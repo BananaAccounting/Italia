@@ -2,7 +2,7 @@
 
 ## Regione Veneto
 
-### Esempi piani contabili per associazioni Regione Veneto
+### Esempi piani contabili per associazioni 
 
 Banana.ch SA mette a disposizione principalmente due tipi di piani contabili, elaborati in partita doppia:
 
