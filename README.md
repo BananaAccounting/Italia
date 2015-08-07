@@ -6,9 +6,9 @@ Esempi piani contabili per associazioni Regione Veneto
 
 Banana.ch SA mette a disposizione principalmente due tipi di piani contabili, elaborati in partita doppia:
 
-*Piano conti per Associazione AP (Associazioni promozione sociale)
+* Piano conti per Associazione AP (Associazioni promozione sociale)
 
-*Piano conti per Associazione OVD (Organizzazione di volontariato)
+* Piano conti per Associazione OVD (Organizzazione di volontariato)
 
 Si tratta di piani contabili che presentano i conti tipici di un'associazione per la Regione Veneto. 
 Nella tabella Conti è stata visualizzata la colonna GR1 e per ogni conto è stato definito un numero/codice GR1.
