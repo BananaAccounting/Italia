@@ -14,6 +14,7 @@ Nella tabella è stata visualizzata la colonna GR1 e per ogni conto è stato def
 Tramite Report esterni o Apps apposite che riprendono il raggruppamento della colonna GR1 si possono presentare Bilanci e Conti Economici secondo le normative alle quale devono sottostare le associazioni della Regione Veneto.
 
 Maggiori informazioni sono disponibili sul sito seguente:
+
 [http://www.csvpadova.org/Adempimenti-e-Modulistica/rendiconto-economico.html]
 
 [http://www.csvpadova.org/Consulenza-e-assistenza/Adempimenti-e-Modulistica/]
