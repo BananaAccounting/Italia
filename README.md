@@ -10,10 +10,13 @@ Banana.ch SA mette a disposizione principalmente due tipi di piani contabili, el
 * Piano conti per Associazione OVD (Organizzazione di volontariato)
 
 Si tratta di piani contabili che presentano i conti tipici di un'associazione per la Regione Veneto. 
-Nella tabella è stata visualizzata la colonna GR1 e per ogni conto è stato definito un numero/codice GR1.
+Nella tabella Ã¨ stata visualizzata la colonna GR1 e per ogni conto Ã¨ stato definito un numero/codice GR1.
 Tramite Report esterni o Apps apposite che riprendono il raggruppamento della colonna GR1 si possono presentare Bilanci e Conti Economici secondo le normative alle quale devono sottostare le associazioni della Regione Veneto.
 
-[www.banana.ch]
+Maggiori informazioni sono disponibili sul sito seguente:
+[http://www.csvpadova.org/Adempimenti-e-Modulistica/rendiconto-economico.html]
+
+[http://www.csvpadova.org/Consulenza-e-assistenza/Adempimenti-e-Modulistica/]
 
 
 
