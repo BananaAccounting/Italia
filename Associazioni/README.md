@@ -13,6 +13,8 @@ Si tratta di piani contabili che presentano i conti tipici di un'associazione pe
 Nella tabella è stata visualizzata la colonna GR1 e per ogni conto è stato definito un numero/codice GR1.
 Tramite Report esterni o Apps apposite che riprendono il raggruppamento della colonna GR1 si possono presentare Bilanci e Conti Economici secondo le normative alle quale devono sottostare le associazioni della Regione Veneto.
 
+Maggiori informazioni documenti specifici sono disponibili alle seguenti pagine web:
+
 [http://www.csvpadova.org/Adempimenti-e-Modulistica/rendiconto-economico.html]
 
 [http://www.csvpadova.org/Consulenza-e-assistenza/Adempimenti-e-Modulistica/]
