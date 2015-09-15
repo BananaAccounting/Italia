@@ -82,10 +82,10 @@ function loadForm() {
 	form.push({"id":"VF11.2", "gr":"VF11", "vatClass":"2", "description":"Imposta in detrazioni 20%"});
 
 	//Quadro VL
-	form.push({"id":"VL1", "gr":"VL1", "sum":"VE25;VJ17", "description":"IVA debito (somma dei righi VE25 e VJ17)"});
-	form.push({"id":"VL2", "gr":"VL2", "sum":"", "description":"IVA detraibile (da riga VF57)"});
-	form.push({"id":"VL3", "gr":"VL3", "sum":"VL1;-VL2", "description":"IMPOSTA DOVUTA (VL1 - VL2)"});
-	form.push({"id":"VL4", "gr":"VL4", "sum":"-VL1;VL2", "description":"IMPOSTA A CREDITO (VL2 - VL1)"});
+	form.push({"id":"VL1", "gr":"", "sum":"VE25;VJ17", "description":"IVA debito (somma dei righi VE25 e VJ17)"});
+	form.push({"id":"VL2", "gr":"", "sum":"", "description":"IVA detraibile (da riga VF57)"});
+	form.push({"id":"VL3", "gr":"", "sum":"VL1;-VL2", "description":"IMPOSTA DOVUTA (VL1 - VL2)"});
+	form.push({"id":"VL4", "gr":"", "sum":"-VL1;VL2", "description":"IMPOSTA A CREDITO (VL2 - VL1)"});
 
 	form.push({"id":"VJ17", "gr":"VJ17", "vatClass":"2", "description":"Descrizione VJ17"});
 	
@@ -169,9 +169,6 @@ function printReport() {
 }
 
 
-
-//**************************************************************************************************************************
-
 //The purpose of this function is to load all the balances and save the values into the form
 function loadBalances() {
 	for (var k = 0; k < form.length; k++) {
@@ -195,22 +192,22 @@ function calculateGr1Balance(gr, vatClass, grColumn, startDate, endDate) {
 		// 3 = Vorsteuer vatPosted  
 		// 4 = Umsatzsteur vatPosted  
 		if (vatClass === "1") {
-			if (currentBal.vatTaxable !== "0") {
+			if (currentBal.vatTaxable != 0) {
 				return currentBal.vatTaxable;
 			}
 		}
 		else if (vatClass === "2") {
-			if (currentBal.vatTaxable !== "0") {
+			if (currentBal.vatTaxable != 0) {
 				return Banana.SDecimal.invert(currentBal.vatTaxable);
 			}
 		}
 		else if (vatClass === "3") {
-			if (currentBal.vatPosted !== "0") {
+			if (currentBal.vatPosted != 0) {
 				return currentBal.vatPosted;
 			}
 		}
 		else if (vatClass === "4") {
-			if (currentBal.vatPosted !== "0") {
+			if (currentBal.vatPosted != 0) {
 				return Banana.SDecimal.invert(currentBal.vatPosted);
 			}
 		}
@@ -248,117 +245,6 @@ function getAccountsListForGr(table, grText, codeColumn, grColumn) {
 	return str;
 }
 
-//**************************************************************************************************************************
-
-
-
-
-
-
-// //The main purpose of this function is to get all VAT codes of the same group and create a string with them, using the character "|" as separator
-// function getVatCodes(vatCodesTable, codeStr) {
-
-// 	var str = [];
-
-// 	//Loop to take the values of each rows of the table
-// 	for (var i = 0; i < vatCodesTable.rowCount; i++) {
-// 		var tRow = vatCodesTable.row(i);
-// 		var gr1 = tRow.value("Gr1");
-// 		var vatCode = tRow.value("VatCode");
-
-// 		//Check if there are Gr1 and VatCode values
-// 		if (gr1 && vatCode) {
-
-// 			//If Gr1 column contains other characters (in this case ";") we know there are more values.
-// 			//We have to split them and take all values separately.
-// 			//If there are only alphanumeric characters in Gr1 column we know there is only one value and we take it.
-// 			var vatCodeString = gr1;
-// 			var arrVatCodeString = vatCodeString.split(";");
-// 			for (var j = 0; j < arrVatCodeString.length; j++) {
-// 				var vatCodeString1 = arrVatCodeString[j];
-// 				if (vatCodeString1 === codeStr) {
-// 					str.push(vatCode);
-// 				}
-// 			}
-// 		}
-// 	}
-
-// 	//Removing duplicates
-// 	for (var i = 0; i < str.length; i++) {
-// 		for (var x = i+1; x < str.length; x++) {
-// 			if (str[x] === str[i]) {
-// 				str.splice(x,1);
-// 				--x;
-// 			}
-// 		}
-// 	}
-
-
-// 	// //We return the array adding a separator between elements
-// 	return str;
-// }
-
-
-// //The purpose of this function is to calculate the vatTaxable and vatAmount balances, then load these values into the structure
-// function loadVatBalances() {
-
-// 	var vatCodes = Banana.document.table("VatCodes");
-// 	if (vatCodes === undefined || !vatCodes) {
-// 		Banana.document.addMessage("VatCodes table not found.");
-// 		return;
-// 	}
-
-// 	for (var i in form) {
-// 		var grCodes = getVatCodes(vatCodes, getObject(form, form[i]["id"]).gr);
-// 		grCodes = grCodes.join("|");
-
-// 		var currentBal = Banana.document.vatCurrentBalance(grCodes, param.startDate, param.endDate);
-
-// 		//vatClass decide the value to use:
-// 		// 1 = Vorsteuer vatTaxable
-// 		// 2 = Umsatzsteur vatTaxable  
-// 		// 3 = Vorsteuer vatPosted  
-// 		// 4 = Umsatzsteur vatPosted  
-// 		if (form[i]["vatClass"] === "1") {
-// 			if (currentBal.vatTaxable != 0) {
-// 				form[i]["amount"] = currentBal.vatTaxable;
-// 			}
-// 		}
-// 		else if (form[i]["vatClass"] === "2") {
-// 			if (currentBal.vatTaxable != 0) {
-// 				form[i]["amount"] = Banana.SDecimal.invert(currentBal.vatTaxable);
-// 			}
-// 		}
-// 		else if (form[i]["vatClass"] === "3") {
-// 			if (currentBal.vatPosted != 0) {
-// 				form[i]["amount"] = currentBal.vatPosted;
-// 			}
-// 		}
-// 		else if (form[i]["vatClass"] === "4") {
-// 			if (currentBal.vatPosted != 0) {
-// 				form[i]["amount"] = Banana.SDecimal.invert(currentBal.vatPosted);
-// 			}
-// 		}
-// 	}
-// }
-
-//****************************************************************************************************************************
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //The purpose of this function is to return a specific whole object
 function getObject(form, id) {
@@ -394,9 +280,8 @@ function getDescription(gr) {
 				return form[i]["description"];
 			}
 		}
-
 	}
-	throw "Couldn't find object with gr: " + gr;
+	Banana.document.addMessage("Couldn't find object with gr: " + gr);
 }
 
 //The purpose of this function is to get the Balance from an object
@@ -407,7 +292,7 @@ function getBalance(gr) {
 			return form[i]["amount"];
 		}
 	}
-	throw "Couldn't find object with gr: " + gr;
+	Banana.document.addMessage("Couldn't find object with gr: " + gr);
 }
 
 //The purpose of this function is to convert all the values from the given list to local format
@@ -494,24 +379,10 @@ function createStyleSheet() {
 
     stylesheet.addStyle("body", "font-family : Helvetica");
 
-	var style = stylesheet.addStyle(".description");
-	style.setAttribute("padding-bottom", "5px");
-	style.setAttribute("padding-top", "5px");
-	style.setAttribute("font-size", "8px");
-	
-	// style = stylesheet.addStyle(".description1");
-	// style.setAttribute("font-size", "7px");
-	// style.setAttribute("text-align", "center");
-
-	// style = stylesheet.addStyle(".descriptionBold");
-	// style.setAttribute("font-size", "8px");
-	// style.setAttribute("font-weight", "bold");
-
 	style = stylesheet.addStyle(".footer");
 	style.setAttribute("text-align", "right");
 	style.setAttribute("font-size", "8px");
 	style.setAttribute("font-family", "Courier New");
-	//style.setAttribute("font-family", "Courier New");
 
 	style = stylesheet.addStyle(".heading1");
 	style.setAttribute("font-size", "16px");
@@ -529,92 +400,6 @@ function createStyleSheet() {
 	style.setAttribute("font-size", "9px");
 	style.setAttribute("font-weight", "bold");
 
-	// style = stylesheet.addStyle(".horizontalLine");
-	// style.setAttribute("border-top", "1px solid black");
-
-	// style = stylesheet.addStyle(".rowNumber");
-	// style.setAttribute("font-size", "9px");
-
-	style = stylesheet.addStyle(".valueAmount");
-	style.setAttribute("font-size", "9px");
-	style.setAttribute("font-weight", "bold");
-	style.setAttribute("padding-bottom", "5px"); 
-	style.setAttribute("background-color", "#eeeeee"); 
-	style.setAttribute("text-align", "right");
-	
-	// style = stylesheet.addStyle(".valueDate");
-	// style.setAttribute("font-size", "9px");
-	// style.setAttribute("font-weight", "bold");
-	// style.setAttribute("padding-bottom", "5px"); 
-	// style.setAttribute("background-color", "#eeeeee"); 
-
-	style = stylesheet.addStyle(".valueText");
-	style.setAttribute("font-size", "9px");
-	style.setAttribute("font-weight", "bold");
-	style.setAttribute("padding-bottom", "5px");
-	style.setAttribute("padding-top", "5px");
-	style.setAttribute("background-color", "#eeeeee"); 
-	
-	style = stylesheet.addStyle(".valueTitle");
-	style.setAttribute("font-size", "9px");
-	style.setAttribute("font-weight", "bold");
-	//style.setAttribute("padding-bottom", "5px"); 
-	//style.setAttribute("padding-top", "5px");
-	style.setAttribute("background-color", "#000000");
-	style.setAttribute("color", "#fff");
-	
-	style = stylesheet.addStyle(".valueTitle1");
-	style.setAttribute("font-size", "9px");
-	style.setAttribute("font-weight", "bold");
-	style.setAttribute("padding-bottom", "5px"); 
-	style.setAttribute("padding-top", "5px");
-	
-	// style = stylesheet.addStyle(".valueTotal");
-	// style.setAttribute("font-size", "9px");
-	// style.setAttribute("font-weight", "bold");
-	// style.setAttribute("padding-bottom", "5px"); 
-	// style.setAttribute("background-color", "#eeeeee"); 
-	// style.setAttribute("text-align", "right");
-	// style.setAttribute("border-bottom", "1px double black");
-
-	//Tables
-	style = stylesheet.addStyle("tableInfo");
-	style.setAttribute("width", "100%");
-	style.setAttribute("font-size", "8px");
-	//stylesheet.addStyle("table.tableInfo td", "border: thin solid black");
-
-	style = stylesheet.addStyle("tableChoices");
-	style.setAttribute("width", "100%");
-	style.setAttribute("font-size", "8px");
-
-	style = stylesheet.addStyle("table");
-	style.setAttribute("width", "100%");
-	style.setAttribute("font-size", "8px");
-	stylesheet.addStyle("table.table td", "border: thin solid black");
-
-	style = stylesheet.addStyle("table2");
-	style.setAttribute("width", "100%");
-	style.setAttribute("font-size", "8px");
-	//stylesheet.addStyle("table.table2 td", "border: thin solid black");
-
-	style = stylesheet.addStyle("table3");
-	style.setAttribute("width", "100%");
-	style.setAttribute("font-size", "8px");
-	//stylesheet.addStyle("table.table3 td", "border: thin solid black");
-
-
-
-	style = stylesheet.addStyle(".background");
-	style.setAttribute("padding-bottom", "5px");
-	style.setAttribute("padding-top", "5px"); 
-	style.setAttribute("background-color", "#eeeeee"); 
-
-	style = stylesheet.addStyle(".borderLeft");
-	style.setAttribute("border-left","thin solid black");
-
-	style = stylesheet.addStyle(".borderBottom");
-	style.setAttribute("border-bottom","thin solid black");
-
 	style = stylesheet.addStyle(".bold");
 	style.setAttribute("font-weight", "bold");
 
@@ -624,20 +409,17 @@ function createStyleSheet() {
 	style = stylesheet.addStyle(".alignRight");
 	style.setAttribute("text-align", "right");
 
-	style = stylesheet.addStyle(".alignCenter");
-	style.setAttribute("text-align", "center");
-
-
-	
-
 	//Warning message.
 	style = stylesheet.addStyle(".warningMsg");
 	style.setAttribute("font-weight", "bold");
 	style.setAttribute("color", "red");
 	style.setAttribute("font-size", "10");
 
-
+	//Tables
+	style = stylesheet.addStyle("table");
+	style.setAttribute("width", "100%");
+	style.setAttribute("font-size", "8px");
+	stylesheet.addStyle("table.table td", "border: thin solid black");
 
 	return stylesheet;
 }
-
