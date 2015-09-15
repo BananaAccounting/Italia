@@ -1,5 +1,5 @@
 # IVA Italia (in fase di sviluppo)
-L'obiettivo Modello di preparare un facsimile del modollo partendo dai dati della contabilità 
+L'obiettivo è  di preparare un stampa che è un facsimile del modello dell'agenzia delle entrate, con tutti i quadri compilati riprendendo i dati  della contabilità.
 Al momento si è in fase di primo sviluppo.
 
 ## Riferimenti
