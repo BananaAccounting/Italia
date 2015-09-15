@@ -82,10 +82,12 @@ function loadForm() {
 	form.push({"id":"VF11.2", "gr":"VF11", "vatClass":"2", "description":"Imposta in detrazioni 20%"});
 
 	//Quadro VL
-	// form.push({"id":"VL1", "gr":"VL1", "sum":"VE25;VJ17", "description":"IVA debito (somma dei righi VE25 e VJ17)"});
-	// form.push({"id":"VL2", "gr":"VL2", "sum":"", "description":"IVA detraibile (da riga VF57)"});
-	// form.push({"id":"VL3", "gr":"VL3", "sum":"VL1;-VL2", "description":"IMPOSTA DOVUTA (VL1 - VL2)"});
-	// form.push({"id":"VL4", "gr":"VL4", "sum":"-VL1;VL2", "description":"IMPOSTA A CREDITO (VL2 - VL1)"});
+	form.push({"id":"VL1", "gr":"VL1", "sum":"VE25;VJ17", "description":"IVA debito (somma dei righi VE25 e VJ17)"});
+	form.push({"id":"VL2", "gr":"VL2", "sum":"", "description":"IVA detraibile (da riga VF57)"});
+	form.push({"id":"VL3", "gr":"VL3", "sum":"VL1;-VL2", "description":"IMPOSTA DOVUTA (VL1 - VL2)"});
+	form.push({"id":"VL4", "gr":"VL4", "sum":"-VL1;VL2", "description":"IMPOSTA A CREDITO (VL2 - VL1)"});
+
+	form.push({"id":"VJ17", "gr":"VJ17", "vatClass":"2", "description":"Descrizione VJ17"});
 	
 	//Altri quadri ...
 }
@@ -108,7 +110,6 @@ function exec(string) {
 
 	// 2. Extract the data, calculate and load the balances
 	loadBalances();
-	//loadVatBalances();
 
 	// 3. Calculate the totals
 	calcTotals(["amount"]);
@@ -159,6 +160,9 @@ function printReport() {
 		}
 	}
 
+	//Add the footer to the report
+	addFooter(report)
+
 	//Print the report
 	var stylesheet = createStyleSheet();
 	Banana.Report.preview(report, stylesheet);
@@ -191,22 +195,22 @@ function calculateGr1Balance(gr, vatClass, grColumn, startDate, endDate) {
 		// 3 = Vorsteuer vatPosted  
 		// 4 = Umsatzsteur vatPosted  
 		if (vatClass === "1") {
-			if (currentBal.vatTaxable != 0) {
+			if (currentBal.vatTaxable !== "0") {
 				return currentBal.vatTaxable;
 			}
 		}
 		else if (vatClass === "2") {
-			if (currentBal.vatTaxable != 0) {
+			if (currentBal.vatTaxable !== "0") {
 				return Banana.SDecimal.invert(currentBal.vatTaxable);
 			}
 		}
 		else if (vatClass === "3") {
-			if (currentBal.vatPosted != 0) {
+			if (currentBal.vatPosted !== "0") {
 				return currentBal.vatPosted;
 			}
 		}
 		else if (vatClass === "4") {
-			if (currentBal.vatPosted != 0) {
+			if (currentBal.vatPosted !== "0") {
 				return Banana.SDecimal.invert(currentBal.vatPosted);
 			}
 		}
@@ -470,12 +474,23 @@ function calcTotal(id, fields) {
 	}
 }
 
+
+//This function adds a Footer to the report
+function addFooter(report) {
+   report.getFooter().addClass("footer");
+   var versionLine = report.getFooter().addText(param.bananaVersion + ", " + param.scriptVersion + ", ", "description");
+   //versionLine.excludeFromTest();
+   report.getFooter().addText("Pagina ", "description");
+   report.getFooter().addFieldPageNr();
+}
+
+
 //The main purpose of this function is to create styles for the report print
 function createStyleSheet() {
 	var stylesheet = Banana.Report.newStyleSheet();
 
     var pageStyle = stylesheet.addStyle("@page");
-    pageStyle.setAttribute("margin", "10mm 10mm 10mm 10mm");
+    pageStyle.setAttribute("margin", "20mm 10mm 20mm 20mm");
 
     stylesheet.addStyle("body", "font-family : Helvetica");
 
