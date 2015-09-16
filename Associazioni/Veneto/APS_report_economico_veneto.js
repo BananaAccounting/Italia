@@ -26,14 +26,16 @@
 
 
 
-
-
-//Create the param object with some parameters
+//Global variables
 var param = {};
 var	form = [];
 
+//Create the param object with some parameters
 function loadParam() {
 	param = {
+		"reportName":"APS report economico - Veneto",																//Save the report's name
+		"bananaVersion":"Banana Accounting, v. " + Banana.document.info("Base", "ProgramVersion"), 					//Save the version of Banana Accounting used
+		"scriptVersion":"script v. 2015-09-16 (TEST VERSION)", 														//Save the version of the script
 		"headerLeft" : Banana.document.info("Base","HeaderLeft"),													// Get the info from File->File properties->Header left
 		"headerRight" : Banana.document.info("Base","HeaderRight"),													// Get the info from File->File properties->Header right
 		"startDate" : Banana.document.info("AccountingDataBase","OpeningDate"),										// Get the start date of the accounting period
@@ -55,69 +57,67 @@ function loadParam() {
 }
 
 
-
 //The purpose of this function is to create and load the structure that will contains all the data used to create the report
 function loadForm() {
 
 	//INCOME
-	form.push({"id":"R1", "description":"QUOTE ASSOCIATIVE", "gr":"R1", "bClass":"4"});
-	form.push({"id":"R2", "description":"CONTRIBUTI PER PROGETTI E/O ATTIVITÀ (art. 5 L. 266/91)", "gr":"R2", "sum":"R2.1;R2.2;R2.3;R2.4;R2.5;R2.6;R2.7;R2.8"});
-	form.push({"id":"R2.1", "description":"da soci (specificare a quale titolo)", "gr":"R2.1", "bClass":"4"});
-	form.push({"id":"R2.2", "description":"da non soci (specificare a quale titolo)", "gr":"R2.2", "bClass":"4"});
-	form.push({"id":"R2.3", "description":"da CSV e Comitato di Gestione", "gr":"R2.3", "bClass":"4"});
-	form.push({"id":"R2.4", "description":"da enti pubblici (comune, provincia, regione, stato)", "gr":"R2.4", "bClass":"4"});
-	form.push({"id":"R2.5", "description":"da Comunità europea e da altri organismi internazionali", "gr":"R2.5", "bClass":"4"});
-	form.push({"id":"R2.6", "description":"da altre Odv (specificare a quale titolo)", "gr":"R2.6", "bClass":"4"});
-	form.push({"id":"R2.7", "description":"dal cinque per mille", "gr":"R2.7", "bClass":"4"});
-	form.push({"id":"R2.8", "description":"altro (specificare)", "gr":"R2.8", "bClass":"4"});
-	form.push({"id":"R3", "description":"DONAZIONI DEDUCIBILI E LASCITI TESTAMENTARI - art. 5 L.266/91", "gr":"R3", "sum":"R3.1;R3.2"});
-	form.push({"id":"R3.1", "description":"da soci", "gr":"R3.1", "bClass":"4"});
-	form.push({"id":"R3.2", "description":"da non soci", "gr":"R3.2", "bClass":"4"});
-	form.push({"id":"R4", "description":"RIMBORSI DERIVANTI DA CONVENZIONI CON ENTI PUBBLICI - art. 5 L.266/91", "gr":"R4", "bClass":"4"});
-	form.push({"id":"R5a", "description":"ENTRATE DA ATTIVITÀ COMMERCIALI PRODUTTIVE MARGINALI   (Raccolta fondi)", "gr":"R5a", "sum":"R5.1;R5.2;R5.3"});
-	form.push({"id":"R5.1", "description":"da attività di vendite occasionali o iniziative occasionali di solidarietà (D.M. 1995 lett.a) es.eventi, cassettina offerte, tombole, spettacoli", "gr":"R5.1", "bClass":"4"});
-	form.push({"id":"R5.2", "description":"da attività di vendita di beni acquisiti da terzi a titolo gratuito a fini di sovvenzione  (D.M. 1995 lett.b)", "gr":"R5.2", "bClass":"4"});
-	form.push({"id":"R5.3", "description":"da attività di somministrazione di alimenti e bevande in occasione di manifestazioni e simili a carattere occasionale  (D.M. 1995 lett.d)", "gr":"R5.3", "bClass":"4"});
-	form.push({"id":"R5b", "description":" ALTRE ENTRATE DA ATTIVITÀ COMMERCIALI MARGINALI", "gr":"R5b", "sum":"R5.4;R5.5"});
-	form.push({"id":"R5.4", "description":"cessione di beni prodotti dagli assistiti e dai volontari sempreché la vendita dei prodotti sia curata direttamente dall'organizzazione senza alcun intermediario (D.M. 1995 lett.c)", "gr":"R5.4", "bClass":"4"});
-	form.push({"id":"R5.5", "description":"attività di prestazione di servizi rese in conformità alle finalità istituzionali, non riconducibili nell'ambito applicativo dell'art. 111, comma 3, del TUIR  verso pagamento di corrispettivi specifici che non eccedano del 50% i costi di diretta imputazione (D.M. 1995 lett. e)", "gr":"R5.5", "bClass":"4"});
-	form.push({"id":"R6", "description":"ALTRE ENTRATE (comunque ammesse dalla L.266/91)", "gr":"R6", "sum":"R6.1;R6.2;R6.3"});
-	form.push({"id":"R6.1", "description":"rendite patrimoniali (fitti,….)", "gr":"R6.1", "bClass":"4"});
-	form.push({"id":"R6.2", "description":"rendite finanziarie (interessi, dividendi)", "gr":"R6.2", "bClass":"4"});
-	form.push({"id":"R6.3", "description":"altro: specificare ", "gr":"R6.3", "bClass":"4"});
-	form.push({"id":"R7", "description":"ANTICIPAZIONI DI CASSA", "gr":"R7", "bClass":"4"});
-	form.push({"id":"R8", "description":"PARTITE DI GIRO", "gr":"R8", "bClass":"4"});
+	form.push({"id":"R1", "gr":"R1", "bClass":"4", "description":"QUOTE ASSOCIATIVE"});
+	form.push({"id":"R2", "description":"CONTRIBUTI PER PROGETTI E/O ATTIVITÀ (art. 5 L. 266/91)", "sum":"R2.1;R2.2;R2.3;R2.4;R2.5;R2.6;R2.7;R2.8"});
+	form.push({"id":"R2.1", "gr":"R2.1", "bClass":"4", "description":"da soci (specificare a quale titolo)"});
+	form.push({"id":"R2.2", "gr":"R2.2", "bClass":"4", "description":"da non soci (specificare a quale titolo)"});
+	form.push({"id":"R2.3", "gr":"R2.3", "bClass":"4", "description":"da CSV e Comitato di Gestione"});
+	form.push({"id":"R2.4", "gr":"R2.4", "bClass":"4", "description":"da enti pubblici (comune, provincia, regione, stato)"});
+	form.push({"id":"R2.5", "gr":"R2.5", "bClass":"4", "description":"da Comunità europea e da altri organismi internazionali"});
+	form.push({"id":"R2.6", "gr":"R2.6", "bClass":"4", "description":"da altre Odv (specificare a quale titolo)"});
+	form.push({"id":"R2.7", "gr":"R2.7", "bClass":"4", "description":"dal cinque per mille"});
+	form.push({"id":"R2.8", "gr":"R2.8", "bClass":"4", "description":"altro (specificare)"});
+	form.push({"id":"R3", "description":"DONAZIONI DEDUCIBILI E LASCITI TESTAMENTARI - art. 5 L.266/91", "sum":"R3.1;R3.2"});
+	form.push({"id":"R3.1", "gr":"R3.1", "bClass":"4", "description":"da soci"});
+	form.push({"id":"R3.2", "gr":"R3.2", "bClass":"4", "description":"da non soci"});
+	form.push({"id":"R4", "gr":"R4", "bClass":"4", "description":"RIMBORSI DERIVANTI DA CONVENZIONI CON ENTI PUBBLICI - art. 5 L.266/91"});
+	form.push({"id":"R5a", "description":"ENTRATE DA ATTIVITÀ COMMERCIALI PRODUTTIVE MARGINALI   (Raccolta fondi)", "sum":"R5.1;R5.2;R5.3"});
+	form.push({"id":"R5.1", "gr":"R5.1", "bClass":"4", "description":"da attività di vendite occasionali o iniziative occasionali di solidarietà (D.M. 1995 lett.a) es.eventi, cassettina offerte, tombole, spettacoli"});
+	form.push({"id":"R5.2", "gr":"R5.2", "bClass":"4", "description":"da attività di vendita di beni acquisiti da terzi a titolo gratuito a fini di sovvenzione  (D.M. 1995 lett.b)"});
+	form.push({"id":"R5.3", "gr":"R5.3", "bClass":"4", "description":"da attività di somministrazione di alimenti e bevande in occasione di manifestazioni e simili a carattere occasionale  (D.M. 1995 lett.d)"});
+	form.push({"id":"R5b", "description":" ALTRE ENTRATE DA ATTIVITÀ COMMERCIALI MARGINALI", "sum":"R5.4;R5.5"});
+	form.push({"id":"R5.4", "gr":"R5.4", "bClass":"4", "description":"cessione di beni prodotti dagli assistiti e dai volontari sempreché la vendita dei prodotti sia curata direttamente dall'organizzazione senza alcun intermediario (D.M. 1995 lett.c)"});
+	form.push({"id":"R5.5", "gr":"R5.5", "bClass":"4", "description":"attività di prestazione di servizi rese in conformità alle finalità istituzionali, non riconducibili nell'ambito applicativo dell'art. 111, comma 3, del TUIR  verso pagamento di corrispettivi specifici che non eccedano del 50% i costi di diretta imputazione (D.M. 1995 lett. e)"});
+	form.push({"id":"R6", "description":"ALTRE ENTRATE (comunque ammesse dalla L.266/91)", "sum":"R6.1;R6.2;R6.3"});
+	form.push({"id":"R6.1", "gr":"R6.1", "bClass":"4", "description":"rendite patrimoniali (fitti,….)"});
+	form.push({"id":"R6.2", "gr":"R6.2", "bClass":"4", "description":"rendite finanziarie (interessi, dividendi)"});
+	form.push({"id":"R6.3", "gr":"R6.3", "bClass":"4", "description":"altro: specificare "});
+	form.push({"id":"R7", "gr":"R7", "bClass":"4", "description":"ANTICIPAZIONI DI CASSA"});
+	form.push({"id":"R8", "gr":"R8", "bClass":"4", "description":"PARTITE DI GIRO"});
 	form.push({"id":"R", "description":"TOTALE RICAVI", "sum":"R1;R2;R3;R4;R5a;R5b;R6;R7;R8"});
 
 	//EXPENSES
-	form.push({"id":"C1", "description":"RIMBORSI SPESE AI VOLONTARI  (documentate ed effettivamente sostenute)", "gr":"C1", "bClass":"3"});
-	form.push({"id":"C2", "description":"ASSICURAZIONI", "gr":"C2", "sum":"C2.1;C2.2"});
-	form.push({"id":"C2.1", "description":"volontari (malattie, infortuni e resp. civile terzi) - art. 4 L.266/91", "gr":"C2.1", "bClass":"3"});
-	form.push({"id":"C2.2", "description":"altre: es. veicoli, immobili,….", "gr":"C2.2", "bClass":"3"});
-	form.push({"id":"C3", "description":"PERSONALE OCCORRENTE  A QUALIFICARE E SPECIALIZZARE L’ATTIVITÀ (art. 3 L. 266/91 e art. 3 L.R. 40/1993)", "gr":"C3", "sum":"C3.1;C3.2;C3.3"});
-	form.push({"id":"C3.1", "description":"dipendenti ", "gr":"C3.1", "bClass":"3"});
-	form.push({"id":"C3.2", "description":"atipici e occasionali", "gr":"C3.2", "bClass":"3"});
-	form.push({"id":"C3.3", "description":"consulenti (es. fisioterapista)", "gr":"C3.3", "bClass":"3"});
-	form.push({"id":"C4", "description":"ACQUISTI DI SERVIZI  (es. manutenzione, trasporti, service, consulenza fiscale e del lavoro)", "gr":"C4", "bClass":"3"});
-	form.push({"id":"C5", "description":"UTENZE (telefono, luce, riscaldamento,…)", "gr":"C5", "bClass":"3"});
-	form.push({"id":"C6", "description":"MATERIALI DI CONSUMO (cancelleria, postali, materie prime, generi alimentari)", "gr":"C6", "sum":"C6.1;C6.2;C6.3"});
-	form.push({"id":"C6.1", "description":"per struttura odv", "gr":"C6.1", "bClass":"3"});
-	form.push({"id":"C6.2", "description":"per attività", "gr":"C6.2", "bClass":"3"});
-	form.push({"id":"C6.3", "description":"per soggetti svantaggiati", "gr":"C6.3", "bClass":"3"});
-	form.push({"id":"C7", "description":"GODIMENTO BENI DI TERZI (affitti, noleggio attrezzature, diritti Siae,....)", "gr":"C7", "bClass":"3"});
-	form.push({"id":"C8", "description":"ONERI FINANZIARI E PATRIMONIALI (es. interessi passivi su mutui, prestiti, c/c bancario ..)", "gr":"C8", "bClass":"3"});
-	form.push({"id":"C9", "description":"AMMORTAMENTI", "gr":"C9", "bClass":"3"});
-	form.push({"id":"C10", "description":"IMPOSTE E TASSE", "gr":"C10", "bClass":"3"});
-	form.push({"id":"C11", "description":"RACCOLTE FONDI (vedi allegati Nr. delle singole raccolte fondi di cui ai punti 5.1, 5.2 e 5.3 delle entrate)", "gr":"C11", "bClass":"3"});
-	form.push({"id":"C12", "description":"ALTRE USCITE/COSTI", "gr":"C12", "sum":"C12.1;C12.2;C12.3;C12.4"});
-	form.push({"id":"C12.1", "description":"Contributi a soggetti svantaggiati", "gr":"C12.1", "bClass":"3"});
-	form.push({"id":"C12.2", "description":"Quote associative a odv collegate  (specificare)", "gr":"C12.2", "bClass":"3"});
-	form.push({"id":"C12.3", "description":"versate ad altre odv (specificare)", "gr":"C12.3", "bClass":"3"});
-	form.push({"id":"C12.4", "description":"Altro (specificare)", "gr":"C12.4", "bClass":"3"});
-	form.push({"id":"C13", "description":"PARTITE DI GIRO", "gr":"C13", "bClass":"3"});
+	form.push({"id":"C1", "gr":"C1", "bClass":"3", "description":"RIMBORSI SPESE AI VOLONTARI  (documentate ed effettivamente sostenute)"});
+	form.push({"id":"C2", "description":"ASSICURAZIONI", "sum":"C2.1;C2.2"});
+	form.push({"id":"C2.1", "gr":"C2.1", "bClass":"3", "description":"volontari (malattie, infortuni e resp. civile terzi) - art. 4 L.266/91"});
+	form.push({"id":"C2.2", "gr":"C2.2", "bClass":"3", "description":"altre: es. veicoli, immobili,…."});
+	form.push({"id":"C3", "description":"PERSONALE OCCORRENTE  A QUALIFICARE E SPECIALIZZARE L’ATTIVITÀ (art. 3 L. 266/91 e art. 3 L.R. 40/1993)", "sum":"C3.1;C3.2;C3.3"});
+	form.push({"id":"C3.1", "gr":"C3.1", "bClass":"3", "description":"dipendenti "});
+	form.push({"id":"C3.2", "gr":"C3.2", "bClass":"3", "description":"atipici e occasionali"});
+	form.push({"id":"C3.3", "gr":"C3.3", "bClass":"3", "description":"consulenti (es. fisioterapista)"});
+	form.push({"id":"C4", "gr":"C4", "bClass":"3", "description":"ACQUISTI DI SERVIZI  (es. manutenzione, trasporti, service, consulenza fiscale e del lavoro)"});
+	form.push({"id":"C5", "gr":"C5", "bClass":"3", "description":"UTENZE (telefono, luce, riscaldamento,…)"});
+	form.push({"id":"C6", "description":"MATERIALI DI CONSUMO (cancelleria, postali, materie prime, generi alimentari)", "sum":"C6.1;C6.2;C6.3"});
+	form.push({"id":"C6.1", "gr":"C6.1", "bClass":"3", "description":"per struttura odv"});
+	form.push({"id":"C6.2", "gr":"C6.2", "bClass":"3", "description":"per attività"});
+	form.push({"id":"C6.3", "gr":"C6.3", "bClass":"3", "description":"per soggetti svantaggiati"});
+	form.push({"id":"C7", "gr":"C7", "bClass":"3", "description":"GODIMENTO BENI DI TERZI (affitti, noleggio attrezzature, diritti Siae,....)"});
+	form.push({"id":"C8", "gr":"C8", "bClass":"3", "description":"ONERI FINANZIARI E PATRIMONIALI (es. interessi passivi su mutui, prestiti, c/c bancario ..)"});
+	form.push({"id":"C9", "gr":"C9", "bClass":"3", "description":"AMMORTAMENTI"});
+	form.push({"id":"C10", "gr":"C10", "bClass":"3", "description":"IMPOSTE E TASSE"});
+	form.push({"id":"C11", "gr":"C11", "bClass":"3", "description":"RACCOLTE FONDI (vedi allegati Nr. delle singole raccolte fondi di cui ai punti 5.1, 5.2 e 5.3 delle entrate)"});
+	form.push({"id":"C12", "description":"ALTRE USCITE/COSTI", "sum":"C12.1;C12.2;C12.3;C12.4"});
+	form.push({"id":"C12.1", "gr":"C12.1", "bClass":"3", "description":"Contributi a soggetti svantaggiati"});
+	form.push({"id":"C12.2", "gr":"C12.2", "bClass":"3", "description":"Quote associative a odv collegate  (specificare)"});
+	form.push({"id":"C12.3", "gr":"C12.3", "bClass":"3", "description":"versate ad altre odv (specificare)"});
+	form.push({"id":"C12.4", "gr":"C12.4", "bClass":"3", "description":"Altro (specificare)"});
+	form.push({"id":"C13", "gr":"C13", "bClass":"3", "description":"PARTITE DI GIRO"});
 	form.push({"id":"C", "description":"TOTALE COSTI", "sum":"C1;C2;C3;C4;C5;C6;C7;C8;C9;C10;C11;C12;C13"});
 
-	//
 	form.push({"id":"UP", "description":"UTILE/PERDITA D'ESERCIZIO", "sum":"R;-C"});
 	
 	//formPrint.push({"id":"R1", row: 1, "print":"description", "column":1});
@@ -145,55 +145,61 @@ function exec(string) {
 	// 3. Calculate the totals
 	calcTotals(["amount"]);
 
+	// 4. Do some operations before the format
 	//postProcess();
 	
-	// 4. Format all the values
+	// 5. Format all the values
 	formatValues(["amount"]);
 
-	// 5. Create and print the report
+	// 6. Create and print the report
 	printReport();
 
 }
 
 
+
+//The purpose of this function is to do some operations before the values are converted
+function postProcess() {
+
+}
+
+
+
 //The purpose of this function is to create and print the report
 function printReport() {
 
-	var report = Banana.Report.newReport("Script Italia, v3");
+	var report = Banana.Report.newReport(param.reportName);
 
 	report.addParagraph(param.headerLeft + " - " + param.headerRight);
-	report.addParagraph(param.title + " (" + param.startDate + " - " + param.endDate + ")");
-	report.addParagraph(param.cellTitle1);
-	report.addParagraph(param.cellTitle2);
-	report.addParagraph(param.cellTitle3);
-	report.addParagraph(param.cellTitle4);
+	report.addParagraph(param.title + " (" + Banana.Converter.toLocaleDateFormat(param.startDate) + " - " + Banana.Converter.toLocaleDateFormat(param.endDate) + ")");
 
 	report.addParagraph(" ");
 	
 	var table = report.addTable("table");
 	tableRow = table.addRow();
-	tableRow.addCell("id", "bold", 1);
-	tableRow.addCell("gr", "bold", 1)
-	tableRow.addCell("description", "bold", 1);
+	tableRow.addCell("Id", "bold", 1);
+	tableRow.addCell("Gr1", "bold", 1)
+	tableRow.addCell("Descrizione", "bold", 1);
 	tableRow.addCell(param.columnTitle1, "bold", 1);
 	tableRow.addCell(param.columnTitle2, "bold", 1);
 
 	for (var k = 0; k < form.length; k++) {
-		if (form[k].gr) {
-			tableRow = table.addRow();
-			tableRow.addCell(form[k].id, "", 1);
-			tableRow.addCell(form[k].gr, "", 1);
-			tableRow.addCell(form[k].description, "", 1);
+		tableRow = table.addRow();
+		tableRow.addCell(form[k]["id"], "", 1);
+		tableRow.addCell(form[k]["gr"], "", 1);
+		tableRow.addCell(form[k]["description"], "", 1);
 
-			if (form[k].gr.indexOf(".") > 0) {
-				tableRow.addCell(getBalance(form[k].gr), "alignRight", 1);
-				tableRow.addCell(" ");
-			} else {
-				tableRow.addCell(" ");
-				tableRow.addCell(getBalance(form[k].gr), "alignRight", 1);
-			}
+		if (form[k].id.indexOf(".") > 0) {
+			tableRow.addCell(getBalance(form[k].id), "alignRight", 1);
+			tableRow.addCell(" ");
+		} else {
+			tableRow.addCell(" ");
+			tableRow.addCell(getBalance(form[k].id), "alignRight", 1);
 		}
 	}
+
+	//Add a footer to the report
+	addFooter(report);
 
 	//Print the report
 	var stylesheet = createStyleSheet();
@@ -321,33 +327,26 @@ function getValue(source, id, field) {
 
 
 //The purpose of this function is to get the Description from an object
-function getDescription(gr) {
-	var searchGr = gr.trim();
+function getDescription(id) {
+	var searchId = id.trim();
 	for (var i = 0; i < form.length; i++) {
-		if (form[i]["gr"]) {
-			if (form[i]["gr"] === searchGr) {
-				return form[i]["description"];
-			}
-		} else {
-			if (form[i]["id"] === searchGr) {
-				return form[i]["description"];
-			}
+		if (form[i]["id"] === searchId) {
+			return form[i]["description"];
 		}
-
 	}
-	Banana.document.addMessage("Couldn't find object with gr: " + gr);
+	Banana.document.addMessage("Couldn't find object with id: " + id);
 }
 
 
 //The purpose of this function is to get the Balance from an object
-function getBalance(gr) {
-	var searchGr = gr.trim();
+function getBalance(id) {
+	var searchId = id.trim();
 	for (var i = 0; i < form.length; i++) {
-		if (form[i]["gr"] === searchGr) {
+		if (form[i]["id"] === searchId) {
 			return form[i]["amount"];
 		}
 	}
-	Banana.document.addMessage("Couldn't find object with gr: " + gr);
+	Banana.document.addMessage("Couldn't find object with id: " + id);
 }
 
 
@@ -416,6 +415,16 @@ function calcTotal(id, fields) {
 		//Already calculated in loadBalances()
 	}
 }
+
+
+//This function adds a Footer to the report
+function addFooter(report) {
+   report.getFooter().addClass("footer");
+   var versionLine = report.getFooter().addText(param.bananaVersion + ", " + param.scriptVersion + ", ", "description");
+   report.getFooter().addText("Pagina ", "description");
+   report.getFooter().addFieldPageNr();
+}
+
 
 //The main purpose of this function is to create styles for the report print
 function createStyleSheet() {
