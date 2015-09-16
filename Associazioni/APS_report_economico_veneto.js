@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// @id = script_regione
+// @id = it.banana.app.report_economico_veneto
 // @api = 1.0
 // @pubdate = 2015-08-18
 // @publisher = Banana.ch SA
-// @description = Italia - Development script
+// @description = APS Report economico Veneto
 // @task = app.command
 // @doctype = 100.100
 // @docproperties = italia
@@ -30,6 +30,8 @@
 
 //Create the param object with some parameters
 var param = {};
+var	form = [];
+
 function loadParam() {
 	param = {
 		"headerLeft" : Banana.document.info("Base","HeaderLeft"),													// Get the info from File->File properties->Header left
@@ -55,9 +57,8 @@ function loadParam() {
 
 
 //The purpose of this function is to create and load the structure that will contains all the data used to create the report
-var	form = [];
 function loadForm() {
-	
+
 	//INCOME
 	form.push({"id":"R1", "description":"QUOTE ASSOCIATIVE", "gr":"R1", "bClass":"4"});
 	form.push({"id":"R2", "description":"CONTRIBUTI PER PROGETTI E/O ATTIVITÀ (art. 5 L. 266/91)", "gr":"R2", "sum":"R2.1;R2.2;R2.3;R2.4;R2.5;R2.6;R2.7;R2.8"});
@@ -86,7 +87,7 @@ function loadForm() {
 	form.push({"id":"R6.3", "description":"altro: specificare ", "gr":"R6.3", "bClass":"4"});
 	form.push({"id":"R7", "description":"ANTICIPAZIONI DI CASSA", "gr":"R7", "bClass":"4"});
 	form.push({"id":"R8", "description":"PARTITE DI GIRO", "gr":"R8", "bClass":"4"});
-	form.push({"id":"R", "description":"TOTALE RICAVI", "gr":"R", "sum":"R1;R2;R3;R4;R5a;R5b;R6;R7;R8"});
+	form.push({"id":"R", "description":"TOTALE RICAVI", "sum":"R1;R2;R3;R4;R5a;R5b;R6;R7;R8"});
 
 	//EXPENSES
 	form.push({"id":"C1", "description":"RIMBORSI SPESE AI VOLONTARI  (documentate ed effettivamente sostenute)", "gr":"C1", "bClass":"3"});
@@ -114,10 +115,14 @@ function loadForm() {
 	form.push({"id":"C12.3", "description":"versate ad altre odv (specificare)", "gr":"C12.3", "bClass":"3"});
 	form.push({"id":"C12.4", "description":"Altro (specificare)", "gr":"C12.4", "bClass":"3"});
 	form.push({"id":"C13", "description":"PARTITE DI GIRO", "gr":"C13", "bClass":"3"});
-	form.push({"id":"C", "description":"TOTALE COSTI", "gr":"C", "sum":"C1;C2;C3;C4;C5;C6;C7;C8;C9;C10;C11;C12;C13"});
-	
+	form.push({"id":"C", "description":"TOTALE COSTI", "sum":"C1;C2;C3;C4;C5;C6;C7;C8;C9;C10;C11;C12;C13"});
+
 	//
-	form.push({"id":"RC", "description":"UTILE/PERDITA D'ESERCIZIO", "gr":"RC", "sum":"R;-C"});
+	form.push({"id":"UP", "description":"UTILE/PERDITA D'ESERCIZIO", "sum":"R;-C"});
+	
+	//formPrint.push({"id":"R1", row: 1, "print":"description", "column":1});
+	//formPrint.push({"id":"R1", row: 1, "print":"amount", "column":2, "style":"bold"});
+
 }
 
 
@@ -140,6 +145,8 @@ function exec(string) {
 	// 3. Calculate the totals
 	calcTotals(["amount"]);
 
+	//postProcess();
+	
 	// 4. Format all the values
 	formatValues(["amount"]);
 
