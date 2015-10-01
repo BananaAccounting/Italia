@@ -19,7 +19,7 @@ Sono disponibili i seguenti file
 
 ##Utilizzare gli esempi
 1. Scaricate il file ac2 d'esempio
-2. Scaricate e installate la BananaApp di report (vedi [Documentazione Banana.ch] (http://doc8.banana.ch/it/node/7685))
+2. Scaricate e installate la BananaApp di report (vedi [Documentazione Banana 8] (http://doc8.banana.ch/it/node/7685))
 3. Aprite il file d'esempio ed eseguite il report.
 
 
