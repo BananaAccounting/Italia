@@ -19,7 +19,7 @@
 // @description = APS Report economico Veneto
 // @task = app.command
 // @doctype = 100.100
-// @docproperties = italia
+// @docproperties = veneto
 // @outputformat = none
 // @inputdatasource = none
 // @timeout = -1
@@ -32,6 +32,11 @@ var	form = [];
 
 //Create the param object with some parameters
 function loadParam() {
+	var openingDate = Banana.Converter.toDate(Banana.document.info("AccountingDataBase","OpeningDate"))
+	var year = "";
+	if (openingDate) {
+		openingDate.getFullYear();
+	}
 	param = {
 		"reportName":"APS report economico - Veneto",																//Save the report's name
 		"bananaVersion":"Banana Accounting, v. " + Banana.document.info("Base", "ProgramVersion"), 					//Save the version of Banana Accounting used
@@ -40,7 +45,7 @@ function loadParam() {
 		"headerRight" : Banana.document.info("Base","HeaderRight"),													// Get the info from File->File properties->Header right
 		"startDate" : Banana.document.info("AccountingDataBase","OpeningDate"),										// Get the start date of the accounting period
 		"endDate" : Banana.document.info("AccountingDataBase","ClosureDate"),										// Get the end date of the accounting period
-		"year" : Banana.Converter.toDate(Banana.document.info("AccountingDataBase","OpeningDate")).getFullYear(),	// Get the year from the accounting period
+		"year" : year,	// Get the year from the accounting period
 		"basicCurrency" : Banana.document.info("AccountingDataBase","BasicCurrency"),								// Get the basic currency of the accounting
 		"grColumn" : "Gr1",																							// Specify the column ("Gr1" or "Gr2")
 		"formatNumber" : true,																						// Specify if convert all the values into the local format
