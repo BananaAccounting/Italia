@@ -57,7 +57,12 @@ function loadParam() {
 		"cellTitle2" : "TOTALE RICAVI",																				// Specify a cell title
 		"cellTitle3" : "COSTI",																						// Specify a cell title
 		"cellTitle4" : "TOTALE COSTI",																				// Specify a cell title
-		"cellTitle5" : "UTILE/PERDITA D'ESERCIZIO"																	// Specify a cell title
+		"cellTitle5" : "UTILE/PERDITA D'ESERCIZIO",																	// Specify a cell title
+		"title1" : "STATO PATRIMONIALE",
+		"columnTitle3" : "ATTIVO",
+		"columnTitle4" : "PASSIVO",
+		"cellTitle6" : "PERDITA DI GESTIONE",
+		"cellTitle7" : "AVANZO DI GESTIONE"																
 	};
 }
 
@@ -65,6 +70,7 @@ function loadParam() {
 //The purpose of this function is to create and load the structure that will contains all the data used to create the report
 function loadForm() {
 
+	/** CONTO ECONOMICO **/
 	//INCOME
 	form.push({"id":"R1", "gr":"R1", "bClass":"4", "description":"QUOTE ASSOCIATIVE"});
 	form.push({"id":"R2", "description":"CONTRIBUTI PER PROGETTI E/O ATTIVITÀ (art. 5 L. 266/91)", "sum":"R2.1;R2.2;R2.3;R2.4;R2.5;R2.6;R2.7;R2.8"});
@@ -128,6 +134,24 @@ function loadForm() {
 	//formPrint.push({"id":"R1", row: 1, "print":"description", "column":1});
 	//formPrint.push({"id":"R1", row: 1, "print":"amount", "column":2, "style":"bold"});
 
+
+	/** STATO PATRIMONIALE **/
+	//ATTIVI
+	form.push({"id":"A1", "gr":"A1", "bClass":"1", "description":"BENI DUREVOLI"});
+	form.push({"id":"A2.1", "gr":"A2.1", "bClass":"1", "description":"CASSA"});
+	form.push({"id":"A2.2", "gr":"A2.2", "bClass":"1", "description":"BANCA"});
+	form.push({"id":"A3", "gr":"A3", "bClass":"1", "description":"CREDITI"});
+	form.push({"id":"APG", "description":"PERDITA DI GESTIONE"});
+	form.push({"id":"ATP", "description":"TOTALE A PAREGGIO", "sum":"A1;A2.1;A2.2;A3;APG"});
+
+	//PASSIVI
+	form.push({"id":"P1", "gr":"P1", "bClass":"2", "description":"DEBITI"});
+	form.push({"id":"P2.1", "gr":"P2.1", "bClass":"2", "description":"FONDI DI AMMORTAMENTO BENI E ATTREZZATURE"});
+	form.push({"id":"P2.2", "gr":"P2.2", "bClass":"2", "description":"FONDI DI ACCANTONAMENTO"});
+	form.push({"id":"P3", "gr":"P3", "bClass":"2", "description":"NETTO"});
+	form.push({"id":"PAG", "description":"AVANZO DI GESTIONE"});
+	form.push({"id":"PTP", "description":"TOTALE A PAREGGIO", "sum":"P1;P2.1;P2.2;P3;PAG"});
+
 }
 
 
@@ -146,6 +170,7 @@ function exec(string) {
 
 	// 2. Extract the data, calculate and load the balances
 	loadBalances();
+	preProcess();
 
 	// 3. Calculate the totals
 	calcTotals(["amount"]);
@@ -163,9 +188,42 @@ function exec(string) {
 
 
 
+//The purpose of this function is to do some operations before the calculation of the totals
+function preProcess() {
+
+	//var balanceUP =  Banana.document.currentBalance("Gr=UP-BIL", param.startDate, param.endDate).balance;
+	var balanceUP = "";
+	var table = Banana.document.table("Totals");
+	for (var i = 0; i < table.rowCount; i++) {
+		var tRow = table.row(i);
+		if (tRow.value("Group") === "02") {
+			balanceUP = tRow.value("Balance");
+		}
+	}
+
+	for (var i = 0; i < form.length; i++) {
+
+		//Attivo - Perdita di gestione (+)
+		if (Banana.SDecimal.sign(balanceUP) > 0) {
+			if (form[i]["id"] === "APG") {
+				form[i]["amount"] = balanceUP;
+		    	getObject(form,"PAG").amount = "";
+			}
+		}
+		//Passivo - Avanzo di gestione (-)
+		else if (Banana.SDecimal.sign(balanceUP) < 0) {
+			if (form[i]["id"] === "PAG") {
+				form[i]["amount"] = Banana.SDecimal.invert(balanceUP);
+				getObject(form,"APG").amount = "";
+			}
+		}
+	}
+}
+
+
 //The purpose of this function is to do some operations before the values are converted
 function postProcess() {
-
+	
 }
 
 
@@ -175,10 +233,9 @@ function printReport() {
 
 	var report = Banana.Report.newReport(param.reportName);
 
+	/** TABLE CONTO ECONOMICO **/
 	report.addParagraph(param.headerLeft + " - " + param.headerRight);
 	report.addParagraph(param.title + " (" + Banana.Converter.toLocaleDateFormat(param.startDate) + " - " + Banana.Converter.toLocaleDateFormat(param.endDate) + ")");
-
-	report.addParagraph(" ");
 	
 	var table = report.addTable("table");
 	tableRow = table.addRow();
@@ -189,19 +246,120 @@ function printReport() {
 	tableRow.addCell(param.columnTitle2, "bold", 1);
 
 	for (var k = 0; k < form.length; k++) {
-		tableRow = table.addRow();
-		tableRow.addCell(form[k]["id"], "", 1);
-		tableRow.addCell(form[k]["gr"], "", 1);
-		tableRow.addCell(form[k]["description"], "", 1);
 
-		if (form[k].id.indexOf(".") > 0) {
-			tableRow.addCell(getBalance(form[k].id), "alignRight", 1);
-			tableRow.addCell(" ");
-		} else {
-			tableRow.addCell(" ");
-			tableRow.addCell(getBalance(form[k].id), "alignRight", 1);
+		if (form[k]["id"].substring(0,1) === "R" || form[k]["id"].substring(0,1) === "C" || form[k]["id"].substring(0,2) === "UP") {
+
+			tableRow = table.addRow();
+			tableRow.addCell(form[k]["id"], "", 1);
+			tableRow.addCell(form[k]["gr"], "", 1);
+			tableRow.addCell(form[k]["description"], "", 1);
+
+			if (form[k].id.indexOf(".") > 0) {
+				tableRow.addCell(getBalance(form[k].id), "alignRight", 1);
+				tableRow.addCell(" ");
+			} else {
+				tableRow.addCell(" ");
+				tableRow.addCell(getBalance(form[k].id), "alignRight", 1);
+			}
 		}
 	}
+
+	report.addPageBreak();
+
+	/** TABLE STATO PATRIMONIALE **/
+	report.addParagraph(param.headerLeft + " - " + param.headerRight);
+	report.addParagraph(param.title + " (" + Banana.Converter.toLocaleDateFormat(param.startDate) + " - " + Banana.Converter.toLocaleDateFormat(param.endDate) + ")");
+	report.addParagraph(param.title1, "");
+
+	var table = report.addTable("table");
+	tableRow = table.addRow();
+
+	tableRow.addCell(param.columnTitle3, "bold", 4);
+	tableRow.addCell(param.columnTitle4, "bold", 4);
+	
+	tableRow = table.addRow();
+	tableRow.addCell("Id", "bold", 1);
+	tableRow.addCell("Gr1", "bold", 1)
+	tableRow.addCell("Descrizione", "bold", 1);
+	tableRow.addCell(" ", "bold", 1);
+	
+	tableRow.addCell("Id", "bold", 1);
+	tableRow.addCell("Gr1", "bold", 1)
+	tableRow.addCell("Descrizione", "bold", 1);
+	tableRow.addCell(" ", "bold", 1);
+
+	//Row1
+	tableRow = table.addRow();
+	tableRow.addCell(getValue(form, "A1", "id"), "", 1);
+	tableRow.addCell(getValue(form, "A1", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "A1", "description"), "", 1);
+	tableRow.addCell(getBalance("A1"), "alignRight", 1);
+
+	tableRow.addCell(getValue(form, "P1", "id"), "", 1);
+	tableRow.addCell(getValue(form, "P1", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "P1", "description"), "", 1);
+	tableRow.addCell(getBalance("P1"), "alignRight", 1);
+	
+	//Row 2
+	tableRow = table.addRow();
+	tableRow.addCell(getValue(form, "A2.1", "id"), "", 1);
+	tableRow.addCell(getValue(form, "A2.1", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "A2.1", "description"), "", 1);
+	tableRow.addCell(getBalance("A2.1"), "alignRight", 1);
+
+	tableRow.addCell(getValue(form, "P2.1", "id"), "", 1);
+	tableRow.addCell(getValue(form, "P2.1", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "P2.1", "description"), "", 1);
+	tableRow.addCell(getBalance("P2.1"), "alignRight", 1);
+
+	//Row 3
+	tableRow = table.addRow();
+	tableRow.addCell(getValue(form, "A2.2", "id"), "", 1);
+	tableRow.addCell(getValue(form, "A2.2", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "A2.2", "description"), "", 1);
+	tableRow.addCell(getBalance("A2.2"), "alignRight", 1);
+
+	tableRow.addCell(getValue(form, "P2.2", "id"), "", 1);
+	tableRow.addCell(getValue(form, "P2.2", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "P2.2", "description"), "", 1);
+	tableRow.addCell(getBalance("P2.2"), "alignRight", 1);
+
+	//Row 4
+	tableRow = table.addRow();
+	tableRow.addCell(getValue(form, "A3", "id"), "", 1);
+	tableRow.addCell(getValue(form, "A3", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "A3", "description"), "", 1);
+	tableRow.addCell(getBalance("A3"), "alignRight", 1);
+
+	tableRow.addCell(getValue(form, "P3", "id"), "", 1);
+	tableRow.addCell(getValue(form, "P3", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "P3", "description"), "", 1);
+	tableRow.addCell(getBalance("P3"), "alignRight", 1);
+
+	//Row 5
+	tableRow = table.addRow();
+	tableRow.addCell(getValue(form, "APG", "id"), "", 1);
+	tableRow.addCell(getValue(form, "APG", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "APG", "description"), "", 1);
+	tableRow.addCell(getBalance("APG"), "alignRight", 1);
+
+	tableRow.addCell(getValue(form, "PAG", "id"), "", 1);
+	tableRow.addCell(getValue(form, "PAG", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "PAG", "description"), "", 1);
+	tableRow.addCell(getBalance("PAG"), "alignRight", 1);
+
+	//Row 6
+	tableRow = table.addRow();
+	tableRow.addCell(getValue(form, "ATP", "id"), "", 1);
+	tableRow.addCell(getValue(form, "ATP", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "ATP", "description"), "", 1);
+	tableRow.addCell(getBalance("ATP"), "alignRight", 1);
+
+	tableRow.addCell(getValue(form, "PTP", "id"), "", 1);
+	tableRow.addCell(getValue(form, "PTP", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "PTP", "description"), "", 1);
+	tableRow.addCell(getBalance("PTP"), "alignRight", 1);
+
 
 	//Add a footer to the report
 	addFooter(report);
@@ -436,7 +594,7 @@ function createStyleSheet() {
 	var stylesheet = Banana.Report.newStyleSheet();
 
     var pageStyle = stylesheet.addStyle("@page");
-    pageStyle.setAttribute("margin", "10mm 10mm 10mm 10mm");
+    pageStyle.setAttribute("margin", "5mm 10mm 10mm 10mm");
 
     stylesheet.addStyle("body", "font-family : Helvetica");
 
