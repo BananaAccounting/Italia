@@ -3,7 +3,7 @@
 **Attenzione per scaricare i file bisogna**
 
 1. cliccare sul link del nome file
-2. Cliccare sul bottone **"Row"**
+2. click sul bottone **Row** oppure clic tasto destro del mouse sul bottone **"Row"** e fare "Salva con nome" 
 
 
 ##Riferimento
