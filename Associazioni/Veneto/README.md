@@ -1,5 +1,11 @@
 # Associazioni Regione Veneto
 
+**Attenzione per scaricare i file bisogna**
+
+1. cliccare sul link del nome file
+2. Cliccare sul bottone **"Row"**
+
+
 ##Riferimento
 Gli sviluppi sono basati sugli schemi messi a punto dal Centro Servizio Volonatriato (CSV) di Padova:
 * [CSV Padova Rendiconto Economico] (http://www.csvpadova.org/Adempimenti-e-Modulistica/rendiconto-economico.html)
