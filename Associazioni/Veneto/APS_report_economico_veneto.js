@@ -16,7 +16,7 @@
 // @api = 1.0
 // @pubdate = 2015-08-18
 // @publisher = Banana.ch SA
-// @description = APS Report economico Veneto
+// @description = Italia - APS Report economico
 // @task = app.command
 // @doctype = 100.100
 // @docproperties = veneto

@@ -16,7 +16,7 @@
 // @api = 1.0
 // @pubdate = 2015-08-18
 // @publisher = Banana.ch SA
-// @description = ODV Report 5 per mille Veneto
+// @description = Italia - Report "5 per mille"
 // @task = app.command
 // @doctype = 100.100
 // @docproperties = veneto
@@ -98,7 +98,7 @@ function printReport(itemSelected, startDate, endDate) {
 	
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Scopi dell'attività sociale", "", 1);
-	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", "SCO-ATT").value("Testo"), "", 1);
+	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", ":5XM-SCOPO").value("Testo"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("C.F. del soggetto beneficiario", "", 1);
@@ -126,11 +126,11 @@ function printReport(itemSelected, startDate, endDate) {
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Nome del rappresentante legale", "", 1);
-	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", "NOME-RAPP").value("Testo"), "", 1);
+	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", ":5XM-RAPP").value("Testo"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("C.F. del rappresentante legale", "", 1);
-	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", "CF-RAPP").value("Testo"), "", 1);
+	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", ":5XM-RAPP-CF").value("Testo"), "", 1);
 
 	report.addParagraph(" ");
 
@@ -148,7 +148,7 @@ function printReport(itemSelected, startDate, endDate) {
 	tableRow.addCell(Banana.Converter.toDate(startDate).getFullYear(), "alignCenter bold", 1);
 	tableRow = table.addRow();
 	tableRow.addCell("Data di percezione", "alignRight bold", 2);
-	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", "DATA-PERC").value("Testo"), "alignCenter bold", 1);
+	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", ":5XM-DATA").value("Testo"), "alignCenter bold", 1);
 	
 	//Creation and print of the INCOME groups with all the details
 	for (var i = 0; i < groups.length; i++) {
