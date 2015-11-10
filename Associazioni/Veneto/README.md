@@ -22,7 +22,7 @@ Nella colonna Gr1 della tabella conti e per ogni conto è stato definito la voce
 ##BananaApp report
 Sono disponibili i seguenti file
 * [APS_report_economico_veneto.js] (https://raw.githubusercontent.com/BananaAccounting/Italia/master/Associazioni/Veneto/APS_report_economico_veneto.js) che prepara il rendiconto economico come richiesto dalla Regione Veneto.
-* [ODV_report_5XM_veneto.js] (https://raw.githubusercontent.com/BananaAccounting/Italia/master/Associazioni/Veneto/ODV_report_5XM_veneto.js) che prepara il rendiconto per ogni finanziamento 5 per mille come richiesto dalla Regione Veneto.
+* [ODV_report_5XM_veneto.js] (https://raw.githubusercontent.com/BananaAccounting/Italia/master/Associazioni/Veneto/ODV_report_5XM_veneto.js) che prepara il rendiconto per ogni finanziamento 5 per mille.
 * [ODV_report_raccolta_fondi_veneto.js] (https://raw.githubusercontent.com/BananaAccounting/Italia/master/Associazioni/Veneto/ODV_report_raccolta_fondi_veneto.js) che prepara le schede delle raccolte fondi.
 
 ##Utilizzare gli esempi
