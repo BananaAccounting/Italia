@@ -33,7 +33,8 @@
 	5XM_FUN	: C2.1, C2.2, C5, C6.1, C8, C10
 	5XM_B&S : C4, C6.2, C6.3, C7, C9, C11
 	5XM_ALT : C12.1, C12.4, C13
-	5XM_ERO : C12.2, C12.3, 
+	5XM_ERO : C12.2, C12.3,
+	5XM_ACC : P2.2 
 */
 
 var totalExpenses = "";
@@ -46,7 +47,7 @@ groups.push({"group":"2", "gr1":"C2.1;C2.2;C5;C6.1;C8;C10","title":"Costi di fun
 groups.push({"group":"3", "gr1":"C4;C6.2;C6.3;C7;C9;C11", "title":"Acquisto beni e servizi", "text":"(dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…)"});
 groups.push({"group":"4", "gr1":"C12.2;C12.3", "title":"Erogazioni ai sensi della propria finalità istituzionale", "text":"N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato"});
 groups.push({"group":"5", "gr1":"C12.1;C12.4;C13", "title":"Altre voci di spesa riconducibili al raggiungimento dello scopo sociale", "text":""});
-groups.push({"group":"6", "gr1":"", "title":"Accantonamento", "text":"(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo)"});
+groups.push({"group":"6", "gr1":"P2.2", "title":"Accantonamento", "text":"(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo)"});
 
 
 
