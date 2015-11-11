@@ -14,9 +14,9 @@
 //
 // @id = it.banana.app.report_economico_veneto
 // @api = 1.0
-// @pubdate = 2015-08-18
+// @pubdate = 2015-11-11
 // @publisher = Banana.ch SA
-// @description = Italia - APS Report economico
+// @description = Italia - Report economico
 // @task = app.command
 // @doctype = 100.100
 // @docproperties = veneto
@@ -38,7 +38,7 @@ function loadParam() {
 		openingDate.getFullYear();
 	}
 	param = {
-		"reportName":"APS report economico - Veneto",																//Save the report's name
+		"reportName":"Report economico - Veneto",																//Save the report's name
 		"bananaVersion":"Banana Accounting, v. " + Banana.document.info("Base", "ProgramVersion"), 					//Save the version of Banana Accounting used
 		"scriptVersion":"script v. 2015-09-16 (TEST VERSION)", 														//Save the version of the script
 		"headerLeft" : Banana.document.info("Base","HeaderLeft"),													// Get the info from File->File properties->Header left
@@ -140,6 +140,7 @@ function loadForm() {
 	form.push({"id":"A1", "gr":"A1", "bClass":"1", "description":"BENI DUREVOLI"});
 	form.push({"id":"A2.1", "gr":"A2.1", "bClass":"1", "description":"CASSA"});
 	form.push({"id":"A2.2", "gr":"A2.2", "bClass":"1", "description":"BANCA"});
+	form.push({"id":"A2.3", "gr":"A2.3", "bClass":"1", "description":"TITOLI"});
 	form.push({"id":"A3", "gr":"A3", "bClass":"1", "description":"CREDITI"});
 	form.push({"id":"APG", "description":"PERDITA DI GESTIONE"});
 	form.push({"id":"ATP", "description":"TOTALE A PAREGGIO", "sum":"A1;A2.1;A2.2;A3;APG"});
@@ -272,89 +273,92 @@ function printReport() {
 	report.addParagraph(param.title1, "");
 
 	var table = report.addTable("table");
+	
 	tableRow = table.addRow();
+	tableRow.addCell("Id", "bold", 1);
+	tableRow.addCell("Gr1", "bold", 1)
+	tableRow.addCell("Descrizione", "bold", 1);
+	tableRow.addCell("IMPORTI TOTALI", "bold", 1);
 
+	tableRow = table.addRow();
 	tableRow.addCell(param.columnTitle3, "bold", 4);
-	tableRow.addCell(param.columnTitle4, "bold", 4);
-	
-	tableRow = table.addRow();
-	tableRow.addCell("Id", "bold", 1);
-	tableRow.addCell("Gr1", "bold", 1)
-	tableRow.addCell("Descrizione", "bold", 1);
-	tableRow.addCell(" ", "bold", 1);
-	
-	tableRow.addCell("Id", "bold", 1);
-	tableRow.addCell("Gr1", "bold", 1)
-	tableRow.addCell("Descrizione", "bold", 1);
-	tableRow.addCell(" ", "bold", 1);
 
-	//Row1
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "A1", "id"), "", 1);
 	tableRow.addCell(getValue(form, "A1", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "A1", "description"), "", 1);
 	tableRow.addCell(getBalance("A1"), "alignRight", 1);
 
-	tableRow.addCell(getValue(form, "P1", "id"), "", 1);
-	tableRow.addCell(getValue(form, "P1", "gr"), "", 1);
-	tableRow.addCell(getValue(form, "P1", "description"), "", 1);
-	tableRow.addCell(getBalance("P1"), "alignRight", 1);
-	
-	//Row 2
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "A2.1", "id"), "", 1);
 	tableRow.addCell(getValue(form, "A2.1", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "A2.1", "description"), "", 1);
 	tableRow.addCell(getBalance("A2.1"), "alignRight", 1);
 
-	tableRow.addCell(getValue(form, "P2.1", "id"), "", 1);
-	tableRow.addCell(getValue(form, "P2.1", "gr"), "", 1);
-	tableRow.addCell(getValue(form, "P2.1", "description"), "", 1);
-	tableRow.addCell(getBalance("P2.1"), "alignRight", 1);
-
-	//Row 3
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "A2.2", "id"), "", 1);
 	tableRow.addCell(getValue(form, "A2.2", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "A2.2", "description"), "", 1);
 	tableRow.addCell(getBalance("A2.2"), "alignRight", 1);
 
-	tableRow.addCell(getValue(form, "P2.2", "id"), "", 1);
-	tableRow.addCell(getValue(form, "P2.2", "gr"), "", 1);
-	tableRow.addCell(getValue(form, "P2.2", "description"), "", 1);
-	tableRow.addCell(getBalance("P2.2"), "alignRight", 1);
+	tableRow = table.addRow();
+	tableRow.addCell(getValue(form, "A2.3", "id"), "", 1);
+	tableRow.addCell(getValue(form, "A2.3", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "A2.3", "description"), "", 1);
+	tableRow.addCell(getBalance("A2.3"), "alignRight", 1);
 
-	//Row 4
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "A3", "id"), "", 1);
 	tableRow.addCell(getValue(form, "A3", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "A3", "description"), "", 1);
 	tableRow.addCell(getBalance("A3"), "alignRight", 1);
 
-	tableRow.addCell(getValue(form, "P3", "id"), "", 1);
-	tableRow.addCell(getValue(form, "P3", "gr"), "", 1);
-	tableRow.addCell(getValue(form, "P3", "description"), "", 1);
-	tableRow.addCell(getBalance("P3"), "alignRight", 1);
-
-	//Row 5
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "APG", "id"), "", 1);
 	tableRow.addCell(getValue(form, "APG", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "APG", "description"), "", 1);
 	tableRow.addCell(getBalance("APG"), "alignRight", 1);
 
-	tableRow.addCell(getValue(form, "PAG", "id"), "", 1);
-	tableRow.addCell(getValue(form, "PAG", "gr"), "", 1);
-	tableRow.addCell(getValue(form, "PAG", "description"), "", 1);
-	tableRow.addCell(getBalance("PAG"), "alignRight", 1);
-
-	//Row 6
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "ATP", "id"), "", 1);
 	tableRow.addCell(getValue(form, "ATP", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "ATP", "description"), "", 1);
 	tableRow.addCell(getBalance("ATP"), "alignRight", 1);
 
+	tableRow = table.addRow();
+	tableRow.addCell(param.columnTitle4, "bold", 4);
+
+	tableRow = table.addRow();
+	tableRow.addCell(getValue(form, "P1", "id"), "", 1);
+	tableRow.addCell(getValue(form, "P1", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "P1", "description"), "", 1);
+	tableRow.addCell(getBalance("P1"), "alignRight", 1);
+
+	tableRow = table.addRow();	
+	tableRow.addCell(getValue(form, "P2.1", "id"), "", 1);
+	tableRow.addCell(getValue(form, "P2.1", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "P2.1", "description"), "", 1);
+	tableRow.addCell(getBalance("P2.1"), "alignRight", 1);
+
+	tableRow = table.addRow();
+	tableRow.addCell(getValue(form, "P2.2", "id"), "", 1);
+	tableRow.addCell(getValue(form, "P2.2", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "P2.2", "description"), "", 1);
+	tableRow.addCell(getBalance("P2.2"), "alignRight", 1);
+
+	tableRow = table.addRow();
+	tableRow.addCell(getValue(form, "P3", "id"), "", 1);
+	tableRow.addCell(getValue(form, "P3", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "P3", "description"), "", 1);
+	tableRow.addCell(getBalance("P3"), "alignRight", 1);
+
+	tableRow = table.addRow();
+	tableRow.addCell(getValue(form, "PAG", "id"), "", 1);
+	tableRow.addCell(getValue(form, "PAG", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "PAG", "description"), "", 1);
+	tableRow.addCell(getBalance("PAG"), "alignRight", 1);
+
+	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "PTP", "id"), "", 1);
 	tableRow.addCell(getValue(form, "PTP", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "PTP", "description"), "", 1);
