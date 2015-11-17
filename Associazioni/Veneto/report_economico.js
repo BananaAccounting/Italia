@@ -38,31 +38,16 @@ function loadParam() {
 		openingDate.getFullYear();
 	}
 	param = {
-		"reportName":"Report economico - Veneto",																//Save the report's name
-		"bananaVersion":"Banana Accounting, v. " + Banana.document.info("Base", "ProgramVersion"), 					//Save the version of Banana Accounting used
-		"scriptVersion":"script v. 2015-09-16 (TEST VERSION)", 														//Save the version of the script
-		"headerLeft" : Banana.document.info("Base","HeaderLeft"),													// Get the info from File->File properties->Header left
-		"headerRight" : Banana.document.info("Base","HeaderRight"),													// Get the info from File->File properties->Header right
-		"startDate" : Banana.document.info("AccountingDataBase","OpeningDate"),										// Get the start date of the accounting period
-		"endDate" : Banana.document.info("AccountingDataBase","ClosureDate"),										// Get the end date of the accounting period
-		"year" : year,	// Get the year from the accounting period
-		"basicCurrency" : Banana.document.info("AccountingDataBase","BasicCurrency"),								// Get the basic currency of the accounting
-		"grColumn" : "Gr1",																							// Specify the column ("Gr1" or "Gr2")
-		"formatNumber" : true,																						// Specify if convert all the values into the local format
-		"rounding" : 2,																								// Specify the rounding of the sums
-		"title" : "BILANCIO ECONOMICO (Modello 2) ANNO 2015",														// Specify a title that will be displayed on the report
-		"columnTitle1" : "MPORTI PARZIALI",																			// Specify a column title
-		"columnTitle2" : "IMPORTI TOTALI",																			// Specify another column title
-		"cellTitle1" : "RICAVI",																					// Specify a cell title
-		"cellTitle2" : "TOTALE RICAVI",																				// Specify a cell title
-		"cellTitle3" : "COSTI",																						// Specify a cell title
-		"cellTitle4" : "TOTALE COSTI",																				// Specify a cell title
-		"cellTitle5" : "UTILE/PERDITA D'ESERCIZIO",																	// Specify a cell title
-		"title1" : "STATO PATRIMONIALE",
-		"columnTitle3" : "ATTIVO",
-		"columnTitle4" : "PASSIVO",
-		"cellTitle6" : "PERDITA DI GESTIONE",
-		"cellTitle7" : "AVANZO DI GESTIONE"																
+		"reportName":"Report economico - Veneto",										//Save the report's name
+		"headerLeft" : Banana.document.info("Base","HeaderLeft"),						// Get the info from File->File properties->Header left
+		"headerRight" : Banana.document.info("Base","HeaderRight"),						// Get the info from File->File properties->Header right
+		"startDate" : Banana.document.info("AccountingDataBase","OpeningDate"),			// Get the start date of the accounting period
+		"endDate" : Banana.document.info("AccountingDataBase","ClosureDate"),			// Get the end date of the accounting period
+		"year" : year,																	// Get the year from the accounting period
+		"basicCurrency" : Banana.document.info("AccountingDataBase","BasicCurrency"),	// Get the basic currency of the accounting
+		"grColumn" : "Gr1",																// Specify the column ("Gr1" or "Gr2")
+		"formatNumber" : true,															// Specify if convert all the values into the local format
+		"rounding" : 2																	// Specify the rounding of the sums
 	};
 }
 
@@ -72,6 +57,7 @@ function loadForm() {
 
 	/** CONTO ECONOMICO **/
 	//INCOME
+	form.push({"id":"Rt", "description":"RICAVI"});
 	form.push({"id":"R1", "gr":"R1", "bClass":"4", "description":"QUOTE ASSOCIATIVE"});
 	form.push({"id":"R2", "description":"CONTRIBUTI PER PROGETTI E/O ATTIVITÀ (art. 5 L. 266/91)", "sum":"R2.1;R2.2;R2.3;R2.4;R2.5;R2.6;R2.7;R2.8"});
 	form.push({"id":"R2.1", "gr":"R2.1", "bClass":"4", "description":"da soci (specificare a quale titolo)"});
@@ -102,6 +88,7 @@ function loadForm() {
 	form.push({"id":"R", "description":"TOTALE RICAVI", "sum":"R1;R2;R3;R4;R5a;R5b;R6;R7;R8"});
 
 	//EXPENSES
+	form.push({"id":"Ct", "description":"COSTI"});
 	form.push({"id":"C1", "gr":"C1", "bClass":"3", "description":"RIMBORSI SPESE AI VOLONTARI  (documentate ed effettivamente sostenute)"});
 	form.push({"id":"C2", "description":"ASSICURAZIONI", "sum":"C2.1;C2.2"});
 	form.push({"id":"C2.1", "gr":"C2.1", "bClass":"3", "description":"volontari (malattie, infortuni e resp. civile terzi) - art. 4 L.266/91"});
@@ -129,11 +116,9 @@ function loadForm() {
 	form.push({"id":"C13", "gr":"C13", "bClass":"3", "description":"PARTITE DI GIRO"});
 	form.push({"id":"C", "description":"TOTALE COSTI", "sum":"C1;C2;C3;C4;C5;C6;C7;C8;C9;C10;C11;C12;C13"});
 
+	//RISULTATO D'ESERCIZIO
 	form.push({"id":"UP", "description":"UTILE/PERDITA D'ESERCIZIO", "sum":"R;-C"});
 	
-	//formPrint.push({"id":"R1", row: 1, "print":"description", "column":1});
-	//formPrint.push({"id":"R1", row: 1, "print":"amount", "column":2, "style":"bold"});
-
 
 	/** STATO PATRIMONIALE **/
 	//ATTIVI
@@ -235,32 +220,72 @@ function printReport() {
 	var report = Banana.Report.newReport(param.reportName);
 
 	/** TABLE CONTO ECONOMICO **/
-	report.addParagraph(param.headerLeft + " - " + param.headerRight);
-	report.addParagraph(param.title + " (" + Banana.Converter.toLocaleDateFormat(param.startDate) + " - " + Banana.Converter.toLocaleDateFormat(param.endDate) + ")");
+	report.addParagraph(param.headerLeft + " - " + "BILANCIO ECONOMICO (Modello 2) ANNO 2015", "heading2");
+	//report.addParagraph(param.headerLeft + " - " + param.headerRight, "heading2");
+	//report.addParagraph("BILANCIO ECONOMICO (Modello 2) ANNO 2015" + " (" + Banana.Converter.toLocaleDateFormat(param.startDate) + " - " + Banana.Converter.toLocaleDateFormat(param.endDate) + ")", "heading3");
 	
 	var table = report.addTable("table");
 	tableRow = table.addRow();
-	tableRow.addCell("Id", "bold", 1);
-	tableRow.addCell("Gr1", "bold", 1)
-	tableRow.addCell("Descrizione", "bold", 1);
-	tableRow.addCell(param.columnTitle1, "bold", 1);
-	tableRow.addCell(param.columnTitle2, "bold", 1);
+	tableRow.addCell("Id/Gr1", "styleTableHeader", 1);
+	//tableRow.addCell("Gr1", "styleTableHeader", 1)
+	tableRow.addCell("Descritzione Gruppo", "styleTableHeader", 1);
+    tableRow.addCell("Id/Gr1", "styleTableHeader", 1);
+	tableRow.addCell("Descrizione Conti", "styleTableHeader", 1);	
+	tableRow.addCell("Importi parziali", "styleTableHeader", 1);
+	tableRow.addCell("Importi totali", "styleTableHeader", 1);
 
 	for (var k = 0; k < form.length; k++) {
 
 		if (form[k]["id"].substring(0,1) === "R" || form[k]["id"].substring(0,1) === "C" || form[k]["id"].substring(0,2) === "UP") {
 
-			tableRow = table.addRow();
-			tableRow.addCell(form[k]["id"], "", 1);
-			tableRow.addCell(form[k]["gr"], "", 1);
-			tableRow.addCell(form[k]["description"], "", 1);
+			//Titles
+			if (form[k]["id"] === "Rt" || form[k]["id"] === "Ct") {
+				tableRow = table.addRow();
+				tableRow.addCell(form[k]["description"], "styleTitleCell", 6);
+				// tableRow.addCell("", "styleTitleCell", 1);
+				// tableRow.addCell("", "styleTitleCell", 1);
+			}
+			//Totals
+			else if (form[k]["id"] === "R" || form[k]["id"] === "C" || form[k]["id"] === "UP") {
+				tableRow = table.addRow();
+				tableRow.addCell(form[k]["id"], "valueTotal", 1);
+				//tableRow.addCell(form[k]["gr"], "valueTotal", 1);
+				tableRow.addCell(form[k]["description"], "valueTotal", 3);
+				//tableRow.addCell(" ", "valueTotal", 1);
+				//tableRow.addCell(" ", "valueTotal", 1);
+				tableRow.addCell(" ", "valueTotal", 1);
+				tableRow.addCell(getBalance(form[k].id), "alignRight bold valueTotal", 1);
+			}
+			//Details
+			else {
+				// tableRow = table.addRow();
+				// tableRow.addCell(form[k]["id"], "", 1);
+				// tableRow.addCell(form[k]["gr"], "", 1);
+				// tableRow.addCell(form[k]["description"], "", 1);
+			
+				if (form[k].id.indexOf(".") > 0) {
+					tableRow = table.addRow();
+					tableRow.addCell(" ", "", 2);
+					//tableRow.addCell(" ", "", 1);
+					tableRow.addCell(form[k]["id"], "", 1);
+					//tableRow.addCell(form[k]["gr"], "", 1);
+					tableRow.addCell(form[k]["description"], "", 1);
+					tableRow.addCell(getBalance(form[k].id), "alignRight", 1);
+					tableRow.addCell(" ", "", 1);
+				} else {
+					tableRow = table.addRow();
+					tableRow.addCell(form[k]["id"], "bold italic", 1);
+					//tableRow.addCell(form[k]["gr"], "bold italic", 1);
+	
+					tableRow.addCell(form[k]["description"], "bold italic", 1);
+					tableRow.addCell(" ", "", 2);
 
-			if (form[k].id.indexOf(".") > 0) {
-				tableRow.addCell(getBalance(form[k].id), "alignRight", 1);
-				tableRow.addCell(" ");
-			} else {
-				tableRow.addCell(" ");
-				tableRow.addCell(getBalance(form[k].id), "alignRight", 1);
+					//tableRow.addCell(form[k]["description"], "bold italic", 3);
+
+					//tableRow.addCell(" ", "", 1);
+					tableRow.addCell(" ", "", 1);
+					tableRow.addCell(getBalance(form[k].id), "alignRight bold italic", 1);
+				}
 			}
 		}
 	}
@@ -268,101 +293,101 @@ function printReport() {
 	report.addPageBreak();
 
 	/** TABLE STATO PATRIMONIALE **/
-	report.addParagraph(param.headerLeft + " - " + param.headerRight);
-	report.addParagraph(param.title + " (" + Banana.Converter.toLocaleDateFormat(param.startDate) + " - " + Banana.Converter.toLocaleDateFormat(param.endDate) + ")");
-	report.addParagraph(param.title1, "");
+	report.addParagraph(param.headerLeft + " - STATO PATRIMONIALE", "heading2");
+	// report.addParagraph(param.headerLeft + " - " + param.headerRight, "heading2");
+	// report.addParagraph("STATO PATRIMONIALE", "heading3");
 
 	var table = report.addTable("table");
 	
 	tableRow = table.addRow();
-	tableRow.addCell("Id", "bold", 1);
-	tableRow.addCell("Gr1", "bold", 1)
-	tableRow.addCell("Descrizione", "bold", 1);
-	tableRow.addCell("IMPORTI TOTALI", "bold", 1);
+	tableRow.addCell("Id", "styleTableHeader", 1);
+	//tableRow.addCell("Gr1", "styleTableHeader", 1)
+	tableRow.addCell("Descrizione", "styleTableHeader", 1);
+	tableRow.addCell("Importi totali", "styleTableHeader", 1);
 
 	tableRow = table.addRow();
-	tableRow.addCell(param.columnTitle3, "bold", 4);
+	tableRow.addCell("ATTIVO", "bold styleTitleCell", 3);
 
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "A1", "id"), "", 1);
-	tableRow.addCell(getValue(form, "A1", "gr"), "", 1);
+	//tableRow.addCell(getValue(form, "A1", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "A1", "description"), "", 1);
 	tableRow.addCell(getBalance("A1"), "alignRight", 1);
 
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "A2.1", "id"), "", 1);
-	tableRow.addCell(getValue(form, "A2.1", "gr"), "", 1);
+	//tableRow.addCell(getValue(form, "A2.1", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "A2.1", "description"), "", 1);
 	tableRow.addCell(getBalance("A2.1"), "alignRight", 1);
 
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "A2.2", "id"), "", 1);
-	tableRow.addCell(getValue(form, "A2.2", "gr"), "", 1);
+	//tableRow.addCell(getValue(form, "A2.2", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "A2.2", "description"), "", 1);
 	tableRow.addCell(getBalance("A2.2"), "alignRight", 1);
 
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "A2.3", "id"), "", 1);
-	tableRow.addCell(getValue(form, "A2.3", "gr"), "", 1);
+	//tableRow.addCell(getValue(form, "A2.3", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "A2.3", "description"), "", 1);
 	tableRow.addCell(getBalance("A2.3"), "alignRight", 1);
 
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "A3", "id"), "", 1);
-	tableRow.addCell(getValue(form, "A3", "gr"), "", 1);
+	//tableRow.addCell(getValue(form, "A3", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "A3", "description"), "", 1);
 	tableRow.addCell(getBalance("A3"), "alignRight", 1);
 
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "APG", "id"), "", 1);
-	tableRow.addCell(getValue(form, "APG", "gr"), "", 1);
+	//tableRow.addCell(getValue(form, "APG", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "APG", "description"), "", 1);
 	tableRow.addCell(getBalance("APG"), "alignRight", 1);
 
 	tableRow = table.addRow();
-	tableRow.addCell(getValue(form, "ATP", "id"), "", 1);
-	tableRow.addCell(getValue(form, "ATP", "gr"), "", 1);
-	tableRow.addCell(getValue(form, "ATP", "description"), "", 1);
-	tableRow.addCell(getBalance("ATP"), "alignRight", 1);
+	tableRow.addCell(getValue(form, "ATP", "id"), "bold", 1);
+	//tableRow.addCell(getValue(form, "ATP", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "ATP", "description"), "bold", 1);
+	tableRow.addCell(getBalance("ATP"), "alignRight bold", 1);
 
 	tableRow = table.addRow();
-	tableRow.addCell(param.columnTitle4, "bold", 4);
+	tableRow.addCell("PASSIVO", "bold styleTitleCell", 3);
 
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "P1", "id"), "", 1);
-	tableRow.addCell(getValue(form, "P1", "gr"), "", 1);
+	//tableRow.addCell(getValue(form, "P1", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "P1", "description"), "", 1);
 	tableRow.addCell(getBalance("P1"), "alignRight", 1);
 
 	tableRow = table.addRow();	
 	tableRow.addCell(getValue(form, "P2.1", "id"), "", 1);
-	tableRow.addCell(getValue(form, "P2.1", "gr"), "", 1);
+	//tableRow.addCell(getValue(form, "P2.1", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "P2.1", "description"), "", 1);
 	tableRow.addCell(getBalance("P2.1"), "alignRight", 1);
 
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "P2.2", "id"), "", 1);
-	tableRow.addCell(getValue(form, "P2.2", "gr"), "", 1);
+	//tableRow.addCell(getValue(form, "P2.2", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "P2.2", "description"), "", 1);
 	tableRow.addCell(getBalance("P2.2"), "alignRight", 1);
 
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "P3", "id"), "", 1);
-	tableRow.addCell(getValue(form, "P3", "gr"), "", 1);
+	//tableRow.addCell(getValue(form, "P3", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "P3", "description"), "", 1);
 	tableRow.addCell(getBalance("P3"), "alignRight", 1);
 
 	tableRow = table.addRow();
 	tableRow.addCell(getValue(form, "PAG", "id"), "", 1);
-	tableRow.addCell(getValue(form, "PAG", "gr"), "", 1);
+	//tableRow.addCell(getValue(form, "PAG", "gr"), "", 1);
 	tableRow.addCell(getValue(form, "PAG", "description"), "", 1);
 	tableRow.addCell(getBalance("PAG"), "alignRight", 1);
 
 	tableRow = table.addRow();
-	tableRow.addCell(getValue(form, "PTP", "id"), "", 1);
-	tableRow.addCell(getValue(form, "PTP", "gr"), "", 1);
-	tableRow.addCell(getValue(form, "PTP", "description"), "", 1);
-	tableRow.addCell(getBalance("PTP"), "alignRight", 1);
+	tableRow.addCell(getValue(form, "PTP", "id"), "bold", 1);
+	//tableRow.addCell(getValue(form, "PTP", "gr"), "", 1);
+	tableRow.addCell(getValue(form, "PTP", "description"), "bold", 1);
+	tableRow.addCell(getBalance("PTP"), "alignRight bold", 1);
 
 
 	//Add a footer to the report
@@ -587,7 +612,7 @@ function calcTotal(id, fields) {
 //This function adds a Footer to the report
 function addFooter(report) {
    report.getFooter().addClass("footer");
-   var versionLine = report.getFooter().addText(param.bananaVersion + ", " + param.scriptVersion + ", ", "description");
+   var versionLine = report.getFooter().addText("Banana Accounting - ", "description");
    report.getFooter().addText("Pagina ", "description");
    report.getFooter().addFieldPageNr();
 }
@@ -598,7 +623,7 @@ function createStyleSheet() {
 	var stylesheet = Banana.Report.newStyleSheet();
 
     var pageStyle = stylesheet.addStyle("@page");
-    pageStyle.setAttribute("margin", "5mm 10mm 10mm 10mm");
+    pageStyle.setAttribute("margin", "5mm 10mm 5mm 10mm");
 
     stylesheet.addStyle("body", "font-family : Helvetica");
 
@@ -619,18 +644,17 @@ function createStyleSheet() {
 	style.setAttribute("text-align", "right");
 	style.setAttribute("font-size", "8px");
 	style.setAttribute("font-family", "Courier New");
-	//style.setAttribute("font-family", "Courier New");
 
 	style = stylesheet.addStyle(".heading1");
 	style.setAttribute("font-size", "16px");
 	style.setAttribute("font-weight", "bold");
 	
 	style = stylesheet.addStyle(".heading2");
-	style.setAttribute("font-size", "14px");
+	style.setAttribute("font-size", "12px");
 	style.setAttribute("font-weight", "bold");
 
 	style = stylesheet.addStyle(".heading3");
-	style.setAttribute("font-size", "12px");
+	style.setAttribute("font-size", "10px");
 	style.setAttribute("font-weight", "bold");
 
 	style = stylesheet.addStyle(".heading4");
@@ -643,12 +667,12 @@ function createStyleSheet() {
 	// style = stylesheet.addStyle(".rowNumber");
 	// style.setAttribute("font-size", "9px");
 
-	style = stylesheet.addStyle(".valueAmount");
-	style.setAttribute("font-size", "9px");
-	style.setAttribute("font-weight", "bold");
-	style.setAttribute("padding-bottom", "5px"); 
-	style.setAttribute("background-color", "#eeeeee"); 
-	style.setAttribute("text-align", "right");
+	// style = stylesheet.addStyle(".valueAmount");
+	// style.setAttribute("font-size", "9px");
+	// style.setAttribute("font-weight", "bold");
+	// style.setAttribute("padding-bottom", "5px"); 
+	// style.setAttribute("background-color", "#eeeeee"); 
+	// style.setAttribute("text-align", "right");
 	
 	// style = stylesheet.addStyle(".valueDate");
 	// style.setAttribute("font-size", "9px");
@@ -656,61 +680,49 @@ function createStyleSheet() {
 	// style.setAttribute("padding-bottom", "5px"); 
 	// style.setAttribute("background-color", "#eeeeee"); 
 
-	style = stylesheet.addStyle(".valueText");
-	style.setAttribute("font-size", "9px");
-	style.setAttribute("font-weight", "bold");
-	style.setAttribute("padding-bottom", "5px");
-	style.setAttribute("padding-top", "5px");
-	style.setAttribute("background-color", "#eeeeee"); 
+	// style = stylesheet.addStyle(".valueText");
+	// style.setAttribute("font-size", "9px");
+	// style.setAttribute("font-weight", "bold");
+	// style.setAttribute("padding-bottom", "5px");
+	// style.setAttribute("padding-top", "5px");
+	// style.setAttribute("background-color", "#eeeeee"); 
 	
-	style = stylesheet.addStyle(".valueTitle");
-	style.setAttribute("font-size", "9px");
-	style.setAttribute("font-weight", "bold");
-	//style.setAttribute("padding-bottom", "5px"); 
-	//style.setAttribute("padding-top", "5px");
-	style.setAttribute("background-color", "#000000");
-	style.setAttribute("color", "#fff");
+	// style = stylesheet.addStyle(".valueTitle");
+	// style.setAttribute("font-size", "9px");
+	// style.setAttribute("font-weight", "bold");
+	// //style.setAttribute("padding-bottom", "5px"); 
+	// //style.setAttribute("padding-top", "5px");
+	// style.setAttribute("background-color", "#000000");
+	// style.setAttribute("color", "#fff");
 	
-	style = stylesheet.addStyle(".valueTitle1");
-	style.setAttribute("font-size", "9px");
-	style.setAttribute("font-weight", "bold");
-	style.setAttribute("padding-bottom", "5px"); 
-	style.setAttribute("padding-top", "5px");
-	
-	// style = stylesheet.addStyle(".valueTotal");
+	// style = stylesheet.addStyle(".valueTitle1");
 	// style.setAttribute("font-size", "9px");
 	// style.setAttribute("font-weight", "bold");
 	// style.setAttribute("padding-bottom", "5px"); 
-	// style.setAttribute("background-color", "#eeeeee"); 
-	// style.setAttribute("text-align", "right");
-	// style.setAttribute("border-bottom", "1px double black");
+	// style.setAttribute("padding-top", "5px");
+	
 
-	//Tables
-	style = stylesheet.addStyle("tableInfo");
-	style.setAttribute("width", "100%");
-	style.setAttribute("font-size", "8px");
-	//stylesheet.addStyle("table.tableInfo td", "border: thin solid black");
+	style = stylesheet.addStyle(".valueTotal");
+	style.setAttribute("font-weight", "bold");
+	style.setAttribute("background-color", "#eeeeee");
 
-	style = stylesheet.addStyle("tableChoices");
-	style.setAttribute("width", "100%");
-	style.setAttribute("font-size", "8px");
-
+	//Table
 	style = stylesheet.addStyle("table");
 	style.setAttribute("width", "100%");
 	style.setAttribute("font-size", "8px");
-	stylesheet.addStyle("table.table td", "border: thin solid black");
+	stylesheet.addStyle("table.table td", "border: thin solid #464e7e");
 
-	style = stylesheet.addStyle("table2");
-	style.setAttribute("width", "100%");
-	style.setAttribute("font-size", "8px");
-	//stylesheet.addStyle("table.table2 td", "border: thin solid black");
+	style = stylesheet.addStyle(".styleTableHeader");
+	//style.setAttribute("font-weight", "bold");
+	style.setAttribute("background-color", "#464e7e"); 
+	style.setAttribute("border-bottom", "1px double black");
+	style.setAttribute("color", "#fff");
 
-	style = stylesheet.addStyle("table3");
-	style.setAttribute("width", "100%");
-	style.setAttribute("font-size", "8px");
-	//stylesheet.addStyle("table.table3 td", "border: thin solid black");
-
-
+	style = stylesheet.addStyle(".styleTitleCell");
+	style.setAttribute("font-weight", "bold");
+	style.setAttribute("background-color", "#ffd100"); 
+	style.setAttribute("border-bottom", "1px double black");
+	style.setAttribute("color", "#464e7e");
 
 	style = stylesheet.addStyle(".background");
 	style.setAttribute("padding-bottom", "5px");
@@ -734,16 +746,6 @@ function createStyleSheet() {
 
 	style = stylesheet.addStyle(".alignCenter");
 	style.setAttribute("text-align", "center");
-
-
-	
-
-	//Warning message.
-	style = stylesheet.addStyle(".warningMsg");
-	style.setAttribute("font-weight", "bold");
-	style.setAttribute("color", "red");
-	style.setAttribute("font-size", "10");
-
 
 
 	return stylesheet;

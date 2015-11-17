@@ -144,7 +144,9 @@ function printReport(itemSelected, startDate, endDate) {
 	var table = report.addTable("table");
 	table.getCaption().addText("RENDICONTO DELLE SPESE SOSTENUTE", "description bold");
 	tableRow = table.addRow();
-	
+	tableRow.addCell(getDescription(itemSelected), "alignRight bold", 2);
+	tableRow.addCell(itemSelected, "alignCenter bold", 1);
+	tableRow = table.addRow();
 	tableRow.addCell("Anno finanziario", "alignRight bold", 2);
 	tableRow.addCell(Banana.Converter.toDate(startDate).getFullYear(), "alignCenter bold", 1);
 	tableRow = table.addRow();
@@ -329,6 +331,17 @@ function getSegmentList() {
 		}
 	}
 	return arrList;
+}
+
+
+//This function returns the description for a given segment
+function getDescription(segment) {
+	for (var i = 0; i < Banana.document.table('Accounts').rowCount; i++) {
+		var tRow = Banana.document.table('Accounts').row(i);
+		if (tRow.value("Account") === segment) {
+			return tRow.value("Description");
+		}
+	}
 }
 
 
