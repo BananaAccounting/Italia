@@ -38,7 +38,7 @@ function loadParam() {
 		openingDate.getFullYear();
 	}
 	param = {
-		"reportName":"Report economico - Veneto",										//Save the report's name
+		"reportName":"Report economico - Veneto",										// Save the report's name
 		"headerLeft" : Banana.document.info("Base","HeaderLeft"),						// Get the info from File->File properties->Header left
 		"headerRight" : Banana.document.info("Base","HeaderRight"),						// Get the info from File->File properties->Header right
 		"startDate" : Banana.document.info("AccountingDataBase","OpeningDate"),			// Get the start date of the accounting period
@@ -221,16 +221,14 @@ function printReport() {
 
 	/** TABLE CONTO ECONOMICO **/
 	report.addParagraph(param.headerLeft + " - " + "BILANCIO ECONOMICO (Modello 2) ANNO 2015", "heading2");
-	//report.addParagraph(param.headerLeft + " - " + param.headerRight, "heading2");
-	//report.addParagraph("BILANCIO ECONOMICO (Modello 2) ANNO 2015" + " (" + Banana.Converter.toLocaleDateFormat(param.startDate) + " - " + Banana.Converter.toLocaleDateFormat(param.endDate) + ")", "heading3");
-	
+		
 	var table = report.addTable("table");
 	tableRow = table.addRow();
 	tableRow.addCell("Id/Gr1", "styleTableHeader", 1);
-	//tableRow.addCell("Gr1", "styleTableHeader", 1)
-	tableRow.addCell("Descritzione Gruppo", "styleTableHeader", 1);
-    tableRow.addCell("Id/Gr1", "styleTableHeader", 1);
-	tableRow.addCell("Descrizione Conti", "styleTableHeader", 1);	
+	tableRow.addCell("Id/Gr1", "styleTableHeader", 1);
+	tableRow.addCell("Descrizione gruppo/conto", "styleTableHeader", 1);
+    tableRow.addCell("                                                              ", "styleTableHeader", 1);
+	tableRow.addCell("                                                              ", "styleTableHeader", 1);	
 	tableRow.addCell("Importi parziali", "styleTableHeader", 1);
 	tableRow.addCell("Importi totali", "styleTableHeader", 1);
 
@@ -241,48 +239,31 @@ function printReport() {
 			//Titles
 			if (form[k]["id"] === "Rt" || form[k]["id"] === "Ct") {
 				tableRow = table.addRow();
-				tableRow.addCell(form[k]["description"], "styleTitleCell", 6);
-				// tableRow.addCell("", "styleTitleCell", 1);
-				// tableRow.addCell("", "styleTitleCell", 1);
+				tableRow.addCell(form[k]["description"], "styleTitleCell", 7);
 			}
 			//Totals
 			else if (form[k]["id"] === "R" || form[k]["id"] === "C" || form[k]["id"] === "UP") {
 				tableRow = table.addRow();
 				tableRow.addCell(form[k]["id"], "valueTotal", 1);
-				//tableRow.addCell(form[k]["gr"], "valueTotal", 1);
-				tableRow.addCell(form[k]["description"], "valueTotal", 3);
-				//tableRow.addCell(" ", "valueTotal", 1);
-				//tableRow.addCell(" ", "valueTotal", 1);
+				tableRow.addCell(form[k]["description"], "valueTotal", 4);
 				tableRow.addCell(" ", "valueTotal", 1);
 				tableRow.addCell(getBalance(form[k].id), "alignRight bold valueTotal", 1);
 			}
 			//Details
 			else {
-				// tableRow = table.addRow();
-				// tableRow.addCell(form[k]["id"], "", 1);
-				// tableRow.addCell(form[k]["gr"], "", 1);
-				// tableRow.addCell(form[k]["description"], "", 1);
-			
 				if (form[k].id.indexOf(".") > 0) {
 					tableRow = table.addRow();
-					tableRow.addCell(" ", "", 2);
-					//tableRow.addCell(" ", "", 1);
+					tableRow.addCell(" ", "", 1);
 					tableRow.addCell(form[k]["id"], "", 1);
-					//tableRow.addCell(form[k]["gr"], "", 1);
-					tableRow.addCell(form[k]["description"], "", 1);
+					tableRow.addCell(form[k]["description"], "", 3);
 					tableRow.addCell(getBalance(form[k].id), "alignRight", 1);
 					tableRow.addCell(" ", "", 1);
 				} else {
 					tableRow = table.addRow();
 					tableRow.addCell(form[k]["id"], "bold italic", 1);
-					//tableRow.addCell(form[k]["gr"], "bold italic", 1);
-	
-					tableRow.addCell(form[k]["description"], "bold italic", 1);
-					tableRow.addCell(" ", "", 2);
-
-					//tableRow.addCell(form[k]["description"], "bold italic", 3);
-
-					//tableRow.addCell(" ", "", 1);
+					//tableRow.addCell(form[k]["description"], "bold italic", 1);
+					//tableRow.addCell(" ", "", 2);
+					tableRow.addCell(form[k]["description"], "bold italic", 4);
 					tableRow.addCell(" ", "", 1);
 					tableRow.addCell(getBalance(form[k].id), "alignRight bold italic", 1);
 				}
@@ -294,13 +275,11 @@ function printReport() {
 
 	/** TABLE STATO PATRIMONIALE **/
 	report.addParagraph(param.headerLeft + " - STATO PATRIMONIALE", "heading2");
-	// report.addParagraph(param.headerLeft + " - " + param.headerRight, "heading2");
-	// report.addParagraph("STATO PATRIMONIALE", "heading3");
 
 	var table = report.addTable("table");
 	
 	tableRow = table.addRow();
-	tableRow.addCell("Id", "styleTableHeader", 1);
+	tableRow.addCell("Id/Gr1", "styleTableHeader", 1);
 	//tableRow.addCell("Gr1", "styleTableHeader", 1)
 	tableRow.addCell("Descrizione", "styleTableHeader", 1);
 	tableRow.addCell("Importi totali", "styleTableHeader", 1);
@@ -704,6 +683,9 @@ function createStyleSheet() {
 
 	style = stylesheet.addStyle(".valueTotal");
 	style.setAttribute("font-weight", "bold");
+	style.setAttribute("background-color", "#eeeeee");
+
+	style = stylesheet.addStyle(".valueTotal1");
 	style.setAttribute("background-color", "#eeeeee");
 
 	//Table
