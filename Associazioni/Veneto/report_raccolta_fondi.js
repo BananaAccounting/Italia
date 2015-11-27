@@ -69,7 +69,7 @@ function printReport() {
 		//Print the report
 		report.addParagraph("RENDICONTO DELLA RACCOLTA FONDI:", "heading1");
 		report.addParagraph(" ");
-		report.addParagraph("'" + racFondi + "'", "heading1 alignCenter");
+		report.addParagraph("'" + racFondi + "'" + " (" + strAccount +")" , "heading1 alignCenter");
 		report.addParagraph(" ");
 		report.addParagraph(" ");
 		report.addParagraph("Associazione: " + headerLeft, "heading3");
@@ -234,7 +234,7 @@ function getAccountsList() {
 		var tRow = Banana.document.table('Accounts').row(i);
 
 		//We take only the account with segment 2 (accounts numbers that begin with "::")
-		if (tRow.value("Account") && tRow.value("Account").indexOf("::") > -1) {
+		if (tRow.value("Account") && tRow.value("Account").indexOf("::") > -1 && tRow.value("Account").substring(2,3)) {
 			arrList.push(tRow.value("Account"));
 		}
 	}
