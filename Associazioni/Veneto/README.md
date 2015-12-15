@@ -14,7 +14,9 @@ Gli sviluppi sono basati sugli schemi messi a punto dal Centro Servizio Volonatr
 ## Esempi piani contabili per associazioni 
 Per le modalità d'impostazione e d'uso si veda  [pagina spiegazioni su Banana.ch] (http://doc8.banana.ch/en/node/7960)
 * Piano conti per Associazione APS (Associazioni promozione sociale)
-* Piano conti per Associazione OVD (Organizzazione di volontariato)
+  Senza entrate attività commerciale, Ammortamenti
+* Piano conti per Associazione OVD (Organizzazione di volontariato) 
+  Con entrate attività commerciale, Beni durevoli 
 
 Si tratta di piani contabili che presentano i conti tipici di un'associazione per la Regione Veneto.  
 
