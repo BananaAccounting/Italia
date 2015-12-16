@@ -59,29 +59,46 @@ function exec(string) {
 		return;
 	}
 
-	//Function call to manage and save user settings about the period date
-	var dateform = getPeriodSettings();
-	if (dateform) {
+	//Show the user a dialog window asking if include or not a second file
+	var answer = Banana.Ui.showQuestion("title", "Si desidera includere il file dell'anno precedente?");
 
-		//Show the user a dialog asking to select a 5XM segment from a list
-		var _5xmSegmentList = getSegmentList();
-		var itemSelected = Banana.Ui.getItem('5 PER MILLE', 'Scegliere un segmento', _5xmSegmentList, 0, false);
+	/** FILE 1 **/
+	var accounts1 = Banana.document.table("Accounts");
+	var segment5XMList = getSegmentList(accounts1);
+	var accounts2 = "";
+	var file2 = "";
 
-		//If user has selected something and clicked "OK"
-		if (itemSelected) {
+	if (answer) { //Answer YES: open a dialog window for the file selection
 
-			//Functin call to create all the account objects for the selected segment
-			loadAccountsMap(itemSelected, dateform.selectionStartDate, dateform.selectionEndDate);
-				
-			//Function call to print the report
-			printReport(itemSelected, dateform.selectionStartDate, dateform.selectionEndDate);
+		/** FILE 2 **/
+		file2 = Banana.application.openDocument("*.*");
+		
+		if (!file2) { //If user clic cancel and doesn't select a 
+			return;
+		} else {
+			accounts2 = file2.table("Accounts");
 		}
+	}
+
+	//Show the user a dialog asking to select a 5XM segment from a list
+	var itemSelected = Banana.Ui.getItem("5 PER MILLE", "Scegliere un segmento", segment5XMList, 0, false);
+
+	//If user has selected something and clicked "OK"
+	if (itemSelected) {
+
+		//Functin call to create all the account objects for the selected segment
+		//loadAccountsMap(file2, accounts1, accounts2, itemSelected, dateform.selectionStartDate, dateform.selectionEndDate);
+		loadAccountsMap(itemSelected, accounts1, accounts2, file2);
+				
+		//Function call to print the report
+		//printReport(itemSelected, accounts1, accounts2, dateform.selectionStartDate, dateform.selectionEndDate);
+		printReport(itemSelected, accounts1, accounts2, file2);
 	}
 }
 
 
 //This function creates and print the report
-function printReport(itemSelected, startDate, endDate) {
+function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 
 	var report = Banana.Report.newReport("5 per mille - Veneto");
 
@@ -141,6 +158,12 @@ function printReport(itemSelected, startDate, endDate) {
 		PRINT TABLE "RENDICONTO DELLE SPESE SOSTENUTE" 
 	*/
 
+	var thisYear = Banana.Converter.toDate(Banana.document.info("AccountingDataBase","OpeningDate")).getFullYear();
+
+	if (tabAccounts2) {
+		var lastYear = Banana.Converter.toDate(file2.info("AccountingDataBase","OpeningDate")).getFullYear();
+	}
+
 	var table = report.addTable("table");
 	table.getCaption().addText("RENDICONTO DELLE SPESE SOSTENUTE", "description bold");
 	tableRow = table.addRow();
@@ -148,7 +171,13 @@ function printReport(itemSelected, startDate, endDate) {
 	tableRow.addCell(itemSelected, "alignCenter bold", 1);
 	tableRow = table.addRow();
 	tableRow.addCell("Anno finanziario", "alignRight bold", 2);
-	tableRow.addCell(Banana.Converter.toDate(startDate).getFullYear(), "alignCenter bold", 1);
+
+	if (tabAccounts2) {
+		tableRow.addCell(lastYear + "-" + thisYear, "alignCenter bold", 1);
+	} else {
+		tableRow.addCell(thisYear, "alignCenter bold", 1);
+	}
+
 	tableRow = table.addRow();
 	tableRow.addCell("Data di percezione", "alignRight bold", 2);
 	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", ":5XM-DATA").value("Testo"), "alignCenter bold", 1);
@@ -157,7 +186,7 @@ function printReport(itemSelected, startDate, endDate) {
 	for (var i = 0; i < groups.length; i++) {
 		var groupObj = getObject(groups, groups[i]["group"]);
 		if (groupObj.gr1.substring(0,1) === "R" ) {
-			createGroup(groupObj, table, itemSelected, startDate, endDate);
+			createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, file2);
 		}
 	}
 
@@ -172,7 +201,7 @@ function printReport(itemSelected, startDate, endDate) {
 	for (var i = 0; i < groups.length; i++) {
 		var groupObj = getObject(groups, groups[i]["group"]);
 		if (groupObj.gr1.substring(0,1) !== "R" ) {
-			createGroup(groupObj, table, itemSelected, startDate, endDate);
+			createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, file2);
 		}
 	}
 	
@@ -191,7 +220,7 @@ function printReport(itemSelected, startDate, endDate) {
 
 
 //This function creates and print a whole group 
-function createGroup(groupObj, table, itemSelected, startDate, endDate) {
+function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, file2) {
 	
 	//Take the data from the given group
 	var _group = groupObj.group;
@@ -202,9 +231,11 @@ function createGroup(groupObj, table, itemSelected, startDate, endDate) {
 	var arrGr = _gr1.split(";");
 	
 	var arrAcc = [];
+	var arrAcc2 = [];
 	var arrDesc = [];
 	var arrTot = [];
-	var total = "";
+	var total1 = "";
+	var total2 = "";
 
 	//Print group name and description
 	if (_gr1.substring(0,1) === "R" ) {
@@ -224,8 +255,9 @@ function createGroup(groupObj, table, itemSelected, startDate, endDate) {
 
 		for (var i = 0; i < arrGr.length; i++) {
 
-			for (var j = 0; j < Banana.document.table('Accounts').rowCount; j++) {
-				var tRow = Banana.document.table('Accounts').row(j);
+			//File1 - We take accounts, description and total
+			for (var j = 0; j < tabAccounts1.rowCount; j++) {
+				var tRow = tabAccounts1.row(j);
 
 				if (accountsMap[tRow.value("Account")] && accountsMap[tRow.value("Account")].gr1 === arrGr[i]) {
 					arrAcc.push(tRow.value("Account"));
@@ -233,9 +265,23 @@ function createGroup(groupObj, table, itemSelected, startDate, endDate) {
 					arrTot.push(accountsMap[tRow.value("Account")].total);
 				}
 			}
+
+			if (tabAccounts2) {
+				//File2 - We take only accounts
+				for (var j = 0; j < tabAccounts2.rowCount; j++) {
+					var tRow = tabAccounts2.row(j);
+
+					if (accountsMap[tRow.value("Account")] && accountsMap[tRow.value("Account")].gr1 === arrGr[i]) {
+						arrAcc2.push(tRow.value("Account"));
+					}
+				}
+			}
+
 		}
 
-		//Print account details
+
+
+		//File1 - Print account details
 		var str = "";
 		for (var i = 0; i < arrAcc.length; i++) { //arrAcc, arrDesc, arrTot have the same length
 			tableRow = table.addRow();
@@ -247,35 +293,115 @@ function createGroup(groupObj, table, itemSelected, startDate, endDate) {
 			str += arrAcc[i] + "|";
 		}
 
-		//Calculate and print the total of the group
-		if (str) {
-			var currentBal = Banana.document.currentBalance(str + itemSelected, startDate, endDate);
-			total = currentBal.total;
+		//File2 - Build the string with the accounts number divided by the "|" to use the currentBalance() function
+		if (tabAccounts2) {
+			var str2 = "";
+			for (var i = 0; i < arrAcc2.length; i++) {
+				str2 += arrAcc2[i] + "|";
+			}
 		}
 
+
+		/** 
+			Calculate the total of segments for both files
+		**/
+		//File1
+		if (str) {
+			var currentBal = Banana.document.currentBalance(str + itemSelected, "", "");
+			total1 = currentBal.total;
+		}
+
+		if (tabAccounts2) {
+			//File2
+			if (str2) {
+				var currentBal2 = file2.currentBalance(str2 + itemSelected, "", "");
+				total2 = currentBal2.total;
+			}
+		}
+
+
+		/**
+			Calculate and print the final total of a group using the values of the File1 and File2
+		**/	
 		tableRow = table.addRow();
 		tableRow.addCell("Totale gruppo " + _group, "bold alignRight italic", 2);
 
-		if (_gr1.substring(0,1) === "R") {
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(total)), "bold alignRight italic", 1);
+		if (tabAccounts2) {
+			var totF1F2 = Banana.SDecimal.add(total1, total2);
 		} else {
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(total), "bold alignRight italic", 1);
+			var totF1F2 = total1;
+		}
+
+		if (_gr1.substring(0,1) === "R") { //For INCOME values we invert the sign
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totF1F2)), "bold alignRight italic", 1);
+		} else {
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totF1F2), "bold alignRight italic", 1);
 		}
 	}
+
 	//If the accountsMap is empty, then print the empty total group adding some spaces to adjust the alignment
 	else {
 		var total = "0";
 		tableRow = table.addRow();
 		tableRow.addCell("", "", 1);
 		tableRow.addCell("                                          Totale gruppo " + _group, "bold alignRight italic", 1);
-		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(total), "bold alignRight italic", 1);
+		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(total1), "bold alignRight italic", 1);
 	}
 
-	//Sum the total usind the SDecimal.add() function to obtain the final total
+	//Calculate the final Income and Expenses totals
 	if (_gr1.substring(0,1) === "R") {
-		totalIncome = Banana.SDecimal.add(totalIncome, total);
+		totalIncome = Banana.SDecimal.add(totalIncome, totF1F2);
 	} else {
-		totalExpenses = Banana.SDecimal.add(totalExpenses, total);
+		totalExpenses = Banana.SDecimal.add(totalExpenses, totF1F2);
+	}
+}
+
+
+//This function, for the given segment and period, creates all the accounts objects
+function loadAccountsMap(segment, tabAccounts1, tabAccounts2, file2) {
+
+	for (var i = 0; i < tabAccounts1.rowCount; i++) {
+		var tRow = tabAccounts1.row(i);
+		if (tRow.value("Account") &&
+			tRow.value("Account").indexOf(":") < 0 && 
+			tRow.value("Account").indexOf(".") < 0 && 
+			tRow.value("Account").indexOf(",") < 0 && 
+			tRow.value("Account").indexOf(";") < 0) {
+
+			var currentBal = Banana.document.currentBalance(tRow.value("Account") + segment, "", "");
+			var total1 = currentBal.total;
+			var amount1 = currentBal.amount;
+		
+			if (total1) {
+
+				if (tabAccounts2) {
+
+					for (var j = 0; j < tabAccounts2.rowCount; j++) {
+						var tRow2 = tabAccounts2.row(j);
+						if (tRow2.value("Account") === tRow.value("Account")) {
+
+							var currentBal2 = file2.currentBalance(tRow2.value("Account") + segment, "", "");
+							var total2 = currentBal2.total;
+							var amount2 = currentBal2.amount;
+
+							accountsMap[tRow.value("Account")] = {
+								"description":tRow.value("Description"), 
+								"gr1":tRow.value("Gr1"), 
+								"total" : Banana.SDecimal.add(amount1, amount2)
+							};
+							//Banana.console.log("Account: " + tRow.value("Account") + ", [" + amount1 + " - " + amount2 + "]");
+						}
+					}
+
+				} else {
+					accountsMap[tRow.value("Account")] = {
+						"description":tRow.value("Description"), 
+						"gr1":tRow.value("Gr1"), 
+						"total" : amount1
+					};
+				}
+			}
+		}
 	}
 }
 
@@ -291,42 +417,12 @@ function getObject(form, nr) {
 }
 
 
-//This function, for the given segment and period, creates all the accounts objects
-function loadAccountsMap(segment, startDate, endDate) {
-
-	var arrList = [];
-	for (var i = 0; i < Banana.document.table('Accounts').rowCount; i++) {
-		var tRow = Banana.document.table('Accounts').row(i);
-		if (tRow.value("Account") &&
-			tRow.value("Account").indexOf(":") < 0 && 
-			tRow.value("Account").indexOf(".") < 0 && 
-			tRow.value("Account").indexOf(",") < 0 && 
-			tRow.value("Account").indexOf(";") < 0) {
-
-			var currentBal = Banana.document.currentBalance(tRow.value("Account") + segment, startDate, endDate);
-			var total = currentBal.total;
-			var amount = currentBal.amount;
-
-			if (total) {
-				accountsMap[tRow.value("Account")] = {
-					"description":tRow.value("Description"), 
-					"gr1":tRow.value("Gr1"), 
-					"total" : amount
-				};
-				//Banana.console.log(tRow.value("Account") + ", " + tRow.value("Gr1") + ", " + total + ", " + amount);
-				//Banana.console.log(JSON.stringify(accountsMap, "", ""));
-			}
-		}
-	}
-}
-
-
 //This function take from Banana table 'Accounts' all the 5XM segments
-function getSegmentList() {
+function getSegmentList(tabAccounts) {
 	var arrList = [];
 	for (var i = 0; i < Banana.document.table('Accounts').rowCount; i++) {
 		var tRow = Banana.document.table('Accounts').row(i);
-		if (tRow.value("Account").indexOf(":") == 0 && tRow.value("Account").indexOf("::") < 0) {
+		if (tRow.value("Account").indexOf(":") == 0 && tRow.value("Account").indexOf("::") < 0 && tRow.value("Account").substring(1,2)) {
 			arrList.push(tRow.value("Account"));
 		}
 	}
@@ -342,58 +438,6 @@ function getDescription(segment) {
 			return tRow.value("Description");
 		}
 	}
-}
-
-
-//The main purpose of this function is to allow the user to enter the accounting period desired and saving it for the next time the script is run.
-//Every time the user runs of the script he has the possibility to change the date of the accounting period.
-function getPeriodSettings() {
-	
-	//The formeters of the period that we need
-	var scriptform = {
-	   "selectionStartDate": "",
-	   "selectionEndDate": "",
-	   "selectionChecked": "false"
-	};
-
-	//Read script settings
-	var data = Banana.document.scriptReadSettings();
-	
-	//Check if there are previously saved settings and read them
-	if (data.length > 0) {
-		try {
-			var readSettings = JSON.parse(data);
-			
-			//We check if "readSettings" is not null, then we fill the formeters with the values just read
-			if (readSettings) {
-				scriptform = readSettings;
-			}
-		} catch (e){}
-	}
-	
-	//We take the accounting "starting date" and "ending date" from the document. These will be used as default dates
-	var docStartDate = Banana.document.startPeriod();
-	var docEndDate = Banana.document.endPeriod();	
-	
-	//A dialog window is opened asking the user to insert the desired period. By default is the accounting period
-	var selectedDates = Banana.Ui.getPeriod("Periodo", docStartDate, docEndDate, 
-		scriptform.selectionStartDate, scriptform.selectionEndDate, scriptform.selectionChecked);
-		
-	//We take the values entered by the user and save them as "new default" values.
-	//This because the next time the script will be executed, the dialog window will contains the new values.
-	if (selectedDates) {
-		scriptform["selectionStartDate"] = selectedDates.startDate;
-		scriptform["selectionEndDate"] = selectedDates.endDate;
-		scriptform["selectionChecked"] = selectedDates.hasSelection;
-
-		//Save script settings
-		var formToString = JSON.stringify(scriptform);
-		var value = Banana.document.scriptSaveSettings(formToString);		
-    } else {
-		//User clicked cancel
-		return;
-	}
-	return scriptform;
 }
 
 
