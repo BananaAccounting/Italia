@@ -72,10 +72,15 @@ function loadForm() {
 	form.push({"id":"R3.1", "gr":"R3.1", "bClass":"4", "description":"da soci"});
 	form.push({"id":"R3.2", "gr":"R3.2", "bClass":"4", "description":"da non soci"});
 	form.push({"id":"R4", "gr":"R4", "bClass":"4", "description":"RIMBORSI DERIVANTI DA CONVENZIONI CON ENTI PUBBLICI - art. 5 L.266/91"});
-	form.push({"id":"R5a", "description":"ENTRATE DA ATTIVITÀ COMMERCIALI PRODUTTIVE MARGINALI   (Raccolta fondi)", "sum":"R5.1;R5.2;R5.3"});
-	form.push({"id":"R5.1", "gr":"R5.1", "bClass":"4", "description":"da attività di vendite occasionali o iniziative occasionali di solidarietà (D.M. 1995 lett.a) es.eventi, cassettina offerte, tombole, spettacoli"});
-	form.push({"id":"R5.2", "gr":"R5.2", "bClass":"4", "description":"da attività di vendita di beni acquisiti da terzi a titolo gratuito a fini di sovvenzione  (D.M. 1995 lett.b)"});
-	form.push({"id":"R5.3", "gr":"R5.3", "bClass":"4", "description":"da attività di somministrazione di alimenti e bevande in occasione di manifestazioni e simili a carattere occasionale  (D.M. 1995 lett.d)"});
+	
+	//We don't include "R5a" group if we are on the APS file
+	if (Banana.document.table("TestiReport").findRowByValue("RowId", "RVENETO").value("Testo") !== "APS") {
+		form.push({"id":"R5a", "description":"ENTRATE DA ATTIVITÀ COMMERCIALI PRODUTTIVE MARGINALI   (Raccolta fondi)", "sum":"R5.1;R5.2;R5.3"});
+		form.push({"id":"R5.1", "gr":"R5.1", "bClass":"4", "description":"da attività di vendite occasionali o iniziative occasionali di solidarietà (D.M. 1995 lett.a) es.eventi, cassettina offerte, tombole, spettacoli"});
+		form.push({"id":"R5.2", "gr":"R5.2", "bClass":"4", "description":"da attività di vendita di beni acquisiti da terzi a titolo gratuito a fini di sovvenzione  (D.M. 1995 lett.b)"});
+		form.push({"id":"R5.3", "gr":"R5.3", "bClass":"4", "description":"da attività di somministrazione di alimenti e bevande in occasione di manifestazioni e simili a carattere occasionale  (D.M. 1995 lett.d)"});
+	}
+
 	form.push({"id":"R5b", "description":" ALTRE ENTRATE DA ATTIVITÀ COMMERCIALI MARGINALI", "sum":"R5.4;R5.5"});
 	form.push({"id":"R5.4", "gr":"R5.4", "bClass":"4", "description":"cessione di beni prodotti dagli assistiti e dai volontari sempreché la vendita dei prodotti sia curata direttamente dall'organizzazione senza alcun intermediario (D.M. 1995 lett.c)"});
 	form.push({"id":"R5.5", "gr":"R5.5", "bClass":"4", "description":"attività di prestazione di servizi rese in conformità alle finalità istituzionali, non riconducibili nell'ambito applicativo dell'art. 111, comma 3, del TUIR  verso pagamento di corrispettivi specifici che non eccedano del 50% i costi di diretta imputazione (D.M. 1995 lett. e)"});
@@ -85,7 +90,13 @@ function loadForm() {
 	form.push({"id":"R6.3", "gr":"R6.3", "bClass":"4", "description":"altro: specificare "});
 	form.push({"id":"R7", "gr":"R7", "bClass":"4", "description":"ANTICIPAZIONI DI CASSA"});
 	form.push({"id":"R8", "gr":"R8", "bClass":"4", "description":"PARTITE DI GIRO"});
-	form.push({"id":"R", "description":"TOTALE RICAVI", "sum":"R1;R2;R3;R4;R5a;R5b;R6;R7;R8"});
+
+	//We don't include "R5a" in the total group if we are on the APS file
+	if (Banana.document.table("TestiReport").findRowByValue("RowId", "RVENETO").value("Testo") !== "APS") {
+		form.push({"id":"R", "description":"TOTALE RICAVI", "sum":"R1;R2;R3;R4;R5a;R5b;R6;R7;R8"});
+	} else {
+		form.push({"id":"R", "description":"TOTALE RICAVI", "sum":"R1;R2;R3;R4;R5b;R6;R7;R8"});
+	}
 
 	//EXPENSES
 	form.push({"id":"Ct", "description":"COSTI"});
