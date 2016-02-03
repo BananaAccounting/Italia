@@ -335,10 +335,10 @@ function printReport() {
 	tableRow.addCell(getBalance("APG"), "alignRight", 1);
 
 	tableRow = table.addRow();
-	tableRow.addCell(getValue(form, "ATP", "id"), "bold", 1);
+	tableRow.addCell(getValue(form, "ATP", "id"), "bold valueTotal", 1);
 	//tableRow.addCell(getValue(form, "ATP", "gr"), "", 1);
-	tableRow.addCell(getValue(form, "ATP", "description"), "bold", 1);
-	tableRow.addCell(getBalance("ATP"), "alignRight bold", 1);
+	tableRow.addCell(getValue(form, "ATP", "description"), "bold valueTotal", 1);
+	tableRow.addCell(getBalance("ATP"), "alignRight bold valueTotal", 1);
 
 	tableRow = table.addRow();
 	tableRow.addCell("PASSIVO", "bold styleTitleCell", 3);
@@ -374,13 +374,14 @@ function printReport() {
 	tableRow.addCell(getBalance("PAG"), "alignRight", 1);
 
 	tableRow = table.addRow();
-	tableRow.addCell(getValue(form, "PTP", "id"), "bold", 1);
+	tableRow.addCell(getValue(form, "PTP", "id"), "bold valueTotal", 1);
 	//tableRow.addCell(getValue(form, "PTP", "gr"), "", 1);
-	tableRow.addCell(getValue(form, "PTP", "description"), "bold", 1);
-	tableRow.addCell(getBalance("PTP"), "alignRight bold", 1);
+	tableRow.addCell(getValue(form, "PTP", "description"), "bold valueTotal", 1);
+	tableRow.addCell(getBalance("PTP"), "alignRight bold valueTotal", 1);
 
 
 	//Add a footer to the report
+	addHeader(report);
 	addFooter(report);
 
 	//Print the report
@@ -608,6 +609,19 @@ function addFooter(report) {
 }
 
 
+function addHeader(report) {
+	var pageHeader = report.getHeader();
+	pageHeader.addClass("header");
+	pageHeader.addImage("logo_regione_vento.tif", " img");
+	pageHeader.addParagraph("                  giunta regionale – 8^ legislatura", "header2");
+	pageHeader.addParagraph(" ");
+	pageHeader.addParagraph("ALLEGATO _A_ Dgr n.    4314  del   29/12/2009          pag.", "header1 bold").addFieldPageNr();
+	pageHeader.addParagraph(" ", "horizontalLine");
+	pageHeader.addParagraph(" ");
+	pageHeader.addParagraph(" ");
+}
+
+
 //The main purpose of this function is to create styles for the report print
 function createStyleSheet() {
 	var stylesheet = Banana.Report.newStyleSheet();
@@ -651,8 +665,16 @@ function createStyleSheet() {
 	style.setAttribute("font-size", "9px");
 	style.setAttribute("font-weight", "bold");
 
-	// style = stylesheet.addStyle(".horizontalLine");
-	// style.setAttribute("border-top", "1px solid black");
+	style = stylesheet.addStyle(".header1");
+	style.setAttribute("font-size", "10px");
+	style.setAttribute("font-family", "Times New Roman");
+
+	style = stylesheet.addStyle(".header2");
+	style.setAttribute("font-size", "7px");
+	style.setAttribute("font-family", "Times New Roman");
+
+	style = stylesheet.addStyle(".horizontalLine");
+	style.setAttribute("border-bottom", "thin solid black");
 
 	// style = stylesheet.addStyle(".rowNumber");
 	// style.setAttribute("font-size", "9px");
@@ -703,19 +725,19 @@ function createStyleSheet() {
 	style = stylesheet.addStyle("table");
 	style.setAttribute("width", "100%");
 	style.setAttribute("font-size", "8px");
-	stylesheet.addStyle("table.table td", "border: thin solid #464e7e");
+	stylesheet.addStyle("table.table td", "border: thin solid #2C4068");
 
 	style = stylesheet.addStyle(".styleTableHeader");
 	//style.setAttribute("font-weight", "bold");
-	style.setAttribute("background-color", "#464e7e"); 
+	style.setAttribute("background-color", "#2C4068"); 
 	style.setAttribute("border-bottom", "1px double black");
 	style.setAttribute("color", "#fff");
 
 	style = stylesheet.addStyle(".styleTitleCell");
 	style.setAttribute("font-weight", "bold");
-	style.setAttribute("background-color", "#ffd100"); 
+	style.setAttribute("background-color", "#FFD100"); 
 	style.setAttribute("border-bottom", "1px double black");
-	style.setAttribute("color", "#464e7e");
+	style.setAttribute("color", "#2C4068");
 
 	style = stylesheet.addStyle(".background");
 	style.setAttribute("padding-bottom", "5px");
@@ -740,6 +762,10 @@ function createStyleSheet() {
 	style = stylesheet.addStyle(".alignCenter");
 	style.setAttribute("text-align", "center");
 
+	//Image style
+	style = stylesheet.addStyle(".img");
+	style.setAttribute("height", "170");
+	style.setAttribute("width", "170");
 
 	return stylesheet;
 }

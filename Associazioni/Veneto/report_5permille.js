@@ -102,6 +102,17 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 
 	var report = Banana.Report.newReport("5 per mille - Veneto");
 
+
+	/*
+		PRINT LOGO
+	*/
+	report.addImage("ministero_del_lavoro", "img alignCenter");
+	report.addParagraph("Ministero del Lavoro e delle Politiche Sociali", "heading1 alignCenter italic bold");
+	report.addParagraph("Direzione Generale per il Terzo Settore e le Formazioni Sociali", "heading2 alignCenter italic");
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+
+
 	/*
 		PRINT TABLE "ANAGRAFICA"
 	*/
@@ -192,7 +203,7 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 
 	tableRow = table.addRow();
 	tableRow.addCell("IMPORTO PERCEPITO", "alignRight bold", 2);
-	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totalIncome)), "alignRight bold", 1);
+	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totalIncome)), "alignRight bold", 1);
 	tableRow = table.addRow();
 	tableRow.addCell(" ", "", 3);
 
@@ -208,7 +219,40 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 	//Add the final total
 	tableRow = table.addRow();
 	tableRow.addCell("TOTALE SPESE", "alignRight bold", 2);
-	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold", 1)
+	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold", 1)
+
+	//Add the current date (DD-MM-YYYY)
+	var date = new Date();
+	report.addParagraph(" ");
+	report.addParagraph("Data: " + Banana.Converter.toLocaleDateFormat(date));
+
+	//Add signature
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph("Firma del rappresentante legale", "alignCenter");
+
+	//Add observations
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph("Il rappresentante legale, sottoscrittore del rendiconto, certifica che le informazioni contenute nel presente documento sono autentiche e veritiere, nella consapevolezza che, ai sensi degli artt. 47 e 76 del DPR 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi o ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. Il rendiconto, inoltre, ai sensi dell’art. 46 del DPR 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del sottoscrittore.", "italic");
+
+	//Add signature
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph("Firma del rappresentante legale", "alignCenter");
+
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph("Si precisa che il trattamento di dati personali è eseguito senza il consenso dell’interessato  in quanto trattasi di consenso obbligatorio previsto da norma di legge.", "italic");
+
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph("N.B. Si fa presente che è obbligatoria, per gli enti beneficiari del contributo, la redazione di una relazione in cui venga descritto in maniera analitica ed esaustiva l’utilizzo dei contributi percepiti. In particolar modo per le spese di personale eventualmente imputate, è necessario specificare per ciascun soggetto: il numero di ore imputate ed il costo orario di riferimento come indicato dalle relative tabelle ministeriali.", "bold underline");
+
 
 	//Add a footer
 	addFooter(report);
@@ -243,7 +287,12 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 		tableRow.addCell(_group + ". " + "Entrate", "bold", 3);
 	} else {
 		tableRow = table.addRow();
-		tableRow.addCell(_group + ". " + _title, "bold", 3);
+		//tableRow.addCell(_group + ". " + _title, "bold", 3);
+
+		var descriptionCell = tableRow.addCell("", "", 2);
+		descriptionCell.addParagraph(_group + ". " + _title, "bold");
+		descriptionCell.addParagraph(_text);
+		tableRow.addCell("","",1);
 	}
 
 	//Check that the accountsMap is not empty, then use it to create the report
@@ -287,7 +336,7 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 			tableRow = table.addRow();
 			tableRow.addCell(arrAcc[i], "alignCenter", 1);
 			tableRow.addCell(arrDesc[i], "", 1);
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(arrTot[i]), "alignRight", 1);
+			tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(arrTot[i]), "alignRight", 1);
 			
 			//Build the string with the accounts number divided by the "|" to use the currentBalance() function
 			str += arrAcc[i] + "|";
@@ -333,9 +382,9 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 		}
 
 		if (_gr1.substring(0,1) === "R") { //For INCOME values we invert the sign
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totF1F2)), "bold alignRight italic", 1);
+			tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totF1F2)), "bold alignRight italic", 1);
 		} else {
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totF1F2), "bold alignRight italic", 1);
+			tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(totF1F2), "bold alignRight italic", 1);
 		}
 	}
 
@@ -472,8 +521,14 @@ function createStyleSheet() {
 	style.setAttribute("padding-top", "5px");
 	style.setAttribute("font-size", "10px");
 
+	style = stylesheet.addStyle(".heading1");
+	style.setAttribute("font-size", "20px");
+
+	style = stylesheet.addStyle(".heading2");
+	style.setAttribute("font-size", "16px");
+
 	style = stylesheet.addStyle(".heading3");
-	style.setAttribute("font-size", "12px");
+	style.setAttribute("font-size", "11px");
 	style.setAttribute("font-weight", "bold");
 
 	style = stylesheet.addStyle(".bold");
@@ -487,6 +542,14 @@ function createStyleSheet() {
 
 	style = stylesheet.addStyle(".alignCenter");
 	style.setAttribute("text-align", "center");
+
+	style = stylesheet.addStyle(".underline");
+	style.setAttribute("text-decoration", "underline");
+
+	//Image style
+	style = stylesheet.addStyle(".img");
+	style.setAttribute("height", "60");
+	style.setAttribute("width", "60");
 
 	//Table style
 	style = stylesheet.addStyle("table");
