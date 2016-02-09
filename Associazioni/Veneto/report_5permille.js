@@ -106,7 +106,7 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 	/*
 		PRINT LOGO
 	*/
-	report.addImage("ministero_del_lavoro", "img alignCenter");
+	report.addImage("ministero_del_lavoro.png", "img alignCenter");
 	report.addParagraph("Ministero del Lavoro e delle Politiche Sociali", "heading1 alignCenter italic bold");
 	report.addParagraph("Direzione Generale per il Terzo Settore e le Formazioni Sociali", "heading2 alignCenter italic");
 	report.addParagraph(" ");
@@ -176,7 +176,7 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 	}
 
 	var table = report.addTable("table");
-	table.getCaption().addText("RENDICONTO DELLE SPESE SOSTENUTE", "description bold");
+	table.getCaption().addText("RENDICONTO DELLE SPESE SOSTENUTE (" + Banana.document.info("AccountingDataBase","BasicCurrency") +")", "description bold");
 	tableRow = table.addRow();
 	tableRow.addCell(getDescription(itemSelected), "alignRight bold", 2);
 	tableRow.addCell(itemSelected, "alignCenter bold", 1);
@@ -203,7 +203,7 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 
 	tableRow = table.addRow();
 	tableRow.addCell("IMPORTO PERCEPITO", "alignRight bold", 2);
-	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totalIncome)), "alignRight bold", 1);
+	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totalIncome)), "alignRight bold", 1);
 	tableRow = table.addRow();
 	tableRow.addCell(" ", "", 3);
 
@@ -219,7 +219,7 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 	//Add the final total
 	tableRow = table.addRow();
 	tableRow.addCell("TOTALE SPESE", "alignRight bold", 2);
-	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold", 1)
+	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold", 1)
 
 	//Add the current date (DD-MM-YYYY)
 	var date = new Date();
@@ -336,7 +336,7 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 			tableRow = table.addRow();
 			tableRow.addCell(arrAcc[i], "alignCenter", 1);
 			tableRow.addCell(arrDesc[i], "", 1);
-			tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(arrTot[i]), "alignRight", 1);
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(arrTot[i]), "alignRight", 1);
 			
 			//Build the string with the accounts number divided by the "|" to use the currentBalance() function
 			str += arrAcc[i] + "|";
@@ -382,9 +382,9 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 		}
 
 		if (_gr1.substring(0,1) === "R") { //For INCOME values we invert the sign
-			tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totF1F2)), "bold alignRight italic", 1);
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totF1F2)), "bold alignRight italic", 1);
 		} else {
-			tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(totF1F2), "bold alignRight italic", 1);
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totF1F2), "bold alignRight italic", 1);
 		}
 	}
 
@@ -493,7 +493,7 @@ function getDescription(segment) {
 //This function adds a Footer to the report
 function addFooter(report) {
    report.getFooter().addClass("footer");
-   var versionLine = report.getFooter().addText("Banana Accounting" + " - ", "description");
+   var versionLine = report.getFooter().addText("Banana Accounting 8" + " - ", "description");
    report.getFooter().addText("Pagina ", "description");
    report.getFooter().addFieldPageNr();
 }
