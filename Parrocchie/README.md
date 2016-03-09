@@ -6,6 +6,8 @@ Il piano contabile comprende i conti del Bilancio e del Risultato di Gestione pe
 Sono stati impostati il Partitario Clienti e Fornitori e i centri di costo per getire le Partite di giro e i Movimenti di Capitale
 (Entrate e uscite per Immobilizzazioni, entrate e uscite Titoli, entrate e uscite Finanziamenti).
 
+Nella colonna GR1 sono stati inseriti dei codici specifici per ottenere, tramite un report esterno, i rendiconti da presentare alla Curia.
+
 Il Risultato di gestione (Conto Economico) è a forma scalare e mette in evidenza i vari Risultati:
 * Risultato gestione attività istituzionale
 * Risultato gestione immobiliare
