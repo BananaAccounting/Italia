@@ -2,9 +2,11 @@
 
 ## Piano dei conti per parrocchie
 
-Il piano contabile comprende i conti del Bilancio e del Risultato di Gestione per la Parrocchia
+Il piano contabile comprende i conti del Bilancio e del Risultato di Gestione per la Parrocchia.
+Sono stati impostati il Partitario Clienti e Fornitori e i centri di costo per getire le Partite di giro e i Movimenti di Capitale
+(Entrate e uscite per Immobilizzazioni, entrate e uscite Titoli, entrate e uscite Finanziamenti).
 
-Il Risultato di gestione (Conto Economico) é a forma scalare e mette in evidenza i vari Risultati:
+Il Risultato di gestione (Conto Economico) è a forma scalare e mette in evidenza i vari Risultati:
 * Risultato gestione attività istituzionale
 * Risultato gestione immobiliare
 * Risultato gestione finanziaria
