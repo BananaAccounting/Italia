@@ -25,3 +25,15 @@ Nel file contabile Parrocchie nel Bilancio Abbellito per gruppi sono state memor
 * Preventivo
 * Partite di giro e Movimenti di capitale
 * Report per la curia (elaborato tramite un raggruppamento esterno creato con il Report contabile).
+
+## Come calcolare i vari Report
+
+Quando si accede al Bilancio abbellito con gruppi (Menu Conta1) sono disponibili le seguenti composizioni:
+
+* Stato patrimoniale
+* Risultato di gestione
+* Preventivo 
+* Partite di giro e Movimenti di capitale
+* Report per Curia 
+
+
