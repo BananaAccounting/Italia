@@ -19,7 +19,7 @@
 // @description = Italia - Report economico
 // @task = app.command
 // @doctype = 100.100
-// @docproperties = veneto
+// @docproperties = associazioni
 // @outputformat = none
 // @inputdatasource = none
 // @timeout = -1
