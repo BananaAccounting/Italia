@@ -1,4 +1,4 @@
-# Associazioni Regione Veneto
+# Associazioni
 
 **Attenzione per scaricare i file bisogna**
 
@@ -18,14 +18,14 @@ Per le modalità d'impostazione e d'uso si veda  [pagina spiegazioni su Banana.c
 * Piano conti per Associazione OVD (Organizzazione di volontariato) 
   Con entrate attività commerciale, Beni durevoli 
 
-Si tratta di piani contabili che presentano i conti tipici di un'associazione per la Regione Veneto.  
+Si tratta di piani contabili che presentano i conti tipici di un'associazione.  
 
 
 ##BananaApp report
 Sono disponibili i seguenti file
-* [report_economico.js] (https://raw.githubusercontent.com/BananaAccounting/Italia/master/Associazioni/Veneto/report_economico.js) che prepara il rendiconto economico come richiesto dalla Regione Veneto.
-* [report_5permille.js] (https://raw.githubusercontent.com/BananaAccounting/Italia/master/Associazioni/Veneto/report_5permille.js) che prepara il rendiconto per ogni finanziamento 5 per mille.
-* [report_raccolta_fondi.js] (https://raw.githubusercontent.com/BananaAccounting/Italia/master/Associazioni/Veneto/report_raccolta_fondi.js) che prepara le schede delle raccolte fondi. 
+* [report_economico.js] (https://raw.githubusercontent.com/BananaAccounting/Italia/master/Associazioni/report_economico.js) che prepara il rendiconto economico.
+* [report_5permille.js] (https://raw.githubusercontent.com/BananaAccounting/Italia/master/Associazioni/report_5permille.js) che prepara il rendiconto per ogni finanziamento 5 per mille.
+* [report_raccolta_fondi.js] (https://raw.githubusercontent.com/BananaAccounting/Italia/master/Associazioni/report_raccolta_fondi.js) che prepara le schede delle raccolte fondi. 
 
 ##Utilizzare gli esempi
 1. Scaricate il file ac2 d'esempio
