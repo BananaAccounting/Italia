@@ -1,9 +1,16 @@
 # Associazioni
 
-**Attenzione per scaricare i file bisogna**
+**Scaricare e salvare un file .js**
 
-1. cliccare sul link del nome file
-2. click sul bottone **Row** oppure clic tasto destro del mouse sul bottone **"Row"** e fare "Salva con nome" 
+1. cliccare sul link del nome file .js desiderato
+2. click sul bottone **Row**
+3. click tasto destro e selezionare "Salva pagina con nome"
+
+**Scaricare e salvare un file .ac2**
+
+1. cliccare sul link del nome file .ac2 desiderato
+2. click sul bottone **Download**
+3. salvare con nome
 
 
 ##Riferimento
