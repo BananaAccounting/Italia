@@ -18,7 +18,7 @@
 // @publisher = Banana.ch SA
 // @description = Italia - Report economico
 // @task = app.command
-// @doctype = 100.100
+// @doctype = 100.100;110.100
 // @docproperties = associazioni
 // @outputformat = none
 // @inputdatasource = none
@@ -191,11 +191,13 @@ function preProcess() {
 	//var balanceUP =  Banana.document.currentBalance("Gr=UP-BIL", param.startDate, param.endDate).balance;
 	var balanceUP = "";
 	var table = Banana.document.table("Totals");
+	if (table) {
 	for (var i = 0; i < table.rowCount; i++) {
 		var tRow = table.row(i);
 		if (tRow.value("Group") === "02") {
 			balanceUP = tRow.value("Balance");
 		}
+	}
 	}
 
 	for (var i = 0; i < form.length; i++) {
@@ -416,6 +418,7 @@ function loadBalances() {
 function calculateAccountGr1Balance(grText, bClass, grColumn, startDate, endDate) {
 	
 	var accounts = getColumnListForGr(Banana.document.table("Accounts"), grText, "Account", grColumn);
+	accounts.push( getColumnListForGr(Banana.document.table("Categories"), grText, "Category", grColumn));
 	accounts = accounts.join("|");
 	
 	//Sum the amounts of opening, debit, credit, total and balance for all transactions for this accounts
@@ -437,16 +440,17 @@ function calculateAccountGr1Balance(grText, bClass, grColumn, startDate, endDate
 	else if (bClass === "4") {
 		return Banana.SDecimal.invert(currentBal.total);
 	}
+	/* se contabilità entrate uscite il 3 costo inverti, il 4 non invertire*/
 }
 
 
 //The main purpose of this function is to create an array with all the values of a given column of the table (codeColumn) belonging to the same group (grText)
 function getColumnListForGr(table, grText, codeColumn, grColumn) {
 
+	debugger;
 	if (table === undefined || !table) {
 		return str;
 	}
-
 	if (!grColumn) {
 		grColumn = "Gr1";
 	}

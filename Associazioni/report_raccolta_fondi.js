@@ -18,7 +18,7 @@
 // @publisher = Banana.ch SA
 // @description = Italia - Report raccolta fondi
 // @task = app.command
-// @doctype = 100.100
+// @doctype = 100.100;110.100
 // @docproperties = associazioni
 // @outputformat = none
 // @inputdatasource = none

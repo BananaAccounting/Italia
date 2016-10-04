@@ -18,7 +18,7 @@
 // @publisher = Banana.ch SA
 // @description = Italia - Report "5 per mille"
 // @task = app.command
-// @doctype = 100.100
+// @doctype = 100.100;110.100
 // @docproperties = associazioni
 // @outputformat = none
 // @inputdatasource = none
