@@ -16,7 +16,7 @@
 // @api = 1.0
 // @pubdate = 2015-08-18
 // @publisher = Banana.ch SA
-// @description = Italia - Report raccolta fondi
+// @description = Associazioni - Report raccolta fondi
 // @task = app.command
 // @doctype = 100.100;110.100
 // @docproperties = associazioni
@@ -230,12 +230,25 @@ function loadRelazioni(account) {
 //This function take from Banana table 'Accounts' all the account numbers of the segment 2 (Raccolta fondi)
 function getAccountsList() {
 	var arrList = [];
-	for (var i = 0; i < Banana.document.table('Accounts').rowCount; i++) {
-		var tRow = Banana.document.table('Accounts').row(i);
 
-		//We take only the account with segment 2 (accounts numbers that begin with "::")
-		if (tRow.value("Account") && tRow.value("Account").indexOf("::") > -1 && tRow.value("Account").substring(2,3)) {
-			arrList.push(tRow.value("Account"));
+	if (!Banana.document.table("Categories")) {
+		for (var i = 0; i < Banana.document.table('Accounts').rowCount; i++) {
+			var tRow = Banana.document.table('Accounts').row(i);
+
+			//We take only the account with segment 2 (accounts numbers that begin with "::")
+			if (tRow.value("Account") && tRow.value("Account").indexOf("::") > -1 && tRow.value("Account").substring(2,3)) {
+				arrList.push(tRow.value("Account"));
+			}
+		}
+	}
+	else {
+		for (var i = 0; i < Banana.document.table('Categories').rowCount; i++) {
+			var tRow = Banana.document.table('Categories').row(i);
+
+			//We take only the account with segment 2 (accounts numbers that begin with "::")
+			if (tRow.value("Category") && tRow.value("Category").indexOf("::") > -1 && tRow.value("Category").substring(2,3)) {
+				arrList.push(tRow.value("Category"));
+			}
 		}
 	}
 	return arrList;

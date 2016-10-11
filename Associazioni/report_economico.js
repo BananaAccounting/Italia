@@ -16,7 +16,7 @@
 // @api = 1.0
 // @pubdate = 2015-11-11
 // @publisher = Banana.ch SA
-// @description = Italia - Report economico
+// @description = Associazioni - Report economico
 // @task = app.command
 // @doctype = 100.100;110.100
 // @docproperties = associazioni
@@ -435,12 +435,21 @@ function calculateAccountGr1Balance(grText, bClass, grColumn, startDate, endDate
 		return Banana.SDecimal.invert(currentBal.balance);
 	}
 	else if (bClass === "3") {
-		return currentBal.total;
+		if (!Banana.document.table("Categories")) {
+			return currentBal.total;
+		}
+		else {
+			return Banana.SDecimal.invert(currentBal.total);
+		}
 	}
 	else if (bClass === "4") {
-		return Banana.SDecimal.invert(currentBal.total);
+		if (!Banana.document.table("Categories")) {
+			return Banana.SDecimal.invert(currentBal.total);
+		}
+		else {
+			return currentBal.total;
+		}
 	}
-	/* se contabilità entrate uscite il 3 costo inverti, il 4 non invertire*/
 }
 
 

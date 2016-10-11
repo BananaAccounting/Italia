@@ -16,9 +16,9 @@
 // @api = 1.0
 // @pubdate = 2015-08-18
 // @publisher = Banana.ch SA
-// @description = Italia - Report "5 per mille"
+// @description = Associazioni - Report "5 per mille"
 // @task = app.command
-// @doctype = 100.100;110.100
+// @doctype = *.*
 // @docproperties = associazioni
 // @outputformat = none
 // @inputdatasource = none
@@ -63,10 +63,18 @@ function exec(string) {
 	var answer = Banana.Ui.showQuestion("title", "Si desidera includere il file dell'anno precedente?");
 
 	/** FILE 1 **/
-	var accounts1 = Banana.document.table("Accounts");
-	var segment5XMList = getSegmentList(accounts1);
-	var accounts2 = "";
-	var file2 = "";
+	if (!Banana.document.table("Categories")) {
+		var accounts1 = Banana.document.table("Accounts");
+		var segment5XMList = getSegmentList(accounts1);
+		var accounts2 = "";
+		var file2 = "";
+	}
+	else {
+		var accounts1 = Banana.document.table("Categories");
+		var segment5XMList = getSegmentList(accounts1);
+		var accounts2 = "";
+		var file2 = "";
+	}
 
 	if (answer) { //Answer YES: open a dialog window for the file selection
 
@@ -76,7 +84,12 @@ function exec(string) {
 		if (!file2) { //If user clic cancel and doesn't select a 
 			return;
 		} else {
-			accounts2 = file2.table("Accounts");
+			if (!Banana.document.table("Categories")) {
+				accounts2 = file2.table("Accounts");
+			}
+			else {
+				accounts2 = file2.table("Categories");
+			}
 		}
 	}
 
@@ -203,7 +216,12 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 
 	tableRow = table.addRow();
 	tableRow.addCell("IMPORTO PERCEPITO", "alignRight bold", 2);
-	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totalIncome)), "alignRight bold", 1);
+	if (!Banana.document.table("Categories")) {
+		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totalIncome)), "alignRight bold", 1);
+	}
+	else {
+		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totalIncome), "alignRight bold", 1);
+	}
 	tableRow = table.addRow();
 	tableRow.addCell(" ", "", 3);
 
@@ -219,7 +237,12 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 	//Add the final total
 	tableRow = table.addRow();
 	tableRow.addCell("TOTALE SPESE", "alignRight bold", 2);
-	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold", 1)
+	if (!Banana.document.table("Categories")) {
+		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold", 1);
+	}
+	else {
+		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totalExpenses)), "alignRight bold", 1);
+	}
 
 	//Add the current date (DD-MM-YYYY)
 	var date = new Date();
@@ -308,10 +331,19 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 			for (var j = 0; j < tabAccounts1.rowCount; j++) {
 				var tRow = tabAccounts1.row(j);
 
-				if (accountsMap[tRow.value("Account")] && accountsMap[tRow.value("Account")].gr1 === arrGr[i]) {
-					arrAcc.push(tRow.value("Account"));
-					arrDesc.push(accountsMap[tRow.value("Account")].description);
-					arrTot.push(accountsMap[tRow.value("Account")].total);
+				if (!Banana.document.table("Categories")) {
+					if (accountsMap[tRow.value("Account")] && accountsMap[tRow.value("Account")].gr1 === arrGr[i]) {
+						arrAcc.push(tRow.value("Account"));
+						arrDesc.push(accountsMap[tRow.value("Account")].description);
+						arrTot.push(accountsMap[tRow.value("Account")].total);
+					}
+				} 
+				else {
+					if (accountsMap[tRow.value("Category")] && accountsMap[tRow.value("Category")].gr1 === arrGr[i]) {
+						arrAcc.push(tRow.value("Category"));
+						arrDesc.push(accountsMap[tRow.value("Category")].description);
+						arrTot.push(accountsMap[tRow.value("Category")].total);
+					}
 				}
 			}
 
@@ -320,12 +352,18 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 				for (var j = 0; j < tabAccounts2.rowCount; j++) {
 					var tRow = tabAccounts2.row(j);
 
-					if (accountsMap[tRow.value("Account")] && accountsMap[tRow.value("Account")].gr1 === arrGr[i]) {
-						arrAcc2.push(tRow.value("Account"));
+					if (!Banana.document.table("Categories")) {
+						if (accountsMap[tRow.value("Account")] && accountsMap[tRow.value("Account")].gr1 === arrGr[i]) {
+							arrAcc2.push(tRow.value("Account"));
+						}
+					}
+					else {
+						if (accountsMap[tRow.value("Category")] && accountsMap[tRow.value("Category")].gr1 === arrGr[i]) {
+							arrAcc2.push(tRow.value("Category"));
+						}
 					}
 				}
 			}
-
 		}
 
 
@@ -336,7 +374,13 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 			tableRow = table.addRow();
 			tableRow.addCell(arrAcc[i], "alignCenter", 1);
 			tableRow.addCell(arrDesc[i], "", 1);
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(arrTot[i]), "alignRight", 1);
+
+			if (!Banana.document.table("Categories")) {
+				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(arrTot[i]), "alignRight", 1);
+			}
+			else {
+				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(arrTot[i])), "alignRight", 1);
+			}
 			
 			//Build the string with the accounts number divided by the "|" to use the currentBalance() function
 			str += arrAcc[i] + "|";
@@ -381,10 +425,19 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 			var totF1F2 = total1;
 		}
 
-		if (_gr1.substring(0,1) === "R") { //For INCOME values we invert the sign
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totF1F2)), "bold alignRight italic", 1);
-		} else {
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totF1F2), "bold alignRight italic", 1);
+		if (!Banana.document.table("Categories")) {
+			if (_gr1.substring(0,1) === "R") { //For INCOME values we invert the sign
+				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totF1F2)), "bold alignRight italic", 1);
+			} else {
+				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totF1F2), "bold alignRight italic", 1);
+			}
+		}
+		else {
+			if (_gr1.substring(0,1) === "R") { //For INCOME values we invert the sign
+				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totF1F2), "bold alignRight italic", 1);
+			} else {
+				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totF1F2)), "bold alignRight italic", 1);
+			}
 		}
 	}
 
@@ -394,7 +447,13 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 		tableRow = table.addRow();
 		tableRow.addCell("", "", 1);
 		tableRow.addCell("                                          Totale gruppo " + _group, "bold alignRight italic", 1);
-		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(total1), "bold alignRight italic", 1);
+
+		if (!Banana.document.table("Categories")) {
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(total1), "bold alignRight italic", 1);
+		}
+		else {
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(total1)), "bold alignRight italic", 1);
+		}
 	}
 
 	//Calculate the final Income and Expenses totals
@@ -409,45 +468,92 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 //This function, for the given segment and period, creates all the accounts objects
 function loadAccountsMap(segment, tabAccounts1, tabAccounts2, file2) {
 
-	for (var i = 0; i < tabAccounts1.rowCount; i++) {
-		var tRow = tabAccounts1.row(i);
-		if (tRow.value("Account") &&
-			tRow.value("Account").indexOf(":") < 0 && 
-			tRow.value("Account").indexOf(".") < 0 && 
-			tRow.value("Account").indexOf(",") < 0 && 
-			tRow.value("Account").indexOf(";") < 0) {
+	if (!Banana.document.table("Categories")) {
+		for (var i = 0; i < tabAccounts1.rowCount; i++) {
+			var tRow = tabAccounts1.row(i);
+			if (tRow.value("Account") &&
+				tRow.value("Account").indexOf(":") < 0 && 
+				tRow.value("Account").indexOf(".") < 0 && 
+				tRow.value("Account").indexOf(",") < 0 && 
+				tRow.value("Account").indexOf(";") < 0) {
 
-			var currentBal = Banana.document.currentBalance(tRow.value("Account") + segment, "", "");
-			var total1 = currentBal.total;
-			var amount1 = currentBal.amount;
-		
-			if (total1) {
+				var currentBal = Banana.document.currentBalance(tRow.value("Account") + segment, "", "");
+				var total1 = currentBal.total;
+				var amount1 = currentBal.amount;
+			
+				if (total1) {
 
-				if (tabAccounts2) {
+					if (tabAccounts2) {
 
-					for (var j = 0; j < tabAccounts2.rowCount; j++) {
-						var tRow2 = tabAccounts2.row(j);
-						if (tRow2.value("Account") === tRow.value("Account")) {
+						for (var j = 0; j < tabAccounts2.rowCount; j++) {
+							var tRow2 = tabAccounts2.row(j);
+							if (tRow2.value("Account") === tRow.value("Account")) {
 
-							var currentBal2 = file2.currentBalance(tRow2.value("Account") + segment, "", "");
-							var total2 = currentBal2.total;
-							var amount2 = currentBal2.amount;
+								var currentBal2 = file2.currentBalance(tRow2.value("Account") + segment, "", "");
+								var total2 = currentBal2.total;
+								var amount2 = currentBal2.amount;
 
-							accountsMap[tRow.value("Account")] = {
-								"description":tRow.value("Description"), 
-								"gr1":tRow.value("Gr1"), 
-								"total" : Banana.SDecimal.add(amount1, amount2)
-							};
-							//Banana.console.log("Account: " + tRow.value("Account") + ", [" + amount1 + " - " + amount2 + "]");
+								accountsMap[tRow.value("Account")] = {
+									"description":tRow.value("Description"), 
+									"gr1":tRow.value("Gr1"), 
+									"total" : Banana.SDecimal.add(amount1, amount2)
+								};
+								//Banana.console.log("Account: " + tRow.value("Account") + ", [" + amount1 + " - " + amount2 + "]");
+							}
 						}
-					}
 
-				} else {
-					accountsMap[tRow.value("Account")] = {
-						"description":tRow.value("Description"), 
-						"gr1":tRow.value("Gr1"), 
-						"total" : amount1
-					};
+					} else {
+						accountsMap[tRow.value("Account")] = {
+							"description":tRow.value("Description"), 
+							"gr1":tRow.value("Gr1"), 
+							"total" : amount1
+						};
+					}
+				}
+			}
+		}
+	}
+	else {
+		for (var i = 0; i < tabAccounts1.rowCount; i++) {
+			var tRow = tabAccounts1.row(i);
+			if (tRow.value("Category") &&
+				tRow.value("Category").indexOf(":") < 0 && 
+				tRow.value("Category").indexOf(".") < 0 && 
+				tRow.value("Category").indexOf(",") < 0 && 
+				tRow.value("Category").indexOf(";") < 0) {
+
+				var currentBal = Banana.document.currentBalance(tRow.value("Category") + segment, "", "");
+				var total1 = currentBal.total;
+				var amount1 = currentBal.amount;
+			
+				if (total1) {
+
+					if (tabAccounts2) {
+
+						for (var j = 0; j < tabAccounts2.rowCount; j++) {
+							var tRow2 = tabAccounts2.row(j);
+							if (tRow2.value("Category") === tRow.value("Category")) {
+
+								var currentBal2 = file2.currentBalance(tRow2.value("Category") + segment, "", "");
+								var total2 = currentBal2.total;
+								var amount2 = currentBal2.amount;
+
+								accountsMap[tRow.value("Category")] = {
+									"description":tRow.value("Description"), 
+									"gr1":tRow.value("Gr1"), 
+									"total" : Banana.SDecimal.add(amount1, amount2)
+								};
+								//Banana.console.log("Account: " + tRow.value("Account") + ", [" + amount1 + " - " + amount2 + "]");
+							}
+						}
+
+					} else {
+						accountsMap[tRow.value("Category")] = {
+							"description":tRow.value("Description"), 
+							"gr1":tRow.value("Gr1"), 
+							"total" : amount1
+						};
+					}
 				}
 			}
 		}
@@ -466,13 +572,23 @@ function getObject(form, nr) {
 }
 
 
-//This function take from Banana table 'Accounts' all the 5XM segments
+//This function take from Banana table 'Accounts/Categories'  all the 5XM segments
 function getSegmentList(tabAccounts) {
 	var arrList = [];
-	for (var i = 0; i < Banana.document.table('Accounts').rowCount; i++) {
-		var tRow = Banana.document.table('Accounts').row(i);
-		if (tRow.value("Account").indexOf(":") == 0 && tRow.value("Account").indexOf("::") < 0 && tRow.value("Account").substring(1,2)) {
-			arrList.push(tRow.value("Account"));
+	if (Banana.document.table('Categories')) {
+		for (var i = 0; i < Banana.document.table('Categories').rowCount; i++) {
+			var tRow = Banana.document.table('Categories').row(i);
+			if (tRow.value("Category").indexOf(":") == 0 && tRow.value("Category").indexOf("::") < 0 && tRow.value("Category").substring(1,2)) {
+				arrList.push(tRow.value("Category"));
+			}
+		}
+	}
+	else {
+		for (var i = 0; i < Banana.document.table('Accounts').rowCount; i++) {
+			var tRow = Banana.document.table('Accounts').row(i);
+			if (tRow.value("Account").indexOf(":") == 0 && tRow.value("Account").indexOf("::") < 0 && tRow.value("Account").substring(1,2)) {
+				arrList.push(tRow.value("Account"));
+			}
 		}
 	}
 	return arrList;
@@ -481,10 +597,20 @@ function getSegmentList(tabAccounts) {
 
 //This function returns the description for a given segment
 function getDescription(segment) {
-	for (var i = 0; i < Banana.document.table('Accounts').rowCount; i++) {
-		var tRow = Banana.document.table('Accounts').row(i);
-		if (tRow.value("Account") === segment) {
-			return tRow.value("Description");
+	if (!Banana.document.table('Categories')) {
+		for (var i = 0; i < Banana.document.table('Accounts').rowCount; i++) {
+			var tRow = Banana.document.table('Accounts').row(i);
+			if (tRow.value("Account") === segment) {
+				return tRow.value("Description");
+			}
+		}
+	}
+	else {
+		for (var i = 0; i < Banana.document.table('Categories').rowCount; i++) {
+			var tRow = Banana.document.table('Categories').row(i);
+			if (tRow.value("Category") === segment) {
+				return tRow.value("Description");
+			}
 		}
 	}
 }
