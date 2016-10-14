@@ -190,30 +190,59 @@ function preProcess() {
 
 	//var balanceUP =  Banana.document.currentBalance("Gr=UP-BIL", param.startDate, param.endDate).balance;
 	var balanceUP = "";
-	var table = Banana.document.table("Totals");
-	if (table) {
-	for (var i = 0; i < table.rowCount; i++) {
-		var tRow = table.row(i);
-		if (tRow.value("Group") === "02") {
-			balanceUP = tRow.value("Balance");
-		}
-	}
-	}
 
-	for (var i = 0; i < form.length; i++) {
-
-		//Attivo - Perdita di gestione (+)
-		if (Banana.SDecimal.sign(balanceUP) > 0) {
-			if (form[i]["id"] === "APG") {
-				form[i]["amount"] = balanceUP;
-		    	getObject(form,"PAG").amount = "";
+	//Table Categories
+	if (Banana.document.table('Categories')) {
+		var table = Banana.document.table("Categories");
+		for (var i = 0; i < table.rowCount; i++) {
+			var tRow = table.row(i);
+			if (tRow.value("Group") === "RIS") {
+				balanceUP = tRow.value("Balance");
 			}
 		}
-		//Passivo - Avanzo di gestione (-)
-		else if (Banana.SDecimal.sign(balanceUP) < 0) {
-			if (form[i]["id"] === "PAG") {
-				form[i]["amount"] = Banana.SDecimal.invert(balanceUP);
-				getObject(form,"APG").amount = "";
+	
+		for (var i = 0; i < form.length; i++) {
+			//Attivo - Perdita di gestione (+)
+			if (Banana.SDecimal.sign(balanceUP) > 0) {
+				if (form[i]["id"] === "PAG") {
+					form[i]["amount"] = balanceUP;
+					getObject(form,"APG").amount = "";
+				}
+			}
+			//Passivo - Avanzo di gestione (-)
+			else if (Banana.SDecimal.sign(balanceUP) < 0) {
+				if (form[i]["id"] === "APG") {
+					form[i]["amount"] = Banana.SDecimal.invert(balanceUP);
+					getObject(form,"PAG").amount = "";
+				}
+			}
+		}
+		getObject(form,"P3").amount = Banana.document.table('Accounts').findRowByValue('Group','PN').value('Opening');
+	} 
+	//Table Accounts
+	else {
+		var table = Banana.document.table("Totals");
+		for (var i = 0; i < table.rowCount; i++) {
+			var tRow = table.row(i);
+			if (tRow.value("Group") === "02") {
+				balanceUP = tRow.value("Balance");
+			}
+		}
+	
+		for (var i = 0; i < form.length; i++) {
+			//Attivo - Perdita di gestione (+)
+			if (Banana.SDecimal.sign(balanceUP) > 0) {
+				if (form[i]["id"] === "APG") {
+					form[i]["amount"] = balanceUP;
+					getObject(form,"PAG").amount = "";
+				}
+			}
+			//Passivo - Avanzo di gestione (-)
+			else if (Banana.SDecimal.sign(balanceUP) < 0) {
+				if (form[i]["id"] === "PAG") {
+					form[i]["amount"] = Banana.SDecimal.invert(balanceUP);
+					getObject(form,"APG").amount = "";
+				}
 			}
 		}
 	}
@@ -625,7 +654,7 @@ function addFooter(report) {
 function addHeader(report) {
 	var pageHeader = report.getHeader();
 	pageHeader.addClass("header");
-	pageHeader.addImage("logo_regione_vento.png", " img");
+	//pageHeader.addImage("logo_regione_vento.png", " img");
 	pageHeader.addParagraph("                  giunta regionale – 8^ legislatura", "header2");
 	pageHeader.addParagraph(" ");
 	pageHeader.addParagraph("ALLEGATO _A_ Dgr n.    4314  del   29/12/2009          pag.", "header1 bold").addFieldPageNr();
