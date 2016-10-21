@@ -16,9 +16,9 @@
 // @api = 1.0
 // @pubdate = 2015-11-11
 // @publisher = Banana.ch SA
-// @description = Italia - Report economico
+// @description = Associazioni - Report economico
 // @task = app.command
-// @doctype = 100.100
+// @doctype = 100.100;110.100
 // @docproperties = associazioni
 // @outputformat = none
 // @inputdatasource = none
@@ -190,28 +190,59 @@ function preProcess() {
 
 	//var balanceUP =  Banana.document.currentBalance("Gr=UP-BIL", param.startDate, param.endDate).balance;
 	var balanceUP = "";
-	var table = Banana.document.table("Totals");
-	for (var i = 0; i < table.rowCount; i++) {
-		var tRow = table.row(i);
-		if (tRow.value("Group") === "02") {
-			balanceUP = tRow.value("Balance");
-		}
-	}
 
-	for (var i = 0; i < form.length; i++) {
-
-		//Attivo - Perdita di gestione (+)
-		if (Banana.SDecimal.sign(balanceUP) > 0) {
-			if (form[i]["id"] === "APG") {
-				form[i]["amount"] = balanceUP;
-		    	getObject(form,"PAG").amount = "";
+	//Table Categories
+	if (Banana.document.table('Categories')) {
+		var table = Banana.document.table("Categories");
+		for (var i = 0; i < table.rowCount; i++) {
+			var tRow = table.row(i);
+			if (tRow.value("Group") === "RIS") {
+				balanceUP = tRow.value("Balance");
 			}
 		}
-		//Passivo - Avanzo di gestione (-)
-		else if (Banana.SDecimal.sign(balanceUP) < 0) {
-			if (form[i]["id"] === "PAG") {
-				form[i]["amount"] = Banana.SDecimal.invert(balanceUP);
-				getObject(form,"APG").amount = "";
+	
+		for (var i = 0; i < form.length; i++) {
+			//Attivo - Perdita di gestione (+)
+			if (Banana.SDecimal.sign(balanceUP) > 0) {
+				if (form[i]["id"] === "PAG") {
+					form[i]["amount"] = balanceUP;
+					getObject(form,"APG").amount = "";
+				}
+			}
+			//Passivo - Avanzo di gestione (-)
+			else if (Banana.SDecimal.sign(balanceUP) < 0) {
+				if (form[i]["id"] === "APG") {
+					form[i]["amount"] = Banana.SDecimal.invert(balanceUP);
+					getObject(form,"PAG").amount = "";
+				}
+			}
+		}
+		getObject(form,"P3").amount = Banana.document.table('Accounts').findRowByValue('Group','PN').value('Opening');
+	} 
+	//Table Accounts
+	else {
+		var table = Banana.document.table("Totals");
+		for (var i = 0; i < table.rowCount; i++) {
+			var tRow = table.row(i);
+			if (tRow.value("Group") === "02") {
+				balanceUP = tRow.value("Balance");
+			}
+		}
+	
+		for (var i = 0; i < form.length; i++) {
+			//Attivo - Perdita di gestione (+)
+			if (Banana.SDecimal.sign(balanceUP) > 0) {
+				if (form[i]["id"] === "APG") {
+					form[i]["amount"] = balanceUP;
+					getObject(form,"PAG").amount = "";
+				}
+			}
+			//Passivo - Avanzo di gestione (-)
+			else if (Banana.SDecimal.sign(balanceUP) < 0) {
+				if (form[i]["id"] === "PAG") {
+					form[i]["amount"] = Banana.SDecimal.invert(balanceUP);
+					getObject(form,"APG").amount = "";
+				}
 			}
 		}
 	}
@@ -416,6 +447,7 @@ function loadBalances() {
 function calculateAccountGr1Balance(grText, bClass, grColumn, startDate, endDate) {
 	
 	var accounts = getColumnListForGr(Banana.document.table("Accounts"), grText, "Account", grColumn);
+	accounts.push( getColumnListForGr(Banana.document.table("Categories"), grText, "Category", grColumn));
 	accounts = accounts.join("|");
 	
 	//Sum the amounts of opening, debit, credit, total and balance for all transactions for this accounts
@@ -432,10 +464,20 @@ function calculateAccountGr1Balance(grText, bClass, grColumn, startDate, endDate
 		return Banana.SDecimal.invert(currentBal.balance);
 	}
 	else if (bClass === "3") {
-		return currentBal.total;
+		if (!Banana.document.table("Categories")) {
+			return currentBal.total;
+		}
+		else {
+			return Banana.SDecimal.invert(currentBal.total);
+		}
 	}
 	else if (bClass === "4") {
-		return Banana.SDecimal.invert(currentBal.total);
+		if (!Banana.document.table("Categories")) {
+			return Banana.SDecimal.invert(currentBal.total);
+		}
+		else {
+			return currentBal.total;
+		}
 	}
 }
 
@@ -443,10 +485,10 @@ function calculateAccountGr1Balance(grText, bClass, grColumn, startDate, endDate
 //The main purpose of this function is to create an array with all the values of a given column of the table (codeColumn) belonging to the same group (grText)
 function getColumnListForGr(table, grText, codeColumn, grColumn) {
 
+	debugger;
 	if (table === undefined || !table) {
 		return str;
 	}
-
 	if (!grColumn) {
 		grColumn = "Gr1";
 	}
@@ -612,7 +654,7 @@ function addFooter(report) {
 function addHeader(report) {
 	var pageHeader = report.getHeader();
 	pageHeader.addClass("header");
-	pageHeader.addImage("logo_regione_vento.png", " img");
+	pageHeader.addImage("file:script/logo_regione_vento.png", "100%", "15%");
 	pageHeader.addParagraph("                  giunta regionale – 8^ legislatura", "header2");
 	pageHeader.addParagraph(" ");
 	pageHeader.addParagraph("ALLEGATO _A_ Dgr n.    4314  del   29/12/2009          pag.", "header1 bold").addFieldPageNr();
