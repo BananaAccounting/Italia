@@ -119,7 +119,7 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 	/*
 		PRINT LOGO
 	*/
-	report.addImage("ministero_del_lavoro.png", "img alignCenter");
+	report.addImage("Immagini/ministero_del_lavoro.png", "img alignCenter");
 	report.addParagraph("Ministero del Lavoro e delle Politiche Sociali", "heading1 alignCenter italic bold");
 	report.addParagraph("Direzione Generale per il Terzo Settore e le Formazioni Sociali", "heading2 alignCenter italic");
 	report.addParagraph(" ");

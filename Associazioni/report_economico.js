@@ -654,7 +654,7 @@ function addFooter(report) {
 function addHeader(report) {
 	var pageHeader = report.getHeader();
 	pageHeader.addClass("header");
-	pageHeader.addImage("file:script/logo_regione_vento.png", "100%", "15%");
+	pageHeader.addImage("Immagini/logo_regione_vento.png", "100%", "15%");
 	pageHeader.addParagraph("                  giunta regionale – 8^ legislatura", "header2");
 	pageHeader.addParagraph(" ");
 	pageHeader.addParagraph("ALLEGATO _A_ Dgr n.    4314  del   29/12/2009          pag.", "header1 bold").addFieldPageNr();
