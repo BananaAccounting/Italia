@@ -260,9 +260,10 @@ function postProcess() {
 function printReport() {
 
 	var report = Banana.Report.newReport(param.reportName);
-
+	var thisYear = Banana.Converter.toDate(Banana.document.info("AccountingDataBase","OpeningDate")).getFullYear();
+	
 	/** TABLE CONTO ECONOMICO **/
-	report.addParagraph(param.headerLeft + " - " + "BILANCIO ECONOMICO (Modello 2) ANNO 2015", "heading2");
+	report.addParagraph(param.headerLeft + " - " + "BILANCIO ECONOMICO (Modello 2) ANNO " + thisYear, "heading2");
 		
 	var table = report.addTable("table");
 	tableRow = table.addRow();
