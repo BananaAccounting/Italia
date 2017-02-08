@@ -161,6 +161,13 @@ function exec(string) {
 		return;
 	}
 
+	//Check if the table "TestiReport" exists
+	var tableNames = Banana.document.tableNames;
+	if (tableNames.indexOf("TestiReport") < 0) {
+		Banana.document.addMessage('Tabella "TestiReport" inesistente oppure nome maiuscolo/minuscolo non esatto.');
+		return;
+	}
+
 	// 1. Create and load the parameters and the form
 	loadParam();
 	loadForm();

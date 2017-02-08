@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file>report_economico.js</file>
+		<file>report_5permille.js</file>
+		<file>report_raccolta_fondi.js</file>
+		<file>Immagini/logo_regione_vento.png</file>
+		<file>Immagini/ministero_del_lavoro.png</file>
+	</qresource>
+</RCC>

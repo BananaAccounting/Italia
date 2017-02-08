@@ -59,6 +59,13 @@ function exec(string) {
 		return;
 	}
 
+	//Check if the table "TestiReport" exists
+	var tableNames = Banana.document.tableNames;
+	if (tableNames.indexOf("TestiReport") < 0) {
+		Banana.document.addMessage('Tabella "TestiReport" inesistente oppure nome maiuscolo/minuscolo non esatto.');
+		return;
+	}
+
 	//Show the user a dialog window asking if include or not a second file
 	var answer = Banana.Ui.showQuestion("title", "Si desidera includere il file dell'anno precedente?");
 
