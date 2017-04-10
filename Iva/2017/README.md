@@ -1,8 +1,8 @@
-# SPESOMETRO2017 
+# SPESOMETRO 2017 
 ## Sviluppo condiviso
 
 Banana intende sviluppare in modo condiviso le esportazioni di dati nei formati richiesti dall'Agenzia delle entrate.
-Vedi [Roadma Spesometro 2017](https://www.banana.ch/it/node/9944)
+Vedi [Roadmap Spesometro 2017](https://www.banana.ch/it/node/9944)
 
 
 ## Riferimenti
@@ -10,3 +10,4 @@ Vedi [Roadma Spesometro 2017](https://www.banana.ch/it/node/9944)
 * [Comunicazioni Liquidazioni periodiche IVA](http://www.informazionefiscale.it/IMG/pdf/comunicazione_liquidazioni_iva_trimestrali_modello.pdf) documento PDF
 * [Specifiche tecniche fatture e corrispettivi](http://www.agenziaentrate.gov.it/wps/content/nsilib/nsi/strumenti/specifiche+tecniche/specifiche+tecniche+comunicazioni/fatture+e+corrispettivi+st)   
 
+Nella cartella [Specifiche tecniche](https://github.com/BananaAccounting/Italia/tree/master/Iva/2017/Specifiche) si trova la documentazione relativa.
