@@ -2,7 +2,7 @@
 
 Informazioni per la programmazione.
 
-#Riferimenti
+# Riferimenti
 * Liquidazione IVA periodica (Modulo cartaceo)[http://www.agenziaentrate.gov.it/wps/wcm/connect/f8544907-3410-4ad0-a6c8-84a03f91868b/IVA+period_2017_mod_istr.pdf?MOD=AJPERES&CACHEID=f8544907-3410-4ad0-a6c8-84a03f91868b]
 * [Comunicazioni Liquidazioni periodiche IVA](http://www.informazionefiscale.it/IMG/pdf/comunicazione_liquidazioni_iva_trimestrali_modello.pdf) 
 Nella cartella [Specifiche tecniche](https://github.com/BananaAccounting/Italia/tree/master/Iva/2017/Specifiche) si trova la documentazione relativa.
@@ -32,8 +32,13 @@ A livello di parametri app si indica
 * Partita IVA (Proprietà indirizzo)
 * Mese o trimestre (dialogo scelta periodo)
 * Totale operazioni attive
+  VatTaxable delle operazioni di vendita 
+  (bisogna capire quali codici IVA includere o gruppi)
 * Totale operazioni passive
+  VaxTaxable delle operazioni di acquisto.
 * IVA esigibile
+  Il totale VatAmount delle operazioni di vendita
+  (bisogna capire quali codici IVA includere o gruppi)
 * IVA detratta
 * IVA a debito o credito (Calcolata)
 * IVA da versare o a credito (Calcolata)
@@ -48,8 +53,5 @@ A livello di parametri app si indica
 * Acconto dovuto
 
 
-
-Banana intende sviluppare in modo condiviso le esportazioni di dati nei formati richiesti dall'Agenzia delle entrate.
-Vedi [Roadmap Spesometro 2017](https://www.banana.ch/it/node/9944)
 
 
