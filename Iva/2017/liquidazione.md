@@ -3,7 +3,7 @@
 Informazioni per la programmazione.
 
 # Riferimenti
-* Liquidazione IVA periodica (Modulo cartaceo)[http://www.agenziaentrate.gov.it/wps/wcm/connect/f8544907-3410-4ad0-a6c8-84a03f91868b/IVA+period_2017_mod_istr.pdf?MOD=AJPERES&CACHEID=f8544907-3410-4ad0-a6c8-84a03f91868b]
+* Liquidazione IVA periodica (Modulo PDF)[http://www.agenziaentrate.gov.it/wps/wcm/connect/f8544907-3410-4ad0-a6c8-84a03f91868b/IVA+period_2017_mod_istr.pdf?MOD=AJPERES&CACHEID=f8544907-3410-4ad0-a6c8-84a03f91868b ]
 * [Comunicazioni Liquidazioni periodiche IVA](http://www.informazionefiscale.it/IMG/pdf/comunicazione_liquidazioni_iva_trimestrali_modello.pdf) 
 Nella cartella [Specifiche tecniche](https://github.com/BananaAccounting/Italia/tree/master/Iva/2017/Specifiche) si trova la documentazione relativa.
 
