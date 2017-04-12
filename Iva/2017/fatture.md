@@ -2,7 +2,8 @@
 
 Informazioni per la programmazione.
 
-# Riferimenti
+## Riferimenti
+* [Spiegazioni codici e gruppi IVA](https://github.com/BananaAccounting/Italia/blob/master/Iva/2017/codiciIVA.md)
 
 
 ## Domande preliminari
