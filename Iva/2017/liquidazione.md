@@ -33,9 +33,10 @@ A livello di parametri app si indica
 * Mese o trimestre (dialogo scelta periodo)
 * Totale operazioni attive
   VatTaxable delle operazioni di vendita 
-  (bisogna capire quali codici IVA includere o gruppi)
+  Gruppi primo livello V e C
 * Totale operazioni passive
   VaxTaxable delle operazioni di acquisto.
+  Gruppi primo livello A
 * IVA esigibile
   Il totale VatAmount delle operazioni di vendita
   (bisogna capire quali codici IVA includere o gruppi)
