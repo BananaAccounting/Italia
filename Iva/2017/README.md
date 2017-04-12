@@ -7,6 +7,7 @@ Vedi [Roadmap Spesometro 2017](https://www.banana.ch/it/node/9944)
 ## Sviluppo
 * [Sviluppo trasmissione dati fatture](https://github.com/BananaAccounting/Italia/blob/master/Iva/2017/fatture.md)
 * [Sviluppo trasmissione liquidazione IVA](https://github.com/BananaAccounting/Italia/blob/master/Iva/2017/liquidazione.md)
+* [Spiegazioni codici e gruppi IVA](https://github.com/BananaAccounting/Italia/blob/master/Iva/2017/codiciIVA.md)
 
 ## Riferimenti
 * [Spesometro 2017: dati obbligatori da comunicare e scadenza](http://www.informazionefiscale.it/Spesometro-2017-dati-da-comunicare-e-scadenza)
