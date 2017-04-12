@@ -7,6 +7,7 @@ Informazioni per la programmazione.
 * [Comunicazioni Liquidazioni periodiche IVA](http://www.informazionefiscale.it/IMG/pdf/comunicazione_liquidazioni_iva_trimestrali_modello.pdf) 
 Nella cartella [Specifiche tecniche](https://github.com/BananaAccounting/Italia/tree/master/Iva/2017/Specifiche) si trova la documentazione relativa.
 * [Spiegazioni codici e gruppi IVA](https://github.com/BananaAccounting/Italia/blob/master/Iva/2017/codiciIVA.md)
+* [File con tabella Codici e Gruppi IVA di riferimento](https://github.com/BananaAccounting/Italia/raw/master/Iva/2017/TestCases/InventatoIVA2017.ac2)
 
 ## Domande preliminari
 Si tratta di capire se generiamo un documento XML 
