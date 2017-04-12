@@ -4,6 +4,9 @@
 Banana intende sviluppare in modo condiviso le esportazioni di dati nei formati richiesti dall'Agenzia delle entrate.
 Vedi [Roadmap Spesometro 2017](https://www.banana.ch/it/node/9944)
 
+## Sviluppo
+* (Sviluppo trasmissione dati fatture)[fatture.md]
+* (Sviluppo trasmissione liquidazione IVA)[liquidazione.md]
 
 ## Riferimenti
 * [Spesometro 2017: dati obbligatori da comunicare e scadenza](http://www.informazionefiscale.it/Spesometro-2017-dati-da-comunicare-e-scadenza)
