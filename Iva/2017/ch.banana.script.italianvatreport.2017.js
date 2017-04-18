@@ -53,43 +53,14 @@ function exec(inData) {
   //printVatReport(report, stylesheet, param);
   //Banana.Report.preview(report, stylesheet);
 
-  var contextList = [
-  {
-    'name': 'aktjahr',
-    'startdate' : Banana.document.startPeriod(),
-    'enddate' : Banana.document.endPeriod(),
-    'document' : Banana.document
-  }];
-
-  /*var fileName = Banana.document.info("AccountingDataBase","FileNamePreviousYear");
-  if (fileName.length>0) {
-    var documentPreviousYear = Banana.application.openDocument(fileName);
-    if (documentPreviousYear) {
-      contextList.push(
-        {
-          'name':  'prevjahr',
-          'startdate' : documentPreviousYear.startPeriod(),
-          'enddate' : documentPreviousYear.endPeriod(),
-          'document' : documentPreviousYear
-        } );
-    }
-  }
-  getAccountingData(param, contextList);*/
-  return createInstance(param, contextList);
+  return createInstance(param);
 
 }
 
 function initParam()
 {
   var param = {
-  'contextId' : 'yourContextId',
-  'companyId' : 'yourCompanyId',
-  'identifierScheme' : 'http://scheme.xbrl.org',
-  'profitLossGroup' : '02',
-  'accountingBasicCurrency' : '',
-  'accountingOpeningDate' : '',
-  'accountingClosureDate' : '',
-  'accountingYear' : 0,
+  'identifierScheme' : 'http://www.w3.org/2001/XMLSchema-instance',
   };
   
   if (Banana.document)
@@ -108,8 +79,48 @@ function initParam()
    param.accountingYear = openingYear;
   }
  
+  param.schemaRefs = init_schemarefs();
+  param.namespaces = init_namespaces();
   return param;
 }
+
+function init_namespaces()
+{
+  var ns = [
+    {
+      'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:telent:v1',
+      'prefix' : 'xmlns:tm',
+    },
+    {
+      'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:common',
+      'prefix' : 'xmlns:cm',
+    },
+    {
+      'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:sco:common',
+      'prefix' : 'xmlns:sc',
+    },
+    {
+      'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp',
+      'prefix' : 'xmlns:iv',
+    },
+  ];
+  return ns;
+}
+function init_schemarefs()
+{
+  var schemaRefs = [
+    'telematico_v1.xsd',
+    'fornitura_v3.xsd',
+    'typesDati_v3.xsd',
+    'typesProvincie_v3.xsd',
+    'datiFiscali_v4.xsd',
+    'typesFiscali_v4.xsd',
+    'typeEventi_v4.xsd',
+    'fornituraIvp_2017_v1.xsd',
+    'typesIvp_2017_v1.xsd',
+  ];
+  return schemaRefs;
+};
 
 function loadVatCodes(param) 
 {
