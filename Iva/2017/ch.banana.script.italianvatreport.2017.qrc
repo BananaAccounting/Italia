@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+    <file>ch.banana.script.italianvatreport.2017.js</file>
+    <file>ch.banana.script.italianvatreport.2017.createinstance.js</file>
+    <file>ch.banana.script.italianvatreport.2017.xml.js</file>
+ </qresource>
+</RCC>
