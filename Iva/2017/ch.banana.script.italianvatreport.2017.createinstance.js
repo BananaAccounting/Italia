@@ -111,8 +111,9 @@ function createInstance_GetVatTaxable(vatCode, param) {
     return "";
   var amount = param.vatAmounts[vatCode].vatTaxable;
   amount = Banana.SDecimal.abs(amount);
-  amount = Banana.SDecimal.roundNearest(amount, '1');
   if (Banana.SDecimal.isZero(amount))
     return "";
+  //amount = Banana.SDecimal.roundNearest(amount, '1');
+  amount = amount.replace(".",",");
   return amount;
 }

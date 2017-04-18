@@ -40,7 +40,7 @@ function exec(inData) {
   param = verifyParam(param);
   
   // Ask period
-  var selPeriod = Banana.Ui.getPeriod("Vat report period", param.repStartDate, param.repEndDate, true);
+  var selPeriod = Banana.Ui.getPeriod("Vat report period", Banana.document.startPeriod(), Banana.document.endPeriod(), param.repStartDate, param.repEndDate, true);
   if (!selPeriod)
     return;
 
