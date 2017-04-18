@@ -45,14 +45,14 @@ function createInstance_Comunicazione(param)
   var xbrlTrimestre = '';
   if (createInstance_GetAccountingPeriod("m", param).length>0)
     xbrlMese = xml_createElement("iv:Mese", createInstance_GetAccountingPeriod("m", param)) + '\n';
-  if (createInstance_GetAccountingPeriod("q", param).length>0)
+  if (createInstance_GetAccountingPeriod("q", param).length>0 && xbrlMese.length<=0)
     xbrlTrimestre = xml_createElement("iv:Trimestre", createInstance_GetAccountingPeriod("q", param)) + '\n';
   if (xbrlMese.length<=0 && xbrlTrimestre.length<=0){
       Banana.document.addMessage( "Periodo non valido. Selezionare un mese oppure un trimestre.", "Errore");
       return '';
   }
-  var xbrlTotaleOperazioniAttive = xml_createElement("iv:TotaleOperazioniAttive", createInstance_GetVatTaxable("V", param)) + '\n';
-  var xbrlTotaleOperazioniPassive = xml_createElement("iv:TotaleOperazioniPassive", createInstance_GetVatTaxable("A", param)) + '\n';
+  var xbrlTotaleOperazioniAttive = xml_createElement("iv:TotaleOperazioniAttive", createInstance_GetVatTaxable("OPATTIVE", param)) + '\n';
+  var xbrlTotaleOperazioniPassive = xml_createElement("iv:TotaleOperazioniPassive", createInstance_GetVatTaxable("OPPASSIVE", param)) + '\n';
   xbrlContent = '\n' + xbrlMese + xbrlTrimestre + xbrlTotaleOperazioniAttive + xbrlTotaleOperazioniPassive;
   var xbrlModulo = '\n' + xml_createElement("iv:Modulo", xbrlContent) + '\n';
   var xbrlDatiContabili =  xml_createElement("iv:DatiContabili", xbrlModulo) + '\n';
@@ -112,5 +112,7 @@ function createInstance_GetVatTaxable(vatCode, param) {
   var amount = param.vatAmounts[vatCode].vatTaxable;
   amount = Banana.SDecimal.abs(amount);
   amount = Banana.SDecimal.roundNearest(amount, '1');
+  if (Banana.SDecimal.isZero(amount))
+    return "";
   return amount;
 }

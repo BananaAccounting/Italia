@@ -32,14 +32,18 @@ function exec(inData) {
   if (!Banana.document)
     return;
 
+  var param = initParam();
+  var savedParam = Banana.document.scriptReadSettings();
+  if (savedParam.length > 0) {
+    param = JSON.parse(savedParam);
+  }
+  param = verifyParam(param);
+  
   // Ask period
-  var accStartDate = Banana.document.startPeriod();
-  var accEndDate = Banana.document.endPeriod();
-  var selPeriod = Banana.Ui.getPeriod("Vat report period", accStartDate, accEndDate);
+  var selPeriod = Banana.Ui.getPeriod("Vat report period", param.repStartDate, param.repEndDate, true);
   if (!selPeriod)
     return;
 
-  var param = initParam();
   if (selPeriod.selectionChecked) {
     param.repStartDate = selPeriod.selectionStartDate;
     param.repEndDate = selPeriod.selectionEndDate;
@@ -49,6 +53,9 @@ function exec(inData) {
     param.repEndDate = selPeriod.endDate;
   }
 
+  var paramToString = JSON.stringify(param);
+  var value = Banana.document.scriptSaveSettings(paramToString);
+  
   // Calculate vat amounts for each vat code
   param = loadVatCodes(param);
 
@@ -66,6 +73,12 @@ function exec(inData) {
 function initParam()
 {
   var param = {};
+  param.repStartDate = '';
+  param.repEndDate = '';
+  if (Banana.document) {
+    param.repStartDate = Banana.document.startPeriod();
+    param.repEndDate = Banana.document.endPeriod();
+  }
   param.schemaRefs = init_schemarefs();
   param.namespaces = init_namespaces();
   return param;
@@ -151,7 +164,7 @@ function loadVatCodes(param)
   vatCodes = findVatCodes(tableVatCodes, "Gr", "C-REG");
   param.vatAmounts["C-REG"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), param.repStartDate, param.repEndDate);
   param.vatAmounts["C"] = sumVatAmounts(param.vatAmounts, ["C-NVE","C-VEN","C-REG"]);
-
+  
   // A = Acquisti
   vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM");
   param.vatAmounts["A-IM"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), param.repStartDate, param.repEndDate);
@@ -192,6 +205,13 @@ function loadVatCodes(param)
   param.vatAmounts["difference"] = substractVatAmounts(param.vatAmounts["C"], param.vatAmounts["difference"]);
   param.vatAmounts["difference"] = substractVatAmounts(param.vatAmounts["A"], param.vatAmounts["difference"]);
   param.vatAmounts["difference"].vatTaxable = "";
+
+  //Operazioni attive
+  param.vatAmounts["OPATTIVE"] = sumVatAmounts(param.vatAmounts, ["V","C"]);
+
+  //Operazioni passive
+  param.vatAmounts["OPPASSIVE"] = sumVatAmounts(param.vatAmounts, ["A"]);
+
   return param;
 }
 
@@ -308,3 +328,10 @@ function sumVatAmounts(vatAmounts, codesToSum) {
   return sum;
 }
 
+function verifyParam(param) {
+   if (!param.repStartDate)
+     param.repStartDate = '';
+   if (!param.repEndDate)
+     param.repEndDate = '';
+   return param;
+}
