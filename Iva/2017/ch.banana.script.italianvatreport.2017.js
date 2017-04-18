@@ -40,13 +40,19 @@ function exec(inData) {
     return;
 
   var param = initParam();
-  param.repStartDate = selPeriod.startDate;
-  param.repEndDate = selPeriod.endDate;
+  if (selPeriod.selectionChecked) {
+    param.repStartDate = selPeriod.selectionStartDate;
+    param.repEndDate = selPeriod.selectionEndDate;
+  }
+  else {
+    param.repStartDate = selPeriod.startDate;
+    param.repEndDate = selPeriod.endDate;
+  }
 
   // Calculate vat amounts for each vat code
   param = loadVatCodes(param);
 
-  //Stampa totali
+  //Test
   //Banana.Ui.showText(JSON.stringify(param.vatAmounts, null, 3));
   //var report = Banana.Report.newReport("Report title");
   //var stylesheet = Banana.Report.newStyleSheet();
@@ -59,26 +65,7 @@ function exec(inData) {
 
 function initParam()
 {
-  var param = {
-  'identifierScheme' : 'http://www.w3.org/2001/XMLSchema-instance',
-  };
-  
-  if (Banana.document)
-  {
-   param.accountingBasicCurrency = Banana.document.info("AccountingDataBase", "BasicCurrency");
-   param.accountingOpeningDate = Banana.document.info("AccountingDataBase", "OpeningDate");
-   param.accountingClosureDate = Banana.document.info("AccountingDataBase", "ClosureDate");
-
-  var openingYear = 0;
-  var closureYear = 0;
-  if (param.accountingOpeningDate.length >= 10)
-    openingYear = param.accountingOpeningDate.substring(0, 4);
-  if (param.accountingClosureDate.length >= 10)
-    closureYear = param.accountingClosureDate.substring(0, 4);
-  if (openingYear > 0 && openingYear === closureYear)
-   param.accountingYear = openingYear;
-  }
- 
+  var param = {};
   param.schemaRefs = init_schemarefs();
   param.namespaces = init_namespaces();
   return param;
