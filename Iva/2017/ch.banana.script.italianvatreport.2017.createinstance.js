@@ -67,6 +67,8 @@ function createInstance_Comunicazione(param)
     xbrlDebitoPeriodoPrecedente = xml_createElement("iv:DebitoPrecedente", createInstance_GetVatAmount("L-CI", "vatAmount", param)) + '\n';
   else
     xbrlCreditoPeriodoPrecedente = xml_createElement("iv:CreditoPeriodoPrecedente", createInstance_GetVatAmount("L-CI", "vatAmount", param)) + '\n';
+  var xbrlCreditoAnnoPrecedente = xml_createElement("iv:CreditoAnnoPrecedente", createInstance_GetVatAmount("L-CIA", "vatAmount", param)) + '\n';
+  var xbrlInteressiDovuti = xml_createElement("iv:InteressiDovuti", createInstance_GetVatAmount("L-INT", "vatAmount", param)) + '\n';
   var xbrlAcconto = xml_createElement("iv:Acconto", createInstance_GetVatAmount("L-AC", "vatAmount", param)) + '\n';
   var xbrlImportoDaVersare = '';
   var xbrlImportoACredito = '';
@@ -77,7 +79,7 @@ function createInstance_Comunicazione(param)
 
 
   xbrlContent = '\n' + xbrlMese + xbrlTrimestre + xbrlTotaleOperazioniAttive + xbrlTotaleOperazioniPassive + xbrlIvaEsigibile + xbrlIvaDetratta + xbrlIvaDovuta + xbrlIvaCredito;
-  xbrlContent += xbrlDebitoPeriodoPrecedente + xbrlCreditoPeriodoPrecedente + xbrlAcconto + xbrlImportoDaVersare + xbrlImportoACredito;
+  xbrlContent += xbrlDebitoPeriodoPrecedente + xbrlCreditoPeriodoPrecedente + xbrlCreditoAnnoPrecedente + xbrlInteressiDovuti + xbrlAcconto + xbrlImportoDaVersare + xbrlImportoACredito;
   var xbrlModulo = '\n' + xml_createElement("iv:Modulo", xbrlContent) + '\n';
   var xbrlDatiContabili =  xml_createElement("iv:DatiContabili", xbrlModulo) + '\n';
   
