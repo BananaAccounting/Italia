@@ -38,7 +38,7 @@ function settingsDialog() {
   }
   param = verifyParam(param);
 
-  param.interestRate = Banana.Ui.getText('Settings', 'Percentuale interesse per liquidazioni trimestrali', param.interestRate);
+  param.interestRate = Banana.Ui.getText('Settings', 'Interesse per liquidazioni trimestrali (%)', param.interestRate);
   if (param.interestRate === undefined)
     return;
 
