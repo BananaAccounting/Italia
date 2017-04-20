@@ -22,37 +22,38 @@ Si tratta di capire se generiamo un documento XML
 * Dichiarazione di gruppo o appartenente a un gruppo
 * Subfornitorie
 * Eventi eccezionali
+* Nome file esportato in xml deve contenere il codice fiscale, al momento non è possibile (IT99999999999_DF_00001.xml)
+* Versamento auto UE (non ancora immesso)
+* Crediti d'imposta (non ancora immesso)
  
 ## Parametri applicativo 
-A livello di parametri app si indica 
-* Se la trasmissione è mensile o trimestrale
-* Dichiarante partita iva
-* Dichiarante codice fiscale
-  
+
+## Dialoghi applicativo 
+* Dialogo periodo scelta se mensile o trimestrale
+
 ## Valori ripresi dalla contabilità
-* Partita IVA (Proprietà indirizzo)
-* Mese o trimestre (dialogo scelta periodo)
+* Partita IVA (Proprietà file, indirizzo)
+* Codice fiscale (Proprietà file, indirizzo)
 * Totale operazioni attive
   VatTaxable delle operazioni di vendita 
-  Gruppi primo livello V e C
+  Codici IVA con colonna Gr primo livello V e C
 * Totale operazioni passive
   VaxTaxable delle operazioni di acquisto.
-  Gruppi primo livello A
+  Codici IVA con colonna Gr con primo livello A
 * IVA esigibile
-  Il totale VatAmount delle operazioni di vendita
-  (bisogna capire quali codici IVA includere o gruppi)
+  Il totale VatAmount del totale operazioni attive
 * IVA detratta
-* IVA a debito o credito (Calcolata)
-* IVA da versare o a credito (Calcolata)
+  Il totale VatAmount del totale operazioni passive
+* IVA a debito o credito (Calcolata) 
+  Differenza esigibile meno detratta
+* Debito/Credito periodo precedente (Codice IVA L-CI)
+* Credito anno precedente (Codice IVA L-CIA)
+* Interessi (Codice IVA L-INT)
+  1% calcolato e visualizzato nella stampa
+* Acconto dovuto (Codice IVA L-ACC)
+* IVA da versare o a credito (Calcolata in base a tutti gli elementi indicati qui sopra)
 
-## Valori immessi manualmente (dialogo??)
-* Debito periodo precedente
-* Credito periodo precedente
-* Credito anno precedente
-* Versamento auto UE
-* Crediti d'imposta
-* Interessi
-* Acconto dovuto
+
 
 
 
