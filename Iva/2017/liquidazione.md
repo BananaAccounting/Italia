@@ -27,6 +27,7 @@ Si tratta di capire se generiamo un documento XML
 * Crediti d'imposta (non ancora immesso)
  
 ## Parametri applicativo 
+* Percentuale interessi dovuti per liquidazione trimetrale
 
 ## Dialoghi applicativo 
 * Dialogo periodo scelta se mensile o trimestrale
@@ -41,9 +42,9 @@ Si tratta di capire se generiamo un documento XML
   VaxTaxable delle operazioni di acquisto.
   Codici IVA con colonna Gr con primo livello A
 * IVA esigibile
-  Il totale VatAmount del totale operazioni attive
+  Il totale VatPosted del totale operazioni attive
 * IVA detratta
-  Il totale VatAmount del totale operazioni passive
+  Il totale VatPosted del totale operazioni passive
 * IVA a debito o credito (Calcolata) 
   Differenza esigibile meno detratta
 * Debito/Credito periodo precedente (Codice IVA L-CI)
