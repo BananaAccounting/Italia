@@ -4,7 +4,7 @@ Informazioni per la programmazione.
 
 ## Riferimenti
 * [Spiegazioni codici e gruppi IVA](https://github.com/BananaAccounting/Italia/blob/master/Iva/2017/codiciIVA.md)
-* [Invio dati fattura e spesometro:ecco i chiarimenti dell’Agenzia](http://www.fiscooggi.it/normativa-e-prassi/articolo/invio-dati-fattura-e-spesometroecco-chiarimenti-dell-agenzia)
+* [Fiscooggi.it: Invio dati fattura e spesometro](http://www.fiscooggi.it/normativa-e-prassi/articolo/invio-dati-fattura-e-spesometroecco-chiarimenti-dell-agenzia)
 
 
 ## Domande preliminari
