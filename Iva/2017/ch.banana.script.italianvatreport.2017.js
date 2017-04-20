@@ -75,6 +75,46 @@ function exec(inData) {
 
 }
 
+function calculateInterestAmount(param) {
+  var vatTotalWithoutInterest = substractVatAmounts(param.vatAmounts["Total"], param.vatAmounts["L-INT"]);
+  if (Banana.SDecimal.sign(vatTotalWithoutInterest.vatAmount)<=0) {
+    var interestAmount = Banana.SDecimal.abs(vatTotalWithoutInterest.vatAmount) * 1 /100;
+    interestAmount = Banana.SDecimal.roundNearest(interestAmount, '0.01');
+    return interestAmount.toString();
+  }
+  return '';
+}
+
+function findVatCodes(table, column, code) {
+  var vatCodes = [];
+  for (var rowNr=0; rowNr < table.rowCount; rowNr++) {
+  var gr1Codes = table.value(rowNr, column).split(";");
+  if (gr1Codes.indexOf(code) >= 0) {
+    var vatCode = table.value(rowNr, "VatCode").split(";");
+    vatCodes.push(vatCode);
+  }
+  }
+  return vatCodes;
+}
+
+function getVatTotalFromBanana(startDate, endDate) {
+  var total =  {
+  vatAmount : "",
+  vatTaxable : "",
+  vatNotDeductible : "",
+  vatPosted : ""
+  };
+
+  var tableVatReport = Banana.document.vatReport(startDate, endDate);
+  var totalRow = tableVatReport.findRowByValue("Group", "_tot_");
+  total.vatAmount = totalRow.value("VatAmount");
+  total.vatTaxable = totalRow.value("VatTaxable");
+  total.vatNotDeductible = totalRow.value("VatNonDeductible");
+  total.vatPosted = totalRow.value("VatPosted");
+
+  return total;
+}
+
 function initParam()
 {
   var param = {};
@@ -190,27 +230,32 @@ function printVatReport2(report, stylesheet, param) {
   headerRow.addCell("");
   headerRow.addCell("");
   headerRow.addCell("");
+  headerRow.addCell("");
 
   // Print vat amounts
   var row = table.addRow();
   row.addCell("VP2");
   row.addCell("Totale operazioni attive (al netto dell'IVA)", "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["OPATTIVE"].vatTaxable)), "amount");
+  row.addCell("");
 
   row = table.addRow();
   row.addCell("VP3");
   row.addCell("Totale operazioni passive (al netto dell'IVA)", "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["OPPASSIVE"].vatTaxable)), "amount");
+  row.addCell("");
 
   row = table.addRow();
   row.addCell("VP4");
   row.addCell("IVA esigibile", "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["OPATTIVE"].vatAmount)), "amount");
+  row.addCell("");
   
   row = table.addRow();
   row.addCell("VP5");
   row.addCell("IVA detratta", "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["OPPASSIVE"].vatAmount)), "amount");
+  row.addCell("");
 
   row = table.addRow();
   row.addCell("VP6");
@@ -219,6 +264,7 @@ function printVatReport2(report, stylesheet, param) {
   else
     row.addCell("IVA a credito", "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["OPDIFFERENZA"].vatAmount)), "amount");
+  row.addCell("");
   
   row = table.addRow();
   row.addCell("VP7");
@@ -227,6 +273,7 @@ function printVatReport2(report, stylesheet, param) {
     row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-CI"].vatAmount)), "amount");
   else
     row.addCell("", "amount");
+  row.addCell("");
 
   row = table.addRow();
   row.addCell("VP8");
@@ -235,31 +282,42 @@ function printVatReport2(report, stylesheet, param) {
     row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-CI"].vatAmount)), "amount");
   else
     row.addCell("", "amount");
+  row.addCell("");
 
   row = table.addRow();
   row.addCell("VP9");
   row.addCell("Credito anno precedente", "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-CIA"].vatAmount)), "amount");
+  row.addCell("");
 
   row = table.addRow();
   row.addCell("VP10");
   row.addCell("Versamenti auto UE", "description");
   row.addCell("", "amount");
+  row.addCell("");
 
   row = table.addRow();
   row.addCell("VP11");
   row.addCell("Crediti d'imposta", "description");
   row.addCell("", "amount");
+  row.addCell("");
 
   row = table.addRow();
   row.addCell("VP12");
   row.addCell("Interessi dovuti per liquidazioni trimestrali", "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-INT"].vatAmount)), "amount");
+  /*propone interessi se importo è diverso da quello visualizzato*/
+  var calculatedAmount = calculateInterestAmount(param);
+  if (Banana.SDecimal.abs(param.vatAmounts["L-INT"].vatAmount) != calculatedAmount && !Banana.SDecimal.isZero(calculatedAmount))
+    row.addCell("Interesse calcolato " + Banana.Converter.toLocaleNumberFormat(calculatedAmount), "amount");
+  else
+    row.addCell("");
 
   row = table.addRow();
   row.addCell("VP13");
   row.addCell("Acconto dovuto", "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-AC"].vatAmount)), "amount");
+  row.addCell("");
 
   row = table.addRow();
   row.addCell("VP14");
@@ -268,37 +326,8 @@ function printVatReport2(report, stylesheet, param) {
   else
     row.addCell("IVA a credito", "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["Total"].vatAmount)), "amount");
+  row.addCell("");
 
-}
-
-function findVatCodes(table, column, code) {
-  var vatCodes = [];
-  for (var rowNr=0; rowNr < table.rowCount; rowNr++) {
-  var gr1Codes = table.value(rowNr, column).split(";");
-  if (gr1Codes.indexOf(code) >= 0) {
-    var vatCode = table.value(rowNr, "VatCode").split(";");
-    vatCodes.push(vatCode);
-  }
-  }
-  return vatCodes;
-}
-
-function getVatTotalFromBanana(startDate, endDate) {
-  var total =  {
-  vatAmount : "",
-  vatTaxable : "",
-  vatNotDeductible : "",
-  vatPosted : ""
-  };
-
-  var tableVatReport = Banana.document.vatReport(startDate, endDate);
-  var totalRow = tableVatReport.findRowByValue("Group", "_tot_");
-  total.vatAmount = totalRow.value("VatAmount");
-  total.vatTaxable = totalRow.value("VatTaxable");
-  total.vatNotDeductible = totalRow.value("VatNonDeductible");
-  total.vatPosted = totalRow.value("VatPosted");
-
-  return total;
 }
 
 function substractVatAmounts(vatAmounts1, vatAmounts2) {
