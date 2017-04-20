@@ -22,10 +22,29 @@
 // @includejs = ch.banana.script.italianvatreport.2017.createinstance.js
 // @includejs = ch.banana.script.italianvatreport.2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-04-14
+// @pubdate = 2017-04-20
 // @publisher = Banana.ch SA
 // @task = export.file
 // @timeout = -1
+
+/*
+ * Update script's parameters
+*/
+function settingsDialog() {
+  var param = initParam();
+  var savedParam = Banana.document.scriptReadSettings();
+  if (savedParam.length > 0) {
+    param = JSON.parse(savedParam);
+  }
+  param = verifyParam(param);
+
+  param.interestRate = Banana.Ui.getText('Settings', 'Percentuale interesse per liquidazioni trimestrali', param.interestRate);
+  if (param.interestRate === undefined)
+    return;
+
+  var paramToString = JSON.stringify(param);
+  var value = Banana.document.scriptSaveSettings(paramToString);
+}
 
 function exec(inData) {
 
@@ -76,9 +95,14 @@ function exec(inData) {
 }
 
 function calculateInterestAmount(param) {
+  //calcolato solo per stampe trimestrali
+  if (getPeriod("q", param).length<=0)
+    return '';
+  
   var vatTotalWithoutInterest = substractVatAmounts(param.vatAmounts["Total"], param.vatAmounts["L-INT"]);
-  if (Banana.SDecimal.sign(vatTotalWithoutInterest.vatAmount)<=0) {
-    var interestAmount = Banana.SDecimal.abs(vatTotalWithoutInterest.vatAmount) * 1 /100;
+  if (Banana.SDecimal.sign(vatTotalWithoutInterest.vatPosted)<=0) {
+    var interestRate = Banana.SDecimal.round(param.interestRate, {'decimals':2});
+    var interestAmount = Banana.SDecimal.abs(vatTotalWithoutInterest.vatPosted) * interestRate /100;
     interestAmount = Banana.SDecimal.roundNearest(interestAmount, '0.01');
     return interestAmount.toString();
   }
@@ -95,6 +119,33 @@ function findVatCodes(table, column, code) {
   }
   }
   return vatCodes;
+}
+
+function getPeriod(format, param) {
+  var fromDate = Banana.Converter.toDate(param.repStartDate);
+  var toDate = Banana.Converter.toDate(param.repEndDate);
+  var firstDayOfPeriod = 1;
+  var lastDayOfPeriod = new Date(toDate.getFullYear(),toDate.getMonth()+1,0).getDate().toString();
+  if (fromDate.getDate() != firstDayOfPeriod)
+    return "";
+  if (toDate.getDate() != lastDayOfPeriod)
+    return "";
+  if (format === "y") {
+    if (fromDate.getFullYear() === toDate.getFullYear())
+      return fromDate.getFullYear();
+  }
+  else if (format === "m") {
+    if (fromDate.getMonth() === toDate.getMonth())
+      return (fromDate.getMonth()+1).toString();
+  }
+  else if (format === "q") {
+    var q = [1,2,3,4];
+    var q1 = q[Math.floor(fromDate.getMonth() / 3)];  
+    var q2 = q[Math.floor(toDate.getMonth() / 3)];  
+    if (q1 === q2)
+      return q1.toString();
+  }
+  return "";
 }
 
 function getVatTotalFromBanana(startDate, endDate) {
@@ -120,6 +171,7 @@ function initParam()
   var param = {};
   param.repStartDate = '';
   param.repEndDate = '';
+  param.interestRate = '1';
   if (Banana.document) {
     param.repStartDate = Banana.document.startPeriod();
     param.repEndDate = Banana.document.endPeriod();
@@ -175,6 +227,7 @@ function printVatReport1(report, stylesheet, param) {
   stylesheet.addStyle(".amount", "text-align: right");
   stylesheet.addStyle(".period", "font-size: 10px; padding-top: 1em;padding-bottom: 1em;");
   stylesheet.addStyle(".vatNumber", "font-size: 10px");
+  stylesheet.addStyle(".warning", "color: red;font-size:8px;");
   stylesheet.addStyle(".total1", "border-bottom:1px double black;font-weight:bold;padding-top:10px;");
   stylesheet.addStyle(".total2", "border-bottom:1px double black;font-weight:bold;padding-top:10px;");
   stylesheet.addStyle(".total3", "border-bottom:1px solid black;padding-top:10px");
@@ -248,29 +301,29 @@ function printVatReport2(report, stylesheet, param) {
   row = table.addRow();
   row.addCell("VP4");
   row.addCell("IVA esigibile", "description");
-  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["OPATTIVE"].vatAmount)), "amount");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["OPATTIVE"].vatPosted)), "amount");
   row.addCell("");
   
   row = table.addRow();
   row.addCell("VP5");
   row.addCell("IVA detratta", "description");
-  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["OPPASSIVE"].vatAmount)), "amount");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["OPPASSIVE"].vatPosted)), "amount");
   row.addCell("");
 
   row = table.addRow();
   row.addCell("VP6");
-  if (Banana.SDecimal.sign(param.vatAmounts["OPDIFFERENZA"].vatAmount)<=0)
+  if (Banana.SDecimal.sign(param.vatAmounts["OPDIFFERENZA"].vatPosted)<=0)
     row.addCell("IVA dovuta", "description");
   else
     row.addCell("IVA a credito", "description");
-  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["OPDIFFERENZA"].vatAmount)), "amount");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["OPDIFFERENZA"].vatPosted)), "amount");
   row.addCell("");
   
   row = table.addRow();
   row.addCell("VP7");
   row.addCell("Debito periodo precedente", "description");
-  if (Banana.SDecimal.sign(param.vatAmounts["L-CI"].vatAmount)<=0)
-    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-CI"].vatAmount)), "amount");
+  if (Banana.SDecimal.sign(param.vatAmounts["L-CI"].vatPosted)<=0)
+    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-CI"].vatPosted)), "amount");
   else
     row.addCell("", "amount");
   row.addCell("");
@@ -278,8 +331,8 @@ function printVatReport2(report, stylesheet, param) {
   row = table.addRow();
   row.addCell("VP8");
   row.addCell("Credito periodo precedente", "description");
-  if (Banana.SDecimal.sign(param.vatAmounts["L-CI"].vatAmount)>=0)
-    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-CI"].vatAmount)), "amount");
+  if (Banana.SDecimal.sign(param.vatAmounts["L-CI"].vatPosted)>=0)
+    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-CI"].vatPosted)), "amount");
   else
     row.addCell("", "amount");
   row.addCell("");
@@ -287,7 +340,7 @@ function printVatReport2(report, stylesheet, param) {
   row = table.addRow();
   row.addCell("VP9");
   row.addCell("Credito anno precedente", "description");
-  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-CIA"].vatAmount)), "amount");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-CIA"].vatPosted)), "amount");
   row.addCell("");
 
   row = table.addRow();
@@ -305,27 +358,27 @@ function printVatReport2(report, stylesheet, param) {
   row = table.addRow();
   row.addCell("VP12");
   row.addCell("Interessi dovuti per liquidazioni trimestrali", "description");
-  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-INT"].vatAmount)), "amount");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-INT"].vatPosted)), "amount");
   /*propone interessi se importo è diverso da quello visualizzato*/
   var calculatedAmount = calculateInterestAmount(param);
-  if (Banana.SDecimal.abs(param.vatAmounts["L-INT"].vatAmount) != calculatedAmount && !Banana.SDecimal.isZero(calculatedAmount))
-    row.addCell("Interesse calcolato " + Banana.Converter.toLocaleNumberFormat(calculatedAmount), "amount");
+  if (Banana.SDecimal.abs(param.vatAmounts["L-INT"].vatPosted) != calculatedAmount && !Banana.SDecimal.isZero(calculatedAmount))
+    row.addCell("Interessi dovuti per liquidazione trimestrale (" + param.interestRate + "% EUR " + Banana.Converter.toLocaleNumberFormat(calculatedAmount) + ") non registrati correttamente", "amount warning");
   else
     row.addCell("");
 
   row = table.addRow();
   row.addCell("VP13");
   row.addCell("Acconto dovuto", "description");
-  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-AC"].vatAmount)), "amount");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["L-AC"].vatPosted)), "amount");
   row.addCell("");
 
   row = table.addRow();
   row.addCell("VP14");
-  if (Banana.SDecimal.sign(param.vatAmounts["Total"].vatAmount)<=0)
+  if (Banana.SDecimal.sign(param.vatAmounts["Total"].vatPosted)<=0)
     row.addCell("IVA da versare", "description");
   else
     row.addCell("IVA a credito", "description");
-  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["Total"].vatAmount)), "amount");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param.vatAmounts["Total"].vatPosted)), "amount");
   row.addCell("");
 
 }
@@ -527,5 +580,7 @@ function verifyParam(param) {
      param.repStartDate = '';
    if (!param.repEndDate)
      param.repEndDate = '';
+   if(!param.interestRate)
+     param.interestRate = '1';
    return param;
 }
