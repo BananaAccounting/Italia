@@ -14,7 +14,7 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italianvatreport.2017.js
-// @description = Comunicazione periodica IVA 2017 formato xml
+// @description = Comunicazione periodica IVA 2017(file xml)
 // @doctype = *;110
 // @encoding = utf-8
 // @exportfilename = IT99999999999_LI_00001
