@@ -98,8 +98,6 @@ function initParam()
     param.repStartDate = Banana.document.startPeriod();
     param.repEndDate = Banana.document.endPeriod();
   }
-  param.schemaRefs = init_schemarefs();
-  param.namespaces = init_namespaces();
   return param;
 }
 
@@ -108,7 +106,11 @@ function init_namespaces()
   var ns = [
     {
       'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2',
-      'prefix' : 'xmlns:ns2',
+      'prefix' : 'xmlns:ns2'
+    },
+    {
+      'namespace' : 'http://www.w3.org/2001/XMLSchema-instance',
+      'prefix' : 'xmlns:xsi'
     },
   ];
   return ns;
@@ -116,13 +118,16 @@ function init_namespaces()
 function init_schemarefs()
 {
   var schemaRefs = [
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/DatiFattura_v2.0.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/DatiFattura_v1.0.xsd',
   ];
   return schemaRefs;
 };
 
 function loadData(param)
 {
+  param.schemaRefs = init_schemarefs();
+  param.namespaces = init_namespaces();
+
   var journal = Banana.document.journal(
     Banana.document.ORIGINTYPE_CURRENT, Banana.document.ACCOUNTTYPE_NORMAL);
   var filteredRows = journal.findRows(loadData_filterTransactions);

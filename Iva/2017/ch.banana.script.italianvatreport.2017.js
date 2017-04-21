@@ -78,6 +78,8 @@ function exec(inData) {
   // Calculate vat amounts for each vat code
   param = vatCodesLoad(param);
   param = vatCodesAddStyle(param);
+  param.schemaRefs = init_schemarefs();
+  param.namespaces = init_namespaces();
 
   var output = createInstance(param)
 
@@ -176,8 +178,6 @@ function initParam()
     param.repStartDate = Banana.document.startPeriod();
     param.repEndDate = Banana.document.endPeriod();
   }
-  param.schemaRefs = init_schemarefs();
-  param.namespaces = init_namespaces();
   return param;
 }
 
@@ -200,21 +200,25 @@ function init_namespaces()
       'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp',
       'prefix' : 'xmlns:iv',
     },
+    {
+      'namespace' : 'http://www.w3.org/2001/XMLSchema-instance',
+      'prefix' : 'xmlns:xsi'
+    },
   ];
   return ns;
 }
 function init_schemarefs()
 {
   var schemaRefs = [
-    'telematico_v1.xsd',
-    'fornitura_v3.xsd',
-    'typesDati_v3.xsd',
-    'typesProvincie_v3.xsd',
-    'datiFiscali_v4.xsd',
-    'typesFiscali_v4.xsd',
-    'typeEventi_v4.xsd',
-    'fornituraIvp_2017_v1.xsd',
-    'typesIvp_2017_v1.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/telematico_v1.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fornitura_v3.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesDati_v3.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesProvincie_v3.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/datiFiscali_v4.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesFiscali_v4.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typeEventi_v4.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fornituraIvp_2017_v1.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesIvp_2017_v1.xsd',
   ];
   return schemaRefs;
 };
