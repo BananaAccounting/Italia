@@ -25,12 +25,15 @@ Si tratta di capire se generiamo un documento XML
 * Nome file esportato in xml deve contenere il codice fiscale, al momento non è possibile (IT99999999999_DF_00001.xml)
 * Versamento auto UE (non ancora immesso)
 * Crediti d'imposta (non ancora immesso)
- 
+* Separazione mensile è necessaria o se la liquidazione è trimestrale le ditte scelgono anche il periodo trimestrale? 
+
+
 ## Parametri applicativo 
 * Percentuale interessi dovuti per liquidazione trimetrale
 
 ## Dialoghi applicativo 
-* Dialogo periodo scelta se mensile o trimestrale
+* Dialogo periodo scelta periodo.
+  Si deve scegliere trimestre, se si sceglie un altro periodo la dichiarazione viene fatta per tutto il periodo.
 
 ## Valori ripresi dalla contabilità
 * Partita IVA (Proprietà file, indirizzo)
