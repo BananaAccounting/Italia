@@ -21,7 +21,7 @@ function createInstance(param)
   var xbrlDTE = createInstance_DTE(param);
 
   //<DatiFattura> root element
-  var xbrlContent = '\n' + xbrlDatiFatturaHeader + xbrlDTE;
+  var xbrlContent = xbrlDatiFatturaHeader + xbrlDTE;
   var attrsNamespaces = {};
   for (var j in param.namespaces) {
     var prefix = param.namespaces[j]['prefix'];
@@ -34,6 +34,9 @@ function createInstance(param)
     if (schema.length > 0)
       attrsNamespaces['xsi:schemaLocation'] = schema;
   }
+  if (xbrlContent.length>0) {
+    xbrlContent = '\n' + xbrlContent;
+  }
   xbrlContent = xml_createElement("ns2:DatiFattura", xbrlContent, attrsNamespaces);
 
   //Output
@@ -44,32 +47,61 @@ function createInstance(param)
 
 }
 
-function createInstance_DatiFatturaHeader(param) 
+function createInstance_CedentePrestatoreDTE(param) 
 {
-  return '';
-  var xbrlContent =  xml_createElement("Dichiarante");
-  var xbrlHeader =   '\n' + xml_createElement("DatiFatturaHeader", xbrlContent)
-  return xbrlHeader;
+  var xbrlContent = '';
+  
+  //2.1.1   <IdentificativiFiscali>
+  var countryCode = param.fileInfo["Address"]["Country"];
+  if (countryCode.length<=0 || countryCode.length>2)
+    countryCode = 'IT';
+  xbrlContent = '\n' + xml_createElement("IdPaese", countryCode);
+  xbrlContent += '\n' + xml_createElement("IdCodice", param.fileInfo["Address"]["FiscalNumber"]) +'\n';
+  xbrlContent = '\n' + xml_createElement("IdFiscaleIVA", xbrlContent);
+  xbrlContent += '\n' + xml_createElement("CodiceFiscale", param.fileInfo["Address"]["FiscalNumber"]) +'\n';
+  xbrlContent =  '\n' + xml_createElement("IdentificativiFiscali", xbrlContent) +'\n';
+  
+  //2.1.2   <AltriDatiIdentificativi>
+  var xbrlContent2 = '\n' + xml_createElement("Denominazione", param.fileInfo["Address"]["Company"]);
+  xbrlContent2 += '\n' + xml_createElement("Nome", param.fileInfo["Address"]["Name"]);
+  xbrlContent2 += '\n' + xml_createElement("Cognome", param.fileInfo["Address"]["FamilyName"]);
+  var xbrlContent3 = '\n' + xml_createElement("Indirizzo", param.fileInfo["Address"]["Address1"]) +'\n';
+  xbrlContent3 += xml_createElement("NumeroCivico") +'\n';
+  xbrlContent3 += xml_createElement("CAP", param.fileInfo["Address"]["ZIP"]) +'\n';
+  xbrlContent3 += xml_createElement("Comune", param.fileInfo["Address"]["City"]) +'\n';
+  xbrlContent3 += xml_createElement("Provincia", param.fileInfo["Address"]["State"]) +'\n';
+  xbrlContent3 += xml_createElement("Nazione", countryCode) +'\n';
+  xbrlContent2 += '\n' + xml_createElement("Sede", xbrlContent3) +'\n';
+  xbrlContent +=  xml_createElement("AltriDatiIdentificativi", xbrlContent2) +'\n';
+  xbrlContent =  '\n' + xml_createElement("CedentePrestatoreDTE", xbrlContent);
+  return xbrlContent;
 }
 
-/*
-* 
-*/
-function createInstance_CedentePrestatoreDTE(customerAccount, param) 
+function createInstance_CessionarioCommittenteDTE(customerAccount, param) 
 {
   var xbrlContent = '';
   if (customerAccount.length>0) {
     var customerObj = JSON.parse(getAccount(customerAccount));
     if (customerObj) {
-      xbrlContent = '\n' + xml_createElement("IdPaese", "2.1.1.1.1");
-      xbrlContent += '\n' + xml_createElement("IdCodice", "2.1.1.1.2") +'\n';
+
+      //2.1.1   <IdentificativiFiscali>
+      var countryCode = customerObj["CountryCode"];
+      if (countryCode.length<=0 || countryCode.length>2)
+        countryCode = 'IT';
+      xbrlContent = '\n' + xml_createElement("IdPaese", countryCode);
+      xbrlContent += '\n' + xml_createElement("IdCodice", customerObj["FiscalNumber"]) +'\n';
       xbrlContent = '\n' + xml_createElement("IdFiscaleIVA", xbrlContent);
       xbrlContent += '\n' + xml_createElement("CodiceFiscale", customerObj["FiscalNumber"]) +'\n';
       xbrlContent =  '\n' + xml_createElement("IdentificativiFiscali", xbrlContent) +'\n';
-   }
+    }
   }
-  xbrlContent =  '\n' + xml_createElement("CedentePrestatoreDTE", xbrlContent);
+  xbrlContent =  '\n' + xml_createElement("CessionarioCommittenteDTE", xbrlContent);
   return xbrlContent;
+}
+
+function createInstance_DatiFatturaHeader(param) 
+{
+  return '';
 }
 
 /*
@@ -77,7 +109,8 @@ function createInstance_CedentePrestatoreDTE(customerAccount, param)
 */
 function createInstance_DTE(param) 
 {
-  var xbrlContent = '';
+  var xbrlDTE = '';
+  var xbrlContent = createInstance_CedentePrestatoreDTE(param);
   for (var i = 0; i < param.journal.rows.length; i++) {
     var jsonObj = param.journal.rows[i];
     var isCustomer = jsonObj["JInvoiceRowCustomerSupplier"];
@@ -85,10 +118,11 @@ function createInstance_DTE(param)
       continue;
     var customerAccount = jsonObj["JAccount"];
     if (customerAccount.length>0)
-      xbrlContent += createInstance_CedentePrestatoreDTE(customerAccount, param);
+      xbrlContent += createInstance_CessionarioCommittenteDTE(customerAccount, param);
   }
-  if (xbrlContent.length>0)
+  if (xbrlContent.length>0) {
     xbrlContent += '\n';
-  var xbrlDTE =   xml_createElement("DTE", xbrlContent) + '\n';
+    xbrlDTE =  xml_createElement("DTE", xbrlContent) + '\n';
+  }
   return xbrlDTE;
 }

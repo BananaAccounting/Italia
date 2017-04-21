@@ -160,6 +160,32 @@ function loadData(param)
     value = "";
   }
   
+  //Table FileInfo
+  param.fileInfo = {};
+  param.fileInfo["BasicCurrency"] = Banana.document.info("AccountingDataBase", "BasicCurrency");
+  param.fileInfo["OpeningDate"] = Banana.document.info("AccountingDataBase", "OpeningDate");
+  param.fileInfo["ClosureDate"] = Banana.document.info("AccountingDataBase", "ClosureDate");
+  param.fileInfo["CustomersGroup"] = Banana.document.info("AccountingDataBase", "CustomersGroup");
+  param.fileInfo["SuppliersGroup"] = Banana.document.info("AccountingDataBase", "SuppliersGroup");
+  param.fileInfo["Address"] = {};
+  param.fileInfo["Address"]["Company"] = Banana.document.info("AccountingDataBase", "Company");
+  param.fileInfo["Address"]["Courtesy"] = Banana.document.info("AccountingDataBase", "Courtesy");
+  param.fileInfo["Address"]["Name"] = Banana.document.info("AccountingDataBase", "Name");
+  param.fileInfo["Address"]["FamilyName"] = Banana.document.info("AccountingDataBase", "FamilyName");
+  param.fileInfo["Address"]["Address1"] = Banana.document.info("AccountingDataBase", "Address1");
+  param.fileInfo["Address"]["Address2"] = Banana.document.info("AccountingDataBase", "Address2");
+  param.fileInfo["Address"]["Zip"] = Banana.document.info("AccountingDataBase", "Zip");
+  param.fileInfo["Address"]["City"] = Banana.document.info("AccountingDataBase", "City");
+  param.fileInfo["Address"]["State"] = Banana.document.info("AccountingDataBase", "State");
+  param.fileInfo["Address"]["Country"] = Banana.document.info("AccountingDataBase", "Country");
+  param.fileInfo["Address"]["Web"] = Banana.document.info("AccountingDataBase", "Web");
+  param.fileInfo["Address"]["Email"] = Banana.document.info("AccountingDataBase", "Email");
+  param.fileInfo["Address"]["Phone"] = Banana.document.info("AccountingDataBase", "Phone");
+  param.fileInfo["Address"]["Mobile"] = Banana.document.info("AccountingDataBase", "Mobile");
+  param.fileInfo["Address"]["Fax"] = Banana.document.info("AccountingDataBase", "Fax");
+  param.fileInfo["Address"]["FiscalNumber"] = Banana.document.info("AccountingDataBase", "FiscalNumber");
+  param.fileInfo["Address"]["VatNumber"] = Banana.document.info("AccountingDataBase", "VatNumber");
+  
   //debug
   /*var line = [];
   var transactions = [];
