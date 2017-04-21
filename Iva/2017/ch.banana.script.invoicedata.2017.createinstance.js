@@ -46,12 +46,49 @@ function createInstance(param)
 
 function createInstance_DatiFatturaHeader(param) 
 {
-  var xbrlContent =  '\n' + xml_createElement("Dichiarante", "") + '\n';
-  var xbrlHeader =  xml_createElement("DatiFatturaHeader", xbrlContent) + '\n';
+  return '';
+  var xbrlContent =  xml_createElement("Dichiarante");
+  var xbrlHeader =   '\n' + xml_createElement("DatiFatturaHeader", xbrlContent)
   return xbrlHeader;
 }
 
+/*
+* 
+*/
+function createInstance_CedentePrestatoreDTE(customerAccount, param) 
+{
+  var xbrlContent = '';
+  if (customerAccount.length>0) {
+    var customerObj = JSON.parse(getAccount(customerAccount));
+    if (customerObj) {
+      xbrlContent = '\n' + xml_createElement("IdPaese", "2.1.1.1.1");
+      xbrlContent += '\n' + xml_createElement("IdCodice", "2.1.1.1.2") +'\n';
+      xbrlContent = '\n' + xml_createElement("IdFiscaleIVA", xbrlContent);
+      xbrlContent += '\n' + xml_createElement("CodiceFiscale", customerObj["FiscalNumber"]) +'\n';
+      xbrlContent =  '\n' + xml_createElement("IdentificativiFiscali", xbrlContent) +'\n';
+   }
+  }
+  xbrlContent =  '\n' + xml_createElement("CedentePrestatoreDTE", xbrlContent);
+  return xbrlContent;
+}
+
+/*
+* Dati relativi a fatture  EMESSE.
+*/
 function createInstance_DTE(param) 
 {
-  return '';
+  var xbrlContent = '';
+  for (var i = 0; i < param.journal.rows.length; i++) {
+    var jsonObj = param.journal.rows[i];
+    var isCustomer = jsonObj["JInvoiceRowCustomerSupplier"];
+    if (isCustomer != '1')
+      continue;
+    var customerAccount = jsonObj["JAccount"];
+    if (customerAccount.length>0)
+      xbrlContent += createInstance_CedentePrestatoreDTE(customerAccount, param);
+  }
+  if (xbrlContent.length>0)
+    xbrlContent += '\n';
+  var xbrlDTE =   xml_createElement("DTE", xbrlContent) + '\n';
+  return xbrlDTE;
 }

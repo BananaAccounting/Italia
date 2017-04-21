@@ -18,7 +18,7 @@
 // @doctype = *;110
 // @encoding = utf-8
 // @exportfilename = IT99999999999_DF_00001
-// @exportfiletype = csv
+// @exportfiletype = xml
 // @includejs = ch.banana.script.invoicedata.2017.createinstance.js
 // @includejs = ch.banana.script.italianvatreport.2017.xml.js
 // @inputdatasource = none
@@ -56,7 +56,7 @@ function exec(inData) {
   var paramToString = JSON.stringify(param);
   var value = Banana.document.scriptSaveSettings(paramToString);
   
-  return loadData(param);
+  param = loadData(param);
 
   var output = createInstance(param)
 
@@ -69,6 +69,24 @@ function exec(inData) {
 
   return output;
 
+}
+
+/*
+ * Get customer or supplier data from table Accounts
+ */
+function getAccount(accountId) {
+  if (!accountId || accountId.length <= 0)
+    return '';
+  if (!Banana.document)
+    return '';
+  var tableAccounts = Banana.document.table('Accounts');
+  if (tableAccounts) {
+    var row = tableAccounts.findRowByValue('Account', accountId);
+    if (row) {
+      return row.toJSON();
+    }
+  }
+  return '';
 }
 
 function initParam()
@@ -143,7 +161,7 @@ function loadData(param)
   }
   
   //debug
-  var line = [];
+  /*var line = [];
   var transactions = [];
   for (var i = 0; i < param.journal.rows.length; i++) {
     var jsonObj = param.journal.rows[i];
@@ -155,12 +173,16 @@ function loadData(param)
   }
   line = [];
   var header = [];
-  for (var i = 0; i < tColumnNames.length; i++) {
-    var columnName = tColumnNames[i];
-    line.push(columnName);
+  if (param.journal.rows.length>0) {
+    var jsonObj = param.journal.rows[0];
+    for (var key in jsonObj) {
+      line.push(key);
+    }
+    header.push(line);
   }
-  header.push(line);
-  return tableToCsv(header.concat(transactions));
+  return tableToCsv(header.concat(transactions));*/
+  
+  return param;
   
 }
 
@@ -176,6 +198,10 @@ function loadData_filterTransactions(row, index, table) {
   var docType = row.value("JInvoiceDocType");
   if (docType == "10" || docType == "20")
     return true;
+
+  /*var isVatOperation = row.value("JVatIsVatOperation");
+  if (isVatOperation)
+    return true;*/
     
   return false;
 }
@@ -183,24 +209,63 @@ function loadData_filterTransactions(row, index, table) {
 function printVatReport1(report, stylesheet, param) {
 
   // Styles
-  stylesheet.addStyle("phead", "font-size: 12px, font-weight: bold; margin-bottom: 1em");
-  stylesheet.addStyle("thead", "font-weight: bold");
-  stylesheet.addStyle("td", "padding-right: 1em");
+  stylesheet.addStyle("@page", "size:landscape");
+  stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
+  stylesheet.addStyle("thead", "font-size: 8px; font-weight: bold");
+  stylesheet.addStyle("td", "font-size: 8px; padding-right: 1em");
   stylesheet.addStyle(".amount", "text-align: right");
   stylesheet.addStyle(".period", "font-size: 10px; padding-top: 1em;padding-bottom: 1em;");
   stylesheet.addStyle(".vatNumber", "font-size: 10px");
   stylesheet.addStyle(".warning", "color: red;font-size:8px;");
+
+  if (param.journal.rows.length<=0)
+    return;
 
   //Print table
   var table = report.addTable("table1");
 
   // Print header
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("");
+  headerRow.addCell("JDate");
+  headerRow.addCell("Type");
+  headerRow.addCell("Inv");
+  headerRow.addCell("JAcc");
+  headerRow.addCell("JContrAcc");
+  headerRow.addCell("JAmount");
+  headerRow.addCell("CS");
+  headerRow.addCell("VCode");
+  headerRow.addCell("VAmTy");
+  headerRow.addCell("VRate");
+  headerRow.addCell("VRateEff");
+  headerRow.addCell("VTax");
+  headerRow.addCell("VAm");
+  headerRow.addCell("VPercND");
+  headerRow.addCell("VND");
+  headerRow.addCell("VPosted");
+  headerRow.addCell("VNumber");
 
   // Print data
-  var row = table.addRow();
-  row.addCell("");
+  for (var i = 0; i < param.journal.rows.length; i++) {
+    var row = table.addRow();
+    var jsonObj = param.journal.rows[i];
+    row.addCell(jsonObj["JDate"]);
+    row.addCell(jsonObj["JInvoiceDocType"]);
+    row.addCell(jsonObj["DocInvoice"]);
+    row.addCell(jsonObj["JAccount"]);
+    row.addCell(jsonObj["JContraAccount"]);
+    row.addCell(jsonObj["JAmount"]);
+    row.addCell(jsonObj["JInvoiceRowCustomerSupplier"]);
+    row.addCell(jsonObj["VatCode"]);
+    row.addCell(jsonObj["VatAmountType"]);
+    row.addCell(jsonObj["VatRate"]);
+    row.addCell(jsonObj["VatRateEffective"]);
+    row.addCell(jsonObj["VatTaxable"]);
+    row.addCell(jsonObj["VatAmount"]);
+    row.addCell(jsonObj["VatPercentNonDeductible"]);
+    row.addCell(jsonObj["VatNonDeductible"]);
+    row.addCell(jsonObj["VatPosted"]);
+    row.addCell(jsonObj["VatNumber"]);
+  }
 
 }
 
