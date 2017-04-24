@@ -105,7 +105,7 @@ function init_namespaces()
 {
   var ns = [
     {
-      'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.0',
+      'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2',
       'prefix' : 'xmlns'
     },
     {
@@ -122,7 +122,7 @@ function init_namespaces()
 function init_schemarefs()
 {
   var schemaRefs = [
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2',
+    //'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2',
   ];
   return schemaRefs;
 };

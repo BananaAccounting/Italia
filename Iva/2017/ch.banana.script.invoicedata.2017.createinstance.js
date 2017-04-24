@@ -158,7 +158,6 @@ function createInstance_DatiFatturaHeader(param)
 */
 function createInstance_DTE(param) 
 {
-  var xbrlDTE = '';
   var xbrlContent = createInstance_CedentePrestatoreDTE(param);
   for (var i in param.customers) {
     var customerObj = param.customers[i];
@@ -167,7 +166,7 @@ function createInstance_DTE(param)
   }
   if (xbrlContent.length>0) {
     xbrlContent += '\n';
-    xbrlDTE =  xml_createElement("DTE", xbrlContent) + '\n';
   }
+  var xbrlDTE =  '\n' + xml_createElement("DTE", xbrlContent) + '\n';
   return xbrlDTE;
 }
