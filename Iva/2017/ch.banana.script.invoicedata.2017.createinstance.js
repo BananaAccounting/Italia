@@ -26,7 +26,6 @@ function createInstance(param)
   //<DatiFattura> root element
   var xbrlContent = xbrlDatiFatturaHeader + xbrlDTE;
   var attrsNamespaces = {};
-  attrsNamespaces['xsi:schemaLocation'] = '';
   for (var j in param.namespaces) {
     var prefix = param.namespaces[j]['prefix'];
     var namespace = param.namespaces[j]['namespace'];
@@ -35,13 +34,15 @@ function createInstance(param)
   }
   for (var j in param.schemaRefs) {
     var schema = param.schemaRefs[j];
-    if (schema.length > 0)
-      attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + " " + schema;
+    if (schema.length > 0) {
+      if (!attrsNamespaces['xsi:schemaLocation'])
+        attrsNamespaces['xsi:schemaLocation'] = '';
+      if (attrsNamespaces['xsi:schemaLocation'].length>0)
+        attrsNamespaces['xsi:schemaLocation'] =+ " ";
+      attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + schema;
+    }
   }
-  if (xbrlContent.length>0) {
-    xbrlContent = '\n' + xbrlContent;
-  }
-  xbrlContent = xml_createElement("ns2:DatiFattura", xbrlContent, attrsNamespaces);
+  xbrlContent = xml_createElement("DatiFattura", xbrlContent, attrsNamespaces);
 
   //Output
   var results = [];
@@ -124,10 +125,10 @@ function createInstance_CessionarioCommittenteDTE(customerObj, param)
     //2.2.3   <DatiFatturaBodyDTE>
     for (var i in customerObj.invoices) {
       if (customerObj.invoices[i]) {
-        var invoiceNo = customerObj.invoices[i]["DocInvoice"];
-        xbrlContent3 = '\n' + xml_createElement("TipoDocumento", "");
-        xbrlContent3 += '\n' + xml_createElement("Data", "");
-        xbrlContent3 += '\n' + xml_createElement("Numero", invoiceNo);
+        var data = customerObj.invoices[i]["JInvoiceIssueDate"];
+        xbrlContent3 = '\n' + xml_createElement("TipoDocumento", customerObj.invoices[i]["TipoDocumento"]);
+        xbrlContent3 += '\n' + xml_createElement("Data", data);
+        xbrlContent3 += '\n' + xml_createElement("Numero", customerObj.invoices[i]["DocInvoice"]);
         xbrlContent2 = '\n' + xml_createElement("DatiGenerali", xbrlContent3) +'\n';
         xbrlContent +=  xml_createElement("DatiFatturaBodyDTE", xbrlContent2) +'\n';
       }

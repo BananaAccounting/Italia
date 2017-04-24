@@ -105,12 +105,16 @@ function init_namespaces()
 {
   var ns = [
     {
-      'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2',
-      'prefix' : 'xmlns:ns2'
+      'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.0',
+      'prefix' : 'xmlns'
     },
     {
       'namespace' : 'http://www.w3.org/2001/XMLSchema-instance',
       'prefix' : 'xmlns:xsi'
+    },
+    {
+      'namespace' : 'http://www.w3.org/2001/XMLSchema',
+      'prefix' : 'xmlns:xsd'
     },
   ];
   return ns;
@@ -118,7 +122,7 @@ function init_namespaces()
 function init_schemarefs()
 {
   var schemaRefs = [
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/DatiFattura_v1.0.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2',
   ];
   return schemaRefs;
 };
@@ -165,7 +169,7 @@ function loadData(param)
     value = "";
   }
   
-  //Get customers and suppliers
+  //Set customers and suppliers objects
   param.customers = {};
   param.suppliers = {};
   for (var i = 0; i < param.journal.rows.length; i++) {
@@ -175,6 +179,7 @@ function loadData(param)
       continue;
     var accountId = jsonRowObj["JAccount"];
     if (accountId && accountId.length>0) {
+      jsonRowObj = loadData_setDocType(jsonRowObj);
       var accountObj = JSON.parse(getAccount(accountId));
       if (accountObj) {
         if (isCustomer == '1') {
@@ -264,6 +269,30 @@ function loadData_filterTransactions(row, index, table) {
     return true;*/
     
   return false;
+}
+
+/*
+* TD01  fattura
+* TD04  nota di credito
+* TD05  nota di debito
+* TD07  fattura semplificata
+* TD08  nota di credito semplificata
+* TD10  fattura di acquisto intracomunitario beni
+* TD11  fattura di acquisto intracomunitario servizi
+*/
+function loadData_setDocType(jsonRowObj) {
+  var docType = jsonRowObj["JInvoiceDocType"];
+  if (docType.length<=0)
+    docType =  jsonRowObj["DocType"];
+  
+  if (docType == 10)  /* fattura*/
+    jsonRowObj["TipoDocumento"] = 'TD01';
+  else if (docType == 12)  /* nota di credito */
+    jsonRowObj["TipoDocumento"] = 'TD04';
+  else
+    jsonRowObj["TipoDocumento"] = '';
+  
+  return jsonRowObj;
 }
 
 function printVatReport1(report, stylesheet, param) {

@@ -26,7 +26,6 @@ function createInstance(param)
   //<Fornitura> root element
   var xbrlContent = '\n' + xbrlIntestazione + xbrlComunicazione;
   var attrsNamespaces = {};
-  attrsNamespaces['xsi:schemaLocation'] = '';
   for (var j in param.namespaces) {
     var prefix = param.namespaces[j]['prefix'];
     var namespace = param.namespaces[j]['namespace'];
@@ -35,10 +34,15 @@ function createInstance(param)
   }
   for (var j in param.schemaRefs) {
     var schema = param.schemaRefs[j];
-    if (schema.length > 0)
-      attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + " " + schema;
+    if (schema.length > 0) {
+      if (!attrsNamespaces['xsi:schemaLocation'])
+        attrsNamespaces['xsi:schemaLocation'] = '';
+      if (attrsNamespaces['xsi:schemaLocation'].length>0)
+        attrsNamespaces['xsi:schemaLocation'] =+ " ";
+      attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + schema;
+    }
   }
-  xbrlContent = xml_createElement("iv:Fornitura", xbrlContent, attrsNamespaces);
+  xbrlContent = xml_createElement("Fornitura", xbrlContent, attrsNamespaces);
 
   //Output
   var results = [];

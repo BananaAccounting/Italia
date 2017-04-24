@@ -185,6 +185,10 @@ function init_namespaces()
 {
   var ns = [
     {
+      'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp',
+      'prefix' : 'xmlns',
+    },
+    /*{
       'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:telent:v1',
       'prefix' : 'xmlns:tm',
     },
@@ -197,20 +201,20 @@ function init_namespaces()
       'prefix' : 'xmlns:sc',
     },
     {
-      'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp',
-      'prefix' : 'xmlns:iv',
-    },
-    {
       'namespace' : 'http://www.w3.org/2001/XMLSchema-instance',
       'prefix' : 'xmlns:xsi'
     },
+    {
+      'namespace' : 'http://www.w3.org/2001/XMLSchema',
+      'prefix' : 'xmlns:xsd'
+    },*/
   ];
   return ns;
 }
 function init_schemarefs()
 {
   var schemaRefs = [
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/telematico_v1.xsd',
+    /*'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/telematico_v1.xsd',
     'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fornitura_v3.xsd',
     'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesDati_v3.xsd',
     'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesProvincie_v3.xsd',
@@ -218,7 +222,7 @@ function init_schemarefs()
     'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesFiscali_v4.xsd',
     'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typeEventi_v4.xsd',
     'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fornituraIvp_2017_v1.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesIvp_2017_v1.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesIvp_2017_v1.xsd',*/
   ];
   return schemaRefs;
 };
