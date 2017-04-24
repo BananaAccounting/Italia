@@ -165,6 +165,35 @@ function loadData(param)
     value = "";
   }
   
+  //Get customers and suppliers
+  param.customers = {};
+  param.suppliers = {};
+  for (var i = 0; i < param.journal.rows.length; i++) {
+    var jsonRowObj = param.journal.rows[i];
+    var isCustomer = jsonRowObj["JInvoiceRowCustomerSupplier"];
+    if (!isCustomer)
+      continue;
+    var accountId = jsonRowObj["JAccount"];
+    if (accountId && accountId.length>0) {
+      var accountObj = JSON.parse(getAccount(accountId));
+      if (accountObj) {
+        if (isCustomer == '1') {
+          param.customers[accountId] = accountObj;
+          if (!param.customers[accountId].invoices)
+            param.customers[accountId].invoices = [];
+          param.customers[accountId].invoices.push(jsonRowObj);
+        }
+        else if (isCustomer == '2') {
+          param.suppliers[accountId] = accountObj;
+          if (!param.suppliers[accountId].invoices)
+            param.suppliers[accountId].invoices = [];
+          param.suppliers[accountId].invoices.push(jsonRowObj);
+        }
+      }
+    }
+  }
+
+  
   //Table FileInfo
   param.fileInfo = {};
   param.fileInfo["BasicCurrency"] = Banana.document.info("AccountingDataBase", "BasicCurrency");

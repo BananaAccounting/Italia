@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/*
+* metodo principale che genera il file xml
+*/
 function createInstance(param)
 {
   //<DatiFatturaHeader>
@@ -48,6 +51,10 @@ function createInstance(param)
 
 }
 
+/*
+* Blocco contenente le informazioni relative al cedente/prestatore (fornitore).
+* Occorrenze: <1.1>
+*/
 function createInstance_CedentePrestatoreDTE(param) 
 {
   var xbrlContent = '';
@@ -79,69 +86,83 @@ function createInstance_CedentePrestatoreDTE(param)
   return xbrlContent;
 }
 
-function createInstance_CessionarioCommittenteDTE(customerAccount, param) 
+/*
+* Blocco contenente le informazioni relative al cessionario/committente (cliente) e ai dati fattura a lui riferiti.
+* Può essere replicato per trasmettere dati di fatture relative a clienti diversi
+* Occorrenze: <1.1000>
+*/
+function createInstance_CessionarioCommittenteDTE(customerObj, param) 
 {
   var xbrlContent = '';
-  if (customerAccount.length>0) {
-    var customerObj = JSON.parse(getAccount(customerAccount));
-    if (customerObj) {
+  if (customerObj) {
+    //2.2.1   <IdentificativiFiscali>
+    var countryCode = customerObj["CountryCode"];
+    if (countryCode.length<=0 || countryCode.length>2)
+      countryCode = 'IT';
+    xbrlContent = '\n' + xml_createElement("IdPaese", countryCode);
+    xbrlContent += '\n' + xml_createElement("IdCodice", customerObj["FiscalNumber"]) +'\n';
+    xbrlContent = '\n' + xml_createElement("IdFiscaleIVA", xbrlContent);
+    xbrlContent += '\n' + xml_createElement("CodiceFiscale", customerObj["FiscalNumber"]) +'\n';
+    xbrlContent =  '\n' + xml_createElement("IdentificativiFiscali", xbrlContent) +'\n';
 
-      //2.2.1   <IdentificativiFiscali>
-      var countryCode = customerObj["CountryCode"];
-      if (countryCode.length<=0 || countryCode.length>2)
-        countryCode = 'IT';
-      xbrlContent = '\n' + xml_createElement("IdPaese", countryCode);
-      xbrlContent += '\n' + xml_createElement("IdCodice", customerObj["FiscalNumber"]) +'\n';
-      xbrlContent = '\n' + xml_createElement("IdFiscaleIVA", xbrlContent);
-      xbrlContent += '\n' + xml_createElement("CodiceFiscale", customerObj["FiscalNumber"]) +'\n';
-      xbrlContent =  '\n' + xml_createElement("IdentificativiFiscali", xbrlContent) +'\n';
+    //2.2.2   <AltriDatiIdentificativi>
+    var xbrlContent2 = '\n' + xml_createElement("Denominazione", customerObj["OrganisationName"]);
+    xbrlContent2 += '\n' + xml_createElement("Nome", customerObj["FirstName"]);
+    xbrlContent2 += '\n' + xml_createElement("Cognome", customerObj["FamilyName"]);
+    var xbrlContent3 = '\n' + xml_createElement("Indirizzo", customerObj["Street"]) +'\n';
+    xbrlContent3 += xml_createElement("NumeroCivico") +'\n';
+    xbrlContent3 += xml_createElement("CAP", customerObj["PostalCode"]) +'\n';
+    xbrlContent3 += xml_createElement("Comune", customerObj["Locality"]) +'\n';
+    xbrlContent3 += xml_createElement("Provincia", customerObj["Region"]) +'\n';
+    xbrlContent3 += xml_createElement("Nazione", countryCode) +'\n';
+    xbrlContent2 += '\n' + xml_createElement("Sede", xbrlContent3) +'\n';
+    xbrlContent +=  xml_createElement("AltriDatiIdentificativi", xbrlContent2) +'\n';
 
-      //2.2.2   <AltriDatiIdentificativi>
-      var xbrlContent2 = '\n' + xml_createElement("Denominazione", customerObj["OrganisationName"]);
-      xbrlContent2 += '\n' + xml_createElement("Nome", customerObj["FirstName"]);
-      xbrlContent2 += '\n' + xml_createElement("Cognome", customerObj["FamilyName"]);
-      var xbrlContent3 = '\n' + xml_createElement("Indirizzo", customerObj["Street"]) +'\n';
-      xbrlContent3 += xml_createElement("NumeroCivico") +'\n';
-      xbrlContent3 += xml_createElement("CAP", customerObj["PostalCode"]) +'\n';
-      xbrlContent3 += xml_createElement("Comune", customerObj["Locality"]) +'\n';
-      xbrlContent3 += xml_createElement("Provincia", customerObj["Region"]) +'\n';
-      xbrlContent3 += xml_createElement("Nazione", countryCode) +'\n';
-      xbrlContent2 += '\n' + xml_createElement("Sede", xbrlContent3) +'\n';
-      xbrlContent +=  xml_createElement("AltriDatiIdentificativi", xbrlContent2) +'\n';
-
-      //2.2.3   <DatiFatturaBodyDTE>
-      xbrlContent3 = '\n' + xml_createElement("TipoDocumento", "");
-      xbrlContent3 += '\n' + xml_createElement("Data", "");
-      xbrlContent3 += '\n' + xml_createElement("Numero", "");
-      xbrlContent2 = '\n' + xml_createElement("DatiGenerali", xbrlContent3) +'\n';
-      xbrlContent +=  xml_createElement("DatiFatturaBodyDTE", xbrlContent2) +'\n';
-  
+    /*
+    * Blocco obbligatorio. Può essere replicato per trasmettere dati di più fatture relative allo stesso cliente
+    */
+    //2.2.3   <DatiFatturaBodyDTE>
+    for (var i in customerObj.invoices) {
+      if (customerObj.invoices[i]) {
+        var invoiceNo = customerObj.invoices[i]["DocInvoice"];
+        xbrlContent3 = '\n' + xml_createElement("TipoDocumento", "");
+        xbrlContent3 += '\n' + xml_createElement("Data", "");
+        xbrlContent3 += '\n' + xml_createElement("Numero", invoiceNo);
+        xbrlContent2 = '\n' + xml_createElement("DatiGenerali", xbrlContent3) +'\n';
+        xbrlContent +=  xml_createElement("DatiFatturaBodyDTE", xbrlContent2) +'\n';
+      }
     }
   }
   xbrlContent =  '\n' + xml_createElement("CessionarioCommittenteDTE", xbrlContent);
   return xbrlContent;
 }
 
+/*
+* Blocco da valorizzare solo se si intende identificare con un progressivo il file che si sta trasmettendo.
+* L'elemento 1.3 <IdSistema> non va mai valorizzato in quanto riservato al sistema
+* Occorrenze: <0.1>
+*/
 function createInstance_DatiFatturaHeader(param) 
 {
   return '';
 }
 
 /*
-* Dati relativi a fatture  EMESSE.
+* Dati relativi a fatture  EMESSE. Da valorizzare per trasmettere i dati delle fatture emesse.
+* Non devono essere riportati in questo blocco i dati delle così dette autofatture, cioè fatture 
+* emesse dall'acquirente nei casi in cui non le abbia ricevute oppure, pur avendole ricevute, 
+* abbia rilevato in esse delle irregolarità. Tali dati devono essere riportati come dati delle fatture ricevute.
+* Se questo blocco è valorizzato, non dovranno essere valorizzati i blocchi 3 <DTR> e 4 <ANN>
+* Occorrenze: <0.1>
 */
 function createInstance_DTE(param) 
 {
   var xbrlDTE = '';
   var xbrlContent = createInstance_CedentePrestatoreDTE(param);
-  for (var i = 0; i < param.journal.rows.length; i++) {
-    var jsonObj = param.journal.rows[i];
-    var isCustomer = jsonObj["JInvoiceRowCustomerSupplier"];
-    if (isCustomer != '1')
-      continue;
-    var customerAccount = jsonObj["JAccount"];
-    if (customerAccount.length>0)
-      xbrlContent += createInstance_CessionarioCommittenteDTE(customerAccount, param);
+  for (var i in param.customers) {
+    var customerObj = param.customers[i];
+    if (customerObj)
+      xbrlContent += createInstance_CessionarioCommittenteDTE(customerObj, param);
   }
   if (xbrlContent.length>0) {
     xbrlContent += '\n';
