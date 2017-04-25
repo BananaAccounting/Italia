@@ -22,11 +22,14 @@ function createInstance(param)
 
   //<DTE>
   var xbrlContent = '';
-    xbrlContent = createInstance_DTE(param);
+  if (param.blocco == 'DTE') {
+    xbrlContent = createInstance_blocco_DTE(param);
   }
-    //xbrlContent = createInstance_DTR(param);
+  else if (param.blocco == 'DTR') {
+    xbrlContent = createInstance_blocco_DTR(param);
   }
-    //xbrlContent = createInstance_ANN(param);
+  else if (param.blocco == 'ANN') {
+    xbrlContent = createInstance_blocco_ANN(param);
   }
 
   //<DatiFattura> root element
@@ -60,6 +63,41 @@ function createInstance(param)
 }
 
 /*
+* Dati relativi a fatture  EMESSE. Da valorizzare per trasmettere i dati delle fatture emesse.
+* Non devono essere riportati in questo blocco i dati delle così dette autofatture, cioè fatture 
+* emesse dall'acquirente nei casi in cui non le abbia ricevute oppure, pur avendole ricevute, 
+* abbia rilevato in esse delle irregolarità. Tali dati devono essere riportati come dati delle fatture ricevute.
+* Se questo blocco è valorizzato, non dovranno essere valorizzati i blocchi 3 <DTR> e 4 <ANN>
+* Occorrenze: <0.1>
+*/
+function createInstance_blocco_ANN(param) 
+{
+  var xbrlANN=  '\n' + xml_createElement("ANN", '') + '\n';
+  return xbrlANN;
+}
+
+function createInstance_blocco_DTE(param) 
+{
+  var xbrlContent = createInstance_CedentePrestatoreDTE(param);
+  for (var i in param.customers) {
+    var customerObj = param.customers[i];
+    if (customerObj)
+      xbrlContent += createInstance_CessionarioCommittenteDTE(customerObj, param);
+  }
+  if (xbrlContent.length>0) {
+    xbrlContent += '\n';
+  }
+  var xbrlDTE =  '\n' + xml_createElement("DTE", xbrlContent) + '\n';
+  return xbrlDTE;
+}
+
+function createInstance_blocco_DTR(param) 
+{
+  var xbrlDTR=  '\n' + xml_createElement("DTR", '') + '\n';
+  return xbrlDTR;
+}
+
+/*
 * Blocco contenente le informazioni relative al cedente/prestatore (fornitore).
 * Occorrenze: <1.1>
 */
@@ -68,29 +106,31 @@ function createInstance_CedentePrestatoreDTE(param)
   var xbrlContent = '';
   
   //2.1.1   <IdentificativiFiscali>
-  var countryCode = param.fileInfo["Address"]["Country"];
-  if (countryCode.length<=0 || countryCode.length>2)
-    countryCode = 'IT';
-  xbrlContent = '\n' + xml_createElement("IdPaese", countryCode);
-  xbrlContent += '\n' + xml_createElement("IdCodice", param.fileInfo["Address"]["FiscalNumber"]) +'\n';
-  xbrlContent = '\n' + xml_createElement("IdFiscaleIVA", xbrlContent);
-  xbrlContent += '\n' + xml_createElement("CodiceFiscale", param.fileInfo["Address"]["FiscalNumber"]) +'\n';
-  xbrlContent =  '\n' + xml_createElement("IdentificativiFiscali", xbrlContent) +'\n';
+  xbrlContent = '\n' + xml_createElementWithValidation("IdPaese", getCountryCode(param.fileInfo["Address"]["Country"]),1,'2');
+  xbrlContent += '\n' + xml_createElementWithValidation("IdCodice", param.fileInfo["Address"]["FiscalNumber"],1,'1...28') +'\n';
+  xbrlContent = '\n' + xml_createElementWithValidation("IdFiscaleIVA",xbrlContent,1);
+  xbrlContent += '\n' + xml_createElementWithValidation("CodiceFiscale", param.fileInfo["Address"]["FiscalNumber"],0,'11...16') +'\n';
+  xbrlContent =  '\n' + xml_createElementWithValidation("IdentificativiFiscali",xbrlContent,1) +'\n';
   
   //2.1.2   <AltriDatiIdentificativi>
-  var xbrlContent2 = '\n' + xml_createElement("Denominazione", param.fileInfo["Address"]["Company"]);
-  xbrlContent2 += '\n' + xml_createElement("Nome", param.fileInfo["Address"]["Name"]);
-  xbrlContent2 += '\n' + xml_createElement("Cognome", param.fileInfo["Address"]["FamilyName"]);
-  var xbrlContent3 = '\n' + xml_createElement("Indirizzo", param.fileInfo["Address"]["Address1"]) +'\n';
-  xbrlContent3 += xml_createElement("NumeroCivico") +'\n';
-  xbrlContent3 += xml_createElement("CAP", param.fileInfo["Address"]["ZIP"]) +'\n';
-  xbrlContent3 += xml_createElement("Comune", param.fileInfo["Address"]["City"]) +'\n';
-  xbrlContent3 += xml_createElement("Provincia", param.fileInfo["Address"]["State"]) +'\n';
-  xbrlContent3 += xml_createElement("Nazione", countryCode) +'\n';
-  xbrlContent2 += '\n' + xml_createElement("Sede", xbrlContent3) +'\n';
-  xbrlContent +=  xml_createElement("AltriDatiIdentificativi", xbrlContent2) +'\n';
+  var xbrlContent2 = '';
+  if (param.fileInfo["Address"]["Company"].length) {
+    xbrlContent2 = '\n' + xml_createElementWithValidation("Denominazione", param.fileInfo["Address"]["Company"],0,'1...80');
+  }
+  else {
+    xbrlContent2 = '\n' + xml_createElementWithValidation("Nome", param.fileInfo["Address"]["Name"],0,'1...60');
+    xbrlContent2 += '\n' + xml_createElementWithValidation("Cognome", param.fileInfo["Address"]["FamilyName"],0,'1...60');
+  }
+  var xbrlContent3 = '\n' + xml_createElementWithValidation("Indirizzo", param.fileInfo["Address"]["Address1"],1,'1...60') +'\n';
+  //xbrlContent3 += xml_createElementWithValidation("NumeroCivico") +'\n';
+  xbrlContent3 += xml_createElementWithValidation("CAP", param.fileInfo["Address"]["ZIP"],1,'5') +'\n';
+  xbrlContent3 += xml_createElementWithValidation("Comune", param.fileInfo["Address"]["City"],1,'1...60') +'\n';
+  xbrlContent3 += xml_createElementWithValidation("Provincia", param.fileInfo["Address"]["State"],0,'2') +'\n';
+  xbrlContent3 += xml_createElementWithValidation("Nazione", getCountryCode(param.fileInfo["Address"]["Country"]),1,'2') +'\n';
+  xbrlContent2 += '\n' + xml_createElementWithValidation("Sede", xbrlContent3,1) +'\n';
+  xbrlContent +=  xml_createElementWithValidation("AltriDatiIdentificativi",xbrlContent2,1) +'\n';
 
-  xbrlContent =  '\n' + xml_createElement("CedentePrestatoreDTE", xbrlContent);
+  xbrlContent =  '\n' + xml_createElementWithValidation("CedentePrestatoreDTE",xbrlContent,1);
   return xbrlContent;
 }
 
@@ -114,11 +154,15 @@ function createInstance_CessionarioCommittenteDTE(customerObj, param)
     xbrlContent =  '\n' + xml_createElement("IdentificativiFiscali", xbrlContent) +'\n';
 
     //2.2.2   <AltriDatiIdentificativi>
-    var xbrlContent2 = '\n' + xml_createElement("Denominazione", customerObj["OrganisationName"]);
-    xbrlContent2 += '\n' + xml_createElement("Nome", customerObj["FirstName"]);
-    xbrlContent2 += '\n' + xml_createElement("Cognome", customerObj["FamilyName"]);
+    var xbrlContent2 = '';
+    if (customerObj["OrganisationName"].length) {
+      xbrlContent2 = '\n' + xml_createElement("Denominazione", customerObj["OrganisationName"]);
+    }
+    else {
+      xbrlContent2 = '\n' + xml_createElement("Nome", customerObj["FirstName"]);
+      xbrlContent2 += '\n' + xml_createElement("Cognome", customerObj["FamilyName"]);
+    }
     var xbrlContent3 = '\n' + xml_createElement("Indirizzo", customerObj["Street"]) +'\n';
-    xbrlContent3 += xml_createElement("NumeroCivico") +'\n';
     xbrlContent3 += xml_createElement("CAP", customerObj["PostalCode"]) +'\n';
     xbrlContent3 += xml_createElement("Comune", customerObj["Locality"]) +'\n';
     xbrlContent3 += xml_createElement("Provincia", customerObj["Region"]) +'\n';
@@ -155,25 +199,3 @@ function createInstance_DatiFatturaHeader(param)
   return '';
 }
 
-/*
-* Dati relativi a fatture  EMESSE. Da valorizzare per trasmettere i dati delle fatture emesse.
-* Non devono essere riportati in questo blocco i dati delle così dette autofatture, cioè fatture 
-* emesse dall'acquirente nei casi in cui non le abbia ricevute oppure, pur avendole ricevute, 
-* abbia rilevato in esse delle irregolarità. Tali dati devono essere riportati come dati delle fatture ricevute.
-* Se questo blocco è valorizzato, non dovranno essere valorizzati i blocchi 3 <DTR> e 4 <ANN>
-* Occorrenze: <0.1>
-*/
-function createInstance_DTE(param) 
-{
-  var xbrlContent = createInstance_CedentePrestatoreDTE(param);
-  for (var i in param.customers) {
-    var customerObj = param.customers[i];
-    if (customerObj)
-      xbrlContent += createInstance_CessionarioCommittenteDTE(customerObj, param);
-  }
-  if (xbrlContent.length>0) {
-    xbrlContent += '\n';
-  }
-  var xbrlDTE =  '\n' + xml_createElement("DTE", xbrlContent) + '\n';
-  return xbrlDTE;
-}

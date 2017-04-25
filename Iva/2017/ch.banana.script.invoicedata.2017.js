@@ -99,6 +99,16 @@ function getAccount(accountId) {
   return '';
 }
 
+function getCountryCode(country) {
+  if (!country)
+    return '';
+  var countryCode = country.toLowerCase();
+  if (countryCode == 'italy' || countryCode == 'italia') {
+    countryCode = 'IT';
+  }
+  return countryCode.toUpperCase();
+}
+
 function initParam()
 {
   var param = {};
