@@ -44,7 +44,7 @@ function createInstance(param)
       if (!attrsNamespaces['xsi:schemaLocation'])
         attrsNamespaces['xsi:schemaLocation'] = '';
       if (attrsNamespaces['xsi:schemaLocation'].length>0)
-        attrsNamespaces['xsi:schemaLocation'] =+ " ";
+        attrsNamespaces['xsi:schemaLocation'] += " ";
       attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + schema;
     }
   }

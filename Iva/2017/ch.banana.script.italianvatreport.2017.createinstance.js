@@ -38,11 +38,11 @@ function createInstance(param)
       if (!attrsNamespaces['xsi:schemaLocation'])
         attrsNamespaces['xsi:schemaLocation'] = '';
       if (attrsNamespaces['xsi:schemaLocation'].length>0)
-        attrsNamespaces['xsi:schemaLocation'] =+ " ";
+        attrsNamespaces['xsi:schemaLocation'] += " ";
       attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + schema;
     }
   }
-  xbrlContent = xml_createElement("Fornitura", xbrlContent, attrsNamespaces);
+  xbrlContent = xml_createElement("iv:Fornitura", xbrlContent, attrsNamespaces);
 
   //Output
   var results = [];

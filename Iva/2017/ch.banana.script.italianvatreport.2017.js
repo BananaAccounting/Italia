@@ -186,45 +186,26 @@ function init_namespaces()
 {
   var ns = [
     {
-      'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp',
-      'prefix' : 'xmlns',
-    },
-    /*{
-      'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:telent:v1',
-      'prefix' : 'xmlns:tm',
-    },
-    {
-      'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:common',
-      'prefix' : 'xmlns:cm',
-    },
-    {
-      'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:sco:common',
-      'prefix' : 'xmlns:sc',
+      'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0',
+      'prefix' : 'xmlns:iv'
     },
     {
       'namespace' : 'http://www.w3.org/2001/XMLSchema-instance',
       'prefix' : 'xmlns:xsi'
     },
-    {
-      'namespace' : 'http://www.w3.org/2001/XMLSchema',
-      'prefix' : 'xmlns:xsd'
-    },*/
   ];
   return ns;
 }
 function init_schemarefs()
 {
   var schemaRefs = [
-    /*'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/telematico_v1.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fornitura_v3.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesDati_v3.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesProvincie_v3.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/datiFiscali_v4.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesFiscali_v4.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typeEventi_v4.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fornituraIvp_2017_v1.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/typesIvp_2017_v1.xsd',*/
-  ];
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 comunicazioneIvp_2017_v1.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 fornituraIvp_2017_v1.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 fornitura_v3.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 intestazioneIvp_2017_v1.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 typesDati_v3.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 typesProvincie_v3.xsd',
+   ];
   return schemaRefs;
 };
 
