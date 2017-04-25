@@ -21,10 +21,16 @@ function createInstance(param)
   var xbrlDatiFatturaHeader = createInstance_DatiFatturaHeader(param);
 
   //<DTE>
-  var xbrlDTE = createInstance_DTE(param);
+  var xbrlContent = '';
+    xbrlContent = createInstance_DTE(param);
+  }
+    //xbrlContent = createInstance_DTR(param);
+  }
+    //xbrlContent = createInstance_ANN(param);
+  }
 
   //<DatiFattura> root element
-  var xbrlContent = xbrlDatiFatturaHeader + xbrlDTE;
+  xbrlContent = xbrlDatiFatturaHeader + xbrlContent;
   var attrsNamespaces = {};
   for (var j in param.namespaces) {
     var prefix = param.namespaces[j]['prefix'];

@@ -53,7 +53,16 @@ function exec(inData) {
     param.repStartDate = selPeriod.startDate;
     param.repEndDate = selPeriod.endDate;
   }
-
+  var bloccoId = 0;
+  if (param.blocco == 'DTR')
+    bloccoId = 1;
+  if (param.blocco == 'ANN')
+    bloccoId = 2;
+  var blocco = Banana.Ui.getItem("Comunicazione fatture emesse e ricevute", "Seleziona blocco", ["DTE","DTR","ANN"], bloccoId, false);
+  if (!blocco)
+    return "@Cancel";
+  param.blocco = blocco;
+  
   var paramToString = JSON.stringify(param);
   var value = Banana.document.scriptSaveSettings(paramToString);
   
@@ -99,6 +108,7 @@ function initParam()
     param.repStartDate = Banana.document.startPeriod();
     param.repEndDate = Banana.document.endPeriod();
   }
+  param.blocco = 'DTE';
   return param;
 }
 
@@ -375,5 +385,7 @@ function verifyParam(param) {
      param.repStartDate = '';
    if (!param.repEndDate)
      param.repEndDate = '';
+   if (!param.blocco)
+     param.blocco = 'DTE';
    return param;
 }
