@@ -38,7 +38,8 @@ function xml_createElement(name,content,attributes){
 //xml_createElement('CodiceFiscale', '1345453', {}, '11...16', 0)
 //Len una sola cifra lunghezza fissa, due cifre separate da ... lunghezza min e max, nessuna cifra non controlla
 //mandatory 0=non obbligatorio 1=obbligatorio
-function xml_createElementWithValidation(name,content,mandatory,len,attributes){
+//context: dà ulteriori informazioni nella stringa del messaggio d'errrore
+function xml_createElementWithValidation(name,content,mandatory,len,context,attributes){
   var att_str = '';
   if (attributes) { // tests false if this arg is missing!
     att_str = xml_formatAttributes(attributes);
@@ -56,6 +57,7 @@ function xml_createElementWithValidation(name,content,mandatory,len,attributes){
   var fixedLen = 0;
   var minLen = 0;
   var maxLen = 0;
+  var msg = '';
   if (len && len.indexOf("...")>0) {
     var lenStrings = len.split("...");
     minLen = parseInt(lenStrings[0]);
@@ -65,26 +67,34 @@ function xml_createElementWithValidation(name,content,mandatory,len,attributes){
     fixedLen = parseInt(len);
   }
   if (fixedLen > 0 && content.length != fixedLen && mandatory>0) {
-    var msg = getErrorMessage(ID_ERR_XML_LUNGHEZZA_NONVALIDA);
+    if (!content.length)
+      content = '[vuoto]';
+    msg = getErrorMessage(ID_ERR_XML_LUNGHEZZA_NONVALIDA);
     msg = msg.replace("%1", name );
     msg = msg.replace("%2", content );
     msg = msg.replace("%3", fixedLen);
-    Banana.document.addMessage( msg, "Errore");
-    //Banana.document.table('Transactions').addMessage(msg, -1, "Transactions", ID_ERR_XML_LUNGHEZZA_NONVALIDA);
   }
   else if (maxLen && content.length > maxLen && mandatory>0) {
-    var msg = getErrorMessage(ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA);
+    if (!content.length)
+      content = '[vuoto]';
+    msg = getErrorMessage(ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA);
     msg = msg.replace("%1", name );
     msg = msg.replace("%2", content );
     msg = msg.replace("%3", maxLen);
-    Banana.document.addMessage( msg, "Errore");
   }
   else if (minLen && content.length < minLen && mandatory>0) {
-    var msg = getErrorMessage(ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA);
+    if (!content.length)
+      content = '[vuoto]';
+    msg = getErrorMessage(ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA);
     msg = msg.replace("%1", name );
     msg = msg.replace("%2", content );
     msg = msg.replace("%3", minLen);
+  }
+  if (msg) {
+    if (context)
+      msg = context + ': ' +  msg;
     Banana.document.addMessage( msg, "Errore");
+    //Banana.document.table('Transactions').addMessage(msg, -1, "Transactions", ID_ERR_XML_LUNGHEZZA_NONVALIDA);
   }
   return xml;
 }
