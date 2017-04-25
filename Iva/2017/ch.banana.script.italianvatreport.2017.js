@@ -199,12 +199,7 @@ function init_namespaces()
 function init_schemarefs()
 {
   var schemaRefs = [
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 comunicazioneIvp_2017_v1.xsd',
     'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 fornituraIvp_2017_v1.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 fornitura_v3.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 intestazioneIvp_2017_v1.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 typesDati_v3.xsd',
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 typesProvincie_v3.xsd',
    ];
   return schemaRefs;
 };
