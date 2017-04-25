@@ -106,16 +106,12 @@ function init_namespaces()
 {
   var ns = [
     {
-      'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2',
-      'prefix' : 'xmlns'
+      'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.0',
+      'prefix' : 'xmlns:df'
     },
     {
       'namespace' : 'http://www.w3.org/2001/XMLSchema-instance',
       'prefix' : 'xmlns:xsi'
-    },
-    {
-      'namespace' : 'http://www.w3.org/2001/XMLSchema',
-      'prefix' : 'xmlns:xsd'
     },
   ];
   return ns;
@@ -123,7 +119,7 @@ function init_namespaces()
 function init_schemarefs()
 {
   var schemaRefs = [
-    //'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.0 DatiFattura_v1.0.xsd',
   ];
   return schemaRefs;
 };
@@ -261,15 +257,15 @@ function loadData_filterTransactions(row, index, table) {
   if (operationType && operationType != Banana.document.OPERATIONTYPE_TRANSACTION)
     return false;
 
-  var docType = row.value("JInvoiceDocType");
+  /*var docType = row.value("JInvoiceDocType");
   if (docType == "10" || docType == "20")
-    return true;
+    return true;*/
 
   /*var isVatOperation = row.value("JVatIsVatOperation");
   if (isVatOperation)
     return true;*/
     
-  return false;
+  return true;
 }
 
 /*

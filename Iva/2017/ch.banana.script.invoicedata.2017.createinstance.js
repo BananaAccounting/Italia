@@ -42,7 +42,8 @@ function createInstance(param)
       attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + schema;
     }
   }
-  xbrlContent = xml_createElement("DatiFattura", xbrlContent, attrsNamespaces);
+  attrsNamespaces['versione'] = "DAT10";
+  xbrlContent = xml_createElement("df:DatiFattura", xbrlContent, attrsNamespaces);
 
   //Output
   var results = [];
