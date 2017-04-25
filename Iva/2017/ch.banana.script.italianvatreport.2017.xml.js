@@ -66,7 +66,7 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
   else if (len && len.length>0) {
     fixedLen = parseInt(len);
   }
-  if (fixedLen > 0 && content.length != fixedLen && mandatory>0) {
+  if (fixedLen > 0 && content.length != fixedLen && xml.length>0) {
     if (!content.length)
       content = '[vuoto]';
     msg = getErrorMessage(ID_ERR_XML_LUNGHEZZA_NONVALIDA);
@@ -74,7 +74,7 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
     msg = msg.replace("%2", content );
     msg = msg.replace("%3", fixedLen);
   }
-  else if (maxLen && content.length > maxLen && mandatory>0) {
+  else if (maxLen && content.length > maxLen && xml.length>0) {
     if (!content.length)
       content = '[vuoto]';
     msg = getErrorMessage(ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA);
@@ -82,7 +82,7 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
     msg = msg.replace("%2", content );
     msg = msg.replace("%3", maxLen);
   }
-  else if (minLen && content.length < minLen && mandatory>0) {
+  else if (minLen && content.length < minLen && xml.length>0) {
     if (!content.length)
       content = '[vuoto]';
     msg = getErrorMessage(ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA);

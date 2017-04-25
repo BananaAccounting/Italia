@@ -56,9 +56,7 @@ function exec(inData) {
   var bloccoId = 0;
   if (param.blocco == 'DTR')
     bloccoId = 1;
-  if (param.blocco == 'ANN')
-    bloccoId = 2;
-  var blocco = Banana.Ui.getItem("Comunicazione fatture emesse e ricevute", "Seleziona blocco", ["DTE","DTR","ANN"], bloccoId, false);
+  var blocco = Banana.Ui.getItem("Comunicazione fatture emesse e ricevute", "Seleziona blocco", ["DTE","DTR"], bloccoId, false);
   if (!blocco)
     return "@Cancel";
   param.blocco = blocco;
@@ -109,6 +107,29 @@ function getCountryCode(country) {
   return countryCode.toUpperCase();
 }
 
+function getIvaAliquota(row) {
+  if (!row)
+    return '';
+  var vatRate = '';
+  vatRate = row["VatRate"];
+  vatRate = Banana.SDecimal.abs(vatRate);
+  return vatRate;
+}
+
+function getIvaImponibile(row) {
+  if (!row)
+    return '';
+  var amount = '';
+  return amount;
+}
+
+function getIvaImposta(row) {
+  if (!row)
+    return '';
+  var amount = '';
+  return amount;
+}
+
 function initParam()
 {
   var param = {};
@@ -126,7 +147,7 @@ function init_namespaces()
 {
   var ns = [
     {
-      'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.0',
+      'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0',
       'prefix' : 'xmlns:df'
     },
     {
@@ -139,7 +160,7 @@ function init_namespaces()
 function init_schemarefs()
 {
   var schemaRefs = [
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.0 DatiFattura_v1.0.xsd',
+    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 DatiFattura_v2.0.xsd',
   ];
   return schemaRefs;
 };

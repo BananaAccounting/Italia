@@ -28,9 +28,6 @@ function createInstance(param)
   else if (param.blocco == 'DTR') {
     xbrlContent = createInstance_blocco_DTR(param);
   }
-  else if (param.blocco == 'ANN') {
-    xbrlContent = createInstance_blocco_ANN(param);
-  }
 
   //<DatiFattura> root element
   xbrlContent = xbrlDatiFatturaHeader + xbrlContent;
@@ -70,17 +67,9 @@ function createInstance(param)
 * Se questo blocco è valorizzato, non dovranno essere valorizzati i blocchi 3 <DTR> e 4 <ANN>
 * Occorrenze: <0.1>
 */
-function createInstance_blocco_ANN(param) 
-{
-  var xbrlANN=  '\n' + xml_createElement("ANN", '') + '\n';
-  return xbrlANN;
-}
-
 function createInstance_blocco_DTE(param) 
 {
-  var xbrlContent = '';
-  if (param.customers.length)
-    xbrlContent = createInstance_CedentePrestatoreDTE(param);
+  var xbrlContent = createInstance_CedentePrestatoreDTE(param);
   for (var i in param.customers) {
     var customerObj = param.customers[i];
     if (customerObj)
@@ -145,7 +134,7 @@ function createInstance_CedentePrestatoreDTE(param)
 function createInstance_CessionarioCommittenteDTE(customerObj, param) 
 {
   var xbrlContent = '';
-  var msgContext = '<CessionarioCommittenteDTE> ' + customerObj["Account"] + ' ' + customerObj["Description"];
+  var msgContext = '<CessionarioCommittenteDTE> cliente: ' + customerObj["Account"] + ' ' + customerObj["Description"];
   if (customerObj) {
     //2.2.1   <IdentificativiFiscali>
     xbrlContent = '\n' + xml_createElementWithValidation("IdPaese", getCountryCode(customerObj["Country"]),1,'2',msgContext);
@@ -177,12 +166,19 @@ function createInstance_CessionarioCommittenteDTE(customerObj, param)
     //2.2.3   <DatiFatturaBodyDTE>
     for (var i in customerObj.invoices) {
       if (customerObj.invoices[i]) {
-        msgContext = '<DatiFatturaBodyDTE> ' + customerObj.invoices[i]["DocInvoice"];
+        msgContext = '<DatiFatturaBodyDTE> no fattura: ' + customerObj.invoices[i]["DocInvoice"];
         var data = customerObj.invoices[i]["JInvoiceIssueDate"];
+        //2.2.3.1  <DatiGenerali>
         xbrlContent3 = '\n' + xml_createElementWithValidation("TipoDocumento", customerObj.invoices[i]["TipoDocumento"],1,'4',msgContext);
         xbrlContent3 += '\n' + xml_createElementWithValidation("Data", data,1,'10',msgContext);
-        xbrlContent3 += '\n' + xml_createElementWithValidation("Numero", customerObj.invoices[i]["DocInvoice"],1,'1...20',msgContext);
-        xbrlContent2 = '\n' + xml_createElementWithValidation("DatiGenerali", xbrlContent3,1) +'\n';
+        xbrlContent3 += '\n' + xml_createElementWithValidation("Numero", customerObj.invoices[i]["DocInvoice"],1,'1...20',msgContext) + '\n';
+        xbrlContent2 = '\n' + xml_createElementWithValidation("DatiGenerali", xbrlContent3,1);
+        //2.2.3.1  <DatiRiepilogo>
+        xbrlContent3 = '\n' + xml_createElementWithValidation("ImponibileImporto", getIvaImponibile(customerObj.invoices[i]),1,'4...15',msgContext);
+        var xbrlContent4 = '\n' + xml_createElementWithValidation("Imposta", getIvaImposta(customerObj.invoices[i]),1,'4...15',msgContext);
+        xbrlContent4 += '\n' + xml_createElementWithValidation("Aliquota", getIvaAliquota(customerObj.invoices[i]),1,'4...6',msgContext) + '\n';
+        xbrlContent3 += '\n' + xml_createElementWithValidation("DatiIVA",xbrlContent4,1) +'\n';
+        xbrlContent2 += '\n' + xml_createElementWithValidation("DatiRiepilogo", xbrlContent3,1) +'\n';
         xbrlContent +=  xml_createElementWithValidation("DatiFatturaBodyDTE", xbrlContent2,1) +'\n';
       }
     }
