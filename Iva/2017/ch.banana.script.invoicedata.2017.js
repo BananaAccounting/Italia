@@ -21,6 +21,7 @@
 // @exportfiletype = xml
 // @includejs = ch.banana.script.invoicedata.2017.createinstance.js
 // @includejs = ch.banana.script.italianvatreport.2017.xml.js
+// @includejs = ch.banana.script.italianvatreport.2017.errors.js
 // @inputdatasource = none
 // @pubdate = 2017-04-20
 // @publisher = Banana.ch SA
