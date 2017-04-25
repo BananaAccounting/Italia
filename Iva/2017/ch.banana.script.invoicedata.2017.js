@@ -14,7 +14,7 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.invoicedata.2017.js
-// @description = Dati delle fatture emesse e ricevute (file xml)
+// @description = Comunicazione fatture emesse e ricevute (file xml)
 // @doctype = *;110
 // @encoding = utf-8
 // @exportfilename = IT99999999999_DF_00001
@@ -40,7 +40,7 @@ function exec(inData) {
   param = verifyParam(param);
   
   // Ask period
-  var selPeriod = Banana.Ui.getPeriod("Periodo", Banana.document.startPeriod(), Banana.document.endPeriod(), param.repStartDate, param.repEndDate, true);
+  var selPeriod = Banana.Ui.getPeriod("Comunicazione fatture emesse e ricevute", Banana.document.startPeriod(), Banana.document.endPeriod(), param.repStartDate, param.repEndDate, true);
   if (!selPeriod)
     return "@Cancel";
 

@@ -54,64 +54,64 @@ function createInstance(param)
 
 function createInstance_Comunicazione(param) 
 {
-  var xbrlCodiceFiscale = xml_createElement("iv:CodiceFiscale", createInstance_GetValueFromTableInfo("AccountingDataBase", "FiscalNumber")) + '\n';
-  var xbrlAnnoImposta = xml_createElement("iv:AnnoImposta", getPeriod("y", param)) + '\n';
-  var xbrlPartitaIva = xml_createElement("iv:PartitaIva", createInstance_GetValueFromTableInfo("AccountingDataBase", "VatNumber")) + '\n';
+  var xbrlCodiceFiscale = xml_createElement("CodiceFiscale", createInstance_GetValueFromTableInfo("AccountingDataBase", "FiscalNumber")) + '\n';
+  var xbrlAnnoImposta = xml_createElement("AnnoImposta", getPeriod("y", param)) + '\n';
+  var xbrlPartitaIva = xml_createElement("PartitaIva", createInstance_GetValueFromTableInfo("AccountingDataBase", "VatNumber")) + '\n';
   var xbrlContent = '\n' + xbrlCodiceFiscale + xbrlAnnoImposta + xbrlPartitaIva;
-  var xbrlFrontespizio = '\n' + xml_createElement("iv:Frontespizio", xbrlContent) + '\n';
+  var xbrlFrontespizio = '\n' + xml_createElement("Frontespizio", xbrlContent) + '\n';
   
   var xbrlMese = '';
   var xbrlTrimestre = '';
   if (getPeriod("m", param).length>0)
-    xbrlMese = xml_createElement("iv:Mese", getPeriod("m", param)) + '\n';
+    xbrlMese = xml_createElement("Mese", getPeriod("m", param)) + '\n';
   if (getPeriod("q", param).length>0 && xbrlMese.length<=0)
-    xbrlTrimestre = xml_createElement("iv:Trimestre", getPeriod("q", param)) + '\n';
+    xbrlTrimestre = xml_createElement("Trimestre", getPeriod("q", param)) + '\n';
   if (xbrlMese.length<=0 && xbrlTrimestre.length<=0){
-      Banana.document.addMessage( "Periodo non valido. Selezionare un mese oppure un trimestre.", "Errore");
+      Banana.document.addMessage( getErrorMessage(ID_ERR_PERIODO_NONVALIDO), "Errore");
       return '';
   }
-  var xbrlTotaleOperazioniAttive = xml_createElement("iv:TotaleOperazioniAttive", createInstance_GetVatAmount("OPATTIVE", "vatTaxable", param)) + '\n';
-  var xbrlTotaleOperazioniPassive = xml_createElement("iv:TotaleOperazioniPassive", createInstance_GetVatAmount("OPPASSIVE", "vatTaxable", param)) + '\n';
-  var xbrlIvaEsigibile = xml_createElement("iv:IvaEsigibile", createInstance_GetVatAmount("OPATTIVE", "vatPosted", param)) + '\n';
-  var xbrlIvaDetratta = xml_createElement("iv:IvaDetratta", createInstance_GetVatAmount("OPPASSIVE", "vatPosted", param)) + '\n';
+  var xbrlTotaleOperazioniAttive = xml_createElement("TotaleOperazioniAttive", createInstance_GetVatAmount("OPATTIVE", "vatTaxable", param)) + '\n';
+  var xbrlTotaleOperazioniPassive = xml_createElement("TotaleOperazioniPassive", createInstance_GetVatAmount("OPPASSIVE", "vatTaxable", param)) + '\n';
+  var xbrlIvaEsigibile = xml_createElement("IvaEsigibile", createInstance_GetVatAmount("OPATTIVE", "vatPosted", param)) + '\n';
+  var xbrlIvaDetratta = xml_createElement("IvaDetratta", createInstance_GetVatAmount("OPPASSIVE", "vatPosted", param)) + '\n';
   var xbrlIvaDovuta = '';
   var xbrlIvaCredito = '';
   if (Banana.SDecimal.sign(param.vatAmounts["OPDIFFERENZA"].vatPosted)<0)
-    xbrlIvaDovuta = xml_createElement("iv:IvaDovuta", createInstance_GetVatAmount("OPDIFFERENZA", "vatPosted", param)) + '\n';
+    xbrlIvaDovuta = xml_createElement("IvaDovuta", createInstance_GetVatAmount("OPDIFFERENZA", "vatPosted", param)) + '\n';
   else
-    xbrlIvaCredito = xml_createElement("iv:IvaCredito", createInstance_GetVatAmount("OPDIFFERENZA", "vatPosted", param)) + '\n';
+    xbrlIvaCredito = xml_createElement("IvaCredito", createInstance_GetVatAmount("OPDIFFERENZA", "vatPosted", param)) + '\n';
   var xbrlDebitoPeriodoPrecedente = '';
   var xbrlCreditoPeriodoPrecedente = '';
   if (Banana.SDecimal.sign(param.vatAmounts["L-CI"].vatPosted)<0)
-    xbrlDebitoPeriodoPrecedente = xml_createElement("iv:DebitoPrecedente", createInstance_GetVatAmount("L-CI", "vatPosted", param)) + '\n';
+    xbrlDebitoPeriodoPrecedente = xml_createElement("DebitoPrecedente", createInstance_GetVatAmount("L-CI", "vatPosted", param)) + '\n';
   else
-    xbrlCreditoPeriodoPrecedente = xml_createElement("iv:CreditoPeriodoPrecedente", createInstance_GetVatAmount("L-CI", "vatPosted", param)) + '\n';
-  var xbrlCreditoAnnoPrecedente = xml_createElement("iv:CreditoAnnoPrecedente", createInstance_GetVatAmount("L-CIA", "vatPosted", param)) + '\n';
-  var xbrlInteressiDovuti = xml_createElement("iv:InteressiDovuti", createInstance_GetVatAmount("L-INT", "vatPosted", param)) + '\n';
-  var xbrlAcconto = xml_createElement("iv:Acconto", createInstance_GetVatAmount("L-AC", "vatPosted", param)) + '\n';
+    xbrlCreditoPeriodoPrecedente = xml_createElement("CreditoPeriodoPrecedente", createInstance_GetVatAmount("L-CI", "vatPosted", param)) + '\n';
+  var xbrlCreditoAnnoPrecedente = xml_createElement("CreditoAnnoPrecedente", createInstance_GetVatAmount("L-CIA", "vatPosted", param)) + '\n';
+  var xbrlInteressiDovuti = xml_createElement("InteressiDovuti", createInstance_GetVatAmount("L-INT", "vatPosted", param)) + '\n';
+  var xbrlAcconto = xml_createElement("Acconto", createInstance_GetVatAmount("L-AC", "vatPosted", param)) + '\n';
   var xbrlImportoDaVersare = '';
   var xbrlImportoACredito = '';
   if (Banana.SDecimal.sign(param.vatAmounts["Total"].vatPosted)<0)
-    xbrlImportoDaVersare = xml_createElement("iv:ImportoDaVersare", createInstance_GetVatAmount("Total", "vatPosted", param)) + '\n';
+    xbrlImportoDaVersare = xml_createElement("ImportoDaVersare", createInstance_GetVatAmount("Total", "vatPosted", param)) + '\n';
   else
-    xbrlImportoACredito = xml_createElement("iv:ImportoACredito", createInstance_GetVatAmount("Total", "vatPosted", param)) + '\n';
+    xbrlImportoACredito = xml_createElement("ImportoACredito", createInstance_GetVatAmount("Total", "vatPosted", param)) + '\n';
 
 
   xbrlContent = '\n' + xbrlMese + xbrlTrimestre + xbrlTotaleOperazioniAttive + xbrlTotaleOperazioniPassive + xbrlIvaEsigibile + xbrlIvaDetratta + xbrlIvaDovuta + xbrlIvaCredito;
   xbrlContent += xbrlDebitoPeriodoPrecedente + xbrlCreditoPeriodoPrecedente + xbrlCreditoAnnoPrecedente + xbrlInteressiDovuti + xbrlAcconto + xbrlImportoDaVersare + xbrlImportoACredito;
-  var xbrlModulo = '\n' + xml_createElement("iv:Modulo", xbrlContent) + '\n';
-  var xbrlDatiContabili =  xml_createElement("iv:DatiContabili", xbrlModulo) + '\n';
+  var xbrlModulo = '\n' + xml_createElement("Modulo", xbrlContent) + '\n';
+  var xbrlDatiContabili =  xml_createElement("DatiContabili", xbrlModulo) + '\n';
   
   xbrlContent = xbrlFrontespizio + xbrlDatiContabili;
 
-  var xbrlComunicazione =  xml_createElement("iv:Comunicazione", xbrlContent, {'identificativo':'1'}) + '\n';
+  var xbrlComunicazione =  xml_createElement("Comunicazione", xbrlContent, {'identificativo':'1'}) + '\n';
   return xbrlComunicazione;
 }
 
 function createInstance_Intestazione(param) 
 {
-  var xbrlContent =  '\n' + xml_createElement("iv:CodiceFornitura", "IVP17") + '\n';
-  var xbrlIntestazione =  xml_createElement("iv:Intestazione", xbrlContent) + '\n';
+  var xbrlContent =  '\n' + xml_createElement("CodiceFornitura", "IVP17") + '\n';
+  var xbrlIntestazione =  xml_createElement("Intestazione", xbrlContent) + '\n';
   return xbrlIntestazione;
 }
 

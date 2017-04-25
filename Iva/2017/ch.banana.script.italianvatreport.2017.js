@@ -14,13 +14,14 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italianvatreport.2017.js
-// @description = Comunicazione periodica IVA 2017(file xml)
+// @description = Comunicazione periodica IVA (file xml)
 // @doctype = *;110
 // @encoding = utf-8
 // @exportfilename = IT99999999999_LI_00001
 // @exportfiletype = xml
 // @includejs = ch.banana.script.italianvatreport.2017.createinstance.js
 // @includejs = ch.banana.script.italianvatreport.2017.xml.js
+// @includejs = ch.banana.script.italianvatreport.2017.errors.js
 // @inputdatasource = none
 // @pubdate = 2017-04-20
 // @publisher = Banana.ch SA
@@ -59,7 +60,7 @@ function exec(inData) {
   param = verifyParam(param);
   
   // Ask period
-  var selPeriod = Banana.Ui.getPeriod("Vat report period", Banana.document.startPeriod(), Banana.document.endPeriod(), param.repStartDate, param.repEndDate, true);
+  var selPeriod = Banana.Ui.getPeriod("Comunicazione periodica IVA", Banana.document.startPeriod(), Banana.document.endPeriod(), param.repStartDate, param.repEndDate, true);
   if (!selPeriod)
     return "@Cancel";
 
@@ -418,7 +419,9 @@ function sumVatAmounts(vatAmounts, codesToSum) {
   for (var i=0; i<codesToSum.length; i++) {
   codeAmounts = vatAmounts[codesToSum[i]];
   if (codeAmounts === undefined) {
-    Banana.document.addMessage( "Codici " + codesToSum + " non definiti", "Errore");
+    var msg = getErrorMessage(ID_ERR_CODICI_ND);
+    msg = msg.replace("%1", codesToSum );
+    Banana.document.addMessage( msg, "Errore");
     continue;
   }
   // Javascript note: the sign '+' in '+codeAmounts.vatAmount' is used to convert a string in a number
