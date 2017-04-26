@@ -174,10 +174,19 @@ function createInstance_CessionarioCommittenteDTE(customerObj, param)
         xbrlContent3 += '\n' + xml_createElementWithValidation("Numero", customerObj.invoices[i]["DocInvoice"],1,'1...20',msgContext) + '\n';
         xbrlContent2 = '\n' + xml_createElementWithValidation("DatiGenerali", xbrlContent3,1);
         //2.2.3.1  <DatiRiepilogo>
-        xbrlContent3 = '\n' + xml_createElementWithValidation("ImponibileImporto", getIvaImponibile(customerObj.invoices[i]),1,'4...15',msgContext);
-        var xbrlContent4 = '\n' + xml_createElementWithValidation("Imposta", getIvaImposta(customerObj.invoices[i]),1,'4...15',msgContext);
-        xbrlContent4 += '\n' + xml_createElementWithValidation("Aliquota", getIvaAliquota(customerObj.invoices[i]),1,'4...6',msgContext) + '\n';
-        xbrlContent3 += '\n' + xml_createElementWithValidation("DatiIVA",xbrlContent4,1) +'\n';
+        var vatAmounts = createInstance_GetVatAmounts(customerObj.invoices[i]);
+        xbrlContent3 = '\n' + xml_createElementWithValidation("ImponibileImporto", vatAmounts.imponibile,1,'4...15',msgContext);
+        var xbrlContent4 = '\n' + xml_createElementWithValidation("Imposta", vatAmounts.imposta,1,'4...15',msgContext);
+        xbrlContent4 += '\n' + xml_createElementWithValidation("Aliquota", vatAmounts.aliquota,1,'4...6',msgContext) + '\n';
+        xbrlContent3 += '\n' + xml_createElementWithValidation("DatiIVA",xbrlContent4,1) ;
+        if (vatAmounts.natura.length)
+          xbrlContent3 += '\n' + xml_createElementWithValidation("Natura", vatAmounts.natura,0,'2');
+        if (vatAmounts.detraibile.length)
+          xbrlContent3 += '\n' + xml_createElementWithValidation("Detraibile", vatAmounts.detraibile,0,'4...6');
+        if (vatAmounts.deducibile.length)
+          xbrlContent3 += '\n' + xml_createElementWithValidation("Deducibile",vatAmounts.deducibile,0,'2');
+        if (vatAmounts.natura.length || vatAmounts.detraibile.length || vatAmounts.deducibile.length)
+          xbrlContent3 += '\n';
         xbrlContent2 += '\n' + xml_createElementWithValidation("DatiRiepilogo", xbrlContent3,1) +'\n';
         xbrlContent +=  xml_createElementWithValidation("DatiFatturaBodyDTE", xbrlContent2,1) +'\n';
       }
@@ -197,3 +206,45 @@ function createInstance_DatiFatturaHeader(param)
   return '';
 }
 
+function createInstance_GetVatAmounts(row) {
+  var amounts = {};
+  amounts.aliquota = '0.00';
+  amounts.deducibile = '';
+  amounts.detraibile = '0.00';
+  amounts.imponibile = '0.00';
+  amounts.imposta = '0.00';
+  amounts.natura = '';
+  
+  if (!row)
+    return amounts;
+
+  //aliquota
+  amounts.aliquota = row["VatRate"];
+  if (Banana.SDecimal.isZero(amounts.aliquota))
+    amounts.aliquota = '0.00';
+  else
+    amounts.aliquota = Banana.SDecimal.abs(amounts.aliquota);
+
+  //iva deducibile
+  
+  //iva detraibile
+
+  //iva imponibile
+  amounts.imponibile = row["JVatTaxable"];
+  if (Banana.SDecimal.isZero(amounts.imponibile))
+    amounts.imponibile = '0.00';
+  else
+    amounts.imponibile = Banana.SDecimal.abs(amounts.imponibile);
+
+  //iva imposta
+  amounts.imposta = row["VatPosted"];
+  if (Banana.SDecimal.isZero(amounts.imposta))
+    amounts.imposta = '0.00';
+  else
+    amounts.imposta = Banana.SDecimal.abs(amounts.imposta);
+
+  //natura
+  amounts.natura = row["Natura"];
+  
+  return amounts;
+}

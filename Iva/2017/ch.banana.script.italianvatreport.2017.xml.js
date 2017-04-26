@@ -24,7 +24,7 @@ function xml_createElement(name,content,attributes){
   if (attributes) { // tests false if this arg is missing!
     att_str = xml_formatAttributes(attributes);
   }
-  var xml;
+  var xml='';
   if (!content){
     xml='<' + name + att_str + '/>';
   }
@@ -44,7 +44,7 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
   if (attributes) { // tests false if this arg is missing!
     att_str = xml_formatAttributes(attributes);
   }
-  var xml;
+  var xml='';
   if (content) {
     xml='<' + name + att_str + '>' + content + '</'+name+'>';
   }

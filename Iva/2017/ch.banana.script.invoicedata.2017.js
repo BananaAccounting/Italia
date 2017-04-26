@@ -66,7 +66,7 @@ function exec(inData) {
   
   param = loadData(param);
 
-  var output = createInstance(param)
+  var output = createInstance(param);
 
   if (output != "@Cancel") {
     var report = Banana.Report.newReport("Dati delle fatture emesse e ricevute");
@@ -105,29 +105,6 @@ function getCountryCode(country) {
     countryCode = 'IT';
   }
   return countryCode.toUpperCase();
-}
-
-function getIvaAliquota(row) {
-  if (!row)
-    return '';
-  var vatRate = '';
-  vatRate = row["VatRate"];
-  vatRate = Banana.SDecimal.abs(vatRate);
-  return vatRate;
-}
-
-function getIvaImponibile(row) {
-  if (!row)
-    return '';
-  var amount = '';
-  return amount;
-}
-
-function getIvaImposta(row) {
-  if (!row)
-    return '';
-  var amount = '';
-  return amount;
 }
 
 function initParam()
@@ -179,6 +156,7 @@ function loadData(param)
   
   var periodStart = Banana.Converter.stringToDate(param.repStartDate);
   var periodEnd = Banana.Converter.stringToDate(param.repEndDate);
+  var tableVatCodes = Banana.document.table('VatCodes');
   var tColumnNames = journal.columnNames;
   param.journal = {};
   param.journal.rows = [];
@@ -196,12 +174,41 @@ function loadData(param)
       continue;
      }
 
-    //add data
+    //add data from journal
     for (var j = 0; j < tColumnNames.length; j++) {
       var columnName = tColumnNames[j];
       value = filteredRows[i].value(columnName);
       jsonLine[columnName] = value;
     }
+
+    //additional data for print-out
+    jsonLine["Natura"] = '';
+    var vatCode = filteredRows[i].value("JVatCodeWithoutSign");
+    if (Banana.document && vatCode.length) {
+      if (tableVatCodes) {
+        var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
+        if (rowVatCodes) {
+          //N1 escluse ex art. 15
+          //N2 non soggette
+          //N3 non imponibili
+          //N4 esenti
+          //N5 regime del margine / IVA non esposta in fattura
+          //N6 inversione contabile
+          //N7 IVA assolta in altro stato UE 
+          var vatGr = rowVatCodes.value("Gr");
+          if (vatGr && vatGr.startsWith("V-NI") || vatGr.startsWith("A-NI")) {
+            jsonLine["Natura"] = 'N3';
+          }
+          else if (vatGr && vatGr.startsWith("V-ES") || vatGr.startsWith("A-ES")) {
+            jsonLine["Natura"] = 'N4';
+          }
+          else if (vatGr && vatGr.startsWith("V-NE") || vatGr.startsWith("A-NE")) {
+            jsonLine["Natura"] = 'N5';
+          }
+        }
+      }
+    }
+
     param.journal.rows.push(jsonLine);
     jsonLine = {};
     value = "";
@@ -370,6 +377,7 @@ function printVatReport1(report, stylesheet, param) {
   headerRow.addCell("VND");
   headerRow.addCell("VPosted");
   headerRow.addCell("VNumber");
+  headerRow.addCell("Natura");
 
   // Print data
   for (var i = 0; i < param.journal.rows.length; i++) {
@@ -392,6 +400,7 @@ function printVatReport1(report, stylesheet, param) {
     row.addCell(jsonObj["VatNonDeductible"]);
     row.addCell(jsonObj["VatPosted"]);
     row.addCell(jsonObj["VatNumber"]);
+    row.addCell(jsonObj["Natura"]);
   }
 
 }
