@@ -42,7 +42,7 @@ function createInstance(param)
       attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + schema;
     }
   }
-  xbrlContent = xml_createElement("iv:Fornitura", xbrlContent, attrsNamespaces);
+  xbrlContent = xml_createElement("Fornitura", xbrlContent, attrsNamespaces);
 
   //Output
   var results = [];
@@ -56,7 +56,7 @@ function createInstance_Comunicazione(param)
 {
   var xbrlCodiceFiscale = xml_createElement("CodiceFiscale", createInstance_GetValueFromTableInfo("AccountingDataBase", "FiscalNumber")) + '\n';
   var xbrlAnnoImposta = xml_createElement("AnnoImposta", getPeriod("y", param)) + '\n';
-  var xbrlPartitaIva = xml_createElement("PartitaIva", createInstance_GetValueFromTableInfo("AccountingDataBase", "VatNumber")) + '\n';
+  var xbrlPartitaIva = xml_createElement("PartitaIVA", createInstance_GetValueFromTableInfo("AccountingDataBase", "VatNumber")) + '\n';
   var xbrlContent = '\n' + xbrlCodiceFiscale + xbrlAnnoImposta + xbrlPartitaIva;
   var xbrlFrontespizio = '\n' + xml_createElement("Frontespizio", xbrlContent) + '\n';
   
@@ -104,7 +104,7 @@ function createInstance_Comunicazione(param)
   
   xbrlContent = xbrlFrontespizio + xbrlDatiContabili;
 
-  var xbrlComunicazione =  xml_createElement("Comunicazione", xbrlContent, {'identificativo':'1'}) + '\n';
+  var xbrlComunicazione =  xml_createElement("Comunicazione", xbrlContent, {'identificativo':'00001'}) + '\n';
   return xbrlComunicazione;
 }
 
@@ -137,7 +137,7 @@ function createInstance_GetVatAmount(vatCode, column, param) {
   else if (column == "vatNotDeductible")
     amount = param.vatAmounts[vatCode].vatNotDeductible;
   if (Banana.SDecimal.isZero(amount))
-    return "";
+    return "0,00";
   amount = Banana.SDecimal.abs(amount);
   //amount = Banana.SDecimal.roundNearest(amount, '1');
   amount = amount.replace(".",",");

@@ -186,8 +186,8 @@ function init_namespaces()
 {
   var ns = [
     {
-      'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0',
-      'prefix' : 'xmlns:iv'
+      'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp',
+      'prefix' : 'xmlns'
     },
     {
       'namespace' : 'http://www.w3.org/2001/XMLSchema-instance',
@@ -199,7 +199,7 @@ function init_namespaces()
 function init_schemarefs()
 {
   var schemaRefs = [
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 fornituraIvp_2017_v1.xsd',
+    //'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 fornituraIvp_2017_v1.xsd',
    ];
   return schemaRefs;
 };
