@@ -169,7 +169,7 @@ function createInstance_CessionarioCommittenteDTE(customerObj, param)
         msgContext = '<DatiFatturaBodyDTE> no fattura: ' + customerObj.rows[i]["DocInvoice"];
         var data = customerObj.rows[i]["JInvoiceIssueDate"];
         //2.2.3.1  <DatiGenerali>
-        xbrlContent3 = '\n' + xml_createElementWithValidation("TipoDocumento", customerObj.rows[i]["TipoDocumento"],1,'4',msgContext);
+        xbrlContent3 = '\n' + xml_createElementWithValidation("TipoDocumento", customerObj.rows[i]["DF_TipoDoc"],1,'4',msgContext);
         xbrlContent3 += '\n' + xml_createElementWithValidation("Data", data,1,'10',msgContext);
         xbrlContent3 += '\n' + xml_createElementWithValidation("Numero", customerObj.rows[i]["DocInvoice"],1,'1...20',msgContext) + '\n';
         xbrlContent2 = '\n' + xml_createElementWithValidation("DatiGenerali", xbrlContent3,1);
@@ -180,7 +180,7 @@ function createInstance_CessionarioCommittenteDTE(customerObj, param)
         xbrlContent4 += '\n' + xml_createElementWithValidation("Aliquota", vatAmounts.aliquota,1,'4...6',msgContext) + '\n';
         xbrlContent3 += '\n' + xml_createElementWithValidation("DatiIVA",xbrlContent4,1) ;
         if (vatAmounts.natura.length)
-          xbrlContent3 += '\n' + xml_createElementWithValidation("Natura", vatAmounts.natura,0,'2');
+          xbrlContent3 += '\n' + xml_createElementWithValidation("DF_Natura", vatAmounts.natura,0,'2');
         if (vatAmounts.detraibile.length)
           xbrlContent3 += '\n' + xml_createElementWithValidation("Detraibile", vatAmounts.detraibile,0,'4...6');
         if (vatAmounts.deducibile.length)
@@ -244,7 +244,7 @@ function createInstance_GetVatAmounts(row) {
     amounts.imposta = Banana.SDecimal.abs(amounts.imposta);
 
   //natura
-  amounts.natura = row["Natura"];
+  amounts.natura = row["DF_Natura"];
   
   return amounts;
 }
