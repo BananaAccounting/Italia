@@ -154,27 +154,92 @@ function loadData(param)
   if (!journal || !filteredRows)
     return false;
   
+  //Get customers or suppliers
   var periodStart = Banana.Converter.stringToDate(param.repStartDate);
   var periodEnd = Banana.Converter.stringToDate(param.repEndDate);
-  var tableVatCodes = Banana.document.table('VatCodes');
-  var tColumnNames = journal.columnNames;
-  param.journal = {};
-  param.journal.rows = [];
-  var jsonLine = {};
-  var value = "";
+  param.customers = {};
+  param.suppliers = {};
 
   for (var i = 0; i < filteredRows.length; i++) {
+    //Exclude vat rows
+     if (filteredRows[i].value("JVatIsVatOperation")) {
+      continue;
+     }
     //Check period
     var validPeriod = false;
-    value = filteredRows[i].value("JDate");
+    var value = filteredRows[i].value("JDate");
     var currentDate = Banana.Converter.stringToDate(value, "YYYY-MM-DD");
     if (currentDate >= periodStart && currentDate <= periodEnd)
       validPeriod = true;
     if (!validPeriod) {
       continue;
-     }
+    }
+    //Only rows with JInvoiceRowCustomerSupplier=1 (customer) or JInvoiceRowCustomerSupplier=2 (supplier)
+    var keepRow=false;
+    var isCustomer = filteredRows[i].value("JInvoiceRowCustomerSupplier");
+    if (param.blocco == 'DTE' && isCustomer=='1')
+      keepRow=true;
+    if (param.blocco == 'DTR' && isCustomer=='2')
+      keepRow=true;
+    if (!keepRow)
+      continue;
 
-    //add data from journal
+    var accountId = filteredRows[i].value("JAccount");
+    if (accountId && accountId.length>0) {
+      var accountObj = JSON.parse(getAccount(accountId));
+      if (accountObj) {
+        if (isCustomer == '1') {
+          param.customers[accountId] = accountObj;
+        }
+        else if (isCustomer == '2') {
+          param.suppliers[accountId] = accountObj;
+        }
+      }
+    }
+  }
+
+  //Load rows
+  var tableVatCodes = Banana.document.table('VatCodes');
+  var tColumnNames = journal.columnNames;
+  var jsonLine = {};
+  
+  for (var i = 0; i < filteredRows.length; i++) {
+    //Exclude vat rows
+     if (filteredRows[i].value("JVatIsVatOperation")) {
+      continue;
+     }
+    //Check period
+    var validPeriod = false;
+    var value = filteredRows[i].value("JDate");
+    var currentDate = Banana.Converter.stringToDate(value, "YYYY-MM-DD");
+    if (currentDate >= periodStart && currentDate <= periodEnd)
+      validPeriod = true;
+    if (!validPeriod) {
+      continue;
+    }
+   //Must contains customer or supplier accounts
+   var isCustomer=false;
+   var isSupplier=false;
+   var accountId = filteredRows[i].value("JAccount");
+   var contraAccountId = filteredRows[i].value("JContraAccount");
+   if (accountId in param.customers) {
+     isCustomer = true;
+   }
+   if (contraAccountId in param.customers) {
+     isCustomer = true;
+     accountId = contraAccountId;
+   }
+   if (accountId in param.suppliers) {
+     isSupplier = true;
+   }
+   if (contraAccountId in param.suppliers) {
+     isSupplier = true;
+     accountId = contraAccountId;
+   }
+   if (!isCustomer && !isSupplier)
+     continue;
+
+    //Add data from journal
     for (var j = 0; j < tColumnNames.length; j++) {
       var columnName = tColumnNames[j];
       value = filteredRows[i].value(columnName);
@@ -209,40 +274,18 @@ function loadData(param)
       }
     }
 
-    param.journal.rows.push(jsonLine);
-    jsonLine = {};
-    value = "";
-  }
-  
-  //Set customers and suppliers objects
-  param.customers = {};
-  param.suppliers = {};
-  for (var i = 0; i < param.journal.rows.length; i++) {
-    var jsonRowObj = param.journal.rows[i];
-    var isCustomer = jsonRowObj["JInvoiceRowCustomerSupplier"];
-    if (!isCustomer)
-      continue;
-    var accountId = jsonRowObj["JAccount"];
-    if (accountId && accountId.length>0) {
-      jsonRowObj = loadData_setDocType(jsonRowObj);
-      var accountObj = JSON.parse(getAccount(accountId));
-      if (accountObj) {
-        if (isCustomer == '1') {
-          param.customers[accountId] = accountObj;
-          if (!param.customers[accountId].invoices)
-            param.customers[accountId].invoices = [];
-          param.customers[accountId].invoices.push(jsonRowObj);
-        }
-        else if (isCustomer == '2') {
-          param.suppliers[accountId] = accountObj;
-          if (!param.suppliers[accountId].invoices)
-            param.suppliers[accountId].invoices = [];
-          param.suppliers[accountId].invoices.push(jsonRowObj);
-        }
-      }
+    if (isCustomer) {
+      if (!param.customers[accountId].rows)
+        param.customers[accountId].rows = [];
+      param.customers[accountId].rows.push(jsonLine);
     }
+    else if (isSupplier) {
+      if (!param.suppliers[accountId].rows)
+        param.suppliers[accountId].rows = [];
+      param.suppliers[accountId].rows.push(jsonLine);
+    }
+    jsonLine = {};
   }
-
   
   //Table FileInfo
   param.fileInfo = {};
@@ -273,8 +316,8 @@ function loadData(param)
   //debug
   /*var line = [];
   var transactions = [];
-  for (var i = 0; i < param.journal.rows.length; i++) {
-    var jsonObj = param.journal.rows[i];
+  for (var i = 0; i < filteredRows.length; i++) {
+    var jsonObj = filteredRows[i];
     for (var key in jsonObj) {
       line.push(jsonObj[key]);
     }
@@ -283,8 +326,8 @@ function loadData(param)
   }
   line = [];
   var header = [];
-  if (param.journal.rows.length>0) {
-    var jsonObj = param.journal.rows[0];
+  if (filteredRows.length>0) {
+    var jsonObj = filteredRows[0];
     for (var key in jsonObj) {
       line.push(key);
     }
@@ -352,7 +395,7 @@ function printVatReport1(report, stylesheet, param) {
   stylesheet.addStyle(".vatNumber", "font-size: 10px");
   stylesheet.addStyle(".warning", "color: red;font-size:8px;");
 
-  if (param.journal.rows.length<=0)
+  if (param.customers.length<=0 && param.suppliers.length<=0)
     return;
 
   //Print table
@@ -380,29 +423,54 @@ function printVatReport1(report, stylesheet, param) {
   headerRow.addCell("Natura");
 
   // Print data
-  for (var i = 0; i < param.journal.rows.length; i++) {
-    var row = table.addRow();
-    var jsonObj = param.journal.rows[i];
-    row.addCell(jsonObj["JDate"]);
-    row.addCell(jsonObj["JInvoiceDocType"]);
-    row.addCell(jsonObj["DocInvoice"]);
-    row.addCell(jsonObj["JAccount"]);
-    row.addCell(jsonObj["JContraAccount"]);
-    row.addCell(jsonObj["JAmount"]);
-    row.addCell(jsonObj["JInvoiceRowCustomerSupplier"]);
-    row.addCell(jsonObj["VatCode"]);
-    row.addCell(jsonObj["VatAmountType"]);
-    row.addCell(jsonObj["VatRate"]);
-    row.addCell(jsonObj["VatRateEffective"]);
-    row.addCell(jsonObj["VatTaxable"]);
-    row.addCell(jsonObj["VatAmount"]);
-    row.addCell(jsonObj["VatPercentNonDeductible"]);
-    row.addCell(jsonObj["VatNonDeductible"]);
-    row.addCell(jsonObj["VatPosted"]);
-    row.addCell(jsonObj["VatNumber"]);
-    row.addCell(jsonObj["Natura"]);
+  for (var i in param.customers) {
+    for (var j in param.customers[i].rows) {
+      var jsonObj = param.customers[i].rows[j];
+      var row = table.addRow();
+      row.addCell(jsonObj["JDate"]);
+      row.addCell(jsonObj["JInvoiceDocType"]);
+      row.addCell(jsonObj["DocInvoice"]);
+      row.addCell(jsonObj["JAccount"]);
+      row.addCell(jsonObj["JContraAccount"]);
+      row.addCell(jsonObj["JAmount"]);
+      row.addCell(jsonObj["JInvoiceRowCustomerSupplier"]);
+      row.addCell(jsonObj["VatCode"]);
+      row.addCell(jsonObj["VatAmountType"]);
+      row.addCell(jsonObj["VatRate"]);
+      row.addCell(jsonObj["VatRateEffective"]);
+      row.addCell(jsonObj["VatTaxable"]);
+      row.addCell(jsonObj["VatAmount"]);
+      row.addCell(jsonObj["VatPercentNonDeductible"]);
+      row.addCell(jsonObj["VatNonDeductible"]);
+      row.addCell(jsonObj["VatPosted"]);
+      row.addCell(jsonObj["VatNumber"]);
+      row.addCell(jsonObj["Natura"]);
+    }
   }
-
+  for (var i in param.suppliers) {
+    for (var j in param.suppliers[i].rows) {
+      var jsonObj = param.suppliers[i].rows[j];
+      var row = table.addRow();
+      row.addCell(jsonObj["JDate"]);
+      row.addCell(jsonObj["JInvoiceDocType"]);
+      row.addCell(jsonObj["DocInvoice"]);
+      row.addCell(jsonObj["JAccount"]);
+      row.addCell(jsonObj["JContraAccount"]);
+      row.addCell(jsonObj["JAmount"]);
+      row.addCell(jsonObj["JInvoiceRowCustomerSupplier"]);
+      row.addCell(jsonObj["VatCode"]);
+      row.addCell(jsonObj["VatAmountType"]);
+      row.addCell(jsonObj["VatRate"]);
+      row.addCell(jsonObj["VatRateEffective"]);
+      row.addCell(jsonObj["VatTaxable"]);
+      row.addCell(jsonObj["VatAmount"]);
+      row.addCell(jsonObj["VatPercentNonDeductible"]);
+      row.addCell(jsonObj["VatNonDeductible"]);
+      row.addCell(jsonObj["VatPosted"]);
+      row.addCell(jsonObj["VatNumber"]);
+      row.addCell(jsonObj["Natura"]);
+    }
+  }
 }
 
 function tableToCsv(table) {

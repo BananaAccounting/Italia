@@ -164,17 +164,17 @@ function createInstance_CessionarioCommittenteDTE(customerObj, param)
     * Blocco obbligatorio. Può essere replicato per trasmettere dati di più fatture relative allo stesso cliente
     */
     //2.2.3   <DatiFatturaBodyDTE>
-    for (var i in customerObj.invoices) {
-      if (customerObj.invoices[i]) {
-        msgContext = '<DatiFatturaBodyDTE> no fattura: ' + customerObj.invoices[i]["DocInvoice"];
-        var data = customerObj.invoices[i]["JInvoiceIssueDate"];
+    for (var i in customerObj.rows) {
+      if (customerObj.rows[i]) {
+        msgContext = '<DatiFatturaBodyDTE> no fattura: ' + customerObj.rows[i]["DocInvoice"];
+        var data = customerObj.rows[i]["JInvoiceIssueDate"];
         //2.2.3.1  <DatiGenerali>
-        xbrlContent3 = '\n' + xml_createElementWithValidation("TipoDocumento", customerObj.invoices[i]["TipoDocumento"],1,'4',msgContext);
+        xbrlContent3 = '\n' + xml_createElementWithValidation("TipoDocumento", customerObj.rows[i]["TipoDocumento"],1,'4',msgContext);
         xbrlContent3 += '\n' + xml_createElementWithValidation("Data", data,1,'10',msgContext);
-        xbrlContent3 += '\n' + xml_createElementWithValidation("Numero", customerObj.invoices[i]["DocInvoice"],1,'1...20',msgContext) + '\n';
+        xbrlContent3 += '\n' + xml_createElementWithValidation("Numero", customerObj.rows[i]["DocInvoice"],1,'1...20',msgContext) + '\n';
         xbrlContent2 = '\n' + xml_createElementWithValidation("DatiGenerali", xbrlContent3,1);
         //2.2.3.1  <DatiRiepilogo>
-        var vatAmounts = createInstance_GetVatAmounts(customerObj.invoices[i]);
+        var vatAmounts = createInstance_GetVatAmounts(customerObj.rows[i]);
         xbrlContent3 = '\n' + xml_createElementWithValidation("ImponibileImporto", vatAmounts.imponibile,1,'4...15',msgContext);
         var xbrlContent4 = '\n' + xml_createElementWithValidation("Imposta", vatAmounts.imposta,1,'4...15',msgContext);
         xbrlContent4 += '\n' + xml_createElementWithValidation("Aliquota", vatAmounts.aliquota,1,'4...6',msgContext) + '\n';
