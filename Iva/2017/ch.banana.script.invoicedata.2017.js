@@ -153,8 +153,8 @@ function loadData(param)
 
   if (!journal || !filteredRows)
     return false;
-  
-  //Get customers or suppliers
+
+  //Load customers/suppliers accounts
   var periodStart = Banana.Converter.stringToDate(param.repStartDate);
   var periodEnd = Banana.Converter.stringToDate(param.repEndDate);
   param.customers = {};
@@ -197,10 +197,9 @@ function loadData(param)
   //Load rows
   var tableVatCodes = Banana.document.table('VatCodes');
   var tColumnNames = journal.columnNames;
-  var jsonLine = {};
   
   for (var i = 0; i < filteredRows.length; i++) {
-    //Check period
+    //Checks period
     var validPeriod = false;
     var value = filteredRows[i].value("JDate");
     var currentDate = Banana.Converter.stringToDate(value, "YYYY-MM-DD");
@@ -208,7 +207,18 @@ function loadData(param)
       validPeriod = true;
     if (!validPeriod)
       continue;
-   //Must contains customer or supplier accounts
+
+    //Checks vatCode
+    var vatCode = filteredRows[i].value("JVatCodeWithoutSign");
+    if (vatCode.length<=0)
+      continue;
+
+   //Checks if customer/supplier row
+   var isCustomer = filteredRows[i].value("JInvoiceRowCustomerSupplier");
+   if (isCustomer)
+     continue;
+
+   //Checks customer or supplier accounts
    var isCustomer=false;
    var isSupplier=false;
    var accountId = filteredRows[i].value("JAccount");
@@ -231,26 +241,90 @@ function loadData(param)
      continue;
 
     //Add data from journal
+    var jsonLine = {};
     for (var j = 0; j < tColumnNames.length; j++) {
       var columnName = tColumnNames[j];
       value = filteredRows[i].value(columnName);
-      jsonLine[columnName] = value;
+      if (value)
+        jsonLine[columnName] = value;
+      else
+        jsonLine[columnName] = '';
     }
 
     //additional data
+
+    //DF_TipoDoc
+    //TD01 Fattura  
+    //TD04 Nota di credito  
+    //TD05  nota di debito
+    //TD07  fattura semplificata
+    //TD08  nota di credito semplificata
+    //TD10  fattura di acquisto intracomunitario beni
+    //TD11  fattura di acquisto intracomunitario servizi
+    jsonLine["DF_TipoDoc"] = '';
+    value = filteredRows[i].value("JInvoiceDocType");
+    if (value.length<=0)
+      value =  filteredRows[i].value("DocType");
+    if (value == 10)
+      jsonLine["DF_TipoDoc"] = 'TD01';
+    else if (value == 12)
+      jsonLine["DF_TipoDoc"] = 'TD04';
+
+    //DF_Aliquota
+    jsonLine["DF_Aliquota"] = '';
+    value = filteredRows[i].value("VatRate");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else
+      value = Banana.SDecimal.invert(value);
+    jsonLine["DF_Aliquota"] = value;
+
+    //DF_Deducibile
+    jsonLine["DF_Deducibile"] = '';
+  
+    //DF_Detraibile
+    jsonLine["DF_Detraibile"] = '';
+
+    //DF_Imponibile
+    jsonLine["DF_Imponibile"] = '';
+    value = filteredRows[i].value("JVatTaxable");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else
+      value = Banana.SDecimal.invert(value);
+    jsonLine["DF_Imponibile"] = value;
+
+    //DF_Imposta
+    jsonLine["DF_Imposta"] = '';
+    value = filteredRows[i].value("VatPosted");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else
+      value = Banana.SDecimal.invert(value);
+    jsonLine["DF_Imposta"] = value;
+
+    //DF_Lordo
+    jsonLine["DF_Lordo"] = '';
+    value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else
+      value = Banana.SDecimal.invert(value);
+    jsonLine["DF_Lordo"] = value;
+
+    //DF_Natura
+    //N1 escluse ex art. 15
+    //N2 non soggette
+    //N3 non imponibili
+    //N4 esenti
+    //N5 regime del margine / IVA non esposta in fattura
+    //N6 inversione contabile
+    //N7 IVA assolta in altro stato UE 
     jsonLine["DF_Natura"] = '';
-    var vatCode = filteredRows[i].value("JVatCodeWithoutSign");
     if (Banana.document && vatCode.length) {
       if (tableVatCodes) {
         var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
         if (rowVatCodes) {
-          //N1 escluse ex art. 15
-          //N2 non soggette
-          //N3 non imponibili
-          //N4 esenti
-          //N5 regime del margine / IVA non esposta in fattura
-          //N6 inversione contabile
-          //N7 IVA assolta in altro stato UE 
           var vatGr = rowVatCodes.value("Gr");
           if (vatGr && vatGr.startsWith("V-NI") || vatGr.startsWith("A-NI")) {
             jsonLine["DF_Natura"] = 'N3';
@@ -265,23 +339,6 @@ function loadData(param)
       }
     }
 
-    jsonLine["DF_TipoDoc"] = '';
-    var docType = filteredRows[i].value("JInvoiceDocType");
-    if (docType.length<=0)
-      docType =  filteredRows[i].value("DocType");
-    //TD01 Fattura  
-    //TD04 Nota di credito  
-    //TD05  nota di debito
-    //TD07  fattura semplificata
-    //TD08  nota di credito semplificata
-    //TD10  fattura di acquisto intracomunitario beni
-    //TD11  fattura di acquisto intracomunitario servizi
-    if (docType == 10)
-      jsonLine["DF_TipoDoc"] = 'TD01';
-    else if (docType == 12)
-      jsonLine["DF_TipoDoc"] = 'TD04';
-
-
     if (isCustomer) {
       if (!param.customers[accountId].rows)
         param.customers[accountId].rows = [];
@@ -292,7 +349,6 @@ function loadData(param)
         param.suppliers[accountId].rows = [];
       param.suppliers[accountId].rows.push(jsonLine);
     }
-    jsonLine = {};
   }
   
   //Table FileInfo
@@ -383,14 +439,19 @@ function printVatReport1(report, stylesheet, param) {
 
   // Print header
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Data");
-  headerRow.addCell("Fattura");
   headerRow.addCell("Tipo");
+  headerRow.addCell("Data");
+  headerRow.addCell("Fatt.");
   headerRow.addCell("Descrizione");
   headerRow.addCell("Conto");
-  headerRow.addCell("Contropartita");
-  headerRow.addCell("Importo");
+  headerRow.addCell("Ctrpart.");
   headerRow.addCell("Cod.IVA");
+  headerRow.addCell("Lordo");
+  headerRow.addCell("Imponibile");
+  headerRow.addCell("Imposta");
+  headerRow.addCell("Aliquota");
+  headerRow.addCell("Deducibile");
+  headerRow.addCell("Detraibile");
   headerRow.addCell("Natura");
 
   // Print data
@@ -398,26 +459,40 @@ function printVatReport1(report, stylesheet, param) {
     for (var j in param.customers[i].rows) {
       var jsonObj = param.customers[i].rows[j];
       var row = table.addRow();
-      row.addCell(jsonObj["JDate"]);
-      row.addCell(jsonObj["DocInvoice"]);
       row.addCell(jsonObj["DF_TipoDoc"]);
+      row.addCell(jsonObj["JDate"]);
+      row.addCell(jsonObj["DocInvoice"], "amount");
       row.addCell(jsonObj["JDescription"]);
-      row.addCell(jsonObj["JAccount"]);
-      row.addCell(jsonObj["JContraAccount"]);
-      row.addCell(jsonObj["JAmount"]);
-      row.addCell(jsonObj["VatCode"]);
-      row.addCell(jsonObj["DF_Natura"]);
-      /*
-      row.addCell(jsonObj["VatAmountType"]);
-      row.addCell(jsonObj["VatRate"]);
-      row.addCell(jsonObj["VatRateEffective"]);
-      row.addCell(jsonObj["VatTaxable"]);
-      row.addCell(jsonObj["VatAmount"]);
-      row.addCell(jsonObj["VatPercentNonDeductible"]);
-      row.addCell(jsonObj["VatNonDeductible"]);
-      row.addCell(jsonObj["VatPosted"]);
-      row.addCell(jsonObj["VatNumber"]);
-      */
+      row.addCell(jsonObj["JAccount"], "amount");
+      row.addCell(jsonObj["JContraAccount"], "amount");
+      row.addCell(jsonObj["JVatCodeWithoutSign"], "amount");
+      row.addCell(jsonObj["DF_Lordo"], "amount");
+      row.addCell(jsonObj["DF_Imponibile"], "amount");
+      row.addCell(jsonObj["DF_Imposta"], "amount");
+      row.addCell(jsonObj["DF_Aliquota"], "amount");
+      row.addCell(jsonObj["DF_Deducibile"], "amount");
+      row.addCell(jsonObj["DF_Detraibile"], "amount");
+      row.addCell(jsonObj["DF_Natura"], "amount");
+    }
+  }
+  for (var i in param.suppliers) {
+    for (var j in param.suppliers[i].rows) {
+      var jsonObj = param.suppliers[i].rows[j];
+      var row = table.addRow();
+      row.addCell(jsonObj["DF_TipoDoc"]);
+      row.addCell(jsonObj["JDate"]);
+      row.addCell(jsonObj["DocInvoice"], "amount");
+      row.addCell(jsonObj["JDescription"]);
+      row.addCell(jsonObj["JAccount"], "amount");
+      row.addCell(jsonObj["JContraAccount"], "amount");
+      row.addCell(jsonObj["JVatCodeWithoutSign"], "amount");
+      row.addCell(jsonObj["DF_Lordo"], "amount");
+      row.addCell(jsonObj["DF_Imponibile"], "amount");
+      row.addCell(jsonObj["DF_Imposta"], "amount");
+      row.addCell(jsonObj["DF_Aliquota"], "amount");
+      row.addCell(jsonObj["DF_Deducibile"], "amount");
+      row.addCell(jsonObj["DF_Detraibile"], "amount");
+      row.addCell(jsonObj["DF_Natura"], "amount");
     }
   }
 }
