@@ -40,6 +40,16 @@ function exec(inData) {
   }
   param = verifyParam(param);
   
+  // Check version
+  var serial = '';
+  if (typeof (Banana.application.serial) === 'string')
+    serial = Banana.application.serial;
+  if (serial.length<=0) {
+    var msg = getErrorMessage(ID_ERR_VERSIONE);
+    Banana.document.addMessage( msg, ID_ERR_VERSIONE);
+    return "@Cancel";
+  }
+
   // Ask period
   var selPeriod = Banana.Ui.getPeriod("Comunicazione fatture emesse e ricevute", Banana.document.startPeriod(), Banana.document.endPeriod(), param.repStartDate, param.repEndDate, true);
   if (!selPeriod)

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+var ID_ERR_VERSIONE = "ID_ERR_VERSIONE";
 var ID_ERR_CODICI_ND = "ID_ERR_CODICI_ND";
 var ID_ERR_PERIODO_NONVALIDO = "ID_ERR_PERIODO_NONVALIDO";
 var ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE = "ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE";
@@ -25,6 +26,8 @@ var ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA = "ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA";
 */
 function getErrorMessage(errorId) {
     switch (errorId) {
+        case ID_ERR_VERSIONE:
+            return "Lo script non è supportato. Aggiornare Banana ad una versione più recente.";
         case ID_ERR_CODICI_ND:
             return "Codici %1 non definiti";
         case ID_ERR_PERIODO_NONVALIDO:
