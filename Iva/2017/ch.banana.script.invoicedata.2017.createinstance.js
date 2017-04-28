@@ -196,11 +196,13 @@ function createInstance_Blocco22_32(accountObj, param)
     for (var i in accountObj.rows) {
       if (accountObj.rows[i]) {
         msgContext = '[' + accountObj.rows[i]["JTableOrigin"] + ': Riga ' + (parseInt(accountObj.rows[i]["JRowOrigin"])+1).toString() +'] <DatiFatturaBody' + param.blocco + '>';
-        var data = accountObj.rows[i]["JInvoiceIssueDate"];
+        var dataEmissione = accountObj.rows[i]["JInvoiceIssueDate"];
         //2.2.3.1  <DatiGenerali>
         xbrlContent3 = '\n' + xml_createElementWithValidation("TipoDocumento", accountObj.rows[i]["DF_TipoDoc"],1,'4',msgContext);
-        xbrlContent3 += '\n' + xml_createElementWithValidation("Data", data,1,'10',msgContext);
+        xbrlContent3 += '\n' + xml_createElementWithValidation("Data", dataEmissione,1,'10',msgContext);
         xbrlContent3 += '\n' + xml_createElementWithValidation("Numero", accountObj.rows[i]["DocInvoice"],1,'1...20',msgContext) + '\n';
+        if (param.blocco == 'DTR')
+          xbrlContent3 += '\n' + xml_createElementWithValidation("DataRegistrazione", accountObj.rows[i]["JDate"],1,'10',msgContext) + '\n';
         xbrlContent2 = '\n' + xml_createElementWithValidation("DatiGenerali", xbrlContent3,1);
         //2.2.3.1  <DatiRiepilogo>
         xbrlContent3 = '\n' + xml_createElementWithValidation("ImponibileImporto", accountObj.rows[i]["DF_Imponibile"],1,'4...15',msgContext);
@@ -208,7 +210,7 @@ function createInstance_Blocco22_32(accountObj, param)
         xbrlContent4 += '\n' + xml_createElementWithValidation("Aliquota", accountObj.rows[i]["DF_Aliquota"],0,'4...6',msgContext) + '\n';
         xbrlContent3 += '\n' + xml_createElementWithValidation("DatiIVA",xbrlContent4,1) ;
         if (accountObj.rows[i]["DF_Natura"].length)
-          xbrlContent3 += '\n' + xml_createElementWithValidation("DF_Natura", accountObj.rows[i]["DF_Natura"],0,'2');
+          xbrlContent3 += '\n' + xml_createElementWithValidation("Natura", accountObj.rows[i]["DF_Natura"],0,'2');
         if (accountObj.rows[i]["DF_Detraibile"].length)
           xbrlContent3 += '\n' + xml_createElementWithValidation("Detraibile", accountObj.rows[i]["DF_Detraibile"],0,'4...6');
         if (accountObj.rows[i]["DF_Deducibile"].length)

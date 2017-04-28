@@ -185,10 +185,10 @@ function initParam()
 function init_namespaces()
 {
   var ns = [
-    {
+    /*{
       'namespace' : 'urn:www.agenziaentrate.gov.it:specificheTecniche:sco:ivp',
       'prefix' : 'xmlns'
-    },
+    },*/
     {
       'namespace' : 'http://www.w3.org/2001/XMLSchema-instance',
       'prefix' : 'xmlns:xsi'

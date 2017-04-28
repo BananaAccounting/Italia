@@ -58,6 +58,7 @@ function createInstance_Comunicazione(param)
   var xbrlAnnoImposta = xml_createElement("AnnoImposta", getPeriod("y", param)) + '\n';
   var xbrlPartitaIva = xml_createElement("PartitaIVA", createInstance_GetValueFromTableInfo("AccountingDataBase", "VatNumber")) + '\n';
   var xbrlContent = '\n' + xbrlCodiceFiscale + xbrlAnnoImposta + xbrlPartitaIva;
+  xbrlContent += xml_createElement("FirmaDichiarazione", "0") + '\n';
   var xbrlFrontespizio = '\n' + xml_createElement("Frontespizio", xbrlContent) + '\n';
   
   var xbrlMese = '';
