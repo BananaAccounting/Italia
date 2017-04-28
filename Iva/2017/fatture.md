@@ -4,9 +4,6 @@ Informazioni per la programmazione.
 
 ## Riferimenti
 * [Spiegazioni codici e gruppi IVA](https://github.com/BananaAccounting/Italia/blob/master/Iva/2017/codiciIVA.md)
-* [Fiscooggi.it: Invio dati fattura e spesometro](http://www.fiscooggi.it/normativa-e-prassi/articolo/invio-dati-fattura-e-spesometroecco-chiarimenti-dell-agenzia)
-* [Validazione file xml con schema xsd](http://www.utilities-online.info/)
-
 
 ## Domande preliminari
 Si tratta di capire se generiamo un documento XML 
@@ -25,5 +22,6 @@ Si tratta di capire se generiamo un documento XML
 
 ## Valori immessi manualmente (dialogo??)
 
-
-
+## Tools
+* [www.utilities-online: validazione file xml](http://www.utilities-online.info/)
+* [ww.corefiling.com: validazione file xml](https://www.corefiling.com/opensource/schemaValidate.html)
