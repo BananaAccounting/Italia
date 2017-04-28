@@ -397,7 +397,7 @@ function sumVatAmounts(vatAmounts, codesToSum) {
   if (codeAmounts === undefined) {
     var msg = getErrorMessage(ID_ERR_CODICI_ND);
     msg = msg.replace("%1", codesToSum );
-    Banana.document.addMessage( msg, "Errore");
+    Banana.document.addMessage( msg, ID_ERR_CODICI_ND);
     continue;
   }
   // Javascript note: the sign '+' in '+codeAmounts.vatAmount' is used to convert a string in a number

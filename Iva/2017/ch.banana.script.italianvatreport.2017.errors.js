@@ -14,6 +14,8 @@
 
 var ID_ERR_CODICI_ND = "ID_ERR_CODICI_ND";
 var ID_ERR_PERIODO_NONVALIDO = "ID_ERR_PERIODO_NONVALIDO";
+var ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE = "ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE";
+var ID_ERR_XML_ELEMENTO_NATURA_PRESENTE = "ID_ERR_XML_ELEMENTO_NATURA_PRESENTE";
 var ID_ERR_XML_LUNGHEZZA_NONVALIDA = "ID_ERR_XML_LUNGHEZZA_NONVALIDA";
 var ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA = "ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA";
 var ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA = "ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA";
@@ -27,6 +29,10 @@ function getErrorMessage(errorId) {
             return "Codici %1 non definiti";
         case ID_ERR_PERIODO_NONVALIDO:
             return "Periodo non valido. Selezionare un mese oppure un trimestre.";
+        case ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE:
+            return "<Natura> non presente a fronte di <Aliquota>  e/o  <Imposta> pari a zero";
+        case ID_ERR_XML_ELEMENTO_NATURA_PRESENTE:
+            return "<Natura> presente a fronte di <Aliquota>  e/o  <Imposta> diversa da zero";
         case ID_ERR_XML_LUNGHEZZA_NONVALIDA:
             return "Lunghezza stringa non valida per l'elemento %1: %2. Lunghezza richiesta: %3";
         case ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA:

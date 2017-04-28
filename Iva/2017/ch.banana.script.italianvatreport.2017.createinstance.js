@@ -67,7 +67,7 @@ function createInstance_Comunicazione(param)
   if (getPeriod("q", param).length>0 && xbrlMese.length<=0)
     xbrlTrimestre = xml_createElement("Trimestre", getPeriod("q", param)) + '\n';
   if (xbrlMese.length<=0 && xbrlTrimestre.length<=0){
-      Banana.document.addMessage( getErrorMessage(ID_ERR_PERIODO_NONVALIDO), "Errore");
+      Banana.document.addMessage( getErrorMessage(ID_ERR_PERIODO_NONVALIDO), ID_ERR_PERIODO_NONVALIDO);
       return '';
   }
   var xbrlTotaleOperazioniAttive = xml_createElement("TotaleOperazioniAttive", createInstance_GetVatAmount("OPATTIVE", "vatTaxable", param)) + '\n';

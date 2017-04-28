@@ -97,12 +97,23 @@ function getAccount(accountId) {
   return '';
 }
 
-function getCountryCode(country) {
-  if (!country)
-    return '';
-  var countryCode = country.toLowerCase();
+function getCountryCode(jsonObject) {
+  var countryCode = '';
+  if (!jsonObject)
+    return countryCode;
+  if (jsonObject["CountryCode"])
+    countryCode = jsonObject["CountryCode"];
+  else if (jsonObject["Country"])
+    countryCode = jsonObject["Country"];
+  countryCode = countryCode.toLowerCase();
   if (countryCode == 'italy' || countryCode == 'italia') {
-    countryCode = 'IT';
+    countryCode = 'it';
+  }
+  if (countryCode == 'germany' || countryCode == 'germania') {
+    countryCode = 'de';
+  }
+  if (countryCode == 'france' || countryCode == 'francia') {
+    countryCode = 'fr';
   }
   return countryCode.toUpperCase();
 }
@@ -256,18 +267,20 @@ function loadData(param)
     //DF_TipoDoc
     //TD01 Fattura  
     //TD04 Nota di credito  
-    //TD05  nota di debito
-    //TD07  fattura semplificata
-    //TD08  nota di credito semplificata
-    //TD10  fattura di acquisto intracomunitario beni
-    //TD11  fattura di acquisto intracomunitario servizi
+    //TD05 Nota di debito
+    //TD07 Fattura semplificata
+    //TD08 Nota di credito semplificata
+    //TD10 Fattura di acquisto intracomunitario beni
+    //TD11 Fattura di acquisto intracomunitario servizi
     jsonLine["DF_TipoDoc"] = '';
     value = filteredRows[i].value("JInvoiceDocType");
     if (value.length<=0)
       value =  filteredRows[i].value("DocType");
-    if (value == 10)
+    if (value == 10 || value == 20)
       jsonLine["DF_TipoDoc"] = 'TD01';
-    else if (value == 12)
+    else if (value == 12 || value == 22)
+      jsonLine["DF_TipoDoc"] = 'TD04';
+    if (jsonLine["JVatNegative"]  == '1')
       jsonLine["DF_TipoDoc"] = 'TD04';
 
     //DF_Aliquota
@@ -276,14 +289,8 @@ function loadData(param)
     if (Banana.SDecimal.isZero(value))
       value = '0.00';
     else
-      value = Banana.SDecimal.invert(value);
+      value = Banana.SDecimal.abs(value);
     jsonLine["DF_Aliquota"] = value;
-
-    //DF_Deducibile
-    jsonLine["DF_Deducibile"] = '';
-  
-    //DF_Detraibile
-    jsonLine["DF_Detraibile"] = '';
 
     //DF_Imponibile
     jsonLine["DF_Imponibile"] = '';
@@ -291,7 +298,7 @@ function loadData(param)
     if (Banana.SDecimal.isZero(value))
       value = '0.00';
     else
-      value = Banana.SDecimal.invert(value);
+      value = Banana.SDecimal.abs(value);
     jsonLine["DF_Imponibile"] = value;
 
     //DF_Imposta
@@ -300,8 +307,22 @@ function loadData(param)
     if (Banana.SDecimal.isZero(value))
       value = '0.00';
     else
-      value = Banana.SDecimal.invert(value);
+      value = Banana.SDecimal.abs(value);
     jsonLine["DF_Imposta"] = value;
+
+    //DF_Detraibile
+    //DF_Deducibile
+    jsonLine["DF_Detraibile"] = '';
+    jsonLine["DF_Deducibile"] = '';
+    value = filteredRows[i].value("VatNonDeductible");
+    if (!Banana.SDecimal.isZero(value)) {
+      value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatNonDeductible"));
+      if (!Banana.SDecimal.isZero(value)) {
+        value = Banana.SDecimal.abs(value);
+        jsonLine["DF_Detraibile"] = value;
+        jsonLine["DF_Deducibile"] = "SI";
+      }
+    }
 
     //DF_Lordo
     jsonLine["DF_Lordo"] = '';
@@ -309,7 +330,7 @@ function loadData(param)
     if (Banana.SDecimal.isZero(value))
       value = '0.00';
     else
-      value = Banana.SDecimal.invert(value);
+      value = Banana.SDecimal.abs(value);
     jsonLine["DF_Lordo"] = value;
 
     //DF_Natura
@@ -318,7 +339,7 @@ function loadData(param)
     //N3 non imponibili
     //N4 esenti
     //N5 regime del margine / IVA non esposta in fattura
-    //N6 inversione contabile
+    //N6 inversione contabile (reverse charge)
     //N7 IVA assolta in altro stato UE 
     jsonLine["DF_Natura"] = '';
     if (Banana.document && vatCode.length) {
@@ -335,8 +356,33 @@ function loadData(param)
           else if (vatGr && vatGr.startsWith("V-NE") || vatGr.startsWith("A-NE")) {
             jsonLine["DF_Natura"] = 'N5';
           }
+          else if (vatGr && vatGr.indexOf("-REV")>=0) {
+            jsonLine["DF_Natura"] = 'N6';
+            jsonLine["DF_Imponibile"] = '0.00';
+            jsonLine["DF_Imposta"] = '';
+            jsonLine["DF_Aliquota"] = '';
+            jsonLine["DF_Detraibile"] = '';
+            jsonLine["DF_Deducibile"] = '';
+            jsonLine["DF_Lordo"] = '';
+          }
         }
       }
+    }
+
+    //Controllo DF_Natura e aliquota
+    value = jsonLine["DF_Aliquota"];
+    if (!Banana.SDecimal.isZero(value) && jsonLine["DF_Natura"].length>0) {
+      var msg = getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+      var rowNumber = jsonLine["JRowOrigin"];
+      //Banana.document.table('Transactions').addMessage(msg, rowNumber, "Transactions", ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+      Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+
+    }
+    else if (Banana.SDecimal.isZero(value) && jsonLine["DF_Natura"].length<=0) {
+      var msg = getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+      var rowNumber = jsonLine["JRowOrigin"];
+      //Banana.document.table('Transactions').addMessage(msg, rowNumber, "Transactions", ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+      Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
     }
 
     if (isCustomer) {
@@ -453,6 +499,7 @@ function printVatReport1(report, stylesheet, param) {
   headerRow.addCell("Deducibile");
   headerRow.addCell("Detraibile");
   headerRow.addCell("Natura");
+  headerRow.addCell("IVA neg.");
 
   // Print data
   for (var i in param.customers) {
@@ -473,6 +520,7 @@ function printVatReport1(report, stylesheet, param) {
       row.addCell(jsonObj["DF_Deducibile"], "amount");
       row.addCell(jsonObj["DF_Detraibile"], "amount");
       row.addCell(jsonObj["DF_Natura"], "amount");
+      row.addCell(jsonObj["JVatNegative"], "amount");
     }
   }
   for (var i in param.suppliers) {
@@ -493,6 +541,7 @@ function printVatReport1(report, stylesheet, param) {
       row.addCell(jsonObj["DF_Deducibile"], "amount");
       row.addCell(jsonObj["DF_Detraibile"], "amount");
       row.addCell(jsonObj["DF_Natura"], "amount");
+      row.addCell(jsonObj["JVatNegative"], "amount");
     }
   }
 }
