@@ -66,12 +66,12 @@ function createInstance(param)
 */
 function createInstance_DTE(param) 
 {
-  var xbrlContent = createInstance_Blocco21_31(param);
+  var xbrlContent = createInstance_Blocco1(param);
   
   for (var i in param.customers) {
     var customerObj = param.customers[i];
     if (customerObj)
-      xbrlContent += createInstance_Blocco22_32(customerObj, param);
+      xbrlContent += createInstance_Blocco2(customerObj, param);
   }
   if (xbrlContent.length>0) {
     xbrlContent += '\n';
@@ -82,12 +82,12 @@ function createInstance_DTE(param)
 
 function createInstance_DTR(param) 
 {
-  var xbrlContent = createInstance_Blocco21_31(param);
+  var xbrlContent = createInstance_Blocco1(param);
   
   for (var i in param.suppliers) {
     var supplierObj = param.suppliers[i];
     if (supplierObj)
-      xbrlContent += createInstance_Blocco22_32(supplierObj, param);
+      xbrlContent += createInstance_Blocco2(supplierObj, param);
   }
   if (xbrlContent.length>0) {
     xbrlContent += '\n';
@@ -100,7 +100,7 @@ function createInstance_DTR(param)
 * Blocco 2.1 <CedentePrestatoreDTE> e 3.1 <CessionarioCommittenteDTR>
 * Occorrenze: <1.1>
 */
-function createInstance_Blocco21_31(param) 
+function createInstance_Blocco1(param) 
 {
   var tag = ''
   if (param.blocco == 'DTE')
@@ -151,7 +151,7 @@ function createInstance_Blocco21_31(param)
 * Blocco 2.2 <CessionarioCommittenteDTE> e 3.2 <CedentePrestatoreDTR>
 * Occorrenze: <1.1000>
 */
-function createInstance_Blocco22_32(accountObj, param) 
+function createInstance_Blocco2(accountObj, param) 
 {
   var tag = ''
   if (param.blocco == 'DTE')

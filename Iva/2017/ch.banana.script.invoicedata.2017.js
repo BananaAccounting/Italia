@@ -290,8 +290,12 @@ function loadData(param)
       jsonLine["DF_TipoDoc"] = 'TD01';
     else if (value == 12 || value == 22)
       jsonLine["DF_TipoDoc"] = 'TD04';
-    if (jsonLine["JVatNegative"]  == '1')
+    if (jsonLine["JVatNegative"]  == '' && isCustomer)
       jsonLine["DF_TipoDoc"] = 'TD04';
+    else if (jsonLine["JVatNegative"]  == '1' && isSupplier)
+      jsonLine["DF_TipoDoc"] = 'TD04';
+    else
+      jsonLine["DF_TipoDoc"] = 'TD01';
 
     //DF_Aliquota
     jsonLine["DF_Aliquota"] = '';
@@ -324,24 +328,22 @@ function loadData(param)
     //DF_Deducibile
     jsonLine["DF_Detraibile"] = '';
     jsonLine["DF_Deducibile"] = '';
-    value = filteredRows[i].value("VatNonDeductible");
+    value = filteredRows[i].value("VatPercentNonDeductible");
     if (!Banana.SDecimal.isZero(value)) {
-      value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatNonDeductible"));
       if (!Banana.SDecimal.isZero(value)) {
-        value = Banana.SDecimal.abs(value);
         jsonLine["DF_Detraibile"] = value;
         jsonLine["DF_Deducibile"] = "SI";
       }
     }
 
     //DF_Lordo
-    jsonLine["DF_Lordo"] = '';
+    /*jsonLine["DF_Lordo"] = '';
     value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
     if (Banana.SDecimal.isZero(value))
       value = '0.00';
     else
       value = Banana.SDecimal.abs(value);
-    jsonLine["DF_Lordo"] = value;
+    jsonLine["DF_Lordo"] = value;*/
 
     //DF_Natura
     //N1 escluse ex art. 15
@@ -373,7 +375,6 @@ function loadData(param)
             jsonLine["DF_Aliquota"] = '';
             jsonLine["DF_Detraibile"] = '';
             jsonLine["DF_Deducibile"] = '';
-            jsonLine["DF_Lordo"] = '';
           }
         }
       }
@@ -478,82 +479,138 @@ function loadData_filterTransactions(row, index, table) {
 function printVatReport1(report, stylesheet, param) {
 
   // Styles
-  stylesheet.addStyle("@page", "size:landscape");
+  stylesheet.addStyle("@page", "size:landscape;margin-top:1em;font-size: 8px; ");
   stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
-  stylesheet.addStyle("thead", "font-size: 8px; font-weight: bold");
-  stylesheet.addStyle("td", "font-size: 8px; padding-right: 1em");
-  stylesheet.addStyle(".amount", "text-align: right");
-  stylesheet.addStyle(".period", "font-size: 10px; padding-top: 1em;padding-bottom: 1em;");
-  stylesheet.addStyle(".vatNumber", "font-size: 10px");
+  stylesheet.addStyle("thead", "font-weight: bold;background-color:#eeeeee;");
+  stylesheet.addStyle("td", "padding:1px;vertical-align:top;");
+  stylesheet.addStyle("td.title", "background-color:#ffffff;font-size:10px;");
+  stylesheet.addStyle("td.period", "background-color:#ffffff;");
+  stylesheet.addStyle(".amount", "text-align: right; border: 1px solid black;");
+  stylesheet.addStyle(".center", "text-align: center;");
+  stylesheet.addStyle(".notes", "padding-top: 2em;font-style:italic;");
+  stylesheet.addStyle(".period", "padding-bottom: 1em;");
+  stylesheet.addStyle(".right", "text-align: right;");
+  stylesheet.addStyle(".rowName", "font-weight: bold;padding-top:5px;border-top:1px solid black;");
+  stylesheet.addStyle(".table1", "margin-top:1em;width:100%;");
   stylesheet.addStyle(".warning", "color: red;font-size:8px;");
 
   if (param.customers.length<=0 && param.suppliers.length<=0)
     return;
 
-  //Print table
-  var table = report.addTable("table1");
+  //Page numbers
+  var reportFooter = report.getFooter();
+  reportFooter.addClass("center");
+  reportFooter.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()) + " Pagina ").addFieldPageNr();
 
-  // Print header
+  //Address
+  if (param.fileInfo["Address"]["Company"].length)
+    report.addParagraph(param.fileInfo["Address"]["Company"], "address");
+  if (param.fileInfo["Address"]["Name"].length || param.fileInfo["Address"]["FamilyName"].length)
+    report.addParagraph(param.fileInfo["Address"]["Name"] + ' ' + param.fileInfo["Address"]["FamilyName"], "address");
+  if (param.fileInfo["Address"]["Address1"].length)
+    report.addParagraph(param.fileInfo["Address"]["Address1"], "address");
+  if (param.fileInfo["Address"]["Zip"].length || param.fileInfo["Address"]["City"].length)
+    report.addParagraph(param.fileInfo["Address"]["Zip"] + ' ' + param.fileInfo["Address"]["City"], "address");
+  if (param.fileInfo["Address"]["VatNumber"].length)
+    report.addParagraph('P.I.:' + param.fileInfo["Address"]["VatNumber"], "address");
+  if (param.fileInfo["Address"]["FiscalNumber"].length)
+    report.addParagraph('C.F.:' + param.fileInfo["Address"]["FiscalNumber"], "address");
+
+
+  
+  //Print table
+  //Title
+  var table = report.addTable("table1");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Tipo");
-  headerRow.addCell("Data");
-  headerRow.addCell("Fatt.");
+  headerRow.addCell("Comunicazione dei dati delle fatture", "title", 14);
+  //Period
+  var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(param.repStartDate);
+  periodo +=" al " + Banana.Converter.toLocaleDateFormat(param.repEndDate);
+  periodo += " blocco " + param.blocco;
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell(periodo, "period",  14);
+
+  //Column names
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell("Soggetto", "", 1);
+  headerRow.addCell("Descrizione", "", 4);
+  headerRow.addCell("ID paese", "", 2);
+  headerRow.addCell("Partita IVA", "", 2);
+  headerRow.addCell("Codice fiscale", "", 5);
+
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell("Tipo doc.");
+  headerRow.addCell("Data doc.");
+  headerRow.addCell("N. doc.");
+  headerRow.addCell("Data reg.");
   headerRow.addCell("Descrizione");
-  headerRow.addCell("Conto");
-  headerRow.addCell("Ctrpart.");
-  headerRow.addCell("Cod.IVA");
-  headerRow.addCell("Lordo");
-  headerRow.addCell("Imponibile");
-  headerRow.addCell("Imposta");
-  headerRow.addCell("Aliquota");
-  headerRow.addCell("Deducibile");
-  headerRow.addCell("Detraibile");
-  headerRow.addCell("Natura");
-  headerRow.addCell("IVA neg.");
+  headerRow.addCell("Conto", "center");
+  headerRow.addCell("Ctrpart.", "center");
+  headerRow.addCell("Cod.IVA", "center");
+  var cell = headerRow.addCell("", "center");
+  var paragraph = cell.addParagraph("Imponibile");
+  paragraph.addLineBreak();
+  paragraph.addText("Non imponib.");
+  headerRow.addCell("Imposta", "center");
+  headerRow.addCell("Aliquota", "center");
+  headerRow.addCell("Natura", "center");
+  headerRow.addCell("Detraibile", "center");
+  headerRow.addCell("Deducibile", "center");
 
   // Print data
   for (var i in param.customers) {
+    var rowName = table.addRow();
+    rowName.addCell("cliente", "rowName");
+    rowName.addCell(param.customers[i]["Description"],"rowName",4);
+    rowName.addCell(getCountryCode(param.customers[i]),"rowName",2);
+    rowName.addCell(param.customers[i]["VatNumber"],"rowName",2);
+    rowName.addCell(param.customers[i]["FiscalNumber"],"rowName",5);
     for (var j in param.customers[i].rows) {
       var jsonObj = param.customers[i].rows[j];
       var row = table.addRow();
       row.addCell(jsonObj["DF_TipoDoc"]);
-      row.addCell(jsonObj["JDate"]);
-      row.addCell(jsonObj["DocInvoice"], "amount");
+      row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JInvoiceIssueDate"]));
+      row.addCell(jsonObj["DocInvoice"]);
+      row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JDate"]));
       row.addCell(jsonObj["JDescription"]);
       row.addCell(jsonObj["JAccount"], "amount");
       row.addCell(jsonObj["JContraAccount"], "amount");
       row.addCell(jsonObj["JVatCodeWithoutSign"], "amount");
-      row.addCell(jsonObj["DF_Lordo"], "amount");
-      row.addCell(jsonObj["DF_Imponibile"], "amount");
-      row.addCell(jsonObj["DF_Imposta"], "amount");
-      row.addCell(jsonObj["DF_Aliquota"], "amount");
-      row.addCell(jsonObj["DF_Deducibile"], "amount");
-      row.addCell(jsonObj["DF_Detraibile"], "amount");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Imponibile"],2,false), "amount");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Imposta"],2,false), "amount");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Aliquota"],2,false), "amount");
       row.addCell(jsonObj["DF_Natura"], "amount");
-      row.addCell(jsonObj["JVatNegative"], "amount");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Detraibile"],2,false), "amount");
+      row.addCell(jsonObj["DF_Deducibile"], "amount");
     }
   }
   for (var i in param.suppliers) {
+    var rowName = table.addRow();
+    rowName.addCell("fornitore", "rowName");
+    rowName.addCell(param.suppliers[i]["Description"],"rowName",4);
+    rowName.addCell(getCountryCode(param.suppliers[i]),"rowName",2);
+    rowName.addCell(param.suppliers[i]["VatNumber"],"rowName",2);
+    rowName.addCell(param.suppliers[i]["FiscalNumber"],"rowName",5);
     for (var j in param.suppliers[i].rows) {
       var jsonObj = param.suppliers[i].rows[j];
       var row = table.addRow();
       row.addCell(jsonObj["DF_TipoDoc"]);
-      row.addCell(jsonObj["JDate"]);
-      row.addCell(jsonObj["DocInvoice"], "amount");
+      row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JInvoiceIssueDate"]));
+      row.addCell(jsonObj["DocInvoice"]);
+      row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JDate"]));
       row.addCell(jsonObj["JDescription"]);
       row.addCell(jsonObj["JAccount"], "amount");
       row.addCell(jsonObj["JContraAccount"], "amount");
       row.addCell(jsonObj["JVatCodeWithoutSign"], "amount");
-      row.addCell(jsonObj["DF_Lordo"], "amount");
-      row.addCell(jsonObj["DF_Imponibile"], "amount");
-      row.addCell(jsonObj["DF_Imposta"], "amount");
-      row.addCell(jsonObj["DF_Aliquota"], "amount");
-      row.addCell(jsonObj["DF_Deducibile"], "amount");
-      row.addCell(jsonObj["DF_Detraibile"], "amount");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Imponibile"],2,false), "amount");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Imposta"],2,false), "amount");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Aliquota"],2,false), "amount");
       row.addCell(jsonObj["DF_Natura"], "amount");
-      row.addCell(jsonObj["JVatNegative"], "amount");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Detraibile"],2,false), "amount");
+      row.addCell(jsonObj["DF_Deducibile"], "amount");
     }
   }
+  
 }
 
 function tableToCsv(table) {
