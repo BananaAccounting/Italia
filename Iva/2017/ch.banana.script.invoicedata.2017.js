@@ -272,30 +272,7 @@ function loadData(param)
         jsonLine[columnName] = '';
     }
 
-    //additional data
-
-    //DF_TipoDoc
-    //TD01 Fattura  
-    //TD04 Nota di credito  
-    //TD05 Nota di debito
-    //TD07 Fattura semplificata
-    //TD08 Nota di credito semplificata
-    //TD10 Fattura di acquisto intracomunitario beni
-    //TD11 Fattura di acquisto intracomunitario servizi
-    jsonLine["DF_TipoDoc"] = '';
-    value = filteredRows[i].value("JInvoiceDocType");
-    if (value.length<=0)
-      value =  filteredRows[i].value("DocType");
-    if (value == 10 || value == 20)
-      jsonLine["DF_TipoDoc"] = 'TD01';
-    else if (value == 12 || value == 22)
-      jsonLine["DF_TipoDoc"] = 'TD04';
-    if (jsonLine["JVatNegative"]  == '' && isCustomer)
-      jsonLine["DF_TipoDoc"] = 'TD04';
-    else if (jsonLine["JVatNegative"]  == '1' && isSupplier)
-      jsonLine["DF_TipoDoc"] = 'TD04';
-    else
-      jsonLine["DF_TipoDoc"] = 'TD01';
+    //Additional data
 
     //DF_Aliquota
     jsonLine["DF_Aliquota"] = '';
@@ -331,8 +308,8 @@ function loadData(param)
     value = filteredRows[i].value("VatPercentNonDeductible");
     if (!Banana.SDecimal.isZero(value)) {
       if (!Banana.SDecimal.isZero(value)) {
-        jsonLine["DF_Detraibile"] = value;
-        jsonLine["DF_Deducibile"] = "SI";
+        var detraibile = Banana.SDecimal.subtract('100', value);
+        jsonLine["DF_Detraibile"] = detraibile;
       }
     }
 
@@ -344,6 +321,43 @@ function loadData(param)
     else
       value = Banana.SDecimal.abs(value);
     jsonLine["DF_Lordo"] = value;*/
+
+    //DF_TipoDoc
+    //TD01 Fattura  
+    //TD04 Nota di credito  
+    //TD05 Nota di debito
+    //TD07 Fattura semplificata
+    //TD08 Nota di credito semplificata
+    //TD10 Fattura di acquisto intracomunitario beni
+    //TD11 Fattura di acquisto intracomunitario servizi
+    jsonLine["DF_TipoDoc"] = '';
+    value = filteredRows[i].value("JInvoiceDocType");
+    if (value.length<=0)
+      value =  filteredRows[i].value("DocType");
+
+    if (value == 10 || value == 20)
+      jsonLine["DF_TipoDoc"] = 'TD01';
+    else if (value == 12 || value == 22)
+      jsonLine["DF_TipoDoc"] = 'TD04';
+
+    if (jsonLine["JVatNegative"]  == '' && isCustomer)
+      jsonLine["DF_TipoDoc"] = 'TD04';
+    else if (jsonLine["JVatNegative"]  == '1' && isSupplier)
+      jsonLine["DF_TipoDoc"] = 'TD04';
+    else
+      jsonLine["DF_TipoDoc"] = 'TD01';
+  
+    if (Banana.document && vatCode.length && isSupplier) {
+      if (tableVatCodes) {
+        var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
+        if (rowVatCodes) {
+          var vatGr = rowVatCodes.value("Gr");
+          if (vatGr && vatGr.indexOf("EU")>=0) {
+            jsonLine["DF_TipoDoc"] = 'TD10';
+          }
+        }
+      }
+    }
 
     //DF_Natura
     //N1 escluse ex art. 15
@@ -370,32 +384,25 @@ function loadData(param)
           }
           else if (vatGr && vatGr.indexOf("-REV")>=0) {
             jsonLine["DF_Natura"] = 'N6';
-            jsonLine["DF_Imponibile"] = '0.00';
-            jsonLine["DF_Imposta"] = '';
-            jsonLine["DF_Aliquota"] = '';
-            jsonLine["DF_Detraibile"] = '';
-            jsonLine["DF_Deducibile"] = '';
           }
         }
       }
     }
 
     //Controllo DF_Natura e aliquota
-    value = jsonLine["DF_Aliquota"];
-    if (!Banana.SDecimal.isZero(value) && jsonLine["DF_Natura"].length>0) {
-      var msg = getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
-      var rowNumber = jsonLine["JRowOrigin"];
-      //Banana.document.table('Transactions').addMessage(msg, rowNumber, "Transactions", ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+    var aliquota = jsonLine["DF_Aliquota"];
+    var imposta = jsonLine["DF_Imposta"];
+    var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
+    if ((!Banana.SDecimal.isZero(aliquota) || !Banana.SDecimal.isZero(imposta)) && jsonLine["DF_Natura"].length>0) {
+      msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
       Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
-
     }
-    else if (Banana.SDecimal.isZero(value) && jsonLine["DF_Natura"].length<=0) {
-      var msg = getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
-      var rowNumber = jsonLine["JRowOrigin"];
-      //Banana.document.table('Transactions').addMessage(msg, rowNumber, "Transactions", ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+    else if ((Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta))  && jsonLine["DF_Natura"].length<=0) {
+      msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
       Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
     }
 
+    //Aggiunge la riga nei parametri
     if (isCustomer) {
       if (!param.customers[accountId].rows)
         param.customers[accountId].rows = [];
