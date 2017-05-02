@@ -16,7 +16,8 @@ Si tratta di capire se generiamo un documento XML
 
 ## Funzionalità non supportate o da chiarire
 * Registrazioni IVA che non appartengono ai clienti e fornitori (senza fattura) sono da includere nella trasmissione?
-* Manca l'informazione iva detraibile (percentuale)
+* Controllare iva detraibile / deducibile
+* Controllare codici e operazioni IVA intracomunitari e reverse charge
  
 ## Parametri applicativo 
   
