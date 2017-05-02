@@ -15,6 +15,8 @@ Si tratta di capire se generiamo un documento XML
   I dati dell'XML sono importati in un applicativo  (commercialista o software agenzia delle entrate) e i dati mancanti sono completati nell'applicativo che serve alla trasmissione dei dati.
 
 ## Funzionalità non supportate o da chiarire
+* Registrazioni IVA che non appartengono ai clienti e fornitori (senza fattura) sono da includere nella trasmissione?
+* Manca l'informazione iva detraibile (percentuale)
  
 ## Parametri applicativo 
   
