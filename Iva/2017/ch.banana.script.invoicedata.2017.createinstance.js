@@ -196,10 +196,9 @@ function createInstance_Blocco2(accountObj, param)
     for (var i in accountObj.rows) {
       if (accountObj.rows[i]) {
         msgContext = '[' + accountObj.rows[i]["JTableOrigin"] + ': Riga ' + (parseInt(accountObj.rows[i]["JRowOrigin"])+1).toString() +'] <DatiFatturaBody' + param.blocco + '>';
-        var dataEmissione = accountObj.rows[i]["JInvoiceIssueDate"];
         //2.2.3.1  <DatiGenerali>
         xbrlContent3 = '\n' + xml_createElementWithValidation("TipoDocumento", accountObj.rows[i]["DF_TipoDoc"],1,'4',msgContext);
-        xbrlContent3 += '\n' + xml_createElementWithValidation("Data", dataEmissione,1,'10',msgContext);
+        xbrlContent3 += '\n' + xml_createElementWithValidation("Data", accountObj.rows[i]["JInvoiceIssueDate"],1,'10',msgContext);
         xbrlContent3 += '\n' + xml_createElementWithValidation("Numero", accountObj.rows[i]["DocInvoice"],1,'1...20',msgContext) + '\n';
         if (param.blocco == 'DTR')
           xbrlContent3 += '\n' + xml_createElementWithValidation("DataRegistrazione", accountObj.rows[i]["JDate"],1,'10',msgContext) + '\n';

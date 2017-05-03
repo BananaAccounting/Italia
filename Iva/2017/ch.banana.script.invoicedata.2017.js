@@ -331,11 +331,34 @@ function loadData(param)
     //TD10 Fattura di acquisto intracomunitario beni
     //TD11 Fattura di acquisto intracomunitario servizi
     jsonLine["DF_TipoDoc"] = '';
-    value = filteredRows[i].value("JInvoiceDocType");
-    if (value.length<=0)
-      value =  filteredRows[i].value("DocType");
+    var tipoDoc = filteredRows[i].value("JInvoiceDocType");
+    if (tipoDoc.length<=0)
+      tipoDoc =  filteredRows[i].value("DocType");
 
-    if (value == 10 || value == 20)
+    if (jsonLine["JVatNegative"]  == '1') {
+      if (isCustomer) {
+        if (tipoDoc == '14')
+          jsonLine["DF_TipoDoc"] = 'TD05';
+        else
+          jsonLine["DF_TipoDoc"] = 'TD01';
+      }
+      else if (isSupplier) {
+        jsonLine["DF_TipoDoc"] = 'TD04';
+      }
+    }
+    else {
+      if (isCustomer) {
+        jsonLine["DF_TipoDoc"] = 'TD04';
+      }
+      else if (isSupplier) {
+        if (tipoDoc == '14')
+          jsonLine["DF_TipoDoc"] = 'TD05';
+        else
+          jsonLine["DF_TipoDoc"] = 'TD01';
+      }
+    }
+
+    /*if (value == 10 || value == 20)
       jsonLine["DF_TipoDoc"] = 'TD01';
     else if (value == 12 || value == 22)
       jsonLine["DF_TipoDoc"] = 'TD04';
@@ -345,7 +368,7 @@ function loadData(param)
     else if (jsonLine["JVatNegative"]  == '1' && isSupplier)
       jsonLine["DF_TipoDoc"] = 'TD04';
     else
-      jsonLine["DF_TipoDoc"] = 'TD01';
+      jsonLine["DF_TipoDoc"] = 'TD01';*/
   
     if (Banana.document && vatCode.length && isSupplier) {
       if (tableVatCodes) {
