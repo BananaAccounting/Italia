@@ -310,6 +310,15 @@ function loadData(param)
       }
     }
 
+    //DF_Gruppo_IVA
+    jsonLine["DF_Gr_IVA"] = '';
+    if (vatCode.length && tableVatCodes) {
+      var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
+      if (rowVatCodes) {
+        jsonLine["DF_Gr_IVA"] = rowVatCodes.value("Gr");
+      }
+    }
+
     //DF_Lordo
     /*jsonLine["DF_Lordo"] = '';
     value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
@@ -334,7 +343,7 @@ function loadData(param)
 
     if (jsonLine["JVatNegative"]  == '1') {
       if (isCustomer) {
-        if (tipoDoc == '14')
+        if (tipoDoc == '14' || tipoDoc == '12')
           jsonLine["DF_TipoDoc"] = 'TD05';
         else
           jsonLine["DF_TipoDoc"] = 'TD01';
@@ -348,33 +357,22 @@ function loadData(param)
         jsonLine["DF_TipoDoc"] = 'TD04';
       }
       else if (isSupplier) {
-        if (tipoDoc == '14')
+        if (tipoDoc == '24' || tipoDoc == '22')
           jsonLine["DF_TipoDoc"] = 'TD05';
         else
           jsonLine["DF_TipoDoc"] = 'TD01';
       }
     }
 
-    /*if (value == 10 || value == 20)
-      jsonLine["DF_TipoDoc"] = 'TD01';
-    else if (value == 12 || value == 22)
-      jsonLine["DF_TipoDoc"] = 'TD04';
-
-    if (jsonLine["JVatNegative"]  == '' && isCustomer)
-      jsonLine["DF_TipoDoc"] = 'TD04';
-    else if (jsonLine["JVatNegative"]  == '1' && isSupplier)
-      jsonLine["DF_TipoDoc"] = 'TD04';
-    else
-      jsonLine["DF_TipoDoc"] = 'TD01';*/
-  
-    if (Banana.document && vatCode.length && isSupplier) {
-      if (tableVatCodes) {
-        var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
-        if (rowVatCodes) {
-          var vatGr = rowVatCodes.value("Gr");
-          if (vatGr && vatGr.indexOf("EU")>=0) {
-            jsonLine["DF_TipoDoc"] = 'TD10';
-          }
+    if (vatCode.length && isSupplier && tableVatCodes) {
+      var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
+      if (rowVatCodes) {
+        var vatGr = rowVatCodes.value("Gr");
+        if (vatGr && vatGr.indexOf("EU-S")>=0) {
+          jsonLine["DF_TipoDoc"] = 'TD11';
+        }
+        else if (vatGr && vatGr.indexOf("EU")>=0) {
+          jsonLine["DF_TipoDoc"] = 'TD10';
         }
       }
     }
@@ -393,33 +391,43 @@ function loadData(param)
         var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
         if (rowVatCodes) {
           var vatGr = rowVatCodes.value("Gr");
-          if (vatGr && vatGr.startsWith("V-NI") || vatGr.startsWith("A-NI")) {
+          if (vatGr.indexOf("-FC")>=0) {
+            jsonLine["DF_Natura"] = 'N1';
+          }
+          else if (vatGr.startsWith("V-NI") || vatGr.startsWith("A-NI")) {
             jsonLine["DF_Natura"] = 'N3';
           }
-          else if (vatGr && vatGr.startsWith("V-ES") || vatGr.startsWith("A-ES")) {
+          else if (vatGr.startsWith("V-ES") || vatGr.startsWith("A-ES")) {
             jsonLine["DF_Natura"] = 'N4';
           }
-          else if (vatGr && vatGr.startsWith("V-NE") || vatGr.startsWith("A-NE")) {
+          else if (vatGr.startsWith("V-NE") || vatGr.startsWith("A-NE")) {
             jsonLine["DF_Natura"] = 'N5';
           }
-          else if (vatGr && vatGr.indexOf("-REV")>=0) {
+          else if (vatGr.indexOf("-EU")>=0) {
             jsonLine["DF_Natura"] = 'N6';
+          }
+          else if (vatGr.indexOf("-REV")>=0) {
+            jsonLine["DF_Natura"] = 'N7';
           }
         }
       }
     }
 
     //Controllo DF_Natura e aliquota
-    var aliquota = jsonLine["DF_Aliquota"];
-    var imposta = jsonLine["DF_Imposta"];
-    var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
-    if ((!Banana.SDecimal.isZero(aliquota) || !Banana.SDecimal.isZero(imposta)) && jsonLine["DF_Natura"].length>0) {
-      msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
-      Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
-    }
-    else if ((Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta))  && jsonLine["DF_Natura"].length<=0) {
-      msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
-      Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+    //Se il campo Natura è valorizzato il campo Imposta dev'essere vuoto
+    //Eccezione: codifica “N6” vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota per le fatture ricevute
+    if (param.blocco != "DTR" && jsonLine["DF_Natura"] != "N6") {
+      var aliquota = jsonLine["DF_Aliquota"];
+      var imposta = jsonLine["DF_Imposta"];
+      var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
+      if ((!Banana.SDecimal.isZero(aliquota) || !Banana.SDecimal.isZero(imposta)) && jsonLine["DF_Natura"].length>0) {
+        msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+        Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+      }
+      else if ((Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta))  && jsonLine["DF_Natura"].length<=0) {
+        msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+        Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+      }
     }
 
     //Aggiunge la riga nei parametri
@@ -514,7 +522,7 @@ function printVatReport1(report, stylesheet, param) {
   stylesheet.addStyle("td.period", "background-color:#ffffff;");
   stylesheet.addStyle(".amount", "text-align: right; border: 1px solid black;");
   stylesheet.addStyle(".center", "text-align: center;");
-  stylesheet.addStyle(".notes", "padding-top: 2em;font-style:italic;");
+  stylesheet.addStyle(".notes", "padding: 2em;font-style:italic;");
   stylesheet.addStyle(".period", "padding-bottom: 1em;");
   stylesheet.addStyle(".right", "text-align: right;");
   stylesheet.addStyle(".rowName", "font-weight: bold;padding-top:5px;border-top:1px solid black;");
@@ -527,7 +535,10 @@ function printVatReport1(report, stylesheet, param) {
   //Page numbers
   var reportFooter = report.getFooter();
   reportFooter.addClass("center");
+  //Note
+  reportFooter.addParagraph("N1 escluse ex art. 15, N2 non soggette, N3 non imponibili, N4 esenti, N5 regime del margine/IVA non esposta in fattura, N6 inversione contabile (reverse charge), N7 IVA assolta in altro stato UE", "notes");
   reportFooter.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()) + " Pagina ").addFieldPageNr();
+  
 
   //Address
   if (param.fileInfo["Address"]["Company"].length)
@@ -549,21 +560,21 @@ function printVatReport1(report, stylesheet, param) {
   //Title
   var table = report.addTable("table1");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Comunicazione dei dati delle fatture", "title", 14);
+  headerRow.addCell("Comunicazione dei dati delle fatture", "title", 15);
   //Period
   var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(param.repStartDate);
   periodo +=" al " + Banana.Converter.toLocaleDateFormat(param.repEndDate);
   periodo += " blocco " + param.blocco;
   headerRow = table.getHeader().addRow();
-  headerRow.addCell(periodo, "period",  14);
+  headerRow.addCell(periodo, "period",  15);
 
   //Column names
   headerRow = table.getHeader().addRow();
   headerRow.addCell("Soggetto", "", 1);
-  headerRow.addCell("Descrizione", "", 4);
+  headerRow.addCell("Nome", "", 4);
   headerRow.addCell("ID paese", "", 2);
   headerRow.addCell("Partita IVA", "", 2);
-  headerRow.addCell("Codice fiscale", "", 5);
+  headerRow.addCell("Codice fiscale", "", 6);
 
   headerRow = table.getHeader().addRow();
   headerRow.addCell("Tipo doc.");
@@ -574,6 +585,7 @@ function printVatReport1(report, stylesheet, param) {
   headerRow.addCell("Conto", "center");
   headerRow.addCell("Ctrpart.", "center");
   headerRow.addCell("Cod.IVA", "center");
+  headerRow.addCell("Gr.IVA", "center");
   var cell = headerRow.addCell("", "center");
   var paragraph = cell.addParagraph("Imponibile");
   paragraph.addLineBreak();
@@ -591,7 +603,7 @@ function printVatReport1(report, stylesheet, param) {
     rowName.addCell(param.customers[i]["Description"],"rowName",4);
     rowName.addCell(getCountryCode(param.customers[i]),"rowName",2);
     rowName.addCell(param.customers[i]["VatNumber"],"rowName",2);
-    rowName.addCell(param.customers[i]["FiscalNumber"],"rowName",5);
+    rowName.addCell(param.customers[i]["FiscalNumber"],"rowName",6);
     for (var j in param.customers[i].rows) {
       var jsonObj = param.customers[i].rows[j];
       var row = table.addRow();
@@ -603,6 +615,7 @@ function printVatReport1(report, stylesheet, param) {
       row.addCell(jsonObj["JAccount"], "amount");
       row.addCell(jsonObj["JContraAccount"], "amount");
       row.addCell(jsonObj["JVatCodeWithoutSign"], "amount");
+      row.addCell(jsonObj["DF_Gr_IVA"], "amount");
       row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Imponibile"],2,false), "amount");
       row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Imposta"],2,false), "amount");
       row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Aliquota"],2,false), "amount");
@@ -617,7 +630,7 @@ function printVatReport1(report, stylesheet, param) {
     rowName.addCell(param.suppliers[i]["Description"],"rowName",4);
     rowName.addCell(getCountryCode(param.suppliers[i]),"rowName",2);
     rowName.addCell(param.suppliers[i]["VatNumber"],"rowName",2);
-    rowName.addCell(param.suppliers[i]["FiscalNumber"],"rowName",5);
+    rowName.addCell(param.suppliers[i]["FiscalNumber"],"rowName",6);
     for (var j in param.suppliers[i].rows) {
       var jsonObj = param.suppliers[i].rows[j];
       var row = table.addRow();
@@ -629,6 +642,7 @@ function printVatReport1(report, stylesheet, param) {
       row.addCell(jsonObj["JAccount"], "amount");
       row.addCell(jsonObj["JContraAccount"], "amount");
       row.addCell(jsonObj["JVatCodeWithoutSign"], "amount");
+      row.addCell(jsonObj["DF_Gr_IVA"], "amount");
       row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Imponibile"],2,false), "amount");
       row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Imposta"],2,false), "amount");
       row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Aliquota"],2,false), "amount");
@@ -637,7 +651,7 @@ function printVatReport1(report, stylesheet, param) {
       row.addCell(jsonObj["DF_Deducibile"], "amount");
     }
   }
-  
+
 }
 
 function tableToCsv(table) {
