@@ -41,10 +41,7 @@ function exec(inData) {
   param = verifyParam(param);
   
   // Check version
-  var serial = '';
-  if (typeof (Banana.application.serial) === 'string')
-    serial = Banana.application.serial;
-  if (serial.length<=0) {
+  if (typeof (Banana.document.customerSupplierJournal) === 'undefined') {
     var msg = getErrorMessage(ID_ERR_VERSIONE);
     Banana.document.addMessage( msg, ID_ERR_VERSIONE);
     return "@Cancel";
@@ -168,7 +165,7 @@ function loadData(param)
   param.schemaRefs = init_schemarefs();
   param.namespaces = init_namespaces();
 
-  var journal = Banana.document.journal(
+  var journal = Banana.document.customerSupplierJournal(
     Banana.document.ORIGINTYPE_CURRENT, Banana.document.ACCOUNTTYPE_NORMAL);
   var filteredRows = journal.findRows(loadData_filterTransactions);
 
