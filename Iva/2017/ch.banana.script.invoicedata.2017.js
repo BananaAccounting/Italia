@@ -41,7 +41,7 @@ function exec(inData) {
   param = verifyParam(param);
   
   // Check version
-  if (typeof (Banana.document.customerSupplierJournal) === 'undefined') {
+  if (typeof (Banana.document.journalCustomersSuppliers) === 'undefined') {
     var msg = getErrorMessage(ID_ERR_VERSIONE);
     Banana.document.addMessage( msg, ID_ERR_VERSIONE);
     return "@Cancel";
@@ -165,7 +165,7 @@ function loadData(param)
   param.schemaRefs = init_schemarefs();
   param.namespaces = init_namespaces();
 
-  var journal = Banana.document.customerSupplierJournal(
+  var journal = Banana.document.journalCustomersSuppliers(
     Banana.document.ORIGINTYPE_CURRENT, Banana.document.ACCOUNTTYPE_NORMAL);
   var filteredRows = journal.findRows(loadData_filterTransactions);
 
