@@ -4,7 +4,8 @@
     <file>ch.banana.script.invoicedata.2017.createinstance.js</file>
     <file>ch.banana.script.italianvatreport.2017.js</file>
     <file>ch.banana.script.italianvatreport.2017.createinstance.js</file>
-    <file>ch.banana.script.italianvatreport.2017.xml.js</file>
+    <file>ch.banana.script.italianvatreport.2017.dialog.ui</file>
     <file>ch.banana.script.italianvatreport.2017.errors.js</file>
+    <file>ch.banana.script.italianvatreport.2017.xml.js</file>
  </qresource>
 </RCC>

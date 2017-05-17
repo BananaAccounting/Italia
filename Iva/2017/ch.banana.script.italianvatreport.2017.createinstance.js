@@ -60,7 +60,10 @@ function createInstance_Comunicazione(param)
   var xbrlAnnoImposta = xml_createElementWithValidation("iv:AnnoImposta", getPeriod("y", param),1,'4',msgContext) + '\n';
   var xbrlPartitaIva = xml_createElementWithValidation("iv:PartitaIVA", createInstance_GetValueFromTableInfo("AccountingDataBase", "VatNumber"),1,'11',msgContext) + '\n';
   var xbrlContent = '\n' + xbrlCodiceFiscale + xbrlAnnoImposta + xbrlPartitaIva;
-  xbrlContent += xml_createElement("iv:FirmaDichiarazione", "0") + '\n';
+  var firmaDichiarazione = "0";
+  if (param.firmaContribuente)
+    firmaDichiarazione = "1";
+  xbrlContent += xml_createElement("iv:FirmaDichiarazione", firmaDichiarazione) + '\n';
   var xbrlFrontespizio = '\n' + xml_createElement("iv:Frontespizio", xbrlContent) + '\n';
   
   var msgContext = '<iv:Modulo>';
@@ -124,7 +127,20 @@ function createInstance_Comunicazione(param)
 
 function createInstance_Intestazione(param) 
 {
-  var xbrlContent =  '\n' + xml_createElement("iv:CodiceFornitura", "IVP17") + '\n';
+  var msgContext = '<Intestazione>';
+  
+  var xbrlCodiceFornitura = xml_createElement("iv:CodiceFornitura", "IVP17") + '\n';
+
+  var xbrlCodiceFiscaleDichiarante = '';
+  if (param.codicefiscaleDichiarante.length>0)
+    xbrlCodiceFiscaleDichiarante = xml_createElementWithValidation("iv:CodiceFiscaleDichiarante", param.codicefiscaleDichiarante, 0, '16', msgContext) + '\n';
+
+  var xbrlCodiceCarica = '';
+  if (parseInt(param.codiceCarica)>0)
+    xbrlCodiceCarica = xml_createElementWithValidation("iv:CodiceCarica", param.codiceCarica, 0, '1...2', msgContext) + '\n';
+
+  var xbrlContent =  '\n' + xbrlCodiceFornitura + xbrlCodiceFiscaleDichiarante + xbrlCodiceCarica;
+  
   var xbrlIntestazione =  xml_createElement("iv:Intestazione", xbrlContent) + '\n';
   return xbrlIntestazione;
 }
