@@ -23,7 +23,7 @@
 // @includejs = ch.banana.script.italianvatreport.2017.xml.js
 // @includejs = ch.banana.script.italianvatreport.2017.errors.js
 // @inputdatasource = none
-// @pubdate = 2017-05-17
+// @pubdate = 2017-05-18
 // @publisher = Banana.ch SA
 // @task = export.file
 // @timeout = -1
@@ -270,7 +270,7 @@ function initParam()
     param.repEndDate = Banana.document.endPeriod();
   }
   param.interestRate = '';
-  param.firmaContribuente = false;
+  param.firmaContribuente = true;
   param.codicefiscaleDichiarante = '';
   param.codiceCarica = '';
   return param;

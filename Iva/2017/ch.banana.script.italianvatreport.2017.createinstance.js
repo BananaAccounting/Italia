@@ -59,11 +59,46 @@ function createInstance_Comunicazione(param)
   var xbrlCodiceFiscale = xml_createElementWithValidation("iv:CodiceFiscale", createInstance_GetValueFromTableInfo("AccountingDataBase", "FiscalNumber"),1,'11...16',msgContext) + '\n';
   var xbrlAnnoImposta = xml_createElementWithValidation("iv:AnnoImposta", getPeriod("y", param),1,'4',msgContext) + '\n';
   var xbrlPartitaIva = xml_createElementWithValidation("iv:PartitaIVA", createInstance_GetValueFromTableInfo("AccountingDataBase", "VatNumber"),1,'11',msgContext) + '\n';
-  var xbrlContent = '\n' + xbrlCodiceFiscale + xbrlAnnoImposta + xbrlPartitaIva;
+
+  var xbrlUltimoMese = '';
+  var nUltimoMese = 0;
+  var nMese = getPeriod("m", param);
+  var nTrimestre = getPeriod("q", param);
+  if (nMese.length>0) {
+    nUltimoMese = parseInt(nMese)-1;
+    if (nUltimoMese<=0)
+      nUltimoMese = 12;
+  }
+  else if (nTrimestre.length>0) {
+    nTrimestre = parseInt(nTrimestre);
+    if (nTrimestre == 1)
+      nUltimoMese = 12;
+    else if (nTrimestre == 2)
+      nUltimoMese = 3;
+    else if (nTrimestre == 3)
+      nUltimoMese = 6;
+    else if (nTrimestre == 4)
+      nUltimoMese = 9;
+  }
+  if (nUltimoMese>0) {
+    xbrlUltimoMese = xml_createElementWithValidation("iv:UltimoMese", nUltimoMese.toString(), 0, '1...2', msgContext) + '\n';
+  }
+  
+  var xbrlCFDichiarante = '';
+  if (param.codicefiscaleDichiarante.length>0)
+    xbrlCFDichiarante = xml_createElementWithValidation("iv:CFDichiarante", param.codicefiscaleDichiarante, 0, '16', msgContext) + '\n';
+
+  var xbrlCodiceCaricaDichiarante = '';
+  if (parseInt(param.codiceCarica)>0)
+    xbrlCodiceCaricaDichiarante = xml_createElementWithValidation("iv:CodiceCaricaDichiarante", param.codiceCarica, 0, '1...2', msgContext) + '\n';
+
   var firmaDichiarazione = "0";
   if (param.firmaContribuente)
     firmaDichiarazione = "1";
-  xbrlContent += xml_createElement("iv:FirmaDichiarazione", firmaDichiarazione) + '\n';
+  var xbrlFirmaDichiarazione = xml_createElement("iv:FirmaDichiarazione", firmaDichiarazione) + '\n';
+
+  var xbrlContent = '\n' + xbrlCodiceFiscale + xbrlAnnoImposta + xbrlPartitaIva + xbrlUltimoMese + xbrlCFDichiarante + xbrlCodiceCaricaDichiarante + xbrlFirmaDichiarazione;
+  
   var xbrlFrontespizio = '\n' + xml_createElement("iv:Frontespizio", xbrlContent) + '\n';
   
   var msgContext = '<iv:Modulo>';
@@ -72,22 +107,40 @@ function createInstance_Comunicazione(param)
   var xbrlTrimestre = '';
   if (getPeriod("m", param).length>0)
     xbrlMese = xml_createElementWithValidation("iv:Mese", getPeriod("m", param),0,'1...2',msgContext) + '\n';
-  if (getPeriod("q", param).length>0 && xbrlMese.length<=0)
+  else if (getPeriod("q", param).length>0)
     xbrlTrimestre = xml_createElementWithValidation("iv:Trimestre", getPeriod("q", param),0,'1',msgContext) + '\n';
   if (xbrlMese.length<=0 && xbrlTrimestre.length<=0){
       Banana.document.addMessage( getErrorMessage(ID_ERR_PERIODO_NONVALIDO), ID_ERR_PERIODO_NONVALIDO);
       return '';
   }
-  var xbrlTotaleOperazioniAttive = xml_createElementWithValidation("iv:TotaleOperazioniAttive", createInstance_GetVatAmount("OPATTIVE", "vatTaxable", param),0,'4...16',msgContext) + '\n';
-  var xbrlTotaleOperazioniPassive = xml_createElementWithValidation("iv:TotaleOperazioniPassive", createInstance_GetVatAmount("OPPASSIVE", "vatTaxable", param),0,'4...16',msgContext) + '\n';
-  var xbrlIvaEsigibile = xml_createElementWithValidation("iv:IvaEsigibile", createInstance_GetVatAmount("OPATTIVE", "vatPosted", param),0,'4...16',msgContext) + '\n';
-  var xbrlIvaDetratta = xml_createElementWithValidation("iv:IvaDetratta", createInstance_GetVatAmount("OPPASSIVE", "vatPosted", param),0,'4...16',msgContext) + '\n';
+
+  var xbrlTotaleOperazioniAttive = xml_createElementWithValidation("iv:TotaleOperazioniAttive", createInstance_GetVatAmount("OPATTIVE", "vatTaxable", param),0,'4...16',msgContext);
+  if (xbrlTotaleOperazioniAttive.length>0)
+    xbrlTotaleOperazioniAttive += '\n';
+
+  var xbrlTotaleOperazioniPassive = xml_createElementWithValidation("iv:TotaleOperazioniPassive", createInstance_GetVatAmount("OPPASSIVE", "vatTaxable", param),0,'4...16',msgContext);
+  if (xbrlTotaleOperazioniPassive.length>0)
+    xbrlTotaleOperazioniPassive += '\n';
+
+  var xbrlIvaEsigibile = xml_createElementWithValidation("iv:IvaEsigibile", createInstance_GetVatAmount("OPATTIVE", "vatPosted", param),0,'4...16',msgContext);
+  if (xbrlIvaEsigibile.length>0)
+    xbrlIvaEsigibile += '\n';
+
+  var xbrlIvaDetratta = xml_createElementWithValidation("iv:IvaDetratta", createInstance_GetVatAmount("OPPASSIVE", "vatPosted", param),0,'4...16',msgContext);
+  if (xbrlIvaDetratta.length>0)
+    xbrlIvaDetratta += '\n';
+
   var xbrlIvaDovuta = '';
   var xbrlIvaCredito = '';
   if (Banana.SDecimal.sign(param.vatAmounts["OPDIFFERENZA"].vatPosted)<0)
-    xbrlIvaDovuta = xml_createElementWithValidation("iv:IvaDovuta", createInstance_GetVatAmount("OPDIFFERENZA", "vatPosted", param),0,'4...16',msgContext) + '\n';
+    xbrlIvaDovuta = xml_createElementWithValidation("iv:IvaDovuta", createInstance_GetVatAmount("OPDIFFERENZA", "vatPosted", param),0,'4...16',msgContext);
   else
-    xbrlIvaCredito = xml_createElementWithValidation("iv:IvaCredito", createInstance_GetVatAmount("OPDIFFERENZA", "vatPosted", param),0,'4...16',msgContext) + '\n';
+    xbrlIvaCredito = xml_createElementWithValidation("iv:IvaCredito", createInstance_GetVatAmount("OPDIFFERENZA", "vatPosted", param),0,'4...16',msgContext);
+  if (xbrlIvaDovuta.length>0)
+    xbrlIvaDovuta += '\n';
+  if (xbrlIvaCredito.length>0)
+    xbrlIvaCredito += '\n';
+
   var xbrlDebitoPeriodoPrecedente = '';
   var xbrlCreditoPeriodoPrecedente = '';
   if (Banana.SDecimal.sign(param.vatAmounts["L-CI"].vatPosted)<0)
@@ -98,21 +151,29 @@ function createInstance_Comunicazione(param)
     xbrlDebitoPeriodoPrecedente += '\n';
   if (xbrlCreditoPeriodoPrecedente.length>0)
     xbrlCreditoPeriodoPrecedente += '\n';
+
   var xbrlCreditoAnnoPrecedente = xml_createElementWithValidation("iv:CreditoAnnoPrecedente", createInstance_GetVatAmount("L-CIA", "vatPosted", param),0,'4...16',msgContext);
   if (xbrlCreditoAnnoPrecedente.length>0)
     xbrlCreditoAnnoPrecedente += '\n';
+
   var xbrlInteressiDovuti = xml_createElementWithValidation("iv:InteressiDovuti", createInstance_GetVatAmount("L-INT", "vatPosted", param),0,'4...16',msgContext);
   if (xbrlInteressiDovuti.length>0)
     xbrlInteressiDovuti += '\n';
+
   var xbrlAcconto = xml_createElementWithValidation("iv:Acconto", createInstance_GetVatAmount("L-AC", "vatPosted", param),0,'4...16',msgContext);
   if (xbrlAcconto.length>0)
     xbrlAcconto += '\n';
+
   var xbrlImportoDaVersare = '';
   var xbrlImportoACredito = '';
   if (Banana.SDecimal.sign(param.vatAmounts["Total"].vatPosted)<0)
-    xbrlImportoDaVersare = xml_createElementWithValidation("iv:ImportoDaVersare", createInstance_GetVatAmount("Total", "vatPosted", param),0,'4...16',msgContext) + '\n';
+    xbrlImportoDaVersare = xml_createElementWithValidation("iv:ImportoDaVersare", createInstance_GetVatAmount("Total", "vatPosted", param),0,'4...16',msgContext);
   else
-    xbrlImportoACredito = xml_createElementWithValidation("iv:ImportoACredito", createInstance_GetVatAmount("Total", "vatPosted", param),0,'4...16',msgContext) + '\n';
+    xbrlImportoACredito = xml_createElementWithValidation("iv:ImportoACredito", createInstance_GetVatAmount("Total", "vatPosted", param),0,'4...16',msgContext);
+  if (xbrlImportoDaVersare.length>0)
+    xbrlImportoDaVersare += '\n';
+  if (xbrlImportoACredito.length>0)
+    xbrlImportoACredito += '\n';
 
   xbrlContent = '\n' + xbrlMese + xbrlTrimestre + xbrlTotaleOperazioniAttive + xbrlTotaleOperazioniPassive + xbrlIvaEsigibile + xbrlIvaDetratta + xbrlIvaDovuta + xbrlIvaCredito;
   xbrlContent += xbrlDebitoPeriodoPrecedente + xbrlCreditoPeriodoPrecedente + xbrlCreditoAnnoPrecedente + xbrlInteressiDovuti + xbrlAcconto + xbrlImportoDaVersare + xbrlImportoACredito;
