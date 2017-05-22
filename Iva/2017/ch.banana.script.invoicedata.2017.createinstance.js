@@ -115,25 +115,25 @@ function createInstance_Blocco1(param)
   
   //2.1.1   <IdentificativiFiscali>
   var xbrlContent = '\n' + xml_createElementWithValidation("IdPaese", getCountryCode(param.fileInfo["Address"]),1,'2',msgContext);
-  xbrlContent += '\n' + xml_createElementWithValidation("IdCodice", param.fileInfo["Address"]["FiscalNumber"],1,'1...28',msgContext) +'\n';
+  xbrlContent += '\n' + xml_createElementWithValidation("IdCodice", xml_escapeString(param.fileInfo["Address"]["FiscalNumber"]),1,'1...28',msgContext) +'\n';
   xbrlContent = '\n' + xml_createElementWithValidation("IdFiscaleIVA",xbrlContent,1);
-  xbrlContent += '\n' + xml_createElementWithValidation("CodiceFiscale", param.fileInfo["Address"]["FiscalNumber"],0,'11...16',msgContext) +'\n';
+  xbrlContent += '\n' + xml_createElementWithValidation("CodiceFiscale", xml_escapeString(param.fileInfo["Address"]["FiscalNumber"]),0,'11...16',msgContext) +'\n';
   xbrlContent =  '\n' + xml_createElementWithValidation("IdentificativiFiscali",xbrlContent,1) +'\n';
   
   //2.1.2   <AltriDatiIdentificativi>
   var xbrlContent2 = '';
   if (param.fileInfo["Address"]["Company"].length) {
-    xbrlContent2 = '\n' + xml_createElementWithValidation("Denominazione", param.fileInfo["Address"]["Company"],0,'1...80',msgContext);
+    xbrlContent2 = '\n' + xml_createElementWithValidation("Denominazione", xml_escapeString(param.fileInfo["Address"]["Company"]),0,'1...80',msgContext);
   }
   else {
-    xbrlContent2 = '\n' + xml_createElementWithValidation("Nome", param.fileInfo["Address"]["Name"],0,'1...60',msgContext);
-    xbrlContent2 += '\n' + xml_createElementWithValidation("Cognome", param.fileInfo["Address"]["FamilyName"],0,'1...60',msgContext);
+    xbrlContent2 = '\n' + xml_createElementWithValidation("Nome", xml_escapeString(param.fileInfo["Address"]["Name"]),0,'1...60',msgContext);
+    xbrlContent2 += '\n' + xml_createElementWithValidation("Cognome", xml_escapeString(param.fileInfo["Address"]["FamilyName"]),0,'1...60',msgContext);
   }
-  var xbrlContent3 = '\n' + xml_createElementWithValidation("Indirizzo", param.fileInfo["Address"]["Address1"],1,'1...60',msgContext) +'\n';
+  var xbrlContent3 = '\n' + xml_createElementWithValidation("Indirizzo", xml_escapeString(param.fileInfo["Address"]["Address1"]),1,'1...60',msgContext) +'\n';
   //xbrlContent3 += xml_createElementWithValidation("NumeroCivico") +'\n';
-  xbrlContent3 += xml_createElementWithValidation("CAP", param.fileInfo["Address"]["Zip"],1,'5',msgContext) +'\n';
-  xbrlContent3 += xml_createElementWithValidation("Comune", param.fileInfo["Address"]["City"],1,'1...60',msgContext) +'\n';
-  xbrlContent3 += xml_createElementWithValidation("Provincia", param.fileInfo["Address"]["State"],0,'2',msgContext) +'\n';
+  xbrlContent3 += xml_createElementWithValidation("CAP", xml_escapeString(param.fileInfo["Address"]["Zip"]),1,'5',msgContext) +'\n';
+  xbrlContent3 += xml_createElementWithValidation("Comune", xml_escapeString(param.fileInfo["Address"]["City"]),1,'1...60',msgContext) +'\n';
+  xbrlContent3 += xml_createElementWithValidation("Provincia", xml_escapeString(param.fileInfo["Address"]["State"]),0,'2',msgContext) +'\n';
   xbrlContent3 += xml_createElementWithValidation("Nazione", getCountryCode(param.fileInfo["Address"]),1,'2',msgContext) +'\n';
   xbrlContent2 += '\n' + xml_createElementWithValidation("Sede", xbrlContent3,1) +'\n';
   xbrlContent +=  xml_createElementWithValidation("AltriDatiIdentificativi",xbrlContent2,1) +'\n';
@@ -167,24 +167,24 @@ function createInstance_Blocco2(accountObj, param)
   if (accountObj) {
     //2.2.1   <IdentificativiFiscali>
     xbrlContent = '\n' + xml_createElementWithValidation("IdPaese", getCountryCode(accountObj),1,'2',msgContext);
-    xbrlContent += '\n' + xml_createElementWithValidation("IdCodice", accountObj["FiscalNumber"],1,'1...28',msgContext) +'\n';
+    xbrlContent += '\n' + xml_createElementWithValidation("IdCodice", xml_escapeString(accountObj["FiscalNumber"]),1,'1...28',msgContext) +'\n';
     xbrlContent = '\n' + xml_createElementWithValidation("IdFiscaleIVA",xbrlContent,1);
-    xbrlContent += '\n' + xml_createElementWithValidation("CodiceFiscale", accountObj["FiscalNumber"],0,'11...16',msgContext) +'\n';
+    xbrlContent += '\n' + xml_createElementWithValidation("CodiceFiscale", xml_escapeString(accountObj["FiscalNumber"]),0,'11...16',msgContext) +'\n';
     xbrlContent =  '\n' + xml_createElementWithValidation("IdentificativiFiscali",xbrlContent,1) +'\n';
 
     //2.2.2   <AltriDatiIdentificativi>
     var xbrlContent2 = '';
     if (accountObj["OrganisationName"].length) {
-      xbrlContent2 = '\n' + xml_createElementWithValidation("Denominazione", accountObj["OrganisationName"],0,'1...80',msgContext);
+      xbrlContent2 = '\n' + xml_createElementWithValidation("Denominazione", xml_escapeString(accountObj["OrganisationName"]),0,'1...80',msgContext);
     }
     else {
-      xbrlContent2 = '\n' + xml_createElementWithValidation("Nome", accountObj["FirstName"],0,'1...60',msgContext);
-      xbrlContent2 += '\n' + xml_createElementWithValidation("Cognome", accountObj["FamilyName"],0,'1...60',msgContext);
+      xbrlContent2 = '\n' + xml_createElementWithValidation("Nome", xml_escapeString(accountObj["FirstName"]),0,'1...60',msgContext);
+      xbrlContent2 += '\n' + xml_createElementWithValidation("Cognome", xml_escapeString(accountObj["FamilyName"]),0,'1...60',msgContext);
     }
-    var xbrlContent3 = '\n' + xml_createElementWithValidation("Indirizzo", accountObj["Street"],1,'1...60',msgContext) +'\n';
-    xbrlContent3 += xml_createElementWithValidation("CAP", accountObj["PostalCode"],1,'5',msgContext) +'\n';
-    xbrlContent3 += xml_createElementWithValidation("Comune", accountObj["Locality"],1,'1...60',msgContext) +'\n';
-    xbrlContent3 += xml_createElementWithValidation("Provincia", accountObj["Region"],0,'2',msgContext) +'\n';
+    var xbrlContent3 = '\n' + xml_createElementWithValidation("Indirizzo", xml_escapeString(accountObj["Street"]),1,'1...60',msgContext) +'\n';
+    xbrlContent3 += xml_createElementWithValidation("CAP", xml_escapeString(accountObj["PostalCode"]),1,'5',msgContext) +'\n';
+    xbrlContent3 += xml_createElementWithValidation("Comune", xml_escapeString(accountObj["Locality"]),1,'1...60',msgContext) +'\n';
+    xbrlContent3 += xml_createElementWithValidation("Provincia", xml_escapeString(accountObj["Region"]),0,'2',msgContext) +'\n';
     xbrlContent3 += xml_createElementWithValidation("Nazione", getCountryCode(accountObj),1,'2',msgContext) +'\n';
     xbrlContent2 += '\n' + xml_createElementWithValidation("Sede", xbrlContent3,1) +'\n';
     xbrlContent +=  xml_createElementWithValidation("AltriDatiIdentificativi", xbrlContent2,1) +'\n';
@@ -199,7 +199,7 @@ function createInstance_Blocco2(accountObj, param)
         //2.2.3.1  <DatiGenerali>
         xbrlContent3 = '\n' + xml_createElementWithValidation("TipoDocumento", accountObj.rows[i]["DF_TipoDoc"],1,'4',msgContext);
         xbrlContent3 += '\n' + xml_createElementWithValidation("Data", accountObj.rows[i]["JInvoiceIssueDate"],1,'10',msgContext);
-        xbrlContent3 += '\n' + xml_createElementWithValidation("Numero", accountObj.rows[i]["DocInvoice"],1,'1...20',msgContext) + '\n';
+        xbrlContent3 += '\n' + xml_createElementWithValidation("Numero", xml_escapeString(accountObj.rows[i]["DocInvoice"]),1,'1...20',msgContext) + '\n';
         if (param.blocco == 'DTR')
           xbrlContent3 += '\n' + xml_createElementWithValidation("DataRegistrazione", accountObj.rows[i]["JDate"],1,'10',msgContext) + '\n';
         xbrlContent2 = '\n' + xml_createElementWithValidation("DatiGenerali", xbrlContent3,1);

@@ -122,6 +122,7 @@ function getCountryCode(jsonObject) {
   if (countryCode == 'france' || countryCode == 'francia') {
     countryCode = 'fr';
   }
+  contryCode = xml_escapeString(countryCode);
   return countryCode.toUpperCase();
 }
 
