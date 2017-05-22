@@ -56,8 +56,8 @@ function createInstance_Comunicazione(param)
 {
   var msgContext = '<iv:Frontespizio>';
 
-  var codiceFiscale = xml_escapeString(createInstance_GetValueFromTableInfo("AccountingDataBase", "FiscalNumber"));
-  var partitaIva = xml_escapeString(createInstance_GetValueFromTableInfo("AccountingDataBase", "VatNumber"));
+  var codiceFiscale = createInstance_GetValueFromTableInfo("AccountingDataBase", "FiscalNumber");
+  var partitaIva = createInstance_GetValueFromTableInfo("AccountingDataBase", "VatNumber");
   var xbrlCodiceFiscale = xml_createElementWithValidation("iv:CodiceFiscale", codiceFiscale,1,'11...16',msgContext) + '\n';
   var xbrlAnnoImposta = xml_createElementWithValidation("iv:AnnoImposta", getPeriod("y", param),1,'4',msgContext) + '\n';
   var xbrlPartitaIva = xml_createElementWithValidation("iv:PartitaIVA", partitaIva,1,'11',msgContext) + '\n';
@@ -214,6 +214,8 @@ function createInstance_GetValueFromTableInfo(xmlSection, xmlId, param) {
   var xmlValue = Banana.document.info(xmlSection,xmlId);
   if (xmlValue === undefined)
     xmlValue = '';
+  if (xmlValue.length > 0)
+   xml_escapeString(xmlValue);
   return xmlValue;
 }
 

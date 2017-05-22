@@ -123,6 +123,7 @@ function xml_escapeString(_string) {
   string = string.replace(re, ESCAPED_QUOTE[APOS]);
   re = new RegExp(QUOTE,'g');
   string = string.replace(re, ESCAPED_QUOTE[QUOTE]);
+  string = string.trim();
   return string;
 }
 

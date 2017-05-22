@@ -23,7 +23,7 @@
 // @includejs = ch.banana.script.italianvatreport.2017.xml.js
 // @includejs = ch.banana.script.italianvatreport.2017.errors.js
 // @inputdatasource = none
-// @pubdate = 2017-04-20
+// @pubdate = 2017-05-22
 // @publisher = Banana.ch SA
 // @task = export.file
 // @timeout = -1
@@ -90,18 +90,25 @@ function exec(inData) {
  * Get customer or supplier data from table Accounts
  */
 function getAccount(accountId) {
+  var jsonObj = {};
   if (!accountId || accountId.length <= 0)
-    return '';
+    return jsonObj;
   if (!Banana.document)
-    return '';
+    return jsonObj;
+
   var tableAccounts = Banana.document.table('Accounts');
   if (tableAccounts) {
     var row = tableAccounts.findRowByValue('Account', accountId);
     if (row) {
-      return row.toJSON();
+      var jsonString = row.toJSON();
+      jsonObj = JSON.parse(jsonString);
+      for (var key in jsonObj) {
+        if (jsonObj[key].length > 0)
+          jsonObj[key] = xml_escapeString(jsonObj[key]);
+      }
     }
   }
-  return '';
+  return jsonObj;
 }
 
 function getCountryCode(jsonObject) {
@@ -143,12 +150,8 @@ function init_namespaces()
 {
   var ns = [
     {
-      'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0',
-      'prefix' : 'xmlns:df'
-    },
-    {
-      'namespace' : 'http://www.w3.org/2001/XMLSchema-instance',
-      'prefix' : 'xmlns:xsi'
+      'namespace' : 'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.0',
+      'prefix' : 'xmlns:ns2'
     },
   ];
   return ns;
@@ -156,7 +159,6 @@ function init_namespaces()
 function init_schemarefs()
 {
   var schemaRefs = [
-    'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0 DatiFattura_v2.0.xsd',
   ];
   return schemaRefs;
 };
@@ -201,7 +203,7 @@ function loadData(param)
 
     var accountId = filteredRows[i].value("JAccount");
     if (accountId && accountId.length>0) {
-      var accountObj = JSON.parse(getAccount(accountId));
+      var accountObj = getAccount(accountId);
       if (accountObj) {
         if (isCustomer == '1') {
           param.customers[accountId] = accountObj;
@@ -265,7 +267,7 @@ function loadData(param)
       var columnName = tColumnNames[j];
       value = filteredRows[i].value(columnName);
       if (value)
-        jsonLine[columnName] = value;
+        jsonLine[columnName] = xml_escapeString(value);
       else
         jsonLine[columnName] = '';
     }
@@ -452,23 +454,23 @@ function loadData(param)
   param.fileInfo["CustomersGroup"] = Banana.document.info("AccountingDataBase", "CustomersGroup");
   param.fileInfo["SuppliersGroup"] = Banana.document.info("AccountingDataBase", "SuppliersGroup");
   param.fileInfo["Address"] = {};
-  param.fileInfo["Address"]["Company"] = Banana.document.info("AccountingDataBase", "Company");
-  param.fileInfo["Address"]["Courtesy"] = Banana.document.info("AccountingDataBase", "Courtesy");
-  param.fileInfo["Address"]["Name"] = Banana.document.info("AccountingDataBase", "Name");
-  param.fileInfo["Address"]["FamilyName"] = Banana.document.info("AccountingDataBase", "FamilyName");
-  param.fileInfo["Address"]["Address1"] = Banana.document.info("AccountingDataBase", "Address1");
-  param.fileInfo["Address"]["Address2"] = Banana.document.info("AccountingDataBase", "Address2");
-  param.fileInfo["Address"]["Zip"] = Banana.document.info("AccountingDataBase", "Zip");
-  param.fileInfo["Address"]["City"] = Banana.document.info("AccountingDataBase", "City");
-  param.fileInfo["Address"]["State"] = Banana.document.info("AccountingDataBase", "State");
-  param.fileInfo["Address"]["Country"] = Banana.document.info("AccountingDataBase", "Country");
-  param.fileInfo["Address"]["Web"] = Banana.document.info("AccountingDataBase", "Web");
-  param.fileInfo["Address"]["Email"] = Banana.document.info("AccountingDataBase", "Email");
-  param.fileInfo["Address"]["Phone"] = Banana.document.info("AccountingDataBase", "Phone");
-  param.fileInfo["Address"]["Mobile"] = Banana.document.info("AccountingDataBase", "Mobile");
-  param.fileInfo["Address"]["Fax"] = Banana.document.info("AccountingDataBase", "Fax");
-  param.fileInfo["Address"]["FiscalNumber"] = Banana.document.info("AccountingDataBase", "FiscalNumber");
-  param.fileInfo["Address"]["VatNumber"] = Banana.document.info("AccountingDataBase", "VatNumber");
+  param.fileInfo["Address"]["Company"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Company"));
+  param.fileInfo["Address"]["Courtesy"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Courtesy"));
+  param.fileInfo["Address"]["Name"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Name"));
+  param.fileInfo["Address"]["FamilyName"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FamilyName"));
+  param.fileInfo["Address"]["Address1"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address1"));
+  param.fileInfo["Address"]["Address2"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address2"));
+  param.fileInfo["Address"]["Zip"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Zip"));
+  param.fileInfo["Address"]["City"] = xml_escapeString(Banana.document.info("AccountingDataBase", "City"));
+  param.fileInfo["Address"]["State"] = xml_escapeString(Banana.document.info("AccountingDataBase", "State"));
+  param.fileInfo["Address"]["Country"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Country"));
+  param.fileInfo["Address"]["Web"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Web"));
+  param.fileInfo["Address"]["Email"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Email"));
+  param.fileInfo["Address"]["Phone"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Phone"));
+  param.fileInfo["Address"]["Mobile"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Mobile"));
+  param.fileInfo["Address"]["Fax"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Fax"));
+  param.fileInfo["Address"]["FiscalNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FiscalNumber"));
+  param.fileInfo["Address"]["VatNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "VatNumber"));
   
   //debug
   /*var line = [];
