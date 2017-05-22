@@ -12,11 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+var AMPERSAND = '&';
 var APOS = "'"; 
-QUOTE = '"';
+var GREATERTHAN = ">"; 
+var LOWERTHAN = "<"; 
+var QUOTE = '"';
 var ESCAPED_QUOTE = {  };
-ESCAPED_QUOTE[QUOTE] = '&quot;';
+ESCAPED_QUOTE[AMPERSAND] = '&amp;';
 ESCAPED_QUOTE[APOS] = '&apos;';
+ESCAPED_QUOTE[GREATERTHAN] = '&gt;';
+ESCAPED_QUOTE[LOWERTHAN] = '&lt;';
+ESCAPED_QUOTE[QUOTE] = '&quot;';
    
 // XML writer with attributes and smart attribute quote escaping 
 function xml_createElement(name,content,attributes){
@@ -45,7 +51,16 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
   if (attributes) { // tests false if this arg is missing!
     att_str = xml_formatAttributes(attributes);
   }
+  
+  //escape content
   content = content.toString()
+  var re = new RegExp(AMPERSAND,'g');
+  content = content.replace(re, ESCAPED_QUOTE[AMPERSAND]);
+  re = new RegExp(GREATERTHAN,'g');
+  content = content.replace(re, ESCAPED_QUOTE[GREATERTHAN]);
+  re = new RegExp(LOWERTHAN,'g');
+  content = content.replace(re, ESCAPED_QUOTE[LOWERTHAN]);
+
   var xml='';
   if (content) {
     xml='<' + name + att_str + '>' + content + '</'+name+'>';
@@ -121,6 +136,13 @@ function xml_formatAttributes(attributes) {
     att_value = attributes[att];
     if (att_value === undefined)
       continue;
+
+    re = new RegExp(AMPERSAND,'g');
+    att_value = att_value.replace(re, ESCAPED_QUOTE[AMPERSAND]);
+    re = new RegExp(GREATERTHAN,'g');
+    att_value = att_value.replace(re, ESCAPED_QUOTE[GREATERTHAN]);
+    re = new RegExp(LOWERTHAN,'g');
+    att_value = att_value.replace(re, ESCAPED_QUOTE[LOWERTHAN]);
     
     // Find first quote marks if any
     apos_pos = att_value.indexOf(APOS);
