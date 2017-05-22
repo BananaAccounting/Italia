@@ -52,15 +52,7 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
     att_str = xml_formatAttributes(attributes);
   }
   
-  //escape content
   content = content.toString()
-  var re = new RegExp(AMPERSAND,'g');
-  content = content.replace(re, ESCAPED_QUOTE[AMPERSAND]);
-  re = new RegExp(GREATERTHAN,'g');
-  content = content.replace(re, ESCAPED_QUOTE[GREATERTHAN]);
-  re = new RegExp(LOWERTHAN,'g');
-  content = content.replace(re, ESCAPED_QUOTE[LOWERTHAN]);
-
   var xml='';
   if (content) {
     xml='<' + name + att_str + '>' + content + '</'+name+'>';
@@ -117,6 +109,21 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
     Banana.document.addMessage( msg, ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA);
   }
   return xml;
+}
+
+function xml_escapeString(_string) {
+  var string = _string.toString()
+  var re = new RegExp(AMPERSAND,'g');
+  string = string.replace(re, ESCAPED_QUOTE[AMPERSAND]);
+  re = new RegExp(GREATERTHAN,'g');
+  string = string.replace(re, ESCAPED_QUOTE[GREATERTHAN]);
+  re = new RegExp(LOWERTHAN,'g');
+  string = string.replace(re, ESCAPED_QUOTE[LOWERTHAN]);
+  re = new RegExp(APOS,'g');
+  string = string.replace(re, ESCAPED_QUOTE[APOS]);
+  re = new RegExp(QUOTE,'g');
+  string = string.replace(re, ESCAPED_QUOTE[QUOTE]);
+  return string;
 }
 
 /*

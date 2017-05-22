@@ -56,9 +56,11 @@ function createInstance_Comunicazione(param)
 {
   var msgContext = '<iv:Frontespizio>';
 
-  var xbrlCodiceFiscale = xml_createElementWithValidation("iv:CodiceFiscale", createInstance_GetValueFromTableInfo("AccountingDataBase", "FiscalNumber"),1,'11...16',msgContext) + '\n';
+  var codiceFiscale = xml_escapeString(createInstance_GetValueFromTableInfo("AccountingDataBase", "FiscalNumber"));
+  var partitaIva = xml_escapeString(createInstance_GetValueFromTableInfo("AccountingDataBase", "VatNumber"));
+  var xbrlCodiceFiscale = xml_createElementWithValidation("iv:CodiceFiscale", codiceFiscale,1,'11...16',msgContext) + '\n';
   var xbrlAnnoImposta = xml_createElementWithValidation("iv:AnnoImposta", getPeriod("y", param),1,'4',msgContext) + '\n';
-  var xbrlPartitaIva = xml_createElementWithValidation("iv:PartitaIVA", createInstance_GetValueFromTableInfo("AccountingDataBase", "VatNumber"),1,'11',msgContext) + '\n';
+  var xbrlPartitaIva = xml_createElementWithValidation("iv:PartitaIVA", partitaIva,1,'11',msgContext) + '\n';
 
   var xbrlUltimoMese = '';
   var nUltimoMese = 0;
@@ -86,7 +88,7 @@ function createInstance_Comunicazione(param)
   
   var xbrlCFDichiarante = '';
   if (param.codicefiscaleDichiarante.length>0)
-    xbrlCFDichiarante = xml_createElementWithValidation("iv:CFDichiarante", param.codicefiscaleDichiarante, 0, '16', msgContext) + '\n';
+    xbrlCFDichiarante = xml_createElementWithValidation("iv:CFDichiarante", xml_escapeString(param.codicefiscaleDichiarante), 0, '16', msgContext) + '\n';
 
   var xbrlCodiceCaricaDichiarante = '';
   if (parseInt(param.codiceCarica)>0)
@@ -194,7 +196,7 @@ function createInstance_Intestazione(param)
 
   var xbrlCodiceFiscaleDichiarante = '';
   if (param.codicefiscaleDichiarante.length>0)
-    xbrlCodiceFiscaleDichiarante = xml_createElementWithValidation("iv:CodiceFiscaleDichiarante", param.codicefiscaleDichiarante, 0, '16', msgContext) + '\n';
+    xbrlCodiceFiscaleDichiarante = xml_createElementWithValidation("iv:CodiceFiscaleDichiarante", xml_escapeString(param.codicefiscaleDichiarante), 0, '16', msgContext) + '\n';
 
   var xbrlCodiceCarica = '';
   if (parseInt(param.codiceCarica)>0)
