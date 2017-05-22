@@ -258,9 +258,26 @@ function createInstance_Blocco2(accountObj, param)
 */
 function createInstance_DatiFatturaHeader(param) 
 {
- 
-  var xbrlProgressivo = '\n' + xml_createElement("ProgressivoInvio", "2") + '\n';
+  var msgContext = '<DatiFatturaHeader>';
+  
+  var xbrlProgressivo = '';
+  if (param.progressivoInvio.length>0)
+    xbrlProgressivo = xml_createElementWithValidation("ProgressivoInvio",xml_escapeString(param.progressivoInvio),0,'1...10', msgContext) + '\n';
+  
+  var xbrlCFDichiarante = '';
+  if (param.codicefiscaleDichiarante.length>0)
+    xbrlCFDichiarante = xml_createElementWithValidation("CodiceFiscale", xml_escapeString(param.codicefiscaleDichiarante), 0, '11...16', msgContext) + '\n';
 
-  var xbrlHeader =  '\n' + xml_createElement("DatiFatturaHeader", xbrlProgressivo);
+  var xbrlCodiceCaricaDichiarante = '';
+  if (parseInt(param.codiceCarica)>0)
+    xbrlCodiceCaricaDichiarante = xml_createElementWithValidation("Carica", param.codiceCarica, 0, '1...2', msgContext) + '\n';
+
+  var xbrlDichiarante = '';
+  if (xbrlCFDichiarante.length > 0 || xbrlCodiceCaricaDichiarante.length > 0) {
+    xbrlDichiarante =  '\n' + xml_createElement("Dichiarante", xbrlCFDichiarante + xbrlCodiceCaricaDichiarante);
+  }
+
+  var xbrlContent = xbrlProgressivo + xbrlDichiarante;
+  var xbrlHeader =  '\n' + xml_createElement("DatiFatturaHeader", xbrlContent);
   return xbrlHeader;
 }
