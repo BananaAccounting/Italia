@@ -115,7 +115,7 @@ function createInstance_Blocco1(param)
   
   //2.1.1   <IdentificativiFiscali>
   var xbrlContent = '\n' + xml_createElementWithValidation("IdPaese", getCountryCode(param.fileInfo["Address"]),1,'2',msgContext);
-  xbrlContent += '\n' + xml_createElementWithValidation("IdCodice", param.fileInfo["Address"]["FiscalNumber"],1,'1...28',msgContext) +'\n';
+  xbrlContent += '\n' + xml_createElementWithValidation("IdCodice", param.fileInfo["Address"]["VatNumber"],1,'1...28',msgContext) +'\n';
   xbrlContent = '\n' + xml_createElementWithValidation("IdFiscaleIVA",xbrlContent,1);
   xbrlContent += '\n' + xml_createElementWithValidation("CodiceFiscale", param.fileInfo["Address"]["FiscalNumber"],0,'11...16',msgContext) +'\n';
   xbrlContent =  '\n' + xml_createElementWithValidation("IdentificativiFiscali",xbrlContent,1) +'\n';
@@ -176,14 +176,14 @@ function createInstance_Blocco2(accountObj, param)
      return;
 
   var msgContext = '<' + tag + '> ' + accountObj["Account"] + ' ' + accountObj["Description"];
-  var xbrlContent = '';
+  var xbrlCessionarioCommittente = '';
   if (accountObj) {
     //2.2.1   <IdentificativiFiscali>
-    xbrlContent = '\n' + xml_createElementWithValidation("IdPaese", getCountryCode(accountObj),1,'2',msgContext);
-    xbrlContent += '\n' + xml_createElementWithValidation("IdCodice", accountObj["FiscalNumber"],1,'1...28',msgContext) +'\n';
-    xbrlContent = '\n' + xml_createElementWithValidation("IdFiscaleIVA",xbrlContent,1);
-    xbrlContent += '\n' + xml_createElementWithValidation("CodiceFiscale", accountObj["FiscalNumber"],0,'11...16',msgContext) +'\n';
-    xbrlContent =  '\n' + xml_createElementWithValidation("IdentificativiFiscali",xbrlContent,1) +'\n';
+    xbrlCessionarioCommittente = '\n' + xml_createElementWithValidation("IdPaese", getCountryCode(accountObj),1,'2',msgContext);
+    xbrlCessionarioCommittente += '\n' + xml_createElementWithValidation("IdCodice", accountObj["VatNumber"],1,'1...28',msgContext) +'\n';
+    xbrlCessionarioCommittente = '\n' + xml_createElementWithValidation("IdFiscaleIVA",xbrlCessionarioCommittente,1);
+    xbrlCessionarioCommittente += '\n' + xml_createElementWithValidation("CodiceFiscale", accountObj["FiscalNumber"],0,'11...16',msgContext) +'\n';
+    xbrlCessionarioCommittente =  '\n' + xml_createElementWithValidation("IdentificativiFiscali",xbrlCessionarioCommittente,1) +'\n';
 
     //2.2.2   <AltriDatiIdentificativi>
     var xbrlContent2 = '';
@@ -213,21 +213,24 @@ function createInstance_Blocco2(accountObj, param)
     xbrlContent3 += xml_createElementWithValidation("Provincia", accountObj["Region"],0,'2',msgContext) +'\n';
     xbrlContent3 += xml_createElementWithValidation("Nazione", getCountryCode(accountObj),1,'2',msgContext) +'\n';
     xbrlContent2 += '\n' + xml_createElementWithValidation("Sede", xbrlContent3,1) +'\n';
-    xbrlContent +=  xml_createElementWithValidation("AltriDatiIdentificativi", xbrlContent2,1) +'\n';
+    xbrlCessionarioCommittente +=  xml_createElementWithValidation("AltriDatiIdentificativi", xbrlContent2,1) +'\n';
 
     /*
     * Blocco obbligatorio. Può essere replicato per trasmettere dati di più fatture relative allo stesso cliente
     */
     //2.2.3 <DatiFatturaBodyDTE> o 3.2.3 <DatiFatturaBodyDTR>
+    var xbrlDatiFatturaBody = '';
     for (var i in accountObj.rows) {
       if (accountObj.rows[i]) {
         msgContext = '[' + accountObj.rows[i]["JTableOrigin"] + ': Riga ' + (parseInt(accountObj.rows[i]["JRowOrigin"])+1).toString() +'] <DatiFatturaBody' + param.blocco + '>';
         //2.2.3.1  <DatiGenerali>
         xbrlContent3 = '\n' + xml_createElementWithValidation("TipoDocumento", accountObj.rows[i]["DF_TipoDoc"],1,'4',msgContext);
         xbrlContent3 += '\n' + xml_createElementWithValidation("Data", accountObj.rows[i]["JInvoiceIssueDate"],1,'10',msgContext);
-        xbrlContent3 += '\n' + xml_createElementWithValidation("Numero", accountObj.rows[i]["DocInvoice"],1,'1...20',msgContext) + '\n';
+        xbrlContent3 += '\n' + xml_createElementWithValidation("Numero", accountObj.rows[i]["DocInvoice"],1,'1...20',msgContext);
         if (param.blocco == 'DTR')
           xbrlContent3 += '\n' + xml_createElementWithValidation("DataRegistrazione", accountObj.rows[i]["JDate"],1,'10',msgContext) + '\n';
+        else
+          xbrlContent3 += '\n';
         xbrlContent2 = '\n' + xml_createElementWithValidation("DatiGenerali", xbrlContent3,1);
         //2.2.3.1  <DatiRiepilogo>
         xbrlContent3 = '\n' + xml_createElementWithValidation("ImponibileImporto", accountObj.rows[i]["DF_Imponibile"],1,'4...15',msgContext);
@@ -243,11 +246,12 @@ function createInstance_Blocco2(accountObj, param)
         if (accountObj.rows[i]["DF_Natura"].length || accountObj.rows[i]["DF_Detraibile"].length || accountObj.rows[i]["DF_Deducibile"].length)
           xbrlContent3 += '\n';
         xbrlContent2 += '\n' + xml_createElementWithValidation("DatiRiepilogo", xbrlContent3,1) +'\n';
-        xbrlContent +=  xml_createElementWithValidation("DatiFatturaBody" + param.blocco, xbrlContent2,1) +'\n';
+        xbrlDatiFatturaBody +=  '\n' + xml_createElementWithValidation("DatiFatturaBody" + param.blocco, xbrlContent2,1);
       }
     }
   }
-  xbrlContent =  '\n' + xml_createElement(tag, xbrlContent);
+  var xbrlContent =  '\n' + xml_createElement(tag, xbrlCessionarioCommittente);
+  xbrlContent +=  xbrlDatiFatturaBody;
   return xbrlContent;
 }
 
@@ -262,22 +266,22 @@ function createInstance_DatiFatturaHeader(param)
   
   var xbrlProgressivo = '';
   if (param.progressivoInvio.length>0)
-    xbrlProgressivo = xml_createElementWithValidation("ProgressivoInvio",xml_escapeString(param.progressivoInvio),0,'1...10', msgContext) + '\n';
+    xbrlProgressivo = '\n' + xml_createElementWithValidation("ProgressivoInvio",xml_escapeString(param.progressivoInvio),0,'1...10', msgContext) + '\n';
   
   var xbrlCFDichiarante = '';
   if (param.codicefiscaleDichiarante.length>0)
-    xbrlCFDichiarante = xml_createElementWithValidation("CodiceFiscale", xml_escapeString(param.codicefiscaleDichiarante), 0, '11...16', msgContext) + '\n';
+    xbrlCFDichiarante = '\n' + xml_createElementWithValidation("CodiceFiscale", xml_escapeString(param.codicefiscaleDichiarante), 0, '11...16', msgContext);
 
   var xbrlCodiceCaricaDichiarante = '';
   if (parseInt(param.codiceCarica)>0)
-    xbrlCodiceCaricaDichiarante = xml_createElementWithValidation("Carica", param.codiceCarica, 0, '1...2', msgContext) + '\n';
+    xbrlCodiceCaricaDichiarante = '\n' + xml_createElementWithValidation("Carica", param.codiceCarica, 0, '1...2', msgContext);
 
   var xbrlDichiarante = '';
   if (xbrlCFDichiarante.length > 0 || xbrlCodiceCaricaDichiarante.length > 0) {
-    xbrlDichiarante =  '\n' + xml_createElement("Dichiarante", xbrlCFDichiarante + xbrlCodiceCaricaDichiarante);
+    xbrlDichiarante =  xml_createElement("Dichiarante", xbrlCFDichiarante + xbrlCodiceCaricaDichiarante +'\n');
   }
 
-  var xbrlContent = xbrlProgressivo + xbrlDichiarante;
+  var xbrlContent = xbrlProgressivo + xbrlDichiarante + '\n';
   var xbrlHeader =  '\n' + xml_createElement("DatiFatturaHeader", xbrlContent);
   return xbrlHeader;
 }

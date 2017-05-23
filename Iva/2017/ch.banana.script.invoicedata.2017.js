@@ -145,7 +145,7 @@ function settingsDialog() {
       param.repEndDate = accountingData.accountingYear.toString() + zeroPad(month, 2) + "31" ;
     }
   }
-  param.invioProgressivo = dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text;
+  param.progressivoInvio = dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text;
   param.codicefiscaleDichiarante = dialog.datiFatturaHeaderGroupBox.cfDichiaranteLineEdit.text;
   param.codiceCarica = dialog.datiFatturaHeaderGroupBox.codiceCaricaComboBox.currentIndex.toString();
   var bloccoId = dialog.bloccoComboBox.currentIndex.toString();
