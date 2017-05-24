@@ -189,7 +189,7 @@
            <string notr="true">Progressivo invio</string>
           </property>
           <property name="buddy">
-           <cstring>cfDichiaranteLineEdit</cstring>
+           <cstring>progressivoInvioLineEdit</cstring>
           </property>
          </widget>
         </item>
@@ -299,6 +299,9 @@
          <widget class="QLabel" name="codiceCaricaLabel">
           <property name="text">
            <string notr="true">Codice carica</string>
+          </property>
+          <property name="buddy">
+           <cstring>codiceCaricaComboBox</cstring>
           </property>
          </widget>
         </item>
@@ -525,8 +528,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>254</x>
-     <y>387</y>
+     <x>263</x>
+     <y>332</y>
     </hint>
     <hint type="destinationlabel">
      <x>204</x>

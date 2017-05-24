@@ -57,7 +57,13 @@ function settingsDialog() {
   }
   dialog.periodoGroupBox.trimestreComboBox.currentIndex = param.valoreTrimestre;
   dialog.periodoGroupBox.meseComboBox.currentIndex = param.valoreMese;
-  dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text = param.progressivoInvio;
+  var progressivo = parseInt(param.progressivoInvio, 10);
+  if (!progressivo)
+    progressivo = 1;
+  else
+    progressivo += 1;
+  progressivo = zeroPad(progressivo, 5);
+  dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text = progressivo;
   dialog.datiFatturaHeaderGroupBox.cfDichiaranteLineEdit.text = param.codicefiscaleDichiarante;
   dialog.datiFatturaHeaderGroupBox.codiceCaricaComboBox.currentIndex = param.codiceCarica;
   var bloccoId = 0;
@@ -145,7 +151,11 @@ function settingsDialog() {
       param.repEndDate = accountingData.accountingYear.toString() + zeroPad(month, 2) + "31" ;
     }
   }
-  param.progressivoInvio = dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text;
+  progressivo = dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text;
+  progressivo = parseInt(progressivo, 10);
+  if (!progressivo)
+    progressivo = 1;
+  param.progressivoInvio = zeroPad(progressivo, 5);
   param.codicefiscaleDichiarante = dialog.datiFatturaHeaderGroupBox.cfDichiaranteLineEdit.text;
   param.codiceCarica = dialog.datiFatturaHeaderGroupBox.codiceCaricaComboBox.currentIndex.toString();
   var bloccoId = dialog.bloccoComboBox.currentIndex.toString();
@@ -251,7 +261,7 @@ function initParam()
     param.repStartDate = Banana.document.startPeriod();
     param.repEndDate = Banana.document.endPeriod();
   }
-  param.invioProgressivo = '1';
+  param.invioProgressivo = '';
   param.codicefiscaleDichiarante = '';
   param.codiceCarica = '';
   param.blocco = 'DTE';
@@ -825,4 +835,14 @@ function verifyParam(param) {
    if (!param.blocco)
      param.blocco = 'DTE';
    return param;
+}
+
+/**
+* output integers with leading zeros
+*/
+function zeroPad(num, places) {
+    if (num.toString().length > places)
+        num = 0;
+    var zero = places - num.toString().length + 1;
+    return Array(+(zero > 0 && zero)).join("0") + num;
 }

@@ -60,8 +60,15 @@ function settingsDialog() {
   if (param.interestRate.length>0)
     dialog.interesseSpinBox.value = parseInt(param.interestRate);
   dialog.firmaContribuenteCheckBox.checked = param.firmaContribuente;
-  dialog.cfDichiaranteLineEdit.text = param.codicefiscaleDichiarante;
-  dialog.codiceCaricaComboBox.currentIndex = param.codiceCarica;
+  var progressivo = parseInt(param.progressivoInvio, 10);
+  if (!progressivo)
+    progressivo = 1;
+  else
+    progressivo += 1;
+  progressivo = zeroPad(progressivo, 5);
+  dialog.intestazioneGroupBox.progressivoInvioLineEdit.text = progressivo;
+  dialog.intestazioneGroupBox.cfDichiaranteLineEdit.text = param.codicefiscaleDichiarante;
+  dialog.intestazioneGroupBox.codiceCaricaComboBox.currentIndex = param.codiceCarica;
 
   //dialog functions
   dialog.checkdata = function () {
@@ -145,8 +152,13 @@ function settingsDialog() {
   }
   param.interestRate = dialog.interesseSpinBox.value.toString();
   param.firmaContribuente = dialog.firmaContribuenteCheckBox.checked;
-  param.codicefiscaleDichiarante = dialog.cfDichiaranteLineEdit.text;
-  param.codiceCarica = dialog.codiceCaricaComboBox.currentIndex.toString();
+  progressivo = dialog.intestazioneGroupBox.progressivoInvioLineEdit.text;
+  progressivo = parseInt(progressivo, 10);
+  if (!progressivo)
+    progressivo = 1;
+  param.progressivoInvio = zeroPad(progressivo, 5);
+  param.codicefiscaleDichiarante = dialog.intestazioneGroupBox.cfDichiaranteLineEdit.text;
+  param.codiceCarica = dialog.intestazioneGroupBox.codiceCaricaComboBox.currentIndex.toString();
 
   var paramToString = JSON.stringify(param);
   Banana.document.scriptSaveSettings(paramToString);
@@ -271,6 +283,7 @@ function initParam()
   }
   param.interestRate = '';
   param.firmaContribuente = true;
+  param.invioProgressivo = '';
   param.codicefiscaleDichiarante = '';
   param.codiceCarica = '';
   return param;
@@ -692,6 +705,8 @@ function verifyParam(param) {
      param.interestRate = '';
    if(!param.firmaContribuente)
      param.firmaContribuente = false;
+   if(!param.progressivoInvio)
+     param.progressivoInvio = '';
    if(!param.codicefiscaleDichiarante)
      param.codicefiscaleDichiarante = '';
    if(!param.codiceCarica)
