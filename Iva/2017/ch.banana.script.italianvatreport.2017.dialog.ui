@@ -244,7 +244,7 @@
    <item>
     <widget class="QGroupBox" name="intestazioneGroupBox">
      <property name="title">
-      <string>Intestazione</string>
+      <string>Comunicazione</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -252,7 +252,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="progressivoInvioLabel">
           <property name="text">
-           <string notr="true">Progressivo invio</string>
+           <string notr="true">Identificativo</string>
           </property>
           <property name="buddy">
            <cstring>progressivoInvioLineEdit</cstring>

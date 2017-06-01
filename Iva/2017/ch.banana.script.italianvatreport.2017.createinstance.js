@@ -56,8 +56,8 @@ function createInstance_Comunicazione(param)
 {
   var msgContext = '<iv:Frontespizio>';
 
-  var codiceFiscale = createInstance_GetValueFromTableInfo("AccountingDataBase", "FiscalNumber");
-  var partitaIva = createInstance_GetValueFromTableInfo("AccountingDataBase", "VatNumber");
+  var codiceFiscale = param.fileInfo["Address"]["FiscalNumber"];
+  var partitaIva = param.fileInfo["Address"]["VatNumber"];
   var xbrlCodiceFiscale = xml_createElementWithValidation("iv:CodiceFiscale", codiceFiscale,1,'11...16',msgContext) + '\n';
   var xbrlAnnoImposta = xml_createElementWithValidation("iv:AnnoImposta", getPeriod("y", param),1,'4',msgContext) + '\n';
   var xbrlPartitaIva = xml_createElementWithValidation("iv:PartitaIVA", partitaIva,1,'11',msgContext) + '\n';
@@ -184,7 +184,7 @@ function createInstance_Comunicazione(param)
   
   xbrlContent = xbrlFrontespizio + xbrlDatiContabili;
 
-  var xbrlComunicazione =  xml_createElement("iv:Comunicazione", xbrlContent, {'identificativo':'00001'}) + '\n';
+  var xbrlComunicazione =  xml_createElement("iv:Comunicazione", xbrlContent, {'identificativo':param.progressivoInvio}) + '\n';
   return xbrlComunicazione;
 }
 
@@ -206,17 +206,6 @@ function createInstance_Intestazione(param)
   
   var xbrlIntestazione =  xml_createElement("iv:Intestazione", xbrlContent) + '\n';
   return xbrlIntestazione;
-}
-
-function createInstance_GetValueFromTableInfo(xmlSection, xmlId, param) {
-  if (!Banana.document)
-    return '';
-  var xmlValue = Banana.document.info(xmlSection,xmlId);
-  if (xmlValue === undefined)
-    xmlValue = '';
-  if (xmlValue.length > 0)
-   xml_escapeString(xmlValue);
-  return xmlValue;
 }
 
 function createInstance_GetVatAmount(vatCode, column, param) {

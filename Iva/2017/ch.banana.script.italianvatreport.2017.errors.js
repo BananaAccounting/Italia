@@ -27,7 +27,7 @@ var ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA = "ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA";
 function getErrorMessage(errorId) {
     switch (errorId) {
         case ID_ERR_VERSIONE:
-            return "Lo script non è supportato. Aggiornare Banana ad una versione più recente.";
+            return "Metodo %1 non supportato. Aggiornare Banana ad una versione più recente.";
         case ID_ERR_CODICI_ND:
             return "Codici %1 non definiti";
         case ID_ERR_PERIODO_NONVALIDO:

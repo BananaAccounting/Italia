@@ -17,15 +17,13 @@
 // @description = Comunicazione fatture emesse e ricevute (file xml)
 // @doctype = *;110
 // @encoding = utf-8
-// @exportfilename = IT99999999999_DF_00001
-// @exportfiletype = xml
 // @includejs = ch.banana.script.invoicedata.2017.createinstance.js
 // @includejs = ch.banana.script.italianvatreport.2017.xml.js
 // @includejs = ch.banana.script.italianvatreport.2017.errors.js
 // @inputdatasource = none
 // @pubdate = 2017-05-24
 // @publisher = Banana.ch SA
-// @task = export.file
+// @task = app.command
 // @timeout = -1
 
 /*
@@ -177,6 +175,13 @@ function exec(inData) {
   // Check version
   if (typeof (Banana.document.journalCustomersSuppliers) === 'undefined') {
     var msg = getErrorMessage(ID_ERR_VERSIONE);
+    msg = msg.replace("%1", "Banana.document.journalCustomersSuppliers" );
+    Banana.document.addMessage( msg, ID_ERR_VERSIONE);
+    return "@Cancel";
+  }
+  if (typeof (Banana.IO) === 'undefined') {
+    var msg = getErrorMessage(ID_ERR_VERSIONE);
+    msg = msg.replace("%1", "Banana.IO" );
     Banana.document.addMessage( msg, ID_ERR_VERSIONE);
     return "@Cancel";
   }
@@ -195,9 +200,10 @@ function exec(inData) {
     var stylesheet = Banana.Report.newStyleSheet();
     printVatReport1(report, stylesheet, param);
     Banana.Report.preview(report, stylesheet);
+    saveData(output, param);
   }
 
-  return output;
+  return;
 
 }
 
@@ -570,30 +576,31 @@ function loadData(param)
   
   //Table FileInfo
   param.fileInfo = {};
-  param.fileInfo["BasicCurrency"] = Banana.document.info("AccountingDataBase", "BasicCurrency");
-  param.fileInfo["OpeningDate"] = Banana.document.info("AccountingDataBase", "OpeningDate");
-  param.fileInfo["ClosureDate"] = Banana.document.info("AccountingDataBase", "ClosureDate");
-  param.fileInfo["CustomersGroup"] = Banana.document.info("AccountingDataBase", "CustomersGroup");
-  param.fileInfo["SuppliersGroup"] = Banana.document.info("AccountingDataBase", "SuppliersGroup");
-  param.fileInfo["Address"] = {};
-  param.fileInfo["Address"]["Company"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Company"));
-  param.fileInfo["Address"]["Courtesy"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Courtesy"));
-  param.fileInfo["Address"]["Name"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Name"));
-  param.fileInfo["Address"]["FamilyName"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FamilyName"));
-  param.fileInfo["Address"]["Address1"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address1"));
-  param.fileInfo["Address"]["Address2"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address2"));
-  param.fileInfo["Address"]["Zip"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Zip"));
-  param.fileInfo["Address"]["City"] = xml_escapeString(Banana.document.info("AccountingDataBase", "City"));
-  param.fileInfo["Address"]["State"] = xml_escapeString(Banana.document.info("AccountingDataBase", "State"));
-  param.fileInfo["Address"]["Country"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Country"));
-  param.fileInfo["Address"]["Web"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Web"));
-  param.fileInfo["Address"]["Email"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Email"));
-  param.fileInfo["Address"]["Phone"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Phone"));
-  param.fileInfo["Address"]["Mobile"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Mobile"));
-  param.fileInfo["Address"]["Fax"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Fax"));
-  param.fileInfo["Address"]["FiscalNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FiscalNumber"));
-  param.fileInfo["Address"]["VatNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "VatNumber"));
-  
+  if (Banana.document.info) {
+    param.fileInfo["BasicCurrency"] = Banana.document.info("AccountingDataBase", "BasicCurrency");
+    param.fileInfo["OpeningDate"] = Banana.document.info("AccountingDataBase", "OpeningDate");
+    param.fileInfo["ClosureDate"] = Banana.document.info("AccountingDataBase", "ClosureDate");
+    param.fileInfo["CustomersGroup"] = Banana.document.info("AccountingDataBase", "CustomersGroup");
+    param.fileInfo["SuppliersGroup"] = Banana.document.info("AccountingDataBase", "SuppliersGroup");
+    param.fileInfo["Address"] = {};
+    param.fileInfo["Address"]["Company"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Company"));
+    param.fileInfo["Address"]["Courtesy"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Courtesy"));
+    param.fileInfo["Address"]["Name"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Name"));
+    param.fileInfo["Address"]["FamilyName"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FamilyName"));
+    param.fileInfo["Address"]["Address1"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address1"));
+    param.fileInfo["Address"]["Address2"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address2"));
+    param.fileInfo["Address"]["Zip"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Zip"));
+    param.fileInfo["Address"]["City"] = xml_escapeString(Banana.document.info("AccountingDataBase", "City"));
+    param.fileInfo["Address"]["State"] = xml_escapeString(Banana.document.info("AccountingDataBase", "State"));
+    param.fileInfo["Address"]["Country"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Country"));
+    param.fileInfo["Address"]["Web"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Web"));
+    param.fileInfo["Address"]["Email"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Email"));
+    param.fileInfo["Address"]["Phone"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Phone"));
+    param.fileInfo["Address"]["Mobile"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Mobile"));
+    param.fileInfo["Address"]["Fax"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Fax"));
+    param.fileInfo["Address"]["FiscalNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FiscalNumber"));
+    param.fileInfo["Address"]["VatNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "VatNumber"));
+  }
   //debug
   /*var line = [];
   var transactions = [];
@@ -796,6 +803,24 @@ function readAccountingData() {
     param.accountingYear = openingYear;
 
   return param;
+}
+
+function saveData(output, param) {
+  var codiceFiscale = param.fileInfo["Address"]["FiscalNumber"];
+  if (codiceFiscale.length<=0)
+    codiceFiscale = "99999999999";
+  var fileName = "IT" + codiceFiscale + "_DF_" + param.progressivoInvio + ".xml";
+  fileName = Banana.IO.getSaveFileName("Save as", fileName, "XML file (*.xml);;All files (*)")
+  if (fileName.length) {
+    var file = Banana.IO.getLocalFile(fileName)
+    file.write(output);
+    if (file.errorString) {
+      Banana.Ui.showInformation("Write error", file.errorString);
+    }
+    else {
+      Banana.IO.openUrl(fileName);
+    }
+  }
 }
 
 function tableToCsv(table) {
