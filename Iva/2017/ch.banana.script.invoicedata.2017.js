@@ -21,7 +21,7 @@
 // @includejs = ch.banana.script.italianvatreport.2017.xml.js
 // @includejs = ch.banana.script.italianvatreport.2017.errors.js
 // @inputdatasource = none
-// @pubdate = 2017-05-24
+// @pubdate = 2017-06-06
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -673,20 +673,9 @@ function printVatReport1(report, stylesheet, param) {
   
 
   //Address
-  if (param.fileInfo["Address"]["Company"].length)
-    report.addParagraph(param.fileInfo["Address"]["Company"], "address");
-  if (param.fileInfo["Address"]["Name"].length || param.fileInfo["Address"]["FamilyName"].length)
-    report.addParagraph(param.fileInfo["Address"]["Name"] + ' ' + param.fileInfo["Address"]["FamilyName"], "address");
-  if (param.fileInfo["Address"]["Address1"].length)
-    report.addParagraph(param.fileInfo["Address"]["Address1"], "address");
-  if (param.fileInfo["Address"]["Zip"].length || param.fileInfo["Address"]["City"].length)
-    report.addParagraph(param.fileInfo["Address"]["Zip"] + ' ' + param.fileInfo["Address"]["City"], "address");
-  if (param.fileInfo["Address"]["VatNumber"].length)
-    report.addParagraph('P.I.:' + param.fileInfo["Address"]["VatNumber"], "address");
-  if (param.fileInfo["Address"]["FiscalNumber"].length)
-    report.addParagraph('C.F.:' + param.fileInfo["Address"]["FiscalNumber"], "address");
-
-
+  report.addParagraph(xml_unescapeString(param.fileInfo["Address"]["Company"]) + " " + xml_unescapeString(param.fileInfo["Address"]["FamilyName"]) + " " + xml_unescapeString(param.fileInfo["Address"]["Name"]));
+  report.addParagraph(xml_unescapeString(param.fileInfo["Address"]["City"]) + " " + xml_unescapeString(param.fileInfo["Address"]["State"]));
+  report.addParagraph("Partita IVA: " + param.fileInfo["Address"]["VatNumber"], "vatNumber");
   
   //Print table
   //Title
@@ -732,7 +721,7 @@ function printVatReport1(report, stylesheet, param) {
   for (var i in param.customers) {
     var rowName = table.addRow();
     rowName.addCell("cliente", "rowName");
-    rowName.addCell(param.customers[i]["Description"],"rowName",4);
+    rowName.addCell(xml_unescapeString(param.customers[i]["Description"]),"rowName",4);
     rowName.addCell(getCountryCode(param.customers[i]),"rowName",2);
     rowName.addCell(param.customers[i]["VatNumber"],"rowName",2);
     rowName.addCell(param.customers[i]["FiscalNumber"],"rowName",6);
@@ -743,7 +732,7 @@ function printVatReport1(report, stylesheet, param) {
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JInvoiceIssueDate"]));
       row.addCell(jsonObj["DocInvoice"]);
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JDate"]));
-      row.addCell(jsonObj["JDescription"]);
+      row.addCell(xml_unescapeString(jsonObj["JDescription"]));
       row.addCell(jsonObj["JAccount"], "amount");
       row.addCell(jsonObj["JContraAccount"], "amount");
       row.addCell(jsonObj["JVatCodeWithoutSign"], "amount");
@@ -759,7 +748,7 @@ function printVatReport1(report, stylesheet, param) {
   for (var i in param.suppliers) {
     var rowName = table.addRow();
     rowName.addCell("fornitore", "rowName");
-    rowName.addCell(param.suppliers[i]["Description"],"rowName",4);
+    rowName.addCell(xml_unescapeString(param.suppliers[i]["Description"]),"rowName",4);
     rowName.addCell(getCountryCode(param.suppliers[i]),"rowName",2);
     rowName.addCell(param.suppliers[i]["VatNumber"],"rowName",2);
     rowName.addCell(param.suppliers[i]["FiscalNumber"],"rowName",6);
@@ -770,7 +759,7 @@ function printVatReport1(report, stylesheet, param) {
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JInvoiceIssueDate"]));
       row.addCell(jsonObj["DocInvoice"]);
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JDate"]));
-      row.addCell(jsonObj["JDescription"]);
+      row.addCell(xml_unescapeString(jsonObj["JDescription"]));
       row.addCell(jsonObj["JAccount"], "amount");
       row.addCell(jsonObj["JContraAccount"], "amount");
       row.addCell(jsonObj["JVatCodeWithoutSign"], "amount");

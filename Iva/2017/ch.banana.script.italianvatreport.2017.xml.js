@@ -127,6 +127,22 @@ function xml_escapeString(_string) {
   return string;
 }
 
+function xml_unescapeString(_string) {
+  var string = _string.toString()
+  var re = new RegExp(ESCAPED_QUOTE[AMPERSAND],'g');
+  string = string.replace(re, AMPERSAND);
+  re = new RegExp(ESCAPED_QUOTE[GREATERTHAN],'g');
+  string = string.replace(re, GREATERTHAN);
+  re = new RegExp(ESCAPED_QUOTE[LOWERTHAN],'g');
+  string = string.replace(re, LOWERTHAN);
+  re = new RegExp(ESCAPED_QUOTE[APOS],'g');
+  string = string.replace(re, APOS);
+  re = new RegExp(ESCAPED_QUOTE[QUOTE],'g');
+  string = string.replace(re, QUOTE);
+  string = string.trim();
+  return string;
+}
+
 /*
    Format a dictionary of attributes into a string suitable
    for inserting into the start tag of an element.  Be smart

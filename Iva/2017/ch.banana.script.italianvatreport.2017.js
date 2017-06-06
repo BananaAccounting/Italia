@@ -21,7 +21,7 @@
 // @includejs = ch.banana.script.italianvatreport.2017.xml.js
 // @includejs = ch.banana.script.italianvatreport.2017.errors.js
 // @inputdatasource = none
-// @pubdate = 2017-05-24
+// @pubdate = 2017-06-06
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -335,10 +335,10 @@ function printVatReport1(report, stylesheet, param) {
 
   // Page header
   var pageHeader = report.getHeader();
-  pageHeader.addParagraph(param.fileInfo["Address"]["Company"] + " " + param.fileInfo["Address"]["City"]);
+  pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["Company"]) + " " + xml_unescapeString(param.fileInfo["Address"]["FamilyName"]) + " " + xml_unescapeString(param.fileInfo["Address"]["Name"]));
+  pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["City"]) + " " + xml_unescapeString(param.fileInfo["Address"]["State"]));
   pageHeader.addParagraph("Partita IVA: " + param.fileInfo["Address"]["VatNumber"], "vatNumber");
   pageHeader.addParagraph("Periodo: " + Banana.Converter.toLocaleDateFormat(param.repStartDate) + " - " + Banana.Converter.toLocaleDateFormat(param.repEndDate), "period");
-
   var table = report.addTable("table1");
 
   // Print header
