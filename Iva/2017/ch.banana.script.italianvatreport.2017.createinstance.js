@@ -63,27 +63,8 @@ function createInstance_Comunicazione(param)
   var xbrlPartitaIva = xml_createElementWithValidation("iv:PartitaIVA", partitaIva,1,'11',msgContext) + '\n';
 
   var xbrlUltimoMese = '';
-  var nUltimoMese = 0;
-  var nMese = getPeriod("m", param);
-  var nTrimestre = getPeriod("q", param);
-  if (nMese.length>0) {
-    nUltimoMese = parseInt(nMese)-1;
-    if (nUltimoMese<=0)
-      nUltimoMese = 12;
-  }
-  else if (nTrimestre.length>0) {
-    nTrimestre = parseInt(nTrimestre);
-    if (nTrimestre == 1)
-      nUltimoMese = 12;
-    else if (nTrimestre == 2)
-      nUltimoMese = 3;
-    else if (nTrimestre == 3)
-      nUltimoMese = 6;
-    else if (nTrimestre == 4)
-      nUltimoMese = 9;
-  }
-  if (nUltimoMese>0) {
-    xbrlUltimoMese = xml_createElementWithValidation("iv:UltimoMese", nUltimoMese.toString(), 0, '1...2', msgContext) + '\n';
+  if (parseInt(param.ultimoMese)>0) {
+    xbrlUltimoMese = xml_createElementWithValidation("iv:UltimoMese", param.ultimoMese, 0, '1...2', msgContext) + '\n';
   }
   
   var xbrlCFDichiarante = '';

@@ -58,7 +58,6 @@ function settingsDialog() {
   dialog.periodoGroupBox.meseComboBox.currentIndex = param.valoreMese;
   if (param.interestRate.length>0)
     dialog.interesseSpinBox.value = parseInt(param.interestRate);
-  dialog.firmaContribuenteCheckBox.checked = param.firmaContribuente;
   var progressivo = parseInt(param.progressivoInvio, 10);
   if (!progressivo)
     progressivo = 1;
@@ -68,6 +67,13 @@ function settingsDialog() {
   dialog.intestazioneGroupBox.progressivoInvioLineEdit.text = progressivo;
   dialog.intestazioneGroupBox.cfDichiaranteLineEdit.text = param.codicefiscaleDichiarante;
   dialog.intestazioneGroupBox.codiceCaricaComboBox.currentIndex = param.codiceCarica;
+  var ultimoMese = param.ultimoMese;
+  if (ultimoMese == '13')
+    ultimoMese = '12';
+  else if (ultimoMese == '99')
+    ultimoMese = '13';
+  dialog.intestazioneGroupBox.ultimoMeseComboBox.currentIndex = ultimoMese;
+  dialog.intestazioneGroupBox.firmaContribuenteCheckBox.checked = param.firmaContribuente;
 
   //dialog functions
   dialog.checkdata = function () {
@@ -150,7 +156,6 @@ function settingsDialog() {
     }
   }
   param.interestRate = dialog.interesseSpinBox.value.toString();
-  param.firmaContribuente = dialog.firmaContribuenteCheckBox.checked;
   progressivo = dialog.intestazioneGroupBox.progressivoInvioLineEdit.text;
   progressivo = parseInt(progressivo, 10);
   if (!progressivo)
@@ -158,6 +163,12 @@ function settingsDialog() {
   param.progressivoInvio = zeroPad(progressivo, 5);
   param.codicefiscaleDichiarante = dialog.intestazioneGroupBox.cfDichiaranteLineEdit.text;
   param.codiceCarica = dialog.intestazioneGroupBox.codiceCaricaComboBox.currentIndex.toString();
+  param.ultimoMese = dialog.intestazioneGroupBox.ultimoMeseComboBox.currentIndex.toString();
+  if (param.ultimoMese == '12')
+    param.ultimoMese = '13';
+  else if (param.ultimoMese == '13')
+    param.ultimoMese = '99';
+  param.firmaContribuente = dialog.intestazioneGroupBox.firmaContribuenteCheckBox.checked;
 
   var paramToString = JSON.stringify(param);
   Banana.document.scriptSaveSettings(paramToString);
@@ -293,6 +304,7 @@ function initParam()
   param.firmaContribuente = true;
   param.invioProgressivo = '';
   param.codicefiscaleDichiarante = '';
+  param.ultimoMese = '';
   param.codiceCarica = '';
   return param;
 }
@@ -786,6 +798,8 @@ function verifyParam(param) {
      param.progressivoInvio = '';
    if(!param.codicefiscaleDichiarante)
      param.codicefiscaleDichiarante = '';
+   if(!param.ultimoMese)
+     param.ultimoMese = '';
    if(!param.codiceCarica)
      param.codiceCarica = '';
    return param;
