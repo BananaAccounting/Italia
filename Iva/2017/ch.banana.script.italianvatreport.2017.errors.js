@@ -14,7 +14,7 @@
 
 var ID_ERR_VERSIONE = "ID_ERR_VERSIONE";
 var ID_ERR_CODICI_ND = "ID_ERR_CODICI_ND";
-var ID_ERR_PERIODO_NONVALIDO = "ID_ERR_PERIODO_NONVALIDO";
+var ID_ERR_TIPOVERSAMENTO = "ID_ERR_TIPOVERSAMENTO";
 var ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE = "ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE";
 var ID_ERR_XML_ELEMENTO_NATURA_PRESENTE = "ID_ERR_XML_ELEMENTO_NATURA_PRESENTE";
 var ID_ERR_XML_LUNGHEZZA_NONVALIDA = "ID_ERR_XML_LUNGHEZZA_NONVALIDA";
@@ -30,8 +30,8 @@ function getErrorMessage(errorId) {
             return "Metodo %1 non supportato. Aggiornare Banana ad una versione più recente.";
         case ID_ERR_CODICI_ND:
             return "Codici %1 non definiti";
-        case ID_ERR_PERIODO_NONVALIDO:
-            return "Periodo non valido. Selezionare un mese oppure un trimestre.";
+        case ID_ERR_TIPOVERSAMENTO:
+            return "Periodo non valido: invio di un unico mese con tipo versamento trimestrale";
         case ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE:
             return "<Natura> non presente a fronte di <Aliquota> e/o <Imposta> pari a zero";
         case ID_ERR_XML_ELEMENTO_NATURA_PRESENTE:
