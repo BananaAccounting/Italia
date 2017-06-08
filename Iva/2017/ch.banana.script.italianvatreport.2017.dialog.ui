@@ -78,12 +78,49 @@
      <item>
       <widget class="QGroupBox" name="periodoGroupBox">
        <property name="title">
-        <string notr="true">Periodo</string>
+        <string notr="true">Anno imposta</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
+           <widget class="QRadioButton" name="trimestreRadioButton">
+            <property name="text">
+             <string notr="true">&amp;Trimestre</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="trimestreComboBox">
+            <property name="minimumSize">
+             <size>
+              <width>110</width>
+              <height>0</height>
+             </size>
+            </property>
+            <item>
+             <property name="text">
+              <string notr="true">1. trimestre</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">2. trimestre</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">3. trimestre</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string notr="true">4. trimestre</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
            <widget class="QRadioButton" name="meseRadioButton">
             <property name="minimumSize">
              <size>
@@ -96,7 +133,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="1" column="1">
            <widget class="QComboBox" name="meseComboBox">
             <property name="minimumSize">
              <size>
@@ -162,43 +199,6 @@
             <item>
              <property name="text">
               <string notr="true">Dicembre</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="trimestreRadioButton">
-            <property name="text">
-             <string notr="true">&amp;Trimestre</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="trimestreComboBox">
-            <property name="minimumSize">
-             <size>
-              <width>110</width>
-              <height>0</height>
-             </size>
-            </property>
-            <item>
-             <property name="text">
-              <string notr="true">1. trimestre</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">2. trimestre</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">3. trimestre</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">4. trimestre</string>
              </property>
             </item>
            </widget>
@@ -710,10 +710,10 @@
  <tabstops>
   <tabstop>tipoVersamentoComboBox</tabstop>
   <tabstop>interesseSpinBox</tabstop>
-  <tabstop>meseRadioButton</tabstop>
-  <tabstop>meseComboBox</tabstop>
   <tabstop>trimestreRadioButton</tabstop>
   <tabstop>trimestreComboBox</tabstop>
+  <tabstop>meseRadioButton</tabstop>
+  <tabstop>meseComboBox</tabstop>
   <tabstop>progressivoInvioLineEdit</tabstop>
   <tabstop>cfDichiaranteLineEdit</tabstop>
   <tabstop>codiceCaricaComboBox</tabstop>

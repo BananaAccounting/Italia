@@ -216,7 +216,7 @@ function exec(inData) {
     // Page header
     var pageHeader = report.getHeader();
     pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["Company"]) + " " + xml_unescapeString(param.fileInfo["Address"]["FamilyName"]) + " " + xml_unescapeString(param.fileInfo["Address"]["Name"]));
-    pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["City"]) + " " + xml_unescapeString(param.fileInfo["Address"]["State"]));
+    pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["City"]) + " (" + xml_unescapeString(param.fileInfo["Address"]["State"]) + ")");
     pageHeader.addParagraph("Partita IVA: " + param.fileInfo["Address"]["VatNumber"], "vatNumber");
     //Data
     for (var index=0; index<param.vatPeriods.length; index++) {
