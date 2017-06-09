@@ -64,12 +64,12 @@ Campo ExtraInfo IVA
 La normativa IVA è molto complessa e contiene diverse casistiche. 
 Non si vuole coprire tutte le possibilità, ma supportare quelle:
 * Che coprono le esigenze basilari di una piccola impresa.
-* Escludere le casisticche:
-  * Usate poco, vetuste o altroe per cui non ha senso commerciale inserirle.
+* Escludere le casistiche:
+  * Usate poco, vetuste e di altro genere per cui non ha senso commerciale inserirle.
   * Quelle complicate (anche se usate parecchio) che rendono complesso e difficile da usare il programma, la documentazione e ritarderebbero inutilmente nella messa a punto della soluzione.
   * Quelle complicate (anche se usate parecchio) per cui comunque si richiedono conoscenze che solo i commercialisti hanno e per cui presumibilmente le ditte si affidano ai commercialisti. 
 
-Le casistiche supportate sono  quelle elencate nella tabella IVA.
+Le casistiche supportate sono quelle elencate nella tabella IVA.
 * Quelle non presenti non sono supportate. 
   Eventualmente si potrà tenere una lista delle casistiche non supportate per le quali ci sono delle richieste esplicite. 
 * Si potrà prendere nota di quelle da supportare in futuro.
