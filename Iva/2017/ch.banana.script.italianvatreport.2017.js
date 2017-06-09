@@ -70,7 +70,7 @@ function settingsDialog() {
   var progressivo = parseInt(param.comunicazioneProgressivo, 10);
   if (!progressivo)
     progressivo = 1;
-  else
+  else if (param.stampaFileXml)
     progressivo += 1;
   progressivo = zeroPad(progressivo, 5);
   dialog.intestazioneGroupBox.progressivoInvioLineEdit.text = progressivo;
