@@ -6,22 +6,184 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>465</width>
-    <height>510</height>
+    <width>452</width>
+    <height>572</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Comunicazione IVA</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
+  <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QGroupBox" name="liquidazioneGroupBox">
-       <property name="title">
-        <string>Tipo versamento</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
+    <widget class="QGroupBox" name="periodoGroupBox">
+     <property name="title">
+      <string notr="true">Anno</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QRadioButton" name="trimestreRadioButton">
+          <property name="text">
+           <string notr="true">&amp;Trimestre</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="trimestreComboBox">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string notr="true">1. trimestre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">2. trimestre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">3. trimestre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">4. trimestre</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="meseRadioButton">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string notr="true">&amp;Mese</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="meseComboBox">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string notr="true">Gennaio</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Febbraio</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Marzo</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Aprile</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Maggio</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Giugno</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Luglio</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Agosto</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Settembre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Ottobre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Novembre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Dicembre</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="liquidazioneGroupBox">
+     <property name="title">
+      <string>Tipo versamento</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QComboBox" name="tipoVersamentoComboBox">
           <property name="sizePolicy">
@@ -49,166 +211,58 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QLabel" name="interesseLabel">
-            <property name="text">
-             <string notr="true">&amp;Interessi trimestrali (%)</string>
-            </property>
-            <property name="buddy">
-             <cstring>interesseSpinBox</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="interesseSpinBox">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="maximum">
-             <double>100.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="periodoGroupBox">
-       <property name="title">
-        <string notr="true">Anno imposta</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="trimestreRadioButton">
-            <property name="text">
-             <string notr="true">&amp;Trimestre</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="trimestreComboBox">
-            <property name="minimumSize">
-             <size>
-              <width>110</width>
-              <height>0</height>
-             </size>
-            </property>
-            <item>
-             <property name="text">
-              <string notr="true">1. trimestre</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">2. trimestre</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">3. trimestre</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">4. trimestre</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="meseRadioButton">
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string notr="true">&amp;Mese</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="meseComboBox">
-            <property name="minimumSize">
-             <size>
-              <width>110</width>
-              <height>0</height>
-             </size>
-            </property>
-            <item>
-             <property name="text">
-              <string notr="true">Gennaio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">Febbraio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">Marzo</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">Aprile</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">Maggio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">Giugno</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">Luglio</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">Agosto</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">Settembre</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">Ottobre</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">Novembre</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string notr="true">Dicembre</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QLabel" name="interesseLabel">
+          <property name="text">
+           <string notr="true">&amp;Interessi trimestrali (%)</string>
+          </property>
+          <property name="buddy">
+           <cstring>interesseSpinBox</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="interesseSpinBox">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="maximum">
+           <double>100.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
-      </widget>
-     </item>
-    </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="intestazioneGroupBox">
@@ -686,6 +740,46 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="stampaGroupBox">
+     <property name="title">
+      <string>Stampa</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QRadioButton" name="stampaReportRadioButton">
+          <property name="text">
+           <string>F&amp;ormulario</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="stampaXmlRadioButton">
+          <property name="text">
+           <string>&amp;File xml per trasmissione</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -708,12 +802,12 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>tipoVersamentoComboBox</tabstop>
-  <tabstop>interesseSpinBox</tabstop>
   <tabstop>trimestreRadioButton</tabstop>
   <tabstop>trimestreComboBox</tabstop>
   <tabstop>meseRadioButton</tabstop>
   <tabstop>meseComboBox</tabstop>
+  <tabstop>tipoVersamentoComboBox</tabstop>
+  <tabstop>interesseSpinBox</tabstop>
   <tabstop>progressivoInvioLineEdit</tabstop>
   <tabstop>cfDichiaranteLineEdit</tabstop>
   <tabstop>codiceCaricaComboBox</tabstop>
@@ -723,6 +817,8 @@
   <tabstop>firmaDichiarazioneCheckBox</tabstop>
   <tabstop>firmaIntermediarioCheckBox</tabstop>
   <tabstop>ultimoMeseComboBox</tabstop>
+  <tabstop>stampaReportRadioButton</tabstop>
+  <tabstop>stampaXmlRadioButton</tabstop>
  </tabstops>
  <resources/>
  <connections>

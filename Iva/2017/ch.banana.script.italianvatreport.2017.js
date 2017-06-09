@@ -88,6 +88,12 @@ function settingsDialog() {
   else if (ultimoMese == '99')
     ultimoMese = '13';
   dialog.intestazioneGroupBox.ultimoMeseComboBox.currentIndex = ultimoMese;
+  
+  //Groupbox stampa
+  if (param.stampaFileXml)
+    dialog.stampaGroupBox.stampaXmlRadioButton.checked = true;
+  else  
+    dialog.stampaGroupBox.stampaReportRadioButton.checked = true;
 
   //dialog functions
   dialog.checkdata = function () {
@@ -165,6 +171,12 @@ function settingsDialog() {
   else if (param.comunicazioneUltimoMese == '13')
     param.comunicazioneUltimoMese = '99';
 
+  //Groupbox stampa
+  if (dialog.stampaGroupBox.stampaXmlRadioButton.checked)
+    param.stampaFileXml = true;
+  else
+    param.stampaFileXml = false;
+
   var paramToString = JSON.stringify(param);
   Banana.document.scriptSaveSettings(paramToString);
   return true;
@@ -197,36 +209,39 @@ function exec(inData) {
   var output = createInstance(param)
 
   if (output != "@Cancel") {
-    //Banana.Ui.showText(JSON.stringify(param, null, 3));
-    var report = Banana.Report.newReport("Report title");
-    var stylesheet = Banana.Report.newStyleSheet();
-    stylesheet.addStyle("phead", "font-size: 12px, font-weight: bold; margin-bottom: 1em");
-    stylesheet.addStyle("thead", "font-weight: bold");
-    stylesheet.addStyle("td", "padding-right: 1em");
-    stylesheet.addStyle(".amount", "text-align: right");
-    stylesheet.addStyle(".period", "font-size: 12px;font-weight: bold;padding-top: 2em;");
-    stylesheet.addStyle(".vatNumber", "font-size: 10px");
-    stylesheet.addStyle(".warning", "color: red;font-size:8px;");
-    stylesheet.addStyle(".total1", "border-bottom:1px double black;font-weight:bold;padding-top:10px;");
-    stylesheet.addStyle(".total2", "border-bottom:1px double black;font-weight:bold;padding-top:10px;");
-    stylesheet.addStyle(".total3", "border-bottom:1px solid black;padding-top:10px");
-    stylesheet.addStyle(".total4", "");
-    stylesheet.addStyle("table.table1", "");
-    stylesheet.addStyle("table.table2", "");
-    // Page header
-    var pageHeader = report.getHeader();
-    pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["Company"]) + " " + xml_unescapeString(param.fileInfo["Address"]["FamilyName"]) + " " + xml_unescapeString(param.fileInfo["Address"]["Name"]));
-    pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["City"]) + " (" + xml_unescapeString(param.fileInfo["Address"]["State"]) + ")");
-    pageHeader.addParagraph("Partita IVA: " + param.fileInfo["Address"]["VatNumber"], "vatNumber");
-    //Data
-    for (var index=0; index<param.vatPeriods.length; index++) {
-      printVatReport1(report, stylesheet, param.vatPeriods[index]);
-      printVatReport2(report, stylesheet, param.vatPeriods[index]);
-      if (index+1<param.vatPeriods.length)
-        report.addPageBreak();
+    if (param.stampaFileXml) {
+      saveData(output, param);
     }
-    Banana.Report.preview(report, stylesheet);
-    saveData(output, param);
+    else {
+      var report = Banana.Report.newReport("Report title");
+      var stylesheet = Banana.Report.newStyleSheet();
+      stylesheet.addStyle("phead", "font-size: 12px, font-weight: bold; margin-bottom: 1em");
+      stylesheet.addStyle("thead", "font-weight: bold");
+      stylesheet.addStyle("td", "padding-right: 1em");
+      stylesheet.addStyle(".amount", "text-align: right");
+      stylesheet.addStyle(".period", "font-size: 12px;font-weight: bold;padding-top: 2em;");
+      stylesheet.addStyle(".vatNumber", "font-size: 10px");
+      stylesheet.addStyle(".warning", "color: red;font-size:8px;");
+      stylesheet.addStyle(".total1", "border-bottom:1px double black;font-weight:bold;padding-top:10px;");
+      stylesheet.addStyle(".total2", "border-bottom:1px double black;font-weight:bold;padding-top:10px;");
+      stylesheet.addStyle(".total3", "border-bottom:1px solid black;padding-top:10px");
+      stylesheet.addStyle(".total4", "");
+      stylesheet.addStyle("table.table1", "");
+      stylesheet.addStyle("table.table2", "");
+      // Page header
+      var pageHeader = report.getHeader();
+      pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["Company"]) + " " + xml_unescapeString(param.fileInfo["Address"]["FamilyName"]) + " " + xml_unescapeString(param.fileInfo["Address"]["Name"]));
+      pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["City"]) + " (" + xml_unescapeString(param.fileInfo["Address"]["State"]) + ")");
+      pageHeader.addParagraph("Partita IVA: " + param.fileInfo["Address"]["VatNumber"], "vatNumber");
+      //Data
+      for (var index=0; index<param.vatPeriods.length; index++) {
+        printVatReport1(report, stylesheet, param.vatPeriods[index]);
+        printVatReport2(report, stylesheet, param.vatPeriods[index]);
+        if (index+1<param.vatPeriods.length)
+          report.addPageBreak();
+      }
+      Banana.Report.preview(report, stylesheet);
+    }
   }
 
   return;
@@ -319,6 +334,8 @@ function initParam()
   param.periodoSelezionato = 0;
   param.periodoValoreMese = '';
   param.periodoValoreTrimestre = '';
+  
+  param.stampaFileXml = false;
 
   return param;
 }
@@ -474,7 +491,7 @@ function printVatReport2(report, stylesheet, param) {
   if (param.tipoVersamento == 1)
     calculatedAmount = calculateInterestAmount(param);
   if (Banana.SDecimal.abs(param["L-INT"].vatPosted) != calculatedAmount && !Banana.SDecimal.isZero(calculatedAmount))
-    row.addCell("Interessi dovuti per liquidazione trimestrale (" + param.interesseTrimestrale + "% EUR " + Banana.Converter.toLocaleNumberFormat(calculatedAmount) + ") non registrati correttamente", "amount warning");
+    row.addCell("La registrazione degli interessi (" + param.interesseTrimestrale + "% EUR " + Banana.Converter.toLocaleNumberFormat(calculatedAmount) + ") manca o non è corretta.", "amount warning");
   else
     row.addCell("");
 
@@ -632,7 +649,7 @@ function vatCodesLoad(param)
   var endDate = '';
   if (param.periodoSelezionato == 0) {
     //MESE
-    var month = param.periodoValoreMese + 1;
+    var month = parseInt(param.periodoValoreMese) + 1;
     if (month === 11 || month === 4 || month === 6 || month === 9) {
       startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01";
       endDate = param.accountingYear.toString() + zeroPad(month, 2) + "30";
@@ -813,8 +830,12 @@ function vatCodesLoadPeriod(param, _startDate, _endDate)
   vatAmounts["A"] = sumVatAmounts(vatAmounts, ["A-IM","A-NI","A-ES","A-NE","A-ED"]);
   
   //Liquidazione
+  //L-CI Debito/Credito periodo precedente viene calcolato sommando gli importi IVA fino al giorno precedente il periodo
   vatAmounts["L-AC"] = Banana.document.vatCurrentBalance("L-AC", _startDate, _endDate);
-  vatAmounts["L-CI"] = Banana.document.vatCurrentBalance("L-CI", _startDate, _endDate);
+  var endPreviousPeriod = Banana.Converter.toDate(_startDate);
+  endPreviousPeriod.setDate(endPreviousPeriod.getDate() - 1);
+  endPreviousPeriod = Banana.Converter.toInternalDateFormat(endPreviousPeriod);
+  vatAmounts["L-CI"] = Banana.document.vatCurrentBalance("*", "", endPreviousPeriod);
   vatAmounts["L-CIA"] = Banana.document.vatCurrentBalance("L-CIA", _startDate, _endDate);
   vatAmounts["L-INT"] = Banana.document.vatCurrentBalance("L-INT", _startDate, _endDate);
   vatAmounts["L"] = sumVatAmounts(vatAmounts, ["L-AC","L-CI","L-CIA","L-INT"]);
@@ -826,7 +847,9 @@ function vatCodesLoadPeriod(param, _startDate, _endDate)
   vatAmounts["BananaTotal"] = getVatTotalFromBanana(_startDate, _endDate);
 
   // Calculate difference in totals between report and Banana
-  vatAmounts["difference"] = substractVatAmounts(vatAmounts["Total"], vatAmounts["BananaTotal"]);
+  //vatAmounts["difference"] = substractVatAmounts(vatAmounts["Total"], vatAmounts["BananaTotal"]);
+  vatAmounts["difference"] = substractVatAmounts(vatAmounts["Total"], vatAmounts["L-CI"]);
+  vatAmounts["difference"] = substractVatAmounts(vatAmounts["difference"], vatAmounts["BananaTotal"]);
 
   //Operazioni attive
   vatAmounts["OPATTIVE"] = sumVatAmounts(vatAmounts, ["V","C"]);
@@ -919,6 +942,9 @@ function verifyParam(param) {
     param.periodoValoreMese = '';
   if (!param.periodoValoreTrimestre)
     param.periodoValoreTrimestre = '';
+  if (!param.stampaFileXml)
+    param.stampaFileXml = false;
+
   return param;
 }
 /**
