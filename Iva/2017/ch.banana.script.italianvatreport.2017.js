@@ -21,7 +21,7 @@
 // @includejs = ch.banana.script.italianvatreport.2017.xml.js
 // @includejs = ch.banana.script.italianvatreport.2017.errors.js
 // @inputdatasource = none
-// @pubdate = 2017-06-08
+// @pubdate = 2017-06-09
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
