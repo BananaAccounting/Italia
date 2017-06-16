@@ -31,7 +31,7 @@
 function settingsDialog() {
 
   var param = initParam();
-  var savedParam = Banana.document.getScriptSettings();
+  var savedParam = Banana.document.scriptReadSettings();
   if (savedParam.length > 0) {
     param = JSON.parse(savedParam);
   }
@@ -70,7 +70,7 @@ function settingsDialog() {
   param.valoreTrimestre = dialog.periodoGroupBox.trimestreComboBox.currentIndex.toString();*/
   
   var paramToString = JSON.stringify(param);
-  Banana.document.setScriptSettings(paramToString);
+  Banana.document.scriptSaveSettings(paramToString);
   return true;
 }
 
@@ -87,10 +87,15 @@ function exec(inData) {
     return "@Cancel";
   }
 
-  if (!settingsDialog())
-    return "@Cancel";
-
-  var param = JSON.parse(Banana.document.getScriptSettings());
+  var param = {};
+  if (inData.length>0) {
+    param = JSON.parse(inData);
+  }
+  else {
+    if (!settingsDialog())
+      return "@Cancel";
+    param = JSON.parse(Banana.document.scriptReadSettings());
+  }
   
   param = readAccountingData(param);
   param = loadData(param);

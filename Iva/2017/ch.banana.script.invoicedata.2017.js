@@ -186,10 +186,15 @@ function exec(inData) {
     return "@Cancel";
   }
 
-  if (!settingsDialog())
-    return "@Cancel";
-
-  var param = JSON.parse(Banana.document.scriptReadSettings());
+  var param = {};
+  if (inData.length>0) {
+    param = JSON.parse(inData);
+  }
+  else {
+    if (!settingsDialog())
+      return "@Cancel";
+    param = JSON.parse(Banana.document.scriptReadSettings());
+  }
   
   param = loadData(param);
 
