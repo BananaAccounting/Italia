@@ -21,7 +21,7 @@
 // @includejs = ch.banana.script.italianvatreport.2017.xml.js
 // @includejs = ch.banana.script.italianvatreport.2017.errors.js
 // @inputdatasource = none
-// @pubdate = 2017-06-09
+// @pubdate = 2017-06-28
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -32,7 +32,7 @@
 function settingsDialog() {
 
   var param = initParam();
-  var savedParam = Banana.document.scriptReadSettings();
+  var savedParam = Banana.document.getScriptSettings();
   if (savedParam.length > 0) {
     param = JSON.parse(savedParam);
   }
@@ -178,7 +178,7 @@ function settingsDialog() {
     param.outputScript = 0;
 
   var paramToString = JSON.stringify(param);
-  Banana.document.scriptSaveSettings(paramToString);
+  Banana.document.setScriptSettings(paramToString);
   return true;
 }
 
@@ -202,7 +202,7 @@ function exec(inData) {
   else {
     if (!settingsDialog())
       return "@Cancel";
-    param = JSON.parse(Banana.document.scriptReadSettings());
+    param = JSON.parse(Banana.document.getScriptSettings());
   }
   
   // Calculate vat amounts for each vat code

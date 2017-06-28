@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>352</width>
-    <height>342</height>
+    <width>323</width>
+    <height>403</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Comunicazione Dati fatture</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
     <widget class="QGroupBox" name="periodoGroupBox">
      <property name="title">
@@ -160,20 +160,56 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_4">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+    <widget class="QGroupBox" name="bloccoGroupBox">
+     <property name="title">
+      <string>Blocco</string>
      </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QComboBox" name="bloccoComboBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>DTE</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>DTR</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="datiFatturaHeaderGroupBox">
@@ -407,86 +443,44 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_5">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+    <widget class="QGroupBox" name="stampaGroupBox">
+     <property name="title">
+      <string>Stampa</string>
      </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>10</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="bloccoLabel">
-       <property name="text">
-        <string notr="true">Blocco</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="bloccoComboBox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>110</width>
-         <height>0</height>
-        </size>
-       </property>
-       <item>
-        <property name="text">
-         <string>DTE</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>DTR</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QRadioButton" name="stampaReportRadioButton">
+          <property name="text">
+           <string>F&amp;ormulario</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="stampaXmlRadioButton">
+          <property name="text">
+           <string>&amp;File xml per trasmissione</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">
@@ -509,15 +503,24 @@
     </widget>
    </item>
   </layout>
+  <zorder>periodoGroupBox</zorder>
+  <zorder>datiFatturaHeaderGroupBox</zorder>
+  <zorder>buttonBox</zorder>
+  <zorder>stampaGroupBox</zorder>
+  <zorder>horizontalSpacer_2</zorder>
+  <zorder>bloccoGroupBox</zorder>
  </widget>
  <tabstops>
   <tabstop>trimestreRadioButton</tabstop>
   <tabstop>trimestreComboBox</tabstop>
   <tabstop>meseRadioButton</tabstop>
   <tabstop>meseComboBox</tabstop>
+  <tabstop>bloccoComboBox</tabstop>
   <tabstop>progressivoInvioLineEdit</tabstop>
   <tabstop>cfDichiaranteLineEdit</tabstop>
   <tabstop>codiceCaricaComboBox</tabstop>
+  <tabstop>stampaReportRadioButton</tabstop>
+  <tabstop>stampaXmlRadioButton</tabstop>
  </tabstops>
  <resources/>
  <connections>
