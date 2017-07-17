@@ -21,7 +21,7 @@
 // @includejs = ch.banana.script.italianvatreport.2017.xml.js
 // @includejs = ch.banana.script.italianvatreport.2017.errors.js
 // @inputdatasource = none
-// @pubdate = 2017-06-08
+// @pubdate = 2017-06-28
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -32,7 +32,7 @@
 function settingsDialog() {
 
   var param = initParam();
-  var savedParam = Banana.document.scriptReadSettings();
+  var savedParam = Banana.document.getScriptSettings();
   if (savedParam.length > 0) {
     param = JSON.parse(savedParam);
   }
@@ -58,7 +58,7 @@ function settingsDialog() {
   var progressivo = parseInt(param.progressivoInvio, 10);
   if (!progressivo)
     progressivo = 1;
-  else
+  else if (param.outputScript==1)
     progressivo += 1;
   progressivo = zeroPad(progressivo, 5);
   dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text = progressivo;
@@ -67,7 +67,13 @@ function settingsDialog() {
   var bloccoId = 0;
   if (param.blocco == "DTR")
     bloccoId = 1;
-  dialog.bloccoComboBox.currentIndex = bloccoId;
+  dialog.bloccoGroupBox.bloccoComboBox.currentIndex = bloccoId;
+
+  //Groupbox stampa
+  if (param.outputScript==1)
+    dialog.stampaGroupBox.stampaXmlRadioButton.checked = true;
+  else  
+    dialog.stampaGroupBox.stampaReportRadioButton.checked = true;
 
   //dialog functions
   dialog.checkdata = function () {
@@ -108,46 +114,10 @@ function settingsDialog() {
   if (dialog.periodoGroupBox.trimestreRadioButton.checked) {
     param.selezioneTrimestre = true;
     param.selezioneMese = false;
-    if (param.valoreTrimestre === "0") {
-      param.repStartDate = accountingData.accountingYear.toString() + "0101";
-      param.repEndDate = accountingData.accountingYear.toString() + "0331";
-    }
-    else if (param.valoreTrimestre === "1") {
-      param.repStartDate = accountingData.accountingYear.toString() + "0401";
-      param.repEndDate = accountingData.accountingYear.toString() + "0630";
-    }
-    else if (param.valoreTrimestre === "2") {
-      param.repStartDate = accountingData.accountingYear.toString() + "0701";
-      param.repEndDate = accountingData.accountingYear.toString() + "0930";
-    }
-    else {
-      param.repStartDate = accountingData.accountingYear.toString() + "1001";
-      param.repEndDate = accountingData.accountingYear.toString() + "1231";
-    }
   }
   else {
     param.selezioneTrimestre = false;
     param.selezioneMese = true;
-    var month = parseInt(param.valoreMese) + 1;
-    //months with 30 days
-    if (month === 11 || month === 4 || month === 6 || month === 9) {
-      param.repStartDate = accountingData.accountingYear.toString() + zeroPad(month, 2) + "01";
-      param.repEndDate = accountingData.accountingYear.toString() + zeroPad(month, 2) + "30";
-    }
-    //month with 28 or 29 days
-    else if (month === 2) {
-      var day = 28;
-      if (accountingData.accountingYear % 4 == 0 && (accountingData.accountingYear % 100 != 0 || accountingData.accountingYear % 400 == 0)) {
-        day = 29;
-      }
-      param.repStartDate = accountingData.accountingYear.toString() + "0201" ;
-      param.repEndDate = accountingData.accountingYear.toString() + "02" + day.toString();
-    }
-    //months with 31 days
-    else {
-      param.repStartDate = accountingData.accountingYear.toString() + zeroPad(month, 2) + "01" ;
-      param.repEndDate = accountingData.accountingYear.toString() + zeroPad(month, 2) + "31" ;
-    }
   }
   progressivo = dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text;
   progressivo = parseInt(progressivo, 10);
@@ -156,14 +126,20 @@ function settingsDialog() {
   param.progressivoInvio = zeroPad(progressivo, 5);
   param.codicefiscaleDichiarante = dialog.datiFatturaHeaderGroupBox.cfDichiaranteLineEdit.text;
   param.codiceCarica = dialog.datiFatturaHeaderGroupBox.codiceCaricaComboBox.currentIndex.toString();
-  var bloccoId = dialog.bloccoComboBox.currentIndex.toString();
+  var bloccoId = dialog.bloccoGroupBox.bloccoComboBox.currentIndex.toString();
   if (bloccoId == 1)
     param.blocco = "DTR";
   else
     param.blocco = "DTE";
   
+  //Groupbox stampa
+  if (dialog.stampaGroupBox.stampaXmlRadioButton.checked)
+    param.outputScript = 1;
+  else
+    param.outputScript = 0;
+
   var paramToString = JSON.stringify(param);
-  Banana.document.scriptSaveSettings(paramToString);
+  Banana.document.setScriptSettings(paramToString);
   return true;
 }
 
@@ -186,25 +162,34 @@ function exec(inData) {
     return "@Cancel";
   }
 
-  if (!settingsDialog())
-    return "@Cancel";
-
-  var param = JSON.parse(Banana.document.scriptReadSettings());
+  var param = {};
+  if (inData.length>0) {
+    param = JSON.parse(inData);
+  }
+  else {
+    if (!settingsDialog())
+      return "@Cancel";
+    param = JSON.parse(Banana.document.getScriptSettings());
+  }
   
   param = loadData(param);
 
   var output = createInstance(param);
 
-  if (output != "@Cancel") {
+  if (param.outputScript==0 && output != "@Cancel") {
     var report = Banana.Report.newReport("Dati delle fatture emesse e ricevute");
     var stylesheet = Banana.Report.newStyleSheet();
     printVatReport1(report, stylesheet, param);
     Banana.Report.preview(report, stylesheet);
+  }
+  else if (param.outputScript==1 && output != "@Cancel") {
+    //xml file
     saveData(output, param);
+    return;
   }
 
-  return;
-
+  //return xml content
+  return output;
 }
 
 /*
@@ -261,16 +246,16 @@ function initParam()
   param.selezioneMese = false;
   param.valoreTrimestre = '';
   param.valoreMese = '';
-  param.repStartDate = '';
-  param.repEndDate = '';
-  if (Banana.document) {
-    param.repStartDate = Banana.document.startPeriod();
-    param.repEndDate = Banana.document.endPeriod();
-  }
-  param.invioProgressivo = '';
   param.codicefiscaleDichiarante = '';
   param.codiceCarica = '';
   param.blocco = 'DTE';
+  param.progressivoInvio = '';
+  /*
+  0 = create print preview report
+  1 = create file xml 
+  2 = return xml string */
+  param.outputScript = 0;
+  
   return param;
 }
 
@@ -303,9 +288,11 @@ function loadData(param)
   if (!journal || !filteredRows)
     return false;
 
+  param = setPeriod(param);
+
   //Load customers/suppliers accounts
-  var periodStart = Banana.Converter.toDate(param.repStartDate);
-  var periodEnd = Banana.Converter.toDate(param.repEndDate);
+  var periodStart = Banana.Converter.toDate(param.startDate);
+  var periodEnd = Banana.Converter.toDate(param.endDate);
   param.customers = {};
   param.suppliers = {};
 
@@ -683,8 +670,8 @@ function printVatReport1(report, stylesheet, param) {
   var headerRow = table.getHeader().addRow();
   headerRow.addCell("Comunicazione dei dati delle fatture", "title", 15);
   //Period
-  var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(param.repStartDate);
-  periodo +=" al " + Banana.Converter.toLocaleDateFormat(param.repEndDate);
+  var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(param.startDate);
+  periodo +=" al " + Banana.Converter.toLocaleDateFormat(param.endDate);
   periodo += " blocco " + param.blocco;
   headerRow = table.getHeader().addRow();
   headerRow.addCell(periodo, "period",  15);
@@ -812,6 +799,54 @@ function saveData(output, param) {
   }
 }
 
+function setPeriod(param) {
+  var accountingData = readAccountingData();
+  if (accountingData.accountingYear.length<=0) {
+    return param;
+  }
+  if (param.selezioneTrimestre) {
+    if (param.valoreTrimestre === "0") {
+      param.startDate = accountingData.accountingYear.toString() + "0101";
+      param.endDate = accountingData.accountingYear.toString() + "0331";
+    }
+    else if (param.valoreTrimestre === "1") {
+      param.startDate = accountingData.accountingYear.toString() + "0401";
+      param.endDate = accountingData.accountingYear.toString() + "0630";
+    }
+    else if (param.valoreTrimestre === "2") {
+      param.startDate = accountingData.accountingYear.toString() + "0701";
+      param.endDate = accountingData.accountingYear.toString() + "0930";
+    }
+    else {
+      param.startDate = accountingData.accountingYear.toString() + "1001";
+      param.endDate = accountingData.accountingYear.toString() + "1231";
+    }
+  }
+  else if (param.selezioneMese) {
+    var month = parseInt(param.valoreMese) + 1;
+    //months with 30 days
+    if (month === 11 || month === 4 || month === 6 || month === 9) {
+      param.startDate = accountingData.accountingYear.toString() + zeroPad(month, 2) + "01";
+      param.endDate = accountingData.accountingYear.toString() + zeroPad(month, 2) + "30";
+    }
+    //month with 28 or 29 days
+    else if (month === 2) {
+      var day = 28;
+      if (accountingData.accountingYear % 4 == 0 && (accountingData.accountingYear % 100 != 0 || accountingData.accountingYear % 400 == 0)) {
+        day = 29;
+      }
+      param.startDate = accountingData.accountingYear.toString() + "0201" ;
+      param.endDate = accountingData.accountingYear.toString() + "02" + day.toString();
+    }
+    //months with 31 days
+    else {
+      param.startDate = accountingData.accountingYear.toString() + zeroPad(month, 2) + "01" ;
+      param.endDate = accountingData.accountingYear.toString() + zeroPad(month, 2) + "31" ;
+    }
+  }
+  return param;
+}
+
 function tableToCsv(table) {
     var result = "";
     for (var i = 0; i < table.length; i++) {
@@ -828,6 +863,9 @@ function tableToCsv(table) {
 }
 
 function verifyParam(param) {
+  //compatibilità con versioni precedenti
+  if (param.repStartDate)
+    param = {};
   if (!param.selezioneTrimestre && !param.selezioneMese) {
     param.selezioneTrimestre  = true;
     param.selezioneMese  = false;
@@ -836,19 +874,17 @@ function verifyParam(param) {
     param.valoreTrimestre  = '';
   if (!param.valoreMese)
     param.valoreMese  = '';
-   if (!param.repStartDate)
-     param.repStartDate = '';
-   if (!param.repEndDate)
-     param.repEndDate = '';
-   if(!param.progressivoInvio)
-     param.progressivoInvio = '';
-   if(!param.codicefiscaleDichiarante)
-     param.codicefiscaleDichiarante = '';
-   if(!param.codiceCarica)
-     param.codiceCarica = '';
-   if (!param.blocco)
-     param.blocco = 'DTE';
-   return param;
+  if(!param.codicefiscaleDichiarante)
+    param.codicefiscaleDichiarante = '';
+  if(!param.codiceCarica)
+    param.codiceCarica = '';
+  if (!param.blocco)
+    param.blocco = 'DTE';
+  if(!param.progressivoInvio)
+    param.progressivoInvio = '';
+  if (!param.outputScript)
+    param.outputScript = 0;
+  return param;
 }
 
 /**

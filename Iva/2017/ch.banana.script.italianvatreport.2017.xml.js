@@ -30,9 +30,14 @@ function xml_createElement(name,content,attributes){
   if (attributes) { // tests false if this arg is missing!
     att_str = xml_formatAttributes(attributes);
   }
-  content = content.toString()
+  
+  if (content === undefined)
+    content = '';
+  else
+    content = content.toString()
+  
   var xml='';
-  if (!content){
+  if (content.length<=0){
     xml='<' + name + att_str + '/>';
   }
   else {
@@ -52,16 +57,19 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
     att_str = xml_formatAttributes(attributes);
   }
   
-  content = content.toString()
-  var xml='';
-  if (content) {
-    xml='<' + name + att_str + '>' + content + '</'+name+'>';
-  }
-  else {
+  if (content === undefined)
     content = '';
+  else
+    content = content.toString()
+  
+  var xml='';
+  if (content.length<=0) {
     if (mandatory>0) {
       xml='<' + name + att_str + '/>';
     }
+  }
+  else {
+    xml='<' + name + att_str + '>' + content + '</'+name+'>';
   }
   var fixedLen = 0;
   var minLen = 0;

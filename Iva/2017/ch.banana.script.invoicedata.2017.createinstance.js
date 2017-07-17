@@ -181,7 +181,7 @@ function createInstance_Blocco2(accountObj, param)
 
     //2.2.2   <AltriDatiIdentificativi>
     var xbrlAltriDati = '';
-    if (accountObj["OrganisationName"].length) {
+    if (accountObj["OrganisationName"] && accountObj["OrganisationName"].length) {
       xbrlAltriDati = '\n' + xml_createElementWithValidation("Denominazione", accountObj["OrganisationName"],0,'1...80',msgContext);
     }
     else {
@@ -190,7 +190,7 @@ function createInstance_Blocco2(accountObj, param)
     }
 
     var address = accountObj["Street"];
-    if (accountObj["AddressExtra"].length > 0) {
+    if (accountObj["AddressExtra"] && accountObj["AddressExtra"].length > 0) {
       if (address.length > 0)
         address += ' ';
       address += accountObj["AddressExtra"];

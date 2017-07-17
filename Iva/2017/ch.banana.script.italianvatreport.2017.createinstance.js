@@ -185,10 +185,10 @@ function createInstance_Modulo(param)
 
   var xbrlDebitoPeriodoPrecedente = '';
   var xbrlCreditoPeriodoPrecedente = '';
-  if (Banana.SDecimal.sign(param["L-CI"].vatPosted)<0)
-    xbrlDebitoPeriodoPrecedente = xml_createElementWithValidation("iv:DebitoPrecedente", createInstance_Modulo_GetVatAmount("L-CI", "vatPosted", param),0,'4...16',msgContext);
+  if (Banana.SDecimal.sign(param["PrevPeriod"].vatPosted)<0)
+    xbrlDebitoPeriodoPrecedente = xml_createElementWithValidation("iv:DebitoPrecedente", createInstance_Modulo_GetVatAmount("PrevPeriod", "vatPosted", param),0,'4...16',msgContext);
   else
-    xbrlCreditoPeriodoPrecedente = xml_createElementWithValidation("iv:CreditoPeriodoPrecedente", createInstance_Modulo_GetVatAmount("L-CI", "vatPosted", param),0,'4...16',msgContext);
+    xbrlCreditoPeriodoPrecedente = xml_createElementWithValidation("iv:CreditoPeriodoPrecedente", createInstance_Modulo_GetVatAmount("PrevPeriod", "vatPosted", param),0,'4...16',msgContext);
   if (xbrlDebitoPeriodoPrecedente.length>0)
     xbrlDebitoPeriodoPrecedente += '\n';
   if (xbrlCreditoPeriodoPrecedente.length>0)
@@ -208,10 +208,10 @@ function createInstance_Modulo(param)
 
   var xbrlImportoDaVersare = '';
   var xbrlImportoACredito = '';
-  if (Banana.SDecimal.sign(param["Total"].vatPosted)<0)
-    xbrlImportoDaVersare = xml_createElementWithValidation("iv:ImportoDaVersare", createInstance_Modulo_GetVatAmount("Total", "vatPosted", param),0,'4...16',msgContext);
+  if (Banana.SDecimal.sign(param["TotalDue"].vatPosted)<0)
+    xbrlImportoDaVersare = xml_createElementWithValidation("iv:ImportoDaVersare", createInstance_Modulo_GetVatAmount("TotalDue", "vatPosted", param),0,'4...16',msgContext);
   else
-    xbrlImportoACredito = xml_createElementWithValidation("iv:ImportoACredito", createInstance_Modulo_GetVatAmount("Total", "vatPosted", param),0,'4...16',msgContext);
+    xbrlImportoACredito = xml_createElementWithValidation("iv:ImportoACredito", createInstance_Modulo_GetVatAmount("TotalDue", "vatPosted", param),0,'4...16',msgContext);
   if (xbrlImportoDaVersare.length>0)
     xbrlImportoDaVersare += '\n';
   if (xbrlImportoACredito.length>0)
