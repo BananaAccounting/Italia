@@ -188,8 +188,9 @@ function exec(inData) {
     var report = Banana.Report.newReport("Dati delle fatture emesse e ricevute");
     var stylesheet = Banana.Report.newStyleSheet();
     printVatReport1(report, stylesheet, param);
-    report.addPageBreak();
-	printJournal(param.data, report, stylesheet);
+    //report.addPageBreak();
+    //printCustomersSuppliersJournal(param.data, report, stylesheet);
+    //printJournal(param.data, report, stylesheet);
     Banana.Report.preview(report, stylesheet);
   }
   else if (param.outputScript==1 && output != "@Cancel") {
