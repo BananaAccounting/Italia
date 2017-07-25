@@ -121,7 +121,7 @@ function settingsDialog() {
     }
   }
   dialog.showHelp = function () {
-    Banana.Ui.showHelp("ch.banana.script.italy_vat_2017.report.liquidazione.js");
+    Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
   }
   var index='';
   dialog.buttonBox.accepted.connect(dialog, "checkdata");

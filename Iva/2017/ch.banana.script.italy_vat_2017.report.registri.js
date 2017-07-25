@@ -54,7 +54,7 @@ function settingsDialog() {
   dialog.enableButtons = function () {
   }
   dialog.showHelp = function () {
-    Banana.Ui.showHelp("ch.banana.script.italy_vat_2017.report.registri.js");
+    Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
   }
   dialog.buttonBox.accepted.connect(dialog, "checkdata");
   dialog.buttonBox.helpRequested.connect(dialog, "showHelp");

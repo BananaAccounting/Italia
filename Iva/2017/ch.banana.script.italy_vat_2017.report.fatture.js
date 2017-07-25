@@ -96,7 +96,7 @@ function settingsDialog() {
     }
   }
   dialog.showHelp = function () {
-    Banana.Ui.showHelp("ch.banana.script.italy_vat_2017.report.fatture.js");
+    Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
   }
   dialog.buttonBox.accepted.connect(dialog, "checkdata");
   dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
