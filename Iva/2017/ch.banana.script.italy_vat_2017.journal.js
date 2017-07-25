@@ -70,10 +70,9 @@ function loadJournalCustomersSuppliers(data)
       continue;
 
     //Only rows with JInvoiceRowCustomerSupplier=1 (customer) or JInvoiceRowCustomerSupplier=2 (supplier)
-    var keepRow=false;
     var isCustomer = filteredRows[i].value("JInvoiceRowCustomerSupplier");
-    if (isCustomer=='1' || isCustomer=='2')
-      keepRow=true;
+    if (isCustomer!='1' && isCustomer!='2')
+      continue;
 
     var accountId = filteredRows[i].value("JAccount");
     if (accountId && accountId.length>0) {
@@ -145,7 +144,6 @@ function loadJournalCustomersSuppliers(data)
       value = filteredRows[i].value(columnName);
       if (value) {
         jsonLine[columnName] = xml_escapeString(value);
-  	    //data.columns[j].visible = true;
 	  }
       else {
         jsonLine[columnName] = '';
@@ -354,68 +352,80 @@ function loadJournalCustomersSuppliers_filter(row, index, table) {
 function printCustomersSuppliersJournal(data, report, stylesheet) {
 
   //Column count
-  var count = 0;
-  for (var index in data.columns) {
-    if (data.columns[index].visible)
-      count++;
+  var sortedColumns = [];
+  for (var i in data.columns) {
+    if (data.columns[i].index>=0)
+      sortedColumns.push(data.columns[i].index);
   }
+  sortedColumns.sort(sortNumber);  
 
   //Title
   var table = report.addTable("tableJournalCustomersSuppliers");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Customers/Suppliers", "title",  count);
+  headerRow.addCell("Customers/Suppliers", "title",  sortedColumns.length);
   
   //Period
   var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(data.startDate);
   periodo +=" al " + Banana.Converter.toLocaleDateFormat(data.endDate);
   headerRow = table.getHeader().addRow();
-  headerRow.addCell(periodo, "period",  count);
+  headerRow.addCell(periodo, "period",  sortedColumns.length);
   
   //Header
   var headerRow = table.getHeader().addRow();
-  for (var index in data.columns) {
-    if (data.columns[index].visible) {
-	  var columnName = data.columns[index].name;
-	  if (columnName.length>8)
-	    columnName = columnName.substring(0, 7) + ".";
-      headerRow.addCell(columnName);
-	}
+  for (var i in sortedColumns) {
+    var index = sortedColumns[i];
+    for (var j in data.columns) {
+      if (data.columns[j].index == index) {
+        var columnName = data.columns[j].name;
+        if (columnName.length>8)
+          columnName = columnName.substring(0, 7) + ".";
+        headerRow.addCell(columnName);
+        break;
+      }
+    }
   }
 
   // Print data
   var row = table.addRow();
-  row.addCell("------------------- customers -------------------", "", count);
+  row.addCell("------------------- customers -------------------", "", sortedColumns.length);
   for (var i in data.customers) {
     for (var j in data.customers[i].rows) {
+      var rowJsonObj = data.customers[i].rows[j];
       var row = table.addRow();
-      var index = 0;
-      var jsonObj = data.customers[i].rows[j];
-      for (var key in jsonObj) {
-        if (data.columns[index] && data.columns[index].visible) {
-		  var content = jsonObj[key];
-		  if (content.length>11 && data.columns[index].type == "description")
-		    content = content.substring(0,10) + "...";
-          row.addCell(content, data.columns[index].type);
-	    }
-		index++;
+      for (var k in sortedColumns) {
+        var index = sortedColumns[k];
+        for (var l in data.columns) {
+          if (data.columns[l].index == index) {
+            var columnName = data.columns[l].name;
+            var content = rowJsonObj[columnName];
+            if (content.length>11 && data.columns[l].type == "description")
+              content = content.substring(0,10) + "...";
+            row.addCell(content, data.columns[l].type);
+            break;
+          }
+        }
       }
     }
   }
+  
   var row = table.addRow();
-  row.addCell("------------------- suppliers -------------------", "", count);
+  row.addCell("------------------- suppliers -------------------", "", sortedColumns.length);
   for (var i in data.suppliers) {
     for (var j in data.suppliers[i].rows) {
+      var rowJsonObj = data.suppliers[i].rows[j];
       var row = table.addRow();
-	  var index = 0;
-      var jsonObj = data.suppliers[i].rows[j];
-      for (var key in jsonObj) {
-        if (data.columns[index] && data.columns[index].visible) {
-		  var content = jsonObj[key];
-		  if (content.length>11 && data.columns[index].type == "description")
-		    content = content.substring(0,10) + "...";
-          row.addCell(content, data.columns[index].type);
-	    }
-		index++;
+      for (var k in sortedColumns) {
+        var index = sortedColumns[k];
+        for (var l in data.columns) {
+          if (data.columns[l].index == index) {
+            var columnName = data.columns[l].name;
+            var content = rowJsonObj[columnName];
+            if (content.length>11 && data.columns[l].type == "description")
+              content = content.substring(0,10) + "...";
+            row.addCell(content, data.columns[l].type);
+            break;
+          }
+        }
       }
     }
   }
@@ -427,60 +437,55 @@ function printCustomersSuppliersJournal(data, report, stylesheet) {
 function printJournal(data, report, stylesheet) {
 
   //Column count
-  var count = 0;
-  for (var index in data.columns) {
-    if (!data.columns[index].name.startsWith("DF_"))
-      count++;
+  var sortedColumns = [];
+  for (var i in data.columns) {
+    if (data.columns[i].index>=0)
+      sortedColumns.push(data.columns[i].index);
   }
+  sortedColumns.sort(sortNumber);  
 
   //Title
   var table = report.addTable("tableJournal");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Journal", "title",  count);
+  headerRow.addCell("Journal", "title",  sortedColumns.length);
   
   //Period
   var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(data.startDate);
   periodo +=" al " + Banana.Converter.toLocaleDateFormat(data.endDate);
   headerRow = table.getHeader().addRow();
-  headerRow.addCell(periodo, "period",  count);
+  headerRow.addCell(periodo, "period",  sortedColumns.length);
   
   //Header
   var headerRow = table.getHeader().addRow();
-  for (var index in data.columns) {
-    if (!data.columns[index].name.startsWith("DF_")) {
-	  var columnName = data.columns[index].name;
-	  if (columnName.length>8)
-	    columnName = columnName.substring(0, 7) + ".";
-      headerRow.addCell(columnName);
-	}
+  for (var i in sortedColumns) {
+    var index = sortedColumns[i];
+    for (var j in data.columns) {
+      if (data.columns[j].index == index) {
+        var columnName = data.columns[j].name;
+        if (columnName.length>8)
+          columnName = columnName.substring(0, 7) + ".";
+        headerRow.addCell(columnName);
+        break;
+      }
+    }
   }
 
   // Print data
   var row = table.addRow();
-  row.addCell("------------------- journal -------------------", "", count);
+  row.addCell("------------------- journal -------------------", "", sortedColumns.length);
   for (var i=0; i < data.journal.rowCount;i++) {
     var tRow = data.journal.row(i);
-	var index = 0;
     var row = table.addRow();
-    for (var index in data.columns) {
-      if (!data.columns[index].name.startsWith("DF_")) {
-  	    var rowValue = tRow.value(data.columns[index].name);
-        row.addCell(rowValue, data.columns[index].type);
-	  }
-	  index++;
-   }
-    /*var index = 0;
-    var row = table.addRow();
-    var jsonObj = data.journal[i];
-    for (var key in jsonObj) {
-      if (data.columns[index] && data.columns[index].visible) {
-        var content = jsonObj[key];
-		if (content.length>11 && data.columns[index].type == "description")
-		  content = content.substring(0,10) + "...";
-        row.addCell(content, data.columns[index].type);
-	  }
-	  index++;
-    }*/
+    for (var j in sortedColumns) {
+      var index = sortedColumns[j];
+      for (var k in data.columns) {
+        if (data.columns[k].index == index) {
+          var rowValue = tRow.value(data.columns[k].name);
+          row.addCell(rowValue, data.columns[k].type);
+          break;
+        }
+      }
+    }
   }
   
   printJournal_addStyle(data, report, stylesheet);
@@ -500,151 +505,98 @@ function printJournal_addStyle(data, report, stylesheet) {
 }
 
 function setColumns(data, journalColumns) {
-  //Load column names
+  //Journal columns
   data.columns = {};
   for (var j = 0; j < journalColumns.length; j++) {
-	var column = {};
-	column.name = journalColumns[j];
-	column.type = "amount";
+    var column = {};
+    column.name = journalColumns[j];
+    column.type = "amount";
+    column.index = -1;
     if (column.name == "Date") {
-	  column.visible = true;
-	  column.type = "date";
-	}
+      column.type = "date";
+      column.index = 10;
+    }
     else if (column.name == "Doc") {
-	  column.visible = true;
-	  column.type = "description";
-	}
-    /*else if (column.name == "DocInvoice") {
-	  column.visible = true;
-	  column.type = "description";
-	}
-    else if (column.name == "DocProtocol")
-	  column.visible = true;*/
+      column.type = "description";
+      column.index = 20;
+    }
+    /*else if (column.name == "DocInvoice")
+    else if (column.name == "DocProtocol")*/
     else if (column.name == "Description") {
-	  column.visible = true;
-	  column.type = "description";
-	}
+      column.type = "description";
+      column.index = 30;
+    }
     /*else if (column.name == "AccountDebit")
-	  column.visible = true;
     else if (column.name == "AccountDebitDes")
-	  column.visible = true;
     else if (column.name == "AccountCredit")
-	  column.visible = true;
     else if (column.name == "AccountCreditDes")
-	  column.visible = true;
-    else if (column.name == "Amount")
-	  column.visible = true;*/
-    else if (column.name == "VatCode")
-	  column.visible = true;
+    else if (column.name == "Amount")*/
+    else if (column.name == "VatCode") {
+      column.index = 130;
+    }
     /*else if (column.name == "VatRate")
-	  column.visible = true;
     else if (column.name == "VatRateEffective")
-	  column.visible = true;
     else if (column.name == "VatTaxable")
-	  column.visible = true;
     else if (column.name == "VatAmount")
-	  column.visible = true;
     else if (column.name == "VatAccount")
-	  column.visible = true;
     else if (column.name == "VatAccountDes")
-	  column.visible = true;
     else if (column.name == "VatPosted")
-	  column.visible = true;
     else if (column.name == "JDate")
-	  column.visible = true;
     else if (column.name == "JDescription")
-	  column.visible = true;
-    else if (column.name == "JTableOrigin")
-	  column.visible = true;*/
-    else if (column.name == "JRowOrigin")
-	  column.visible = true;
-    else if (column.name == "JAccount")
-	  column.visible = true;
-    /*else if (column.name == "JAccountComplete")
-	  column.visible = true;*/
+    else if (column.name == "JTableOrigin")*/
+    else if (column.name == "JRowOrigin") {
+      column.index = 0;
+    }
+    else if (column.name == "JAccount") {
+      column.index = 40;
+    }
+    /*else if (column.name == "JAccountComplete") */
     else if (column.name == "JAccountDescription") {
-	  column.visible = true;
-	  column.type = "description";
-	}
+      column.type = "description";
+      column.index = 41;
+    }
     /*else if (column.name == "JAccountClass")
-	  column.visible = true;
     else if (column.name == "JAccountSection")
-	  column.visible = true;
     else if (column.name == "JAccountType")
-	  column.visible = true;
     else if (column.name == "JOriginType")
-	  column.visible = true;
     else if (column.name == "JOriginFile")
-	  column.visible = true;
     else if (column.name == "JOperationType")
-	  column.visible = true;
     else if (column.name == "JAccountGr")
-	  column.visible = true;
     else if (column.name == "JAccountGrPath")
-	  column.visible = true;
     else if (column.name == "JAmountAccountCurrency")
-	  column.visible = true;
     else if (column.name == "JAmount")
-	  column.visible = true;
     else if (column.name == "JTransactionCurrency")
-	  column.visible = true;
     else if (column.name == "JAmountTransactionCurrency")
-	  column.visible = true;
     else if (column.name == "JTransactionCurrencyConversionRate")
-	  column.visible = true;
     else if (column.name == "JAmountSection")
-	  column.visible = true;
     else if (column.name == "JVatCodeWithoutSign")
-	  column.visible = true;
     else if (column.name == "JVatCodeDescription")
-	  column.visible = true;
     else if (column.name == "JVatCodeWithMinus")
-	  column.visible = true;
     else if (column.name == "JVatNegative")
-	  column.visible = true;
-    else if (column.name == "JVatTaxable")
-	  column.visible = true;*/
+    else if (column.name == "JVatTaxable")*/
     else if (column.name == "JContraAccount")
-	  column.visible = true;
+      column.index = 50;
     else if (column.name == "JCContraAccountDes") {
-	  column.visible = true;
-	  column.type = "description";
-	}
+      column.index = 51;
+      column.type = "description";
+    }
     /*else if (column.name == "JContraAccountType")
-	  column.visible = true;
     else if (column.name == "JContraAccountGroup")
-	  column.visible = true;
     else if (column.name == "JDebitAmountAccountCurrency")
-	  column.visible = true;
     else if (column.name == "JCreditAmountAccountCurrency")
-	  column.visible = true;
     else if (column.name == "JDebitAmount")
-	  column.visible = true;
     else if (column.name == "JCreditAmount")
-	  column.visible = true;
     else if (column.name == "JInvoiceDocType")
-	  column.visible = true;
     else if (column.name == "JInvoiceAccountId")
-	  column.visible = true;
     else if (column.name == "JInvoiceCurrency")
-	  column.visible = true;
     else if (column.name == "JInvoiceDueDate")
-	  column.visible = true;
     else if (column.name == "JInvoiceDaysPastDue")
-	  column.visible = true;
     else if (column.name == "JInvoiceIssueDate")
-	  column.visible = true;
     else if (column.name == "JInvoiceExpectedDate")
-	  column.visible = true;
     else if (column.name == "JInvoiceDuePeriod")
-	  column.visible = true;
     else if (column.name == "ProbableIndexGroup")
-	  column.visible = false;
-    else if (column.name == "VatTwinAccount")
-	  column.visible = false;*/
-	else
-	  column.visible = false;
-	data.columns[j] = column;
+    else if (column.name == "VatTwinAccount")*/
+    data.columns[j] = column;
   }
 
   //Additional columns
@@ -652,46 +604,59 @@ function setColumns(data, journalColumns) {
   column.name = "DF_Aliquota";
   column.visible = true;
   column.type = "amount";
+  column.index = 1000;
   data.columns[j++] = column;
   var column = {};
   column.name = "DF_Imponibile";
   column.visible = true;
   column.type = "amount";
+  column.index = 1001;
   data.columns[j++] = column;
   var column = {};
   column.name = "DF_Imposta";
   column.visible = true;
   column.type = "amount";
+  column.index = 1002;
   data.columns[j++] = column;
   var column = {};
   column.name = "DF_Detraibile";
   column.visible = true;
   column.type = "amount";
+  column.index = 1003;
   data.columns[j++] = column;
   var column = {};
   column.name = "DF_Deducibile";
   column.visible = true;
   column.type = "amount";
+  column.index = 1004;
   data.columns[j++] = column;
   var column = {};
   column.name = "DF_Gr_IVA";
   column.visible = true;
   column.type = "description";
+  column.index = 1005;
   data.columns[j++] = column;
   var column = {};
   column.name = "DF_Lordo";
   column.visible = true;
   column.type = "amount";
+  column.index = 1006;
   data.columns[j++] = column;
   var column = {};
   column.name = "DF_TipoDoc";
   column.visible = true;
   column.type = "description";
+  column.index = 1007;
   data.columns[j++] = column;
   var column = {};
   column.name = "DF_Natura";
   column.visible = true;
   column.type = "description";
+  column.index = 1008;
   data.columns[j++] = column;
   return data;
+}
+
+function sortNumber(a,b) {
+    return a - b;
 }
