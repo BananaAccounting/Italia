@@ -1,4 +1,4 @@
-// Copyright [2016] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2017] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 var ID_ERR_VERSIONE = "ID_ERR_VERSIONE";
 var ID_ERR_CODICI_ND = "ID_ERR_CODICI_ND";
 var ID_ERR_TIPOVERSAMENTO = "ID_ERR_TIPOVERSAMENTO";
+var ID_ERR_XML_ELEMENTO_NATURA_N6 = "ID_ERR_XML_ELEMENTO_NATURA_N6";
 var ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE = "ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE";
 var ID_ERR_XML_ELEMENTO_NATURA_PRESENTE = "ID_ERR_XML_ELEMENTO_NATURA_PRESENTE";
 var ID_ERR_XML_LUNGHEZZA_NONVALIDA = "ID_ERR_XML_LUNGHEZZA_NONVALIDA";
@@ -32,6 +33,8 @@ function getErrorMessage(errorId) {
             return "Codici %1 non definiti";
         case ID_ERR_TIPOVERSAMENTO:
             return "Periodo non valido: invio di un unico mese con tipo versamento trimestrale";
+        case ID_ERR_XML_ELEMENTO_NATURA_N6:
+            return "Natura N6 (reverse charge) vanno anche obbligatoriamente valorizzati i campi Imposta ed Aliquota";
         case ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE:
             return "<Natura> non presente a fronte di <Aliquota> e/o <Imposta> pari a zero";
         case ID_ERR_XML_ELEMENTO_NATURA_PRESENTE:

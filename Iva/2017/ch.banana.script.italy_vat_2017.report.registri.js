@@ -13,14 +13,15 @@
 // limitations under the License.
 //
 // @api = 1.0
-// @id = ch.banana.script.italianvatregisters.2017.js
-// @description = Registri IVA 
+// @id = ch.banana.script.italy_vat_2017.report.registri.js
+// @description = Registri IVA 2017
 // @doctype = *;110
 // @encoding = utf-8
-// @includejs = ch.banana.script.italianvatreport.2017.errors.js
-// @includejs = ch.banana.script.italianvatreport.2017.xml.js
+// @includejs = ch.banana.script.italy_vat_2017.errors.js
+// @includejs = ch.banana.script.italy_vat_2017.journal.js
+// @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-06-28
+// @pubdate = 2017-07-25
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -43,7 +44,7 @@ function settingsDialog() {
     return false;
   }
   
-  /*var dialog = Banana.Ui.createUi("ch.banana.script.italianvatregisters.2017.dialog.ui");
+  /*var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.registri.dialog.ui");
   dialog.periodoGroupBox.title += ' ' + accountingData.accountingYear;
 
   //dialog functions
@@ -53,7 +54,7 @@ function settingsDialog() {
   dialog.enableButtons = function () {
   }
   dialog.showHelp = function () {
-    Banana.Ui.showHelp("ch.banana.script.italianvatregisters.2017.js");
+    Banana.Ui.showHelp("ch.banana.script.italy_vat_2017.report.registri.js");
   }
   dialog.buttonBox.accepted.connect(dialog, "checkdata");
   dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
@@ -97,9 +98,12 @@ function exec(inData) {
     param = JSON.parse(Banana.document.getScriptSettings());
   }
   
+  //add accounting data and journal
   param = readAccountingData(param);
-  param = loadData(param);
-
+  param.data = {};  
+  param = setPeriod(param);
+  param = loadJournalCustomersSuppliers(param);
+  
   //Print report
   var report = Banana.Report.newReport("Registri IVA");
   var stylesheet = Banana.Report.newStyleSheet();
@@ -126,13 +130,13 @@ function exec(inData) {
   pageFooter.addClass("center");
   pageFooter.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()) + " Pagina ").addFieldPageNr();
   //Data
-  for (var index=0; index<param.journals.length; index++) {
+  /*for (var index=0; index<param.journals.length; index++) {
     printRegister(report, stylesheet, param.journals[index], "VENDITE");
     printRegister(report, stylesheet, param.journals[index], "ACQUISTI");
     printRegister(report, stylesheet, param.journals[index], "CORRISPETTIVI");
     if (index+1<param.journals.length)
       report.addPageBreak();
-  }
+  }*/
   Banana.Report.preview(report, stylesheet);
   return;
 
@@ -167,243 +171,6 @@ function initParam()
 {
   var param = {};
   return param;
-}
-
-function loadData(param)
-{
-  var journal = Banana.document.journalCustomersSuppliers(
-    Banana.document.ORIGINTYPE_CURRENT, Banana.document.ACCOUNTTYPE_NORMAL);
-
-  if (!journal)
-    return false;
-
-  //Load customers/suppliers accounts
-  param.customers = {};
-  param.suppliers = {};
-  for (var i = 0; i < journal.rows.length; i++) {
-    //Only rows with JInvoiceRowCustomerSupplier=1 (customer) or JInvoiceRowCustomerSupplier=2 (supplier)
-    var description = journal.row(i).value("Description");
-    var isCustomerSupplier = journal.row(i).value("JInvoiceRowCustomerSupplier").toString();
-    if (isCustomerSupplier != '1' && isCustomerSupplier != '2')
-      continue;
-
-    var accountId = journal.row(i).value("JAccount").toString();
-    if (accountId && accountId.length>0) {
-      if (isCustomerSupplier == '1' && !param.customers[accountId]) {
-        var accountObj = getAccount(accountId);
-        param.customers[accountId] = accountObj;
-      }
-      else if (isCustomerSupplier == '2' && !param.suppliers[accountId]) {
-        var accountObj = getAccount(accountId);
-        param.suppliers[accountId] = accountObj;
-      }
-    }
-  }
-
-  //Load journal
-  //Whole periods
-  param.journals = [];
-  var startDate = Banana.document.startPeriod();
-  var endDate = Banana.document.endPeriod();
-  param = loadDataPeriod(param, journal, startDate, endDate);
-  
-  //Other periods
-  
-  return param;
-
-}
-
-function loadDataPeriod(param, journal, _startDate, _endDate) 
-{
-  if (!journal)
-    return;
-
-  var data = {};
-  var periodStart = Banana.Converter.toDate(_startDate);
-  var periodEnd = Banana.Converter.toDate(_endDate);
-  var tableVatCodes = Banana.document.table('VatCodes');
-  var tColumnNames = journal.columnNames;
-
-   //Load journal, keep only vat operation
-  var filteredRows = journal.findRows(loadDataPeriod_filterTransactions);
-  if (!filteredRows)
-    return false;
-
-  //debugger;
-  //Load data from journal
-  for (var i = 0; i < filteredRows.length; i++) {
-    //Checks period
-    var validPeriod = false;
-    var value = filteredRows[i].value("JDate");
-    var currentDate = Banana.Converter.stringToDate(value, "YYYY-MM-DD");
-    if (currentDate >= periodStart && currentDate <= periodEnd)
-      validPeriod = true;
-    if (!validPeriod)
-      continue;
-
-    var jsonLine = {};
-    for (var j = 0; j < tColumnNames.length; j++) {
-      var columnName = tColumnNames[j];
-      value = filteredRows[i].value(columnName);
-      if (value)
-        jsonLine[columnName] = xml_escapeString(value);
-      else
-        jsonLine[columnName] = '';
-    }
-
-    var jsonLine = {};
-    for (var j = 0; j < tColumnNames.length; j++) {
-      var columnName = tColumnNames[j];
-      value = filteredRows[i].value(columnName);
-      if (value)
-        jsonLine[columnName] = xml_escapeString(value);
-      else
-        jsonLine[columnName] = '';
-    }
-
-    //Additional data
-    //AD_InvoiceRowCustomerSupplier
-    //jsonLine["AD_InvoiceRowCustomerSupplier"] = '';
-    //var invoiceAccountId = filteredRows[i].value("JInvoiceAccountId").toString();
-    //if (invoiceAccountId.length && param.customers[invoiceAccountId])
-    //  jsonLine["AD_InvoiceRowCustomerSupplier"] = '1';
-    //else if (invoiceAccountId.length && param.suppliers[invoiceAccountId])
-    //  jsonLine["AD_InvoiceRowCustomerSupplier"] = '2';
-    //AD_AccountCustomer -> JInvoiceAccountId
-    //AD_AccountCustomerDes -> oggetto customers[invoiceAccountId]
-    //AD_AccountCustomerType -> AD_InvoiceRowCustomerSupplier
-    //AD_FiscalNumber
-    //jsonLine["AD_FiscalNumber"] = '';
-
-    //AD_AmountLordo
-    value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
-    value = Banana.SDecimal.abs(value);
-    jsonLine["AD_AmountLordo"] = value;
-
-    //AD_AmountImponibile
-    //jsonLine["AD_AmountImponibile"] = '';
-    //AD_AmountNonImponibile
-    //jsonLine["AD_AmountNonImponibile"] = '';
-    //AD_AmountEsente
-    //jsonLine["AD_AmountEsente"] = '';
-    //AD_AmountNonEsposto
-    //jsonLine["AD_AmountNonEsposto"] = '';
-    //AD_NVAPAmountLordo
-    //jsonLine["AD_AmountNonEsposto"] = '';
-    //AD_NVAPAmountImponibile
-    //jsonLine["AD_NVAPAmountImponibile"] = '';
-    //AD_NVAPAmountNonImponibile
-    //jsonLine["AD_NVAPAmountNonImponibile"] = '';
-    //AD_NVAPAmountEsente
-    //jsonLine["AD_NVAPAmountEsente"] = '';
-    //AD_NVAPAmountNonEsposto
-    //jsonLine["AD_NVAPAmountNonEsposto"] = '';
-    //AD_CustomerHeader
-    //jsonLine["AD_CustomerHeader"] = '';
-    //AD_NotaDiVariazione
-    //jsonLine["AD_NotaDiVariazione"] = '';
-
-    //AD_GrIva
-    //AD_Gr1Iva
-    jsonLine["AD_GrIva"] = '';
-    jsonLine["AD_Gr1Iva"] = '';
-    var vatCode = filteredRows[i].value("JVatCodeWithoutSign");
-    if (vatCode.length && tableVatCodes) {
-      var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
-      if (rowVatCodes) {
-        jsonLine["AD_GrIva"] = rowVatCodes.value("Gr");
-        jsonLine["AD_Gr1Iva"] = rowVatCodes.value("Gr1");
-      }
-    }
-
-    //AD_Registro
-    var registro = '';
-    if (jsonLine["AD_GrIva"].startsWith("V"))
-      registro = "VENDITE";
-    else if (jsonLine["AD_GrIva"].startsWith("C"))
-      registro = "CORRISPETTIVI";
-    else if (jsonLine["AD_GrIva"].startsWith("A"))
-      registro = "ACQUISTI";
-    else if (jsonLine["AD_GrIva"].startsWith("L"))
-      registro = "LIQUIDAZIONI";
-    else
-      registro = "Registro non trovato: " + jsonLine["AD_GrIva"];
-    jsonLine["AD_Registro"] = registro;
-
-    //AD_ProgRegistro
-    //jsonLine["AD_ProgRegistro"] = '';
-    //AD_PercIvaAssoluto
-    //jsonLine["AD_PercIvaAssoluto"] = '';
-    //AD_CRContraAccount
-    //jsonLine["AD_CRContraAccount"] = '';
-    //AD_CRContraAccountDes
-    //jsonLine["AD_CRContraAccountDes"] = '';
-    //AD_CRAmount
-    //jsonLine["AD_CRAmount"] = '';
-    //AD_CorrFattureNormali
-    //jsonLine["AD_CorrFattureNormali"] = '';
-    //AD_CorrFattureFiscali
-    //jsonLine["AD_CorrFattureFiscali"] = '';
-    //AD_CorrFattureScontrini
-    //jsonLine["AD_CorrFattureScontrini"] = '';
-    //AD_CorrFattureDifferite
-    //jsonLine["AD_CorrFattureDifferite"] = '';
-    //AD_CorrFattureCorrispettiviNormali
-    //jsonLine["AD_CorrFattureCorrispettiviNormali"] = '';
-    //AD_CorrFattureCorrispettiviScontrini
-    //jsonLine["AD_CorrFattureCorrispettiviScontrini"] = '';
-    //AD_CorrFattureRicevuteFiscali
-    //jsonLine["AD_CorrFattureRicevuteFiscali"] = '';
-    //AD_CorrFattureTotaleGiornaliero
-    //jsonLine["AD_CorrFattureTotaleGiornaliero"] = '';
-
-    //Aggiunge la riga nei parametri
-    if (!data.rows)
-      data.rows = [];
-    data.rows.push(jsonLine);
-  }
-  
-  data.startDate = _startDate;
-  data.endDate = _endDate;
-  param.journals.push(data);
-  return param;
-
-  //debug
-  /*var line = [];
-  var transactions = [];
-  for (var i = 0; i < param.journal.rows.length; i++) {
-    var jsonObj = param.journal.rows[i];
-    for (var key in jsonObj) {
-      line.push(xml_unescapeString(jsonObj[key]));
-    }
-    transactions.push(line);
-    line = [];
-  }
-  line = [];
-  var header = [];
-  if (param.journal.rows.length>0) {
-    var jsonObj = param.journal.rows[0];
-    for (var key in jsonObj) {
-      line.push(key);
-    }
-    header.push(line);
-  }
-  Banana.Ui.showText(tableToCsv(header.concat(transactions)));*/
-}
-
-function loadDataPeriod_filterTransactions(row, index, table) {
-  //only normal transaction with vat
-  //OperationType_None = 0, OperationType_Opening = 1, OperationType_CarryForward = 2,
-  //OperationType_Transaction = 3, OperationType_Closure = 4, OperationType_Total = 6
-  var operationType = row.value("JOperationType");
-  if (operationType && operationType != Banana.document.OPERATIONTYPE_TRANSACTION)
-    return false;
-
-  var isVatOperation = row.value("JVatIsVatOperation");
-  if (!isVatOperation)
-    return false;
-    
-  return true;
 }
 
 function printRegister(report, stylesheet, journal, register) {
@@ -502,7 +269,22 @@ function printRegister(report, stylesheet, journal, register) {
 }
 
 function readAccountingData(param) {
-  //Table FileInfo
+
+  param.accountingYear = '';
+
+  var accountingOpeningDate = Banana.document.info("AccountingDataBase", "OpeningDate");
+  var accountingClosureDate = Banana.document.info("AccountingDataBase", "ClosureDate");
+
+  var openingYear = 0;
+  var closureYear = 0;
+  if (accountingOpeningDate.length >= 10)
+    openingYear = accountingOpeningDate.substring(0, 4);
+  if (accountingClosureDate.length >= 10)
+    closureYear = accountingClosureDate.substring(0, 4);
+  if (openingYear > 0 && openingYear === closureYear)
+    param.accountingYear = openingYear;
+
+	//Table FileInfo
   param.fileInfo = {};
   param.fileInfo["BasicCurrency"] = "";
   param.fileInfo["OpeningDate"] = "";
@@ -553,20 +335,12 @@ function readAccountingData(param) {
     param.fileInfo["Address"]["VatNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "VatNumber"));
   }
 
-  var accountingOpeningDate = param.fileInfo["OpeningDate"];
-  var accountingClosureDate = param.fileInfo["ClosureDate"];
+  return param;
+}
 
-  var openingYear = 0;
-  var closureYear = 0;
-  if (accountingOpeningDate.length >= 10)
-    openingYear = accountingOpeningDate.substring(0, 4);
-  if (accountingClosureDate.length >= 10)
-    closureYear = accountingClosureDate.substring(0, 4);
-
-  param.accountingYear = '';
-  if (openingYear > 0 && openingYear === closureYear)
-    param.accountingYear = openingYear;
-
+function setPeriod(param) {
+  param.data.startDate = Banana.document.startPeriod();
+  param.data.endDate = Banana.document.endPeriod();
   return param;
 }
 

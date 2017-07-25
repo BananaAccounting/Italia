@@ -1,4 +1,4 @@
-// Copyright [2016] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2017] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,15 +13,15 @@
 // limitations under the License.
 //
 // @api = 1.0
-// @id = ch.banana.script.italianvatreport.2017.js
-// @description = Comunicazione periodica IVA (file xml)
+// @id = ch.banana.script.italy_vat_2017.report.liquidazione.js
+// @description = Comunicazione periodica IVA 2017 (file xml)
 // @doctype = *;110
 // @encoding = utf-8
-// @includejs = ch.banana.script.italianvatreport.2017.createinstance.js
-// @includejs = ch.banana.script.italianvatreport.2017.xml.js
-// @includejs = ch.banana.script.italianvatreport.2017.errors.js
+// @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.createinstance.js
+// @includejs = ch.banana.script.italy_vat_2017.errors.js
+// @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-06-28
+// @pubdate = 2017-07-25
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -44,7 +44,7 @@ function settingsDialog() {
     return false;
   }
 
-  var dialog = Banana.Ui.createUi("ch.banana.script.italianvatreport.2017.dialog.ui");
+  var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.liquidazione.dialog.ui");
   //Groupbox periodo
   if (param.periodoSelezionato == 0)
     dialog.periodoGroupBox.meseRadioButton.checked = true;
@@ -121,7 +121,7 @@ function settingsDialog() {
     }
   }
   dialog.showHelp = function () {
-    Banana.Ui.showHelp("ch.banana.script.italianvatreport.2017.js");
+    Banana.Ui.showHelp("ch.banana.script.italy_vat_2017.report.liquidazione.js");
   }
   var index='';
   dialog.buttonBox.accepted.connect(dialog, "checkdata");

@@ -1,4 +1,4 @@
-// Copyright [2016] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2017] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -68,8 +68,8 @@ function createInstance_DTE(param)
 {
   var xbrlContent = createInstance_Blocco1(param);
   
-  for (var i in param.customers) {
-    var customerObj = param.customers[i];
+  for (var i in param.data.customers) {
+    var customerObj = param.data.customers[i];
     if (customerObj)
       xbrlContent += createInstance_Blocco2(customerObj, param);
   }
@@ -84,8 +84,8 @@ function createInstance_DTR(param)
 {
   var xbrlContent = createInstance_Blocco1(param);
   
-  for (var i in param.suppliers) {
-    var supplierObj = param.suppliers[i];
+  for (var i in param.data.suppliers) {
+    var supplierObj = param.data.suppliers[i];
     if (supplierObj)
       xbrlContent += createInstance_Blocco2(supplierObj, param);
   }
