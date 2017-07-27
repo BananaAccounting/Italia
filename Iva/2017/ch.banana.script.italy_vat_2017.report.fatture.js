@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-07-25
+// @pubdate = 2017-07-26
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -150,7 +150,7 @@ function exec(inData) {
   if (!Banana.document)
     return "@Cancel";
 
-   var debug = false;
+   var debug = true;
 
   // Check version
   if (typeof (Banana.document.journalCustomersSuppliers) === 'undefined') {
@@ -192,7 +192,6 @@ function exec(inData) {
     printVatReport1(report, stylesheet, param);
     if (debug) {
       report.addPageBreak();
-      printCustomersSuppliersJournal(param.data, report, stylesheet);
       printJournal(param.data, report, stylesheet);
     }
     Banana.Report.preview(report, stylesheet);

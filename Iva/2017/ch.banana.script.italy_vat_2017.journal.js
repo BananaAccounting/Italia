@@ -38,7 +38,8 @@ function getAccount(accountId) {
 }
 
 /*
- * Update script's parameters
+ * Load data from journal 
+ * This function is used from all reports
 */
 function loadJournalCustomersSuppliers(data)
 {
@@ -52,13 +53,19 @@ function loadJournalCustomersSuppliers(data)
   if (!journal || !filteredRows)
     return false;
 
-  //Load customers/suppliers accounts
+  var tableVatCodes = Banana.document.table('VatCodes');
   var periodStart = Banana.Converter.toDate(data.startDate);
   var periodEnd = Banana.Converter.toDate(data.endDate);
   data.customers = {};
   data.suppliers = {};
-  data.journal = journal;
+  data.journal = {};
+  data.journal.rows = [];
 
+  //Load column names
+  var tColumnNames = journal.columnNames;
+  data.journal = setColumns(data.journal, tColumnNames);
+
+  //Load customers/suppliers accounts
   for (var i = 0; i < filteredRows.length; i++) {
     //Check period
     var validPeriod = false;
@@ -88,14 +95,13 @@ function loadJournalCustomersSuppliers(data)
     }
   }
   
-  //Load column names
-  var tColumnNames = journal.columnNames;
-  data = setColumns(data, tColumnNames);
-
   //Load transactions
-  var tableVatCodes = Banana.document.table('VatCodes');
-  
   for (var i = 0; i < filteredRows.length; i++) {
+    //Only vat operations
+    var isVatOperation = filteredRows[i].value("JVatIsVatOperation");
+    if (!isVatOperation)
+      continue;
+
     //Checks period
     var validPeriod = false;
     var value = filteredRows[i].value("JDate");
@@ -105,37 +111,54 @@ function loadJournalCustomersSuppliers(data)
     if (!validPeriod)
       continue;
 
-    //Checks vatCode
-    var vatCode = filteredRows[i].value("JVatCodeWithoutSign");
-    if (vatCode.length<=0)
-      continue;
+    //Checks customer or supplier accounts
+	/*TODO: vedere se si può semplificare controllando meno campi*/
+    var isCustomer=false;
+    var isSupplier=false;
+    var accountId = filteredRows[i].value("JAccount");
+    var contraAccountId = filteredRows[i].value("JContraAccount");
+    var vatTwinAccountId = filteredRows[i].value("VatTwinAccount");
+    var accountDebitId = filteredRows[i].value("AccountDebit");
+    var accountCreditId = filteredRows[i].value("AccountCredit");
 
-   //Checks if customer/supplier row
-   var isCustomer = filteredRows[i].value("JInvoiceRowCustomerSupplier");
-   if (isCustomer)
-     continue;
-
-   //Checks customer or supplier accounts
-   var isCustomer=false;
-   var isSupplier=false;
-   var accountId = filteredRows[i].value("JAccount");
-   var contraAccountId = filteredRows[i].value("JContraAccount");
-   if (accountId in data.customers) {
-     isCustomer = true;
-   }
-   if (contraAccountId in data.customers) {
-     isCustomer = true;
-     accountId = contraAccountId;
-   }
-   if (accountId in data.suppliers) {
-     isSupplier = true;
-   }
-   if (contraAccountId in data.suppliers) {
-     isSupplier = true;
-     accountId = contraAccountId;
-   }
-   if (!isCustomer && !isSupplier)
-     continue;
+    if (accountId in data.customers) {
+      isCustomer = true;
+    }
+    else if (contraAccountId in data.customers) {
+      isCustomer = true;
+      accountId = contraAccountId;
+    }
+    else if (vatTwinAccountId in data.customers) {
+      isCustomer = true;
+      accountId = vatTwinAccountId;
+    }
+    else if (accountDebitId in data.customers) {
+      isCustomer = true;
+      accountId = accountDebitId;
+    }
+    else if (accountCreditId in data.customers) {
+      isCustomer = true;
+      accountId = accountCreditId;
+    }
+    else if (accountId in data.suppliers) {
+      isSupplier = true;
+    }
+    else if (contraAccountId in data.suppliers) {
+      isSupplier = true;
+      accountId = contraAccountId;
+    }
+    else if (vatTwinAccountId in data.suppliers) {
+      isSupplier = true;
+      accountId = vatTwinAccountId;
+    }
+    else if (accountDebitId in data.suppliers) {
+      isSupplier = true;
+      accountId = accountDebitId;
+    }
+    else if (accountCreditId in data.suppliers) {
+      isSupplier = true;
+      accountId = accountCreditId;
+    }
 
     //Add data from journal
     var jsonLine = {};
@@ -144,10 +167,10 @@ function loadJournalCustomersSuppliers(data)
       value = filteredRows[i].value(columnName);
       if (value) {
         jsonLine[columnName] = xml_escapeString(value);
-	  }
+      }
       else {
         jsonLine[columnName] = '';
-	  }
+      }
     }
 
     //Additional data
@@ -192,6 +215,7 @@ function loadJournalCustomersSuppliers(data)
 
     //DF_Gr_IVA
     jsonLine["DF_Gr_IVA"] = '';
+    var vatCode = filteredRows[i].value("JVatCodeWithoutSign");
     if (vatCode.length && tableVatCodes) {
       var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
       if (rowVatCodes) {
@@ -327,6 +351,13 @@ function loadJournalCustomersSuppliers(data)
         data.suppliers[accountId].rows = [];
       data.suppliers[accountId].rows.push(jsonLine);
     }
+
+    //Write rows for debugging purposes
+    /*var jsonString = filteredRows[i].toJSON();
+    var jsonObj = JSON.parse(jsonString);
+    data.journal.rows.push(jsonObj);*/
+    data.journal.rows.push(jsonLine);
+
   }
   
   return data;
@@ -342,10 +373,6 @@ function loadJournalCustomersSuppliers_filter(row, index, table) {
   if (operationType && operationType != Banana.document.OPERATIONTYPE_TRANSACTION)
     return false;
 
-  var isVatOperation = row.value("JVatIsVatOperation");
-  if (isVatOperation)
-    return false;
-    
   return true;
 }
 
@@ -353,9 +380,9 @@ function printCustomersSuppliersJournal(data, report, stylesheet) {
 
   //Column count
   var sortedColumns = [];
-  for (var i in data.columns) {
-    if (data.columns[i].index>=0)
-      sortedColumns.push(data.columns[i].index);
+  for (var i in data.journal.columns) {
+    if (data.journal.columns[i].index>=0)
+      sortedColumns.push(data.journal.columns[i].index);
   }
   sortedColumns.sort(sortNumber);  
 
@@ -374,12 +401,12 @@ function printCustomersSuppliersJournal(data, report, stylesheet) {
   var headerRow = table.getHeader().addRow();
   for (var i in sortedColumns) {
     var index = sortedColumns[i];
-    for (var j in data.columns) {
-      if (data.columns[j].index == index) {
-        var columnName = data.columns[j].name;
-        if (columnName.length>8)
-          columnName = columnName.substring(0, 7) + ".";
-        headerRow.addCell(columnName);
+    for (var j in data.journal.columns) {
+      if (data.journal.columns[j].index == index) {
+        var columnTitle = data.journal.columns[j].title;
+        /*if (columnTitle.length>8)
+          columnTitle = columnTitle.substring(0, 7) + ".";*/
+        headerRow.addCell(columnTitle);
         break;
       }
     }
@@ -394,13 +421,13 @@ function printCustomersSuppliersJournal(data, report, stylesheet) {
       var row = table.addRow();
       for (var k in sortedColumns) {
         var index = sortedColumns[k];
-        for (var l in data.columns) {
-          if (data.columns[l].index == index) {
-            var columnName = data.columns[l].name;
+        for (var l in data.journal.columns) {
+          if (data.journal.columns[l].index == index) {
+            var columnName = data.journal.columns[l].name;
             var content = rowJsonObj[columnName];
-            if (content.length>11 && data.columns[l].type == "description")
+            if (content.length>11 && data.journal.columns[l].type == "description")
               content = content.substring(0,10) + "...";
-            row.addCell(content, data.columns[l].type);
+            row.addCell(content, data.journal.columns[l].type);
             break;
           }
         }
@@ -416,13 +443,13 @@ function printCustomersSuppliersJournal(data, report, stylesheet) {
       var row = table.addRow();
       for (var k in sortedColumns) {
         var index = sortedColumns[k];
-        for (var l in data.columns) {
-          if (data.columns[l].index == index) {
-            var columnName = data.columns[l].name;
+        for (var l in data.journal.columns) {
+          if (data.journal.columns[l].index == index) {
+            var columnName = data.journal.columns[l].name;
             var content = rowJsonObj[columnName];
-            if (content.length>11 && data.columns[l].type == "description")
+            if (content.length>11 && data.journal.columns[l].type == "description")
               content = content.substring(0,10) + "...";
-            row.addCell(content, data.columns[l].type);
+            row.addCell(content, data.journal.columns[l].type);
             break;
           }
         }
@@ -438,16 +465,16 @@ function printJournal(data, report, stylesheet) {
 
   //Column count
   var sortedColumns = [];
-  for (var i in data.columns) {
-    if (data.columns[i].index>=0)
-      sortedColumns.push(data.columns[i].index);
+  for (var i in data.journal.columns) {
+    if (data.journal.columns[i].index>=0)
+      sortedColumns.push(data.journal.columns[i].index);
   }
   sortedColumns.sort(sortNumber);  
 
   //Title
   var table = report.addTable("tableJournal");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Journal", "title",  sortedColumns.length);
+  headerRow.addCell("Registrazioni IVA Italia", "title",  sortedColumns.length);
   
   //Period
   var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(data.startDate);
@@ -459,12 +486,12 @@ function printJournal(data, report, stylesheet) {
   var headerRow = table.getHeader().addRow();
   for (var i in sortedColumns) {
     var index = sortedColumns[i];
-    for (var j in data.columns) {
-      if (data.columns[j].index == index) {
-        var columnName = data.columns[j].name;
-        if (columnName.length>8)
-          columnName = columnName.substring(0, 7) + ".";
-        headerRow.addCell(columnName);
+    for (var j in data.journal.columns) {
+      if (data.journal.columns[j].index == index) {
+        var columnTitle = data.journal.columns[j].title;
+        /*if (columnTitle.length>8)
+          columnTitle = columnTitle.substring(0, 7) + ".";*/
+        headerRow.addCell(columnTitle);
         break;
       }
     }
@@ -472,16 +499,15 @@ function printJournal(data, report, stylesheet) {
 
   // Print data
   var row = table.addRow();
-  row.addCell("------------------- journal -------------------", "", sortedColumns.length);
-  for (var i=0; i < data.journal.rowCount;i++) {
-    var tRow = data.journal.row(i);
+  for (var i=0; i < data.journal.rows.length;i++) {
+    var jsonObj = data.journal.rows[i];
     var row = table.addRow();
     for (var j in sortedColumns) {
       var index = sortedColumns[j];
-      for (var k in data.columns) {
-        if (data.columns[k].index == index) {
-          var rowValue = tRow.value(data.columns[k].name);
-          row.addCell(rowValue, data.columns[k].type);
+      for (var k in data.journal.columns) {
+        if (data.journal.columns[k].index == index) {
+          var content = jsonObj[data.journal.columns[k].name];
+          row.addCell(content, data.journal.columns[k].type);
           break;
         }
       }
@@ -504,157 +530,229 @@ function printJournal_addStyle(data, report, stylesheet) {
   stylesheet.addStyle(".amount", "text-align:right;");
 }
 
-function setColumns(data, journalColumns) {
+function setColumns(journal, journalColumns) {
   //Journal columns
-  data.columns = {};
+  journal.columns = {};
   for (var j = 0; j < journalColumns.length; j++) {
     var column = {};
     column.name = journalColumns[j];
+    column.title = journalColumns[j];
     column.type = "amount";
     column.index = -1;
     if (column.name == "Date") {
+      column.title = "Data";
       column.type = "date";
-      column.index = 10;
+      column.index = 1;
+    }
+    if (column.name == "DateDocument") {
+      column.title = "Data Doc";
+      column.type = "date";
+      column.index = 2;
+    }
+    if (column.name == "DateValue") {
+      column.title = "Data valuta";
+      column.type = "date";
+      column.index = 3;
     }
     else if (column.name == "Doc") {
       column.type = "description";
-      column.index = 20;
+      column.index = 4;
     }
-    /*else if (column.name == "DocInvoice")
-    else if (column.name == "DocProtocol")*/
-    else if (column.name == "Description") {
+    else if (column.name == "DocProtocol") {
+      column.title = "Doc.Prot.";
       column.type = "description";
-      column.index = 30;
+      column.index = 5;
     }
-    /*else if (column.name == "AccountDebit")
-    else if (column.name == "AccountDebitDes")
-    else if (column.name == "AccountCredit")
-    else if (column.name == "AccountCreditDes")
-    else if (column.name == "Amount")*/
+    else if (column.name == "Description") {
+      column.title = "Descrizione";
+      column.type = "description";
+      column.index = 6;
+    }
     else if (column.name == "VatCode") {
-      column.index = 130;
+      column.title = "Cod.IVA";
+      column.index = 7;
     }
-    /*else if (column.name == "VatRate")
-    else if (column.name == "VatRateEffective")
-    else if (column.name == "VatTaxable")
-    else if (column.name == "VatAmount")
-    else if (column.name == "VatAccount")
-    else if (column.name == "VatAccountDes")
-    else if (column.name == "VatPosted")
-    else if (column.name == "JDate")
-    else if (column.name == "JDescription")
-    else if (column.name == "JTableOrigin")*/
-    else if (column.name == "JRowOrigin") {
-      column.index = 0;
+    else if (column.name == "VatRate") {
+      column.title = "%IVA";
+      column.index = 8;
+    }
+    else if (column.name == "VatRateEffective") {
+      column.title = "%Eff.";
+      column.index = 9;
+    }
+    else if (column.name == "VatTaxable") {
+      column.title = "Imponibile";
+      column.index = 10;
+    }
+    else if (column.name == "VatAmount") {
+      column.title = "Imp.IVA";
+      column.index = 11;
+    }
+    else if (column.name == "VatAccount") {
+      column.title = "Cto.IVA";
+      column.index = 12;
+    }
+    else if (column.name == "VatAccountDes") {
+      column.title = "Cto.IVA Des.";
+      column.index = 13;
+    }
+    else if (column.name == "VatPercentNonDeductible") {
+      column.title = "%Non.Ded.";
+      column.index = 14;
+    }
+    else if (column.name == "VatNonDeductible") {
+      column.title = "Non.Ded.";
+      column.index = 15;
+    }
+    else if (column.name == "VatPosted") {
+      column.title = "IVA Contab.";
+      column.index = 16;
+    }
+    else if (column.name == "VatNumber") {
+      column.title = "Partita IVA";
+      column.index = 17;
     }
     else if (column.name == "JAccount") {
-      column.index = 40;
+      column.title = "N.conto";
+      column.index = 18;
     }
-    /*else if (column.name == "JAccountComplete") */
     else if (column.name == "JAccountDescription") {
+      column.title = "Des.conto";
       column.type = "description";
-      column.index = 41;
+      column.index = 19;
     }
-    /*else if (column.name == "JAccountClass")
-    else if (column.name == "JAccountSection")
-    else if (column.name == "JAccountType")
-    else if (column.name == "JOriginType")
-    else if (column.name == "JOriginFile")
-    else if (column.name == "JOperationType")
-    else if (column.name == "JAccountGr")
-    else if (column.name == "JAccountGrPath")
-    else if (column.name == "JAmountAccountCurrency")
-    else if (column.name == "JAmount")
-    else if (column.name == "JTransactionCurrency")
-    else if (column.name == "JAmountTransactionCurrency")
-    else if (column.name == "JTransactionCurrencyConversionRate")
-    else if (column.name == "JAmountSection")
-    else if (column.name == "JVatCodeWithoutSign")
-    else if (column.name == "JVatCodeDescription")
-    else if (column.name == "JVatCodeWithMinus")
-    else if (column.name == "JVatNegative")
-    else if (column.name == "JVatTaxable")*/
-    else if (column.name == "JContraAccount")
-      column.index = 50;
+    else if (column.name == "JContraAccount") {
+      column.title = "Ctr.";
+      column.index = 20;
+    }
     else if (column.name == "JCContraAccountDes") {
-      column.index = 51;
+      column.title = "Des.ctrpartita";
       column.type = "description";
+      column.index = 21;
     }
-    /*else if (column.name == "JContraAccountType")
-    else if (column.name == "JContraAccountGroup")
-    else if (column.name == "JDebitAmountAccountCurrency")
-    else if (column.name == "JCreditAmountAccountCurrency")
-    else if (column.name == "JDebitAmount")
-    else if (column.name == "JCreditAmount")
-    else if (column.name == "JInvoiceDocType")
-    else if (column.name == "JInvoiceAccountId")
-    else if (column.name == "JInvoiceCurrency")
-    else if (column.name == "JInvoiceDueDate")
-    else if (column.name == "JInvoiceDaysPastDue")
-    else if (column.name == "JInvoiceIssueDate")
-    else if (column.name == "JInvoiceExpectedDate")
-    else if (column.name == "JInvoiceDuePeriod")
-    else if (column.name == "ProbableIndexGroup")
-    else if (column.name == "VatTwinAccount")*/
-    data.columns[j] = column;
+    else if (column.name == "JAccountCurrency") {
+      column.title = "Moneta conto";
+      column.type = "description";
+      column.index = 22;
+    }
+    else if (column.name == "JAmountAccountCurrency") {
+      column.title = "Importo moneta";
+      column.type = "description";
+      column.index = 23;
+    }
+    else if (column.name == "JAmount") {
+      column.title = "Importo";
+      column.type = "description";
+      column.index = 24;
+    }
+    else if (column.name == "JVatIsVatOperation") {
+      column.title = "Operazione IVA";
+      column.index = 25;
+    }
+    else if (column.name == "JVatCodeWithoutSign") {
+      column.title = "Cod.IVA senza segno";
+      column.index = 26;
+    }
+    else if (column.name == "JVatCodeDescription") {
+      column.title = "Des.codice IVA";
+      column.index = 27;
+    }
+    else if (column.name == "JVatCodeWithMinus") {
+      column.title = "Cod.IVA con segno meno";
+      column.index = 28;
+    }
+    else if (column.name == "JVatNegative") {
+      column.title = "IVA negativa";
+      column.index = 29;
+    }
+    else if (column.name == "JVatTaxable") {
+      column.title = "IVA imponibile";
+      column.index = 30;
+    }
+    else if (column.name == "JContraAccountGroup") {
+      column.title = "Gruppo contropartita";
+      column.index = 31;
+    }
+    else if (column.name == "VatTwinAccount") {
+      column.title = "Conto gemello IVA";
+      column.index = 32;
+    }
+    else if (column.name == "JInvoiceDocType") {
+      column.title = "Tipo fattura";
+      column.index = 33;
+    }
+    else if (column.name == "JInvoiceAccountId") {
+      column.title = "Conto fattura";
+      column.index = 34;
+    }
+    journal.columns[j] = column;
   }
 
   //Additional columns
   var column = {};
   column.name = "DF_Aliquota";
+  column.title = "DF_Aliquota";
   column.visible = true;
   column.type = "amount";
   column.index = 1000;
-  data.columns[j++] = column;
+  journal.columns[j++] = column;
   var column = {};
   column.name = "DF_Imponibile";
+  column.title = "DF_Imponibile";
   column.visible = true;
   column.type = "amount";
   column.index = 1001;
-  data.columns[j++] = column;
+  journal.columns[j++] = column;
   var column = {};
   column.name = "DF_Imposta";
+  column.title = "DF_Imposta";
   column.visible = true;
   column.type = "amount";
   column.index = 1002;
-  data.columns[j++] = column;
+  journal.columns[j++] = column;
   var column = {};
   column.name = "DF_Detraibile";
+  column.title = "DF_Detraibile";
   column.visible = true;
   column.type = "amount";
   column.index = 1003;
-  data.columns[j++] = column;
+  journal.columns[j++] = column;
   var column = {};
   column.name = "DF_Deducibile";
+  column.title = "DF_Deducibile";
   column.visible = true;
   column.type = "amount";
   column.index = 1004;
-  data.columns[j++] = column;
+  journal.columns[j++] = column;
   var column = {};
   column.name = "DF_Gr_IVA";
+  column.title = "DF_Gr_IVA";
   column.visible = true;
   column.type = "description";
   column.index = 1005;
-  data.columns[j++] = column;
+  journal.columns[j++] = column;
   var column = {};
   column.name = "DF_Lordo";
+  column.title = "DF_Lordo";
   column.visible = true;
   column.type = "amount";
   column.index = 1006;
-  data.columns[j++] = column;
+  journal.columns[j++] = column;
   var column = {};
   column.name = "DF_TipoDoc";
+  column.title = "DF_TipoDoc";
   column.visible = true;
   column.type = "description";
   column.index = 1007;
-  data.columns[j++] = column;
+  journal.columns[j++] = column;
   var column = {};
   column.name = "DF_Natura";
+  column.title = "DF_Natura";
   column.visible = true;
   column.type = "description";
   column.index = 1008;
-  data.columns[j++] = column;
-  return data;
+  journal.columns[j++] = column;
+  return journal;
 }
 
 function sortNumber(a,b) {
