@@ -14,17 +14,19 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italy_vat_2017.report.registri.js
-// @description = Registri IVA 2017
+// @description = IVA Italia 2017: Registri IVA...
 // @doctype = *;110
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.errors.js
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-07-25
+// @pubdate = 2017-07-28
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
+
+var debug = true;
 
 /*
  * Update script's parameters
@@ -100,14 +102,13 @@ function exec(inData) {
   
   //add accounting data and journal
   param = readAccountingData(param);
-  param.data = {};  
-  param = setPeriod(param);
-  param = loadJournalCustomersSuppliers(param);
+  param = loadJournalData(param);
   
-  //Print report
   var report = Banana.Report.newReport("Registri IVA");
   var stylesheet = Banana.Report.newStyleSheet();
-  stylesheet.addStyle("@page", "size:portrait;margin:2em;font-size: 8px; ");
+
+  //Print report
+  /*  stylesheet.addStyle("@page", "size:portrait;margin:2em;font-size: 8px; ");
   stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
   stylesheet.addStyle("thead", "font-weight: bold");
   stylesheet.addStyle("td", "padding-right: 1em;");
@@ -130,46 +131,35 @@ function exec(inData) {
   pageFooter.addClass("center");
   pageFooter.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()) + " Pagina ").addFieldPageNr();
   //Data
-  /*for (var index=0; index<param.journals.length; index++) {
+  for (var index=0; index<param.journals.length; index++) {
     printRegister(report, stylesheet, param.journals[index], "VENDITE");
     printRegister(report, stylesheet, param.journals[index], "ACQUISTI");
     printRegister(report, stylesheet, param.journals[index], "CORRISPETTIVI");
     if (index+1<param.journals.length)
       report.addPageBreak();
   }*/
+
+  if (debug) {
+    report.addPageBreak();
+    _debug_printJournal(param.data, report, stylesheet);
+  }
+
   Banana.Report.preview(report, stylesheet);
   return;
 
 }
 
-/*
- * Get customer or supplier data from table Accounts
- */
-function getAccount(accountId) {
-  var jsonObj = {};
-  if (!accountId || accountId.length <= 0)
-    return jsonObj;
-  if (!Banana.document)
-    return jsonObj;
-
-  var tableAccounts = Banana.document.table('Accounts');
-  if (tableAccounts) {
-    var row = tableAccounts.findRowByValue('Account', accountId);
-    if (row) {
-      var jsonString = row.toJSON();
-      jsonObj = JSON.parse(jsonString);
-      for (var key in jsonObj) {
-        if (jsonObj[key].length > 0)
-          jsonObj[key] = xml_escapeString(jsonObj[key]);
-      }
-    }
-  }
-  return jsonObj;
-}
-
 function initParam()
 {
   var param = {};
+  return param;
+}
+
+function loadJournalData(param) {
+  param.data = {};  
+  param.data.startDate = Banana.document.startPeriod();
+  param.data.endDate = Banana.document.endPeriod();
+  param.data = loadJournal(param.data);
   return param;
 }
 
@@ -266,97 +256,6 @@ function printRegister(report, stylesheet, journal, register) {
   
   report.addPageBreak();
 
-}
-
-function readAccountingData(param) {
-
-  param.accountingYear = '';
-
-  var accountingOpeningDate = Banana.document.info("AccountingDataBase", "OpeningDate");
-  var accountingClosureDate = Banana.document.info("AccountingDataBase", "ClosureDate");
-
-  var openingYear = 0;
-  var closureYear = 0;
-  if (accountingOpeningDate.length >= 10)
-    openingYear = accountingOpeningDate.substring(0, 4);
-  if (accountingClosureDate.length >= 10)
-    closureYear = accountingClosureDate.substring(0, 4);
-  if (openingYear > 0 && openingYear === closureYear)
-    param.accountingYear = openingYear;
-
-	//Table FileInfo
-  param.fileInfo = {};
-  param.fileInfo["BasicCurrency"] = "";
-  param.fileInfo["OpeningDate"] = "";
-  param.fileInfo["ClosureDate"] = "";
-  param.fileInfo["CustomersGroup"] = "";
-  param.fileInfo["SuppliersGroup"] = "";
-  param.fileInfo["Address"] = {};
-  param.fileInfo["Address"]["Company"] = "";
-  param.fileInfo["Address"]["Courtesy"] = "";
-  param.fileInfo["Address"]["Name"] = "";
-  param.fileInfo["Address"]["FamilyName"] = "";
-  param.fileInfo["Address"]["Address1"] = "";
-  param.fileInfo["Address"]["Address2"] = "";
-  param.fileInfo["Address"]["Zip"] = "";
-  param.fileInfo["Address"]["City"] = "";
-  param.fileInfo["Address"]["State"] = "";
-  param.fileInfo["Address"]["Country"] = "";
-  param.fileInfo["Address"]["Web"] = "";
-  param.fileInfo["Address"]["Email"] = "";
-  param.fileInfo["Address"]["Phone"] = "";
-  param.fileInfo["Address"]["Mobile"] = "";
-  param.fileInfo["Address"]["Fax"] = "";
-  param.fileInfo["Address"]["FiscalNumber"] = "";
-  param.fileInfo["Address"]["VatNumber"] = "";
-  
-  if (Banana.document.info) {
-    param.fileInfo["BasicCurrency"] = Banana.document.info("AccountingDataBase", "BasicCurrency");
-    param.fileInfo["OpeningDate"] = Banana.document.info("AccountingDataBase", "OpeningDate");
-    param.fileInfo["ClosureDate"] = Banana.document.info("AccountingDataBase", "ClosureDate");
-    param.fileInfo["CustomersGroup"] = Banana.document.info("AccountingDataBase", "CustomersGroup");
-    param.fileInfo["SuppliersGroup"] = Banana.document.info("AccountingDataBase", "SuppliersGroup");
-    param.fileInfo["Address"]["Company"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Company"));
-    param.fileInfo["Address"]["Courtesy"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Courtesy"));
-    param.fileInfo["Address"]["Name"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Name"));
-    param.fileInfo["Address"]["FamilyName"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FamilyName"));
-    param.fileInfo["Address"]["Address1"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address1"));
-    param.fileInfo["Address"]["Address2"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address2"));
-    param.fileInfo["Address"]["Zip"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Zip"));
-    param.fileInfo["Address"]["City"] = xml_escapeString(Banana.document.info("AccountingDataBase", "City"));
-    param.fileInfo["Address"]["State"] = xml_escapeString(Banana.document.info("AccountingDataBase", "State"));
-    param.fileInfo["Address"]["Country"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Country"));
-    param.fileInfo["Address"]["Web"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Web"));
-    param.fileInfo["Address"]["Email"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Email"));
-    param.fileInfo["Address"]["Phone"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Phone"));
-    param.fileInfo["Address"]["Mobile"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Mobile"));
-    param.fileInfo["Address"]["Fax"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Fax"));
-    param.fileInfo["Address"]["FiscalNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FiscalNumber"));
-    param.fileInfo["Address"]["VatNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "VatNumber"));
-  }
-
-  return param;
-}
-
-function setPeriod(param) {
-  param.data.startDate = Banana.document.startPeriod();
-  param.data.endDate = Banana.document.endPeriod();
-  return param;
-}
-
-function tableToCsv(table) {
-    var result = "";
-    for (var i = 0; i < table.length; i++) {
-        var values = table[i];
-        for (var j = 0; values && j < values.length; j++) {
-            if (j > 0)
-                result += ";";
-            var value = values[j];
-            result += value;
-        }
-        result += "\r\n";
-    }
-    return result;
 }
 
 function verifyParam(param) {

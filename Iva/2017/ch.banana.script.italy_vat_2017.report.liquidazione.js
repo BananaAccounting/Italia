@@ -14,14 +14,15 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italy_vat_2017.report.liquidazione.js
-// @description = Comunicazione periodica IVA 2017 (file xml)
+// @description = IVA Italia 2017: Comunicazione periodica IVA...
 // @doctype = *;110
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.createinstance.js
 // @includejs = ch.banana.script.italy_vat_2017.errors.js
+// @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-07-25
+// @pubdate = 2017-07-28
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -51,21 +52,14 @@ function settingsDialog() {
   else if (param.periodoSelezionato == 1)
     dialog.periodoGroupBox.trimestreRadioButton.checked = true;
 
-  dialog.periodoGroupBox.title += " " + accountingData.accountingYear;
+  //dialog.periodoGroupBox.title += " " + accountingData.accountingYear;
   dialog.periodoGroupBox.meseComboBox.currentIndex = param.periodoValoreMese;
   dialog.periodoGroupBox.trimestreComboBox.currentIndex = param.periodoValoreTrimestre;
   
-  //Groupbox liquidazione
-  dialog.liquidazioneGroupBox.tipoVersamentoComboBox.currentIndex = param.tipoVersamento;
-  if (param.interesseTrimestrale.length>0)
-    dialog.liquidazioneGroupBox.interesseSpinBox.value = parseInt(param.interesseTrimestrale);
-  else  
-    dialog.liquidazioneGroupBox.interesseSpinBox.value = 0;
-  
   //Groupbox comunicazione
-  dialog.intestazioneGroupBox.cfLabel_2.text = accountingData.fileInfo["Address"]["FiscalNumber"];
+  dialog.intestazioneGroupBox.cfLabel_2.text = accountingData.datiContribuente.codiceFiscale;
+  dialog.intestazioneGroupBox.partitaIvaLabel_2.text = accountingData.datiContribuente.partitaIva;
   dialog.intestazioneGroupBox.annoImpostaLabel_2.text = accountingData.accountingYear;
-  dialog.intestazioneGroupBox.partitaIvaLabel_2.text = accountingData.fileInfo["Address"]["VatNumber"];
 
   var progressivo = parseInt(param.comunicazioneProgressivo, 10);
   if (!progressivo)
@@ -100,16 +94,14 @@ function settingsDialog() {
     dialog.accept();
   }
   dialog.enableButtons = function () {
-    if (dialog.liquidazioneGroupBox.tipoVersamentoComboBox.currentIndex == 0) {
+    if (accountingData.datiContribuente.liqTipoVersamento == 0) {
         dialog.periodoGroupBox.meseRadioButton.enabled = true;
         dialog.periodoGroupBox.meseComboBox.enabled = true;
-        dialog.liquidazioneGroupBox.interesseSpinBox.enabled = false;
     }
     else {
         dialog.periodoGroupBox.meseRadioButton.enabled = false;
         dialog.periodoGroupBox.meseComboBox.enabled = false;
         dialog.periodoGroupBox.trimestreRadioButton.checked = true;
-        dialog.liquidazioneGroupBox.interesseSpinBox.enabled = true;
     }
     if (dialog.periodoGroupBox.meseRadioButton.checked) {
         dialog.periodoGroupBox.meseComboBox.enabled = true;
@@ -126,7 +118,7 @@ function settingsDialog() {
   var index='';
   dialog.buttonBox.accepted.connect(dialog, "checkdata");
   dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
-  dialog.liquidazioneGroupBox.tipoVersamentoComboBox['currentIndexChanged(QString)'].connect(dialog, "enableButtons");
+  //dialog.liquidazioneGroupBox.tipoVersamentoComboBox['currentIndexChanged(QString)'].connect(dialog, "enableButtons");
   dialog.periodoGroupBox.trimestreRadioButton.clicked.connect(dialog, "enableButtons");
   dialog.periodoGroupBox.meseRadioButton.clicked.connect(dialog, "enableButtons");
   
@@ -146,10 +138,6 @@ function settingsDialog() {
     param.periodoSelezionato = 0;
   else if (dialog.periodoGroupBox.trimestreRadioButton.checked)
     param.periodoSelezionato = 1;
-  
-  //Groupbox liquidazione
-  param.tipoVersamento = dialog.liquidazioneGroupBox.tipoVersamentoComboBox.currentIndex.toString();
-  param.interesseTrimestrale = dialog.liquidazioneGroupBox.interesseSpinBox.value.toString();
   
   //Groupbox comunicazione
   progressivo = dialog.intestazioneGroupBox.progressivoInvioLineEdit.text;
@@ -198,6 +186,7 @@ function exec(inData) {
   var param = {};
   if (inData.length>0) {
     param = JSON.parse(inData);
+    param = verifyParam(param);
   }
   else {
     if (!settingsDialog())
@@ -232,9 +221,9 @@ function exec(inData) {
     stylesheet.addStyle("table.table2", "");
     // Page header
     var pageHeader = report.getHeader();
-    pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["Company"]) + " " + xml_unescapeString(param.fileInfo["Address"]["FamilyName"]) + " " + xml_unescapeString(param.fileInfo["Address"]["Name"]));
-    pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["City"]) + " (" + xml_unescapeString(param.fileInfo["Address"]["State"]) + ")");
-    pageHeader.addParagraph("Partita IVA: " + param.fileInfo["Address"]["VatNumber"], "vatNumber");
+    pageHeader.addParagraph(param.datiContribuente.societa + " " + param.datiContribuente.cognome + " " + param.datiContribuente.nome);
+    pageHeader.addParagraph(param.datiContribuente.comuneSedeLegale + " (" + param.datiContribuente.provinciaSedeLegale + ")");
+    pageHeader.addParagraph("Partita IVA: " + param.datiContribuente.partitaIva, "vatNumber");
     //Data
     for (var index=0; index<param.vatPeriods.length; index++) {
       printVatReport1(report, stylesheet, param.vatPeriods[index]);
@@ -258,7 +247,7 @@ function exec(inData) {
 function calculateInterestAmount(param) {
   var vatTotalWithoutInterest = substractVatAmounts(param["TotalDue"], param["L-INT"]);
   if (Banana.SDecimal.sign(vatTotalWithoutInterest.vatPosted)<=0) {
-    var interestRate = Banana.SDecimal.round(param.interesseTrimestrale, {'decimals':2});
+    var interestRate = Banana.SDecimal.round(param.datiContribuente.liqPercInteressi, {'decimals':2});
     var interestAmount = Banana.SDecimal.abs(vatTotalWithoutInterest.vatPosted) * interestRate /100;
     interestAmount = Banana.SDecimal.roundNearest(interestAmount, '0.01');
     return interestAmount.toString();
@@ -335,9 +324,6 @@ function initParam()
   param.comunicazioneFirmaDichiarazione = true;
   param.comunicazioneFirmaIntermediario = true;
   param.comunicazioneUltimoMese = '';
-
-  param.tipoVersamento = 0;
-  param.interesseTrimestrale = '';
 
   param.periodoSelezionato = 0;
   param.periodoValoreMese = '';
@@ -500,10 +486,16 @@ function printVatReport2(report, stylesheet, param) {
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param["L-INT"].vatPosted)), "amount");
   /*propone interessi trimestrali se importo è diverso da quello visualizzato*/
   var calculatedAmount = 0;
-  if (param.tipoVersamento == 1)
+  if (param.datiContribuente.liqTipoVersamento == 1)
     calculatedAmount = calculateInterestAmount(param);
-  if (Banana.SDecimal.abs(param["L-INT"].vatPosted) != calculatedAmount && !Banana.SDecimal.isZero(calculatedAmount))
-    row.addCell("La registrazione degli interessi (" + param.interesseTrimestrale + "% EUR " + Banana.Converter.toLocaleNumberFormat(calculatedAmount) + ") manca o non è corretta.", "amount warning");
+  if (param.datiContribuente.liqTipoVersamento == 1 && Banana.SDecimal.abs(param["L-INT"].vatPosted) != calculatedAmount) {
+    var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
+    msg = msg.replace("%1", param.datiContribuente.liqPercInteressi );
+    msg = msg.replace("%2", Banana.Converter.toLocaleNumberFormat(calculatedAmount) );
+    row.addCell(msg, "amount warning");
+  }
+  else if (param.datiContribuente.liqTipoVersamento == 0 && Banana.SDecimal.abs(param["L-INT"].vatPosted) != calculatedAmount)
+    row.addCell(getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE), "amount warning");
   else
     row.addCell("");
 
@@ -524,78 +516,8 @@ function printVatReport2(report, stylesheet, param) {
 
 }
 
-function readAccountingData(param) {
-
-  //Table FileInfo
-  param.fileInfo = {};
-  param.fileInfo["BasicCurrency"] = "";
-  param.fileInfo["OpeningDate"] = "";
-  param.fileInfo["ClosureDate"] = "";
-  param.fileInfo["CustomersGroup"] = "";
-  param.fileInfo["SuppliersGroup"] = "";
-  param.fileInfo["Address"] = {};
-  param.fileInfo["Address"]["Company"] = "";
-  param.fileInfo["Address"]["Courtesy"] = "";
-  param.fileInfo["Address"]["Name"] = "";
-  param.fileInfo["Address"]["FamilyName"] = "";
-  param.fileInfo["Address"]["Address1"] = "";
-  param.fileInfo["Address"]["Address2"] = "";
-  param.fileInfo["Address"]["Zip"] = "";
-  param.fileInfo["Address"]["City"] = "";
-  param.fileInfo["Address"]["State"] = "";
-  param.fileInfo["Address"]["Country"] = "";
-  param.fileInfo["Address"]["Web"] = "";
-  param.fileInfo["Address"]["Email"] = "";
-  param.fileInfo["Address"]["Phone"] = "";
-  param.fileInfo["Address"]["Mobile"] = "";
-  param.fileInfo["Address"]["Fax"] = "";
-  param.fileInfo["Address"]["FiscalNumber"] = "";
-  param.fileInfo["Address"]["VatNumber"] = "";
-  
-  if (Banana.document.info) {
-    param.fileInfo["BasicCurrency"] = Banana.document.info("AccountingDataBase", "BasicCurrency");
-    param.fileInfo["OpeningDate"] = Banana.document.info("AccountingDataBase", "OpeningDate");
-    param.fileInfo["ClosureDate"] = Banana.document.info("AccountingDataBase", "ClosureDate");
-    param.fileInfo["CustomersGroup"] = Banana.document.info("AccountingDataBase", "CustomersGroup");
-    param.fileInfo["SuppliersGroup"] = Banana.document.info("AccountingDataBase", "SuppliersGroup");
-    param.fileInfo["Address"]["Company"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Company"));
-    param.fileInfo["Address"]["Courtesy"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Courtesy"));
-    param.fileInfo["Address"]["Name"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Name"));
-    param.fileInfo["Address"]["FamilyName"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FamilyName"));
-    param.fileInfo["Address"]["Address1"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address1"));
-    param.fileInfo["Address"]["Address2"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address2"));
-    param.fileInfo["Address"]["Zip"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Zip"));
-    param.fileInfo["Address"]["City"] = xml_escapeString(Banana.document.info("AccountingDataBase", "City"));
-    param.fileInfo["Address"]["State"] = xml_escapeString(Banana.document.info("AccountingDataBase", "State"));
-    param.fileInfo["Address"]["Country"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Country"));
-    param.fileInfo["Address"]["Web"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Web"));
-    param.fileInfo["Address"]["Email"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Email"));
-    param.fileInfo["Address"]["Phone"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Phone"));
-    param.fileInfo["Address"]["Mobile"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Mobile"));
-    param.fileInfo["Address"]["Fax"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Fax"));
-    param.fileInfo["Address"]["FiscalNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FiscalNumber"));
-    param.fileInfo["Address"]["VatNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "VatNumber"));
-  }
-
-  var accountingOpeningDate = param.fileInfo["OpeningDate"];
-  var accountingClosureDate = param.fileInfo["ClosureDate"];
-
-  var openingYear = 0;
-  var closureYear = 0;
-  if (accountingOpeningDate.length >= 10)
-    openingYear = accountingOpeningDate.substring(0, 4);
-  if (accountingClosureDate.length >= 10)
-    closureYear = accountingClosureDate.substring(0, 4);
-
-  param.accountingYear = '';
-  if (openingYear > 0 && openingYear === closureYear)
-    param.accountingYear = openingYear;
-
-  return param;
-}
-
 function saveData(output, param) {
-  var codiceFiscale = param.fileInfo["Address"]["FiscalNumber"];
+  var codiceFiscale = param.datiContribuente.codiceFiscale;
   if (codiceFiscale.length<=0)
     codiceFiscale = "99999999999";
   var fileName = "IT" + codiceFiscale + "_LI_" + param.comunicazioneProgressivo + ".xml";
@@ -679,17 +601,20 @@ function vatCodesLoad(param)
       startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01";
       endDate = param.accountingYear.toString() + zeroPad(month, 2) + "31";
     }
-    param = vatCodesLoadPeriod(param, startDate, endDate);
 
-    if (param.tipoVersamento == 1) {
-      //messaggio con selezione di un mese e tipo versamento trimestrale
+    //se il tipo di versamento è trimestrale avvisa che è stato selezionato un mese
+    if (param.datiContribuente.liqTipoVersamento == 1) {
       var msg = getErrorMessage(ID_ERR_TIPOVERSAMENTO);
       Banana.document.addMessage( msg, ID_ERR_TIPOVERSAMENTO);
+      startDate = '';
+      endDate = '';
     }
+    if (startDate.length>0 && endDate.length>0)
+      param = vatCodesLoadPeriod(param, startDate, endDate);
   }
   else {
-    //TRIMESTRE
-    if (param.tipoVersamento == 0) {
+    //TRIMESTRE param.periodoSelezionato == 1
+    if (param.datiContribuente.liqTipoVersamento == 0) {
       if (param.periodoValoreTrimestre === "0") {
         startDate = param.accountingYear.toString() + "0101";
         endDate = param.accountingYear.toString() + "0131";
@@ -919,16 +844,14 @@ function vatCodesLoadPeriod(param, _startDate, _endDate)
 
   vatAmounts.startDate = _startDate;
   vatAmounts.endDate = _endDate;
-  vatAmounts.tipoVersamento = param.tipoVersamento;
-  vatAmounts.interesseTrimestrale = param.interesseTrimestrale;
+  vatAmounts.datiContribuente = {};
+  vatAmounts.datiContribuente.liqTipoVersamento = param.datiContribuente.liqTipoVersamento;
+  vatAmounts.datiContribuente.liqPercInteressi = param.datiContribuente.liqPercInteressi;
   param.vatPeriods.push(vatAmounts);
   return param;
 }
 
 function verifyParam(param) {
-  //compatibilità con versioni precedenti
-  if (param.repStartDate)
-    param = {};
   if (!param.comunicazioneProgressivo)
     param.comunicazioneProgressivo = '';
   if (!param.comunicazioneCFDichiarante)
@@ -947,10 +870,6 @@ function verifyParam(param) {
     param.comunicazioneFirmaIntermediario = false;
   if (!param.comunicazioneUltimoMese)
     param.comunicazioneUltimoMese = '';
-  if (!param.tipoVersamento)
-    param.tipoVersamento = 0;
-  if (!param.interesseTrimestrale)
-    param.interesseTrimestrale = '';
   if (!param.periodoSelezionato)
     param.periodoSelezionato = 0;
   if (!param.periodoValoreMese)

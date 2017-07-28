@@ -13,7 +13,17 @@
 // limitations under the License.
 
 /*
- * Get customer or supplier data from table Accounts
+ * ------------------------------------ REPORT IVA ITALIA 2017 ------------------------------------
+ *
+ * Metodi che riprendono i dati dal file contabile ac2 (giornale, dati base, tabella conti)
+ *
+ * ------------------------------------------------------------------------------------------------
+*/
+
+/*
+ * Ritorna un oggetto json con i dati del cliente o fornitore ripresi dalla tabella conti(indirizzo, saldo, ...)
+ *
+ * @accountId	numero conto cliente/fornitore
  */
 function getAccount(accountId) {
   var jsonObj = {};
@@ -38,36 +48,38 @@ function getAccount(accountId) {
 }
 
 /*
- * Load data from journal 
- * This function is used from all reports
-*/
-function loadJournalCustomersSuppliers(data)
+ * Riprende l'elenco delle registrazioni iva che appartengono al gruppo clienti/fornitori
+ * Ritorna il parametro iniziale con l'aggiunta del giornale e dell'elenco registrazioni iva 
+ *
+ * @param	parametro con data inizio/fine periodo
+ */
+function loadJournal(param)
 {
   if (!Banana.document || typeof (Banana.document.journalCustomersSuppliers) === 'undefined')
     return false;
 
   var journal = Banana.document.journalCustomersSuppliers(
     Banana.document.ORIGINTYPE_CURRENT, Banana.document.ACCOUNTTYPE_NORMAL);
-  var filteredRows = journal.findRows(loadJournalCustomersSuppliers_filter);
+  var filteredRows = journal.findRows(loadJournal_filter);
 
   if (!journal || !filteredRows)
     return false;
 
   var tableVatCodes = Banana.document.table('VatCodes');
-  var periodStart = Banana.Converter.toDate(data.startDate);
-  var periodEnd = Banana.Converter.toDate(data.endDate);
-  data.customers = {};
-  data.suppliers = {};
-  data.journal = {};
-  data.journal.rows = [];
+  var periodStart = Banana.Converter.toDate(param.startDate);
+  var periodEnd = Banana.Converter.toDate(param.endDate);
+  param.customers = {};
+  param.suppliers = {};
+  param.journal = {};
+  param.journal.rows = [];
 
-  //Load column names
+  //Salva i nomi delle colonne del giornale
   var tColumnNames = journal.columnNames;
-  data.journal = setColumns(data.journal, tColumnNames);
+  param.journal = loadJournal_setColumns(param.journal, tColumnNames);
 
-  //Load customers/suppliers accounts
+  //Carica l'elenco clienti/fornitori
   for (var i = 0; i < filteredRows.length; i++) {
-    //Check period
+    //Controllo periodo
     var validPeriod = false;
     var value = filteredRows[i].value("JDate");
     var currentDate = Banana.Converter.stringToDate(value, "YYYY-MM-DD");
@@ -76,7 +88,7 @@ function loadJournalCustomersSuppliers(data)
     if (!validPeriod)
       continue;
 
-    //Only rows with JInvoiceRowCustomerSupplier=1 (customer) or JInvoiceRowCustomerSupplier=2 (supplier)
+    //Solamente righe con JInvoiceRowCustomerSupplier=1 (cliente) or JInvoiceRowCustomerSupplier=2 (fornitore)
     var isCustomer = filteredRows[i].value("JInvoiceRowCustomerSupplier");
     if (isCustomer!='1' && isCustomer!='2')
       continue;
@@ -86,23 +98,23 @@ function loadJournalCustomersSuppliers(data)
       var accountObj = getAccount(accountId);
       if (accountObj) {
         if (isCustomer == '1') {
-          data.customers[accountId] = accountObj;
+          param.customers[accountId] = accountObj;
         }
         else if (isCustomer == '2') {
-          data.suppliers[accountId] = accountObj;
+          param.suppliers[accountId] = accountObj;
         }
       }
     }
   }
   
-  //Load transactions
+  //Carica le registrazioni IVA
   for (var i = 0; i < filteredRows.length; i++) {
-    //Only vat operations
+    //Solo operazioni IVA
     var isVatOperation = filteredRows[i].value("JVatIsVatOperation");
     if (!isVatOperation)
       continue;
 
-    //Checks period
+    //Controllo periodo
     var validPeriod = false;
     var value = filteredRows[i].value("JDate");
     var currentDate = Banana.Converter.stringToDate(value, "YYYY-MM-DD");
@@ -111,8 +123,8 @@ function loadJournalCustomersSuppliers(data)
     if (!validPeriod)
       continue;
 
-    //Checks customer or supplier accounts
-	/*TODO: vedere se si può semplificare controllando meno campi*/
+    //La registrazione IVA deve contenere un conto cliente/fornitore
+    /*TODO: vedere se si può semplificare controllando meno campi*/
     var isCustomer=false;
     var isSupplier=false;
     var accountId = filteredRows[i].value("JAccount");
@@ -121,46 +133,46 @@ function loadJournalCustomersSuppliers(data)
     var accountDebitId = filteredRows[i].value("AccountDebit");
     var accountCreditId = filteredRows[i].value("AccountCredit");
 
-    if (accountId in data.customers) {
+    if (accountId in param.customers) {
       isCustomer = true;
     }
-    else if (contraAccountId in data.customers) {
+    else if (contraAccountId in param.customers) {
       isCustomer = true;
       accountId = contraAccountId;
     }
-    else if (vatTwinAccountId in data.customers) {
+    else if (vatTwinAccountId in param.customers) {
       isCustomer = true;
       accountId = vatTwinAccountId;
     }
-    else if (accountDebitId in data.customers) {
+    else if (accountDebitId in param.customers) {
       isCustomer = true;
       accountId = accountDebitId;
     }
-    else if (accountCreditId in data.customers) {
+    else if (accountCreditId in param.customers) {
       isCustomer = true;
       accountId = accountCreditId;
     }
-    else if (accountId in data.suppliers) {
+    else if (accountId in param.suppliers) {
       isSupplier = true;
     }
-    else if (contraAccountId in data.suppliers) {
+    else if (contraAccountId in param.suppliers) {
       isSupplier = true;
       accountId = contraAccountId;
     }
-    else if (vatTwinAccountId in data.suppliers) {
+    else if (vatTwinAccountId in param.suppliers) {
       isSupplier = true;
       accountId = vatTwinAccountId;
     }
-    else if (accountDebitId in data.suppliers) {
+    else if (accountDebitId in param.suppliers) {
       isSupplier = true;
       accountId = accountDebitId;
     }
-    else if (accountCreditId in data.suppliers) {
+    else if (accountCreditId in param.suppliers) {
       isSupplier = true;
       accountId = accountCreditId;
     }
 
-    //Add data from journal
+    //Crea un oggetto json dove vengono salvate tutte le informazioni della riga
     var jsonLine = {};
     for (var j = 0; j < tColumnNames.length; j++) {
       var columnName = tColumnNames[j];
@@ -173,66 +185,78 @@ function loadJournalCustomersSuppliers(data)
       }
     }
 
-    //Additional data
-    //DF_Aliquota
-    jsonLine["DF_Aliquota"] = '';
+    //Dati supplementari
+    //IT_Aliquota
+    jsonLine["IT_Aliquota"] = '';
     value = filteredRows[i].value("VatRate");
     if (Banana.SDecimal.isZero(value))
       value = '0.00';
     else
       value = Banana.SDecimal.abs(value);
-    jsonLine["DF_Aliquota"] = value;
+    jsonLine["IT_Aliquota"] = value;
 
-    //DF_Imponibile
-    jsonLine["DF_Imponibile"] = '';
+    //IT_Imponibile
+    jsonLine["IT_Imponibile"] = '';
     value = filteredRows[i].value("JVatTaxable");
     if (Banana.SDecimal.isZero(value))
       value = '0.00';
     else
       value = Banana.SDecimal.abs(value);
-    jsonLine["DF_Imponibile"] = value;
+    jsonLine["IT_Imponibile"] = value;
 
-    //DF_Imposta
-    jsonLine["DF_Imposta"] = '';
+    //IT_Imposta
+    jsonLine["IT_Imposta"] = '';
     value = filteredRows[i].value("VatPosted");
     if (Banana.SDecimal.isZero(value))
       value = '0.00';
     else
       value = Banana.SDecimal.abs(value);
-    jsonLine["DF_Imposta"] = value;
+    jsonLine["IT_Imposta"] = value;
 
-    //DF_Detraibile
-    //DF_Deducibile
-    jsonLine["DF_Detraibile"] = '';
-    jsonLine["DF_Deducibile"] = '';
+    //IT_Detraibile
+    //IT_Deducibile
+    jsonLine["IT_Detraibile"] = '';
+    jsonLine["IT_Deducibile"] = '';
     value = filteredRows[i].value("VatPercentNonDeductible");
     if (!Banana.SDecimal.isZero(value)) {
       if (!Banana.SDecimal.isZero(value)) {
         var detraibile = Banana.SDecimal.subtract('100', value);
-        jsonLine["DF_Detraibile"] = detraibile;
+        jsonLine["IT_Detraibile"] = detraibile;
       }
     }
 
-    //DF_Gr_IVA
-    jsonLine["DF_Gr_IVA"] = '';
+    //IT_Gr_IVA
+    //IT_Registro
+    jsonLine["IT_Gr_IVA"] = '';
+    jsonLine["IT_Registro"] = '';
     var vatCode = filteredRows[i].value("JVatCodeWithoutSign");
     if (vatCode.length && tableVatCodes) {
       var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
       if (rowVatCodes) {
-        jsonLine["DF_Gr_IVA"] = rowVatCodes.value("Gr");
+        var gr0 = rowVatCodes.value("Gr");
+        jsonLine["IT_Gr_IVA"] = gr0;
+        if (gr0.indexOf('-')>0) {
+          var gr1 = gr0.substr(0,1);
+          if (gr1 == "A")
+            jsonLine["IT_Registro"] = "Acquisti";
+          else if (gr1 == "V")
+            jsonLine["IT_Registro"] = "Vendite";
+          else if (gr1 == "C")
+            jsonLine["IT_Registro"] = "Corrispettivi";
+        }
       }
     }
 
-    //DF_Lordo
-    jsonLine["DF_Lordo"] = '';
+    //IT_Lordo
+    jsonLine["IT_Lordo"] = '';
     value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
     if (Banana.SDecimal.isZero(value))
       value = '0.00';
     else
       value = Banana.SDecimal.abs(value);
-    jsonLine["DF_Lordo"] = value;
+    jsonLine["IT_Lordo"] = value;
 
-    //DF_TipoDoc
+    //IT_TipoDoc
     //TD01 Fattura  
     //TD04 Nota di credito  
     //TD05 Nota di debito
@@ -240,7 +264,7 @@ function loadJournalCustomersSuppliers(data)
     //TD08 Nota di credito semplificata
     //TD10 Fattura di acquisto intracomunitario beni
     //TD11 Fattura di acquisto intracomunitario servizi
-    jsonLine["DF_TipoDoc"] = '';
+    jsonLine["IT_TipoDoc"] = '';
     var tipoDoc = filteredRows[i].value("JInvoiceDocType");
     if (tipoDoc.length<=0)
       tipoDoc =  filteredRows[i].value("DocType");
@@ -248,23 +272,23 @@ function loadJournalCustomersSuppliers(data)
     if (jsonLine["JVatNegative"]  == '1') {
       if (isCustomer) {
         if (tipoDoc == '14' || tipoDoc == '12')
-          jsonLine["DF_TipoDoc"] = 'TD05';
+          jsonLine["IT_TipoDoc"] = 'TD05';
         else
-          jsonLine["DF_TipoDoc"] = 'TD01';
+          jsonLine["IT_TipoDoc"] = 'TD01';
       }
       else if (isSupplier) {
-        jsonLine["DF_TipoDoc"] = 'TD04';
+        jsonLine["IT_TipoDoc"] = 'TD04';
       }
     }
     else {
       if (isCustomer) {
-        jsonLine["DF_TipoDoc"] = 'TD04';
+        jsonLine["IT_TipoDoc"] = 'TD04';
       }
       else if (isSupplier) {
         if (tipoDoc == '24' || tipoDoc == '22')
-          jsonLine["DF_TipoDoc"] = 'TD05';
+          jsonLine["IT_TipoDoc"] = 'TD05';
         else
-          jsonLine["DF_TipoDoc"] = 'TD01';
+          jsonLine["IT_TipoDoc"] = 'TD01';
       }
     }
 
@@ -273,15 +297,15 @@ function loadJournalCustomersSuppliers(data)
       if (rowVatCodes) {
         var vatGr = rowVatCodes.value("Gr");
         if (vatGr && vatGr.indexOf("EU-S")>=0) {
-          jsonLine["DF_TipoDoc"] = 'TD11';
+          jsonLine["IT_TipoDoc"] = 'TD11';
         }
         else if (vatGr && vatGr.indexOf("EU")>=0) {
-          jsonLine["DF_TipoDoc"] = 'TD10';
+          jsonLine["IT_TipoDoc"] = 'TD10';
         }
       }
     }
 
-    //DF_Natura
+    //IT_Natura
     //N1 escluse ex art. 15
     //N2 non soggette
     //N3 non imponibili
@@ -289,83 +313,80 @@ function loadJournalCustomersSuppliers(data)
     //N5 regime del margine / IVA non esposta in fattura
     //N6 inversione contabile (reverse charge)
     //N7 IVA assolta in altro stato UE 
-    jsonLine["DF_Natura"] = '';
-    if (Banana.document && vatCode.length) {
-      if (tableVatCodes) {
-        var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
-        if (rowVatCodes) {
-          var vatGr = rowVatCodes.value("Gr");
-          if (vatGr.indexOf("-FC")>=0) {
-            jsonLine["DF_Natura"] = 'N1';
-          }
-          else if (vatGr.startsWith("V-NI") || vatGr.startsWith("A-NI")) {
-            jsonLine["DF_Natura"] = 'N3';
-          }
-          else if (vatGr.startsWith("V-ES") || vatGr.startsWith("A-ES")) {
-            jsonLine["DF_Natura"] = 'N4';
-          }
-          else if (vatGr.startsWith("V-NE") || vatGr.startsWith("A-NE")) {
-            jsonLine["DF_Natura"] = 'N5';
-          }
-          else if (vatGr.indexOf("-EU")>=0) {
-            jsonLine["DF_Natura"] = 'N6';
-          }
-          else if (vatGr.indexOf("-REV")>=0) {
-            jsonLine["DF_Natura"] = 'N7';
-          }
+    jsonLine["IT_Natura"] = '';
+    if (Banana.document && tableVatCodes && (jsonLine["IT_Registro"]=='Acquisti' || jsonLine["IT_Registro"]=='Vendite')) {
+      var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
+      if (rowVatCodes) {
+        var vatGr = rowVatCodes.value("Gr");
+        if (vatGr.indexOf("-FC")>=0) {
+          jsonLine["IT_Natura"] = 'N1';
+        }
+        else if (vatGr.startsWith("V-NI") || vatGr.startsWith("A-NI")) {
+          jsonLine["IT_Natura"] = 'N3';
+        }
+        else if (vatGr.startsWith("V-ES") || vatGr.startsWith("A-ES")) {
+          jsonLine["IT_Natura"] = 'N4';
+        }
+        else if (vatGr.startsWith("V-NE") || vatGr.startsWith("A-NE")) {
+          jsonLine["IT_Natura"] = 'N5';
+        }
+        else if (vatGr.indexOf("-EU")>=0) {
+          jsonLine["IT_Natura"] = 'N6';
+        }
+        else if (vatGr.indexOf("-REV")>=0) {
+          jsonLine["IT_Natura"] = 'N7';
         }
       }
-    }
 
-    //Controllo DF_Natura e aliquota
-    var aliquota = jsonLine["DF_Aliquota"];
-    var imposta = jsonLine["DF_Imposta"];
-    var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
+      //Controllo IT_Natura e aliquota
+      var aliquota = jsonLine["IT_Aliquota"];
+      var imposta = jsonLine["IT_Imposta"];
+      var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
 
-    //Fatture ricevute, natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
-    if (isCustomer=='2' && jsonLine["DF_Natura"] == "N6") {
-      if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
-        msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
-        Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
+      //Fatture ricevute, natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
+      if (isCustomer=='2' && jsonLine["IT_Natura"] == "N6") {
+        if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
+          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
+          Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
+        }
       }
-    }
-    //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
-    else if (jsonLine["DF_Natura"].length>0 && !Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
-      msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
-      Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
-    }
-    //Se i campi Imposta e Aliquota sono vuoti, il campo Natura dev'essere valorizzato
-    else if (jsonLine["DF_Natura"].length<=0 && Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota)) {
-      msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
-      Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+      //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
+      else if (jsonLine["IT_Natura"].length>0 && !Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
+        msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+        Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+      }
+      //Se i campi Imposta e Aliquota sono vuoti, il campo Natura dev'essere valorizzato
+      else if (jsonLine["IT_Natura"].length<=0 && Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota)) {
+        msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+        Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+      }
     }
 
     //Aggiunge la riga nei parametri
     if (isCustomer) {
-      if (!data.customers[accountId].rows)
-        data.customers[accountId].rows = [];
-      data.customers[accountId].rows.push(jsonLine);
+      if (!param.customers[accountId].rows)
+        param.customers[accountId].rows = [];
+      param.customers[accountId].rows.push(jsonLine);
     }
     else if (isSupplier) {
-      if (!data.suppliers[accountId].rows)
-        data.suppliers[accountId].rows = [];
-      data.suppliers[accountId].rows.push(jsonLine);
+      if (!param.suppliers[accountId].rows)
+        param.suppliers[accountId].rows = [];
+      param.suppliers[accountId].rows.push(jsonLine);
     }
 
     //Write rows for debugging purposes
     /*var jsonString = filteredRows[i].toJSON();
     var jsonObj = JSON.parse(jsonString);
-    data.journal.rows.push(jsonObj);*/
-    data.journal.rows.push(jsonLine);
+    param.journal.rows.push(jsonObj);*/
+    param.journal.rows.push(jsonLine);
 
   }
   
-  return data;
+  return param;
   
 }
 
-function loadJournalCustomersSuppliers_filter(row, index, table) {
-
+function loadJournal_filter(row, index, table) {
   //only normal transaction with vat
   //OperationType_None = 0, OperationType_Opening = 1, OperationType_CarryForward = 2,
   //OperationType_Transaction = 3, OperationType_Closure = 4, OperationType_Total = 6
@@ -376,163 +397,8 @@ function loadJournalCustomersSuppliers_filter(row, index, table) {
   return true;
 }
 
-function printCustomersSuppliersJournal(data, report, stylesheet) {
-
-  //Column count
-  var sortedColumns = [];
-  for (var i in data.journal.columns) {
-    if (data.journal.columns[i].index>=0)
-      sortedColumns.push(data.journal.columns[i].index);
-  }
-  sortedColumns.sort(sortNumber);  
-
-  //Title
-  var table = report.addTable("tableJournalCustomersSuppliers");
-  var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Customers/Suppliers", "title",  sortedColumns.length);
-  
-  //Period
-  var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(data.startDate);
-  periodo +=" al " + Banana.Converter.toLocaleDateFormat(data.endDate);
-  headerRow = table.getHeader().addRow();
-  headerRow.addCell(periodo, "period",  sortedColumns.length);
-  
-  //Header
-  var headerRow = table.getHeader().addRow();
-  for (var i in sortedColumns) {
-    var index = sortedColumns[i];
-    for (var j in data.journal.columns) {
-      if (data.journal.columns[j].index == index) {
-        var columnTitle = data.journal.columns[j].title;
-        /*if (columnTitle.length>8)
-          columnTitle = columnTitle.substring(0, 7) + ".";*/
-        headerRow.addCell(columnTitle);
-        break;
-      }
-    }
-  }
-
-  // Print data
-  var row = table.addRow();
-  row.addCell("------------------- customers -------------------", "", sortedColumns.length);
-  for (var i in data.customers) {
-    for (var j in data.customers[i].rows) {
-      var rowJsonObj = data.customers[i].rows[j];
-      var row = table.addRow();
-      for (var k in sortedColumns) {
-        var index = sortedColumns[k];
-        for (var l in data.journal.columns) {
-          if (data.journal.columns[l].index == index) {
-            var columnName = data.journal.columns[l].name;
-            var content = rowJsonObj[columnName];
-            if (content.length>11 && data.journal.columns[l].type == "description")
-              content = content.substring(0,10) + "...";
-            row.addCell(content, data.journal.columns[l].type);
-            break;
-          }
-        }
-      }
-    }
-  }
-  
-  var row = table.addRow();
-  row.addCell("------------------- suppliers -------------------", "", sortedColumns.length);
-  for (var i in data.suppliers) {
-    for (var j in data.suppliers[i].rows) {
-      var rowJsonObj = data.suppliers[i].rows[j];
-      var row = table.addRow();
-      for (var k in sortedColumns) {
-        var index = sortedColumns[k];
-        for (var l in data.journal.columns) {
-          if (data.journal.columns[l].index == index) {
-            var columnName = data.journal.columns[l].name;
-            var content = rowJsonObj[columnName];
-            if (content.length>11 && data.journal.columns[l].type == "description")
-              content = content.substring(0,10) + "...";
-            row.addCell(content, data.journal.columns[l].type);
-            break;
-          }
-        }
-      }
-    }
-  }
-  
-  printJournal_addStyle(data, report, stylesheet);
-
-}
-
-function printJournal(data, report, stylesheet) {
-
-  //Column count
-  var sortedColumns = [];
-  for (var i in data.journal.columns) {
-    if (data.journal.columns[i].index>=0)
-      sortedColumns.push(data.journal.columns[i].index);
-  }
-  sortedColumns.sort(sortNumber);  
-
-  //Title
-  var table = report.addTable("tableJournal");
-  var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Registrazioni IVA Italia", "title",  sortedColumns.length);
-  
-  //Period
-  var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(data.startDate);
-  periodo +=" al " + Banana.Converter.toLocaleDateFormat(data.endDate);
-  headerRow = table.getHeader().addRow();
-  headerRow.addCell(periodo, "period",  sortedColumns.length);
-  
-  //Header
-  var headerRow = table.getHeader().addRow();
-  for (var i in sortedColumns) {
-    var index = sortedColumns[i];
-    for (var j in data.journal.columns) {
-      if (data.journal.columns[j].index == index) {
-        var columnTitle = data.journal.columns[j].title;
-        /*if (columnTitle.length>8)
-          columnTitle = columnTitle.substring(0, 7) + ".";*/
-        headerRow.addCell(columnTitle);
-        break;
-      }
-    }
-  }
-
-  // Print data
-  var row = table.addRow();
-  for (var i=0; i < data.journal.rows.length;i++) {
-    var jsonObj = data.journal.rows[i];
-    var row = table.addRow();
-    for (var j in sortedColumns) {
-      var index = sortedColumns[j];
-      for (var k in data.journal.columns) {
-        if (data.journal.columns[k].index == index) {
-          var content = jsonObj[data.journal.columns[k].name];
-          row.addCell(content, data.journal.columns[k].type);
-          break;
-        }
-      }
-    }
-  }
-  
-  printJournal_addStyle(data, report, stylesheet);
-
-}
-
-function printJournal_addStyle(data, report, stylesheet) {
-  //style
-  stylesheet.addStyle(".tableJournalCustomersSuppliers", "margin-top:1em;width:100%;");
-  stylesheet.addStyle(".tableJournalCustomersSuppliers td", "border:1px solid #333333");
-  stylesheet.addStyle(".tableJournal", "margin-top:1em;width:100%;");
-  stylesheet.addStyle(".tableJournal td", "border:1px solid #333333");
-  
-  stylesheet.addStyle(".title", "background-color:#ffffff;border:1px solid #ffffff;font-size:10px;");
-  stylesheet.addStyle(".period", "background-color:#ffffff;border:1px solid #ffffff;");
-  stylesheet.addStyle(".amount", "text-align:right;");
-}
-
-function setColumns(journal, journalColumns) {
-  //Journal columns
-  journal.columns = {};
+function loadJournal_setColumns(param, journalColumns) {
+  param.columns = {};
   for (var j = 0; j < journalColumns.length; j++) {
     var column = {};
     column.name = journalColumns[j];
@@ -685,76 +551,327 @@ function setColumns(journal, journalColumns) {
       column.title = "Conto fattura";
       column.index = 34;
     }
-    journal.columns[j] = column;
+    param.columns[j] = column;
   }
 
   //Additional columns
   var column = {};
-  column.name = "DF_Aliquota";
-  column.title = "DF_Aliquota";
+  column.name = "IT_Aliquota";
+  column.title = "IT_Aliquota";
   column.visible = true;
   column.type = "amount";
   column.index = 1000;
-  journal.columns[j++] = column;
+  param.columns[j++] = column;
   var column = {};
-  column.name = "DF_Imponibile";
-  column.title = "DF_Imponibile";
+  column.name = "IT_Imponibile";
+  column.title = "IT_Imponibile";
   column.visible = true;
   column.type = "amount";
   column.index = 1001;
-  journal.columns[j++] = column;
+  param.columns[j++] = column;
   var column = {};
-  column.name = "DF_Imposta";
-  column.title = "DF_Imposta";
+  column.name = "IT_Imposta";
+  column.title = "IT_Imposta";
   column.visible = true;
   column.type = "amount";
   column.index = 1002;
-  journal.columns[j++] = column;
+  param.columns[j++] = column;
   var column = {};
-  column.name = "DF_Detraibile";
-  column.title = "DF_Detraibile";
+  column.name = "IT_Detraibile";
+  column.title = "IT_Detraibile";
   column.visible = true;
   column.type = "amount";
   column.index = 1003;
-  journal.columns[j++] = column;
+  param.columns[j++] = column;
   var column = {};
-  column.name = "DF_Deducibile";
-  column.title = "DF_Deducibile";
+  column.name = "IT_Deducibile";
+  column.title = "IT_Deducibile";
   column.visible = true;
   column.type = "amount";
   column.index = 1004;
-  journal.columns[j++] = column;
+  param.columns[j++] = column;
   var column = {};
-  column.name = "DF_Gr_IVA";
-  column.title = "DF_Gr_IVA";
+  column.name = "IT_Gr_IVA";
+  column.title = "IT_Gr_IVA";
   column.visible = true;
   column.type = "description";
   column.index = 1005;
-  journal.columns[j++] = column;
+  param.columns[j++] = column;
   var column = {};
-  column.name = "DF_Lordo";
-  column.title = "DF_Lordo";
-  column.visible = true;
-  column.type = "amount";
-  column.index = 1006;
-  journal.columns[j++] = column;
-  var column = {};
-  column.name = "DF_TipoDoc";
-  column.title = "DF_TipoDoc";
+  column.name = "IT_Registro";
+  column.title = "IT_Registro";
   column.visible = true;
   column.type = "description";
-  column.index = 1007;
-  journal.columns[j++] = column;
+  column.index = 1006;
+  param.columns[j++] = column;
   var column = {};
-  column.name = "DF_Natura";
-  column.title = "DF_Natura";
+  column.name = "IT_Lordo";
+  column.title = "IT_Lordo";
+  column.visible = true;
+  column.type = "amount";
+  column.index = 1007;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_TipoDoc";
+  column.title = "IT_TipoDoc";
   column.visible = true;
   column.type = "description";
   column.index = 1008;
-  journal.columns[j++] = column;
-  return journal;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_Natura";
+  column.title = "IT_Natura";
+  column.visible = true;
+  column.type = "description";
+  column.index = 1009;
+  param.columns[j++] = column;
+  return param;
 }
 
-function sortNumber(a,b) {
+/*
+ * Riprende i dati base della contabilità leggendo la tabella FileInfo (Strumenti - Tabella Info)
+ * Riprende anche i dati contribuente salvati dallo script id  @id = ch.banana.script.italy_vat_2017.daticontribuente.js
+ *
+ * @param	parametro iniziale dove vengono salvati i dati letti
+ */
+function readAccountingData(param) {
+
+  if (!param)
+    param = {};
+
+  //Table FileInfo
+  param.fileInfo = {};
+  param.fileInfo["BasicCurrency"] = "";
+  param.fileInfo["OpeningDate"] = "";
+  param.fileInfo["ClosureDate"] = "";
+  param.fileInfo["CustomersGroup"] = "";
+  param.fileInfo["SuppliersGroup"] = "";
+  param.fileInfo["Address"] = {};
+  param.fileInfo["Address"]["Company"] = "";
+  param.fileInfo["Address"]["Courtesy"] = "";
+  param.fileInfo["Address"]["Name"] = "";
+  param.fileInfo["Address"]["FamilyName"] = "";
+  param.fileInfo["Address"]["Address1"] = "";
+  param.fileInfo["Address"]["Address2"] = "";
+  param.fileInfo["Address"]["Zip"] = "";
+  param.fileInfo["Address"]["City"] = "";
+  param.fileInfo["Address"]["State"] = "";
+  param.fileInfo["Address"]["Country"] = "";
+  param.fileInfo["Address"]["Web"] = "";
+  param.fileInfo["Address"]["Email"] = "";
+  param.fileInfo["Address"]["Phone"] = "";
+  param.fileInfo["Address"]["Mobile"] = "";
+  param.fileInfo["Address"]["Fax"] = "";
+  param.fileInfo["Address"]["FiscalNumber"] = "";
+  param.fileInfo["Address"]["VatNumber"] = "";
+  
+  if (Banana.document.info) {
+    param.fileInfo["BasicCurrency"] = Banana.document.info("AccountingDataBase", "BasicCurrency");
+    param.fileInfo["OpeningDate"] = Banana.document.info("AccountingDataBase", "OpeningDate");
+    param.fileInfo["ClosureDate"] = Banana.document.info("AccountingDataBase", "ClosureDate");
+    param.fileInfo["CustomersGroup"] = Banana.document.info("AccountingDataBase", "CustomersGroup");
+    param.fileInfo["SuppliersGroup"] = Banana.document.info("AccountingDataBase", "SuppliersGroup");
+    param.fileInfo["Address"]["Company"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Company"));
+    param.fileInfo["Address"]["Courtesy"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Courtesy"));
+    param.fileInfo["Address"]["Name"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Name"));
+    param.fileInfo["Address"]["FamilyName"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FamilyName"));
+    param.fileInfo["Address"]["Address1"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address1"));
+    param.fileInfo["Address"]["Address2"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address2"));
+    param.fileInfo["Address"]["Zip"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Zip"));
+    param.fileInfo["Address"]["City"] = xml_escapeString(Banana.document.info("AccountingDataBase", "City"));
+    param.fileInfo["Address"]["State"] = xml_escapeString(Banana.document.info("AccountingDataBase", "State"));
+    param.fileInfo["Address"]["Country"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Country"));
+    param.fileInfo["Address"]["Web"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Web"));
+    param.fileInfo["Address"]["Email"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Email"));
+    param.fileInfo["Address"]["Phone"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Phone"));
+    param.fileInfo["Address"]["Mobile"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Mobile"));
+    param.fileInfo["Address"]["Fax"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Fax"));
+    param.fileInfo["Address"]["FiscalNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FiscalNumber"));
+    param.fileInfo["Address"]["VatNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "VatNumber"));
+  }
+
+  var accountingOpeningDate = param.fileInfo["OpeningDate"];
+  var accountingClosureDate = param.fileInfo["ClosureDate"];
+
+  var openingYear = 0;
+  var closureYear = 0;
+  if (accountingOpeningDate.length >= 10)
+    openingYear = accountingOpeningDate.substring(0, 4);
+  if (accountingClosureDate.length >= 10)
+    closureYear = accountingClosureDate.substring(0, 4);
+
+  param.accountingYear = '';
+  if (openingYear > 0 && openingYear === closureYear)
+    param.accountingYear = openingYear;
+
+  //Dati contribuente
+  param.datiContribuente = {};
+  var datiContribuenteParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat_2017.daticontribuente.js");
+  if (datiContribuenteParam.length > 0) {
+    param.datiContribuente = JSON.parse(datiContribuenteParam);
+  }
+
+  return param;
+}
+
+/*
+ * Funzione di debug per la stampa del giornale di controllo
+ */
+function _debug_printCustomersSuppliers(param, report, stylesheet) {
+
+  //Column count
+  var sortedColumns = [];
+  for (var i in param.journal.columns) {
+    if (param.journal.columns[i].index>=0)
+      sortedColumns.push(param.journal.columns[i].index);
+  }
+  sortedColumns.sort(_debug_sortNumber);  
+
+  //Title
+  var table = report.addTable("tableJournalCustomersSuppliers");
+  var headerRow = table.getHeader().addRow();
+  headerRow.addCell("Customers/Suppliers", "title",  sortedColumns.length);
+  
+  //Period
+  var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(param.startDate);
+  periodo +=" al " + Banana.Converter.toLocaleDateFormat(param.endDate);
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell(periodo, "period",  sortedColumns.length);
+  
+  //Header
+  var headerRow = table.getHeader().addRow();
+  for (var i in sortedColumns) {
+    var index = sortedColumns[i];
+    for (var j in param.journal.columns) {
+      if (param.journal.columns[j].index == index) {
+        var columnTitle = param.journal.columns[j].title;
+        headerRow.addCell(columnTitle);
+        break;
+      }
+    }
+  }
+
+  // Print data
+  var row = table.addRow();
+  row.addCell("------------------- customers -------------------", "", sortedColumns.length);
+  for (var i in param.customers) {
+    for (var j in param.customers[i].rows) {
+      var rowJsonObj = param.customers[i].rows[j];
+      var row = table.addRow();
+      for (var k in sortedColumns) {
+        var index = sortedColumns[k];
+        for (var l in param.journal.columns) {
+          if (param.journal.columns[l].index == index) {
+            var columnName = param.journal.columns[l].name;
+            var content = rowJsonObj[columnName];
+            if (content.length>11 && param.journal.columns[l].type == "description")
+              content = content.substring(0,10) + "...";
+            row.addCell(content, param.journal.columns[l].type);
+            break;
+          }
+        }
+      }
+    }
+  }
+  
+  var row = table.addRow();
+  row.addCell("------------------- suppliers -------------------", "", sortedColumns.length);
+  for (var i in param.suppliers) {
+    for (var j in param.suppliers[i].rows) {
+      var rowJsonObj = param.suppliers[i].rows[j];
+      var row = table.addRow();
+      for (var k in sortedColumns) {
+        var index = sortedColumns[k];
+        for (var l in param.journal.columns) {
+          if (param.journal.columns[l].index == index) {
+            var columnName = param.journal.columns[l].name;
+            var content = rowJsonObj[columnName];
+            if (content.length>11 && param.journal.columns[l].type == "description")
+              content = content.substring(0,10) + "...";
+            row.addCell(content, param.journal.columns[l].type);
+            break;
+          }
+        }
+      }
+    }
+  }
+  
+  _debug_printJournal_addStyle(stylesheet);
+
+}
+
+/*
+ * Funzione di debug per la stampa del giornale di controllo
+ */
+function _debug_printJournal(param, report, stylesheet) {
+
+  //Column count
+  var sortedColumns = [];
+  for (var i in param.journal.columns) {
+    if (param.journal.columns[i].index>=0)
+      sortedColumns.push(param.journal.columns[i].index);
+  }
+  sortedColumns.sort(_debug_sortNumber);  
+
+  //Title
+  var table = report.addTable("tableJournal");
+  var headerRow = table.getHeader().addRow();
+  headerRow.addCell("Registrazioni IVA Italia", "title",  sortedColumns.length);
+  
+  //Period
+  var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(param.startDate);
+  periodo +=" al " + Banana.Converter.toLocaleDateFormat(param.endDate);
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell(periodo, "period",  sortedColumns.length);
+  
+  //Header
+  var headerRow = table.getHeader().addRow();
+  for (var i in sortedColumns) {
+    var index = sortedColumns[i];
+    for (var j in param.journal.columns) {
+      if (param.journal.columns[j].index == index) {
+        var columnTitle = param.journal.columns[j].title;
+        /*if (columnTitle.length>8)
+          columnTitle = columnTitle.substring(0, 7) + ".";*/
+        headerRow.addCell(columnTitle);
+        break;
+      }
+    }
+  }
+
+  // Print data
+  var row = table.addRow();
+  for (var i=0; i < param.journal.rows.length;i++) {
+    var jsonObj = param.journal.rows[i];
+    var row = table.addRow();
+    for (var j in sortedColumns) {
+      var index = sortedColumns[j];
+      for (var k in param.journal.columns) {
+        if (param.journal.columns[k].index == index) {
+          var content = jsonObj[param.journal.columns[k].name];
+          row.addCell(content, param.journal.columns[k].type);
+          break;
+        }
+      }
+    }
+  }
+  
+  _debug_printJournal_addStyle(stylesheet);
+
+}
+
+function _debug_printJournal_addStyle(stylesheet) {
+  //style
+  stylesheet.addStyle(".tableJournalCustomersSuppliers", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".tableJournalCustomersSuppliers td", "border:1px solid #333333");
+  stylesheet.addStyle(".tableJournal", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".tableJournal td", "border:1px solid #333333");
+  
+  stylesheet.addStyle(".title", "background-color:#ffffff;border:1px solid #ffffff;font-size:10px;");
+  stylesheet.addStyle(".period", "background-color:#ffffff;border:1px solid #ffffff;");
+  stylesheet.addStyle(".amount", "text-align:right;");
+}
+
+function _debug_sortNumber(a,b) {
     return a - b;
 }

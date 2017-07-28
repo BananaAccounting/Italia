@@ -14,7 +14,7 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italy_vat_2017.report.fatture.js
-// @description = Comunicazione fatture emesse e ricevute 2017 (file xml)
+// @description = IVA Italia 2017: Comunicazione dati fatture (spesometro)...
 // @doctype = *;110
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.report.fatture.createinstance.js
@@ -22,10 +22,12 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-07-26
+// @pubdate = 2017-07-28
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
+
+var debug = true;
 
 /*
  * Update script's parameters
@@ -150,8 +152,6 @@ function exec(inData) {
   if (!Banana.document)
     return "@Cancel";
 
-   var debug = true;
-
   // Check version
   if (typeof (Banana.document.journalCustomersSuppliers) === 'undefined') {
     var msg = getErrorMessage(ID_ERR_VERSIONE);
@@ -178,9 +178,7 @@ function exec(inData) {
 
   //add accounting data and journal
   param = readAccountingData(param);
-  param.data = {};  
-  param = setPeriod(param);
-  param.data = loadJournalCustomersSuppliers(param.data);
+  param = loadJournalData(param);
   param.schemaRefs = init_schemarefs();
   param.namespaces = init_namespaces();
   
@@ -192,7 +190,7 @@ function exec(inData) {
     printVatReport1(report, stylesheet, param);
     if (debug) {
       report.addPageBreak();
-      printJournal(param.data, report, stylesheet);
+      _debug_printJournal(param.data, report, stylesheet);
     }
     Banana.Report.preview(report, stylesheet);
   }
@@ -264,6 +262,56 @@ function init_schemarefs()
   ];
   return schemaRefs;
 };
+
+function loadJournalData(param) {
+
+  param.data = {};  
+
+  if (param.selezioneTrimestre) {
+    if (param.valoreTrimestre === "0") {
+      param.data.startDate = param.accountingYear.toString() + "0101";
+      param.data.endDate = param.accountingYear.toString() + "0331";
+    }
+    else if (param.valoreTrimestre === "1") {
+      param.data.startDate = param.accountingYear.toString() + "0401";
+      param.data.endDate = param.accountingYear.toString() + "0630";
+    }
+    else if (param.valoreTrimestre === "2") {
+      param.data.startDate = param.accountingYear.toString() + "0701";
+      param.data.endDate = param.accountingYear.toString() + "0930";
+    }
+    else {
+      param.data.startDate = param.accountingYear.toString() + "1001";
+      param.data.endDate = param.accountingYear.toString() + "1231";
+    }
+  }
+  else if (param.selezioneMese) {
+    var month = parseInt(param.valoreMese) + 1;
+    //months with 30 days
+    if (month === 11 || month === 4 || month === 6 || month === 9) {
+      param.data.startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01";
+      param.data.endDate = param.accountingYear.toString() + zeroPad(month, 2) + "30";
+    }
+    //month with 28 or 29 days
+    else if (month === 2) {
+      var day = 28;
+      if (param.accountingYear % 4 == 0 && (param.accountingYear % 100 != 0 || param.accountingYear % 400 == 0)) {
+        day = 29;
+      }
+      param.data.startDate = param.accountingYear.toString() + "0201" ;
+      param.data.endDate = param.accountingYear.toString() + "02" + day.toString();
+    }
+    //months with 31 days
+    else {
+      param.data.startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01" ;
+      param.data.endDate = param.accountingYear.toString() + zeroPad(month, 2) + "31" ;
+    }
+  }
+
+  param.data = loadJournal(param.data);
+
+  return param;
+}
 
 function printVatReport1(report, stylesheet, param) {
 
@@ -363,7 +411,7 @@ function printVatReport1_rows(customers_suppliers, table, param) {
     for (var j in customers_suppliers[i].rows) {
       var jsonObj = customers_suppliers[i].rows[j];
       var row = table.addRow();
-      row.addCell(jsonObj["DF_TipoDoc"], "row");
+      row.addCell(jsonObj["IT_TipoDoc"], "row");
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JInvoiceIssueDate"]), "row");
       row.addCell(jsonObj["DocInvoice"], "row");
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JDate"]), "row");
@@ -371,84 +419,15 @@ function printVatReport1_rows(customers_suppliers, table, param) {
       row.addCell(jsonObj["JAccount"], "row amount");
       row.addCell(jsonObj["JContraAccount"], "row amount");
       row.addCell(jsonObj["JVatCodeWithoutSign"], "row amount");
-      row.addCell(jsonObj["DF_Gr_IVA"], "row amount");
-      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Imponibile"],2,false), "row amount");
-      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Imposta"],2,false), "row amount");
-      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Aliquota"],2,false), "row amount");
-      row.addCell(jsonObj["DF_Natura"], "row amount");
-      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["DF_Detraibile"],2,false), "row amount");
-      row.addCell(jsonObj["DF_Deducibile"], "row amount");
+      row.addCell(jsonObj["IT_Gr_IVA"], "row amount");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["IT_Imponibile"],2,false), "row amount");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["IT_Imposta"],2,false), "row amount");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["IT_Aliquota"],2,false), "row amount");
+      row.addCell(jsonObj["IT_Natura"], "row amount");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["IT_Detraibile"],2,false), "row amount");
+      row.addCell(jsonObj["IT_Deducibile"], "row amount");
     }
   }
-}
-
-function readAccountingData(param) {
-  
-  param.accountingYear = '';
-  
-  var accountingOpeningDate = Banana.document.info("AccountingDataBase", "OpeningDate");
-  var accountingClosureDate = Banana.document.info("AccountingDataBase", "ClosureDate");
-
-  var openingYear = 0;
-  var closureYear = 0;
-  if (accountingOpeningDate.length >= 10)
-    openingYear = accountingOpeningDate.substring(0, 4);
-  if (accountingClosureDate.length >= 10)
-    closureYear = accountingClosureDate.substring(0, 4);
-  if (openingYear > 0 && openingYear === closureYear)
-    param.accountingYear = openingYear;
-
-  //Table FileInfo
-  param.fileInfo = {};
-  param.fileInfo["BasicCurrency"] = "";
-  param.fileInfo["OpeningDate"] = "";
-  param.fileInfo["ClosureDate"] = "";
-  param.fileInfo["CustomersGroup"] = "";
-  param.fileInfo["SuppliersGroup"] = "";
-  param.fileInfo["Address"] = {};
-  param.fileInfo["Address"]["Company"] = "";
-  param.fileInfo["Address"]["Courtesy"] = "";
-  param.fileInfo["Address"]["Name"] = "";
-  param.fileInfo["Address"]["FamilyName"] = "";
-  param.fileInfo["Address"]["Address1"] = "";
-  param.fileInfo["Address"]["Address2"] = "";
-  param.fileInfo["Address"]["Zip"] = "";
-  param.fileInfo["Address"]["City"] = "";
-  param.fileInfo["Address"]["State"] = "";
-  param.fileInfo["Address"]["Country"] = "";
-  param.fileInfo["Address"]["Web"] = "";
-  param.fileInfo["Address"]["Email"] = "";
-  param.fileInfo["Address"]["Phone"] = "";
-  param.fileInfo["Address"]["Mobile"] = "";
-  param.fileInfo["Address"]["Fax"] = "";
-  param.fileInfo["Address"]["FiscalNumber"] = "";
-  param.fileInfo["Address"]["VatNumber"] = "";
-  if (Banana.document.info) {
-    param.fileInfo["BasicCurrency"] = Banana.document.info("AccountingDataBase", "BasicCurrency");
-    param.fileInfo["OpeningDate"] = Banana.document.info("AccountingDataBase", "OpeningDate");
-    param.fileInfo["ClosureDate"] = Banana.document.info("AccountingDataBase", "ClosureDate");
-    param.fileInfo["CustomersGroup"] = Banana.document.info("AccountingDataBase", "CustomersGroup");
-    param.fileInfo["SuppliersGroup"] = Banana.document.info("AccountingDataBase", "SuppliersGroup");
-    param.fileInfo["Address"] = {};
-    param.fileInfo["Address"]["Company"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Company"));
-    param.fileInfo["Address"]["Courtesy"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Courtesy"));
-    param.fileInfo["Address"]["Name"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Name"));
-    param.fileInfo["Address"]["FamilyName"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FamilyName"));
-    param.fileInfo["Address"]["Address1"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address1"));
-    param.fileInfo["Address"]["Address2"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address2"));
-    param.fileInfo["Address"]["Zip"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Zip"));
-    param.fileInfo["Address"]["City"] = xml_escapeString(Banana.document.info("AccountingDataBase", "City"));
-    param.fileInfo["Address"]["State"] = xml_escapeString(Banana.document.info("AccountingDataBase", "State"));
-    param.fileInfo["Address"]["Country"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Country"));
-    param.fileInfo["Address"]["Web"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Web"));
-    param.fileInfo["Address"]["Email"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Email"));
-    param.fileInfo["Address"]["Phone"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Phone"));
-    param.fileInfo["Address"]["Mobile"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Mobile"));
-    param.fileInfo["Address"]["Fax"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Fax"));
-    param.fileInfo["Address"]["FiscalNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FiscalNumber"));
-    param.fileInfo["Address"]["VatNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "VatNumber"));
-  }
-  return param;
 }
 
 function saveData(output, param) {
@@ -469,69 +448,7 @@ function saveData(output, param) {
   }
 }
 
-function setPeriod(param) {
-  if (param.selezioneTrimestre) {
-    if (param.valoreTrimestre === "0") {
-      param.data.startDate = param.accountingYear.toString() + "0101";
-      param.data.endDate = param.accountingYear.toString() + "0331";
-    }
-    else if (param.valoreTrimestre === "1") {
-      param.data.startDate = param.accountingYear.toString() + "0401";
-      param.data.endDate = param.accountingYear.toString() + "0630";
-    }
-    else if (param.valoreTrimestre === "2") {
-      param.data.startDate = param.accountingYear.toString() + "0701";
-      param.data.endDate = param.accountingYear.toString() + "0930";
-    }
-    else {
-      param.data.startDate = param.accountingYear.toString() + "1001";
-      param.data.endDate = param.accountingYear.toString() + "1231";
-    }
-  }
-  else if (param.selezioneMese) {
-    var month = parseInt(param.valoreMese) + 1;
-    //months with 30 days
-    if (month === 11 || month === 4 || month === 6 || month === 9) {
-      param.data.startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01";
-      param.data.endDate = param.accountingYear.toString() + zeroPad(month, 2) + "30";
-    }
-    //month with 28 or 29 days
-    else if (month === 2) {
-      var day = 28;
-      if (param.accountingYear % 4 == 0 && (param.accountingYear % 100 != 0 || param.accountingYear % 400 == 0)) {
-        day = 29;
-      }
-      param.data.startDate = param.accountingYear.toString() + "0201" ;
-      param.data.endDate = param.accountingYear.toString() + "02" + day.toString();
-    }
-    //months with 31 days
-    else {
-      param.data.startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01" ;
-      param.data.endDate = param.accountingYear.toString() + zeroPad(month, 2) + "31" ;
-    }
-  }
-  return param;
-}
-
-function tableToCsv(table) {
-    var result = "";
-    for (var i = 0; i < table.length; i++) {
-        var values = table[i];
-        for (var j = 0; values && j < values.length; j++) {
-            if (j > 0)
-                result += ";";
-            var value = values[j];
-            result += value;
-        }
-        result += "\r\n";
-    }
-    return result;
-}
-
 function verifyParam(param) {
-  //compatibilità con versioni precedenti
-  if (param.repStartDate)
-    param = {};
   if (!param.selezioneTrimestre && !param.selezioneMese) {
     param.selezioneTrimestre  = true;
     param.selezioneMese  = false;

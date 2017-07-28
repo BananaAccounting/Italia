@@ -212,7 +212,7 @@ function createInstance_Blocco2(accountObj, param)
       if (accountObj.rows[i]) {
         msgContext = '[' + accountObj.rows[i]["JTableOrigin"] + ': Riga ' + (parseInt(accountObj.rows[i]["JRowOrigin"])+1).toString() +'] <DatiFatturaBody' + param.blocco + '>';
         //2.2.3.1  <DatiGenerali>
-        var xbrlDatiGenerali = '\n' + xml_createElementWithValidation("TipoDocumento", accountObj.rows[i]["DF_TipoDoc"],1,'4',msgContext);
+        var xbrlDatiGenerali = '\n' + xml_createElementWithValidation("TipoDocumento", accountObj.rows[i]["IT_TipoDoc"],1,'4',msgContext);
         xbrlDatiGenerali += '\n' + xml_createElementWithValidation("Data", accountObj.rows[i]["JInvoiceIssueDate"],1,'10',msgContext);
         xbrlDatiGenerali += '\n' + xml_createElementWithValidation("Numero", accountObj.rows[i]["DocInvoice"],1,'1...20',msgContext);
         if (param.blocco == 'DTR')
@@ -221,17 +221,17 @@ function createInstance_Blocco2(accountObj, param)
           xbrlDatiGenerali += '\n';
         var xbrlContent = '\n' + xml_createElementWithValidation("DatiGenerali", xbrlDatiGenerali,1);
         //2.2.3.1  <DatiRiepilogo>
-        var xbrlDatiRiepilogo = '\n' + xml_createElementWithValidation("ImponibileImporto", accountObj.rows[i]["DF_Imponibile"],1,'4...15',msgContext);
-        var xbrlContent4 = '\n' + xml_createElementWithValidation("Imposta", accountObj.rows[i]["DF_Imposta"],0,'4...15',msgContext);
-        xbrlContent4 += '\n' + xml_createElementWithValidation("Aliquota", accountObj.rows[i]["DF_Aliquota"],0,'4...6',msgContext) + '\n';
+        var xbrlDatiRiepilogo = '\n' + xml_createElementWithValidation("ImponibileImporto", accountObj.rows[i]["IT_Imponibile"],1,'4...15',msgContext);
+        var xbrlContent4 = '\n' + xml_createElementWithValidation("Imposta", accountObj.rows[i]["IT_Imposta"],0,'4...15',msgContext);
+        xbrlContent4 += '\n' + xml_createElementWithValidation("Aliquota", accountObj.rows[i]["IT_Aliquota"],0,'4...6',msgContext) + '\n';
         xbrlDatiRiepilogo += '\n' + xml_createElementWithValidation("DatiIVA",xbrlContent4,1) ;
-        if (accountObj.rows[i]["DF_Natura"].length)
-          xbrlDatiRiepilogo += '\n' + xml_createElementWithValidation("Natura", accountObj.rows[i]["DF_Natura"],0,'2');
-        if (accountObj.rows[i]["DF_Detraibile"].length)
-          xbrlDatiRiepilogo += '\n' + xml_createElementWithValidation("Detraibile", accountObj.rows[i]["DF_Detraibile"],0,'4...6');
-        if (accountObj.rows[i]["DF_Deducibile"].length)
-          xbrlDatiRiepilogo += '\n' + xml_createElementWithValidation("Deducibile",accountObj.rows[i]["DF_Deducibile"],0,'2');
-        if (accountObj.rows[i]["DF_Natura"].length || accountObj.rows[i]["DF_Detraibile"].length || accountObj.rows[i]["DF_Deducibile"].length)
+        if (accountObj.rows[i]["IT_Natura"].length)
+          xbrlDatiRiepilogo += '\n' + xml_createElementWithValidation("Natura", accountObj.rows[i]["IT_Natura"],0,'2');
+        if (accountObj.rows[i]["IT_Detraibile"].length)
+          xbrlDatiRiepilogo += '\n' + xml_createElementWithValidation("Detraibile", accountObj.rows[i]["IT_Detraibile"],0,'4...6');
+        if (accountObj.rows[i]["IT_Deducibile"].length)
+          xbrlDatiRiepilogo += '\n' + xml_createElementWithValidation("Deducibile",accountObj.rows[i]["IT_Deducibile"],0,'2');
+        if (accountObj.rows[i]["IT_Natura"].length || accountObj.rows[i]["IT_Detraibile"].length || accountObj.rows[i]["IT_Deducibile"].length)
           xbrlDatiRiepilogo += '\n';
         xbrlContent += '\n' + xml_createElementWithValidation("DatiRiepilogo", xbrlDatiRiepilogo,1) +'\n';
         xbrlDatiFatturaBody +=  xml_createElementWithValidation("DatiFatturaBody" + param.blocco, xbrlContent,1) + '\n';

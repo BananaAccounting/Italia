@@ -21,6 +21,8 @@ var ID_ERR_XML_ELEMENTO_NATURA_PRESENTE = "ID_ERR_XML_ELEMENTO_NATURA_PRESENTE";
 var ID_ERR_XML_LUNGHEZZA_NONVALIDA = "ID_ERR_XML_LUNGHEZZA_NONVALIDA";
 var ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA = "ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA";
 var ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA = "ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA";
+var ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE = "ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE";
+var ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI = "ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI";
 
 /**
 * return the text error message according to error id
@@ -45,6 +47,10 @@ function getErrorMessage(errorId) {
             return "Lunghezza stringa non valida per l'elemento %1: %2. Lunghezza minima: %3";
         case ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA:
             return "Lunghezza stringa non valida per l'elemento %1: %2. Lunghezza massima: %3";
+        case ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE:
+            return "Sono stati registrati degli interessi (L-INT) con tipo di versamento mensile";
+        case ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI:
+            return "La registrazione degli interessi %1% EUR %2 manca o non è corretta."
     }
     return "";
 }
