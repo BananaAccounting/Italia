@@ -21,7 +21,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-07-28
+// @pubdate = 2017-07-31
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -46,31 +46,191 @@ function settingsDialog() {
     return false;
   }
   
-  /*var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.registri.dialog.ui");
-  dialog.periodoGroupBox.title += ' ' + accountingData.accountingYear;
-
+  var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.registri.dialog.ui");
+  //Groupbox periodo
+  var meseRadioButton = dialog.tabWidget.findChild('meseRadioButton');
+  var trimestreRadioButton = dialog.tabWidget.findChild('trimestreRadioButton');
+  var annoRadioButton = dialog.tabWidget.findChild('annoRadioButton');
+  var trimestreComboBox = dialog.tabWidget.findChild('trimestreComboBox');
+  var meseComboBox = dialog.tabWidget.findChild('meseComboBox');
+  if (param.periodoSelezionato == 1 && trimestreRadioButton)
+    trimestreRadioButton.checked = true;
+  else if (param.periodoSelezionato == 2 && annoRadioButton)
+    annoRadioButton.checked = true;
+  else if (meseRadioButton)
+    meseRadioButton.checked = true;
+  if (meseComboBox)
+    meseComboBox.currentIndex = param.periodoValoreMese;
+  if (trimestreComboBox)
+    trimestreComboBox.currentIndex = param.periodoValoreTrimestre;
+  //Tipo registro
+  var tipoRegistroComboBox = dialog.tabWidget.findChild('tipoRegistroComboBox');
+  if (tipoRegistroComboBox)
+    tipoRegistroComboBox.currentIndex = param.tipoRegistro;
+  //Opzioni
+  var visualizzaDataOraCheckBox = dialog.tabWidget.findChild('visualizzaDataOraCheckBox');
+  if (visualizzaDataOraCheckBox)
+    visualizzaDataOraCheckBox.checked = param.visualizzaDataOra;
+  var numerazioneAutomaticaCheckBox = dialog.tabWidget.findChild('numerazioneAutomaticaCheckBox');
+  if (numerazioneAutomaticaCheckBox)
+    numerazioneAutomaticaCheckBox.checked = param.numerazioneAutomatica;
+  var stampaDefinitivaCheckBox = dialog.tabWidget.findChild('stampaDefinitivaCheckBox');
+  if (stampaDefinitivaCheckBox)
+    stampaDefinitivaCheckBox.checked = param.stampaDefinitiva;
+  var inizioNumerazionePagineSpinBox = dialog.tabWidget.findChild('inizioNumerazionePagineSpinBox');
+  if (inizioNumerazionePagineSpinBox) {
+    if (param.inizioNumerazionePagine.length>0)
+      inizioNumerazionePagineSpinBox.value = parseInt(param.inizioNumerazionePagine);
+    else  
+      inizioNumerazionePagineSpinBox.value = 1;
+  }
+  //Testi
+  var testoRegistriComboBox = dialog.tabWidget.findChild('testoRegistriComboBox');
+  var testoGroupBox = dialog.tabWidget.findChild('testoGroupBox');
+  var testoLineEdit = dialog.tabWidget.findChild('testoLineEdit');
+  var tempStampaTestoRegistroAcquisti = param.stampaTestoRegistroAcquisti;
+  var tempStampaTestoRegistroVendite = param.stampaTestoRegistroVendite;
+  var tempStampaTestoRegistroCorrispettivi = param.stampaTestoRegistroCorrispettivi;
+  var tempTestoRegistroAcquisti = param.testoRegistroAcquisti;
+  var tempTestoRegistroVendite = param.testoRegistroVendite;
+  var tempTestoRegistroCorrispettivi = param.testoRegistroCorrispettivi;
+  var tempTestoRegistriCurrentIndex = param.testoRegistriComboBoxIndex;
+  if (testoRegistriComboBox)
+    testoRegistriComboBox.currentIndex = param.testoRegistriComboBoxIndex;
+  if (testoGroupBox && param.testoRegistriComboBoxIndex == 0) {
+    testoGroupBox.checked = tempStampaTestoRegistroAcquisti;
+    testoLineEdit.setText(tempTestoRegistroAcquisti);
+  }
+  else if (testoGroupBox && param.testoRegistriComboBoxIndex == 1) {
+    testoGroupBox.checked = tempStampaTestoRegistroVendite;
+    testoLineEdit.setText(tempTestoRegistroVendite);
+  }
+  else if (testoGroupBox && param.testoRegistriComboBoxIndex == 2) {
+    testoGroupBox.checked = tempStampaTestoRegistroCorrispettivi;
+    testoLineEdit.setText(tempTestoRegistroCorrispettivi);
+  }
+  
   //dialog functions
   dialog.checkdata = function () {
     dialog.accept();
   }
   dialog.enableButtons = function () {
+    if (meseRadioButton && meseRadioButton.checked) {
+        meseComboBox.enabled = true;
+        trimestreComboBox.enabled = false;
+    }
+    else if (trimestreRadioButton &&trimestreRadioButton.checked) {
+        meseComboBox.enabled = false;
+        trimestreComboBox.enabled = true;
+    }
+    else {
+        meseComboBox.enabled = false;
+        trimestreComboBox.enabled = false;
+    }
+    //Testi
+    if (tempTestoRegistriCurrentIndex == '0') {
+      tempStampaTestoRegistroAcquisti = testoGroupBox.checked;
+      if (tempStampaTestoRegistroAcquisti)
+        tempTestoRegistroAcquisti = testoLineEdit.plainText;
+    }
+    else if (tempTestoRegistriCurrentIndex == '1') {
+      tempStampaTestoRegistroVendite = testoGroupBox.checked;
+      if (tempStampaTestoRegistroVendite)
+        tempTestoRegistroVendite = testoLineEdit.plainText;
+    }
+    else if (tempTestoRegistriCurrentIndex == '2') {
+      tempStampaTestoRegistroCorrispettivi = testoGroupBox.checked;
+      if (tempTestoRegistroCorrispettivi)
+        tempTestoRegistroCorrispettivi = testoLineEdit.plainText;
+    }
+    tempTestoRegistriCurrentIndex = testoRegistriComboBox.currentIndex;
+    testoGroupBox.checked = false;
+    testoLineEdit.setText('');
+    if (tempTestoRegistriCurrentIndex == '0') {
+      testoGroupBox.checked = tempStampaTestoRegistroAcquisti;
+      testoLineEdit.setText(tempTestoRegistroAcquisti);
+    }
+    else if (tempTestoRegistriCurrentIndex == '1') {
+      testoGroupBox.checked = tempStampaTestoRegistroVendite;
+      testoLineEdit.setText(tempTestoRegistroVendite);
+    }
+    else if (tempTestoRegistriCurrentIndex == '2') {
+      testoGroupBox.checked = tempStampaTestoRegistroCorrispettivi;
+      testoLineEdit.setText(tempTestoRegistroCorrispettivi);
+    }
   }
   dialog.showHelp = function () {
     Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
   }
   dialog.buttonBox.accepted.connect(dialog, "checkdata");
   dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
-  dialog.periodoGroupBox.trimestreRadioButton.clicked.connect(dialog, "enableButtons");
+  testoRegistriComboBox['currentIndexChanged(QString)'].connect(dialog, "enableButtons");
+  testoGroupBox.clicked.connect(dialog, "enableButtons");
+  trimestreRadioButton.clicked.connect(dialog, "enableButtons");
+  meseRadioButton.clicked.connect(dialog, "enableButtons");
+  annoRadioButton.clicked.connect(dialog, "enableButtons");
   
+  //Visualizzazione dialogo
   Banana.application.progressBar.pause();
   dialog.enableButtons();
   var dlgResult = dialog.exec();
   Banana.application.progressBar.resume();
-
   if (dlgResult !== 1)
     return false;
 
-  param.valoreTrimestre = dialog.periodoGroupBox.trimestreComboBox.currentIndex.toString();*/
+  //Salvataggio dati
+  //Groupbox periodo
+  if (trimestreRadioButton.checked)
+    param.periodoSelezionato = 1;
+  else if (annoRadioButton.checked)
+    param.periodoSelezionato = 2;
+  else
+    param.periodoSelezionato = 0;
+  if (meseComboBox)
+    param.periodoValoreMese = meseComboBox.currentIndex.toString();
+  if (trimestreComboBox)
+    param.periodoValoreTrimestre = trimestreComboBox.currentIndex.toString();
+  //Tipo registro
+  if (tipoRegistroComboBox)
+    param.tipoRegistro = tipoRegistroComboBox.currentIndex.toString();
+  //Opzioni
+  if (visualizzaDataOraCheckBox)
+    param.visualizzaDataOra = visualizzaDataOraCheckBox.checked;
+  if (numerazioneAutomaticaCheckBox)
+    param.numerazioneAutomatica = numerazioneAutomaticaCheckBox.checked;
+  if (stampaDefinitivaCheckBox)
+    param.stampaDefinitiva = stampaDefinitivaCheckBox.checked;
+  if (inizioNumerazionePagineSpinBox)
+      param.inizioNumerazionePagine = inizioNumerazionePagineSpinBox.value.toString();
+  //Testi
+  param.testoRegistriComboBoxIndex = testoRegistriComboBox.currentIndex.toString();
+  if (param.testoRegistriComboBoxIndex == 0) {
+    param.stampaTestoRegistroAcquisti = testoGroupBox.checked;
+    if (param.stampaTestoRegistroAcquisti)
+      param.testoRegistroAcquisti = testoLineEdit.plainText;
+    param.stampaTestoRegistroVendite = tempStampaTestoRegistroVendite;
+    param.testoRegistroVendite = tempTestoRegistroVendite;
+    param.stampaTestoRegistroCorrispettivi = tempStampaTestoRegistroCorrispettivi;
+    param.testoRegistroCorrispettivi = tempTestoRegistroCorrispettivi;
+  }
+  else if (param.testoRegistriComboBoxIndex == 1) {
+    param.stampaTestoRegistroVendite = testoGroupBox.checked;
+    if (param.stampaTestoRegistroVendite)
+      param.testoRegistroVendite = testoLineEdit.plainText;
+    param.stampaTestoRegistroAcquisti = tempStampaTestoRegistroAcquisti;
+    param.testoRegistroAcquisti = tempTestoRegistroAcquisti;
+    param.stampaTestoRegistroCorrispettivi = tempStampaTestoRegistroCorrispettivi;
+    param.testoRegistroCorrispettivi = tempTestoRegistroCorrispettivi;
+  }
+  else if (param.testoRegistriComboBoxIndex == 2) {
+    param.stampaTestoRegistroCorrispettivi = testoGroupBox.checked;
+    if (param.stampaTestoRegistroCorrispettivi)
+      param.testoRegistroCorrispettivi = testoLineEdit.plainText;
+    param.stampaTestoRegistroAcquisti = tempStampaTestoRegistroAcquisti;
+    param.testoRegistroAcquisti = tempTestoRegistroAcquisti;
+    param.stampaTestoRegistroVendite = tempStampaTestoRegistroVendite;
+    param.testoRegistroVendite = tempTestoRegistroVendite;
+  }
   
   var paramToString = JSON.stringify(param);
   Banana.document.setScriptSettings(paramToString);
@@ -152,6 +312,21 @@ function exec(inData) {
 function initParam()
 {
   var param = {};
+  param.periodoSelezionato = 0;
+  param.periodoValoreMese = '';
+  param.periodoValoreTrimestre = '';
+  param.tipoRegistro = 0;
+  param.visualizzaDataOra = false;
+  param.numerazioneAutomatica = false;
+  param.stampaDefinitiva = false;
+  param.inizioNumerazionePagine = 1;
+  param.testoRegistriComboBoxIndex = 0;
+  param.stampaTestoRegistroAcquisti = false;
+  param.stampaTestoRegistroVendite = false;
+  param.stampaTestoRegistroCorrispettivi = false;
+  param.testoRegistroAcquisti = '';
+  param.testoRegistroVendite = '';
+  param.testoRegistroCorrispettivi = '';
   return param;
 }
 
@@ -259,7 +434,37 @@ function printRegister(report, stylesheet, journal, register) {
 }
 
 function verifyParam(param) {
-   return param;
+  if (!param.periodoSelezionato)
+    param.periodoSelezionato = 0;
+  if (!param.periodoValoreMese)
+    param.periodoValoreMese = '';
+  if (!param.periodoValoreTrimestre)
+    param.periodoValoreTrimestre = '';
+  if (!param.tipoRegistro)
+    param.tipoRegistro = 0;
+  if (!param.visualizzaDataOra)
+    param.visualizzaDataOra = false;
+  if (!param.numerazioneAutomatica)
+    param.numerazioneAutomatica = false;
+  if (!param.stampaDefinitiva)
+    param.stampaDefinitiva = false;
+  if (!param.inizioNumerazionePagine)
+    param.inizioNumerazionePagine = 1;
+  if (!param.testoRegistriComboBoxIndex)
+    param.testoRegistriComboBoxIndex = 0;
+  if (!param.stampaTestoRegistroAcquisti)
+    param.stampaTestoRegistroAcquisti = false;
+  if (!param.stampaTestoRegistroVendite)
+    param.stampaTestoRegistroVendite = false;
+  if (!param.stampaTestoRegistroCorrispettivi)
+    param.stampaTestoRegistroCorrispettivi = false;
+  if (!param.testoRegistroAcquisti)
+    param.testoRegistroAcquisti = '';
+  if (!param.testoRegistroVendite)
+    param.testoRegistroVendite = '';
+  if (!param.testoRegistroCorrispettivi)
+   param.testoRegistroCorrispettivi = '';
+  return param;
 }
 
 /**

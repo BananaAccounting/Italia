@@ -20,7 +20,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-07-28
+// @pubdate = 2017-07-31
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -108,21 +108,8 @@ function settingsDialog() {
   }
   //dialog.tabWidget.tab_2.ivaprorataDoubleSpinBox.value = parseInt(param.liqPercProrata);
   
-  //Dati anagrafici soggetto tenuto alla dichiarazione
-  /*dialog.tabWidget.tab.groupBox..text = param.tipoContribuenteSoggettoTenuto;
-  dialog.tabWidget.tab.groupBox..text = param.cfSoggettoTenuto;
-  dialog.tabWidget.tab.groupBox..text = param.codiceCaricaSoggettoTenuto;
-  dialog.tabWidget.tab.groupBox..text = param.dataInizioProceduraSoggettoTenuto;
-  dialog.tabWidget.tab.groupBox..text = param.dataFineProceduraSoggettoTenuto;
-  dialog.tabWidget.tab.groupBox..text = param.cognomeSoggettoTenuto;
-  dialog.tabWidget.tab.groupBox..text = param.nomeSoggettoTenuto;
-  dialog.tabWidget.tab.groupBox..text = param.sessoSoggettoTenuto;
-  dialog.tabWidget.tab.groupBox..text = param.dataNascitaSoggettoTenuto;
-  dialog.tabWidget.tab.groupBox..text = param.comuneNascitaSoggettoTenuto;
-  dialog.tabWidget.tab.groupBox..text = param.provinciaNascitaSoggettoTenuto;
-  dialog.tabWidget.tab.groupBox..text = param.societaSoggettoTenuto;
   //Numeri conto corrispettivi
-  dialog.tabWidget.tab_2.groupBox_2.fatturenormaliComboBox.currentIndex = param.contoFattureNormali;
+  /*dialog.tabWidget.tab_2.groupBox_2.fatturenormaliComboBox.currentIndex = param.contoFattureNormali;
   dialog.tabWidget.tab_2.groupBox_2.fatturefiscaliComboBox.currentIndex = param.contoFattureFiscali;
   dialog.tabWidget.tab_2.groupBox_2.fatturescontriniComboBox.currentIndex = param.contoFattureScontrini;
   dialog.tabWidget.tab_2.groupBox_2.fatturedifferiteComboBox.currentIndex = param.contoFattureDifferite;
@@ -150,64 +137,45 @@ function settingsDialog() {
 
   //Salvataggio dati
   //Dati anagrafici
-  var tipoContribuenteComboBox = dialog.tabWidget.findChild('tipoContribuenteComboBox');
   if (tipoContribuenteComboBox)
     param.tipoContribuente = tipoContribuenteComboBox.currentIndex.toString();
-  var codicefiscaleLineEdit = dialog.tabWidget.findChild('codicefiscaleLineEdit');
   if (codicefiscaleLineEdit)
     param.codiceFiscale = codicefiscaleLineEdit.text;
-  var partitaivaLineEdit = dialog.tabWidget.findChild('partitaivaLineEdit');
   if (partitaivaLineEdit)
     param.partitaIva = partitaivaLineEdit.text;
-  var codiceattivitaLineEdit = dialog.tabWidget.findChild('codiceattivitaLineEdit');
   if (codiceattivitaLineEdit)
     param.codiceAttivita = codiceattivitaLineEdit.text;
-  var cognomeLineEdit = dialog.tabWidget.findChild('cognomeLineEdit');
   if (cognomeLineEdit)
     param.cognome = cognomeLineEdit.text;
-  var nomeLineEdit = dialog.tabWidget.findChild('nomeLineEdit');
   if (nomeLineEdit)
     param.nome = nomeLineEdit.text;
-  var sessoComboBox = dialog.tabWidget.findChild('sessoComboBox');
   if (sessoComboBox)
     param.sesso = sessoComboBox.currentIndex.toString();
-  var datanascitaDateEdit = dialog.tabWidget.findChild('datanascitaDateEdit');
   if (datanascitaDateEdit) {
     var dataNascita = datanascitaDateEdit.text;
     param.dataNascita = Banana.Converter.toInternalDateFormat(dataNascita);
   }
-  var comunenascitaLineEdit = dialog.tabWidget.findChild('comunenascitaLineEdit');
   if (comunenascitaLineEdit)
     param.comuneNascita = comunenascitaLineEdit.text;
-  var provincianascitaLineEdit = dialog.tabWidget.findChild('provincianascitaLineEdit');
   if (provincianascitaLineEdit)
     param.provinciaNascita = provincianascitaLineEdit.text;
-  var societaLineEdit = dialog.tabWidget.findChild('societaLineEdit');
   if (societaLineEdit)
     param.societa = societaLineEdit.text;
-  var localitaLineEdit = dialog.tabWidget.findChild('localitaLineEdit');
   if (localitaLineEdit)
     param.comuneSedeLegale = localitaLineEdit.text;
-  var provinciaLineEdit = dialog.tabWidget.findChild('provinciaLineEdit');
   if (provinciaLineEdit)
     param.provinciaSedeLegale = provinciaLineEdit.text;
-  var telefonoLineEdit = dialog.tabWidget.findChild('telefonoLineEdit');
   if (telefonoLineEdit)
     param.telefono = telefonoLineEdit.text;
-  var faxLineEdit = dialog.tabWidget.findChild('faxLineEdit');
   if (faxLineEdit)
     param.fax = faxLineEdit.text;
-  var emailLineEdit = dialog.tabWidget.findChild('emailLineEdit');
   if (emailLineEdit)
     param.email = emailLineEdit.text;
   //Dati IVA
-  var tipoversamentoComboBox = dialog.tabWidget.findChild('tipoversamentoComboBox');
   if (tipoversamentoComboBox)
     param.liqTipoVersamento = parseInt(tipoversamentoComboBox.currentIndex.toString());
-  var percinteressiDoubleSpinBox = dialog.tabWidget.findChild('percinteressiDoubleSpinBox');
-  if (percinteressiDoubleSpinBox) {
+  if (percinteressiDoubleSpinBox)
       param.liqPercInteressi = percinteressiDoubleSpinBox.value.toString();
-  }
 
   var paramToString = JSON.stringify(param);
   Banana.document.setScriptSettings("ch.banana.script.italy_vat_2017.daticontribuente.js", paramToString);
@@ -248,26 +216,8 @@ function initParam(param)
   param.liqTipoVersamento = '';
   //param.liqPercProrata = '';
 
-  //Soggetto tenuto alla comunicazione (soggetto che effettua la comunicazione, se diverso dal osggetto cui si riferisce la comunicazione
-  //ad esempio in caso di decesso del contribuente,
-  //la societa nominata rappresentante fiscale da un soggetto non residente, ai sensi dell'art. 17, secondo comma, 
-  //la societa che indica il codice carica 9 in qualita di societa beneficiaria (di societa scissa) o di societa incorporante (di societa incorporata), 
-  //la societa che presenta la dichiarazione in qualita di rappresentante negoziale del contribuente. 
-  /*param.tipoContribuenteSoggettoTenuto = 0;
-  param.cfSoggettoTenuto = '';
-  param.codiceCaricaSoggettoTenuto = '';
-  param.dataInizioProceduraSoggettoTenuto = '';
-  param.dataFineProceduraSoggettoTenuto = '';
-  param.cognomeSoggettoTenuto = '';
-  param.nomeSoggettoTenuto = '';
-  param.sessoSoggettoTenuto = '';
-  param.dataNascitaSoggettoTenuto = '';
-  param.comuneNascitaSoggettoTenuto = '';
-  param.provinciaNascitaSoggettoTenuto = '';
-  param.societaSoggettoTenuto = '';
-
   //Conti corrispettivi
-  param.contoFattureNormali = '';
+  /*param.contoFattureNormali = '';
   param.contoFattureFiscali = '';
   param.contoFattureScontrini = '';
   param.contoFattureDifferite = '';
@@ -319,33 +269,9 @@ function verifyParam(param) {
     param.liqTipoVersamento = '';
   /*if (!param.liqPercProrata)
     param.liqPercProrata = '';
-  if (!param.tipoContribuenteSoggettoTenuto)
-    param.tipoContribuenteSoggettoTenuto = 0;
-  if (!param.cfSoggettoTenuto)
-    param.cfSoggettoTenuto = '';
-  if (!param.codiceCaricaSoggettoTenuto)
-    param.codiceCaricaSoggettoTenuto = '';
-  if (!param.dataInizioProceduraSoggettoTenuto)
-    param.dataInizioProceduraSoggettoTenuto = '';
-  if (!param.dataFineProceduraSoggettoTenuto)
-    param.dataFineProceduraSoggettoTenuto = '';
-  if (!param.cognomeSoggettoTenuto)
-    param.cognomeSoggettoTenuto = '';
-  if (!param.nomeSoggettoTenuto)
-    param.nomeSoggettoTenuto = '';
-  if (!param.sessoSoggettoTenuto)
-    param.sessoSoggettoTenuto = '';
-  if (!param.dataNascitaSoggettoTenuto)
-    param.dataNascitaSoggettoTenuto = '';
-  if (!param.comuneNascitaSoggettoTenuto)
-    param.comuneNascitaSoggettoTenuto = '';
-  if (!param.provinciaNascitaSoggettoTenuto)
-    param.provinciaNascitaSoggettoTenuto = '';
-  if (!param.societaSoggettoTenuto)
-    param.societaSoggettoTenuto = '';
   if (!param.contoFattureNormali)
     param.contoFattureNormali = '';
-  if (!param.contoFattureFiscali)
+  if (!paramcontoFattureFiscali
     param.contoFattureFiscali = '';
   if (!param.contoFattureScontrini)
     param.contoFattureScontrini = '';

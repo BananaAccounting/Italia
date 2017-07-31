@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="periodoGroupBox">
      <property name="title">
-      <string notr="true">Anno imposta</string>
+      <string notr="true">Periodo</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -507,7 +507,6 @@
   <zorder>datiFatturaHeaderGroupBox</zorder>
   <zorder>buttonBox</zorder>
   <zorder>stampaGroupBox</zorder>
-  <zorder>horizontalSpacer_2</zorder>
   <zorder>bloccoGroupBox</zorder>
  </widget>
  <tabstops>
