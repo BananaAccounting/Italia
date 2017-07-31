@@ -48,17 +48,16 @@ function settingsDialog() {
   }
   
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.fatture.dialog.ui");
-  dialog.periodoGroupBox.title += ' ' + accountingData.accountingYear;
-  if (param.selezioneTrimestre) {
-    dialog.periodoGroupBox.trimestreRadioButton.checked = true;
-    dialog.periodoGroupBox.meseRadioButton.checked = false;
-  }
-  else {
-    dialog.periodoGroupBox.trimestreRadioButton.checked = false;
+  //Groupbox periodo
+  if (param.periodoSelezionato == 0)
     dialog.periodoGroupBox.meseRadioButton.checked = true;
-  }
-  dialog.periodoGroupBox.trimestreComboBox.currentIndex = param.valoreTrimestre;
-  dialog.periodoGroupBox.meseComboBox.currentIndex = param.valoreMese;
+  else if (param.periodoSelezionato == 1)
+    dialog.periodoGroupBox.trimestreRadioButton.checked = true;
+
+  dialog.periodoGroupBox.title += ' ' + accountingData.accountingYear;
+  dialog.periodoGroupBox.meseComboBox.currentIndex = param.periodovaloreMese;
+  dialog.periodoGroupBox.trimestreComboBox.currentIndex = param.periodovaloreTrimestre;
+
   var progressivo = parseInt(param.progressivoInvio, 10);
   if (!progressivo)
     progressivo = 1;
@@ -113,16 +112,15 @@ function settingsDialog() {
   if (dlgResult !== 1)
     return false;
 
-  param.valoreTrimestre = dialog.periodoGroupBox.trimestreComboBox.currentIndex.toString();
-  param.valoreMese = dialog.periodoGroupBox.meseComboBox.currentIndex.toString();
-  if (dialog.periodoGroupBox.trimestreRadioButton.checked) {
-    param.selezioneTrimestre = true;
-    param.selezioneMese = false;
-  }
-  else {
-    param.selezioneTrimestre = false;
-    param.selezioneMese = true;
-  }
+  //Salvataggio dati
+  //Groupbox periodo
+  param.periodoValoreTrimestre = dialog.periodoGroupBox.trimestreComboBox.currentIndex.toString();
+  param.periodoValoreMese = dialog.periodoGroupBox.meseComboBox.currentIndex.toString();
+  if (dialog.periodoGroupBox.meseRadioButton.checked)
+    param.periodoSelezionato = 0;
+  else if (dialog.periodoGroupBox.trimestreRadioButton.checked)
+    param.periodoSelezionato = 1;
+
   progressivo = dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text;
   progressivo = parseInt(progressivo, 10);
   if (!progressivo)
@@ -229,14 +227,15 @@ function getCountryCode(jsonObject) {
 function initParam()
 {
   var param = {};
-  param.selezioneTrimestre = true;
-  param.selezioneMese = false;
-  param.valoreTrimestre = '';
-  param.valoreMese = '';
   param.codicefiscaleDichiarante = '';
   param.codiceCarica = '';
   param.blocco = 'DTE';
   param.progressivoInvio = '';
+
+  param.periodoSelezionato = 0;
+  param.periodoValoreMese = '';
+  param.periodoValoreTrimestre = '';
+
   /*
   0 = create print preview report
   1 = create file xml 
@@ -264,51 +263,15 @@ function init_schemarefs()
 };
 
 function loadJournalData(param) {
-
+  //per il momento c'è un unico periodo non controlla il tipo di versamento mensile o trimestrale
   param.data = {};  
-
-  if (param.selezioneTrimestre) {
-    if (param.valoreTrimestre === "0") {
-      param.data.startDate = param.accountingYear.toString() + "0101";
-      param.data.endDate = param.accountingYear.toString() + "0331";
-    }
-    else if (param.valoreTrimestre === "1") {
-      param.data.startDate = param.accountingYear.toString() + "0401";
-      param.data.endDate = param.accountingYear.toString() + "0630";
-    }
-    else if (param.valoreTrimestre === "2") {
-      param.data.startDate = param.accountingYear.toString() + "0701";
-      param.data.endDate = param.accountingYear.toString() + "0930";
-    }
-    else {
-      param.data.startDate = param.accountingYear.toString() + "1001";
-      param.data.endDate = param.accountingYear.toString() + "1231";
-    }
+  param.datiContribuente.liqTipoVersamento = -1;
+  var periods = createPeriods(param);
+  if (periods.length>0) {
+    param.data.startDate = periods[0].startDate;
+    param.data.endDate = periods[0].endDate;
+    param.data = loadJournal(param.data);
   }
-  else if (param.selezioneMese) {
-    var month = parseInt(param.valoreMese) + 1;
-    //months with 30 days
-    if (month === 11 || month === 4 || month === 6 || month === 9) {
-      param.data.startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01";
-      param.data.endDate = param.accountingYear.toString() + zeroPad(month, 2) + "30";
-    }
-    //month with 28 or 29 days
-    else if (month === 2) {
-      var day = 28;
-      if (param.accountingYear % 4 == 0 && (param.accountingYear % 100 != 0 || param.accountingYear % 400 == 0)) {
-        day = 29;
-      }
-      param.data.startDate = param.accountingYear.toString() + "0201" ;
-      param.data.endDate = param.accountingYear.toString() + "02" + day.toString();
-    }
-    //months with 31 days
-    else {
-      param.data.startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01" ;
-      param.data.endDate = param.accountingYear.toString() + zeroPad(month, 2) + "31" ;
-    }
-  }
-
-  param.data = loadJournal(param.data);
 
   return param;
 }
@@ -449,14 +412,6 @@ function saveData(output, param) {
 }
 
 function verifyParam(param) {
-  if (!param.selezioneTrimestre && !param.selezioneMese) {
-    param.selezioneTrimestre  = true;
-    param.selezioneMese  = false;
-  }
-  if (!param.valoreTrimestre)
-    param.valoreTrimestre  = '';
-  if (!param.valoreMese)
-    param.valoreMese  = '';
   if(!param.codicefiscaleDichiarante)
     param.codicefiscaleDichiarante = '';
   if(!param.codiceCarica)
@@ -465,6 +420,14 @@ function verifyParam(param) {
     param.blocco = 'DTE';
   if(!param.progressivoInvio)
     param.progressivoInvio = '';
+
+  if (!param.periodoSelezionato)
+    param.periodoSelezionato = 0;
+  if (!param.periodoValoreMese)
+    param.periodoValoreMese = '';
+  if (!param.periodoValoreTrimestre)
+    param.periodoValoreTrimestre = '';
+
   if (!param.outputScript)
     param.outputScript = 0;
   return param;

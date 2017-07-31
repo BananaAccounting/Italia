@@ -68,6 +68,7 @@ function createPeriods(param) {
   else if (param.periodoSelezionato == 1) {
     //TRIMESTRE param.periodoSelezionato == 1
     if (param.datiContribuente.liqTipoVersamento == 0) {
+      //Tipo versamento mensile quindi crea più periodi per il trimestre selezionato liqTipoVersamento == 0
       if (param.periodoValoreTrimestre === "0") {
         var currentPeriod = {};
         currentPeriod.startDate = param.accountingYear.toString() + "0101";
