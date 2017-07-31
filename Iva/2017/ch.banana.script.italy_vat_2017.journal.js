@@ -21,6 +21,150 @@
 */
 
 /*
+ * Crea i periodi in base alle impostazioni del dialogo: periodo selezionato e tipo versamento(mensile o trimestrale)
+ * Ritorna un array dei periodi
+ *
+ * @param
+ */
+function createPeriods(param) {
+  var periods = [];
+
+  if (!param)
+    return param;
+
+  if (param.periodoSelezionato == 0) {
+    //MESE param.periodoSelezionato == 0
+    var currentPeriod = {};
+    var month = parseInt(param.periodoValoreMese) + 1;
+    if (month === 11 || month === 4 || month === 6 || month === 9) {
+      currentPeriod.startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01";
+      currentPeriod.endDate = param.accountingYear.toString() + zeroPad(month, 2) + "30";
+    }
+    //month with 28 or 29 days
+    else if (month === 2) {
+      var day = 28;
+      if (param.accountingYear % 4 == 0 && (param.accountingYear % 100 != 0 || param.accountingYear % 400 == 0))
+        day = 29;
+      currentPeriod.startDate = param.accountingYear.toString() + "0201";
+      currentPeriod.endDate = param.accountingYear.toString()+ "02" + day.toString() ;
+    }
+    //months with 31 days
+    else {
+      currentPeriod.startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01";
+      currentPeriod.endDate = param.accountingYear.toString() + zeroPad(month, 2) + "31";
+    }
+
+    //se il tipo di versamento è trimestrale avvisa che è stato selezionato un mese
+    if (param.datiContribuente.liqTipoVersamento == 1) {
+      var msg = getErrorMessage(ID_ERR_TIPOVERSAMENTO);
+      Banana.document.addMessage( msg, ID_ERR_TIPOVERSAMENTO);
+      currentPeriod.startDate = '';
+      currentPeriod.endDate = '';
+    }
+    if (currentPeriod.startDate.length>0 && currentPeriod.endDate.length>0) {
+      periods.push(currentPeriod);
+    }
+  }
+  else if (param.periodoSelezionato == 1) {
+    //TRIMESTRE param.periodoSelezionato == 1
+    if (param.datiContribuente.liqTipoVersamento == 0) {
+      if (param.periodoValoreTrimestre === "0") {
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0101";
+        currentPeriod.endDate = param.accountingYear.toString() + "0131";
+        periods.push(currentPeriod);
+
+        var day = 28;
+        if (param.accountingYear % 4 == 0 && (param.accountingYear % 100 != 0 || param.accountingYear % 400 == 0))
+          day = 29;
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0201";
+        currentPeriod.endDate = param.accountingYear.toString() + "02" + day.toString();
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0301";
+        currentPeriod.endDate = param.accountingYear.toString() + "0331";
+        periods.push(currentPeriod);
+      }
+      else if (param.periodoValoreTrimestre === "1") {
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0401";
+        currentPeriod.endDate = param.accountingYear.toString() + "0430";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0501";
+        currentPeriod.endDate = param.accountingYear.toString() + "0531";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0601";
+        currentPeriod.endDate = param.accountingYear.toString() + "0630";
+        periods.push(currentPeriod);
+      }
+      else if (param.periodoValoreTrimestre === "2") {
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0701";
+        currentPeriod.endDate = param.accountingYear.toString() + "0731";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0801";
+        currentPeriod.endDate = param.accountingYear.toString() + "0831";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0901";
+        currentPeriod.endDate = param.accountingYear.toString() + "0930";
+        periods.push(currentPeriod);
+      }
+      else if (param.periodoValoreTrimestre === "3") {
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "1001";
+        currentPeriod.endDate = param.accountingYear.toString() + "1031";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "1101";
+        currentPeriod.endDate = param.accountingYear.toString() + "1130";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "1201";
+        currentPeriod.endDate = param.accountingYear.toString() + "1231";
+        periods.push(currentPeriod);
+      }
+    }
+    else {
+      var currentPeriod = {};
+      if (param.periodoValoreTrimestre === "0") {
+        currentPeriod.startDate = param.accountingYear.toString() + "0101";
+        currentPeriod.endDate = param.accountingYear.toString() + "0331";
+      }
+      else if (param.periodoValoreTrimestre === "1") {
+        currentPeriod.startDate = param.accountingYear.toString() + "0401";
+        currentPeriod.endDate = param.accountingYear.toString() + "0630";
+      }
+      else if (param.periodoValoreTrimestre === "2") {
+        currentPeriod.startDate = param.accountingYear.toString() + "0701";
+        currentPeriod.endDate = param.accountingYear.toString() + "0930";
+      }
+      else if (param.periodoValoreTrimestre === "3") {
+        currentPeriod.startDate = param.accountingYear.toString() + "1001";
+        currentPeriod.endDate = param.accountingYear.toString() + "1231";
+      }
+      periods.push(currentPeriod);
+    }
+  }
+  else if (param.periodoSelezionato == 2) {
+    //TUTTO L'ANNO param.periodoSelezionato == 2
+  }
+  
+  return periods;
+}
+
+/*
  * Ritorna un oggetto json con i dati del cliente o fornitore ripresi dalla tabella conti(indirizzo, saldo, ...)
  *
  * @accountId	numero conto cliente/fornitore
@@ -55,7 +199,7 @@ function getAccount(accountId) {
  */
 function loadJournal(param)
 {
-  if (!Banana.document || typeof (Banana.document.journalCustomersSuppliers) === 'undefined')
+  if (!Banana.document || !param || typeof (Banana.document.journalCustomersSuppliers) === 'undefined')
     return false;
 
   var journal = Banana.document.journalCustomersSuppliers(
@@ -398,6 +542,9 @@ function loadJournal_filter(row, index, table) {
 }
 
 function loadJournal_setColumns(param, journalColumns) {
+  if (!param)
+    return param;
+  
   param.columns = {};
   for (var j = 0; j < journalColumns.length; j++) {
     var column = {};
@@ -635,9 +782,8 @@ function loadJournal_setColumns(param, journalColumns) {
  * @param	parametro iniziale dove vengono salvati i dati letti
  */
 function readAccountingData(param) {
-
   if (!param)
-    param = {};
+    return param;
 
   //Table FileInfo
   param.fileInfo = {};
@@ -718,6 +864,8 @@ function readAccountingData(param) {
  * Funzione di debug per la stampa del giornale di controllo
  */
 function _debug_printCustomersSuppliers(param, report, stylesheet) {
+  if (!param)
+    return param;
 
   //Column count
   var sortedColumns = [];
@@ -804,6 +952,8 @@ function _debug_printCustomersSuppliers(param, report, stylesheet) {
  * Funzione di debug per la stampa del giornale di controllo
  */
 function _debug_printJournal(param, report, stylesheet) {
+  if (!param)
+    return param;
 
   //Column count
   var sortedColumns = [];

@@ -268,6 +268,11 @@ function exec(inData) {
   var stylesheet = Banana.Report.newStyleSheet();
 
   //Print report
+  for (var i=0; i<param.periods.length; i++) {
+    report.addPageBreak();
+    _debug_printJournal(param.periods[i], report, stylesheet);
+  }
+  
   /*  stylesheet.addStyle("@page", "size:portrait;margin:2em;font-size: 8px; ");
   stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
   stylesheet.addStyle("thead", "font-weight: bold");
@@ -299,11 +304,6 @@ function exec(inData) {
       report.addPageBreak();
   }*/
 
-  if (debug) {
-    report.addPageBreak();
-    _debug_printJournal(param.data, report, stylesheet);
-  }
-
   Banana.Report.preview(report, stylesheet);
   return;
 
@@ -331,10 +331,12 @@ function initParam()
 }
 
 function loadJournalData(param) {
-  param.data = {};  
-  param.data.startDate = Banana.document.startPeriod();
-  param.data.endDate = Banana.document.endPeriod();
-  param.data = loadJournal(param.data);
+  param.periods = [];
+  var periods = createPeriods(param);
+  for (var i=0; i<periods.length; i++) {
+    periods[i] = loadJournal(periods[i]);
+    param.periods.push(periods[i]);
+  }
   return param;
 }
 

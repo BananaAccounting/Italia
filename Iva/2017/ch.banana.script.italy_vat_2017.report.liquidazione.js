@@ -194,11 +194,16 @@ function exec(inData) {
     param = JSON.parse(Banana.document.getScriptSettings());
   }
   
-  // Calculate vat amounts for each vat code
   param = readAccountingData(param);
-  param = vatCodesLoad(param);
   param.schemaRefs = init_schemarefs();
   param.namespaces = init_namespaces();
+
+  // Calculate vat amounts for each vat code
+  param.vatPeriods = [];
+  var periods = createPeriods(param);
+  for (var i=0; i<periods.length; i++) {
+    param = loadVatCodes(param, periods[i].startDate, periods[i].endDate);
+  }
 
   var output = createInstance(param)
 
@@ -359,6 +364,161 @@ function init_schemarefs()
    ];
   return schemaRefs;
 };
+
+function loadVatCodes(param, _startDate, _endDate) 
+{
+  var vatAmounts = {};
+
+  // V = Vendite
+  var tableVatCodes = Banana.document.table("VatCodes");
+  var vatCodes = findVatCodes(tableVatCodes, "Gr", "V-IM-BA");
+  vatAmounts["V-IM-BA"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-IM-REV");
+  vatAmounts["V-IM-REV"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-IM-EU");
+  vatAmounts["V-IM-EU"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-IM-ES");
+  vatAmounts["V-IM-ES"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-IM");
+  vatAmounts["V-IM"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-NI-EU");
+  vatAmounts["V-NI-EU"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-NI");
+  vatAmounts["V-NI"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-ES");
+  vatAmounts["V-ES"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-NE");
+  vatAmounts["V-NE"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-ED");
+  vatAmounts["V-ED"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+
+  vatAmounts["V-IM"] = sumVatAmounts(vatAmounts, ["V-IM","V-IM-BA","V-IM-REV","V-IM-EU","V-IM-ES"]);
+  vatAmounts["V-NI"] = sumVatAmounts(vatAmounts, ["V-NI","V-NI-EU"]);
+  vatAmounts["V"] = sumVatAmounts(vatAmounts, ["V-IM","V-NI","V-ES","V-NE","V-ED"]);
+
+  // C = Corrispettivi
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "C-NVE");
+  vatAmounts["C-NVE"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "C-VEN");
+  vatAmounts["C-VEN"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "C-REG");
+  vatAmounts["C-REG"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatAmounts["C"] = sumVatAmounts(vatAmounts, ["C-NVE","C-VEN","C-REG"]);
+  
+  // A = Acquisti
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-RI");
+  vatAmounts["A-IM-RI"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-BA");
+  vatAmounts["A-IM-BA"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-BN");
+  vatAmounts["A-IM-BN"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-AL");
+  vatAmounts["A-IM-AL"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-RI-REV");
+  vatAmounts["A-IM-RI-REV"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-RI-EU");
+  vatAmounts["A-IM-RI-EU"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM");
+  vatAmounts["A-IM"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-NI-X");
+  vatAmounts["A-NI-X"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-NI");
+  vatAmounts["A-NI"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-ES");
+  vatAmounts["A-ES"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-NE");
+  vatAmounts["A-NE"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-ED");
+  vatAmounts["A-ED"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+
+  vatAmounts["A-IM"] = sumVatAmounts(vatAmounts, ["A-IM","A-IM-RI","A-IM-BA","A-IM-BN","A-IM-AL","A-IM-RI-REV","A-IM-RI-EU"]);
+  vatAmounts["A-NI"] = sumVatAmounts(vatAmounts, ["A-NI","A-NI-X"]);
+  vatAmounts["A"] = sumVatAmounts(vatAmounts, ["A-IM","A-NI","A-ES","A-NE","A-ED"]);
+  
+  //Liquidazione
+  vatAmounts["L-AC"] = Banana.document.vatCurrentBalance("L-AC", _startDate, _endDate);
+  vatAmounts["L-CIA"] = Banana.document.vatCurrentBalance("L-CIA", _startDate, _endDate);
+  vatAmounts["L-INT"] = Banana.document.vatCurrentBalance("L-INT", _startDate, _endDate);
+  vatAmounts["L"] = sumVatAmounts(vatAmounts, ["L-AC","L-CIA","L-INT"]);
+
+  // Get vat total from report
+  vatAmounts["Total"] = sumVatAmounts(vatAmounts, ["V","C","A","L"]);
+
+  // Get vat total from Banana
+  vatAmounts["BananaTotal"] = getVatTotalFromBanana(_startDate, _endDate);
+  
+  // Calculate difference in totals between report and Banana
+  vatAmounts["difference"] = substractVatAmounts(vatAmounts["Total"], vatAmounts["BananaTotal"]);
+
+  //PrevPeriod Debito/Credito periodo precedente viene calcolato sommando gli importi IVA fino al giorno precedente il periodo
+  var endPreviousPeriod = Banana.Converter.toDate(_startDate);
+  endPreviousPeriod.setDate(endPreviousPeriod.getDate() - 1);
+  endPreviousPeriod = Banana.Converter.toInternalDateFormat(endPreviousPeriod);
+  vatAmounts["PrevPeriod"] = Banana.document.vatCurrentBalance("*", "", endPreviousPeriod);
+  
+  //Totale con credito periodo precedente per calcolo interessi
+  vatAmounts["TotalDue"] = sumVatAmounts(vatAmounts, ["Total","PrevPeriod"]);
+
+  //Operazioni attive
+  vatAmounts["OPATTIVE"] = sumVatAmounts(vatAmounts, ["V","C"]);
+
+  //Operazioni passive
+  vatAmounts["OPPASSIVE"] = sumVatAmounts(vatAmounts, ["A"]);
+
+  //Differenza operazioni
+  vatAmounts["OPDIFFERENZA"] = sumVatAmounts(vatAmounts, ["OPATTIVE","OPPASSIVE"]);
+  
+    /* just for printing */
+  vatAmounts["V-IM-BA"].style = "total4";
+  vatAmounts["V-IM-REV"].style = "total4";
+  vatAmounts["V-IM-EU"].style = "total4";
+  vatAmounts["V-IM-ES"].style = "total4";
+  vatAmounts["V-IM"].style = "total3";
+  vatAmounts["V-NI-EU"].style = "total4";
+  vatAmounts["V-NI"].style = "total3";
+  vatAmounts["V-ES"].style = "total4";
+  vatAmounts["V-NE"].style = "total4";
+  vatAmounts["V-ED"].style = "total4";
+  vatAmounts["V"].style = "total2";
+
+  vatAmounts["C-NVE"].style = "total3";
+  vatAmounts["C-VEN"].style = "total3";
+  vatAmounts["C-REG"].style = "total3";
+  vatAmounts["C"].style = "total2";
+  
+  vatAmounts["A-IM-RI"].style = "total4";
+  vatAmounts["A-IM-BA"].style = "total4";
+  vatAmounts["A-IM-BN"].style = "total4";
+  vatAmounts["A-IM-AL"].style = "total4";
+  vatAmounts["A-IM-RI-REV"].style = "total4";
+  vatAmounts["A-IM-RI-EU"].style = "total4";
+  vatAmounts["A-IM"].style = "total3";
+  vatAmounts["A-NI-X"].style = "total4";
+  vatAmounts["A-NI"].style = "total3";
+  vatAmounts["A-ES"].style = "total4";
+  vatAmounts["A-NE"].style = "total4";
+  vatAmounts["A-ED"].style = "total4";
+  vatAmounts["A"].style = "total2";
+
+  vatAmounts["L-AC"].style = "total3";
+  vatAmounts["PrevPeriod"].style = "total3";
+  vatAmounts["L-CIA"].style = "total3";
+  vatAmounts["L-INT"].style = "total3";
+  vatAmounts["L"].style = "total2";
+
+  vatAmounts["Total"].style = "total1";
+  vatAmounts["TotalDue"].style = "total1";
+  vatAmounts["BananaTotal"].style = "total1";
+  vatAmounts["difference"].style = "total4";
+
+  vatAmounts.startDate = _startDate;
+  vatAmounts.endDate = _endDate;
+  vatAmounts.datiContribuente = {};
+  vatAmounts.datiContribuente.liqTipoVersamento = param.datiContribuente.liqTipoVersamento;
+  vatAmounts.datiContribuente.liqPercInteressi = param.datiContribuente.liqPercInteressi;
+  param.vatPeriods.push(vatAmounts);
+  return param;
+}
 
 function printVatReport1(report, stylesheet, param) {
 
@@ -574,281 +734,6 @@ function sumVatAmounts(vatAmounts, codesToSum) {
   }
 
   return sum;
-}
-
-function vatCodesLoad(param) 
-{
-  param.vatPeriods = [];
-  var startDate = '';
-  var endDate = '';
-  if (param.periodoSelezionato == 0) {
-    //MESE
-    var month = parseInt(param.periodoValoreMese) + 1;
-    if (month === 11 || month === 4 || month === 6 || month === 9) {
-      startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01";
-      endDate = param.accountingYear.toString() + zeroPad(month, 2) + "30";
-    }
-    //month with 28 or 29 days
-    else if (month === 2) {
-      var day = 28;
-      if (param.accountingYear % 4 == 0 && (param.accountingYear % 100 != 0 || param.accountingYear % 400 == 0))
-        day = 29;
-      startDate = param.accountingYear.toString() + "0201";
-      endDate = param.accountingYear.toString()+ "02" + day.toString() ;
-    }
-    //months with 31 days
-    else {
-      startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01";
-      endDate = param.accountingYear.toString() + zeroPad(month, 2) + "31";
-    }
-
-    //se il tipo di versamento è trimestrale avvisa che è stato selezionato un mese
-    if (param.datiContribuente.liqTipoVersamento == 1) {
-      var msg = getErrorMessage(ID_ERR_TIPOVERSAMENTO);
-      Banana.document.addMessage( msg, ID_ERR_TIPOVERSAMENTO);
-      startDate = '';
-      endDate = '';
-    }
-    if (startDate.length>0 && endDate.length>0)
-      param = vatCodesLoadPeriod(param, startDate, endDate);
-  }
-  else {
-    //TRIMESTRE param.periodoSelezionato == 1
-    if (param.datiContribuente.liqTipoVersamento == 0) {
-      if (param.periodoValoreTrimestre === "0") {
-        startDate = param.accountingYear.toString() + "0101";
-        endDate = param.accountingYear.toString() + "0131";
-        param = vatCodesLoadPeriod(param, startDate, endDate);
-
-        var day = 28;
-        if (param.accountingYear % 4 == 0 && (param.accountingYear % 100 != 0 || param.accountingYear % 400 == 0))
-          day = 29;
-        startDate = param.accountingYear.toString() + "0201";
-        endDate = param.accountingYear.toString() + "02" + day.toString();
-        param = vatCodesLoadPeriod(param, startDate, endDate);
-
-        startDate = param.accountingYear.toString() + "0301";
-        endDate = param.accountingYear.toString() + "0331";
-        param = vatCodesLoadPeriod(param, startDate, endDate);
-      }
-      else if (param.periodoValoreTrimestre === "1") {
-        startDate = param.accountingYear.toString() + "0401";
-        endDate = param.accountingYear.toString() + "0430";
-        param = vatCodesLoadPeriod(param, startDate, endDate);
-
-        startDate = param.accountingYear.toString() + "0501";
-        endDate = param.accountingYear.toString() + "0531";
-        param = vatCodesLoadPeriod(param, startDate, endDate);
-
-        startDate = param.accountingYear.toString() + "0601";
-        endDate = param.accountingYear.toString() + "0630";
-        param = vatCodesLoadPeriod(param, startDate, endDate);
-      }
-      else if (param.periodoValoreTrimestre === "2") {
-        startDate = param.accountingYear.toString() + "0701";
-        endDate = param.accountingYear.toString() + "0731";
-        param = vatCodesLoadPeriod(param, startDate, endDate);
-
-        startDate = param.accountingYear.toString() + "0801";
-        endDate = param.accountingYear.toString() + "0831";
-        param = vatCodesLoadPeriod(param, startDate, endDate);
-
-        startDate = param.accountingYear.toString() + "0901";
-        endDate = param.accountingYear.toString() + "0930";
-        param = vatCodesLoadPeriod(param, startDate, endDate);
-      }
-      else if (param.periodoValoreTrimestre === "3") {
-        startDate = param.accountingYear.toString() + "1001";
-        endDate = param.accountingYear.toString() + "1031";
-        param = vatCodesLoadPeriod(param, startDate, endDate);
-
-        startDate = param.accountingYear.toString() + "1101";
-        endDate = param.accountingYear.toString() + "1130";
-        param = vatCodesLoadPeriod(param, startDate, endDate);
-
-        startDate = param.accountingYear.toString() + "1201";
-        endDate = param.accountingYear.toString() + "1231";
-        param = vatCodesLoadPeriod(param, startDate, endDate);
-      }
-    }
-    else {
-      var startDate = '';
-      var endDate = '';
-      if (param.periodoValoreTrimestre === "0") {
-        startDate = param.accountingYear.toString() + "0101";
-        endDate = param.accountingYear.toString() + "0331";
-      }
-      else if (param.periodoValoreTrimestre === "1") {
-        startDate = param.accountingYear.toString() + "0401";
-        endDate = param.accountingYear.toString() + "0630";
-      }
-      else if (param.periodoValoreTrimestre === "2") {
-        startDate = param.accountingYear.toString() + "0701";
-        endDate = param.accountingYear.toString() + "0930";
-      }
-      else if (param.periodoValoreTrimestre === "3") {
-        startDate = param.accountingYear.toString() + "1001";
-        endDate = param.accountingYear.toString() + "1231";
-      }
-      param = vatCodesLoadPeriod(param, startDate, endDate);
-    }
-  }
-  return param;
-}
-
-function vatCodesLoadPeriod(param, _startDate, _endDate) 
-{
-  var vatAmounts = {};
-
-  // V = Vendite
-  var tableVatCodes = Banana.document.table("VatCodes");
-  var vatCodes = findVatCodes(tableVatCodes, "Gr", "V-IM-BA");
-  vatAmounts["V-IM-BA"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-IM-REV");
-  vatAmounts["V-IM-REV"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-IM-EU");
-  vatAmounts["V-IM-EU"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-IM-ES");
-  vatAmounts["V-IM-ES"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-IM");
-  vatAmounts["V-IM"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-NI-EU");
-  vatAmounts["V-NI-EU"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-NI");
-  vatAmounts["V-NI"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-ES");
-  vatAmounts["V-ES"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-NE");
-  vatAmounts["V-NE"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "V-ED");
-  vatAmounts["V-ED"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-
-  vatAmounts["V-IM"] = sumVatAmounts(vatAmounts, ["V-IM","V-IM-BA","V-IM-REV","V-IM-EU","V-IM-ES"]);
-  vatAmounts["V-NI"] = sumVatAmounts(vatAmounts, ["V-NI","V-NI-EU"]);
-  vatAmounts["V"] = sumVatAmounts(vatAmounts, ["V-IM","V-NI","V-ES","V-NE","V-ED"]);
-
-  // C = Corrispettivi
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "C-NVE");
-  vatAmounts["C-NVE"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "C-VEN");
-  vatAmounts["C-VEN"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "C-REG");
-  vatAmounts["C-REG"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatAmounts["C"] = sumVatAmounts(vatAmounts, ["C-NVE","C-VEN","C-REG"]);
-  
-  // A = Acquisti
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-RI");
-  vatAmounts["A-IM-RI"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-BA");
-  vatAmounts["A-IM-BA"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-BN");
-  vatAmounts["A-IM-BN"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-AL");
-  vatAmounts["A-IM-AL"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-RI-REV");
-  vatAmounts["A-IM-RI-REV"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-RI-EU");
-  vatAmounts["A-IM-RI-EU"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM");
-  vatAmounts["A-IM"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-NI-X");
-  vatAmounts["A-NI-X"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-NI");
-  vatAmounts["A-NI"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-ES");
-  vatAmounts["A-ES"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-NE");
-  vatAmounts["A-NE"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-ED");
-  vatAmounts["A-ED"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-
-  vatAmounts["A-IM"] = sumVatAmounts(vatAmounts, ["A-IM","A-IM-RI","A-IM-BA","A-IM-BN","A-IM-AL","A-IM-RI-REV","A-IM-RI-EU"]);
-  vatAmounts["A-NI"] = sumVatAmounts(vatAmounts, ["A-NI","A-NI-X"]);
-  vatAmounts["A"] = sumVatAmounts(vatAmounts, ["A-IM","A-NI","A-ES","A-NE","A-ED"]);
-  
-  //Liquidazione
-  vatAmounts["L-AC"] = Banana.document.vatCurrentBalance("L-AC", _startDate, _endDate);
-  vatAmounts["L-CIA"] = Banana.document.vatCurrentBalance("L-CIA", _startDate, _endDate);
-  vatAmounts["L-INT"] = Banana.document.vatCurrentBalance("L-INT", _startDate, _endDate);
-  vatAmounts["L"] = sumVatAmounts(vatAmounts, ["L-AC","L-CIA","L-INT"]);
-
-  // Get vat total from report
-  vatAmounts["Total"] = sumVatAmounts(vatAmounts, ["V","C","A","L"]);
-
-  // Get vat total from Banana
-  vatAmounts["BananaTotal"] = getVatTotalFromBanana(_startDate, _endDate);
-  
-  // Calculate difference in totals between report and Banana
-  vatAmounts["difference"] = substractVatAmounts(vatAmounts["Total"], vatAmounts["BananaTotal"]);
-
-  //PrevPeriod Debito/Credito periodo precedente viene calcolato sommando gli importi IVA fino al giorno precedente il periodo
-  var endPreviousPeriod = Banana.Converter.toDate(_startDate);
-  endPreviousPeriod.setDate(endPreviousPeriod.getDate() - 1);
-  endPreviousPeriod = Banana.Converter.toInternalDateFormat(endPreviousPeriod);
-  vatAmounts["PrevPeriod"] = Banana.document.vatCurrentBalance("*", "", endPreviousPeriod);
-  
-  //Totale con credito periodo precedente per calcolo interessi
-  vatAmounts["TotalDue"] = sumVatAmounts(vatAmounts, ["Total","PrevPeriod"]);
-
-  //Operazioni attive
-  vatAmounts["OPATTIVE"] = sumVatAmounts(vatAmounts, ["V","C"]);
-
-  //Operazioni passive
-  vatAmounts["OPPASSIVE"] = sumVatAmounts(vatAmounts, ["A"]);
-
-  //Differenza operazioni
-  vatAmounts["OPDIFFERENZA"] = sumVatAmounts(vatAmounts, ["OPATTIVE","OPPASSIVE"]);
-  
-    /* just for printing */
-  vatAmounts["V-IM-BA"].style = "total4";
-  vatAmounts["V-IM-REV"].style = "total4";
-  vatAmounts["V-IM-EU"].style = "total4";
-  vatAmounts["V-IM-ES"].style = "total4";
-  vatAmounts["V-IM"].style = "total3";
-  vatAmounts["V-NI-EU"].style = "total4";
-  vatAmounts["V-NI"].style = "total3";
-  vatAmounts["V-ES"].style = "total4";
-  vatAmounts["V-NE"].style = "total4";
-  vatAmounts["V-ED"].style = "total4";
-  vatAmounts["V"].style = "total2";
-
-  vatAmounts["C-NVE"].style = "total3";
-  vatAmounts["C-VEN"].style = "total3";
-  vatAmounts["C-REG"].style = "total3";
-  vatAmounts["C"].style = "total2";
-  
-  vatAmounts["A-IM-RI"].style = "total4";
-  vatAmounts["A-IM-BA"].style = "total4";
-  vatAmounts["A-IM-BN"].style = "total4";
-  vatAmounts["A-IM-AL"].style = "total4";
-  vatAmounts["A-IM-RI-REV"].style = "total4";
-  vatAmounts["A-IM-RI-EU"].style = "total4";
-  vatAmounts["A-IM"].style = "total3";
-  vatAmounts["A-NI-X"].style = "total4";
-  vatAmounts["A-NI"].style = "total3";
-  vatAmounts["A-ES"].style = "total4";
-  vatAmounts["A-NE"].style = "total4";
-  vatAmounts["A-ED"].style = "total4";
-  vatAmounts["A"].style = "total2";
-
-  vatAmounts["L-AC"].style = "total3";
-  vatAmounts["PrevPeriod"].style = "total3";
-  vatAmounts["L-CIA"].style = "total3";
-  vatAmounts["L-INT"].style = "total3";
-  vatAmounts["L"].style = "total2";
-
-  vatAmounts["Total"].style = "total1";
-  vatAmounts["TotalDue"].style = "total1";
-  vatAmounts["BananaTotal"].style = "total1";
-  vatAmounts["difference"].style = "total4";
-
-  vatAmounts.startDate = _startDate;
-  vatAmounts.endDate = _endDate;
-  vatAmounts.datiContribuente = {};
-  vatAmounts.datiContribuente.liqTipoVersamento = param.datiContribuente.liqTipoVersamento;
-  vatAmounts.datiContribuente.liqPercInteressi = param.datiContribuente.liqPercInteressi;
-  param.vatPeriods.push(vatAmounts);
-  return param;
 }
 
 function verifyParam(param) {
