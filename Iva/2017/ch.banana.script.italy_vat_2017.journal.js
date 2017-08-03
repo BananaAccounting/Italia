@@ -218,6 +218,10 @@ function loadJournal(param)
   param.journal = {};
   param.journal.rows = [];
 
+  //Variabili per numerazione registro
+  var progRegistri = {};
+  var previousIndexGroup = 0;
+  
   //Salva i nomi delle colonne del giornale
   var tColumnNames = journal.columnNames;
   param.journal = loadJournal_setColumns(param.journal, tColumnNames);
@@ -331,14 +335,38 @@ function loadJournal(param)
     }
 
     //Dati supplementari
-    //IT_Aliquota
-    jsonLine["IT_Aliquota"] = '';
-    value = filteredRows[i].value("VatRate");
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else
-      value = Banana.SDecimal.abs(value);
-    jsonLine["IT_Aliquota"] = value;
+    jsonLine["IT_ClienteConto"] = '';
+    jsonLine["IT_ClienteDescrizione"] = '';
+    jsonLine["IT_ClienteIntestazione"] = '';
+    jsonLine["IT_ClienteTipologia"] = '';
+    jsonLine["IT_ClientePartitaIva"] = '';
+    jsonLine["IT_ClienteCodiceFiscale"] = '';
+
+    if (isCustomer)
+      jsonLine["IT_ClienteTipologia"] = 'C';
+    else if (isSupplier)
+      jsonLine["IT_ClienteTipologia"] = 'F';
+
+    if (isCustomer || isSupplier) {
+      jsonLine["IT_ClienteConto"] = accountId;
+      var accountObj = getAccount(accountId);
+      if (accountObj) {
+         jsonLine["IT_ClienteDescrizione"] = accountObj["Description"];
+         var partitaIva = accountObj["VatNumber"];
+         var codiceFiscale = accountObj["FiscalNumber"];
+         jsonLine["IT_ClientePartitaIva"] = partitaIva;
+         jsonLine["IT_ClienteCodiceFiscale"] = codiceFiscale;
+         var intestazione = accountObj["Description"];
+         if (partitaIva.length>0)
+           partitaIva = "p.iva: " + partitaIva;
+         if (codiceFiscale.length>0)
+           codiceFiscale = " c.f.: " + codiceFiscale;
+         if (partitaIva.length>0 || codiceFiscale.length>0) {
+           intestazione += " (" + partitaIva + codiceFiscale + ")";
+         }
+         jsonLine["IT_ClienteIntestazione"] = intestazione;
+      }
+    }
 
     //IT_Imponibile
     jsonLine["IT_Imponibile"] = '';
@@ -358,6 +386,15 @@ function loadJournal(param)
       value = Banana.SDecimal.abs(value);
     jsonLine["IT_Imposta"] = value;
 
+    //IT_Lordo
+    jsonLine["IT_Lordo"] = '';
+    value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else
+      value = Banana.SDecimal.abs(value);
+    jsonLine["IT_Lordo"] = value;
+
     //IT_Detraibile
     //IT_Deducibile
     jsonLine["IT_Detraibile"] = '';
@@ -370,36 +407,54 @@ function loadJournal(param)
       }
     }
 
+    //IT_Aliquota
     //IT_Gr_IVA
+    //IT_Gr1_IVA
     //IT_Registro
+    jsonLine["IT_Aliquota"] = '';
     jsonLine["IT_Gr_IVA"] = '';
+    jsonLine["IT_Gr1_IVA"] = '';
     jsonLine["IT_Registro"] = '';
     var vatCode = filteredRows[i].value("JVatCodeWithoutSign");
     if (vatCode.length && tableVatCodes) {
       var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
       if (rowVatCodes) {
-        var gr0 = rowVatCodes.value("Gr");
-        jsonLine["IT_Gr_IVA"] = gr0;
-        if (gr0.indexOf('-')>0) {
-          var gr1 = gr0.substr(0,1);
-          if (gr1 == "A")
+        var percAssoluta = rowVatCodes.value("VatRate");
+        if (Banana.SDecimal.isZero(percAssoluta))
+          percAssoluta = '0.00';
+        jsonLine["IT_Aliquota"] = percAssoluta;
+        var gr = rowVatCodes.value("Gr");
+        jsonLine["IT_Gr_IVA"] = gr;
+        jsonLine["IT_Registro"] = gr;
+        if (gr.indexOf('-')>0 || gr.length==1) {
+          var gr0 = gr.substr(0,1);
+          if (gr0 == "A")
             jsonLine["IT_Registro"] = "Acquisti";
-          else if (gr1 == "V")
+          else if (gr0 == "V")
             jsonLine["IT_Registro"] = "Vendite";
-          else if (gr1 == "C")
+          else if (gr0 == "C")
             jsonLine["IT_Registro"] = "Corrispettivi";
+          else if (gr0 == "L")
+            jsonLine["IT_Registro"] = "Liquidazioni";
         }
+
+        var gr1 = rowVatCodes.value("Gr1");
+        jsonLine["IT_Gr1_IVA"] = gr1;
       }
     }
 
-    //IT_Lordo
-    jsonLine["IT_Lordo"] = '';
-    value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else
-      value = Banana.SDecimal.abs(value);
-    jsonLine["IT_Lordo"] = value;
+    //IT_ProgRegistro
+    var registro = jsonLine["IT_Registro"];
+    var noProgressivo = 0;
+    if (progRegistri[registro])
+      noProgressivo = parseInt(progRegistri[registro]);
+    var indexGroup = filteredRows[i].value("JContraAccountGroup") ;
+    if (indexGroup != previousIndexGroup) {
+      noProgressivo += 1;
+    }
+    previousIndexGroup = indexGroup;
+    progRegistri[registro] = noProgressivo;
+    jsonLine["IT_ProgRegistro"] = noProgressivo.toString();
 
     //IT_TipoDoc
     //TD01 Fattura  
@@ -451,10 +506,10 @@ function loadJournal(param)
     }
 
     //IT_Natura
-    //N1 escluse ex art. 15
-    //N2 non soggette
+    //N1 escluse ex art. 15 (bollo, spese anticipate in nome e per conto della controparte, omaggi, interessi moratori, ecc.)
+    //N2 non soggette (Fuori campo IVA/Escluso IVA, codice da utilizzare per i contribuenti minimi e forfettari)
     //N3 non imponibili
-    //N4 esenti
+    //N4 esenti (esente art. 10 D.P.R. 633/72)
     //N5 regime del margine / IVA non esposta in fattura
     //N6 inversione contabile (reverse charge)
     //N7 IVA assolta in altro stato UE 
@@ -463,8 +518,11 @@ function loadJournal(param)
       var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
       if (rowVatCodes) {
         var vatGr = rowVatCodes.value("Gr");
-        if (vatGr.indexOf("-FC")>=0) {
+        if (vatGr.indexOf("-FC2")>=0) {
           jsonLine["IT_Natura"] = 'N1';
+        }
+        else if (vatGr.indexOf("-FC")>=0) {
+          jsonLine["IT_Natura"] = 'N2';
         }
         else if (vatGr.startsWith("V-NI") || vatGr.startsWith("A-NI")) {
           jsonLine["IT_Natura"] = 'N3';
@@ -558,16 +616,6 @@ function loadJournal_setColumns(param, journalColumns) {
       column.type = "date";
       column.index = 1;
     }
-    if (column.name == "DateDocument") {
-      column.title = "Data Doc";
-      column.type = "date";
-      column.index = 2;
-    }
-    if (column.name == "DateValue") {
-      column.title = "Data valuta";
-      column.type = "date";
-      column.index = 3;
-    }
     else if (column.name == "Doc") {
       column.type = "description";
       column.index = 4;
@@ -588,27 +636,19 @@ function loadJournal_setColumns(param, journalColumns) {
     }
     else if (column.name == "VatRate") {
       column.title = "%IVA";
-      column.index = 8;
+      column.index = 9;
     }
     else if (column.name == "VatRateEffective") {
       column.title = "%Eff.";
-      column.index = 9;
+      column.index = 10;
     }
     else if (column.name == "VatTaxable") {
       column.title = "Imponibile";
-      column.index = 10;
-    }
-    else if (column.name == "VatAmount") {
-      column.title = "Imp.IVA";
       column.index = 11;
     }
-    else if (column.name == "VatAccount") {
-      column.title = "Cto.IVA";
+    else if (column.name == "VatAmount") {
+      column.title = "Importo IVA";
       column.index = 12;
-    }
-    else if (column.name == "VatAccountDes") {
-      column.title = "Cto.IVA Des.";
-      column.index = 13;
     }
     else if (column.name == "VatPercentNonDeductible") {
       column.title = "%Non.Ded.";
@@ -622,92 +662,19 @@ function loadJournal_setColumns(param, journalColumns) {
       column.title = "IVA Contab.";
       column.index = 16;
     }
-    else if (column.name == "VatNumber") {
-      column.title = "Partita IVA";
-      column.index = 17;
-    }
-    else if (column.name == "JAccount") {
-      column.title = "N.conto";
-      column.index = 18;
-    }
-    else if (column.name == "JAccountDescription") {
-      column.title = "Des.conto";
-      column.type = "description";
-      column.index = 19;
-    }
-    else if (column.name == "JContraAccount") {
-      column.title = "Ctr.";
-      column.index = 20;
-    }
-    else if (column.name == "JCContraAccountDes") {
-      column.title = "Des.ctrpartita";
-      column.type = "description";
-      column.index = 21;
-    }
-    else if (column.name == "JAccountCurrency") {
-      column.title = "Moneta conto";
-      column.type = "description";
-      column.index = 22;
-    }
-    else if (column.name == "JAmountAccountCurrency") {
-      column.title = "Importo moneta";
-      column.type = "description";
-      column.index = 23;
-    }
-    else if (column.name == "JAmount") {
-      column.title = "Importo";
-      column.type = "description";
-      column.index = 24;
-    }
-    else if (column.name == "JVatIsVatOperation") {
-      column.title = "Operazione IVA";
-      column.index = 25;
-    }
-    else if (column.name == "JVatCodeWithoutSign") {
-      column.title = "Cod.IVA senza segno";
-      column.index = 26;
-    }
-    else if (column.name == "JVatCodeDescription") {
-      column.title = "Des.codice IVA";
-      column.index = 27;
-    }
-    else if (column.name == "JVatCodeWithMinus") {
-      column.title = "Cod.IVA con segno meno";
-      column.index = 28;
-    }
-    else if (column.name == "JVatNegative") {
-      column.title = "IVA negativa";
-      column.index = 29;
-    }
     else if (column.name == "JVatTaxable") {
       column.title = "IVA imponibile";
       column.index = 30;
-    }
-    else if (column.name == "JContraAccountGroup") {
-      column.title = "Gruppo contropartita";
-      column.index = 31;
-    }
-    else if (column.name == "VatTwinAccount") {
-      column.title = "Conto gemello IVA";
-      column.index = 32;
-    }
-    else if (column.name == "JInvoiceDocType") {
-      column.title = "Tipo fattura";
-      column.index = 33;
-    }
-    else if (column.name == "JInvoiceAccountId") {
-      column.title = "Conto fattura";
-      column.index = 34;
     }
     param.columns[j] = column;
   }
 
   //Additional columns
   var column = {};
-  column.name = "IT_Aliquota";
-  column.title = "IT_Aliquota";
+  column.name = "IT_Natura";
+  column.title = "IT_Natura";
   column.visible = true;
-  column.type = "amount";
+  column.type = "description";
   column.index = 1000;
   param.columns[j++] = column;
   var column = {};
@@ -725,53 +692,109 @@ function loadJournal_setColumns(param, journalColumns) {
   column.index = 1002;
   param.columns[j++] = column;
   var column = {};
+  column.name = "IT_Lordo";
+  column.title = "IT_Lordo";
+  column.visible = true;
+  column.type = "amount";
+  column.index = 1003;
+  param.columns[j++] = column;
+  var column = {};
   column.name = "IT_Detraibile";
   column.title = "IT_Detraibile";
   column.visible = true;
   column.type = "amount";
-  column.index = 1003;
+  column.index = 1004;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Deducibile";
   column.title = "IT_Deducibile";
   column.visible = true;
   column.type = "amount";
-  column.index = 1004;
+  column.index = 1005;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_Aliquota";
+  column.title = "IT_Aliquota";
+  column.visible = true;
+  column.type = "amount";
+  column.index = 1006;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Gr_IVA";
   column.title = "IT_Gr_IVA";
   column.visible = true;
   column.type = "description";
-  column.index = 1005;
+  column.index = 1007;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_Gr1_IVA";
+  column.title = "IT_Gr1_IVA";
+  column.visible = true;
+  column.type = "description";
+  column.index = 1008;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Registro";
   column.title = "IT_Registro";
   column.visible = true;
   column.type = "description";
-  column.index = 1006;
+  column.index = 1009;
   param.columns[j++] = column;
   var column = {};
-  column.name = "IT_Lordo";
-  column.title = "IT_Lordo";
+  column.name = "IT_ProgRegistro";
+  column.title = "IT_ProgRegistro";
   column.visible = true;
-  column.type = "amount";
-  column.index = 1007;
+  column.type = "description";
+  column.index = 1010;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_TipoDoc";
   column.title = "IT_TipoDoc";
   column.visible = true;
   column.type = "description";
-  column.index = 1008;
+  column.index = 1011;
   param.columns[j++] = column;
   var column = {};
-  column.name = "IT_Natura";
-  column.title = "IT_Natura";
+  column.name = "IT_ClienteConto";
+  column.title = "IT_ClienteConto";
   column.visible = true;
   column.type = "description";
-  column.index = 1009;
+  column.index = 1013;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ClienteDescrizione";
+  column.title = "IT_ClienteDescrizione";
+  column.visible = true;
+  column.type = "description";
+  column.index = 1014;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ClienteIntestazione";
+  column.title = "IT_ClienteIntestazione";
+  column.visible = true;
+  column.type = "description";
+  column.index = 1015;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ClienteTipologia";
+  column.title = "IT_ClienteTipologia";
+  column.visible = true;
+  column.type = "description";
+  column.index = 1016;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ClientePartitaIva";
+  column.title = "IT_ClientePartitaIva";
+  column.visible = true;
+  column.type = "description";
+  column.index = 1017;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ClienteCodiceFiscale";
+  column.title = "IT_ClienteCodiceFiscale";
+  column.visible = true;
+  column.type = "description";
+  column.index = 1018;
   param.columns[j++] = column;
   return param;
 }
