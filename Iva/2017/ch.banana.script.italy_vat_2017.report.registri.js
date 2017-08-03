@@ -402,6 +402,7 @@ function printRegister(report, stylesheet, param, register) {
 
   //Totali
   var vatRatesTotal = [];
+  var vatRatesNonDedTotal = [];
   var vatCodesTotal = [];  
   
   //Tabella
@@ -426,62 +427,90 @@ function printRegister(report, stylesheet, param, register) {
       continue;
 
     //var customerObject = getAccount(param.journal.rows[index].JInvoiceAccountId);
+    var progRegistro = param.journal.rows[index].DocProtocol;
+    if (param.numerazioneAutomatica)
+      progRegistro = param.journal.rows[index].IT_ProgRegistro;
+    var vatCode = param.journal.rows[index].JVatCodeWithoutSign;
     var vatRate = param.journal.rows[index].IT_Aliquota;
+    var vatAmount = param.journal.rows[index].VatAmount;
     var vatTaxable = param.journal.rows[index].JVatTaxable;
     var vatPosted = param.journal.rows[index].VatPosted;
-    var vatCode = param.journal.rows[index].JVatCodeWithoutSign;
+    var vatNonDed = param.journal.rows[index].VatNonDeductible;
+    var vatPercNonDed = param.journal.rows[index].VatPercNonDed;
 
     var row = table.addRow();
-    row.addCell(param.journal.rows[index].IT_ProgRegistro, "right");
+    row.addCell(progRegistro, "right");
     row.addCell(Banana.Converter.toLocaleDateFormat(param.journal.rows[index].JDate));
     row.addCell(Banana.Converter.toLocaleDateFormat(param.journal.rows[index].JInvoiceIssueDate));
     row.addCell(param.journal.rows[index].IT_TipoDoc, "right");
     var cell = row.addCell();
-    cell.addParagraph(param.journal.rows[index].IT_ClienteIntestazione + " " + param.journal.rows[index].Doc);
+    cell.addParagraph(xml_unescapeString(param.journal.rows[index].IT_ClienteIntestazione) + " " + param.journal.rows[index].Doc);
     row.addCell(Banana.Converter.toLocaleNumberFormat(param.journal.rows[index].IT_Lordo), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatTaxable), "right");
     row.addCell(vatCode, "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatRate), "right");
-    row.addCell(Banana.Converter.toLocaleNumberFormat(vatPosted), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(vatAmount), "right");
 
     //Totali
     if (vatRate.length>0) {
       if (vatRatesTotal[vatRate]) {
+        vatRatesTotal[vatRate].vatAmount = Banana.SDecimal.add(vatRatesTotal[vatRate].vatAmount, vatAmount);
         vatRatesTotal[vatRate].vatTaxable = Banana.SDecimal.add(vatRatesTotal[vatRate].vatTaxable, vatTaxable);
         vatRatesTotal[vatRate].vatPosted = Banana.SDecimal.add(vatRatesTotal[vatRate].vatPosted, vatPosted);
       }
       else {
         vatRatesTotal[vatRate] = {};
+        vatRatesTotal[vatRate].vatAmount = vatAmount;
         vatRatesTotal[vatRate].vatTaxable = vatTaxable;
         vatRatesTotal[vatRate].vatPosted = vatPosted;
       }
     }
+    if (vatRate.length>0 && vatNonDed.length>0) {
+      if (vatRatesNonDedTotal[vatRate]) {
+        vatRatesNonDedTotal[vatRate].vatTaxable = Banana.SDecimal.add(vatRatesNonDedTotal[vatRate].vatTaxable, vatTaxable);
+        vatRatesNonDedTotal[vatRate].vatNonDed = Banana.SDecimal.add(vatRatesNonDedTotal[vatRate].vatNonDed, vatNonDed);
+        vatRatesNonDedTotal[vatRate].vatPercNonDed = vatPercNonDed;
+      }
+      else {
+        vatRatesNonDedTotal[vatRate] = {};
+        vatRatesNonDedTotal[vatRate].vatTaxable = vatTaxable;
+        vatRatesNonDedTotal[vatRate].vatNonDed = vatNonDed;
+        vatRatesNonDedTotal[vatRate].vatPercNonDed = vatPercNonDed;
+      }
+    }
     if (vatCode.length>0) {
       if (vatCodesTotal[vatCode]) {
+        vatCodesTotal[vatCode].vatAmount = Banana.SDecimal.add(vatCodesTotal[vatCode].vatAmount, vatAmount);
         vatCodesTotal[vatCode].vatTaxable = Banana.SDecimal.add(vatCodesTotal[vatCode].vatTaxable, vatTaxable);
         vatCodesTotal[vatCode].vatPosted = Banana.SDecimal.add(vatCodesTotal[vatCode].vatPosted, vatPosted);
+        vatCodesTotal[vatCode].vatNonDed = Banana.SDecimal.add(vatCodesTotal[vatCode].vatNonDed, vatNonDed);
+        vatCodesTotal[vatCode].vatPercNonDed = vatPercNonDed;
       }
       else {
         vatCodesTotal[vatCode] = {};
+        vatCodesTotal[vatCode].vatAmount = vatAmount;
         vatCodesTotal[vatCode].vatTaxable = vatTaxable;
         vatCodesTotal[vatCode].vatPosted = vatPosted;
+        vatCodesTotal[vatCode].vatNonDed = vatNonDed;
+        vatCodesTotal[vatCode].vatPercNonDed = vatPercNonDed;
       }
     }
   }
 
-  //Riepilogo IVA per aliquota
+  //Riepilogo IVA DETRAIBILE per aliquota
   var row = table.addRow();
-  row.addCell("", "", 10);
-  row = table.addRow();
   row.addCell("", "", 4);
-  row.addCell("#RIEPILOGO IVA " + register.toUpperCase(), "bold");
+  var title = "#RIEPILOGO IVA " + register.toUpperCase();
+  if (register == "Acquisti")
+    title = "#RIEPILOGO IVA DETRAIBILE";
+  row.addCell(title, "bold");
   row.addCell("", "", 5);
   var tot1=0;
   var tot2=0;
   for (var vatRate in vatRatesTotal) {
     row = table.addRow();
     row.addCell("", "", 4);
-    row.addCell("Aliquota al " + vatRate + "%");
+    row.addCell("IVA " + vatRate + "%");
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatRatesTotal[vatRate].vatTaxable), "right");
     row.addCell("");
@@ -499,8 +528,40 @@ function printRegister(report, stylesheet, param, register) {
   row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
   
-  //Riepilogo IVA per codice
-  var row = table.addRow();
+  //Riepilogo IVA INDETRAIBILE per aliquota (dovrebbe essere solo per acquisti)
+  if (vatRatesNonDedTotal) {
+    row = table.addRow();
+    row.addCell("", "", 10);
+    row = table.addRow();
+    row.addCell("", "", 4);
+    row.addCell("#RIEPILOGO IVA INDETRAIBILE", "bold");
+    row.addCell("", "", 5);
+    var tot1=0;
+    var tot2=0;
+    for (var vatRate in vatRatesNonDedTotal) {
+      row = table.addRow();
+      row.addCell("", "", 4);
+      row.addCell("IVA " + vatRate + "%");
+      row.addCell("");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(vatRatesNonDedTotal[vatRate].vatTaxable), "right");
+      row.addCell("");
+      row.addCell("");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(vatRatesNonDedTotal[vatRate].vatNonDed), "right");
+      tot1 = Banana.SDecimal.add(vatRatesNonDedTotal[vatRate].vatTaxable, tot1);
+      tot2 = Banana.SDecimal.add(vatRatesNonDedTotal[vatRate].vatNonDed, tot2);
+    }  
+    row = table.addRow();
+    row.addCell("", "", 4);
+    row.addCell("# T O T A L E", "bold");
+    row.addCell("");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
+    row.addCell("");
+    row.addCell("");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
+  }
+
+  //Riepilogo IVA per CODICE
+  row = table.addRow();
   row.addCell("", "", 10);
   row = table.addRow();
   row.addCell("", "", 4);
@@ -519,6 +580,16 @@ function printRegister(report, stylesheet, param, register) {
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatCodesTotal[vatCode].vatPosted), "right");
     tot1 = Banana.SDecimal.add(vatCodesTotal[vatCode].vatTaxable, tot1);
     tot2 = Banana.SDecimal.add(vatCodesTotal[vatCode].vatPosted, tot2);
+    if (!Banana.SDecimal.isZero(vatCodesTotal[vatCode].vatNonDed)) {
+      row = table.addRow();
+      row.addCell("", "", 4);
+      row.addCell(vatCode + " INDETR. " + vatCodesTotal[vatCode].vatPercNonDed);
+      row.addCell("");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(vatCodesTotal[vatCode].vatTaxable), "right");
+      row.addCell("");
+      row.addCell("");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(vatCodesTotal[vatCode].vatNonDed), "right");
+    }
   }  
   row = table.addRow();
   row.addCell("", "", 4);
