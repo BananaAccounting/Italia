@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-07-28
+// @pubdate = 2017-08-03
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -145,6 +145,46 @@ function settingsDialog() {
   return true;
 }
 
+function addHeader(report, param)
+{
+  // Page header
+  var pageHeader = report.getHeader();
+  
+  var line1 = param.datiContribuente.societa;
+  if (line1.length)
+    line1 += " ";
+  if (param.datiContribuente.cognome.length)
+    line1 += param.datiContribuente.cognome;
+  if (param.datiContribuente.nome.length)
+    line1 += param.datiContribuente.nome;
+  if (line1.length)
+    pageHeader.addParagraph(line1);
+  
+  var line2 = param.datiContribuente.comuneSedeLegale;
+  if (line2.length)
+    line2 += " ";
+  if (param.datiContribuente.provinciaSedeLegale.length)
+    line2 += "(" +  param.datiContribuente.provinciaSedeLegale + ")";
+  if (line2.length)
+    pageHeader.addParagraph(line2);
+  
+  var line3 = '';
+  if (param.datiContribuente.partitaIva.length)
+    line3 = "Partita IVA: " + param.datiContribuente.partitaIva;
+  if (line3.length)
+    pageHeader.addParagraph(line3, "vatNumber");
+}
+
+function addFooter(report, param)
+{
+  //Page footer
+  var reportFooter = report.getFooter();
+  reportFooter.addClass("center");
+  reportFooter.addParagraph("N1 escluse ex art. 15, N2 non soggette, N3 non imponibili, N4 esenti, N5 regime del margine/IVA non esposta in fattura, N6 inversione contabile (reverse charge), N7 IVA assolta in altro stato UE", "notes");
+  reportFooter.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()) + " Pagina ").addFieldPageNr();
+
+}
+
 function exec(inData) {
 
   if (!Banana.document)
@@ -185,7 +225,10 @@ function exec(inData) {
   if (param.outputScript==0 && output != "@Cancel") {
     var report = Banana.Report.newReport("Dati delle fatture emesse e ricevute");
     var stylesheet = Banana.Report.newStyleSheet();
-    printVatReport1(report, stylesheet, param);
+    setStyle(report, stylesheet);
+    addHeader(report, param);
+    addFooter(report, param);
+    printVatReport(report, stylesheet, param);
     if (debug) {
       report.addPageBreak();
       _debug_printJournal(param.data, report, stylesheet);
@@ -276,41 +319,11 @@ function loadJournalData(param) {
   return param;
 }
 
-function printVatReport1(report, stylesheet, param) {
-
-  // Styles
-  stylesheet.addStyle("@page", "size:landscape;margin-top:1em;font-size: 8px; ");
-  stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
-  stylesheet.addStyle("thead", "font-weight: bold;background-color:#eeeeee;");
-  stylesheet.addStyle("td", "padding:1px;vertical-align:top;");
-  stylesheet.addStyle("td.title", "background-color:#ffffff;font-size:10px;");
-  stylesheet.addStyle("td.period", "background-color:#ffffff;");
-  stylesheet.addStyle(".amount", "text-align: right;border:1px solid black; ");
-  stylesheet.addStyle(".center", "text-align: center;");
-  stylesheet.addStyle(".notes", "padding: 2em;font-style:italic;");
-  stylesheet.addStyle(".period", "padding-bottom: 1em;");
-  stylesheet.addStyle(".right", "text-align: right;");
-  stylesheet.addStyle(".row.amount", "border:1px solid black;");
-  stylesheet.addStyle(".rowName", "font-weight: bold;padding-top:5px;border-top:1px solid black;");
-  stylesheet.addStyle(".table1", "margin-top:1em;width:100%;");
-  stylesheet.addStyle(".warning", "color: red;font-size:8px;");
+function printVatReport(report, stylesheet, param) {
 
   if (param.data.customers.length<=0 && param.data.suppliers.length<=0)
     return;
 
-  //Page numbers
-  var reportFooter = report.getFooter();
-  reportFooter.addClass("center");
-  //Note
-  reportFooter.addParagraph("N1 escluse ex art. 15, N2 non soggette, N3 non imponibili, N4 esenti, N5 regime del margine/IVA non esposta in fattura, N6 inversione contabile (reverse charge), N7 IVA assolta in altro stato UE", "notes");
-  reportFooter.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()) + " Pagina ").addFieldPageNr();
-  
-
-  //Address
-  report.addParagraph(xml_unescapeString(param.fileInfo["Address"]["Company"]) + " " + xml_unescapeString(param.fileInfo["Address"]["FamilyName"]) + " " + xml_unescapeString(param.fileInfo["Address"]["Name"]));
-  report.addParagraph(xml_unescapeString(param.fileInfo["Address"]["City"]) + " (" + xml_unescapeString(param.fileInfo["Address"]["State"]) + ")");
-  report.addParagraph("Partita IVA: " + param.fileInfo["Address"]["VatNumber"], "vatNumber");
-  
   //Print table
   //Title
   var table = report.addTable("table1");
@@ -353,14 +366,14 @@ function printVatReport1(report, stylesheet, param) {
 
   // Print data
   if (param.blocco == 'DTE') {
-    printVatReport1_rows(param.data.customers, table, param)
+    printVatReport_rows(param.data.customers, table, param)
   }
   else if (param.blocco == 'DTR'){
-    printVatReport1_rows(param.data.suppliers, table, param)
+    printVatReport_rows(param.data.suppliers, table, param)
   }
 }
 
-function printVatReport1_rows(customers_suppliers, table, param) {
+function printVatReport_rows(customers_suppliers, table, param) {
   for (var i in customers_suppliers) {
 	var rowType = "cliente";
 	if (param.blocco == "DTR")
@@ -409,6 +422,29 @@ function saveData(output, param) {
       Banana.IO.openUrl(fileName);
     }
   }
+}
+
+function setStyle(report, stylesheet) {
+  if (!stylesheet) {
+    stylesheet = report.newStyleSheet();
+  }
+  
+  stylesheet.addStyle("@page", "size:landscape;margin:2em;font-size: 8px; ");
+  stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
+  stylesheet.addStyle("thead", "font-weight: bold;background-color:#eeeeee;");
+  stylesheet.addStyle("td", "padding:1px;vertical-align:top;");
+  stylesheet.addStyle("td.title", "background-color:#ffffff;font-size:10px;");
+  stylesheet.addStyle("td.period", "background-color:#ffffff;");
+  stylesheet.addStyle(".amount", "text-align: right;border:1px solid black; ");
+  stylesheet.addStyle(".center", "text-align: center;");
+  stylesheet.addStyle(".notes", "padding: 2em;font-style:italic;");
+  stylesheet.addStyle(".period", "padding-bottom: 1em;");
+  stylesheet.addStyle(".right", "text-align: right;");
+  stylesheet.addStyle(".row.amount", "border:1px solid black;");
+  stylesheet.addStyle(".rowName", "font-weight: bold;padding-top:5px;border-top:1px solid black;");
+  stylesheet.addStyle(".table1", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".warning", "color: red;font-size:8px;");
+
 }
 
 function verifyParam(param) {

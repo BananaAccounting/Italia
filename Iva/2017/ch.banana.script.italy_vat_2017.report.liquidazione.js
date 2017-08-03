@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-07-28
+// @pubdate = 2017-08-03
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -170,6 +170,55 @@ function settingsDialog() {
   return true;
 }
 
+function addHeader(report, param)
+{
+  // Page header
+  var pageHeader = report.getHeader();
+  
+  var line1 = param.datiContribuente.societa;
+  if (line1.length)
+    line1 += " ";
+  if (param.datiContribuente.cognome.length)
+    line1 += param.datiContribuente.cognome;
+  if (param.datiContribuente.nome.length)
+    line1 += param.datiContribuente.nome;
+  if (line1.length)
+    pageHeader.addParagraph(line1);
+  
+  var line2 = param.datiContribuente.comuneSedeLegale;
+  if (line2.length)
+    line2 += " ";
+  if (param.datiContribuente.provinciaSedeLegale.length)
+    line2 += "(" +  param.datiContribuente.provinciaSedeLegale + ")";
+  if (line2.length)
+    pageHeader.addParagraph(line2);
+  
+  var line3 = '';
+  if (param.datiContribuente.partitaIva.length)
+    line3 = "Partita IVA: " + param.datiContribuente.partitaIva;
+  if (line3.length)
+    pageHeader.addParagraph(line3, "vatNumber");
+}
+
+function addFooter(report, param)
+{
+  //Page footer
+  var pageFooter = report.getFooter();
+  pageFooter.addClass("center");
+  pageFooter.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()) + " Pagina ").addFieldPageNr();
+}
+
+function calculateInterestAmount(param) {
+  var vatTotalWithoutInterest = substractVatAmounts(param["TotalDue"], param["L-INT"]);
+  if (Banana.SDecimal.sign(vatTotalWithoutInterest.vatPosted)<=0) {
+    var interestRate = Banana.SDecimal.round(param.datiContribuente.liqPercInteressi, {'decimals':2});
+    var interestAmount = Banana.SDecimal.abs(vatTotalWithoutInterest.vatPosted) * interestRate /100;
+    interestAmount = Banana.SDecimal.roundNearest(interestAmount, '0.01');
+    return interestAmount.toString();
+  }
+  return '';
+}
+
 function exec(inData) {
 
   if (!Banana.document)
@@ -211,24 +260,10 @@ function exec(inData) {
     //print preview
     var report = Banana.Report.newReport("Report title");
     var stylesheet = Banana.Report.newStyleSheet();
-    stylesheet.addStyle("phead", "font-size: 12px, font-weight: bold; margin-bottom: 1em");
-    stylesheet.addStyle("thead", "font-weight: bold");
-    stylesheet.addStyle("td", "padding-right: 1em");
-    stylesheet.addStyle(".amount", "text-align: right");
-    stylesheet.addStyle(".period", "font-size: 12px;font-weight: bold;padding-top: 2em;");
-    stylesheet.addStyle(".vatNumber", "font-size: 10px");
-    stylesheet.addStyle(".warning", "color: red;font-size:8px;");
-    stylesheet.addStyle(".total1", "border-bottom:1px double black;font-weight:bold;padding-top:10px;");
-    stylesheet.addStyle(".total2", "border-bottom:1px double black;font-weight:bold;padding-top:10px;");
-    stylesheet.addStyle(".total3", "border-bottom:1px solid black;padding-top:10px");
-    stylesheet.addStyle(".total4", "padding-top:10px");
-    stylesheet.addStyle("table.table1", "");
-    stylesheet.addStyle("table.table2", "");
-    // Page header
-    var pageHeader = report.getHeader();
-    pageHeader.addParagraph(param.datiContribuente.societa + " " + param.datiContribuente.cognome + " " + param.datiContribuente.nome);
-    pageHeader.addParagraph(param.datiContribuente.comuneSedeLegale + " (" + param.datiContribuente.provinciaSedeLegale + ")");
-    pageHeader.addParagraph("Partita IVA: " + param.datiContribuente.partitaIva, "vatNumber");
+    setStyle(report, stylesheet);
+    addHeader(report, param);
+    addFooter(report, param);
+
     //Data
     for (var index=0; index<param.vatPeriods.length; index++) {
       printVatReport1(report, stylesheet, param.vatPeriods[index]);
@@ -247,17 +282,6 @@ function exec(inData) {
 
   //return xml content
   return output;
-}
-
-function calculateInterestAmount(param) {
-  var vatTotalWithoutInterest = substractVatAmounts(param["TotalDue"], param["L-INT"]);
-  if (Banana.SDecimal.sign(vatTotalWithoutInterest.vatPosted)<=0) {
-    var interestRate = Banana.SDecimal.round(param.datiContribuente.liqPercInteressi, {'decimals':2});
-    var interestAmount = Banana.SDecimal.abs(vatTotalWithoutInterest.vatPosted) * interestRate /100;
-    interestAmount = Banana.SDecimal.roundNearest(interestAmount, '0.01');
-    return interestAmount.toString();
-  }
-  return '';
 }
 
 function findVatCodes(table, column, code) {
@@ -692,6 +716,25 @@ function saveData(output, param) {
       Banana.IO.openUrl(fileName);
     }
   }
+}
+function setStyle(report, stylesheet) {
+  if (!stylesheet) {
+    stylesheet = report.newStyleSheet();
+  }
+  stylesheet.addStyle("phead", "font-size: 12px, font-weight: bold; margin-bottom: 1em");
+  stylesheet.addStyle("thead", "font-weight: bold");
+  stylesheet.addStyle("td", "padding-right: 1em");
+  stylesheet.addStyle(".amount", "text-align: right");
+  stylesheet.addStyle(".center", "text-align: center");
+  stylesheet.addStyle(".period", "font-size: 12px;font-weight: bold;padding-top: 2em;");
+  stylesheet.addStyle(".vatNumber", "font-size: 10px");
+  stylesheet.addStyle(".warning", "color: red;font-size:8px;");
+  stylesheet.addStyle(".total1", "border-bottom:1px double black;font-weight:bold;padding-top:10px;");
+  stylesheet.addStyle(".total2", "border-bottom:1px double black;font-weight:bold;padding-top:10px;");
+  stylesheet.addStyle(".total3", "border-bottom:1px solid black;padding-top:10px");
+  stylesheet.addStyle(".total4", "padding-top:10px");
+  stylesheet.addStyle("table.table1", "");
+  stylesheet.addStyle("table.table2", "");
 }
 
 function substractVatAmounts(vatAmounts1, vatAmounts2) {

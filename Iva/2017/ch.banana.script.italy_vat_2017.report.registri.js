@@ -21,7 +21,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-02
+// @pubdate = 2017-08-03
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -234,6 +234,44 @@ function settingsDialog() {
   return true;
 }
 
+function addHeader(report, param)
+{
+  // Page header
+  var pageHeader = report.getHeader();
+  
+  var line1 = param.datiContribuente.societa;
+  if (line1.length)
+    line1 += " ";
+  if (param.datiContribuente.cognome.length)
+    line1 += param.datiContribuente.cognome;
+  if (param.datiContribuente.nome.length)
+    line1 += param.datiContribuente.nome;
+  if (line1.length)
+    pageHeader.addParagraph(line1);
+  
+  var line2 = param.datiContribuente.comuneSedeLegale;
+  if (line2.length)
+    line2 += " ";
+  if (param.datiContribuente.provinciaSedeLegale.length)
+    line2 += "(" +  param.datiContribuente.provinciaSedeLegale + ")";
+  if (line2.length)
+    pageHeader.addParagraph(line2);
+  
+  var line3 = '';
+  if (param.datiContribuente.partitaIva.length)
+    line3 = "Partita IVA: " + param.datiContribuente.partitaIva;
+  if (line3.length)
+    pageHeader.addParagraph(line3, "vatNumber");
+}
+
+function addFooter(report, param)
+{
+  //Page footer
+  var pageFooter = report.getFooter();
+  pageFooter.addClass("center");
+  pageFooter.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()) + " Pagina ").addFieldPageNr();
+}
+
 function exec(inData) {
 
   if (!Banana.document)
@@ -307,25 +345,6 @@ function exec(inData) {
   Banana.Report.preview(report, stylesheet);
   return;
 
-}
-
-function addHeader(report, param)
-{
-  // Page header
-  var pageHeader = report.getHeader();
-  var paragraph = pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["Company"]) + " " + xml_unescapeString(param.fileInfo["Address"]["FamilyName"]) + " " + xml_unescapeString(param.fileInfo["Address"]["Name"]));
-  paragraph.addText("P.I. " + param.fileInfo["Address"]["VatNumber"]);
-  paragraph = pageHeader.addParagraph(xml_unescapeString(param.fileInfo["Address"]["Address1"]) + " " + xml_unescapeString(param.fileInfo["Address"]["Address2"]) );
-  paragraph.addText(" - " + xml_unescapeString(param.fileInfo["Address"]["Zip"]) + " ");
-  paragraph.addText(xml_unescapeString(param.fileInfo["Address"]["City"]) + " (" + xml_unescapeString(param.fileInfo["Address"]["State"]) + ")");
-}
-
-function addFooter(report, param)
-{
-  //Page footer
-  var pageFooter = report.getFooter();
-  pageFooter.addClass("center");
-  pageFooter.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()) + " Pagina ").addFieldPageNr();
 }
 
 function initParam()
@@ -406,54 +425,110 @@ function printRegister(report, stylesheet, param, register) {
     if (param.journal.rows[index].IT_Registro != register)
       continue;
 
-    var customerObject = getAccount(param.journal.rows[index].JInvoiceAccountId);
-    var vatRate = Banana.SDecimal.abs(param.journal.rows[index].VatRate);
-    var vatTaxable = Banana.SDecimal.invert(param.journal.rows[index].JVatTaxable);
-    var vatPosted = Banana.SDecimal.invert(param.journal.rows[index].VatPosted);
-    var amountLordo = Banana.SDecimal.invert(param.journal.rows[index].IT_Lordo);
+    //var customerObject = getAccount(param.journal.rows[index].JInvoiceAccountId);
+    var vatRate = param.journal.rows[index].IT_Aliquota;
+    var vatTaxable = param.journal.rows[index].JVatTaxable;
+    var vatPosted = param.journal.rows[index].VatPosted;
+    var vatCode = param.journal.rows[index].JVatCodeWithoutSign;
 
     var row = table.addRow();
-    row.addCell("");
+    row.addCell(param.journal.rows[index].IT_ProgRegistro, "right");
     row.addCell(Banana.Converter.toLocaleDateFormat(param.journal.rows[index].JDate));
-    row.addCell(Banana.Converter.toLocaleDateFormat(param.journal.rows[index].DateDocument));
-    row.addCell("");
+    row.addCell(Banana.Converter.toLocaleDateFormat(param.journal.rows[index].JInvoiceIssueDate));
+    row.addCell(param.journal.rows[index].IT_TipoDoc, "right");
     var cell = row.addCell();
-    cell.addParagraph(param.journal.rows[index].JInvoiceAccountId + "/" + param.journal.rows[index].DocInvoice + " " + customerObject.Description);
-    cell.addParagraph("C.F. " + customerObject.FiscalNumber );
-    row.addCell(Banana.Converter.toLocaleNumberFormat(amountLordo), "right");
+    cell.addParagraph(param.journal.rows[index].IT_ClienteIntestazione + " " + param.journal.rows[index].Doc);
+    row.addCell(Banana.Converter.toLocaleNumberFormat(param.journal.rows[index].IT_Lordo), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatTaxable), "right");
-    row.addCell(param.journal.rows[index].JVatCodeWithoutSign, "right");
+    row.addCell(vatCode, "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatRate), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatPosted), "right");
 
     //Totali
-    vatRate = vatRate.toString();
-    if (vatRatesTotal[vatRate]) {
-      vatTaxable = Banana.SDecimal.add(vatRatesTotal[vatRate].vatTaxable, vatTaxable);
-      vatPosted = Banana.SDecimal.add(vatRatesTotal[vatRate].vatPosted, vatPosted);
+    if (vatRate.length>0) {
+      if (vatRatesTotal[vatRate]) {
+        vatRatesTotal[vatRate].vatTaxable = Banana.SDecimal.add(vatRatesTotal[vatRate].vatTaxable, vatTaxable);
+        vatRatesTotal[vatRate].vatPosted = Banana.SDecimal.add(vatRatesTotal[vatRate].vatPosted, vatPosted);
+      }
+      else {
+        vatRatesTotal[vatRate] = {};
+        vatRatesTotal[vatRate].vatTaxable = vatTaxable;
+        vatRatesTotal[vatRate].vatPosted = vatPosted;
+      }
     }
-    else {
-      vatRatesTotal[vatRate] = {};
+    if (vatCode.length>0) {
+      if (vatCodesTotal[vatCode]) {
+        vatCodesTotal[vatCode].vatTaxable = Banana.SDecimal.add(vatCodesTotal[vatCode].vatTaxable, vatTaxable);
+        vatCodesTotal[vatCode].vatPosted = Banana.SDecimal.add(vatCodesTotal[vatCode].vatPosted, vatPosted);
+      }
+      else {
+        vatCodesTotal[vatCode] = {};
+        vatCodesTotal[vatCode].vatTaxable = vatTaxable;
+        vatCodesTotal[vatCode].vatPosted = vatPosted;
+      }
     }
-    vatRatesTotal[vatRate].vatTaxable = vatTaxable;
-    vatRatesTotal[vatRate].vatPosted = vatPosted;
   }
 
-  //Riepilogo  
+  //Riepilogo IVA per aliquota
   var row = table.addRow();
+  row.addCell("", "", 10);
+  row = table.addRow();
   row.addCell("", "", 4);
-  row.addCell("#RIEPILOGO IVA PER ALIQUOTA", "bold");
+  row.addCell("#RIEPILOGO IVA " + register.toUpperCase(), "bold");
+  row.addCell("", "", 5);
+  var tot1=0;
+  var tot2=0;
   for (var vatRate in vatRatesTotal) {
     row = table.addRow();
     row.addCell("", "", 4);
-    row.addCell("Aliquota al " + vatRate);
+    row.addCell("Aliquota al " + vatRate + "%");
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatRatesTotal[vatRate].vatTaxable), "right");
     row.addCell("");
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatRatesTotal[vatRate].vatPosted), "right");
+    tot1 = Banana.SDecimal.add(vatRatesTotal[vatRate].vatTaxable, tot1);
+    tot2 = Banana.SDecimal.add(vatRatesTotal[vatRate].vatPosted, tot2);
   }  
+  row = table.addRow();
+  row.addCell("", "", 4);
+  row.addCell("# T O T A L E", "bold");
+  row.addCell("");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
+  row.addCell("");
+  row.addCell("");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
   
+  //Riepilogo IVA per codice
+  var row = table.addRow();
+  row.addCell("", "", 10);
+  row = table.addRow();
+  row.addCell("", "", 4);
+  row.addCell("#RIEPILOGO PER CODICE IVA", "bold");
+  row.addCell("", "", 5);
+  var tot1=0;
+  var tot2=0;
+  for (var vatCode in vatCodesTotal) {
+    row = table.addRow();
+    row.addCell("", "", 4);
+    row.addCell(vatCode);
+    row.addCell("");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(vatCodesTotal[vatCode].vatTaxable), "right");
+    row.addCell("");
+    row.addCell("");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(vatCodesTotal[vatCode].vatPosted), "right");
+    tot1 = Banana.SDecimal.add(vatCodesTotal[vatCode].vatTaxable, tot1);
+    tot2 = Banana.SDecimal.add(vatCodesTotal[vatCode].vatPosted, tot2);
+  }  
+  row = table.addRow();
+  row.addCell("", "", 4);
+  row.addCell("# T OT A L E", "bold");
+  row.addCell("");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
+  row.addCell("");
+  row.addCell("");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
+
 }
 
 function setStyle(report, stylesheet) {

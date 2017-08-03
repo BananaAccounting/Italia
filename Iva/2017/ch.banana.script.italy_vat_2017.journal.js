@@ -352,23 +352,18 @@ function loadJournal(param)
       var accountObj = getAccount(accountId);
       if (accountObj) {
          jsonLine["IT_ClienteDescrizione"] = accountObj["Description"];
-         var partitaIva = accountObj["VatNumber"];
-         var codiceFiscale = accountObj["FiscalNumber"];
-         jsonLine["IT_ClientePartitaIva"] = partitaIva;
-         jsonLine["IT_ClienteCodiceFiscale"] = codiceFiscale;
-         var intestazione = accountObj["Description"];
-         if (partitaIva.length>0)
-           partitaIva = "p.iva: " + partitaIva;
-         if (codiceFiscale.length>0)
-           codiceFiscale = " c.f.: " + codiceFiscale;
-         if (partitaIva.length>0 || codiceFiscale.length>0) {
-           intestazione += " (" + partitaIva + codiceFiscale + ")";
+         jsonLine["IT_ClientePartitaIva"] = accountObj["VatNumber"];
+         jsonLine["IT_ClienteCodiceFiscale"] = accountObj["FiscalNumber"];
+         var intestazione = accountId + " " + accountObj["Description"];
+         if (accountObj["VatNumber"].length>0) {
+           intestazione += " " + accountObj["VatNumber"];
          }
          jsonLine["IT_ClienteIntestazione"] = intestazione;
       }
     }
 
     //IT_Imponibile
+    //Tolto il segno perché nel file xml non esiste imponibile negativo? (controllare)
     jsonLine["IT_Imponibile"] = '';
     value = filteredRows[i].value("JVatTaxable");
     if (Banana.SDecimal.isZero(value))
@@ -612,59 +607,54 @@ function loadJournal_setColumns(param, journalColumns) {
     column.type = "amount";
     column.index = -1;
     if (column.name == "Date") {
-      column.title = "Data";
       column.type = "date";
       column.index = 1;
     }
     else if (column.name == "Doc") {
       column.type = "description";
-      column.index = 4;
+      column.index = 2;
     }
     else if (column.name == "DocProtocol") {
-      column.title = "Doc.Prot.";
+      column.title = "DocProt";
       column.type = "description";
-      column.index = 5;
+      column.index = 3;
     }
     else if (column.name == "Description") {
-      column.title = "Descrizione";
       column.type = "description";
-      column.index = 6;
+      column.index = 4;
     }
     else if (column.name == "VatCode") {
-      column.title = "Cod.IVA";
-      column.index = 7;
+      column.index = 5;
     }
     else if (column.name == "VatRate") {
-      column.title = "%IVA";
-      column.index = 9;
+      column.index = 6;
     }
     else if (column.name == "VatRateEffective") {
-      column.title = "%Eff.";
-      column.index = 10;
-    }
-    else if (column.name == "VatTaxable") {
-      column.title = "Imponibile";
-      column.index = 11;
+      column.title = "VatRateEff";
+      column.index = 7;
     }
     else if (column.name == "VatAmount") {
-      column.title = "Importo IVA";
-      column.index = 12;
+      column.index = 8;
     }
-    else if (column.name == "VatPercentNonDeductible") {
-      column.title = "%Non.Ded.";
-      column.index = 14;
-    }
-    else if (column.name == "VatNonDeductible") {
-      column.title = "Non.Ded.";
-      column.index = 15;
-    }
-    else if (column.name == "VatPosted") {
-      column.title = "IVA Contab.";
-      column.index = 16;
+    else if (column.name == "VatTaxable") {
+      column.title = "VatTax";
+      column.index = 9;
     }
     else if (column.name == "JVatTaxable") {
-      column.title = "IVA imponibile";
-      column.index = 30;
+      column.title = "JVatTax";
+      column.index = 10;
+    }
+    else if (column.name == "VatPosted") {
+      column.title = "VatPosted";
+      column.index = 11;
+    }
+    else if (column.name == "VatPercentNonDeductible") {
+      column.title = "VatPercNonDed";
+      column.index = 12;
+    }
+    else if (column.name == "VatNonDeductible") {
+      column.title = "VatNonDed";
+      column.index = 13;
     }
     param.columns[j] = column;
   }
