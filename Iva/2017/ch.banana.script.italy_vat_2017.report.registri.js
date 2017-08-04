@@ -21,7 +21,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-03
+// @pubdate = 2017-08-04
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -249,11 +249,13 @@ function addHeader(report, param)
   if (line1.length)
     pageHeader.addParagraph(line1);
   
-  var line2 = param.datiContribuente.comuneSedeLegale;
-  if (line2.length)
-    line2 += " ";
-  if (param.datiContribuente.provinciaSedeLegale.length)
-    line2 += "(" +  param.datiContribuente.provinciaSedeLegale + ")";
+  var line2 = '';
+  if (param.datiContribuente.cap.length)
+    line2 = param.datiContribuente.cap + " ";
+  if (param.datiContribuente.comune.length)
+    line2 += param.datiContribuente.comune + " ";
+  if (param.datiContribuente.provincia.length)
+    line2 += "(" +  param.datiContribuente.provincia + ")";
   if (line2.length)
     pageHeader.addParagraph(line2);
   
@@ -419,7 +421,10 @@ function printRegister(report, stylesheet, param, register) {
   headerRow.addCell("%", "right");
   headerRow.addCell("Imposta", "right");
 
-  //Importi
+  //Righe
+  var totCol1=0;
+  var totCol2=0;
+  var totCol3=0;
   for (var index in param.journal.rows) {
     if (typeof param.journal.rows[index] !== "object")
       continue;
@@ -452,6 +457,10 @@ function printRegister(report, stylesheet, param, register) {
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatAmount), "right");
 
     //Totali
+    totCol1 = Banana.SDecimal.add(param.journal.rows[index].IT_Lordo, totCol1);
+    totCol2 = Banana.SDecimal.add(vatTaxable, totCol2);
+    totCol3 = Banana.SDecimal.add(vatAmount, totCol3);
+
     if (vatRate.length>0) {
       if (vatRatesTotal[vatRate]) {
         vatRatesTotal[vatRate].vatAmount = Banana.SDecimal.add(vatRatesTotal[vatRate].vatAmount, vatAmount);
@@ -496,6 +505,15 @@ function printRegister(report, stylesheet, param, register) {
       }
     }
   }
+
+  //Riga totale
+  var row = table.addRow();
+  row.addCell("", "", 5);
+  row.addCell(Banana.Converter.toLocaleNumberFormat(totCol1), "right bold");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(totCol2), "right bold");
+  row.addCell("");
+  row.addCell("");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(totCol3), "right bold");
 
   //Riepilogo IVA DETRAIBILE per aliquota
   var row = table.addRow();
@@ -589,6 +607,7 @@ function printRegister(report, stylesheet, param, register) {
       row.addCell("");
       row.addCell("");
       row.addCell(Banana.Converter.toLocaleNumberFormat(vatCodesTotal[vatCode].vatNonDed), "right");
+      tot2 = Banana.SDecimal.add(vatCodesTotal[vatCode].vatNonDed, tot2);
     }
   }  
   row = table.addRow();

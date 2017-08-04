@@ -45,8 +45,8 @@ function createInstance(param)
       attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + schema;
     }
   }
-  attrsNamespaces['versione'] = "DAT10";
-  xbrlContent = xml_createElement("DatiFattura", xbrlContent, attrsNamespaces);
+  attrsNamespaces['versione'] = "DAT20";
+  xbrlContent = xml_createElement("ns2:DatiFattura", xbrlContent, attrsNamespaces);
 
   //Output
   var results = [];
@@ -114,34 +114,26 @@ function createInstance_Blocco1(param)
   var msgContext = '<' + tag + '>';
   
   //2.1.1   <IdentificativiFiscali>
-  var xbrlContent = '\n' + xml_createElementWithValidation("IdPaese", getCountryCode(param.fileInfo["Address"]),1,'2',msgContext);
-  xbrlContent += '\n' + xml_createElementWithValidation("IdCodice", param.fileInfo["Address"]["VatNumber"],1,'1...28',msgContext) +'\n';
+  var xbrlContent = '\n' + xml_createElementWithValidation("IdPaese", param.datiContribuente.nazione,1,'2',msgContext);
+  xbrlContent += '\n' + xml_createElementWithValidation("IdCodice", param.datiContribuente.partitaIva,1,'1...28',msgContext) +'\n';
   xbrlContent = '\n' + xml_createElementWithValidation("IdFiscaleIVA",xbrlContent,1);
-  xbrlContent += '\n' + xml_createElementWithValidation("CodiceFiscale", param.fileInfo["Address"]["FiscalNumber"],0,'11...16',msgContext) +'\n';
+  xbrlContent += '\n' + xml_createElementWithValidation("CodiceFiscale", param.datiContribuente.codiceFiscale,0,'11...16',msgContext) +'\n';
   xbrlContent =  '\n' + xml_createElementWithValidation("IdentificativiFiscali",xbrlContent,1) +'\n';
   
   //2.1.2   <AltriDatiIdentificativi>
   var xbrlContent2 = '';
-  if (param.fileInfo["Address"]["Company"].length) {
-    xbrlContent2 = '\n' + xml_createElementWithValidation("Denominazione", param.fileInfo["Address"]["Company"],0,'1...80',msgContext);
+  if (param.datiContribuente.tipoContribuente == 1) {
+    xbrlContent2 = '\n' + xml_createElementWithValidation("Denominazione", param.datiContribuente.societa,0,'1...80',msgContext);
   }
   else {
-    xbrlContent2 = '\n' + xml_createElementWithValidation("Nome", param.fileInfo["Address"]["Name"],0,'1...60',msgContext);
-    xbrlContent2 += '\n' + xml_createElementWithValidation("Cognome", param.fileInfo["Address"]["FamilyName"],0,'1...60',msgContext);
+    xbrlContent2 = '\n' + xml_createElementWithValidation("Nome", param.datiContribuente.nome,0,'1...60',msgContext);
+    xbrlContent2 += '\n' + xml_createElementWithValidation("Cognome", param.datiContribuente.cognome,0,'1...60',msgContext);
   }
-  var address = param.fileInfo["Address"]["Address1"];
-  if (param.fileInfo["Address"]["Address2"].length > 0) {
-    if (address.length > 0)
-      address += ' ';
-    address += param.fileInfo["Address"]["Address2"];
-  }
-  var xbrlContent3 = '\n' + xml_createElementWithValidation("Indirizzo", address,1,'1...60',msgContext) +'\n';
-  xbrlContent3 += xml_createElementWithValidation("CAP", param.fileInfo["Address"]["Zip"],1,'5',msgContext) +'\n';
-  xbrlContent3 += xml_createElementWithValidation("Comune", param.fileInfo["Address"]["City"],1,'1...60',msgContext) +'\n';
-  xbrlContent3 += xml_createElementWithValidation("Provincia", param.fileInfo["Address"]["State"],0,'2',msgContext);
-  if (param.fileInfo["Address"]["State"].length)
-    xbrlContent3 += '\n';
-  xbrlContent3 += xml_createElementWithValidation("Nazione", getCountryCode(param.fileInfo["Address"]),1,'2',msgContext) +'\n';
+  var xbrlContent3 = '\n' + xml_createElementWithValidation("Indirizzo", param.datiContribuente.indirizzo,1,'1...60',msgContext) +'\n';
+  xbrlContent3 += xml_createElementWithValidation("CAP", param.datiContribuente.cap,1,'5',msgContext) +'\n';
+  xbrlContent3 += xml_createElementWithValidation("Comune", param.datiContribuente.comune,1,'1...60',msgContext) +'\n';
+  xbrlContent3 += xml_createElementWithValidation("Provincia", param.datiContribuente.provincia,0,'2',msgContext) +'\n';;
+  xbrlContent3 += xml_createElementWithValidation("Nazione", param.datiContribuente.nazione,1,'2',msgContext) +'\n';
   xbrlContent2 += '\n' + xml_createElementWithValidation("Sede", xbrlContent3,1) +'\n';
   xbrlContent +=  xml_createElementWithValidation("AltriDatiIdentificativi",xbrlContent2,1) +'\n';
 

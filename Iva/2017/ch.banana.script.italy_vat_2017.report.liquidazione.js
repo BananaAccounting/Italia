@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-03
+// @pubdate = 2017-08-04
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -185,11 +185,13 @@ function addHeader(report, param)
   if (line1.length)
     pageHeader.addParagraph(line1);
   
-  var line2 = param.datiContribuente.comuneSedeLegale;
-  if (line2.length)
-    line2 += " ";
-  if (param.datiContribuente.provinciaSedeLegale.length)
-    line2 += "(" +  param.datiContribuente.provinciaSedeLegale + ")";
+  var line2 = '';
+  if (param.datiContribuente.cap.length)
+    line2 = param.datiContribuente.cap + " ";
+  if (param.datiContribuente.comune.length)
+    line2 += param.datiContribuente.comune + " ";
+  if (param.datiContribuente.provincia.length)
+    line2 += "(" +  param.datiContribuente.provincia + ")";
   if (line2.length)
     pageHeader.addParagraph(line2);
   

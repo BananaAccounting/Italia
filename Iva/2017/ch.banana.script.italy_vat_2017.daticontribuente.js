@@ -58,34 +58,29 @@ function settingsDialog() {
   var codiceattivitaLineEdit = dialog.tabWidget.findChild('codiceattivitaLineEdit');
   if (codiceattivitaLineEdit)
     codiceattivitaLineEdit.text = param.codiceAttivita;
+  var societaLineEdit = dialog.tabWidget.findChild('societaLineEdit');
+  if (societaLineEdit)
+    societaLineEdit.text = param.societa;
   var cognomeLineEdit = dialog.tabWidget.findChild('cognomeLineEdit');
   if (cognomeLineEdit)
     cognomeLineEdit.text = param.cognome;
   var nomeLineEdit = dialog.tabWidget.findChild('nomeLineEdit');
   if (nomeLineEdit)
     nomeLineEdit.text = param.nome;
-  var sessoComboBox = dialog.tabWidget.findChild('sessoComboBox');
-  if (sessoComboBox)
-    sessoComboBox.currentIndex = param.sesso;
-  var dataNascita = Banana.Converter.stringToDate(param.dataNascita, "YYYY-MM-DD");
-  var datanascitaDateEdit = dialog.tabWidget.findChild('datanascitaDateEdit');
-  if (datanascitaDateEdit)
-    datanascitaDateEdit.setDate = dataNascita;
-  var comunenascitaLineEdit = dialog.tabWidget.findChild('comunenascitaLineEdit');
-  if (comunenascitaLineEdit)
-    comunenascitaLineEdit.text = param.comuneNascita;
-  var provincianascitaLineEdit = dialog.tabWidget.findChild('provincianascitaLineEdit');
-  if (provincianascitaLineEdit)
-    provincianascitaLineEdit.text = param.provinciaNascita;
-  var societaLineEdit = dialog.tabWidget.findChild('societaLineEdit');
-  if (societaLineEdit)
-    societaLineEdit.text = param.societa;
-  var localitaLineEdit = dialog.tabWidget.findChild('localitaLineEdit');
-  if (localitaLineEdit)
-    localitaLineEdit.text = param.comuneSedeLegale;
-  var provinciaLineEdit = dialog.tabWidget.findChild('provinciaLineEdit');
-  if (provinciaLineEdit)
-    provinciaLineEdit.text = param.provinciaSedeLegale;
+  var indirizzoLineEdit = dialog.tabWidget.findChild('indirizzoLineEdit');
+  if (indirizzoLineEdit)
+    indirizzoLineEdit.text = param.indirizzo;
+  var capLineEdit = dialog.tabWidget.findChild('capLineEdit');
+  if (capLineEdit)
+    capLineEdit.text = param.cap;
+  var comuneLineEdit = dialog.tabWidget.findChild('comuneLineEdit');
+  if (comuneLineEdit)
+    comuneLineEdit.text = param.comune;
+  var provinciaComboBox = dialog.tabWidget.findChild('provinciaComboBox');
+  if (provinciaComboBox)
+    provinciaComboBox.currentText = param.provincia;
+  var nazioneComboBox = dialog.tabWidget.findChild('nazioneComboBox');
+    nazioneComboBox.currentIndex = 0;
   var telefonoLineEdit = dialog.tabWidget.findChild('telefonoLineEdit');
   if (telefonoLineEdit)
     telefonoLineEdit.text = param.telefono;
@@ -122,14 +117,28 @@ function settingsDialog() {
   dialog.checkdata = function () {
     dialog.accept();
   }
+  dialog.enableButtons = function () {
+    if (tipoContribuenteComboBox.currentIndex == 0) {
+        societaLineEdit.enabled = false;
+        cognomeLineEdit.enabled = true;
+        nomeLineEdit.enabled = true;
+    }
+    else {
+        societaLineEdit.enabled = true;
+        cognomeLineEdit.enabled = false;
+        nomeLineEdit.enabled = false;
+    }
+  }
   dialog.showHelp = function () {
     Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
   }
   dialog.buttonBox.accepted.connect(dialog, "checkdata");
   dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
+  tipoContribuenteComboBox['currentIndexChanged(QString)'].connect(dialog, "enableButtons");
   
   //Visualizzazione dialogo
   Banana.application.progressBar.pause();
+  dialog.enableButtons();
   var dlgResult = dialog.exec();
   Banana.application.progressBar.resume();
   if (dlgResult !== 1)
@@ -138,33 +147,29 @@ function settingsDialog() {
   //Salvataggio dati
   //Dati anagrafici
   if (tipoContribuenteComboBox)
-    param.tipoContribuente = tipoContribuenteComboBox.currentIndex.toString();
+    param.tipoContribuente = parseInt(tipoContribuenteComboBox.currentIndex.toString());
   if (codicefiscaleLineEdit)
     param.codiceFiscale = codicefiscaleLineEdit.text;
   if (partitaivaLineEdit)
     param.partitaIva = partitaivaLineEdit.text;
   if (codiceattivitaLineEdit)
     param.codiceAttivita = codiceattivitaLineEdit.text;
+  if (societaLineEdit)
+    param.societa = societaLineEdit.text;
   if (cognomeLineEdit)
     param.cognome = cognomeLineEdit.text;
   if (nomeLineEdit)
     param.nome = nomeLineEdit.text;
-  if (sessoComboBox)
-    param.sesso = sessoComboBox.currentIndex.toString();
-  if (datanascitaDateEdit) {
-    var dataNascita = datanascitaDateEdit.text;
-    param.dataNascita = Banana.Converter.toInternalDateFormat(dataNascita);
-  }
-  if (comunenascitaLineEdit)
-    param.comuneNascita = comunenascitaLineEdit.text;
-  if (provincianascitaLineEdit)
-    param.provinciaNascita = provincianascitaLineEdit.text;
-  if (societaLineEdit)
-    param.societa = societaLineEdit.text;
-  if (localitaLineEdit)
-    param.comuneSedeLegale = localitaLineEdit.text;
-  if (provinciaLineEdit)
-    param.provinciaSedeLegale = provinciaLineEdit.text;
+  if (indirizzoLineEdit)
+    param.indirizzo = indirizzoLineEdit.text;
+  if (capLineEdit)
+    param.cap = capLineEdit.text;
+  if (comuneLineEdit)
+    param.comune = comuneLineEdit.text;
+  if (provinciaComboBox)
+    param.provincia = provinciaComboBox.currentText;
+  if (nazioneComboBox)
+    param.nazione = 'IT';
   if (telefonoLineEdit)
     param.telefono = telefonoLineEdit.text;
   if (faxLineEdit)
@@ -200,15 +205,14 @@ function initParam(param)
   param.codiceFiscale = '';
   param.partitaIva = '';
   param.codiceAttivita = '';
+  param.societa = '';
   param.cognome = '';
   param.nome = '';
-  param.sesso = '';
-  param.dataNascita = '';
-  param.comuneNascita = '';
-  param.provinciaNascita = '';
-  param.societa = '';
-  param.comuneSedeLegale = '';
-  param.provinciaSedeLegale = '';
+  param.indirizzo = '';
+  param.cap = '';
+  param.comune = '';
+  param.provincia = '';
+  param.nazione = 'IT';
   param.telefono = '';
   param.fax = '';
   param.email = '';
@@ -239,24 +243,22 @@ function verifyParam(param) {
     param.partitaIva = '';
   if (!param.codiceAttivita)
     param.codiceAttivita = '';
+  if (!param.societa)
+    param.societa = '';
   if (!param.cognome)
     param.cognome = '';
   if (!param.nome)
     param.nome = '';
-  if (!param.sesso)
-    param.sesso = '';
-  if (!param.dataNascita)
-    param.dataNascita = '';
-  if (!param.comuneNascita)
-    param.comuneNascita = '';
-  if (!param.provinciaNascita)
-    param.provinciaNascita = '';
-  if (!param.societa)
-    param.societa = '';
-  if (!param.comuneSedeLegale)
-    param.comuneSedeLegale = '';
-  if (!param.provinciaSedeLegale)
-    param.provinciaSedeLegale = '';
+  if (!param.indirizzo)
+    param.indirizzo = '';
+  if (!param.cap)
+    param.cap = '';
+  if (!param.comune)
+    param.comune = '';
+  if (!param.provincia)
+    param.provincia = '';
+  if (!param.nazione)
+    param.nazione = 'IT';
   if (!param.telefono)
     param.telefono = '';
   if (!param.fax)

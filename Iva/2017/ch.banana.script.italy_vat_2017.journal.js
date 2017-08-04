@@ -870,6 +870,41 @@ function readAccountingData(param) {
   if (datiContribuenteParam.length > 0) {
     param.datiContribuente = JSON.parse(datiContribuenteParam);
   }
+  //Verifica parametri
+  if (!param.datiContribuente.tipoContribuente)
+    param.datiContribuente.tipoContribuente = 0;
+  if (!param.datiContribuente.codiceFiscale)
+    param.datiContribuente.codiceFiscale = '';
+  if (!param.datiContribuente.partitaIva)
+    param.datiContribuente.partitaIva = '';
+  if (!param.datiContribuente.codiceAttivita)
+    param.datiContribuente.codiceAttivita = '';
+  if (!param.datiContribuente.societa)
+    param.datiContribuente.societa = '';
+  if (!param.datiContribuente.cognome)
+    param.datiContribuente.cognome = '';
+  if (!param.datiContribuente.nome)
+    param.datiContribuente.nome = '';
+  if (!param.datiContribuente.indirizzo)
+    param.datiContribuente.indirizzo = '';
+  if (!param.datiContribuente.cap)
+    param.datiContribuente.cap = '';
+  if (!param.datiContribuente.comune)
+    param.datiContribuente.comune = '';
+  if (!param.datiContribuente.provincia)
+    param.datiContribuente.provincia = '';
+  if (!param.datiContribuente.nazione)
+    param.datiContribuente.nazione = '';
+  if (!param.datiContribuente.telefono)
+    param.datiContribuente.telefono = '';
+  if (!param.datiContribuente.fax)
+    param.datiContribuente.fax = '';
+  if (!param.datiContribuente.email)
+    param.datiContribuente.email = '';
+  if (!param.datiContribuente.liqPercInteressi)
+    param.datiContribuente.liqPercInteressi = '';
+  if (!param.datiContribuente.liqTipoVersamento)
+    param.datiContribuente.liqTipoVersamento = '';
 
   return param;
 }
