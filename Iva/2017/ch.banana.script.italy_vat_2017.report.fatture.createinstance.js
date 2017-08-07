@@ -29,6 +29,7 @@ function createInstance(param)
   //<DatiFattura> root element
   xbrlContent = xbrlDatiFatturaHeader + xbrlContent;
   var attrsNamespaces = {};
+  attrsNamespaces['versione'] = "DAT20";
   for (var j in param.namespaces) {
     var prefix = param.namespaces[j]['prefix'];
     var namespace = param.namespaces[j]['namespace'];
@@ -45,12 +46,11 @@ function createInstance(param)
       attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + schema;
     }
   }
-  attrsNamespaces['versione'] = "DAT20";
   xbrlContent = xml_createElement("ns2:DatiFattura", xbrlContent, attrsNamespaces);
 
   //Output
   var results = [];
-  results.push("<?xml version='1.0' encoding='UTF-8'?>");
+  results.push("<?xml version='1.0' encoding='UTF-8' standalone='yes'?>");
   results.push(xbrlContent);
   return results.join ('\n');
 
@@ -130,6 +130,7 @@ function createInstance_Blocco1(param)
     xbrlContent2 += '\n' + xml_createElementWithValidation("Cognome", param.datiContribuente.cognome,0,'1...60',msgContext);
   }
   var xbrlContent3 = '\n' + xml_createElementWithValidation("Indirizzo", param.datiContribuente.indirizzo,1,'1...60',msgContext) +'\n';
+  xbrlContent3 += xml_createElementWithValidation("NumeroCivico", param.datiContribuente.ncivico,0,'1...8',msgContext) +'\n';
   xbrlContent3 += xml_createElementWithValidation("CAP", param.datiContribuente.cap,1,'5',msgContext) +'\n';
   xbrlContent3 += xml_createElementWithValidation("Comune", param.datiContribuente.comune,1,'1...60',msgContext) +'\n';
   xbrlContent3 += xml_createElementWithValidation("Provincia", param.datiContribuente.provincia,0,'2',msgContext) +'\n';;
@@ -219,7 +220,7 @@ function createInstance_Blocco2(accountObj, param)
         var xbrlDatiRiepilogo = '\n' + xml_createElementWithValidation("ImponibileImporto", accountObj.rows[i]["IT_Imponibile"],1,'4...15',msgContext);
         var xbrlContent4 = '\n' + xml_createElementWithValidation("Imposta", accountObj.rows[i]["IT_Imposta"],0,'4...15',msgContext);
         xbrlContent4 += '\n' + xml_createElementWithValidation("Aliquota", accountObj.rows[i]["IT_Aliquota"],0,'4...6',msgContext) + '\n';
-        xbrlDatiRiepilogo += '\n' + xml_createElementWithValidation("DatiIVA",xbrlContent4,1) ;
+        xbrlDatiRiepilogo += '\n' + xml_createElementWithValidation("DatiIVA",xbrlContent4,1) +'\n';
         if (accountObj.rows[i]["IT_Natura"].length)
           xbrlDatiRiepilogo += '\n' + xml_createElementWithValidation("Natura", accountObj.rows[i]["IT_Natura"],0,'2');
         if (accountObj.rows[i]["IT_Detraibile"].length)
@@ -251,7 +252,7 @@ function createInstance_DatiFatturaHeader(param)
   
   var xbrlProgressivo = '';
   if (param.progressivoInvio.length>0)
-    xbrlProgressivo = '\n' + xml_createElementWithValidation("ProgressivoInvio",xml_escapeString(param.progressivoInvio),0,'1...10', msgContext) + '\n';
+    xbrlProgressivo = '\n' + xml_createElementWithValidation("ProgressivoInvio",xml_escapeString(param.progressivoInvio),0,'1...10', msgContext);
   
   var xbrlCFDichiarante = '';
   if (param.codicefiscaleDichiarante.length>0)

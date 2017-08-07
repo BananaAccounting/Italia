@@ -35,7 +35,7 @@ function settingsDialog() {
   if (savedParam.length > 0) {
     param = JSON.parse(savedParam);
   }
-  param = verifyParam(param);
+  param = verifyDatiContribuente(param);
   
   var accountingData = {};
   accountingData = readAccountingData(accountingData);
@@ -70,6 +70,9 @@ function settingsDialog() {
   var indirizzoLineEdit = dialog.tabWidget.findChild('indirizzoLineEdit');
   if (indirizzoLineEdit)
     indirizzoLineEdit.text = param.indirizzo;
+  var ncivicoLineEdit = dialog.tabWidget.findChild('ncivicoLineEdit');
+  if (ncivicoLineEdit)
+    ncivicoLineEdit.text = param.ncivico;
   var capLineEdit = dialog.tabWidget.findChild('capLineEdit');
   if (capLineEdit)
     capLineEdit.text = param.cap;
@@ -162,6 +165,8 @@ function settingsDialog() {
     param.nome = nomeLineEdit.text;
   if (indirizzoLineEdit)
     param.indirizzo = indirizzoLineEdit.text;
+  if (ncivicoLineEdit)
+    param.ncivico = ncivicoLineEdit.text;
   if (capLineEdit)
     param.cap = capLineEdit.text;
   if (comuneLineEdit)
@@ -209,6 +214,7 @@ function initParam(param)
   param.cognome = '';
   param.nome = '';
   param.indirizzo = '';
+  param.ncivico = '';
   param.cap = '';
   param.comune = '';
   param.provincia = '';
@@ -232,7 +238,7 @@ function initParam(param)
   return param;
 }
 
-function verifyParam(param) {
+function verifyDatiContribuente(param) {
   if (!param)
     param = {};
   if (!param.tipoContribuente)
@@ -251,6 +257,8 @@ function verifyParam(param) {
     param.nome = '';
   if (!param.indirizzo)
     param.indirizzo = '';
+  if (!param.ncivico)
+    param.ncivico = '';
   if (!param.cap)
     param.cap = '';
   if (!param.comune)
