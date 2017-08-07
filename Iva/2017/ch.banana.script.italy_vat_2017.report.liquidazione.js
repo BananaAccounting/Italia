@@ -211,7 +211,7 @@ function addFooter(report, param)
 }
 
 function calculateInterestAmount(param) {
-  var vatTotalWithoutInterest = substractVatAmounts(param["TotalDue"], param["L-INT"]);
+  var vatTotalWithoutInterest = substractVatAmounts(param["Total"], param["L"]);
   if (Banana.SDecimal.sign(vatTotalWithoutInterest.vatPosted)<=0) {
     var interestRate = Banana.SDecimal.round(param.datiContribuente.liqPercInteressi, {'decimals':2});
     var interestAmount = Banana.SDecimal.abs(vatTotalWithoutInterest.vatPosted) * interestRate /100;
@@ -671,16 +671,19 @@ function printVatReport2(report, stylesheet, param) {
   row.addCell("Interessi dovuti per liquidazioni trimestrali", "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param["L-INT"].vatPosted)), "amount");
   /*propone interessi trimestrali se importo è diverso da quello visualizzato*/
-  var calculatedAmount = 0;
+  var amountInteressi = 0;
+  if (param["L-INT"] && param["L-INT"].vatPosted)
+    amountInteressi = Banana.SDecimal.abs(param["L-INT"].vatPosted);
+  var amountInteressiCalcolati = 0;
   if (param.datiContribuente.liqTipoVersamento == 1)
-    calculatedAmount = calculateInterestAmount(param);
-  if (param.datiContribuente.liqTipoVersamento == 1 && Banana.SDecimal.abs(param["L-INT"].vatPosted) != calculatedAmount) {
+    amountInteressiCalcolati = calculateInterestAmount(param);
+  if (param.datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
     var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
     msg = msg.replace("%1", param.datiContribuente.liqPercInteressi );
-    msg = msg.replace("%2", Banana.Converter.toLocaleNumberFormat(calculatedAmount) );
+    msg = msg.replace("%2", Banana.Converter.toLocaleNumberFormat(amountInteressiCalcolati) );
     row.addCell(msg, "amount warning");
   }
-  else if (param.datiContribuente.liqTipoVersamento == 0 && Banana.SDecimal.abs(param["L-INT"].vatPosted) != calculatedAmount)
+  else if (param.datiContribuente.liqTipoVersamento == 0 && amountInteressi != amountInteressiCalcolati)
     row.addCell(getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE), "amount warning");
   else
     row.addCell("");

@@ -198,7 +198,9 @@ function createInstance_Modulo(param)
   if (xbrlCreditoAnnoPrecedente.length>0)
     xbrlCreditoAnnoPrecedente += '\n';
 
-  var amountInteressi = createInstance_Modulo_GetVatAmount("L-INT", "vatPosted", param);
+  var amountInteressi = 0;
+  if (param["L-INT"] && param["L-INT"].vatPosted)
+    amountInteressi = Banana.SDecimal.abs(param["L-INT"].vatPosted);
   var amountInteressiCalcolati = 0;
   if (param.datiContribuente.liqTipoVersamento == 1)
     amountInteressiCalcolati = calculateInterestAmount(param);
@@ -206,13 +208,15 @@ function createInstance_Modulo(param)
   if (param.datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
     var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
     msg = msg.replace("%1", param.datiContribuente.liqPercInteressi );
-    msg = msg.replace("%2", Banana.Converter.toLocaleNumberFormat(amountInteressiCalcolati) );
+    msg = msg.replace("%2", amountInteressiCalcolati );
     Banana.document.addMessage( msg, ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
   }
   else if (param.datiContribuente.liqTipoVersamento == 0 && amountInteressi.length>0) {
       var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE);
       Banana.document.addMessage( msg, ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE);
   }
+  //Riprende interessi con importo formattato
+  var amountInteressi = createInstance_Modulo_GetVatAmount("L-INT", "vatPosted", param);
   var xbrlInteressiDovuti = xml_createElementWithValidation("iv:InteressiDovuti", amountInteressi,0,'4...16',msgContext);
   if (xbrlInteressiDovuti.length>0)
     xbrlInteressiDovuti += '\n';
