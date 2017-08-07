@@ -441,7 +441,7 @@ function printRegister(report, stylesheet, param, register) {
     var vatTaxable = param.journal.rows[index].JVatTaxable;
     var vatPosted = param.journal.rows[index].VatPosted;
     var vatNonDed = param.journal.rows[index].VatNonDeductible;
-    var vatPercNonDed = param.journal.rows[index].VatPercNonDed;
+    var vatPercNonDed = param.journal.rows[index].VatPercentNonDeductible;
 
     var row = table.addRow();
     row.addCell(progRegistro, "right");
@@ -449,7 +449,12 @@ function printRegister(report, stylesheet, param, register) {
     row.addCell(Banana.Converter.toLocaleDateFormat(param.journal.rows[index].JInvoiceIssueDate));
     row.addCell(param.journal.rows[index].IT_TipoDoc, "right");
     var cell = row.addCell();
-    cell.addParagraph(xml_unescapeString(param.journal.rows[index].IT_ClienteIntestazione) + " " + param.journal.rows[index].Doc);
+    var descrizione = xml_unescapeString(param.journal.rows[index].IT_ClienteIntestazione);
+    if (descrizione.length<=0)
+      descrizione = param.journal.rows[index].Description + " ";
+    else
+      descrizione += " ";
+    cell.addParagraph(descrizione + param.journal.rows[index].Doc);
     row.addCell(Banana.Converter.toLocaleNumberFormat(param.journal.rows[index].IT_Lordo), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatTaxable), "right");
     row.addCell(vatCode, "right");

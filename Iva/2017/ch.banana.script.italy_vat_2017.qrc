@@ -10,8 +10,6 @@
     <file>ch.banana.script.italy_vat_2017.report.liquidazione.js</file>
     <file>ch.banana.script.italy_vat_2017.report.liquidazione.createinstance.js</file>
     <file>ch.banana.script.italy_vat_2017.report.liquidazione.dialog.ui</file>
-    <file>ch.banana.script.italy_vat_2017.report.registri.js</file>
-    <file>ch.banana.script.italy_vat_2017.report.registri.dialog.ui</file>
     <file>ch.banana.script.italy_vat_2017.xml.js</file>
  </qresource>
 </RCC>

@@ -176,6 +176,9 @@ function createInstance_Blocco2(accountObj, param)
     if (accountObj["OrganisationName"] && accountObj["OrganisationName"].length) {
       xbrlAltriDati = '\n' + xml_createElementWithValidation("Denominazione", accountObj["OrganisationName"],0,'1...80',msgContext);
     }
+    else if (!accountObj["FirstName"] || accountObj["FirstName"].length<=0) {
+      xbrlAltriDati = '\n' + xml_createElementWithValidation("Denominazione", accountObj["FamilyName"],0,'1...80',msgContext);
+    }
     else {
       xbrlAltriDati = '\n' + xml_createElementWithValidation("Nome", accountObj["FirstName"],0,'1...60',msgContext);
       xbrlAltriDati += '\n' + xml_createElementWithValidation("Cognome", accountObj["FamilyName"],0,'1...60',msgContext);
