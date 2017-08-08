@@ -100,11 +100,17 @@ function settingsDialog() {
   var percinteressiDoubleSpinBox = dialog.tabWidget.findChild('percinteressiDoubleSpinBox');
   if (percinteressiDoubleSpinBox) {
     if (param.liqPercInteressi.length>0)
-      percinteressiDoubleSpinBox.value = parseInt(param.liqPercInteressi);
+      percinteressiDoubleSpinBox.value = parseFloat(param.liqPercInteressi);
     else  
       percinteressiDoubleSpinBox.value = 0;
   }
-  //dialog.tabWidget.tab_2.ivaprorataDoubleSpinBox.value = parseInt(param.liqPercProrata);
+  var ivaprorataDoubleSpinBox = dialog.tabWidget.findChild('ivaprorataDoubleSpinBox');
+  if (ivaprorataDoubleSpinBox) {
+    if (param.liqPercProrata.length>0)
+      ivaprorataDoubleSpinBox.value = parseFloat(param.liqPercProrata);
+    else  
+      ivaprorataDoubleSpinBox.value = 0;
+  }
   
   //Numeri conto corrispettivi
   /*dialog.tabWidget.tab_2.groupBox_2.fatturenormaliComboBox.currentIndex = param.contoFattureNormali;
@@ -186,6 +192,8 @@ function settingsDialog() {
     param.liqTipoVersamento = parseInt(tipoversamentoComboBox.currentIndex.toString());
   if (percinteressiDoubleSpinBox)
       param.liqPercInteressi = percinteressiDoubleSpinBox.value.toString();
+  if (ivaprorataDoubleSpinBox)
+      param.liqPercProrata = ivaprorataDoubleSpinBox.value.toString();
 
   var paramToString = JSON.stringify(param);
   Banana.document.setScriptSettings("ch.banana.script.italy_vat_2017.daticontribuente.js", paramToString);
@@ -222,9 +230,9 @@ function initParam(param)
   param.telefono = '';
   param.fax = '';
   param.email = '';
-  param.liqPercInteressi = '';
   param.liqTipoVersamento = '';
-  //param.liqPercProrata = '';
+  param.liqPercInteressi = '';
+  param.liqPercProrata = '';
 
   //Conti corrispettivi
   /*param.contoFattureNormali = '';
@@ -273,13 +281,13 @@ function verifyDatiContribuente(param) {
     param.fax = '';
   if (!param.email)
     param.email = '';
-  if (!param.liqPercInteressi)
-    param.liqPercInteressi = '';
   if (!param.liqTipoVersamento)
     param.liqTipoVersamento = '';
-  /*if (!param.liqPercProrata)
+  if (!param.liqPercInteressi)
+    param.liqPercInteressi = '';
+  if (!param.liqPercProrata)
     param.liqPercProrata = '';
-  if (!param.contoFattureNormali)
+  /*if (!param.contoFattureNormali)
     param.contoFattureNormali = '';
   if (!paramcontoFattureFiscali
     param.contoFattureFiscali = '';
