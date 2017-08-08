@@ -50,7 +50,7 @@ function createInstance(param)
 
   //Output
   var results = [];
-  results.push("<?xml version='1.0' encoding='UTF-8' standalone='true'?>");
+  results.push("<?xml version='1.0' encoding='UTF-8' standalone='yes'?>");
   results.push(xbrlContent);
   return results.join ('\n');
 
@@ -123,16 +123,16 @@ function createInstance_Blocco1(param)
   //2.1.2   <AltriDatiIdentificativi>
   var xbrlContent2 = '';
   if (param.datiContribuente.tipoContribuente == 1) {
-    xbrlContent2 = '\n' + xml_createElementWithValidation("Denominazione", param.datiContribuente.societa,0,'1...80',msgContext);
+    xbrlContent2 = '\n' + xml_createElementWithValidation("Denominazione", xml_escapeString(param.datiContribuente.societa),0,'1...80',msgContext);
   }
   else {
-    xbrlContent2 = '\n' + xml_createElementWithValidation("Nome", param.datiContribuente.nome,0,'1...60',msgContext);
-    xbrlContent2 += '\n' + xml_createElementWithValidation("Cognome", param.datiContribuente.cognome,0,'1...60',msgContext);
+    xbrlContent2 = '\n' + xml_createElementWithValidation("Nome", xml_escapeString(param.datiContribuente.nome),0,'1...60',msgContext);
+    xbrlContent2 += '\n' + xml_createElementWithValidation("Cognome", xml_escapeString(param.datiContribuente.cognome),0,'1...60',msgContext);
   }
-  var xbrlContent3 = '\n' + xml_createElementWithValidation("Indirizzo", param.datiContribuente.indirizzo,1,'1...60',msgContext) +'\n';
-  xbrlContent3 += xml_createElementWithValidation("NumeroCivico", param.datiContribuente.ncivico,0,'1...8',msgContext) +'\n';
-  xbrlContent3 += xml_createElementWithValidation("CAP", param.datiContribuente.cap,1,'5',msgContext) +'\n';
-  xbrlContent3 += xml_createElementWithValidation("Comune", param.datiContribuente.comune,1,'1...60',msgContext) +'\n';
+  var xbrlContent3 = '\n' + xml_createElementWithValidation("Indirizzo", xml_escapeString(param.datiContribuente.indirizzo),1,'1...60',msgContext) +'\n';
+  xbrlContent3 += xml_createElementWithValidation("NumeroCivico", xml_escapeString(param.datiContribuente.ncivico),0,'1...8',msgContext) +'\n';
+  xbrlContent3 += xml_createElementWithValidation("CAP", xml_escapeString(param.datiContribuente.cap),1,'5',msgContext) +'\n';
+  xbrlContent3 += xml_createElementWithValidation("Comune", xml_escapeString(param.datiContribuente.comune),1,'1...60',msgContext) +'\n';
   xbrlContent3 += xml_createElementWithValidation("Provincia", param.datiContribuente.provincia,0,'2',msgContext) +'\n';;
   xbrlContent3 += xml_createElementWithValidation("Nazione", param.datiContribuente.nazione,1,'2',msgContext) +'\n';
   xbrlContent2 += '\n' + xml_createElementWithValidation("Sede", xbrlContent3,1) +'\n';

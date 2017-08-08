@@ -20,7 +20,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-07
+// @pubdate = 2017-08-08
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
