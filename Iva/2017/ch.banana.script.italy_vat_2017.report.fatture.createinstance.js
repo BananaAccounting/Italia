@@ -50,7 +50,7 @@ function createInstance(param)
 
   //Output
   var results = [];
-  results.push("<?xml version='1.0' encoding='UTF-8' standalone='yes'?>");
+  results.push("<?xml version='1.0' encoding='UTF-8' standalone='true'?>");
   results.push(xbrlContent);
   return results.join ('\n');
 

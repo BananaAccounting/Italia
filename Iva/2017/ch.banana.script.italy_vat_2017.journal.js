@@ -240,18 +240,23 @@ function loadJournal(param)
       continue;
 
     //Solamente righe con JInvoiceRowCustomerSupplier=1 (cliente) or JInvoiceRowCustomerSupplier=2 (fornitore)
-    var isCustomer = filteredRows[i].value("JInvoiceRowCustomerSupplier");
-    if (isCustomer!='1' && isCustomer!='2')
+    var isCustomer=false;
+    var isSupplier=false;
+    if (filteredRows[i].value("JInvoiceRowCustomerSupplier")==1)
+      isCustomer=true;
+    else if (filteredRows[i].value("JInvoiceRowCustomerSupplier")==2)
+      isSupplier=true;
+    if (!isCustomer && !isSupplier)
       continue;
 
     var accountId = filteredRows[i].value("JAccount");
     if (accountId && accountId.length>0) {
       var accountObj = getAccount(accountId);
       if (accountObj) {
-        if (isCustomer == '1') {
+        if (isCustomer) {
           param.customers[accountId] = accountObj;
         }
-        else if (isCustomer == '2') {
+        else {
           param.suppliers[accountId] = accountObj;
         }
       }
@@ -530,10 +535,10 @@ function loadJournal(param)
         else if (vatGr.startsWith("V-NE") || vatGr.startsWith("A-NE")) {
           jsonLine["IT_Natura"] = 'N5';
         }
-        else if (vatGr.indexOf("-EU")>=0) {
+        else if (vatGr.indexOf("-REV")>=0) {
           jsonLine["IT_Natura"] = 'N6';
         }
-        else if (vatGr.indexOf("-REV")>=0) {
+        else if (vatGr.indexOf("-EU")>=0) {
           jsonLine["IT_Natura"] = 'N7';
         }
       }
@@ -544,8 +549,8 @@ function loadJournal(param)
       var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
 
       //Fatture ricevute, natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
-      if (isCustomer=='2' && jsonLine["IT_Natura"] == "N6") {
-        if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
+      if (jsonLine["IT_Natura"] == "N6") {
+        if (isSupplier && (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta))) {
           msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
           Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
         }
