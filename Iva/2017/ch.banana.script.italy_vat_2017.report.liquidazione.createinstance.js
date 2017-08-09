@@ -102,7 +102,7 @@ function createInstance_Comunicazione(param)
     firmaIntermediario = "1";
   var xbrlFirmaIntermediario = xml_createElement("iv:FirmaIntermediario", firmaIntermediario) + '\n';
 
-  var xbrlContent = '\n' + xbrlCodiceFiscale + xbrlAnnoImposta + xbrlPartitaIva + xbrlUltimoMese + xbrlFirmaDichiarazione + xbrlCFDichiarante + xbrlCodiceCaricaDichiarante + 
+  var xbrlContent = '\n' + xbrlCodiceFiscale + xbrlAnnoImposta + xbrlPartitaIva + xbrlUltimoMese + xbrlCFDichiarante + xbrlCodiceCaricaDichiarante + xbrlFirmaDichiarazione + 
     xbrlCFIntermediario + xbrlImpegno + xbrlDataImpegno + xbrlFirmaIntermediario;
   
   var xbrlFrontespizio = '\n' + xml_createElement("iv:Frontespizio", xbrlContent) + '\n';
