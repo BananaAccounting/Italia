@@ -167,37 +167,6 @@ function createPeriods(param) {
   return periods;
 }
 
-/*function getPreviousPeriod(_startDate, _endDate) {
-  var prevPeriod = {};
-
-  var startDate = Banana.Converter.toDate(_startDate);
-  var endDate = Banana.Converter.toDate(_endDate);
-
-  var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-  var diffDays = Math.abs((startDate.getTime() - endDate.getTime()) / (oneDay));
-
-  endDate = Banana.Converter.toDate(_startDate);
-  endDate.setDate(endDate.getDate() - 1);
-
-  startDate = new Date(endDate);
-  startDate.setDate(startDate.getDate() - diffDays);
-  startDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
-  
-  //da rivedere mese febbraio perché bisogna togliere solo 28 giorni
-  //adesso controlla se periodo di 2 mesi che non esiste perché c'è solo suddivisione mensile e trimestrale
-  var diffMonth = parseInt(endDate.getMonth())-parseInt(startDate.getMonth());
-  if (diffMonth == 1) {
-    startDate = new Date(startDate.getFullYear(), startDate.getMonth()+1, 1);
-  }
-  else if (Math.abs(diffMonth) > 2) {
-    startDate = new Date(endDate.getFullYear(), endDate.getMonth()-2, 1);
-  }
-  
-  prevPeriod.startDate = Banana.Converter.toInternalDateFormat(startDate);
-  prevPeriod.endDate = Banana.Converter.toInternalDateFormat(endDate);
-  return prevPeriod;
-}*/
-
 /*
  * Ritorna un oggetto json con i dati del cliente o fornitore ripresi dalla tabella conti(indirizzo, saldo, ...)
  *
