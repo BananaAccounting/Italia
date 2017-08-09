@@ -183,7 +183,8 @@ function xml_formatAttributes(attributes) {
     // Determine which quote type to use around 
     // the attribute value
     if (apos_pos === -1 && quot_pos === -1) {
-      att_str = att + "='" + att_value +  "'";
+      //att_str = att + "='" + att_value +  "'";
+      att_str = att + '="' + att_value +  '"';
       result += att_str + ' ';
       continue;
     }

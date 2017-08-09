@@ -303,6 +303,8 @@ function init_namespaces()
 function init_schemarefs()
 {
   var schemaRefs = [
+    //'http://banana.ch schema_v1.xsd',
+    //'http://banana.ch schema_v2.xsd'
   ];
   return schemaRefs;
 };

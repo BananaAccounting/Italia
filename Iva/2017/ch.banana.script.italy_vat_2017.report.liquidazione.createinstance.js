@@ -37,7 +37,7 @@ function createInstance(param)
     if (schema.length > 0) {
       if (!attrsNamespaces['xsi:schemaLocation'])
         attrsNamespaces['xsi:schemaLocation'] = '';
-      if (attrsNamespaces['xsi:schemaLocation'].length>0)
+      else if (attrsNamespaces['xsi:schemaLocation'].length>0)
         attrsNamespaces['xsi:schemaLocation'] += " ";
       attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + schema;
     }
@@ -46,7 +46,7 @@ function createInstance(param)
 
   //Output
   var results = [];
-  results.push("<?xml version='1.0' encoding='UTF-8'?>");
+  results.push("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
   results.push(xbrlContent);
   return results.join ('\n');
 
