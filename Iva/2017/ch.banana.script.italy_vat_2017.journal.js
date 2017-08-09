@@ -167,7 +167,7 @@ function createPeriods(param) {
   return periods;
 }
 
-function getPreviousPeriod(_startDate, _endDate) {
+/*function getPreviousPeriod(_startDate, _endDate) {
   var prevPeriod = {};
 
   var startDate = Banana.Converter.toDate(_startDate);
@@ -196,7 +196,7 @@ function getPreviousPeriod(_startDate, _endDate) {
   prevPeriod.startDate = Banana.Converter.toInternalDateFormat(startDate);
   prevPeriod.endDate = Banana.Converter.toInternalDateFormat(endDate);
   return prevPeriod;
-}
+}*/
 
 /*
  * Ritorna un oggetto json con i dati del cliente o fornitore ripresi dalla tabella conti(indirizzo, saldo, ...)
