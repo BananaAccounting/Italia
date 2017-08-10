@@ -1,4 +1,4 @@
-// Copyright [2016] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2017] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ function createInstance(param)
     if (schema.length > 0) {
       if (!attrsNamespaces['xsi:schemaLocation'])
         attrsNamespaces['xsi:schemaLocation'] = '';
-      if (attrsNamespaces['xsi:schemaLocation'].length>0)
+      else if (attrsNamespaces['xsi:schemaLocation'].length>0)
         attrsNamespaces['xsi:schemaLocation'] += " ";
       attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + schema;
     }
@@ -46,7 +46,7 @@ function createInstance(param)
 
   //Output
   var results = [];
-  results.push("<?xml version='1.0' encoding='UTF-8'?>");
+  results.push("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
   results.push(xbrlContent);
   return results.join ('\n');
 
@@ -56,8 +56,8 @@ function createInstance_Comunicazione(param)
 {
   var msgContext = '<iv:Frontespizio>';
 
-  var codiceFiscale = param.fileInfo["Address"]["FiscalNumber"];
-  var partitaIva = param.fileInfo["Address"]["VatNumber"];
+  var codiceFiscale = param.datiContribuente.codiceFiscale;
+  var partitaIva = param.datiContribuente.partitaIva;
   var xbrlCodiceFiscale = xml_createElementWithValidation("iv:CodiceFiscale", codiceFiscale,1,'11...16',msgContext) + '\n';
   var xbrlAnnoImposta = xml_createElementWithValidation("iv:AnnoImposta", param.accountingYear,1,'4',msgContext) + '\n';
   var xbrlPartitaIva = xml_createElementWithValidation("iv:PartitaIVA", partitaIva,1,'11',msgContext) + '\n';
@@ -102,7 +102,7 @@ function createInstance_Comunicazione(param)
     firmaIntermediario = "1";
   var xbrlFirmaIntermediario = xml_createElement("iv:FirmaIntermediario", firmaIntermediario) + '\n';
 
-  var xbrlContent = '\n' + xbrlCodiceFiscale + xbrlAnnoImposta + xbrlPartitaIva + xbrlUltimoMese + xbrlFirmaDichiarazione + xbrlCFDichiarante + xbrlCodiceCaricaDichiarante + 
+  var xbrlContent = '\n' + xbrlCodiceFiscale + xbrlAnnoImposta + xbrlPartitaIva + xbrlUltimoMese + xbrlCFDichiarante + xbrlCodiceCaricaDichiarante + xbrlFirmaDichiarazione + 
     xbrlCFIntermediario + xbrlImpegno + xbrlDataImpegno + xbrlFirmaIntermediario;
   
   var xbrlFrontespizio = '\n' + xml_createElement("iv:Frontespizio", xbrlContent) + '\n';
@@ -151,7 +151,7 @@ function createInstance_Modulo(param)
 
   var xbrlMese = '';
   var xbrlTrimestre = '';
-  if (param.tipoVersamento == 0)
+  if (param.datiContribuente.liqTipoVersamento == 0)
     xbrlMese = xml_createElementWithValidation("iv:Mese", getPeriod("m", param),0,'1...2',msgContext) + '\n';
   else
     xbrlTrimestre = xml_createElementWithValidation("iv:Trimestre", getPeriod("q", param),0,'1',msgContext) + '\n';
@@ -185,10 +185,10 @@ function createInstance_Modulo(param)
 
   var xbrlDebitoPeriodoPrecedente = '';
   var xbrlCreditoPeriodoPrecedente = '';
-  if (Banana.SDecimal.sign(param["PrevPeriod"].vatPosted)<0)
-    xbrlDebitoPeriodoPrecedente = xml_createElementWithValidation("iv:DebitoPrecedente", createInstance_Modulo_GetVatAmount("PrevPeriod", "vatPosted", param),0,'4...16',msgContext);
+  if (Banana.SDecimal.sign(param["L-CI"].vatPosted)<0)
+    xbrlDebitoPeriodoPrecedente = xml_createElementWithValidation("iv:DebitoPrecedente", createInstance_Modulo_GetVatAmount("L-CI", "vatPosted", param),0,'4...16',msgContext);
   else
-    xbrlCreditoPeriodoPrecedente = xml_createElementWithValidation("iv:CreditoPeriodoPrecedente", createInstance_Modulo_GetVatAmount("PrevPeriod", "vatPosted", param),0,'4...16',msgContext);
+    xbrlCreditoPeriodoPrecedente = xml_createElementWithValidation("iv:CreditoPeriodoPrecedente", createInstance_Modulo_GetVatAmount("L-CI", "vatPosted", param),0,'4...16',msgContext);
   if (xbrlDebitoPeriodoPrecedente.length>0)
     xbrlDebitoPeriodoPrecedente += '\n';
   if (xbrlCreditoPeriodoPrecedente.length>0)
@@ -198,7 +198,26 @@ function createInstance_Modulo(param)
   if (xbrlCreditoAnnoPrecedente.length>0)
     xbrlCreditoAnnoPrecedente += '\n';
 
-  var xbrlInteressiDovuti = xml_createElementWithValidation("iv:InteressiDovuti", createInstance_Modulo_GetVatAmount("L-INT", "vatPosted", param),0,'4...16',msgContext);
+  var amountInteressi = 0;
+  if (param["L-INT"] && param["L-INT"].vatPosted)
+    amountInteressi = Banana.SDecimal.abs(param["L-INT"].vatPosted);
+  var amountInteressiCalcolati = 0;
+  if (param.datiContribuente.liqTipoVersamento == 1)
+    amountInteressiCalcolati = calculateInterestAmount(param);
+  //se suddivisione mensile e ci sono registrazioni di interessi dà un warning
+  if (param.datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
+    var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
+    msg = msg.replace("%1", param.datiContribuente.liqPercInteressi );
+    msg = msg.replace("%2", amountInteressiCalcolati );
+    Banana.document.addMessage( msg, ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
+  }
+  else if (param.datiContribuente.liqTipoVersamento == 0 && amountInteressi.length>0) {
+      var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE);
+      Banana.document.addMessage( msg, ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE);
+  }
+  //Riprende interessi con importo formattato
+  var amountInteressi = createInstance_Modulo_GetVatAmount("L-INT", "vatPosted", param);
+  var xbrlInteressiDovuti = xml_createElementWithValidation("iv:InteressiDovuti", amountInteressi,0,'4...16',msgContext);
   if (xbrlInteressiDovuti.length>0)
     xbrlInteressiDovuti += '\n';
 
@@ -208,10 +227,10 @@ function createInstance_Modulo(param)
 
   var xbrlImportoDaVersare = '';
   var xbrlImportoACredito = '';
-  if (Banana.SDecimal.sign(param["TotalDue"].vatPosted)<0)
-    xbrlImportoDaVersare = xml_createElementWithValidation("iv:ImportoDaVersare", createInstance_Modulo_GetVatAmount("TotalDue", "vatPosted", param),0,'4...16',msgContext);
+  if (Banana.SDecimal.sign(param["Total"].vatPosted)<0)
+    xbrlImportoDaVersare = xml_createElementWithValidation("iv:ImportoDaVersare", createInstance_Modulo_GetVatAmount("Total", "vatPosted", param),0,'4...16',msgContext);
   else
-    xbrlImportoACredito = xml_createElementWithValidation("iv:ImportoACredito", createInstance_Modulo_GetVatAmount("TotalDue", "vatPosted", param),0,'4...16',msgContext);
+    xbrlImportoACredito = xml_createElementWithValidation("iv:ImportoACredito", createInstance_Modulo_GetVatAmount("Total", "vatPosted", param),0,'4...16',msgContext);
   if (xbrlImportoDaVersare.length>0)
     xbrlImportoDaVersare += '\n';
   if (xbrlImportoACredito.length>0)

@@ -1,42 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ItalianInvoiceDataDialog</class>
- <widget class="QDialog" name="ItalianInvoiceDataDialog">
+ <class>ItalianVatReportDialog</class>
+ <widget class="QDialog" name="ItalianVatReportDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>323</width>
-    <height>403</height>
+    <width>452</width>
+    <height>572</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string notr="true">Comunicazione Dati fatture</string>
+   <string notr="true">Comunicazione IVA</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
     <widget class="QGroupBox" name="periodoGroupBox">
      <property name="title">
-      <string notr="true">Anno imposta</string>
+      <string notr="true">Periodo</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
          <widget class="QRadioButton" name="trimestreRadioButton">
           <property name="text">
-           <string notr="true">Trimestre</string>
+           <string notr="true">&amp;Trimestre</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="meseComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+        <item>
+         <widget class="QComboBox" name="trimestreComboBox">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
           </property>
+          <item>
+           <property name="text">
+            <string notr="true">1. trimestre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">2. trimestre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">3. trimestre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">4. trimestre</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="meseRadioButton">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string notr="true">&amp;Mese</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="meseComboBox">
           <property name="minimumSize">
            <size>
             <width>110</width>
@@ -105,96 +158,8 @@
           </item>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QRadioButton" name="meseRadioButton">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string notr="true">Mese</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="trimestreComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>110</width>
-            <height>0</height>
-           </size>
-          </property>
-          <item>
-           <property name="text">
-            <string notr="true">1. trimestre</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">2. trimestre</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">3. trimestre</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">4. trimestre</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="bloccoGroupBox">
-     <property name="title">
-      <string>Blocco</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QComboBox" name="bloccoComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>110</width>
-            <height>0</height>
-           </size>
-          </property>
-          <item>
-           <property name="text">
-            <string>DTE</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>DTR</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
+         <spacer name="horizontalSpacer_3">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -212,24 +177,66 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="datiFatturaHeaderGroupBox">
+    <widget class="QGroupBox" name="intestazioneGroupBox">
      <property name="title">
-      <string>DatiFatturaHeader</string>
+      <string>Frontespizio comunicazione</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
+         <widget class="QLabel" name="cfLabel">
+          <property name="text">
+           <string notr="true">Codice fiscale</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="cfLabel_2">
+          <property name="text">
+           <string notr="true">Codice fiscale</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="partitaIvaLabel">
+          <property name="text">
+           <string notr="true">Partita IVA</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="partitaIvaLabel_2">
+          <property name="text">
+           <string notr="true">Partita IVA</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="annoImpostaLabel">
+          <property name="text">
+           <string notr="true">Anno imposta</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="annoImpostaLabel_2">
+          <property name="text">
+           <string notr="true">Anno imposta</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
          <widget class="QLabel" name="progressivoInvioLabel">
           <property name="text">
-           <string notr="true">Progressivo invio</string>
+           <string notr="true">I&amp;dentificativo comunicazione</string>
           </property>
           <property name="buddy">
            <cstring>progressivoInvioLineEdit</cstring>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="3" column="1">
          <widget class="QLineEdit" name="progressivoInvioLineEdit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -275,17 +282,17 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="cfDichiaranteLabel">
           <property name="text">
-           <string notr="true">Codice fiscale dichiarante</string>
+           <string notr="true">&amp;Codice fiscale dichiarante</string>
           </property>
           <property name="buddy">
            <cstring>cfDichiaranteLineEdit</cstring>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="4" column="1">
          <widget class="QLineEdit" name="cfDichiaranteLineEdit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -331,17 +338,17 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
+        <item row="5" column="0">
          <widget class="QLabel" name="codiceCaricaLabel">
           <property name="text">
-           <string notr="true">Codice carica</string>
+           <string notr="true">C&amp;odice carica dichiarante</string>
           </property>
           <property name="buddy">
            <cstring>codiceCaricaComboBox</cstring>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="5" column="1">
          <widget class="QComboBox" name="codiceCaricaComboBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -437,6 +444,208 @@
           </item>
          </widget>
         </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="cfIntermediarioLabel">
+          <property name="text">
+           <string notr="true">Codice &amp;fiscale intermediario</string>
+          </property>
+          <property name="buddy">
+           <cstring>cfIntermediarioLineEdit</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QLineEdit" name="cfIntermediarioLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="mouseTracking">
+           <bool>false</bool>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::StrongFocus</enum>
+          </property>
+          <property name="acceptDrops">
+           <bool>false</bool>
+          </property>
+          <property name="toolTip">
+           <string notr="true"/>
+          </property>
+          <property name="inputMethodHints">
+           <set>Qt::ImhNone</set>
+          </property>
+          <property name="inputMask">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string notr="true"/>
+          </property>
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+          <property name="echoMode">
+           <enum>QLineEdit::Normal</enum>
+          </property>
+          <property name="cursorPosition">
+           <number>0</number>
+          </property>
+          <property name="placeholderText">
+           <string notr="true"/>
+          </property>
+          <property name="cursorMoveStyle">
+           <enum>Qt::LogicalMoveStyle</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="impegnoPresentazioneLabel">
+          <property name="text">
+           <string notr="true">Impegno &amp;presentazione</string>
+          </property>
+          <property name="buddy">
+           <cstring>impegnoComboBox</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QComboBox" name="impegnoComboBox">
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>2</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="dataImpegnoLabel">
+          <property name="text">
+           <string notr="true">Data impe&amp;gno</string>
+          </property>
+          <property name="buddy">
+           <cstring>dataImpegnoDateEdit</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QDateEdit" name="dataImpegnoDateEdit"/>
+        </item>
+        <item row="9" column="0" colspan="2">
+         <widget class="QCheckBox" name="firmaDichiarazioneCheckBox">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string notr="true">Firma dic&amp;hiarazione</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="0" colspan="2">
+         <widget class="QCheckBox" name="firmaIntermediarioCheckBox">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string notr="true">Fi&amp;rma intermediario</string>
+          </property>
+         </widget>
+        </item>
+        <item row="11" column="0">
+         <widget class="QLabel" name="ultimoMeseLabel">
+          <property name="text">
+           <string notr="true">&amp;Ultimo mese (liquidazione gruppo)</string>
+          </property>
+          <property name="buddy">
+           <cstring>ultimoMeseComboBox</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="11" column="1">
+         <widget class="QComboBox" name="ultimoMeseComboBox">
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>5</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>7</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>8</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>9</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>10</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>11</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>13</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>99</string>
+           </property>
+          </item>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
@@ -465,7 +674,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_3">
+         <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -489,8 +698,8 @@
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>20</width>
-       <height>58</height>
+       <width>17</width>
+       <height>51</height>
       </size>
      </property>
     </spacer>
@@ -503,22 +712,21 @@
     </widget>
    </item>
   </layout>
-  <zorder>periodoGroupBox</zorder>
-  <zorder>datiFatturaHeaderGroupBox</zorder>
-  <zorder>buttonBox</zorder>
-  <zorder>stampaGroupBox</zorder>
-  <zorder>horizontalSpacer_2</zorder>
-  <zorder>bloccoGroupBox</zorder>
  </widget>
  <tabstops>
   <tabstop>trimestreRadioButton</tabstop>
   <tabstop>trimestreComboBox</tabstop>
   <tabstop>meseRadioButton</tabstop>
   <tabstop>meseComboBox</tabstop>
-  <tabstop>bloccoComboBox</tabstop>
   <tabstop>progressivoInvioLineEdit</tabstop>
   <tabstop>cfDichiaranteLineEdit</tabstop>
   <tabstop>codiceCaricaComboBox</tabstop>
+  <tabstop>cfIntermediarioLineEdit</tabstop>
+  <tabstop>impegnoComboBox</tabstop>
+  <tabstop>dataImpegnoDateEdit</tabstop>
+  <tabstop>firmaDichiarazioneCheckBox</tabstop>
+  <tabstop>firmaIntermediarioCheckBox</tabstop>
+  <tabstop>ultimoMeseComboBox</tabstop>
   <tabstop>stampaReportRadioButton</tabstop>
   <tabstop>stampaXmlRadioButton</tabstop>
  </tabstops>
@@ -527,12 +735,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>ItalianInvoiceDataDialog</receiver>
+   <receiver>ItalianVatReportDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>263</x>
-     <y>332</y>
+     <x>290</x>
+     <y>479</y>
     </hint>
     <hint type="destinationlabel">
      <x>204</x>

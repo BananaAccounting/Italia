@@ -1,4 +1,4 @@
-// Copyright [2016] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2017] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -162,7 +162,7 @@ function xml_formatAttributes(attributes) {
   var use_quote, escape, quote_to_escape;
   var att_str;
   var re;
-  var result = '';
+  var result = ' ';
    
   for (var att in attributes) {
     att_value = attributes[att];
@@ -183,8 +183,9 @@ function xml_formatAttributes(attributes) {
     // Determine which quote type to use around 
     // the attribute value
     if (apos_pos === -1 && quot_pos === -1) {
-      att_str = ' ' + att + "='" + att_value +  "'";
-      result += att_str + '\n';
+      //att_str = att + "='" + att_value +  "'";
+      att_str = att + '="' + att_value +  '"';
+      result += att_str + ' ';
       continue;
     }
     
@@ -202,11 +203,11 @@ function xml_formatAttributes(attributes) {
     
     // Escape only the right kind of quote
     re = new RegExp(use_quote,'g');
-    att_str = ' ' + att + '=' + use_quote + 
+    att_str = att + '=' + use_quote + 
       att_value.replace(re, escape) + use_quote;
-    result += att_str + '\n';
+    result += att_str + ' ';
   }
-  if (result.endsWith('\n'))
+  if (result.endsWith(' '))
     result = result.substr(0, result.length-1);
   return result;
 }
