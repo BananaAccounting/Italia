@@ -160,11 +160,18 @@ function createInstance_Blocco2(accountObj, param)
   var xbrlCessionarioCommittente = '';
   if (accountObj) {
     //2.2.1   <IdentificativiFiscali>
-    var xbrlIdentificativiFiscali = xml_createElementWithValidation("IdPaese", getCountryCode(accountObj),1,'2',msgContext);
-    xbrlIdentificativiFiscali += xml_createElementWithValidation("IdCodice", accountObj["VatNumber"],1,'1...28',msgContext);
-    xbrlIdentificativiFiscali = xml_createElementWithValidation("IdFiscaleIVA",xbrlIdentificativiFiscali,1);
+    var xbrlIdentificativiFiscali = xml_createElementWithValidation("IdPaese", getCountryCode(accountObj),0,'2',msgContext);
+    xbrlIdentificativiFiscali += xml_createElementWithValidation("IdCodice", accountObj["VatNumber"],0,'1...28',msgContext);
+    xbrlIdentificativiFiscali = xml_createElementWithValidation("IdFiscaleIVA",xbrlIdentificativiFiscali,0);
     xbrlIdentificativiFiscali += xml_createElementWithValidation("CodiceFiscale", accountObj["FiscalNumber"],0,'11...16',msgContext);
-    xbrlCessionarioCommittente =  xml_createElementWithValidation("IdentificativiFiscali",xbrlIdentificativiFiscali,1);
+    xbrlCessionarioCommittente =  xml_createElementWithValidation("IdentificativiFiscali",xbrlIdentificativiFiscali,0);
+
+    //Se non è presente la partita IVA (facoltativa) il codice fiscale è obbligatorio
+    if (accountObj["VatNumber"].length<=0 && accountObj["FiscalNumber"].length<=0) {
+      var msg = getErrorMessage(ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE);
+      msg = msg.replace("%1", msgContext );
+      Banana.document.addMessage( msg, ID_ERR_VERSIONE);
+    }
 
     //2.2.2   <AltriDatiIdentificativi>
     var xbrlAltriDati = '';

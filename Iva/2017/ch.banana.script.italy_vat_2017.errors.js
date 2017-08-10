@@ -23,6 +23,7 @@ var ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA = "ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA";
 var ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA = "ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA";
 var ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE = "ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE";
 var ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI = "ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI";
+var ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE = "ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE";
 
 /**
 * return the text error message according to error id
@@ -51,6 +52,8 @@ function getErrorMessage(errorId) {
             return "Sono stati registrati degli interessi (L-INT) con tipo di versamento mensile";
         case ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI:
             return "La registrazione degli interessi %1% EUR %2 manca o non è corretta."
+        case ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE:
+            return "Il codice fiscale è obbligatorio in assenza della partita iva. %1"
     }
     return "";
 }
