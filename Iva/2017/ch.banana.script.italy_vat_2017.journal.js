@@ -508,13 +508,13 @@ function loadJournal(param)
     }
 
     //IT_Natura
-    //N1 escluse ex art. 15 (bollo, spese anticipate in nome e per conto della controparte, omaggi, interessi moratori, ecc.)
-    //N2 non soggette (Fuori campo IVA/Escluso IVA, codice da utilizzare per i contribuenti minimi e forfettari)
-    //N3 non imponibili
-    //N4 esenti (esente art. 10 D.P.R. 633/72)
-    //N5 regime del margine / IVA non esposta in fattura
+    //N1 esclusa ex art. 15 (bollo, spese anticipate in nome e per conto della controparte, omaggi, interessi moratori, ecc.)
+    //N2 non soggetta (Fuori campo IVA/Escluso IVA, codice da utilizzare per i contribuenti minimi e forfettari)
+    //N3 non imponibile (esportazione, cessione di beni intra UE)
+    //N4 esente (esente art. 10 D.P.R. 633/72) 
+    //N5 regime del margine / IVA non esposta in fattura ex art. 74-ter
     //N6 inversione contabile (reverse charge)
-    //N7 IVA assolta in altro stato UE 
+    //N7 IVA assolta in altro stato UE, vendite a distanza o prestazioni di servizi di telecomunicazioni
     jsonLine["IT_Natura"] = '';
     if (Banana.document && tableVatCodes && (jsonLine["IT_Registro"]=='Acquisti' || jsonLine["IT_Registro"]=='Vendite')) {
       var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
