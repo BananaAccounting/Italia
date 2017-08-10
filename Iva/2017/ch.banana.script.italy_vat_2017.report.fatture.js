@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-09
+// @pubdate = 2017-08-10
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -239,6 +239,7 @@ function exec(inData) {
   }
   else if (param.outputScript==1 && output != "@Cancel") {
     //xml file
+    output = formatXml(output);
     saveData(output, param);
     return;
   }
