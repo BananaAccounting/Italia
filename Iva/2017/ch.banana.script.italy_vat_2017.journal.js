@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// @includejs = ch.banana.script.italy_vat_2017.daticontribuente.js
+// @includejs = ch.banana.script.italy_vat.daticontribuente.js
 
 /*
  * ------------------------------------ REPORT IVA ITALIA 2017 ------------------------------------
@@ -891,7 +891,7 @@ function loadJournal_setColumns(param, journalColumns) {
 
 /*
  * Riprende i dati base della contabilità leggendo la tabella FileInfo (Strumenti - Tabella Info)
- * Riprende anche i dati contribuente salvati dallo script id  @id = ch.banana.script.italy_vat_2017.daticontribuente.js
+ * Riprende anche i dati contribuente salvati dallo script id  @id = ch.banana.script.italy_vat.daticontribuente.js
  *
  * @param	parametro iniziale dove vengono salvati i dati letti
  */
@@ -966,7 +966,11 @@ function readAccountingData(param) {
 
   //Dati contribuente
   param.datiContribuente = {};
-  var datiContribuenteParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat_2017.daticontribuente.js");
+  var datiContribuenteParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
+  //compatibilità con una prima versione
+  if (datiContribuenteParam.length <= 0) {
+    datiContribuenteParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat_2017.daticontribuente.js");
+  }
   if (datiContribuenteParam.length > 0) {
     param.datiContribuente = JSON.parse(datiContribuenteParam);
   }

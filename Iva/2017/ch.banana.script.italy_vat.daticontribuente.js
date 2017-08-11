@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 // @api = 1.0
-// @id = ch.banana.script.italy_vat_2017.daticontribuente.js
-// @description = IVA Italia 2017: Dati contribuente...
+// @id = ch.banana.script.italy_vat.daticontribuente.js
+// @description = IVA Italia: Dati contribuente...
 // @doctype = *;110
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
@@ -31,7 +31,11 @@
 function settingsDialog() {
 
   var param = initParam();
-  var savedParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat_2017.daticontribuente.js");
+  var savedParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
+  //compatibilità con una prima versione
+  if (savedParam.length <= 0) {
+    savedParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat_2017.daticontribuente.js");
+  }
   if (savedParam.length > 0) {
     param = JSON.parse(savedParam);
   }
@@ -43,7 +47,7 @@ function settingsDialog() {
     return false;
   }
 
-  var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.daticontribuente.dialog.ui");
+  var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat.daticontribuente.dialog.ui");
   
   //Dati anagrafici
   var tipoContribuenteComboBox = dialog.tabWidget.findChild('tipoContribuenteComboBox');
@@ -196,7 +200,7 @@ function settingsDialog() {
       param.liqPercProrata = ivaprorataDoubleSpinBox.value.toString();
 
   var paramToString = JSON.stringify(param);
-  Banana.document.setScriptSettings("ch.banana.script.italy_vat_2017.daticontribuente.js", paramToString);
+  Banana.document.setScriptSettings("ch.banana.script.italy_vat.daticontribuente.js", paramToString);
   return true;
 }
 
