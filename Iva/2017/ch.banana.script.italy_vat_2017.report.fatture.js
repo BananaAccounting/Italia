@@ -391,6 +391,7 @@ function printVatReport_rows(customers_suppliers, table, param) {
       var row = table.addRow();
       row.addCell(jsonObj["IT_TipoDoc"], "row");
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JInvoiceIssueDate"]), "row");
+      row.addCell(jsonObj["IT_DocInvoice"], "row");
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JDate"]), "row");
       row.addCell(xml_unescapeString(jsonObj["JDescription"]), "row");
       row.addCell(jsonObj["JAccount"], "row amount");

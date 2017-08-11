@@ -551,7 +551,12 @@ function loadJournal(param)
     progRegistri[registro] = noProgressivo;
     jsonLine["IT_ProgRegistro"] = noProgressivo.toString();
 
+    //IT_DocInvoice
+    jsonLine["IT_DocInvoice"] = '';
+    var noDoc = xml_escapeString(filteredRows[i].value("DocInvoice"));
     if (noDoc.length<=0)
+      noDoc =  xml_escapeString(filteredRows[i].value("Doc"));
+    jsonLine["IT_DocInvoice"] = noDoc;
 
     //IT_TipoDoc
     //TD01 Fattura  
@@ -840,6 +845,8 @@ function loadJournal_setColumns(param, journalColumns) {
   column.index = 1010;
   param.columns[j++] = column;
   var column = {};
+  column.name = "IT_DocInvoice";
+  column.title = "IT_DocInvoice";
   column.visible = true;
   column.type = "description";
   column.index = 1011;
