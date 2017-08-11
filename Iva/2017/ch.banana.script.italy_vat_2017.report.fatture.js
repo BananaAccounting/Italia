@@ -49,14 +49,16 @@ function settingsDialog() {
   
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.fatture.dialog.ui");
   //Groupbox periodo
-  if (param.periodoSelezionato == 0)
-    dialog.periodoGroupBox.meseRadioButton.checked = true;
-  else if (param.periodoSelezionato == 1)
-    dialog.periodoGroupBox.trimestreRadioButton.checked = true;
+  var index = 0;
+  if (param.periodoSelezionato == 's')
+    index = parseInt(param.periodoValoreSemestre);
+  else if (param.periodoSelezionato == 'q')
+    index = parseInt(param.periodoValoreTrimestre) + 3;
+  else if (param.periodoSelezionato == 'm')
+    index = parseInt(param.periodoValoreMese) + 8;
 
   dialog.periodoGroupBox.title += ' ' + accountingData.accountingYear;
-  dialog.periodoGroupBox.meseComboBox.currentIndex = param.periodovaloreMese;
-  dialog.periodoGroupBox.trimestreComboBox.currentIndex = param.periodovaloreTrimestre;
+  dialog.periodoGroupBox.periodoComboBox.currentIndex = index;
 
   var progressivo = parseInt(param.progressivoInvio, 10);
   if (!progressivo)
@@ -83,26 +85,12 @@ function settingsDialog() {
     dialog.accept();
   }
   dialog.enableButtons = function () {
-    if (dialog.periodoGroupBox.trimestreRadioButton.checked) {
-        dialog.periodoGroupBox.trimestreComboBox.enabled = true;
-        dialog.periodoGroupBox.trimestreComboBox.update();
-        dialog.periodoGroupBox.meseComboBox.enabled = false;
-        dialog.periodoGroupBox.meseComboBox.update();
-    }
-    else if (dialog.periodoGroupBox.meseRadioButton.checked) {
-        dialog.periodoGroupBox.trimestreComboBox.enabled = false;
-        dialog.periodoGroupBox.trimestreComboBox.update();
-        dialog.periodoGroupBox.meseComboBox.enabled = true;
-        dialog.periodoGroupBox.meseComboBox.update();
-    }
   }
   dialog.showHelp = function () {
     Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
   }
   dialog.buttonBox.accepted.connect(dialog, "checkdata");
   dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
-  dialog.periodoGroupBox.trimestreRadioButton.clicked.connect(dialog, "enableButtons");
-  dialog.periodoGroupBox.meseRadioButton.clicked.connect(dialog, "enableButtons");
   
   Banana.application.progressBar.pause();
   dialog.enableButtons();
@@ -114,12 +102,21 @@ function settingsDialog() {
 
   //Salvataggio dati
   //Groupbox periodo
-  param.periodoValoreTrimestre = dialog.periodoGroupBox.trimestreComboBox.currentIndex.toString();
-  param.periodoValoreMese = dialog.periodoGroupBox.meseComboBox.currentIndex.toString();
-  if (dialog.periodoGroupBox.meseRadioButton.checked)
-    param.periodoSelezionato = 0;
-  else if (dialog.periodoGroupBox.trimestreRadioButton.checked)
-    param.periodoSelezionato = 1;
+  var index = parseInt(dialog.periodoGroupBox.periodoComboBox.currentIndex.toString());
+  if (index < 0)
+    index = 0;
+  if (index <=1) {
+    param.periodoSelezionato = 's';
+    param.periodoValoreSemestre = index.toString();
+  }
+  else if (index > 2 && index < 7) {
+    param.periodoSelezionato = 'q';
+    param.periodoValoreTrimestre = (index-3).toString();
+  }
+  else if (index > 7) {
+    param.periodoSelezionato = 'm';
+    param.periodoValoreMese = (index-8).toString();
+  }
 
   progressivo = dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text;
   progressivo = parseInt(progressivo, 10);
@@ -278,9 +275,10 @@ function initParam()
   param.blocco = 'DTE';
   param.progressivoInvio = '';
 
-  param.periodoSelezionato = 0;
+  param.periodoSelezionato = 'm';
   param.periodoValoreMese = '';
   param.periodoValoreTrimestre = '';
+  param.periodoValoreSemestre = '';
 
   /*
   0 = create print preview report
@@ -463,11 +461,13 @@ function verifyParam(param) {
     param.progressivoInvio = '';
 
   if (!param.periodoSelezionato)
-    param.periodoSelezionato = 0;
+    param.periodoSelezionato = 'm';
   if (!param.periodoValoreMese)
     param.periodoValoreMese = '';
   if (!param.periodoValoreTrimestre)
     param.periodoValoreTrimestre = '';
+  if (!param.periodoValoreSemestre)
+    param.periodoValoreSemestre = '';
 
   if (!param.outputScript)
     param.outputScript = 0;

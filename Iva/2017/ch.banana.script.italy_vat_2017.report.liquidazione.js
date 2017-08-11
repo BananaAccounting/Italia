@@ -47,9 +47,9 @@ function settingsDialog() {
 
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.liquidazione.dialog.ui");
   //Groupbox periodo
-  if (param.periodoSelezionato == 0)
+  if (param.periodoSelezionato == 'm')
     dialog.periodoGroupBox.meseRadioButton.checked = true;
-  else if (param.periodoSelezionato == 1)
+  else if (param.periodoSelezionato == 'q')
     dialog.periodoGroupBox.trimestreRadioButton.checked = true;
 
   //dialog.periodoGroupBox.title += " " + accountingData.accountingYear;
@@ -135,9 +135,9 @@ function settingsDialog() {
   param.periodoValoreTrimestre = dialog.periodoGroupBox.trimestreComboBox.currentIndex.toString();
   param.periodoValoreMese = dialog.periodoGroupBox.meseComboBox.currentIndex.toString();
   if (dialog.periodoGroupBox.meseRadioButton.checked)
-    param.periodoSelezionato = 0;
+    param.periodoSelezionato = 'm';
   else if (dialog.periodoGroupBox.trimestreRadioButton.checked)
-    param.periodoSelezionato = 1;
+    param.periodoSelezionato = 'q';
   
   //Groupbox comunicazione
   progressivo = dialog.intestazioneGroupBox.progressivoInvioLineEdit.text;
@@ -357,9 +357,10 @@ function initParam()
   param.comunicazioneFirmaIntermediario = true;
   param.comunicazioneUltimoMese = '';
 
-  param.periodoSelezionato = 0;
+  param.periodoSelezionato = 'm';
   param.periodoValoreMese = '';
   param.periodoValoreTrimestre = '';
+  param.periodoValoreSemestre = '';
   
   /*
   0 = create print preview report
@@ -812,11 +813,13 @@ function verifyParam(param) {
   if (!param.comunicazioneUltimoMese)
     param.comunicazioneUltimoMese = '';
   if (!param.periodoSelezionato)
-    param.periodoSelezionato = 0;
+    param.periodoSelezionato = 'm';
   if (!param.periodoValoreMese)
     param.periodoValoreMese = '';
   if (!param.periodoValoreTrimestre)
     param.periodoValoreTrimestre = '';
+  if (!param.periodoValoreSemestre)
+    param.periodoValoreSemestre = '';
   if (!param.outputScript)
     param.outputScript = 0;
 

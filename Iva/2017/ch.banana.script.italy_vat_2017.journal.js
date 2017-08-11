@@ -34,8 +34,10 @@ function createPeriods(param) {
   if (!param)
     return param;
 
-  if (param.periodoSelezionato == 0) {
-    //MESE param.periodoSelezionato == 0
+  // --------------------------------------------------------------------------------
+  //MESE param.periodoSelezionato == 'm'
+  // --------------------------------------------------------------------------------
+  if (param.periodoSelezionato == 'm') {
     var currentPeriod = {};
     var month = parseInt(param.periodoValoreMese) + 1;
     if (month === 11 || month === 4 || month === 6 || month === 9) {
@@ -67,10 +69,12 @@ function createPeriods(param) {
       periods.push(currentPeriod);
     }
   }
-  else if (param.periodoSelezionato == 1) {
-    //TRIMESTRE param.periodoSelezionato == 1
+  // --------------------------------------------------------------------------------
+  //TRIMESTRE param.periodoSelezionato == 'q'
+  // --------------------------------------------------------------------------------
+  else if (param.periodoSelezionato == 'q') {
+    //liqTipoVersamento == 0 Tipo versamento mensile quindi crea più periodi per il trimestre selezionato
     if (param.datiContribuente.liqTipoVersamento == 0) {
-      //Tipo versamento mensile quindi crea più periodi per il trimestre selezionato liqTipoVersamento == 0
       if (param.periodoValoreTrimestre === "0") {
         var currentPeriod = {};
         currentPeriod.startDate = param.accountingYear.toString() + "0101";
@@ -139,6 +143,7 @@ function createPeriods(param) {
         periods.push(currentPeriod);
       }
     }
+    //Tipo versamento trimestrale o non definito
     else {
       var currentPeriod = {};
       if (param.periodoValoreTrimestre === "0") {
@@ -160,8 +165,96 @@ function createPeriods(param) {
       periods.push(currentPeriod);
     }
   }
-  else if (param.periodoSelezionato == 2) {
-    //TUTTO L'ANNO param.periodoSelezionato == 2
+  // --------------------------------------------------------------------------------
+  //SEMESTRE param.periodoSelezionato == 's'
+  // --------------------------------------------------------------------------------
+  else if (param.periodoSelezionato == 's') {
+    //liqTipoVersamento == 0 Tipo versamento mensile quindi crea più periodi per il semestre selezionato 
+    if (param.datiContribuente.liqTipoVersamento == 0) {
+      if (param.periodoValoreSemestre === "0") {
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0101";
+        currentPeriod.endDate = param.accountingYear.toString() + "0131";
+        periods.push(currentPeriod);
+
+        var day = 28;
+        if (param.accountingYear % 4 == 0 && (param.accountingYear % 100 != 0 || param.accountingYear % 400 == 0))
+          day = 29;
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0201";
+        currentPeriod.endDate = param.accountingYear.toString() + "02" + day.toString();
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0301";
+        currentPeriod.endDate = param.accountingYear.toString() + "0331";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0401";
+        currentPeriod.endDate = param.accountingYear.toString() + "0430";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0501";
+        currentPeriod.endDate = param.accountingYear.toString() + "0531";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0601";
+        currentPeriod.endDate = param.accountingYear.toString() + "0630";
+        periods.push(currentPeriod);
+      }
+      else if (param.periodoValoreSemestre === "1") {
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0701";
+        currentPeriod.endDate = param.accountingYear.toString() + "0731";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0801";
+        currentPeriod.endDate = param.accountingYear.toString() + "0831";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "0901";
+        currentPeriod.endDate = param.accountingYear.toString() + "0930";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "1001";
+        currentPeriod.endDate = param.accountingYear.toString() + "1031";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "1101";
+        currentPeriod.endDate = param.accountingYear.toString() + "1130";
+        periods.push(currentPeriod);
+
+        var currentPeriod = {};
+        currentPeriod.startDate = param.accountingYear.toString() + "1201";
+        currentPeriod.endDate = param.accountingYear.toString() + "1231";
+        periods.push(currentPeriod);
+      }
+    }
+    //Tipo versamento trimestrale o non definito
+    else {
+      var currentPeriod = {};
+      if (param.periodoValoreSemestre === "0") {
+        currentPeriod.startDate = param.accountingYear.toString() + "0101";
+        currentPeriod.endDate = param.accountingYear.toString() + "0630";
+      }
+      else if (param.periodoValoreSemestre === "1") {
+        currentPeriod.startDate = param.accountingYear.toString() + "0701";
+        currentPeriod.endDate = param.accountingYear.toString() + "1231";
+      }
+      periods.push(currentPeriod);
+    }
+  }
+  // --------------------------------------------------------------------------------
+  //TUTTO L'ANNO param.periodoSelezionato == 'a'
+  // --------------------------------------------------------------------------------
+  else if (param.periodoSelezionato == 'a') {
   }
   
   return periods;

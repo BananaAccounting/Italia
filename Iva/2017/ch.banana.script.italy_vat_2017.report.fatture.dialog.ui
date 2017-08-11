@@ -21,140 +21,120 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="QRadioButton" name="trimestreRadioButton">
-          <property name="text">
-           <string notr="true">Trimestre</string>
-          </property>
-         </widget>
+       <widget class="QComboBox" name="periodoComboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>110</width>
+          <height>0</height>
+         </size>
+        </property>
+        <item>
+         <property name="text">
+          <string>1. semestre</string>
+         </property>
         </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="meseComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>110</width>
-            <height>0</height>
-           </size>
-          </property>
-          <item>
-           <property name="text">
-            <string notr="true">Gennaio</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">Febbraio</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">Marzo</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">Aprile</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">Maggio</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">Giugno</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">Luglio</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">Agosto</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">Settembre</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">Ottobre</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">Novembre</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">Dicembre</string>
-           </property>
-          </item>
-         </widget>
+        <item>
+         <property name="text">
+          <string>2. semestre</string>
+         </property>
         </item>
-        <item row="1" column="0">
-         <widget class="QRadioButton" name="meseRadioButton">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string notr="true">Mese</string>
-          </property>
-         </widget>
+        <item>
+         <property name="text">
+          <string>---</string>
+         </property>
         </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="trimestreComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>110</width>
-            <height>0</height>
-           </size>
-          </property>
-          <item>
-           <property name="text">
-            <string notr="true">1. trimestre</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">2. trimestre</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">3. trimestre</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">4. trimestre</string>
-           </property>
-          </item>
-         </widget>
+        <item>
+         <property name="text">
+          <string notr="true">1. trimestre</string>
+         </property>
         </item>
-       </layout>
+        <item>
+         <property name="text">
+          <string notr="true">2. trimestre</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string notr="true">3. trimestre</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string notr="true">4. trimestre</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>---</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Gennaio</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Febbraio</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Marzo</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Aprile</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Maggio</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Giugno</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Luglio</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Agosto</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Settembre</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ottobre</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Novembre</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Dicembre</string>
+         </property>
+        </item>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -510,10 +490,7 @@
   <zorder>bloccoGroupBox</zorder>
  </widget>
  <tabstops>
-  <tabstop>trimestreRadioButton</tabstop>
-  <tabstop>trimestreComboBox</tabstop>
-  <tabstop>meseRadioButton</tabstop>
-  <tabstop>meseComboBox</tabstop>
+  <tabstop>periodoComboBox</tabstop>
   <tabstop>bloccoComboBox</tabstop>
   <tabstop>progressivoInvioLineEdit</tabstop>
   <tabstop>cfDichiaranteLineEdit</tabstop>
@@ -530,8 +507,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>263</x>
-     <y>332</y>
+     <x>272</x>
+     <y>393</y>
     </hint>
     <hint type="destinationlabel">
      <x>204</x>
