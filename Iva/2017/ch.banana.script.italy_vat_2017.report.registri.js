@@ -53,12 +53,12 @@ function settingsDialog() {
   var annoRadioButton = dialog.tabWidget.findChild('annoRadioButton');
   var trimestreComboBox = dialog.tabWidget.findChild('trimestreComboBox');
   var meseComboBox = dialog.tabWidget.findChild('meseComboBox');
-  if (param.periodoSelezionato == 1 && trimestreRadioButton)
-    trimestreRadioButton.checked = true;
-  else if (param.periodoSelezionato == 2 && annoRadioButton)
-    annoRadioButton.checked = true;
-  else if (meseRadioButton)
+  if (param.periodoSelezionato == 'm' && meseRadioButton)
     meseRadioButton.checked = true;
+  else if (param.periodoSelezionato == 'q' && trimestreRadioButton)
+    trimestreRadioButton.checked = true;
+  else if (param.periodoSelezionato == 'a' && annoRadioButton)
+    annoRadioButton.checked = true;
   if (meseComboBox)
     meseComboBox.currentIndex = param.periodoValoreMese;
   if (trimestreComboBox)
@@ -178,11 +178,11 @@ function settingsDialog() {
   //Salvataggio dati
   //Groupbox periodo
   if (trimestreRadioButton.checked)
-    param.periodoSelezionato = 1;
+    param.periodoSelezionato = 'q';
   else if (annoRadioButton.checked)
-    param.periodoSelezionato = 2;
+    param.periodoSelezionato = 'a';
   else
-    param.periodoSelezionato = 0;
+    param.periodoSelezionato = 'm';
   if (meseComboBox)
     param.periodoValoreMese = meseComboBox.currentIndex.toString();
   if (trimestreComboBox)
@@ -352,9 +352,7 @@ function exec(inData) {
 function initParam()
 {
   var param = {};
-  param.periodoSelezionato = 0;
-  param.periodoValoreMese = '';
-  param.periodoValoreTrimestre = '';
+
   param.tipoRegistro = 0;
   param.visualizzaDataOra = false;
   param.numerazioneAutomatica = false;
@@ -367,6 +365,12 @@ function initParam()
   param.testoRegistroAcquisti = '';
   param.testoRegistroVendite = '';
   param.testoRegistroCorrispettivi = '';
+
+  param.periodoSelezionato = 'm';
+  param.periodoValoreMese = '';
+  param.periodoValoreTrimestre = '';
+  param.periodoValoreSemestre = '';
+
   return param;
 }
 
@@ -643,12 +647,6 @@ function setStyle(report, stylesheet) {
 }
 
 function verifyParam(param) {
-  if (!param.periodoSelezionato)
-    param.periodoSelezionato = 0;
-  if (!param.periodoValoreMese)
-    param.periodoValoreMese = '';
-  if (!param.periodoValoreTrimestre)
-    param.periodoValoreTrimestre = '';
   if (!param.tipoRegistro)
     param.tipoRegistro = 0;
   if (!param.visualizzaDataOra)
@@ -673,6 +671,16 @@ function verifyParam(param) {
     param.testoRegistroVendite = '';
   if (!param.testoRegistroCorrispettivi)
    param.testoRegistroCorrispettivi = '';
+
+   if (!param.periodoSelezionato)
+    param.periodoSelezionato = 'm';
+  if (!param.periodoValoreMese)
+    param.periodoValoreMese = '';
+  if (!param.periodoValoreTrimestre)
+    param.periodoValoreTrimestre = '';
+  if (!param.periodoValoreSemestre)
+    param.periodoValoreSemestre = '';
+
   return param;
 }
 
