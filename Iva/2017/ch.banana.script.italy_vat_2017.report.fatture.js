@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-10
+// @pubdate = 2017-08-11
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -263,7 +263,6 @@ function getCountryCode(jsonObject) {
   if (countryCode == 'france' || countryCode == 'francia') {
     countryCode = 'fr';
   }
-  contryCode = xml_escapeString(countryCode);
   return countryCode.toUpperCase();
 }
 
@@ -392,7 +391,6 @@ function printVatReport_rows(customers_suppliers, table, param) {
       var row = table.addRow();
       row.addCell(jsonObj["IT_TipoDoc"], "row");
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JInvoiceIssueDate"]), "row");
-      row.addCell(jsonObj["DocInvoice"], "row");
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JDate"]), "row");
       row.addCell(xml_unescapeString(jsonObj["JDescription"]), "row");
       row.addCell(jsonObj["JAccount"], "row amount");

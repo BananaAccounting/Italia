@@ -551,6 +551,8 @@ function loadJournal(param)
     progRegistri[registro] = noProgressivo;
     jsonLine["IT_ProgRegistro"] = noProgressivo.toString();
 
+    if (noDoc.length<=0)
+
     //IT_TipoDoc
     //TD01 Fattura  
     //TD04 Nota di credito  
@@ -838,11 +840,16 @@ function loadJournal_setColumns(param, journalColumns) {
   column.index = 1010;
   param.columns[j++] = column;
   var column = {};
+  column.visible = true;
+  column.type = "description";
+  column.index = 1011;
+  param.columns[j++] = column;
+  var column = {};
   column.name = "IT_TipoDoc";
   column.title = "IT_TipoDoc";
   column.visible = true;
   column.type = "description";
-  column.index = 1011;
+  column.index = 1012;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteConto";

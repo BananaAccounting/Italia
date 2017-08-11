@@ -211,7 +211,6 @@ function createInstance_Blocco2(accountObj, param)
         //2.2.3.1  <DatiGenerali>
         var xbrlDatiGenerali = xml_createElementWithValidation("TipoDocumento", accountObj.rows[i]["IT_TipoDoc"],1,'4',msgContext);
         xbrlDatiGenerali += xml_createElementWithValidation("Data", accountObj.rows[i]["JInvoiceIssueDate"],1,'10',msgContext);
-        xbrlDatiGenerali += xml_createElementWithValidation("Numero", accountObj.rows[i]["DocInvoice"],1,'1...20',msgContext);
         if (param.blocco == 'DTR')
           xbrlDatiGenerali += xml_createElementWithValidation("DataRegistrazione", accountObj.rows[i]["JDate"],1,'10',msgContext);
         var xbrlContent = xml_createElementWithValidation("DatiGenerali", xbrlDatiGenerali,1);
