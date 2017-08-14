@@ -301,11 +301,11 @@ function loadJournal(param)
   var journal = Banana.document.journalCustomersSuppliers(
     Banana.document.ORIGINTYPE_CURRENT, Banana.document.ACCOUNTTYPE_NORMAL);
   var filteredRows = journal.findRows(loadJournal_filter);
+  var tableVatCodes = Banana.document.table('VatCodes');
 
-  if (!journal || !filteredRows)
+  if (!journal || !filteredRows || !tableVatCodes)
     return false;
 
-  var tableVatCodes = Banana.document.table('VatCodes');
   var periodStart = Banana.Converter.toDate(param.startDate);
   var periodEnd = Banana.Converter.toDate(param.endDate);
   param.customers = {};
@@ -495,12 +495,11 @@ function loadJournal(param)
     jsonLine["IT_Detraibile"] = '';
     jsonLine["IT_Deducibile"] = '';
     value = filteredRows[i].value("VatPercentNonDeductible");
-    if (!Banana.SDecimal.isZero(value)) {
-      if (!Banana.SDecimal.isZero(value)) {
-        var detraibile = Banana.SDecimal.subtract('100', value);
-        jsonLine["IT_Detraibile"] = detraibile;
-      }
-    }
+    if (!Banana.SDecimal.isZero(value))
+      value = Banana.SDecimal.subtract('100', value);
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    jsonLine["IT_Detraibile"] = value;
 
     //IT_Aliquota
     //IT_Gr_IVA
@@ -511,7 +510,7 @@ function loadJournal(param)
     jsonLine["IT_Gr1_IVA"] = '';
     jsonLine["IT_Registro"] = '';
     var vatCode = filteredRows[i].value("JVatCodeWithoutSign");
-    if (vatCode.length && tableVatCodes) {
+    if (vatCode.length) {
       var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
       if (rowVatCodes) {
         var percAssoluta = rowVatCodes.value("VatRate");
@@ -594,7 +593,7 @@ function loadJournal(param)
       }
     }
 
-    if (vatCode.length && isSupplier && tableVatCodes) {
+    if (vatCode.length && isSupplier) {
       var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
       if (rowVatCodes) {
         var vatGr = rowVatCodes.value("Gr");
@@ -616,7 +615,12 @@ function loadJournal(param)
     //N6 inversione contabile (reverse charge)
     //N7 IVA assolta in altro stato UE, vendite a distanza o prestazioni di servizi di telecomunicazioni
     jsonLine["IT_Natura"] = '';
-    if (Banana.document && tableVatCodes && (jsonLine["IT_Registro"]=='Acquisti' || jsonLine["IT_Registro"]=='Vendite')) {
+    var vatExtraInfo = filteredRows[i].value("VatExtraInfo");
+    if (vatExtraInfo.startsWith("N") && vatExtraInfo.length==2) {
+      var test = vatExtraInfo.substring(vatExtraInfo,1);
+      jsonLine["IT_Natura"] = vatExtraInfo;
+    }
+    if (jsonLine["IT_Natura"].length<=0) {
       var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
       if (rowVatCodes) {
         var vatGr = rowVatCodes.value("Gr");
@@ -642,26 +646,32 @@ function loadJournal(param)
           jsonLine["IT_Natura"] = 'N7';
         }
       }
+    }
 
-      //Controllo IT_Natura e aliquota
-      var aliquota = jsonLine["IT_Aliquota"];
-      var imposta = jsonLine["IT_Imposta"];
-      var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
+    //Controllo IT_Natura e aliquota
+    var aliquota = jsonLine["IT_Aliquota"];
+    var imposta = jsonLine["IT_Imposta"];
+    var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
 
-      //Fatture ricevute, natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
-      if (jsonLine["IT_Natura"] == "N6") {
-        if (isSupplier && (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta))) {
+    //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
+    //Eccezione: fatture ricevute con natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
+    if (jsonLine["IT_Natura"].length>0) {
+      if (isSupplier && jsonLine["IT_Natura"] == "N6") {
+        if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
           msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
           Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
         }
       }
-      //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
-      else if (jsonLine["IT_Natura"].length>0 && !Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
-        msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
-        Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+      else {
+        if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
+          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+          Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+        }
       }
-      //Se i campi Imposta e Aliquota sono vuoti, il campo Natura dev'essere valorizzato
-      else if (jsonLine["IT_Natura"].length<=0 && Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota)) {
+    }
+    //Se il campo Natura non è valorizzato, lo devono essere i campi Imposta e Aliquota
+    else {
+      if (Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota)) {
         msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
         Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
       }

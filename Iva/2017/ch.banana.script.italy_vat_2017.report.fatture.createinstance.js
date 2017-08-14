@@ -192,10 +192,15 @@ function createInstance_Blocco2(accountObj, param)
         address += ' ';
       address += accountObj["AddressExtra"];
     }
+
+    var countryCode = getCountryCode(accountObj);
+
     var xbrSede = xml_createElementWithValidation("Indirizzo", address,1,'1...60',msgContext);
-    xbrSede += xml_createElementWithValidation("CAP", accountObj["PostalCode"],1,'5',msgContext);
+    if (countryCode == "IT" || (accountObj["PostalCode"] && accountObj["PostalCode"].length==5))
+      xbrSede += xml_createElementWithValidation("CAP", accountObj["PostalCode"],0,'5',msgContext);
     xbrSede += xml_createElementWithValidation("Comune", accountObj["Locality"],1,'1...60',msgContext);
-    xbrSede += xml_createElementWithValidation("Provincia", accountObj["Region"],0,'2',msgContext);
+    if (countryCode == "IT")
+      xbrSede += xml_createElementWithValidation("Provincia", accountObj["Region"],0,'2',msgContext);
     xbrSede += xml_createElementWithValidation("Nazione", getCountryCode(accountObj),1,'2',msgContext);
     xbrlAltriDati += xml_createElementWithValidation("Sede", xbrSede,1);
     xbrlCessionarioCommittente +=  xml_createElementWithValidation("AltriDatiIdentificativi", xbrlAltriDati,1);
