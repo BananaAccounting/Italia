@@ -15,6 +15,8 @@
 var ID_ERR_VERSIONE = "ID_ERR_VERSIONE";
 var ID_ERR_CODICI_ND = "ID_ERR_CODICI_ND";
 var ID_ERR_TIPOVERSAMENTO = "ID_ERR_TIPOVERSAMENTO";
+var ID_ERR_TABELLA_INDIRIZZI_MANCANTE = "ID_ERR_TABELLA_INDIRIZZI_MANCANTE";
+var ID_ERR_TABELLA_INDIRIZZI_NONCOMPATIBILE = "ID_ERR_TABELLA_INDIRIZZI_NONCOMPATIBILE";
 var ID_ERR_XML_ELEMENTO_NATURA_N6 = "ID_ERR_XML_ELEMENTO_NATURA_N6";
 var ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE = "ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE";
 var ID_ERR_XML_ELEMENTO_NATURA_PRESENTE = "ID_ERR_XML_ELEMENTO_NATURA_PRESENTE";
@@ -36,6 +38,10 @@ function getErrorMessage(errorId) {
             return "Codici %1 non definiti";
         case ID_ERR_TIPOVERSAMENTO:
             return "Periodo non valido: invio di un unico mese con tipo versamento trimestrale";
+        case ID_ERR_TABELLA_INDIRIZZI_MANCANTE:
+            return "Le colonne indirizzi nella tabella Conti sono mancanti. Aggiornare con il comando Strumenti - Aggiungi nuove funzionalità";
+        case ID_ERR_TABELLA_INDIRIZZI_NONCOMPATIBILE:
+            return "Le colonne indirizzi nella tabella Conti sono di una versione non compatibile. Aggiornare con il comando Strumenti - Converti in nuovo file";
         case ID_ERR_XML_ELEMENTO_NATURA_N6:
             return "Natura N6 (reverse charge) vanno anche obbligatoriamente valorizzati i campi Imposta ed Aliquota";
         case ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE:

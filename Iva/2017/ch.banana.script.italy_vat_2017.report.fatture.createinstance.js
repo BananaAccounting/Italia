@@ -192,10 +192,15 @@ function createInstance_Blocco2(accountObj, param)
         address += ' ';
       address += accountObj["AddressExtra"];
     }
+
+    var countryCode = getCountryCode(accountObj);
+
     var xbrSede = xml_createElementWithValidation("Indirizzo", address,1,'1...60',msgContext);
-    xbrSede += xml_createElementWithValidation("CAP", accountObj["PostalCode"],1,'5',msgContext);
+    if (countryCode == "IT" || (accountObj["PostalCode"] && accountObj["PostalCode"].length==5))
+      xbrSede += xml_createElementWithValidation("CAP", accountObj["PostalCode"],0,'5',msgContext);
     xbrSede += xml_createElementWithValidation("Comune", accountObj["Locality"],1,'1...60',msgContext);
-    xbrSede += xml_createElementWithValidation("Provincia", accountObj["Region"],0,'2',msgContext);
+    if (countryCode == "IT")
+      xbrSede += xml_createElementWithValidation("Provincia", accountObj["Region"],0,'2',msgContext);
     xbrSede += xml_createElementWithValidation("Nazione", getCountryCode(accountObj),1,'2',msgContext);
     xbrlAltriDati += xml_createElementWithValidation("Sede", xbrSede,1);
     xbrlCessionarioCommittente +=  xml_createElementWithValidation("AltriDatiIdentificativi", xbrlAltriDati,1);
@@ -211,7 +216,7 @@ function createInstance_Blocco2(accountObj, param)
         //2.2.3.1  <DatiGenerali>
         var xbrlDatiGenerali = xml_createElementWithValidation("TipoDocumento", accountObj.rows[i]["IT_TipoDoc"],1,'4',msgContext);
         xbrlDatiGenerali += xml_createElementWithValidation("Data", accountObj.rows[i]["JInvoiceIssueDate"],1,'10',msgContext);
-        xbrlDatiGenerali += xml_createElementWithValidation("Numero", accountObj.rows[i]["DocInvoice"],1,'1...20',msgContext);
+        xbrlDatiGenerali += xml_createElementWithValidation("Numero", accountObj.rows[i]["IT_DocInvoice"],1,'1...20',msgContext);
         if (param.blocco == 'DTR')
           xbrlDatiGenerali += xml_createElementWithValidation("DataRegistrazione", accountObj.rows[i]["JDate"],1,'10',msgContext);
         var xbrlContent = xml_createElementWithValidation("DatiGenerali", xbrlDatiGenerali,1);

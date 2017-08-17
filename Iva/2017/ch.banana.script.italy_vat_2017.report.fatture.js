@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-10
+// @pubdate = 2017-08-14
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -202,6 +202,20 @@ function exec(inData) {
     Banana.document.addMessage( msg, ID_ERR_VERSIONE);
     return "@Cancel";
   }
+  if (Banana.document.table('Accounts')) {
+    var tColumnNames = Banana.document.table('Accounts').columnNames.join(";");
+    if (tColumnNames.indexOf('Town')>0 || tColumnNames.indexOf('Company')>0) {
+      //E necessario convertire il file con una tabella Conti/Indirizzi più recente
+      var msg = getErrorMessage(ID_ERR_TABELLA_INDIRIZZI_NONCOMPATIBILE);
+      Banana.document.addMessage( msg, ID_ERR_TABELLA_INDIRIZZI_NONCOMPATIBILE);
+      return "@Cancel";
+    }
+    else if (tColumnNames.indexOf('OrganisationName')<=0) {
+      var msg = getErrorMessage(ID_ERR_TABELLA_INDIRIZZI_MANCANTE);
+      Banana.document.addMessage( msg, ID_ERR_TABELLA_INDIRIZZI_MANCANTE);
+      return "@Cancel";
+    }
+  }
 
   var param = {};
   if (inData.length>0) {
@@ -246,24 +260,26 @@ function exec(inData) {
 }
 
 function getCountryCode(jsonObject) {
-  var countryCode = '';
+  var countryCode = 'it';
   if (!jsonObject)
-    return countryCode;
-  if (jsonObject["CountryCode"])
+    return countryCode.toUpperCase();
+  if (jsonObject["CountryCode"] && jsonObject["CountryCode"].length>0)
     countryCode = jsonObject["CountryCode"];
-  else if (jsonObject["Country"])
+  else if (jsonObject["Country"] && jsonObject["Country"].length>0)
     countryCode = jsonObject["Country"];
   countryCode = countryCode.toLowerCase();
   if (countryCode == 'italy' || countryCode == 'italia') {
     countryCode = 'it';
   }
-  if (countryCode == 'germany' || countryCode == 'germania') {
+  if (countryCode == 'germany' || countryCode == 'germania' || countryCode == 'deutschland') {
     countryCode = 'de';
   }
   if (countryCode == 'france' || countryCode == 'francia') {
     countryCode = 'fr';
   }
-  contryCode = xml_escapeString(countryCode);
+  if (countryCode == 'switzerland' || countryCode == 'schweiz'|| countryCode == 'suisse'|| countryCode == 'svizzera') {
+    countryCode = 'ch';
+  }
   return countryCode.toUpperCase();
 }
 
@@ -317,6 +333,49 @@ function loadJournalData(param) {
     param.data.startDate = periods[0].startDate;
     param.data.endDate = periods[0].endDate;
     param.data = loadJournal(param.data);
+  }
+
+  //Per la comunicazione DTE (Dati fatture emesse tiene solamente le righe del registro Vendite e Corrispettivi
+  //Per la comunicazine DTR (Dati fatture ricevute tiene solamente le righe del registro Acquisti
+  //In questo modo vengono escluse le autofatture
+  
+  if (param.blocco == 'DTE') {
+    var checkedCustomers = {};
+    for (var i in param.data.customers) {
+      var checkedRows = [];
+      var accountObj = param.data.customers[i];
+      for (var j in accountObj.rows) {
+        if (accountObj.rows[j]["IT_Registro"]=="Acquisti")
+          continue;
+        else if (accountObj.rows[j]["VatExtraInfo"]=="ESCL")
+          continue;
+        checkedRows.push(accountObj.rows[j]);
+      }
+      if (checkedRows.length>0) {
+        accountObj.rows = checkedRows;
+        checkedCustomers[i] = accountObj;
+      }
+    }
+    param.data.customers = checkedCustomers;
+  }
+  else if (param.blocco == 'DTR') {
+    var checkedSuppliers = {};
+    for (var i in param.data.suppliers) {
+      var checkedRows = [];
+      var accountObj = param.data.suppliers[i];
+      for (var j in accountObj.rows) {
+        if (accountObj.rows[j]["IT_Registro"]=="Vendite" || accountObj.rows[j]["IT_Registro"]=="Corrispettivi")
+          continue;
+        else if (accountObj.rows[j]["VatExtraInfo"]=="ESCL")
+          continue;
+        checkedRows.push(accountObj.rows[j]);
+      }
+      if (checkedRows.length>0) {
+        accountObj.rows = checkedRows;
+        checkedSuppliers[i] = accountObj;
+      }
+    }
+    param.data.suppliers = checkedSuppliers;
   }
 
   return param;
@@ -392,7 +451,7 @@ function printVatReport_rows(customers_suppliers, table, param) {
       var row = table.addRow();
       row.addCell(jsonObj["IT_TipoDoc"], "row");
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JInvoiceIssueDate"]), "row");
-      row.addCell(jsonObj["DocInvoice"], "row");
+      row.addCell(jsonObj["IT_DocInvoice"], "row");
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JDate"]), "row");
       row.addCell(xml_unescapeString(jsonObj["JDescription"]), "row");
       row.addCell(jsonObj["JAccount"], "row amount");
