@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-14
+// @pubdate = 2017-08-21
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -142,11 +142,21 @@ function settingsDialog() {
   return true;
 }
 
-function addHeader(report, param)
+function addPageHeader(report, stylesheet, param)
 {
   // Page header
   var pageHeader = report.getHeader();
   
+  //Tabella
+  var table = pageHeader.addTable("header_table");
+  table.addColumn("header_col_left");
+  table.addColumn("header_col_center");
+  table.addColumn("header_col_right");
+  
+  //cell_left
+  var row = table.addRow();
+  var cell_left = row.addCell("", "header_cell_left");
+
   var line1 = param.datiContribuente.societa;
   if (line1.length)
     line1 += " ";
@@ -155,33 +165,56 @@ function addHeader(report, param)
   if (param.datiContribuente.nome.length)
     line1 += param.datiContribuente.nome;
   if (line1.length)
-    pageHeader.addParagraph(line1);
+    cell_left.addParagraph(line1);
   
   var line2 = '';
-  if (param.datiContribuente.cap.length)
-    line2 = param.datiContribuente.cap + " ";
-  if (param.datiContribuente.comune.length)
-    line2 += param.datiContribuente.comune + " ";
-  if (param.datiContribuente.provincia.length)
-    line2 += "(" +  param.datiContribuente.provincia + ")";
+  if (param.datiContribuente.indirizzo.length)
+    line2 = param.datiContribuente.indirizzo + " ";
+  if (param.datiContribuente.ncivico.length)
+    line2 += " " + param.datiContribuente.ncivico;
   if (line2.length)
-    pageHeader.addParagraph(line2);
-  
+    cell_left.addParagraph(line2);
+
   var line3 = '';
-  if (param.datiContribuente.partitaIva.length)
-    line3 = "Partita IVA: " + param.datiContribuente.partitaIva;
+  if (param.datiContribuente.cap.length)
+    line3 = param.datiContribuente.cap + " ";
+  if (param.datiContribuente.comune.length)
+    line3 += param.datiContribuente.comune + " ";
+  if (param.datiContribuente.provincia.length)
+    line3 += "(" +  param.datiContribuente.provincia + ")";
   if (line3.length)
-    pageHeader.addParagraph(line3, "vatNumber");
-}
+    cell_left.addParagraph(line3);
+  
+  var line4 = '';
+  if (param.datiContribuente.partitaIva.length)
+    line4 = "Partita IVA: " + param.datiContribuente.partitaIva;
+  if (line4.length)
+    cell_left.addParagraph(line4, "vatNumber");
+  
+  //cell_center
+  var cell_center = row.addCell("", "header_cell_center");
+  var periodo = Banana.Converter.toLocaleDateFormat(param.data.startDate);
+  periodo +=" - " + Banana.Converter.toLocaleDateFormat(param.data.endDate);
+  periodo += " blocco " + param.blocco;
+  cell_center.addParagraph("Comunicazione dati fatture", "title center");
+  cell_center.addParagraph(periodo, "period center");
 
-function addFooter(report, param)
-{
-  //Page footer
-  var reportFooter = report.getFooter();
-  reportFooter.addClass("center");
-  reportFooter.addParagraph("N1 escluse ex art. 15, N2 non soggette, N3 non imponibili, N4 esenti, N5 regime del margine/IVA non esposta in fattura, N6 inversione contabile (reverse charge), N7 IVA assolta in altro stato UE", "notes");
-  reportFooter.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()) + " Pagina ").addFieldPageNr();
-
+  //cell_right
+  var cell_right = row.addCell("", "header_cell_right");
+  cell_right.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()), "right");
+  cell_right.addParagraph(" Pagina ", "right").addFieldPageNr();
+ 
+  //add style
+  stylesheet.addStyle(".header_table", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".header_col_left", "width:33%");
+  stylesheet.addStyle(".header_col_center", "flexible-width:always");
+  stylesheet.addStyle(".header_col_right", "width:33%");
+  stylesheet.addStyle(".header_cell_left", "font-size:8px");
+  stylesheet.addStyle(".header_cell_center", "font-size:8px");
+  stylesheet.addStyle(".header_cell_right", "font-size:8px");
+  stylesheet.addStyle(".center", "text-align: center;");
+  stylesheet.addStyle(".period", "padding-bottom: 1em;");
+  stylesheet.addStyle(".right", "text-align: right;");
 }
 
 function exec(inData) {
@@ -237,10 +270,9 @@ function exec(inData) {
 
   if (param.outputScript==0 && output != "@Cancel") {
     var report = Banana.Report.newReport("Dati delle fatture emesse e ricevute");
-    var stylesheet = Banana.Report.newStyleSheet();
+    var stylesheet = Banana.Report.newStyleSheet(); 
+    addPageHeader(report, stylesheet, param);
     setStyle(report, stylesheet);
-    addHeader(report, param);
-    addFooter(report, param);
     printVatReport(report, stylesheet, param);
     if (debug) {
       report.addPageBreak();
@@ -387,16 +419,8 @@ function printVatReport(report, stylesheet, param) {
     return;
 
   //Print table
-  //Title
-  var table = report.addTable("table1");
+  var table = report.addTable("vatreport_table");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Comunicazione dei dati delle fatture", "title", 15);
-  //Period
-  var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(param.data.startDate);
-  periodo +=" al " + Banana.Converter.toLocaleDateFormat(param.data.endDate);
-  periodo += " blocco " + param.blocco;
-  headerRow = table.getHeader().addRow();
-  headerRow.addCell(periodo, "period",  15);
 
   //Column names
   headerRow = table.getHeader().addRow();
@@ -495,17 +519,17 @@ function setStyle(report, stylesheet) {
   stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
   stylesheet.addStyle("thead", "font-weight: bold;background-color:#eeeeee;");
   stylesheet.addStyle("td", "padding:1px;vertical-align:top;");
-  stylesheet.addStyle("td.title", "background-color:#ffffff;font-size:10px;");
-  stylesheet.addStyle("td.period", "background-color:#ffffff;");
+
   stylesheet.addStyle(".amount", "text-align: right;border:1px solid black; ");
   stylesheet.addStyle(".center", "text-align: center;");
   stylesheet.addStyle(".notes", "padding: 2em;font-style:italic;");
-  stylesheet.addStyle(".period", "padding-bottom: 1em;");
   stylesheet.addStyle(".right", "text-align: right;");
   stylesheet.addStyle(".row.amount", "border:1px solid black;");
   stylesheet.addStyle(".rowName", "font-weight: bold;padding-top:5px;border-top:1px solid black;");
-  stylesheet.addStyle(".table1", "margin-top:1em;width:100%;");
   stylesheet.addStyle(".warning", "color: red;font-size:8px;");
+
+  /*vatrepor_table*/
+  stylesheet.addStyle(".vatreport_table", "margin-top:1em;width:100%;");
 
 }
 
