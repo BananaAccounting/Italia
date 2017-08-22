@@ -222,7 +222,7 @@ function createInstance_Blocco2(accountObj, param)
         var xbrlContent = xml_createElementWithValidation("DatiGenerali", xbrlDatiGenerali,1);
         //2.2.3.1  <DatiRiepilogo>
         var xbrlDatiRiepilogo = xml_createElementWithValidation("ImponibileImporto", accountObj.rows[i]["IT_Imponibile"],1,'4...15',msgContext);
-        var xbrlContent4 = xml_createElementWithValidation("Imposta", accountObj.rows[i]["IT_Imposta"],0,'4...15',msgContext);
+        var xbrlContent4 = xml_createElementWithValidation("Imposta", accountObj.rows[i]["IT_IvaContabilizzata"],0,'4...15',msgContext);
         xbrlContent4 += xml_createElementWithValidation("Aliquota", accountObj.rows[i]["IT_Aliquota"],0,'4...6',msgContext);
         xbrlDatiRiepilogo += xml_createElementWithValidation("DatiIVA",xbrlContent4,1);
         if (accountObj.rows[i]["IT_Natura"].length)

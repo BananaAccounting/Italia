@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-21
+// @pubdate = 2017-08-22
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -214,7 +214,7 @@ function addPageHeader(report, stylesheet, param)
   
   var line4 = '';
   if (param.datiContribuente.partitaIva.length)
-    line4 = "Partita IVA: " + param.datiContribuente.partitaIva;
+    line4 = "P.IVA: " + param.datiContribuente.partitaIva;
   if (line4.length)
     cell_left.addParagraph(line4, "vatNumber");
   

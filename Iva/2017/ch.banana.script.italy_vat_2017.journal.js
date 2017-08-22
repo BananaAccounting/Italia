@@ -456,7 +456,7 @@ function loadJournal(param)
          jsonLine["IT_ClienteCodiceFiscale"] = accountObj["FiscalNumber"];
          var intestazione = accountId + " " + accountObj["Description"];
          if (accountObj["VatNumber"].length>0) {
-           intestazione += " " + accountObj["VatNumber"];
+           intestazione = accountId + "/" + accountObj["VatNumber"] + " " + accountObj["Description"];
          }
          jsonLine["IT_ClienteIntestazione"] = intestazione;
       }
@@ -472,14 +472,23 @@ function loadJournal(param)
       value = Banana.SDecimal.abs(value);
     jsonLine["IT_Imponibile"] = value;
 
-    //IT_Imposta
-    jsonLine["IT_Imposta"] = '';
+    //IT_ImportoIva
+    jsonLine["IT_ImportoIva"] = '';
+    value = filteredRows[i].value("VatAmount");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else
+      value = Banana.SDecimal.abs(value);
+    jsonLine["IT_ImportoIva"] = value;
+
+    //IT_IvaContabilizzata
+    jsonLine["IT_IvaContabilizzata"] = '';
     value = filteredRows[i].value("VatPosted");
     if (Banana.SDecimal.isZero(value))
       value = '0.00';
     else
       value = Banana.SDecimal.abs(value);
-    jsonLine["IT_Imposta"] = value;
+    jsonLine["IT_IvaContabilizzata"] = value;
 
     //IT_Lordo
     jsonLine["IT_Lordo"] = '';
@@ -500,6 +509,25 @@ function loadJournal(param)
     if (Banana.SDecimal.isZero(value))
       value = '0.00';
     jsonLine["IT_Detraibile"] = value;
+
+    //IT_ImponibileDetraibile
+    //IT_ImponibileNonDetraibile
+    jsonLine["IT_ImponibileDetraibile"] = '';
+    jsonLine["IT_ImponibileNonDetraibile"] = '';
+    value = jsonLine["IT_Detraibile"];
+    if (!Banana.SDecimal.isZero(value)) {
+      var rate = Banana.SDecimal.round(value, {'decimals':2});
+      var taxable = filteredRows[i].value("VatTaxable");
+      var amount = taxable * rate /100;
+      amount = Banana.SDecimal.roundNearest(amount, '0.01');
+      jsonLine["IT_ImponibileDetraibile"] = amount;
+      amount = Banana.SDecimal.subtract(taxable, amount);
+      jsonLine["IT_ImponibileNonDetraibile"] = amount;
+    }
+    else {
+      var taxable = filteredRows[i].value("VatTaxable");
+      jsonLine["IT_ImponibileDetraibile"] = taxable;
+    }
 
     //IT_Aliquota
     //IT_Gr_IVA
@@ -650,7 +678,7 @@ function loadJournal(param)
 
     //Controllo IT_Natura e aliquota
     var aliquota = jsonLine["IT_Aliquota"];
-    var imposta = jsonLine["IT_Imposta"];
+    var imposta = jsonLine["IT_IvaContabilizzata"];
     var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
 
     //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
@@ -670,7 +698,8 @@ function loadJournal(param)
       }
     }
     //Se il campo Natura non è valorizzato, lo devono essere i campi Imposta e Aliquota
-    else {
+    //Controlla solamente registro vendite/acquisti
+    else if (jsonLine["IT_Registro"]== "Acquisti" || jsonLine["IT_Registro"] == "Vendite") {
       if (Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota)) {
         msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
         Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
@@ -785,130 +814,151 @@ function loadJournal_setColumns(param, journalColumns) {
   column.index = 1000;
   param.columns[j++] = column;
   var column = {};
-  column.name = "IT_Imponibile";
-  column.title = "IT_Imponibile";
+  column.name = "IT_Lordo";
+  column.title = "IT_Lordo";
   column.visible = true;
   column.type = "amount";
   column.index = 1001;
   param.columns[j++] = column;
   var column = {};
-  column.name = "IT_Imposta";
-  column.title = "IT_Imposta";
+  column.name = "IT_ImportoIva";
+  column.title = "IT_ImportoIva";
   column.visible = true;
   column.type = "amount";
   column.index = 1002;
   param.columns[j++] = column;
   var column = {};
-  column.name = "IT_Lordo";
-  column.title = "IT_Lordo";
+  column.name = "IT_IvaContabilizzata";
+  column.title = "IT_IvaContabilizzata";
   column.visible = true;
   column.type = "amount";
   column.index = 1003;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_Imponibile";
+  column.title = "IT_Imponibile";
+  column.visible = true;
+  column.type = "amount";
+  column.index = 1004;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ImponibileDetraibile";
+  column.title = "IT_ImponibileDetraibile";
+  column.visible = true;
+  column.type = "amount";
+  column.index = 1005;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ImponibileNonDetraibile";
+  column.title = "IT_ImponibileNonDetraibile";
+  column.visible = true;
+  column.type = "amount";
+  column.index = 1006;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Detraibile";
   column.title = "IT_Detraibile";
   column.visible = true;
   column.type = "amount";
-  column.index = 1004;
+  column.index = 1007;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Deducibile";
   column.title = "IT_Deducibile";
   column.visible = true;
   column.type = "amount";
-  column.index = 1005;
+  column.index = 1008;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Aliquota";
   column.title = "IT_Aliquota";
   column.visible = true;
   column.type = "amount";
-  column.index = 1006;
+  column.index = 1009;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Gr_IVA";
   column.title = "IT_Gr_IVA";
   column.visible = true;
   column.type = "description";
-  column.index = 1007;
+  column.index = 1010;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Gr1_IVA";
   column.title = "IT_Gr1_IVA";
   column.visible = true;
   column.type = "description";
-  column.index = 1008;
+  column.index = 1011;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Registro";
   column.title = "IT_Registro";
   column.visible = true;
   column.type = "description";
-  column.index = 1009;
+  column.index = 1012;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ProgRegistro";
   column.title = "IT_ProgRegistro";
   column.visible = true;
   column.type = "description";
-  column.index = 1010;
+  column.index = 1013;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_DocInvoice";
   column.title = "IT_DocInvoice";
   column.visible = true;
   column.type = "description";
-  column.index = 1011;
+  column.index = 1014;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_TipoDoc";
   column.title = "IT_TipoDoc";
   column.visible = true;
   column.type = "description";
-  column.index = 1012;
+  column.index = 1015;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteConto";
   column.title = "IT_ClienteConto";
   column.visible = true;
   column.type = "description";
-  column.index = 1013;
+  column.index = 1016;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteDescrizione";
   column.title = "IT_ClienteDescrizione";
   column.visible = true;
   column.type = "description";
-  column.index = 1014;
+  column.index = 1017;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteIntestazione";
   column.title = "IT_ClienteIntestazione";
   column.visible = true;
   column.type = "description";
-  column.index = 1015;
+  column.index = 1018;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteTipologia";
   column.title = "IT_ClienteTipologia";
   column.visible = true;
   column.type = "description";
-  column.index = 1016;
+  column.index = 1019;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClientePartitaIva";
   column.title = "IT_ClientePartitaIva";
   column.visible = true;
   column.type = "description";
-  column.index = 1017;
+  column.index = 1020;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteCodiceFiscale";
   column.title = "IT_ClienteCodiceFiscale";
   column.visible = true;
   column.type = "description";
-  column.index = 1018;
+  column.index = 1021;
   param.columns[j++] = column;
   return param;
 }
