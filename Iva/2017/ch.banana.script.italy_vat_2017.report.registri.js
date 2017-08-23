@@ -21,12 +21,12 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-22
+// @pubdate = 2017-08-23
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
 
-var debug = true;
+var debug = false;
 
 /*
  * Update script's parameters
@@ -327,7 +327,7 @@ function exec(inData) {
   var report = Banana.Report.newReport("Registri IVA");
   var stylesheet = Banana.Report.newStyleSheet();
   addPageHeader(report, stylesheet, param);
-  setStyle(report, stylesheet);
+  setStyle(report, stylesheet, param);
   
   //Print data
   if (param.tipoRegistro == 3) {
@@ -369,6 +369,59 @@ function exec(inData) {
   Banana.Report.preview(report, stylesheet);
   return;
 
+}
+
+function getPeriodText(param) {
+
+  var fromDate = Banana.Converter.toDate(param.startDate);
+  var toDate = Banana.Converter.toDate(param.endDate);
+  var firstDayOfPeriod = 1;
+  var lastDayOfPeriod = new Date(toDate.getFullYear(),toDate.getMonth()+1,0).getDate().toString();
+  
+  //se le date non corrispondono al primo giorno del mese (fromDate) e all'ultimo giorno del mese (toDate) ritorna il periodo esatto
+  if (fromDate.getDate() != firstDayOfPeriod || toDate.getDate() != lastDayOfPeriod)
+    return "dal: " + Banana.Converter.toLocaleDateFormat(param.startDate) + " al " + Banana.Converter.toLocaleDateFormat(param.endDate);
+
+  if (fromDate.getMonth() === toDate.getMonth()) {
+    var mese = fromDate.getMonth()+1;
+    if (mese == 1)
+      mese = "gennaio";
+    else if (mese == 2)
+      mese = "febbraio";
+    else if (mese == 3)
+      mese = "marzo";
+    else if (mese == 4)
+      mese = "aprile";
+    else if (mese == 5)
+      mese = "maggio";
+    else if (mese == 6)
+      mese = "giugno";
+    else if (mese == 7)
+      mese = "luglio";
+    else if (mese == 8)
+      mese = "agosto";
+    else if (mese == 9)
+      mese = "settembre";
+    else if (mese == 10)
+      mese = "ottobre";
+    else if (mese == 11)
+      mese = "novembre";
+    else if (mese == 12)
+      mese = "dicembre";
+    mese +=  " " + fromDate.getFullYear();
+    return mese;
+  }
+
+  var q = [1,2,3,4];
+  var q1 = q[Math.floor(fromDate.getMonth() / 3)];  
+  var q2 = q[Math.floor(toDate.getMonth() / 3)];  
+  if (q1 === q2)
+    return q1.toString() + ". trimestre " + fromDate.getFullYear();
+
+  if (fromDate.getFullYear() === toDate.getFullYear())
+    return fromDate.getFullYear().toString();
+
+  return "";
 }
 
 function initParam()
@@ -421,13 +474,13 @@ function printRegister(report, stylesheet, param, register) {
       counter++;
     }
   }
-  if (counter<=0)
-    return;
+  /*if (counter<=0)
+    return;*/
   
   //Periodo
-  report.addParagraph("IVA " + register.toUpperCase(), "title center");
-  report.addParagraph("Periodo dal: " + Banana.Converter.toLocaleDateFormat(param.startDate) + " al " + Banana.Converter.toLocaleDateFormat(param.endDate), "period center");
-
+  report.addParagraph("REGISTRO IVA " + register.toUpperCase(), "title center");
+  report.addParagraph("Periodo: " + getPeriodText(param), "period center");
+  
   //Totali
   var vatRatesTotal = [];
   var vatCodesTotal = [];  
@@ -435,7 +488,7 @@ function printRegister(report, stylesheet, param, register) {
   //Tabella
   var table = report.addTable("register_table");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("N. Prot.", "right");
+  headerRow.addCell("N.Prot.", "right");
   headerRow.addCell("Data Reg.", "right");
   headerRow.addCell("Data Doc.", "right");
   headerRow.addCell("N. Doc");
@@ -644,11 +697,13 @@ function printRegister(report, stylesheet, param, register) {
 
 }
 
-function setStyle(report, stylesheet) {
+function setStyle(report, stylesheet, param) {
   if (!stylesheet) {
     stylesheet = report.newStyleSheet();
   }
   stylesheet.addStyle("@page", "size:portrait;margin:2em;font-size: 8px; ");
+  if (param.stampaDefinitiva)
+    stylesheet.addStyle("@page", "fill-empty-area:dash 0.5 black; ");
   stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
   stylesheet.addStyle("thead", "font-weight: bold");
   stylesheet.addStyle("td", "padding-right: 0em;");
