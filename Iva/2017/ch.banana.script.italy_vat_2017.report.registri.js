@@ -242,6 +242,8 @@ function addPageHeader(report, stylesheet, param)
   //Tabella
   var table = pageHeader.addTable("header_table");
   table.addColumn("header_col_left");
+  table.addColumn("header_col_center");
+  table.addColumn("header_col_right");
   table.addColumn("header_col_right");
   
   //cell_left
@@ -282,17 +284,32 @@ function addPageHeader(report, stylesheet, param)
   if (line4.length)
     cell_left.addParagraph(line4, "vatNumber");
   
+  //cell_center
+  var cell_center = row.addCell("", "header_cell_center");
+  var datestring = '';
+  if (param.visualizzaDataOra) {
+    var d = new Date();
+    var datestring = ("0" + d.getDate()).slice(-2) + "/" + ("0"+(d.getMonth()+1)).slice(-2) + "/" + d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);  
+  }
+  cell_center.addParagraph(datestring, "");
+
+  //cell_right1
+  var cell_right1 = row.addCell("", "header_cell_right");
+  cell_right1.addParagraph("pag. ", "right").addFieldPageNr();
+
   //cell_right
-  var cell_right = row.addCell("", "header_cell_right");
-  var paragraph = cell_right.addParagraph("pag. ", "right").addFieldPageNr();
-  paragraph.addText("xxx");
- 
+  var cell_right2 = row.addCell("", "header_cell_right");
+  cell_right2.addParagraph("/" + param.accountingYear, "right");
+
   //add style
   stylesheet.addStyle(".header_table", "margin-top:1em;width:100%;");
-  stylesheet.addStyle(".header_col_left", "width:50%");
-  stylesheet.addStyle(".header_col_right", "width:49%");
+  stylesheet.addStyle(".header_col_left", "width:46%;");
+  stylesheet.addStyle(".header_col_center", "width:45%;");
+  stylesheet.addStyle(".header_col_right1", "width:4%");
+  stylesheet.addStyle(".header_col_right2", "width:4%");
   stylesheet.addStyle(".header_cell_left", "font-size:8px");
-  stylesheet.addStyle(".header_cell_right", "font-size:8px");
+  stylesheet.addStyle(".header_cell_center", "font-size:8px;padding-right:0;margin-right:0;");
+  stylesheet.addStyle(".header_cell_right", "font-size:8px;padding-left:0;margin-left:0;");
   stylesheet.addStyle(".period", "padding-bottom: 1em;");
   stylesheet.addStyle(".right", "text-align: right;");
 }
@@ -326,6 +343,9 @@ function exec(inData) {
 
   var report = Banana.Report.newReport("Registri IVA");
   var stylesheet = Banana.Report.newStyleSheet();
+  //Non funziona
+  /*if (param.inizioNumerazionePagine)
+   report.setFirstPageNumber(param.inizioNumerazionePagine);*/
   addPageHeader(report, stylesheet, param);
   setStyle(report, stylesheet, param);
   
@@ -358,7 +378,6 @@ function exec(inData) {
   }
 
   //Debug
-  var debug = true;
   if (debug) {
     for (var i=0; i<param.periods.length; i++) {
       report.addPageBreak();
@@ -456,6 +475,7 @@ function loadJournalData(param) {
   var periods = createPeriods(param);
   for (var i=0; i<periods.length; i++) {
     periods[i] = loadJournal(periods[i]);
+    periods[i].numerazioneAutomatica = param.numerazioneAutomatica;
     param.periods.push(periods[i]);
   }
   return param;
@@ -530,7 +550,6 @@ function printRegister(report, stylesheet, param, register) {
     row.addCell(param.journal.rows[index].IT_DocInvoice, "right");
     var cell = row.addCell();
     var descrizione = xml_unescapeString(param.journal.rows[index].IT_ClienteIntestazione);
-    descrizione += " " + param.journal.rows[index].Doc;
     if (descrizione.length>1)
       cell.addParagraph(descrizione);
     if (param.journal.rows[index].Description.length>0)
@@ -711,7 +730,7 @@ function setStyle(report, stylesheet, param) {
   stylesheet.addStyle(".period", "padding-bottom: 1em;padding-top:0;");
   stylesheet.addStyle(".center", "text-align: center");
   stylesheet.addStyle(".right", "text-align: right");
-  stylesheet.addStyle(".title", "font-weight:bold;text-decoration:underline;padding-bottom:1em;padding-top:1em;padding-bottom:0.5em;");
+  stylesheet.addStyle(".title", "font-weight:bold;text-decoration:underline;padding-top:1em;padding-bottom:0.5em;");
   stylesheet.addStyle(".total", "padding-bottom:20px;");
   stylesheet.addStyle(".warning", "color: red;");
   /*register_table*/

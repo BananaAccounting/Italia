@@ -567,7 +567,7 @@ function loadJournal(param)
 
     //IT_ProgRegistro
     var registro = jsonLine["IT_Registro"];
-    var noProgressivo = 1;
+    var noProgressivo = 0;
     if (progRegistri[registro])
       noProgressivo = parseInt(progRegistri[registro]);
     var indexGroup = filteredRows[i].value("JContraAccountGroup") ;
