@@ -706,6 +706,25 @@ function loadJournal(param)
       }
     }
 
+    //Corrispettivi
+    jsonLine["IT_CorrFattureNormali"] = '';
+    jsonLine["IT_CorrFattureFiscali"] = '';
+    jsonLine["IT_CorrFattureScontrini"] = '';
+    jsonLine["IT_CorrFattureDifferite"] = '';
+    jsonLine["IT_CorrispettiviNormali"] = '';
+    jsonLine["IT_CorrispettiviScontrini"] = '';
+    jsonLine["IT_CorrRicevuteFiscali"] = '';
+    jsonLine["IT_CorrTotaleGiornaliero"] = '';
+    var contoIvaAssociato = filteredRows[i].value("VatTwinAccount");
+    if (contoIvaAssociato.length && vatCode.length) {
+      var colonnaCorrispettivi = getColonnaCorrispettivi(contoIvaAssociato);
+      if (colonnaCorrispettivi.length) {
+        var lordo = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
+        jsonLine[colonnaCorrispettivi] = lordo;
+        jsonLine["IT_CorrTotaleGiornaliero"] = lordo;
+      }
+    }
+
     //Aggiunge la riga nei parametri
     if (isCustomer) {
       if (!param.customers[accountId].rows)
@@ -960,6 +979,54 @@ function loadJournal_setColumns(param, journalColumns) {
   column.type = "description";
   column.index = 1021;
   param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrFattureNormali";
+  column.title = "IT_CorrFattureNormali";
+  column.visible = true;
+  column.index = 1022;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrFattureFiscali";
+  column.title = "IT_CorrFattureFiscali";
+  column.visible = true;
+  column.index = 1023;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrFattureScontrini";
+  column.title = "IT_CorrFattureScontrini";
+  column.visible = true;
+  column.index = 1024;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrFattureDifferite";
+  column.title = "IT_CorrFattureDifferite";
+  column.visible = true;
+  column.index = 1025;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrispettiviNormali";
+  column.title = "IT_CorrispettiviNormali";
+  column.visible = true;
+  column.index = 1026;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrispettiviScontrini";
+  column.title = "IT_CorrispettiviScontrini";
+  column.visible = true;
+  column.index = 1027;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrRicevuteFiscali";
+  column.title = "IT_CorrRicevuteFiscali";
+  column.visible = true;
+  column.index = 1028;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrTotaleGiornaliero";
+  column.title = "IT_CorrTotaleGiornaliero";
+  column.visible = true;
+  column.index = 1029;
+  param.columns[j++] = column;
   return param;
 }
 
@@ -1042,9 +1109,9 @@ function readAccountingData(param) {
   param.datiContribuente = {};
   var datiContribuenteParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
   //compatibilità con una prima versione
-  if (datiContribuenteParam.length <= 0) {
+  /*if (datiContribuenteParam.length <= 0) {
     datiContribuenteParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat_2017.daticontribuente.js");
-  }
+  }*/
   if (datiContribuenteParam.length > 0) {
     param.datiContribuente = JSON.parse(datiContribuenteParam);
   }

@@ -33,9 +33,9 @@ function settingsDialog() {
   var param = initParam();
   var savedParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
   //compatibilità con una prima versione
-  if (savedParam.length <= 0) {
+  /*if (savedParam.length <= 0) {
     savedParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat_2017.daticontribuente.js");
-  }
+  }*/
   if (savedParam.length > 0) {
     param = JSON.parse(savedParam);
   }
@@ -240,10 +240,39 @@ function exec() {
 }
 
 /*
- * Ritorna il primo conto con descrizione contenente il testo del parametro
- *
+ * Ritorna la colonna del giornale associata al conto corrispettivi
  */
-function getAccountFromDescription(accountDes) {
+function getColonnaCorrispettivi(accountId) {
+  if (!Banana.document || accountId.length<=0)
+    return '';
+  var savedParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
+  if (savedParam.length <= 0) 
+    return '';
+  var param = JSON.parse(savedParam);
+
+  if (param.contoFattureNormali && accountId == param.contoFattureNormali)
+    return "IT_CorrFattureNormali";
+  if (param.contoFattureFiscali && accountId == param.contoFattureFiscali)
+    return "IT_CorrFattureFiscali";
+  if (param.contoFattureScontrini && accountId == param.contoFattureScontrini)
+    return "IT_CorrFattureScontrini";
+  if (param.contoFattureDifferite && accountId == param.contoFattureDifferite)
+    return "IT_CorrFattureDifferite";
+  if (param.contoCorrispettiviNormali && accountId == param.contoCorrispettiviNormali)
+    return "IT_CorrispettiviNormali";
+  if (param.contoCorrispettiviScontrini && accountId == param.contoCorrispettiviScontrini)
+    return "IT_CorrispettiviScontrini";
+  if (param.contoRicevuteFiscali && accountId == param.contoRicevuteFiscali)
+    return "IT_CorrRicevuteFiscali";
+
+  return '';
+}
+/*
+ * Ritorna il conto che ha come descrizione accountDes
+ * Serve per proporre i conti corrispettivi predefiniti 
+ * 
+ */
+function getContoCorrispettivi(accountDes) {
   if (!Banana.document || accountDes.length<=0)
     return '';
 
@@ -348,19 +377,19 @@ function verifyDatiContribuente(param) {
   if (!param.liqPercProrata)
     param.liqPercProrata = '';
   if (!param.contoFattureNormali)
-    param.contoFattureNormali = getAccountFromDescription("fatture normali");
+    param.contoFattureNormali = getContoCorrispettivi("fatture normali");
   if (!param.contoFattureFiscali)
-    param.contoFattureFiscali = getAccountFromDescription("fatture fiscali");
+    param.contoFattureFiscali = getContoCorrispettivi("fatture fiscali");
   if (!param.contoFattureScontrini)
-    param.contoFattureScontrini = getAccountFromDescription("fatture scontrini");
+    param.contoFattureScontrini = getContoCorrispettivi("fatture scontrini");
   if (!param.contoFattureDifferite)
-    param.contoFattureDifferite = getAccountFromDescription("fatture differite");
+    param.contoFattureDifferite = getContoCorrispettivi("fatture differite");
   if (!param.contoCorrispettiviNormali)
-    param.contoCorrispettiviNormali = getAccountFromDescription("corrispettivi normali");
+    param.contoCorrispettiviNormali = getContoCorrispettivi("corrispettivi normali");
   if (!param.contoCorrispettiviScontrini)
-    param.contoCorrispettiviScontrini = getAccountFromDescription("corrispettivi scontrini");
+    param.contoCorrispettiviScontrini = getContoCorrispettivi("corrispettivi scontrini");
   if (!param.contoRicevuteFiscali)
-    param.contoRicevuteFiscali = getAccountFromDescription("ricevute fiscali");
+    param.contoRicevuteFiscali = getContoCorrispettivi("ricevute fiscali");
   
   return param;
 }
