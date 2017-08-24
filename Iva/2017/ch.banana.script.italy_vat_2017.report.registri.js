@@ -21,12 +21,12 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-23
+// @pubdate = 2017-08-24
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
 
-var debug = false;
+var debug = true;
 
 /*
  * Update script's parameters
@@ -494,12 +494,18 @@ function printRegister(report, stylesheet, param, register) {
       counter++;
     }
   }
-  /*if (counter<=0)
-    return;*/
   
   //Periodo
   report.addParagraph("REGISTRO IVA " + register.toUpperCase(), "title center");
   report.addParagraph("Periodo: " + getPeriodText(param), "period center");
+
+  if (counter<=0)
+    return;
+  
+  if (register.toLowerCase() == "corrispettivi") {
+    printRegisterCorrispettivi(report, stylesheet, param);
+    return;
+  }
   
   //Totali
   var vatRatesTotal = [];
@@ -716,6 +722,127 @@ function printRegister(report, stylesheet, param, register) {
 
 }
 
+function printRegisterCorrispettivi(report, stylesheet, param) {
+
+  //Riprende le righe corrispettivi e acquisti per rivendita per il calcolo
+  var corrispettivi = [];
+  /*var corrDaVentilare = {};
+  var corrSenzaVentilazione = {};
+  var acquistiPerRivendita = {};*/
+
+  for (var index in param.journal.rows) {
+    if (typeof param.journal.rows[index] !== "object")
+      continue;
+
+    var gr = param.journal.rows[index].IT_Gr_IVA;
+    var date = param.journal.rows[index].JDate;
+    var vatCode = param.journal.rows[index].JVatCodeWithoutSign;
+    var key = date + "|" + vatCode;
+
+    if (param.journal.rows[index].IT_Registro.toLowerCase() == "corrispettivi") {
+      var currentObject = {};
+      currentObject.contoFattureNormali = 0;
+      currentObject.contoFattureFiscali = 0;
+      currentObject.contoFattureScontrini = 0;
+      currentObject.contoFattureDifferite = 0;
+      currentObject.contoCorrispettiviNormali = 0;
+      currentObject.contoCorrispettiviScontrini = 0;
+      currentObject.contoRicevuteFiscali = 0;
+      currentObject.totaleGiornaliero = 0;
+      currentObject.vatCode = '';
+      if (corrispettivi[key]) {
+        currentObject = corrispettivi[key];
+      }
+      currentObject.contoFattureNormali = Banana.SDecimal.add(param.journal.rows[index].IT_CorrFattureNormali, currentObject.contoFattureNormali);
+      currentObject.contoFattureFiscali = Banana.SDecimal.add(param.journal.rows[index].IT_CorrFattureFiscali, currentObject.contoFattureFiscali);
+      currentObject.contoFattureScontrini = Banana.SDecimal.add(param.journal.rows[index].IT_CorrFattureScontrini, currentObject.contoFattureScontrini);
+      currentObject.contoFattureDifferite = Banana.SDecimal.add(param.journal.rows[index].IT_CorrFattureDifferite, currentObject.contoFattureDifferite);
+      currentObject.contoCorrispettiviNormali = Banana.SDecimal.add(param.journal.rows[index].IT_CorrispettiviNormali, currentObject.contoCorrispettiviNormali);
+      currentObject.contoCorrispettiviScontrini = Banana.SDecimal.add(param.journal.rows[index].IT_CorrispettiviScontrini, currentObject.contoCorrispettiviScontrini);
+      currentObject.contoRicevuteFiscali = Banana.SDecimal.add(param.journal.rows[index].IT_CorrRicevuteFiscali, currentObject.contoRicevuteFiscali);
+      currentObject.totaleGiornaliero = Banana.SDecimal.add(param.journal.rows[index].IT_CorrTotaleGiornaliero, currentObject.totaleGiornaliero);
+      currentObject.vatCode = vatCode;
+      corrispettivi[key] = currentObject;
+
+      /*if (gr == "C-NVE")
+      else if (gr == "C-VEN")*/
+    }
+    /*else if (param.journal.rows[index].IT_Registro.toLowerCase() == "acquisti" && gr == "A-IM-RI") {
+    }*/
+  }
+  
+  //Tabella REGISTRO DEI CORRISPETTIVI 
+  var table = report.addTable("corrispettivi_table");
+  var headerRow = table.getHeader().addRow();
+  headerRow.addCell("REGISTRO DEI CORRISPETTIVI " + getPeriodText(param) + " (Art. 24 D.p.r. 633/1972)", "", 11);
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell("Data");
+  headerRow.addCell("Cod.IVA");
+  headerRow.addCell("Des.cod.IVA");
+  headerRow.addCell("Fatt.normali", "right");
+  headerRow.addCell("Fatt.fiscali", "right");
+  headerRow.addCell("Fatt.scontr.", "right");
+  headerRow.addCell("Fatt.differ.", "right");
+  headerRow.addCell("Corr.normali", "right");
+  headerRow.addCell("Corr.scontr.", "right");
+  headerRow.addCell("Ric.fiscali", "right");
+  headerRow.addCell("Tot.giorn.", "right");
+
+  var tot1=0;
+  var tot2=0;
+  var tot3=0;
+  var tot4=0;
+  var tot5=0;
+  var tot6=0;
+  var tot7=0;
+  var tot8=0;
+
+  for (var key in corrispettivi) {
+    if (key.indexOf('|')<=0)
+      continue;
+    row = table.addRow();
+    var date = key.substring(0, key.indexOf('|'));
+    row.addCell(Banana.Converter.toLocaleDateFormat(date, "dd/mm/yy"), "right");
+    row.addCell(corrispettivi[key].vatCode, "");
+    var vatCodeDes = '';
+    var tableVatCodes = Banana.document.table("VatCodes");
+    if (tableVatCodes) {
+      var vatCodeRow = tableVatCodes.findRowByValue("VatCode", corrispettivi[key].vatCode);
+      if (vatCodeRow)
+        vatCodeDes = vatCodeRow.value("Description");
+    }
+    row.addCell(vatCodeDes, "");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(corrispettivi[key].contoFattureNormali)), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(corrispettivi[key].contoFattureFiscali)), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(corrispettivi[key].contoFattureScontrini)), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(corrispettivi[key].contoFattureDifferite)), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(corrispettivi[key].contoCorrispettiviNormali)), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(corrispettivi[key].contoCorrispettiviScontrini)), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(corrispettivi[key].contoRicevuteFiscali)), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(corrispettivi[key].totaleGiornaliero)), "right");
+    tot1 = Banana.SDecimal.add(corrispettivi[key].contoFattureNormali, tot1);
+    tot2 = Banana.SDecimal.add(corrispettivi[key].contoFattureFiscali, tot2);
+    tot3 = Banana.SDecimal.add(corrispettivi[key].contoFattureScontrini, tot3);
+    tot4 = Banana.SDecimal.add(corrispettivi[key].contoFattureDifferite, tot4);
+    tot5 = Banana.SDecimal.add(corrispettivi[key].contoCorrispettiviNormali, tot5);
+    tot6 = Banana.SDecimal.add(corrispettivi[key].contoCorrispettiviScontrini, tot6);
+    tot7 = Banana.SDecimal.add(corrispettivi[key].contoRicevuteFiscali, tot7);
+    tot8 = Banana.SDecimal.add(corrispettivi[key].totaleGiornaliero, tot8);
+  }  
+  //Totale
+  row = table.addRow();
+  row.addCell("", "", 3);
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot1)), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot2)), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot3)), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot4)), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot5)), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot6)), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot7)), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot8)), "right total");
+
+}
+
 function setStyle(report, stylesheet, param) {
   if (!stylesheet) {
     stylesheet = report.newStyleSheet();
@@ -733,8 +860,10 @@ function setStyle(report, stylesheet, param) {
   stylesheet.addStyle(".title", "font-weight:bold;text-decoration:underline;padding-top:1em;padding-bottom:0.5em;");
   stylesheet.addStyle(".total", "padding-bottom:20px;");
   stylesheet.addStyle(".warning", "color: red;");
-  /*register_table*/
+  /*tables*/
   stylesheet.addStyle(".register_table", "width:100%;");
+  stylesheet.addStyle(".corrispettivi_table", "width:100%;");
+  
 }
 
 function verifyParam(param) {
