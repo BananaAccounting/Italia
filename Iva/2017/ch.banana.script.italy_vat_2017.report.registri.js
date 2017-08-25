@@ -21,7 +21,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-24
+// @pubdate = 2017-08-25
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -350,31 +350,19 @@ function exec(inData) {
   setStyle(report, stylesheet, param);
   
   //Print data
-  if (param.tipoRegistro == 3) {
-    //Registro IVA unico
-    for (var i=0; i<param.periods.length; i++) {
+  for (var i=0; i<param.periods.length; i++) {
+    if (param.tipoRegistro == 0 || param.tipoRegistro == 3)
       printRegister(report, stylesheet, param.periods[i], 'Acquisti');
+    if (param.tipoRegistro == 3)
       report.addPageBreak();
+    if (param.tipoRegistro == 1 || param.tipoRegistro == 3)
       printRegister(report, stylesheet, param.periods[i], 'Vendite');
+    if (param.tipoRegistro == 3)
       report.addPageBreak();
-      printRegister(report, stylesheet, param.periods[i], 'Corrispettivi');
-      if (i+1<param.periods.length)
-        report.addPageBreak();
-    }
-  }
-  else {
-    var tipoRegistro = '';
-    if (param.tipoRegistro == 0)
-      tipoRegistro = 'Acquisti';
-    else if (param.tipoRegistro == 1)
-      tipoRegistro = 'Vendite';
-    else if (param.tipoRegistro == 2)
-      tipoRegistro = 'Corrispettivi';
-    for (var i=0; i<param.periods.length; i++) {
-      printRegister(report, stylesheet, param.periods[i], tipoRegistro);
-      if (i+1<param.periods.length)
-        report.addPageBreak();
-    }
+    if (param.tipoRegistro == 2 || param.tipoRegistro == 3)
+      printRegisterCorrispettivi(report, stylesheet, param.periods[i], param.periodComplete);
+    if (i+1<param.periods.length)
+      report.addPageBreak();
   }
 
   //Debug
@@ -478,18 +466,29 @@ function loadJournalData(param) {
     periods[i].numerazioneAutomatica = param.numerazioneAutomatica;
     param.periods.push(periods[i]);
   }
+  //Periodo che parte da inizio anno contabile
+  //Serve per il calcolo dei corrispettivi da ventilare (acquisti per rivendita)
+  param.periodComplete = {};
+  if (periods.length) {
+    param.periodComplete.startDate = periods[0].startDate;
+    param.periodComplete.endDate = periods[0].endDate;
+  }
+  if (param.fileInfo["OpeningDate"].length>0)
+    param.periodComplete.startDate = param.fileInfo["OpeningDate"];
+  param.periodComplete = loadJournal(param.periodComplete);
+  
   return param;
 }
 
-function printRegister(report, stylesheet, param, register) {
+function printRegister(report, stylesheet, period, register) {
   
   //Controlla se ci sono righe da stampare
-  var counter = param.journal.rows.length;
+  var counter = period.journal.rows.length;
   if (register.length > 0) {
-    for (var index in param.journal.rows) {
-      if (typeof param.journal.rows[index] !== "object")
+    for (var index in period.journal.rows) {
+      if (typeof period.journal.rows[index] !== "object")
         continue;
-      if (param.journal.rows[index].IT_Registro != register)
+      if (period.journal.rows[index].IT_Registro.toLowerCase() != register.toLowerCase())
         continue;
       counter++;
     }
@@ -497,7 +496,7 @@ function printRegister(report, stylesheet, param, register) {
   
   //Periodo
   report.addParagraph("REGISTRO IVA " + register.toUpperCase(), "title center");
-  report.addParagraph("Periodo: " + getPeriodText(param), "period center");
+  report.addParagraph("Periodo: " + getPeriodText(period), "period center");
 
   if (counter<=0)
     return;
@@ -529,45 +528,45 @@ function printRegister(report, stylesheet, param, register) {
   var totCol1=0;
   var totCol2=0;
   var totCol3=0;
-  for (var index in param.journal.rows) {
-    if (typeof param.journal.rows[index] !== "object")
+  for (var index in period.journal.rows) {
+    if (typeof period.journal.rows[index] !== "object")
       continue;
-    if (param.journal.rows[index].IT_Registro != register)
+    if (period.journal.rows[index].IT_Registro.toLowerCase() != register.toLowerCase())
       continue;
 
-    //var customerObject = getAccount(param.journal.rows[index].JInvoiceAccountId);
-    var progRegistro = param.journal.rows[index].DocProtocol;
-    if (param.numerazioneAutomatica)
-      progRegistro = param.journal.rows[index].IT_ProgRegistro;
-    var vatCode = param.journal.rows[index].JVatCodeWithoutSign;
-    var vatRate = param.journal.rows[index].IT_Aliquota;
-    var vatAmount = param.journal.rows[index].IT_ImportoIva;
-    var vatPosted = param.journal.rows[index].IT_IvaContabilizzata;
-    var vatNonDed = param.journal.rows[index].VatNonDeductible;
-    var vatTaxable = param.journal.rows[index].IT_Imponibile;
-    var vatTaxableDed = param.journal.rows[index].IT_ImponibileDetraibile;
-    var vatTaxableNonDed = param.journal.rows[index].IT_ImponibileNonDetraibile;
-    var vatPercNonDed = param.journal.rows[index].VatPercentNonDeductible;
+    //var customerObject = getAccount(period.journal.rows[index].JInvoiceAccountId);
+    var progRegistro = period.journal.rows[index].DocProtocol;
+    if (period.numerazioneAutomatica)
+      progRegistro = period.journal.rows[index].IT_ProgRegistro;
+    var vatCode = period.journal.rows[index].JVatCodeWithoutSign;
+    var vatRate = period.journal.rows[index].IT_Aliquota;
+    var vatAmount = period.journal.rows[index].IT_ImportoIva;
+    var vatPosted = period.journal.rows[index].IT_IvaContabilizzata;
+    var vatNonDed = period.journal.rows[index].VatNonDeductible;
+    var vatTaxable = period.journal.rows[index].IT_Imponibile;
+    var vatTaxableDed = period.journal.rows[index].IT_ImponibileDetraibile;
+    var vatTaxableNonDed = period.journal.rows[index].IT_ImponibileNonDetraibile;
+    var vatPercNonDed = period.journal.rows[index].VatPercentNonDeductible;
 
     var row = table.addRow();
     row.addCell(progRegistro, "right");
-    row.addCell(Banana.Converter.toLocaleDateFormat(param.journal.rows[index].JDate, "dd/mm/yy"), "right");
-    row.addCell(Banana.Converter.toLocaleDateFormat(param.journal.rows[index].JInvoiceIssueDate, "dd/mm/yy"), "right");
-    row.addCell(param.journal.rows[index].IT_DocInvoice, "right");
+    row.addCell(Banana.Converter.toLocaleDateFormat(period.journal.rows[index].JDate, "dd/mm/yy"), "right");
+    row.addCell(Banana.Converter.toLocaleDateFormat(period.journal.rows[index].JInvoiceIssueDate, "dd/mm/yy"), "right");
+    row.addCell(period.journal.rows[index].IT_DocInvoice, "right");
     var cell = row.addCell();
-    var descrizione = xml_unescapeString(param.journal.rows[index].IT_ClienteIntestazione);
+    var descrizione = xml_unescapeString(period.journal.rows[index].IT_ClienteIntestazione);
     if (descrizione.length>1)
       cell.addParagraph(descrizione);
-    if (param.journal.rows[index].Description.length>0)
-      cell.addParagraph(param.journal.rows[index].Description);
-    row.addCell(Banana.Converter.toLocaleNumberFormat(param.journal.rows[index].IT_Lordo), "right");
+    if (period.journal.rows[index].Description.length>0)
+      cell.addParagraph(period.journal.rows[index].Description);
+    row.addCell(Banana.Converter.toLocaleNumberFormat(period.journal.rows[index].IT_Lordo), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatTaxable), "right");
     row.addCell(vatCode, "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatRate), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatAmount), "right");
 
     //Totali
-    totCol1 = Banana.SDecimal.add(param.journal.rows[index].IT_Lordo, totCol1);
+    totCol1 = Banana.SDecimal.add(period.journal.rows[index].IT_Lordo, totCol1);
     totCol2 = Banana.SDecimal.add(vatTaxable, totCol2);
     totCol3 = Banana.SDecimal.add(vatAmount, totCol3);
 
@@ -722,24 +721,41 @@ function printRegister(report, stylesheet, param, register) {
 
 }
 
-function printRegisterCorrispettivi(report, stylesheet, param) {
+function printRegisterCorrispettivi(report, stylesheet, period, periodComplete) {
 
-  //Riprende le righe corrispettivi e acquisti per rivendita per il calcolo
+  var register = "Corrispettivi";
+  
+  //Controlla se ci sono righe da stampare
+  var counter = period.journal.rows.length;
+  for (var index in period.journal.rows) {
+    if (typeof period.journal.rows[index] !== "object")
+      continue;
+    if (period.journal.rows[index].IT_Registro.toLowerCase() != register.toLowerCase())
+      continue;
+    counter++;
+  }
+  
+  //Periodo
+  report.addParagraph("REGISTRO IVA " + register.toUpperCase(), "title center");
+  report.addParagraph("Periodo: " + getPeriodText(period), "period center");
+
+  if (counter<=0)
+    return;
+  
+  //Riprende le righe corrispettivi per il calcolo
   var corrispettivi = [];
-  /*var corrDaVentilare = {};
-  var corrSenzaVentilazione = {};
-  var acquistiPerRivendita = {};*/
+  //var corrSenzaVentilazione = {};
 
-  for (var index in param.journal.rows) {
-    if (typeof param.journal.rows[index] !== "object")
+  for (var index in period.journal.rows) {
+    if (typeof period.journal.rows[index] !== "object")
       continue;
 
-    var gr = param.journal.rows[index].IT_Gr_IVA;
-    var date = param.journal.rows[index].JDate;
-    var vatCode = param.journal.rows[index].JVatCodeWithoutSign;
+    var gr = period.journal.rows[index].IT_Gr_IVA;
+    var date = period.journal.rows[index].JDate;
+    var vatCode = period.journal.rows[index].JVatCodeWithoutSign;
     var key = date + "|" + vatCode;
 
-    if (param.journal.rows[index].IT_Registro.toLowerCase() == "corrispettivi") {
+    if (period.journal.rows[index].IT_Registro.toLowerCase() == "corrispettivi") {
       var currentObject = {};
       currentObject.contoFattureNormali = 0;
       currentObject.contoFattureFiscali = 0;
@@ -753,28 +769,26 @@ function printRegisterCorrispettivi(report, stylesheet, param) {
       if (corrispettivi[key]) {
         currentObject = corrispettivi[key];
       }
-      currentObject.contoFattureNormali = Banana.SDecimal.add(param.journal.rows[index].IT_CorrFattureNormali, currentObject.contoFattureNormali);
-      currentObject.contoFattureFiscali = Banana.SDecimal.add(param.journal.rows[index].IT_CorrFattureFiscali, currentObject.contoFattureFiscali);
-      currentObject.contoFattureScontrini = Banana.SDecimal.add(param.journal.rows[index].IT_CorrFattureScontrini, currentObject.contoFattureScontrini);
-      currentObject.contoFattureDifferite = Banana.SDecimal.add(param.journal.rows[index].IT_CorrFattureDifferite, currentObject.contoFattureDifferite);
-      currentObject.contoCorrispettiviNormali = Banana.SDecimal.add(param.journal.rows[index].IT_CorrispettiviNormali, currentObject.contoCorrispettiviNormali);
-      currentObject.contoCorrispettiviScontrini = Banana.SDecimal.add(param.journal.rows[index].IT_CorrispettiviScontrini, currentObject.contoCorrispettiviScontrini);
-      currentObject.contoRicevuteFiscali = Banana.SDecimal.add(param.journal.rows[index].IT_CorrRicevuteFiscali, currentObject.contoRicevuteFiscali);
-      currentObject.totaleGiornaliero = Banana.SDecimal.add(param.journal.rows[index].IT_CorrTotaleGiornaliero, currentObject.totaleGiornaliero);
+      currentObject.contoFattureNormali = Banana.SDecimal.add(period.journal.rows[index].IT_CorrFattureNormali, currentObject.contoFattureNormali);
+      currentObject.contoFattureFiscali = Banana.SDecimal.add(period.journal.rows[index].IT_CorrFattureFiscali, currentObject.contoFattureFiscali);
+      currentObject.contoFattureScontrini = Banana.SDecimal.add(period.journal.rows[index].IT_CorrFattureScontrini, currentObject.contoFattureScontrini);
+      currentObject.contoFattureDifferite = Banana.SDecimal.add(period.journal.rows[index].IT_CorrFattureDifferite, currentObject.contoFattureDifferite);
+      currentObject.contoCorrispettiviNormali = Banana.SDecimal.add(period.journal.rows[index].IT_CorrispettiviNormali, currentObject.contoCorrispettiviNormali);
+      currentObject.contoCorrispettiviScontrini = Banana.SDecimal.add(period.journal.rows[index].IT_CorrispettiviScontrini, currentObject.contoCorrispettiviScontrini);
+      currentObject.contoRicevuteFiscali = Banana.SDecimal.add(period.journal.rows[index].IT_CorrRicevuteFiscali, currentObject.contoRicevuteFiscali);
+      currentObject.totaleGiornaliero = Banana.SDecimal.add(period.journal.rows[index].IT_CorrTotaleGiornaliero, currentObject.totaleGiornaliero);
       currentObject.vatCode = vatCode;
       corrispettivi[key] = currentObject;
 
       /*if (gr == "C-NVE")
       else if (gr == "C-VEN")*/
     }
-    /*else if (param.journal.rows[index].IT_Registro.toLowerCase() == "acquisti" && gr == "A-IM-RI") {
-    }*/
   }
   
   //Tabella REGISTRO DEI CORRISPETTIVI 
   var table = report.addTable("corrispettivi_table");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("REGISTRO DEI CORRISPETTIVI " + getPeriodText(param) + " (Art. 24 D.p.r. 633/1972)", "", 11);
+  headerRow.addCell("REGISTRO DEI CORRISPETTIVI " + getPeriodText(period) + " (Art. 24 D.p.r. 633/1972)", "", 11);
   headerRow = table.getHeader().addRow();
   headerRow.addCell("Data");
   headerRow.addCell("Cod.IVA");
@@ -841,6 +855,94 @@ function printRegisterCorrispettivi(report, stylesheet, param) {
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot7)), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot8)), "right total");
 
+  //Aggiunge tabella calcolo ventilazione
+  printRegisterCorrispettivi_CalcoloVentilazione(report, stylesheet, period, periodComplete, Banana.SDecimal.invert(tot8));
+  
+}
+
+function printRegisterCorrispettivi_CalcoloVentilazione(report, stylesheet, period, periodComplete, totCorrispettiviDaVentilare) {
+  //Riprende le righe registro acquisti per il calcolo
+  var acquistiPerRivendita = [];
+  var totAcquisti=0;
+  
+  for (var index in periodComplete.journal.rows) {
+    if (typeof periodComplete.journal.rows[index] !== "object")
+      continue;
+
+    var gr = periodComplete.journal.rows[index].IT_Gr_IVA;
+    var vatCode = periodComplete.journal.rows[index].JVatCodeWithoutSign;
+
+    if (periodComplete.journal.rows[index].IT_Registro.toLowerCase() == "acquisti" && gr == "A-IM-RI") {
+      var currentObject = {};
+      currentObject.totaleAcquisti = '';
+      if (acquistiPerRivendita[vatCode]) {
+        currentObject = acquistiPerRivendita[vatCode];
+      }
+      currentObject.totaleAcquisti = Banana.SDecimal.add(periodComplete.journal.rows[index].IT_Lordo, currentObject.totaleAcquisti);
+      acquistiPerRivendita[vatCode] = currentObject;
+      totAcquisti = Banana.SDecimal.add(periodComplete.journal.rows[index].IT_Lordo, totAcquisti);
+    }
+  }
+  
+  //Tabella CALCOLO VENTILAZIONE CORRISPETTIVI
+  var table = report.addTable("corrispettivi_calcolo_ventilazione_table");
+  var headerRow = table.getHeader().addRow();
+  headerRow.addCell("CALCOLO VENTILAZIONE CORRISPETTIVI (GR=C-VEN) " + getPeriodText(period), "", 8);
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell("Cod.IVA");
+  headerRow.addCell("%IVA");
+  headerRow.addCell("Descrizione");
+  headerRow.addCell("Tot.Acquisti", "right");
+  headerRow.addCell("%Incid.", "right");
+  headerRow.addCell("Tot.corr.da ventilare", "right");
+  headerRow.addCell("Imponibile", "right");
+  headerRow.addCell("Totale Iva", "right");
+
+  var tot1=0;
+  var tot2=0;
+  var tot3=0;
+  var tot4=0;
+  var tot5=0;
+
+  for (var key in acquistiPerRivendita) {
+    row = table.addRow();
+    var vatCodeDes = '';
+    var vatCodeRate = '';
+    var tableVatCodes = Banana.document.table("VatCodes");
+    if (tableVatCodes) {
+      var vatCodeRow = tableVatCodes.findRowByValue("VatCode", key);
+      if (vatCodeRow) {
+        vatCodeDes = vatCodeRow.value("Description");
+        vatCodeRate = vatCodeRow.value("VatRate");
+      }
+    }
+    row.addCell(key, "");
+    row.addCell(vatCodeRate, "");
+    row.addCell(vatCodeDes, "");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(acquistiPerRivendita[key].totaleAcquisti), "right");
+    var incidenza = Banana.SDecimal.divide(acquistiPerRivendita[key].totaleAcquisti, totAcquisti); 
+    row.addCell(Banana.Converter.toLocaleNumberFormat(incidenza), "right");
+    var daVentilare = Banana.SDecimal.multiply(totCorrispettiviDaVentilare , incidenza); 
+    row.addCell(Banana.Converter.toLocaleNumberFormat(daVentilare), "right");
+    var aliquota = Banana.SDecimal.round(vatCodeRate, {'decimals':2});
+    var imponibile = Banana.SDecimal.divide(Banana.SDecimal.multiply(daVentilare , 100), Banana.SDecimal.add(100, aliquota));
+    var iva = Banana.SDecimal.divide(Banana.SDecimal.multiply(daVentilare , aliquota), Banana.SDecimal.add(100, aliquota));
+    row.addCell(Banana.Converter.toLocaleNumberFormat(imponibile), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(iva), "right");
+    tot1 = Banana.SDecimal.add(acquistiPerRivendita[key].totaleAcquisti, tot1);
+    tot2 = Banana.SDecimal.add(incidenza, tot2);
+    tot3 = Banana.SDecimal.add(daVentilare, tot3);
+    tot4 = Banana.SDecimal.add(imponibile, tot4);
+    tot5 = Banana.SDecimal.add(iva, tot5);
+  }  
+  //Totale
+  row = table.addRow();
+  row.addCell("", "", 3);
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot3), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot4), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot5), "right total");
 }
 
 function setStyle(report, stylesheet, param) {
