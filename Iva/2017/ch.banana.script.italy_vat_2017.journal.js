@@ -252,9 +252,13 @@ function createPeriods(param) {
     }
   }
   // --------------------------------------------------------------------------------
-  //TUTTO L'ANNO param.periodoSelezionato == 'a'
+  //TUTTO L'ANNO param.periodoSelezionato == 'y'
   // --------------------------------------------------------------------------------
-  else if (param.periodoSelezionato == 'a') {
+  else if (param.periodoSelezionato == 'y') {
+      var currentPeriod = {};
+      currentPeriod.startDate = param.fileInfo["OpeningDate"];
+      currentPeriod.endDate = param.fileInfo["ClosureDate"];
+      periods.push(currentPeriod);
   }
   
   return periods;

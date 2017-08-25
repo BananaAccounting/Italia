@@ -26,7 +26,7 @@
 // @task = app.command
 // @timeout = -1
 
-var debug = true;
+var debug = false;
 
 /*
  * Update script's parameters
@@ -57,7 +57,7 @@ function settingsDialog() {
     meseRadioButton.checked = true;
   else if (param.periodoSelezionato == 'q' && trimestreRadioButton)
     trimestreRadioButton.checked = true;
-  else if (param.periodoSelezionato == 'a' && annoRadioButton)
+  else if (param.periodoSelezionato == 'y' && annoRadioButton)
     annoRadioButton.checked = true;
   if (meseComboBox)
     meseComboBox.currentIndex = param.periodoValoreMese;
@@ -180,7 +180,7 @@ function settingsDialog() {
   if (trimestreRadioButton.checked)
     param.periodoSelezionato = 'q';
   else if (annoRadioButton.checked)
-    param.periodoSelezionato = 'a';
+    param.periodoSelezionato = 'y';
   else
     param.periodoSelezionato = 'm';
   if (meseComboBox)
