@@ -351,12 +351,12 @@ function exec(inData) {
   
   //Print data
   for (var i=0; i<param.periods.length; i++) {
-    if (param.tipoRegistro == 0 || param.tipoRegistro == 3)
-      printRegister(report, stylesheet, param.periods[i], 'Acquisti');
-    if (param.tipoRegistro == 3)
-      report.addPageBreak();
     if (param.tipoRegistro == 1 || param.tipoRegistro == 3)
       printRegister(report, stylesheet, param.periods[i], 'Vendite');
+    if (param.tipoRegistro == 3)
+      report.addPageBreak();
+    if (param.tipoRegistro == 0 || param.tipoRegistro == 3)
+      printRegister(report, stylesheet, param.periods[i], 'Acquisti');
     if (param.tipoRegistro == 3)
       report.addPageBreak();
     if (param.tipoRegistro == 2 || param.tipoRegistro == 3)

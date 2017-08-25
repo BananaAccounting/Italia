@@ -466,73 +466,6 @@ function loadJournal(param)
       }
     }
 
-    //IT_Imponibile
-    //Tolto il segno perché nel file xml non esiste imponibile negativo? (controllare)
-    jsonLine["IT_Imponibile"] = '';
-    value = filteredRows[i].value("JVatTaxable");
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else
-      value = Banana.SDecimal.abs(value);
-    jsonLine["IT_Imponibile"] = value;
-
-    //IT_ImportoIva
-    jsonLine["IT_ImportoIva"] = '';
-    value = filteredRows[i].value("VatAmount");
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else
-      value = Banana.SDecimal.abs(value);
-    jsonLine["IT_ImportoIva"] = value;
-
-    //IT_IvaContabilizzata
-    jsonLine["IT_IvaContabilizzata"] = '';
-    value = filteredRows[i].value("VatPosted");
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else
-      value = Banana.SDecimal.abs(value);
-    jsonLine["IT_IvaContabilizzata"] = value;
-
-    //IT_Lordo
-    jsonLine["IT_Lordo"] = '';
-    value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else
-      value = Banana.SDecimal.abs(value);
-    jsonLine["IT_Lordo"] = value;
-
-    //IT_Detraibile
-    //IT_Deducibile
-    jsonLine["IT_Detraibile"] = '';
-    jsonLine["IT_Deducibile"] = '';
-    value = filteredRows[i].value("VatPercentNonDeductible");
-    if (!Banana.SDecimal.isZero(value))
-      value = Banana.SDecimal.subtract('100', value);
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    jsonLine["IT_Detraibile"] = value;
-
-    //IT_ImponibileDetraibile
-    //IT_ImponibileNonDetraibile
-    jsonLine["IT_ImponibileDetraibile"] = '';
-    jsonLine["IT_ImponibileNonDetraibile"] = '';
-    value = jsonLine["IT_Detraibile"];
-    if (!Banana.SDecimal.isZero(value)) {
-      var rate = Banana.SDecimal.round(value, {'decimals':2});
-      var taxable = filteredRows[i].value("VatTaxable");
-      var amount = taxable * rate /100;
-      amount = Banana.SDecimal.roundNearest(amount, '0.01');
-      jsonLine["IT_ImponibileDetraibile"] = amount;
-      amount = Banana.SDecimal.subtract(taxable, amount);
-      jsonLine["IT_ImponibileNonDetraibile"] = amount;
-    }
-    else {
-      var taxable = filteredRows[i].value("VatTaxable");
-      jsonLine["IT_ImponibileDetraibile"] = taxable;
-    }
-
     //IT_Aliquota
     //IT_Gr_IVA
     //IT_Gr1_IVA
@@ -581,6 +514,73 @@ function loadJournal(param)
     previousIndexGroup = indexGroup;
     progRegistri[registro] = noProgressivo;
     jsonLine["IT_ProgRegistro"] = noProgressivo.toString();
+
+    //IT_Imponibile
+    //Tolto il segno perché nel file xml non esiste imponibile negativo? (controllare)
+    jsonLine["IT_Imponibile"] = '';
+    value = filteredRows[i].value("JVatTaxable");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
+      value = Banana.SDecimal.invert(value);
+    jsonLine["IT_Imponibile"] = value;
+
+    //IT_ImportoIva
+    jsonLine["IT_ImportoIva"] = '';
+    value = filteredRows[i].value("VatAmount");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
+      value = Banana.SDecimal.invert(value);
+    jsonLine["IT_ImportoIva"] = value;
+
+    //IT_IvaContabilizzata
+    jsonLine["IT_IvaContabilizzata"] = '';
+    value = filteredRows[i].value("VatPosted");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
+      value = Banana.SDecimal.invert(value);
+    jsonLine["IT_IvaContabilizzata"] = value;
+
+    //IT_Lordo
+    jsonLine["IT_Lordo"] = '';
+    value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
+      value = Banana.SDecimal.invert(value);
+    jsonLine["IT_Lordo"] = value;
+
+    //IT_Detraibile
+    //IT_Deducibile
+    jsonLine["IT_Detraibile"] = '';
+    jsonLine["IT_Deducibile"] = '';
+    value = filteredRows[i].value("VatPercentNonDeductible");
+    if (!Banana.SDecimal.isZero(value))
+      value = Banana.SDecimal.subtract('100', value);
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    jsonLine["IT_Detraibile"] = value;
+
+    //IT_ImponibileDetraibile
+    //IT_ImponibileNonDetraibile
+    jsonLine["IT_ImponibileDetraibile"] = '';
+    jsonLine["IT_ImponibileNonDetraibile"] = '';
+    value = jsonLine["IT_Detraibile"];
+    if (!Banana.SDecimal.isZero(value)) {
+      var rate = Banana.SDecimal.round(value, {'decimals':2});
+      var taxable = filteredRows[i].value("VatTaxable");
+      var amount = taxable * rate /100;
+      amount = Banana.SDecimal.roundNearest(amount, '0.01');
+      jsonLine["IT_ImponibileDetraibile"] = amount;
+      amount = Banana.SDecimal.subtract(taxable, amount);
+      jsonLine["IT_ImponibileNonDetraibile"] = amount;
+    }
+    else {
+      var taxable = filteredRows[i].value("VatTaxable");
+      jsonLine["IT_ImponibileDetraibile"] = taxable;
+    }
 
     //IT_DocInvoice
     jsonLine["IT_DocInvoice"] = '';

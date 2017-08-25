@@ -221,8 +221,14 @@ function createInstance_Blocco2(accountObj, param)
           xbrlDatiGenerali += xml_createElementWithValidation("DataRegistrazione", accountObj.rows[i]["JDate"],1,'10',msgContext);
         var xbrlContent = xml_createElementWithValidation("DatiGenerali", xbrlDatiGenerali,1);
         //2.2.3.1  <DatiRiepilogo>
-        var xbrlDatiRiepilogo = xml_createElementWithValidation("ImponibileImporto", accountObj.rows[i]["IT_Imponibile"],1,'4...15',msgContext);
-        var xbrlContent4 = xml_createElementWithValidation("Imposta", accountObj.rows[i]["IT_IvaContabilizzata"],0,'4...15',msgContext);
+        var itImponibile = accountObj.rows[i]["IT_Imponibile"];
+        if (!Banana.SDecimal.isZero(itImponibile))
+          itImponibile = Banana.SDecimal.abs(itImponibile);
+        var itIvaContabilizzata = accountObj.rows[i]["IT_IvaContabilizzata"];
+        if (!Banana.SDecimal.isZero(itIvaContabilizzata))
+          itIvaContabilizzata = Banana.SDecimal.abs(itIvaContabilizzata);
+        var xbrlDatiRiepilogo = xml_createElementWithValidation("ImponibileImporto", itImponibile,1,'4...15',msgContext);
+        var xbrlContent4 = xml_createElementWithValidation("Imposta", itIvaContabilizzata,0,'4...15',msgContext);
         xbrlContent4 += xml_createElementWithValidation("Aliquota", accountObj.rows[i]["IT_Aliquota"],0,'4...6',msgContext);
         xbrlDatiRiepilogo += xml_createElementWithValidation("DatiIVA",xbrlContent4,1);
         if (accountObj.rows[i]["IT_Natura"].length)
