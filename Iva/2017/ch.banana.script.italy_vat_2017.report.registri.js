@@ -21,7 +21,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-25
+// @pubdate = 2017-08-28
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -610,6 +610,13 @@ function printRegister(report, stylesheet, period, register) {
         vatCodesTotal[vatCode].vatTaxableNonDed = vatTaxableNonDed;
         vatCodesTotal[vatCode].vatPercNonDed = vatPercNonDed;
         vatCodesTotal[vatCode].vatRate = vatRate;
+        vatCodesTotal[vatCode].vatCodeDes = '';
+        var tableVatCodes = Banana.document.table("VatCodes");
+        if (tableVatCodes) {
+          var vatCodeRow = tableVatCodes.findRowByValue("VatCode", vatCode);
+           if (vatCodeRow)
+             vatCodesTotal[vatCode].vatCodeDes = vatCodeRow.value("Description");
+        }
       }
     }
   }
@@ -642,7 +649,7 @@ function printRegister(report, stylesheet, period, register) {
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatRatesTotal[vatRate].vatTaxableDed), "right");
     row.addCell("");
-    row.addCell(Banana.Converter.toLocaleNumberFormat(vatRate), "right");
+    row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatRatesTotal[vatRate].vatPosted), "right");
     tot1 = Banana.SDecimal.add(vatRatesTotal[vatRate].vatTaxableDed, tot1);
     tot2 = Banana.SDecimal.add(vatRatesTotal[vatRate].vatPosted, tot2);
@@ -674,7 +681,7 @@ function printRegister(report, stylesheet, period, register) {
       row.addCell("");
       row.addCell(Banana.Converter.toLocaleNumberFormat(vatRatesTotal[vatRate].vatTaxableNonDed), "right");
       row.addCell("");
-      row.addCell(Banana.Converter.toLocaleNumberFormat(vatRate), "right");
+      row.addCell("");
       row.addCell(Banana.Converter.toLocaleNumberFormat(vatRatesTotal[vatRate].vatNonDed), "right");
       tot1 = Banana.SDecimal.add(vatRatesTotal[vatRate].vatTaxableNonDed, tot1);
       tot2 = Banana.SDecimal.add(vatRatesTotal[vatRate].vatNonDed, tot2);
@@ -701,11 +708,11 @@ function printRegister(report, stylesheet, period, register) {
   for (var vatCode in vatCodesTotal) {
     row = table.addRow();
     row.addCell("", "", 4);
-    row.addCell(vatCode);
+    row.addCell(vatCode + " " + vatCodesTotal[vatCode].vatCodeDes);
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatCodesTotal[vatCode].vatTaxable), "right");
     row.addCell("");
-    row.addCell("");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(vatCodesTotal[vatCode].vatRate), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatCodesTotal[vatCode].vatAmount), "right");
     tot1 = Banana.SDecimal.add(vatCodesTotal[vatCode].vatTaxable, tot1);
     tot2 = Banana.SDecimal.add(vatCodesTotal[vatCode].vatAmount, tot2);
@@ -943,6 +950,9 @@ function printRegisterCorrispettivi_CalcoloVentilazione(report, stylesheet, peri
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot3), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot4), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot5), "right total");
+}
+
+function printSummary(report, stylesheet, period) {
 }
 
 function setStyle(report, stylesheet, param) {
