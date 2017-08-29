@@ -21,7 +21,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-28
+// @pubdate = 2017-08-29
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -491,11 +491,9 @@ function loadJournalData(param) {
 }
 
 function loadJournalData_AddTotals(period, periodComplete) {
-  //Totali
-  var totaliAliquota = {};
-  var totaliCodice = {};  
+  //Raggruppa totali per registro
+  var registri = [];
   var corrispettivi = [];
-  var acquistiPerRivendita = [];
   
   for (var index in period.journal.rows) {
     if (typeof period.journal.rows[index] !== "object" || period.journal.rows[index].IT_Registro.length<=0)
@@ -505,6 +503,7 @@ function loadJournalData_AddTotals(period, periodComplete) {
     //totali corrispettivi
     if (register == "corrispettivi") {
       var date = period.journal.rows[index].JDate;
+      var vatCode = period.journal.rows[index].JVatCodeWithoutSign;
       var key = date + "|" + vatCode;
       var currentObject = {};
       currentObject.contoFattureNormali = 0;
@@ -535,6 +534,13 @@ function loadJournalData_AddTotals(period, periodComplete) {
     }
     //totali altri registri
     else {
+      if (!registri[register])
+        registri[register] = {};
+      if (!registri[register].totaliAliquota)
+        registri[register].totaliAliquota = [];
+      if (!registri[register].totaliCodice)
+        registri[register].totaliCodice = [];
+
       var vatCode = period.journal.rows[index].JVatCodeWithoutSign;
       var vatRate = period.journal.rows[index].IT_Aliquota;
       var vatAmount = period.journal.rows[index].IT_ImportoIva;
@@ -544,64 +550,74 @@ function loadJournalData_AddTotals(period, periodComplete) {
       var vatTaxableDed = period.journal.rows[index].IT_ImponibileDetraibile;
       var vatTaxableNonDed = period.journal.rows[index].IT_ImponibileNonDetraibile;
       var vatPercNonDed = period.journal.rows[index].VatPercentNonDeductible;
-
-      if (!totaliAliquota[register])
-        totaliAliquota[register] = {};
-      if (!totaliCodice[register])
-        totaliCodice[register] = {};
+      var vatGross =  period.journal.rows[index].IT_Lordo;
 
       if (vatRate.length>0) {
-        if (totaliAliquota[register][vatRate]) {
-          totaliAliquota[register][vatRate].vatAmount = Banana.SDecimal.add(totaliAliquota[register][vatRate].vatAmount, vatAmount);
-          totaliAliquota[register][vatRate].vatPosted = Banana.SDecimal.add(totaliAliquota[register][vatRate].vatPosted, vatPosted);
-          totaliAliquota[register][vatRate].vatNonDed = Banana.SDecimal.add(totaliAliquota[register][vatRate].vatNonDed, vatNonDed);
-          totaliAliquota[register][vatRate].vatTaxable = Banana.SDecimal.add(totaliAliquota[register][vatRate].vatTaxable, vatTaxable);
-          totaliAliquota[register][vatRate].vatTaxableDed = Banana.SDecimal.add(totaliAliquota[register][vatRate].vatTaxableDed, vatTaxableDed);
-          totaliAliquota[register][vatRate].vatTaxableNonDed = Banana.SDecimal.add(totaliAliquota[register][vatRate].vatTaxableNonDed, vatTaxableNonDed);
+        if (registri[register].totaliAliquota[vatRate]) {
+          registri[register].totaliAliquota[vatRate].vatAmount = Banana.SDecimal.add(registri[register].totaliAliquota[vatRate].vatAmount, vatAmount);
+          registri[register].totaliAliquota[vatRate].vatPosted = Banana.SDecimal.add(registri[register].totaliAliquota[vatRate].vatPosted, vatPosted);
+          registri[register].totaliAliquota[vatRate].vatNonDed = Banana.SDecimal.add(registri[register].totaliAliquota[vatRate].vatNonDed, vatNonDed);
+          registri[register].totaliAliquota[vatRate].vatTaxable = Banana.SDecimal.add(registri[register].totaliAliquota[vatRate].vatTaxable, vatTaxable);
+          registri[register].totaliAliquota[vatRate].vatTaxableDed = Banana.SDecimal.add(registri[register].totaliAliquota[vatRate].vatTaxableDed, vatTaxableDed);
+          registri[register].totaliAliquota[vatRate].vatTaxableNonDed = Banana.SDecimal.add(registri[register].totaliAliquota[vatRate].vatTaxableNonDed, vatTaxableNonDed);
+          registri[register].totaliAliquota[vatRate].vatGross = Banana.SDecimal.add(registri[register].totaliAliquota[vatRate].vatGross, vatGross);
+
         }
         else {
-          totaliAliquota[register][vatRate] = {};
-          totaliAliquota[register][vatRate].vatAmount = vatAmount;
-          totaliAliquota[register][vatRate].vatPosted = vatPosted;
-          totaliAliquota[register][vatRate].vatNonDed = vatNonDed;
-          totaliAliquota[register][vatRate].vatTaxable = vatTaxable;
-          totaliAliquota[register][vatRate].vatTaxableDed = vatTaxableDed;
-          totaliAliquota[register][vatRate].vatTaxableNonDed = vatTaxableNonDed;
-          totaliAliquota[register][vatRate].vatPercNonDed = vatPercNonDed;
+          registri[register].totaliAliquota[vatRate] = {};
+          registri[register].totaliAliquota[vatRate].vatAmount = vatAmount;
+          registri[register].totaliAliquota[vatRate].vatPosted = vatPosted;
+          registri[register].totaliAliquota[vatRate].vatNonDed = vatNonDed;
+          registri[register].totaliAliquota[vatRate].vatTaxable = vatTaxable;
+          registri[register].totaliAliquota[vatRate].vatTaxableDed = vatTaxableDed;
+          registri[register].totaliAliquota[vatRate].vatTaxableNonDed = vatTaxableNonDed;
+          registri[register].totaliAliquota[vatRate].vatPercNonDed = vatPercNonDed;
+          registri[register].totaliAliquota[vatRate].vatGross = vatGross;
         }
       }
 
       if (vatCode.length>0) {
-        if (totaliCodice[register][vatCode]) {
-          totaliCodice[register][vatCode].vatAmount = Banana.SDecimal.add(totaliCodice[register][vatCode].vatAmount, vatAmount);
-          totaliCodice[register][vatCode].vatPosted = Banana.SDecimal.add(totaliCodice[register][vatCode].vatPosted, vatPosted);
-          totaliCodice[register][vatCode].vatNonDed = Banana.SDecimal.add(totaliCodice[register][vatCode].vatNonDed, vatNonDed);
-          totaliCodice[register][vatCode].vatTaxable = Banana.SDecimal.add(totaliCodice[register][vatCode].vatTaxable, vatTaxable);
-          totaliCodice[register][vatCode].vatTaxableDed = Banana.SDecimal.add(totaliCodice[register][vatCode].vatTaxableDed, vatTaxableDed);
-          totaliCodice[register][vatCode].vatTaxableNonDed = Banana.SDecimal.add(totaliCodice[register][vatCode].vatTaxableNonDed, vatTaxableNonDed);
+        if (registri[register].totaliCodice[vatCode]) {
+          registri[register].totaliCodice[vatCode].vatAmount = Banana.SDecimal.add(registri[register].totaliCodice[vatCode].vatAmount, vatAmount);
+          registri[register].totaliCodice[vatCode].vatPosted = Banana.SDecimal.add(registri[register].totaliCodice[vatCode].vatPosted, vatPosted);
+          registri[register].totaliCodice[vatCode].vatNonDed = Banana.SDecimal.add(registri[register].totaliCodice[vatCode].vatNonDed, vatNonDed);
+          registri[register].totaliCodice[vatCode].vatTaxable = Banana.SDecimal.add(registri[register].totaliCodice[vatCode].vatTaxable, vatTaxable);
+          registri[register].totaliCodice[vatCode].vatTaxableDed = Banana.SDecimal.add(registri[register].totaliCodice[vatCode].vatTaxableDed, vatTaxableDed);
+          registri[register].totaliCodice[vatCode].vatTaxableNonDed = Banana.SDecimal.add(registri[register].totaliCodice[vatCode].vatTaxableNonDed, vatTaxableNonDed);
+          registri[register].totaliCodice[vatCode].vatGross = Banana.SDecimal.add(registri[register].totaliCodice[vatCode].vatGross, vatGross);
         }
         else {
-          totaliCodice[register][vatCode] = {};
-          totaliCodice[register][vatCode].vatAmount = vatAmount;
-          totaliCodice[register][vatCode].vatPosted = vatPosted;
-          totaliCodice[register][vatCode].vatNonDed = vatNonDed;
-          totaliCodice[register][vatCode].vatTaxable = vatTaxable;
-          totaliCodice[register][vatCode].vatTaxableDed = vatTaxableDed;
-          totaliCodice[register][vatCode].vatTaxableNonDed = vatTaxableNonDed;
-          totaliCodice[register][vatCode].vatPercNonDed = vatPercNonDed;
-          totaliCodice[register][vatCode].vatRate = vatRate;
-          totaliCodice[register][vatCode].vatCodeDes = '';
+          registri[register].totaliCodice[vatCode] = {};
+          registri[register].totaliCodice[vatCode].vatAmount = vatAmount;
+          registri[register].totaliCodice[vatCode].vatPosted = vatPosted;
+          registri[register].totaliCodice[vatCode].vatNonDed = vatNonDed;
+          registri[register].totaliCodice[vatCode].vatTaxable = vatTaxable;
+          registri[register].totaliCodice[vatCode].vatTaxableDed = vatTaxableDed;
+          registri[register].totaliCodice[vatCode].vatTaxableNonDed = vatTaxableNonDed;
+          registri[register].totaliCodice[vatCode].vatPercNonDed = vatPercNonDed;
+          registri[register].totaliCodice[vatCode].vatGross = vatGross;
+          registri[register].totaliCodice[vatCode].vatRate = vatRate;
+          registri[register].totaliCodice[vatCode].vatCodeDes = '';
           var tableVatCodes = Banana.document.table("VatCodes");
           if (tableVatCodes) {
             var vatCodeRow = tableVatCodes.findRowByValue("VatCode", vatCode);
              if (vatCodeRow)
-               totaliCodice[register][vatCode].vatCodeDes = vatCodeRow.value("Description");
+               registri[register].totaliCodice[vatCode].vatCodeDes = vatCodeRow.value("Description");
           }
         }
       }
     }
   }
   
+  period.corrispettivi = corrispettivi;
+  period.registri = registri;
+  period.acquistiPerRivendita = loadJournalData_Ventilazione(corrispettivi, periodComplete) ;
+
+  return period;
+}
+
+function loadJournalData_Ventilazione(corrispettivi, periodComplete) {
+  var acquistiPerRivendita = [];
   //Ventilazione corrispettivi
   for (var index in periodComplete.journal.rows) {
     if (typeof periodComplete.journal.rows[index] !== "object")
@@ -609,6 +625,7 @@ function loadJournalData_AddTotals(period, periodComplete) {
 
     var gr = periodComplete.journal.rows[index].IT_Gr_IVA;
     var vatCode = periodComplete.journal.rows[index].JVatCodeWithoutSign;
+    var totAcquisti = 0;
 
     if (periodComplete.journal.rows[index].IT_Registro.toLowerCase() == "acquisti" && gr == "A-IM-RI") {
       var currentObject = {};
@@ -620,13 +637,42 @@ function loadJournalData_AddTotals(period, periodComplete) {
       acquistiPerRivendita[vatCode] = currentObject;
     }
   }
-
-  period.totaliAliquota = totaliAliquota;
-  period.totaliCodice = totaliCodice;  
-  period.corrispettivi = corrispettivi;
-  period.acquistiPerRivendita = acquistiPerRivendita;
-
-  return period;
+  
+  var totAcquisti=0;
+  for (var key in acquistiPerRivendita) {
+    totAcquisti = Banana.SDecimal.add(acquistiPerRivendita[key].totaleAcquisti, totAcquisti);
+  }
+  var totGiornaliero=0;
+  for (var key in corrispettivi) {
+    totGiornaliero = Banana.SDecimal.add(corrispettivi[key].totaleGiornaliero, totGiornaliero);
+  }
+  totGiornaliero = Banana.SDecimal.invert(totGiornaliero);
+  
+  for (var key in acquistiPerRivendita) {
+    var vatCodeDes = '';
+    var vatCodeRate = '';
+    var tableVatCodes = Banana.document.table("VatCodes");
+    if (tableVatCodes) {
+      var vatCodeRow = tableVatCodes.findRowByValue("VatCode", key);
+      if (vatCodeRow) {
+        vatCodeDes = vatCodeRow.value("Description");
+        vatCodeRate = vatCodeRow.value("VatRate");
+      }
+    }
+    var aliquota = Banana.SDecimal.round(vatCodeRate, {'decimals':2});
+    var incidenza = Banana.SDecimal.divide(acquistiPerRivendita[key].totaleAcquisti, totAcquisti); 
+    var daVentilare = Banana.SDecimal.multiply(totGiornaliero, incidenza); 
+    var imponibile = Banana.SDecimal.divide(Banana.SDecimal.multiply(daVentilare , 100), Banana.SDecimal.add(100, aliquota));
+    var iva = Banana.SDecimal.divide(Banana.SDecimal.multiply(daVentilare , aliquota), Banana.SDecimal.add(100, aliquota));
+    acquistiPerRivendita[key].vatCodeDes = vatCodeDes;
+    acquistiPerRivendita[key].vatRate = vatCodeRate;
+    acquistiPerRivendita[key].aliquota = aliquota;
+    acquistiPerRivendita[key].incidenza = incidenza;
+    acquistiPerRivendita[key].daVentilare = daVentilare;
+    acquistiPerRivendita[key].imponibile = imponibile;
+    acquistiPerRivendita[key].iva = iva;
+  } 
+  return acquistiPerRivendita;
 }
 
 function printRegister(report, stylesheet, period, register) {
@@ -635,7 +681,7 @@ function printRegister(report, stylesheet, period, register) {
   report.addParagraph("REGISTRO IVA " + register.toUpperCase(), "title center");
   report.addParagraph("Periodo: " + getPeriodText(period), "period center");
 
-   if (!period.totaliAliquota[register] && !period.totaliCodice[register])
+   if (!period.registri[register].totaliAliquota && !period.registri[register].totaliCodice)
     return;
   
   //Tabella
@@ -715,18 +761,18 @@ function printRegister(report, stylesheet, period, register) {
   var tot1=0;
   var tot2=0;
   var totNonDed = 0;
-  for (var vatRate in period.totaliAliquota[register]) {
+  for (var vatRate in period.registri[register].totaliAliquota) {
     row = table.addRow();
     row.addCell("", "", 4);
     row.addCell("IVA " + vatRate + "%");
     row.addCell("");
-    row.addCell(Banana.Converter.toLocaleNumberFormat(period.totaliAliquota[register][vatRate].vatTaxableDed), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliAliquota[vatRate].vatTaxableDed), "right");
     row.addCell("");
     row.addCell("");
-    row.addCell(Banana.Converter.toLocaleNumberFormat(period.totaliAliquota[register][vatRate].vatPosted), "right");
-    tot1 = Banana.SDecimal.add(period.totaliAliquota[register][vatRate].vatTaxableDed, tot1);
-    tot2 = Banana.SDecimal.add(period.totaliAliquota[register][vatRate].vatPosted, tot2);
-    totNonDed = Banana.SDecimal.add(period.totaliAliquota[register][vatRate].vatTaxableNonDed, totNonDed);
+    row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliAliquota[vatRate].vatPosted), "right");
+    tot1 = Banana.SDecimal.add(period.registri[register].totaliAliquota[vatRate].vatTaxableDed, tot1);
+    tot2 = Banana.SDecimal.add(period.registri[register].totaliAliquota[vatRate].vatPosted, tot2);
+    totNonDed = Banana.SDecimal.add(period.registri[register].totaliAliquota[vatRate].vatTaxableNonDed, totNonDed);
   }  
   row = table.addRow();
   row.addCell("", "", 4);
@@ -747,17 +793,17 @@ function printRegister(report, stylesheet, period, register) {
     row.addCell("", "", 5);
     var tot1=0;
     var tot2=0;
-    for (var vatRate in period.totaliAliquota[register]) {
+    for (var vatRate in period.registri[register].totaliAliquota) {
       row = table.addRow();
       row.addCell("", "", 4);
       row.addCell("IVA " + vatRate + "%");
       row.addCell("");
-      row.addCell(Banana.Converter.toLocaleNumberFormat(period.totaliAliquota[register][vatRate].vatTaxableNonDed), "right");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliAliquota[vatRate].vatTaxableNonDed), "right");
       row.addCell("");
       row.addCell("");
-      row.addCell(Banana.Converter.toLocaleNumberFormat(period.totaliAliquota[register][vatRate].vatNonDed), "right");
-      tot1 = Banana.SDecimal.add(period.totaliAliquota[register][vatRate].vatTaxableNonDed, tot1);
-      tot2 = Banana.SDecimal.add(period.totaliAliquota[register][vatRate].vatNonDed, tot2);
+      row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliAliquota[vatRate].vatNonDed), "right");
+      tot1 = Banana.SDecimal.add(period.registri[register].totaliAliquota[vatRate].vatTaxableNonDed, tot1);
+      tot2 = Banana.SDecimal.add(period.registri[register].totaliAliquota[vatRate].vatNonDed, tot2);
     }  
     row = table.addRow();
     row.addCell("", "", 4);
@@ -778,17 +824,17 @@ function printRegister(report, stylesheet, period, register) {
   row.addCell("", "", 5);
   var tot1=0;
   var tot2=0;
-  for (var vatCode in period.totaliCodice[register]) {
+  for (var vatCode in period.registri[register].totaliCodice) {
     row = table.addRow();
     row.addCell("", "", 4);
-    row.addCell(vatCode + " " + period.totaliCodice[register][vatCode].vatCodeDes);
+    row.addCell(vatCode + " " + period.registri[register].totaliCodice[vatCode].vatCodeDes);
     row.addCell("");
-    row.addCell(Banana.Converter.toLocaleNumberFormat(period.totaliCodice[register][vatCode].vatTaxable), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliCodice[vatCode].vatTaxable), "right");
     row.addCell("");
-    row.addCell(Banana.Converter.toLocaleNumberFormat(period.totaliCodice[register][vatCode].vatRate), "right");
-    row.addCell(Banana.Converter.toLocaleNumberFormat(period.totaliCodice[register][vatCode].vatAmount), "right");
-    tot1 = Banana.SDecimal.add(period.totaliCodice[register][vatCode].vatTaxable, tot1);
-    tot2 = Banana.SDecimal.add(period.totaliCodice[register][vatCode].vatAmount, tot2);
+    row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliCodice[vatCode].vatRate), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliCodice[vatCode].vatAmount), "right");
+    tot1 = Banana.SDecimal.add(period.registri[register].totaliCodice[vatCode].vatTaxable, tot1);
+    tot2 = Banana.SDecimal.add(period.registri[register].totaliCodice[vatCode].vatAmount, tot2);
   }  
   row = table.addRow();
   row.addCell("", "", 4);
@@ -882,18 +928,6 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot7)), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot8)), "right total");
 
-  //Aggiunge tabella calcolo ventilazione
-  printRegisterCorrispettivi_CalcoloVentilazione(report, stylesheet, period, Banana.SDecimal.invert(tot8));
-  
-}
-
-function printRegisterCorrispettivi_CalcoloVentilazione(report, stylesheet, period, totCorrispettiviDaVentilare) {
-  //Riprende le righe registro acquisti per il calcolo
-  var totAcquisti=0;
-  for (var index in period.acquistiPerRivendita) {
-    totAcquisti = Banana.SDecimal.add(period.acquistiPerRivendita[index], totAcquisti);
-  }
-  
   //Tabella CALCOLO VENTILAZIONE CORRISPETTIVI
   var table = report.addTable("corrispettivi_calcolo_ventilazione_table");
   var headerRow = table.getHeader().addRow();
@@ -908,42 +942,27 @@ function printRegisterCorrispettivi_CalcoloVentilazione(report, stylesheet, peri
   headerRow.addCell("Imponibile", "right");
   headerRow.addCell("Totale Iva", "right");
 
-  var tot1=0;
-  var tot2=0;
-  var tot3=0;
-  var tot4=0;
-  var tot5=0;
+  tot1=0;
+  tot2=0;
+  tot3=0;
+  tot4=0;
+  tot5=0;
 
   for (var key in period.acquistiPerRivendita) {
     row = table.addRow();
-    var vatCodeDes = '';
-    var vatCodeRate = '';
-    var tableVatCodes = Banana.document.table("VatCodes");
-    if (tableVatCodes) {
-      var vatCodeRow = tableVatCodes.findRowByValue("VatCode", key);
-      if (vatCodeRow) {
-        vatCodeDes = vatCodeRow.value("Description");
-        vatCodeRate = vatCodeRow.value("VatRate");
-      }
-    }
     row.addCell(key, "");
-    row.addCell(vatCodeRate, "");
-    row.addCell(vatCodeDes, "");
+    row.addCell(period.acquistiPerRivendita[key].vatRate, "");
+    row.addCell(period.acquistiPerRivendita[key].vatCodeDes, "");
     row.addCell(Banana.Converter.toLocaleNumberFormat(period.acquistiPerRivendita[key].totaleAcquisti), "right");
-    var incidenza = Banana.SDecimal.divide(period.acquistiPerRivendita[key].totaleAcquisti, totAcquisti); 
-    row.addCell(Banana.Converter.toLocaleNumberFormat(incidenza), "right");
-    var daVentilare = Banana.SDecimal.multiply(totCorrispettiviDaVentilare , incidenza); 
-    row.addCell(Banana.Converter.toLocaleNumberFormat(daVentilare), "right");
-    var aliquota = Banana.SDecimal.round(vatCodeRate, {'decimals':2});
-    var imponibile = Banana.SDecimal.divide(Banana.SDecimal.multiply(daVentilare , 100), Banana.SDecimal.add(100, aliquota));
-    var iva = Banana.SDecimal.divide(Banana.SDecimal.multiply(daVentilare , aliquota), Banana.SDecimal.add(100, aliquota));
-    row.addCell(Banana.Converter.toLocaleNumberFormat(imponibile), "right");
-    row.addCell(Banana.Converter.toLocaleNumberFormat(iva), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(period.acquistiPerRivendita[key].incidenza), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(period.acquistiPerRivendita[key].daVentilare), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(period.acquistiPerRivendita[key].imponibile), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(period.acquistiPerRivendita[key].iva), "right");
     tot1 = Banana.SDecimal.add(period.acquistiPerRivendita[key].totaleAcquisti, tot1);
-    tot2 = Banana.SDecimal.add(incidenza, tot2);
-    tot3 = Banana.SDecimal.add(daVentilare, tot3);
-    tot4 = Banana.SDecimal.add(imponibile, tot4);
-    tot5 = Banana.SDecimal.add(iva, tot5);
+    tot2 = Banana.SDecimal.add(period.acquistiPerRivendita[key].incidenza, tot2);
+    tot3 = Banana.SDecimal.add(period.acquistiPerRivendita[key].daVentilare, tot3);
+    tot4 = Banana.SDecimal.add(period.acquistiPerRivendita[key].imponibile, tot4);
+    tot5 = Banana.SDecimal.add(period.acquistiPerRivendita[key].iva, tot5);
   }  
   //Totale
   row = table.addRow();
@@ -953,6 +972,7 @@ function printRegisterCorrispettivi_CalcoloVentilazione(report, stylesheet, peri
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot3), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot4), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot5), "right total");
+  
 }
 
 function printSummary(report, stylesheet, period) {
@@ -960,8 +980,69 @@ function printSummary(report, stylesheet, period) {
   report.addParagraph("PROSPETTO DI LIQUIDAZIONE IVA", "title center");
   report.addParagraph("Periodo: " + getPeriodText(period), "period center");
 
-  //Tabella
+  if (period.registri["vendite"]) {
+    printSummary_Table(report, stylesheet, period.registri["vendite"], "VENDITE", "RIEPILOGO GENERALE IVA VENDITE", "IVA A DEBITO DEL PERIODO");
+  }
+  if (period.registri["acquisti"]) {
+    printSummary_Table(report, stylesheet, period.registri["acquisti"], "ACQUISTI", "RIEPILOGO REGISTRO IVA ACQUISTI", "IVA DETRAIBILE DEL PERIODO");
+    printSummary_Table(report, stylesheet, period.registri["acquisti"], "", "", "IVA INDETRAIBILE DEL PERIODO");
+    printSummary_Table(report, stylesheet, period.registri["acquisti"], "", "RIEPILOGO GENERALE IVA ACQUISTI","");
+  }
+}
+
+function printSummary_Table(report, stylesheet, data, title1, title2, title3) {
+  var tot1=0;
+  var tot2=0;
   var table = report.addTable("summary_table");
+  if (title1.length>0) {
+    row = table.addRow();
+    row.addCell(title1, "center title1", 5); 
+  }
+  if (title2.length>0) {
+    row = table.addRow();
+    row.addCell(title2, "center  title2", 5);
+  }
+  if (title3.length>0) {
+    row = table.addRow();
+    row.addCell(title3, "center  title3", 5);
+  }
+  var titles = title1 + " " + title2 + " " + title3;
+  row = table.addRow();
+  row.addCell("Cod.IVA", "underlined center");
+  row.addCell("Aliquota", "underlined center");
+  row.addCell("Descrizione", "underlined center");
+  row.addCell("Imponibile", "underlined center");
+  row.addCell("Imposta", "underlined center");
+  for (var vatCode in data.totaliCodice) {
+    row = table.addRow();
+    row.addCell(vatCode, "");
+    row.addCell(data.totaliCodice[vatCode].vatRate, "right");
+    row.addCell(data.totaliCodice[vatCode].vatCodeDes);
+    if (titles.toLowerCase().indexOf("indetraibile")>0) {
+      row.addCell(Banana.Converter.toLocaleNumberFormat(data.totaliCodice[vatCode].vatTaxableNonDed), "right");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(data.totaliCodice[vatCode].vatNonDed), "right");
+      tot1 = Banana.SDecimal.add(data.totaliCodice[vatCode].vatTaxableNonDed, tot1);
+      tot2 = Banana.SDecimal.add(data.totaliCodice[vatCode].vatNonDed, tot2);
+    }
+    else if (titles.toLowerCase().indexOf("detraibile")>0) {
+      row.addCell(Banana.Converter.toLocaleNumberFormat(data.totaliCodice[vatCode].vatTaxableDed), "right");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(data.totaliCodice[vatCode].vatPosted), "right");
+      tot1 = Banana.SDecimal.add(data.totaliCodice[vatCode].vatTaxableDed, tot1);
+      tot2 = Banana.SDecimal.add(data.totaliCodice[vatCode].vatPosted, tot2);
+    }
+    else {
+      row.addCell(Banana.Converter.toLocaleNumberFormat(data.totaliCodice[vatCode].vatTaxable), "right");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(data.totaliCodice[vatCode].vatAmount), "right");
+      tot1 = Banana.SDecimal.add(data.totaliCodice[vatCode].vatTaxable, tot1);
+      tot2 = Banana.SDecimal.add(data.totaliCodice[vatCode].vatAmount, tot2);
+    }
+  }
+  //Totale
+  row = table.addRow();
+  row.addCell("", "", 2);
+  row.addCell("TOTALI", "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right total");
 }
 
 function setStyle(report, stylesheet, param) {
@@ -974,16 +1055,21 @@ function setStyle(report, stylesheet, param) {
   stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
   stylesheet.addStyle("thead", "font-weight: bold");
   stylesheet.addStyle("td", "padding-right: 0em;");
+  stylesheet.addStyle("td.underlined", "border-bottom: 1px solid black");
   stylesheet.addStyle(".bold", "font-weight:bold");
   stylesheet.addStyle(".period", "padding-bottom: 1em;padding-top:0;");
   stylesheet.addStyle(".center", "text-align: center");
   stylesheet.addStyle(".right", "text-align: right");
   stylesheet.addStyle(".title", "font-weight:bold;text-decoration:underline;padding-top:1em;padding-bottom:0.5em;");
-  stylesheet.addStyle(".total", "padding-bottom:20px;");
+  stylesheet.addStyle(".title1", "font-weight:bold;font-size:12px;");
+  stylesheet.addStyle(".title2", "font-weight:bold;font-size:10px;");
+  stylesheet.addStyle(".title3", "font-weight:bold;font-size:8px;");
+  stylesheet.addStyle(".total", "font-weight:bold;padding-bottom:20px;");
   stylesheet.addStyle(".warning", "color: red;");
   /*tables*/
   stylesheet.addStyle(".register_table", "width:100%;");
   stylesheet.addStyle(".corrispettivi_table", "width:100%;");
+  stylesheet.addStyle(".summary_table", "width:100%;");
   
 }
 
