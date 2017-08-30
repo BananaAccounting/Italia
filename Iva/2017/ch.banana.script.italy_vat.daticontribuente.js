@@ -318,6 +318,7 @@ function initParam(param)
   param.telefono = '';
   param.fax = '';
   param.email = '';
+  //Tipo versamento liqTipoVersamento == 0 mensile ==1 trimestrale
   param.liqTipoVersamento = '';
   param.liqPercInteressi = '';
   param.liqPercProrata = '';

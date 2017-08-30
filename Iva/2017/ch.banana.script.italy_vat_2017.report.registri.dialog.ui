@@ -52,7 +52,7 @@
            </property>
            <item>
             <property name="text">
-             <string>Acquisti</string>
+             <string>Registro IVA unico</string>
             </property>
            </item>
            <item>
@@ -62,12 +62,17 @@
            </item>
            <item>
             <property name="text">
+             <string>Acquisti</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
              <string>Corrispettivi</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Registro IVA unico</string>
+             <string>Liquidazioni</string>
             </property>
            </item>
           </widget>
