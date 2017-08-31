@@ -308,9 +308,9 @@ function addPageHeader(report, stylesheet, param)
   stylesheet.addStyle(".header_col_center", "width:45%;");
   stylesheet.addStyle(".header_col_right1", "width:4%");
   stylesheet.addStyle(".header_col_right2", "width:4%");
-  stylesheet.addStyle(".header_cell_left", "font-size:8px");
-  stylesheet.addStyle(".header_cell_center", "font-size:8px;padding-right:0;margin-right:0;");
-  stylesheet.addStyle(".header_cell_right", "font-size:8px;padding-left:0;margin-left:0;");
+  stylesheet.addStyle(".header_cell_left", "font-size:9px");
+  stylesheet.addStyle(".header_cell_center", "font-size:9px;padding-right:0;margin-right:0;");
+  stylesheet.addStyle(".header_cell_right", "font-size:9px;padding-left:0;margin-left:0;");
   stylesheet.addStyle(".period", "padding-bottom: 1em;");
   stylesheet.addStyle(".right", "text-align: right;");
 }
@@ -702,8 +702,7 @@ function printLiquidazione(report, stylesheet, param, startDate, endDate) {
   param.vatPeriods = [];
   param = loadVatCodes(param, startDate, endDate);
   if (param.vatPeriods.length>0) {
-    report.addParagraph("LIQUIDAZIONE PERIODICA IVA", "title center");
-    report.addParagraph("Periodo: " + getPeriodText(param.vatPeriods[0]), "period center");
+    report.addParagraph(" ", "title2");
     printVatReport2(report, stylesheet, param.vatPeriods[0]);
     return true;
   }
@@ -714,12 +713,14 @@ function printLiquidazioneAnnuale(report, stylesheet, param) {
   var period = {};
   period.startDate = param.fileInfo["OpeningDate"];
   period.endDate = param.fileInfo["ClosureDate"];
+  period = loadJournal(period);
+  period = loadJournalData_AddTotals(period, period);
+  report.addParagraph("LIQUIDAZIONE ANNUALE IVA " + getPeriodText(param.vatPeriods[0]), "title");
+  printSummary(report, stylesheet, period);
 
   param.vatPeriods = [];
   param = loadVatCodes(param, period.startDate, period.endDate);
   if (param.vatPeriods.length>0) {
-    report.addParagraph("LIQUIDAZIONE ANNUALE IVA", "title center");
-    report.addParagraph("Periodo: " + getPeriodText(period), "period center");
     printVatReport2(report, stylesheet, param.vatPeriods[0]);
     return true;
   }
@@ -731,19 +732,18 @@ function printRegister(report, stylesheet, period, register) {
    if (!period.registri[register] || (!period.registri[register].totaliAliquota && !period.registri[register].totaliCodice))
     return false;
   
-  //Periodo
-  report.addParagraph("REGISTRO IVA " + register.toUpperCase(), "title center");
-  report.addParagraph("Periodo: " + getPeriodText(period), "period center");
+  //Titolo
+  report.addParagraph("REGISTRO IVA " + register.toUpperCase() + " " + getPeriodText(period), "title");
 
   //Tabella
   var table = report.addTable("register_table");
   var headerRow = table.getHeader().addRow();
   headerRow.addCell("N.Prot.", "right");
   headerRow.addCell("Data Reg.", "right");
-  headerRow.addCell("Data Doc.", "right");
-  headerRow.addCell("N. Doc");
+  headerRow.addCell("Data Doc", "right");
   headerRow.addCell("Descrizione");
-  headerRow.addCell("Totale Docum.", "right");
+  headerRow.addCell("N.Doc");
+  headerRow.addCell("Tot.Doc", "right");
   headerRow.addCell("Imponibile", "right");
   headerRow.addCell("Cod.IVA", "right");
   headerRow.addCell("%", "right");
@@ -772,13 +772,13 @@ function printRegister(report, stylesheet, period, register) {
     row.addCell(progRegistro, "right");
     row.addCell(Banana.Converter.toLocaleDateFormat(period.journal.rows[index].JDate, "dd/mm/yy"), "right");
     row.addCell(Banana.Converter.toLocaleDateFormat(period.journal.rows[index].JInvoiceIssueDate, "dd/mm/yy"), "right");
-    row.addCell(period.journal.rows[index].IT_DocInvoice, "right");
     var cell = row.addCell();
     var descrizione = xml_unescapeString(period.journal.rows[index].IT_ClienteIntestazione);
     if (descrizione.length>1)
       cell.addParagraph(descrizione);
     if (period.journal.rows[index].Description.length>0)
       cell.addParagraph(period.journal.rows[index].Description);
+    row.addCell(period.journal.rows[index].IT_DocInvoice, "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatGross), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatTaxable), "right");
     row.addCell(vatCode, "right");
@@ -793,8 +793,8 @@ function printRegister(report, stylesheet, period, register) {
 
   //Riga totale
   var row = table.addRow();
-  row.addCell("", "", 4);
-  row.addCell("# T O T A L E", "total bold");
+  row.addCell("", "", 3);
+  row.addCell("Totali", "total bold", 2);
   row.addCell(Banana.Converter.toLocaleNumberFormat(totCol1), "right bold");
   row.addCell(Banana.Converter.toLocaleNumberFormat(totCol2), "right bold");
   row.addCell("");
@@ -803,19 +803,20 @@ function printRegister(report, stylesheet, period, register) {
 
   //Riepilogo IVA PER ALIQUOTA DETRAIBILE
   var row = table.addRow();
-  row.addCell("", "", 4);
-  var title = "#RIEPILOGO PER ALIQUOTA IVA " + register.toUpperCase() + " (" + getPeriodText(period) + ")";
-  if (register == "Acquisti")
-    title = "#RIEPILOGO IVA DETRAIBILE"  + " (" + getPeriodText(period) + ")";
-  row.addCell(title, "bold");
-  row.addCell("", "", 5);
+  var title = "TOTALI DI PERIODO PER ALIQUOTA - Registro " + register.toUpperCase() + " (" + getPeriodText(period) + ")";
+  row.addCell(title, "title2", 10);
+  if (register.toLowerCase() == "acquisti") {
+    row = table.addRow();
+    row.addCell("", "", 10);
+    row = table.addRow();
+    row.addCell("TOTALE IVA DETRAIBILE", "title3", 10);
+  }
   var tot1=0;
   var tot2=0;
   var totNonDed = 0;
   for (var vatRate in period.registri[register].totaliAliquota) {
     row = table.addRow();
-    row.addCell("", "", 4);
-    row.addCell("IVA " + vatRate + "%");
+    row.addCell("IVA " + vatRate + "%", "", 5);
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliAliquota[vatRate].vatTaxableDed), "right");
     row.addCell("");
@@ -826,8 +827,7 @@ function printRegister(report, stylesheet, period, register) {
     totNonDed = Banana.SDecimal.add(period.registri[register].totaliAliquota[vatRate].vatTaxableNonDed, totNonDed);
   }  
   row = table.addRow();
-  row.addCell("", "", 4);
-  row.addCell("# T O T A L E", "bold");
+  row.addCell("Totali", "bold", 5);
   row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
   row.addCell("");
@@ -839,15 +839,12 @@ function printRegister(report, stylesheet, period, register) {
     row = table.addRow();
     row.addCell("", "", 10);
     row = table.addRow();
-    row.addCell("", "", 4);
-    row.addCell("#RIEPILOGO IVA INDETRAIBILE" + " (" + getPeriodText(period) + ")", "bold");
-    row.addCell("", "", 5);
+    row.addCell("TOTALE IVA INDETRAIBILE", "title3", 10);
     var tot1=0;
     var tot2=0;
     for (var vatRate in period.registri[register].totaliAliquota) {
       row = table.addRow();
-      row.addCell("", "", 4);
-      row.addCell("IVA " + vatRate + "%");
+      row.addCell("IVA " + vatRate + "%", "", 5);
       row.addCell("");
       row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliAliquota[vatRate].vatTaxableNonDed), "right");
       row.addCell("");
@@ -857,8 +854,7 @@ function printRegister(report, stylesheet, period, register) {
       tot2 = Banana.SDecimal.add(period.registri[register].totaliAliquota[vatRate].vatNonDed, tot2);
     }  
     row = table.addRow();
-    row.addCell("", "", 4);
-    row.addCell("# T O T A L E", "bold");
+    row.addCell("Totali", "bold", 5);
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
     row.addCell("");
@@ -870,15 +866,12 @@ function printRegister(report, stylesheet, period, register) {
   row = table.addRow();
   row.addCell("", "", 10);
   row = table.addRow();
-  row.addCell("", "", 4);
-  row.addCell("#RIEPILOGO PER CODICE IVA" + " (" + getPeriodText(period) + ")", "bold");
-  row.addCell("", "", 5);
+  row.addCell("TOTALI DI PERIODO PER CODICI - Registro " + register.toUpperCase() + " (" + getPeriodText(period) + ")", "title2", 10);
   var tot1=0;
   var tot2=0;
   for (var vatCode in period.registri[register].totaliCodice) {
     row = table.addRow();
-    row.addCell("", "", 4);
-    row.addCell(vatCode + " " + period.registri[register].totaliCodice[vatCode].vatCodeDes);
+    row.addCell(vatCode + " " + period.registri[register].totaliCodice[vatCode].vatCodeDes, "", 5);
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliCodice[vatCode].vatTaxable), "right");
     row.addCell("");
@@ -888,8 +881,7 @@ function printRegister(report, stylesheet, period, register) {
     tot2 = Banana.SDecimal.add(period.registri[register].totaliCodice[vatCode].vatAmount, tot2);
   }  
   row = table.addRow();
-  row.addCell("", "", 4);
-  row.addCell("# T OT A L E", "bold");
+  row.addCell("Totali", "bold", 5);
   row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
   row.addCell("");
@@ -905,15 +897,11 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
   if (!period.registri[register])
     return false;
   
-  //Periodo
-  report.addParagraph("REGISTRO IVA " + register.toUpperCase(), "title center");
-  report.addParagraph("Periodo: " + getPeriodText(period), "period center");
-
+  //Titolo
+  report.addParagraph("REGISTRO IVA " + register.toUpperCase() + " " + getPeriodText(period), "title");
  
   //Tabella REGISTRO DEI CORRISPETTIVI 
   var table = report.addTable("corrispettivi_table");
-  var headerRow = table.getHeader().addRow();
-  headerRow.addCell("REGISTRO DEI CORRISPETTIVI " + getPeriodText(period), "", 11);
   headerRow = table.getHeader().addRow();
   headerRow.addCell("Data");
   headerRow.addCell("Cod.IVA");
@@ -975,7 +963,8 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
   }  
   
   row = table.addRow();
-  row.addCell("", "", 4);
+  row.addCell("", "", 3);
+  row.addCell("Totali", "total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot1)), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot2)), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot3)), "right total");
@@ -1030,6 +1019,9 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot4), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot5), "right total");
   
+  //Controlla se la ventilazione è stata fatta
+  printRegisterCorrispettivi_ControllaVentilazione(report, period);
+
   //Riepilogo IVA PER ALIQUOTA
   if (!corrispettivi.totaliAliquota)
     return true;
@@ -1050,7 +1042,7 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
     tot2 = Banana.SDecimal.add(corrispettivi.totaliAliquota[vatRate].vatPosted, tot2);
   }  
   row = table.addRow();
-  row.addCell("# T O T A L E", "bold");
+  row.addCell("Totali", "bold");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
   row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
@@ -1073,13 +1065,11 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
     tot2 = Banana.SDecimal.add(corrispettivi.totaliCodice[vatCode].vatAmount, tot2);
   }  
   row = table.addRow();
-  row.addCell("# T OT A L E", "bold");
+  row.addCell("Totali", "bold");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
   row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
   
-  printRegisterCorrispettivi_ControllaVentilazione(report, period);
-
   return true;
 }
 
@@ -1100,7 +1090,7 @@ function printRegisterCorrispettivi_ControllaVentilazione(report, period) {
       ventilazioneRegistrata = Banana.SDecimal.add(corrispettivi.totaliCodice[vatCode].vatAmount, ventilazioneRegistrata);
   }
 
-  if (!Banana.SDecimal.isZero(ventilazioneCalcolata) && !Banana.SDecimal.isZero(ventilazioneRegistrata)) {
+  if (!Banana.SDecimal.isZero(ventilazioneCalcolata) || !Banana.SDecimal.isZero(ventilazioneRegistrata)) {
     //var differenza = Banana.SDecimal.subtract(ventilazioneRegistrata, ventilazioneCalcolata);
     if (ventilazioneCalcolata != ventilazioneRegistrata) {
       var msg = getErrorMessage(ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA);
@@ -1116,9 +1106,8 @@ function printSummary(report, stylesheet, period) {
   if (!period.registri["vendite"] && !period.registri["acquisti"] && !period.registri["corrispettivi"])
     return false;
 
-  //Periodo
-  report.addParagraph("PROSPETTO DI LIQUIDAZIONE IVA", "title center");
-  report.addParagraph("Periodo: " + getPeriodText(period), "period center");
+  //Titolo
+  report.addParagraph("PROSPETTO DI LIQUIDAZIONE IVA " + getPeriodText(period), "title");
 
   if (period.registri["vendite"]) {
     printSummary_Table(report, stylesheet, period.registri["vendite"], "RIEPILOGO GENERALE IVA VENDITE");
@@ -1149,20 +1138,20 @@ function printSummary_Table(report, stylesheet, data, title) {
   var table = report.addTable("summary_table");
   if (title.length>0) {
     row = table.addRow();
-    row.addCell(title, "center title1", 6); 
+    row.addCell(title, "title2", 6); 
   }
   row = table.addRow();
-  row.addCell("Cod.IVA", "underlined center");
-  row.addCell("Gr.IVA", "underlined center");
-  row.addCell("Aliquota", "underlined center");
-  row.addCell("Descrizione", "underlined center");
-  row.addCell("Imponibile", "underlined center");
-  row.addCell("Imposta", "underlined center");
+  row.addCell("Cod.IVA", "bold");
+  row.addCell("Gr.IVA", "bold");
+  row.addCell("Aliquota", "right bold");
+  row.addCell("Descrizione", "bold expand");
+  row.addCell("Imponibile", "right bold");
+  row.addCell("Imposta", "right bold");
   //registri vendite/acquisti
   for (var vatCode in data.totaliCodice) {
     row = table.addRow();
     row.addCell(vatCode, "");
-    row.addCell(data.totaliCodice[vatCode].gr, "right");
+    row.addCell(data.totaliCodice[vatCode].gr, "");
     row.addCell(data.totaliCodice[vatCode].vatRate, "right");
     row.addCell(data.totaliCodice[vatCode].vatCodeDes);
     if (title.toLowerCase().indexOf("indetraibile")>0) {
@@ -1188,7 +1177,7 @@ function printSummary_Table(report, stylesheet, data, title) {
   //Totale
   row = table.addRow();
   row.addCell("", "", 3);
-  row.addCell("TOTALI", "right total");
+  row.addCell("Totali", "total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right total");
 
@@ -1198,7 +1187,7 @@ function setStyle(report, stylesheet, param) {
   if (!stylesheet) {
     stylesheet = report.newStyleSheet();
   }
-  stylesheet.addStyle("@page", "size:portrait;margin:2em;font-size: 8px; ");
+  stylesheet.addStyle("@page", "size:portrait;margin:2em;font-size: 9px; ");
   if (param.stampaDefinitiva)
     stylesheet.addStyle("@page", "fill-empty-area:dash 0.5 black; ");
   stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
@@ -1207,15 +1196,18 @@ function setStyle(report, stylesheet, param) {
   stylesheet.addStyle("td.underlined", "border-bottom: 1px solid black");
   stylesheet.addStyle(".amount", "text-align: right");
   stylesheet.addStyle(".bold", "font-weight:bold");
+  stylesheet.addStyle(".expand", "width:100%;");
   stylesheet.addStyle(".period", "padding-bottom: 1em;padding-top:0;");
   stylesheet.addStyle(".center", "text-align: center");
   stylesheet.addStyle(".right", "text-align: right");
-  stylesheet.addStyle(".title", "font-weight:bold;text-decoration:underline;padding-top:1em;padding-bottom:0.5em;");
-  stylesheet.addStyle(".title1", "font-weight:bold;font-size:10px;");
+  stylesheet.addStyle(".title", "font-weight:bold;padding:0.3em;background-color:#6699cc;color:#ffffff;");
+  stylesheet.addStyle(".title2", "font-weight:bold;border-top:1px solid black;padding-top:1em;");
+  stylesheet.addStyle(".title3", "font-weight:bold;");
   stylesheet.addStyle(".total", "font-weight:bold;padding-bottom:20px;");
   stylesheet.addStyle(".warning", "color: red;");
   /*tables*/
   stylesheet.addStyle(".register_table", "width:100%;");
+  //stylesheet.addStyle(".register_table td", "border:1px solid black;");
   stylesheet.addStyle(".corrispettivi_table", "width:100%;");
   stylesheet.addStyle(".corrispettivi_calcolo_ventilazione_table", "width:100%;");
   stylesheet.addStyle(".corrispettivi_riepilogo_table", "width:100%;");
