@@ -495,15 +495,13 @@ function loadJournalData(param) {
     param.periods.push(periods[i]);
   }
 
-  //Periodo che parte da inizio anno contabile
-  //Serve per il calcolo dei corrispettivi da ventilare (acquisti per rivendita)
-  var periodComplete = {};
-  periodComplete.startDate = param.fileInfo["OpeningDate"];
-  periodComplete.endDate = param.fileInfo["ClosureDate"];
-  periodComplete = loadJournal(periodComplete);
-  
   //Raggruppa per codici e aliquote
+  //PeriodComplete serve per il calcolo dei corrispettivi da ventilare (acquisti per rivendita)
   for (var i=0; i<param.periods.length; i++) {
+    var periodComplete = {};
+    periodComplete.startDate = param.fileInfo["OpeningDate"];
+    periodComplete.endDate = param.periods[i].endDate;
+    periodComplete = loadJournal(periodComplete);
     param.periods[i] = loadJournalData_AddTotals(param.periods[i], periodComplete);
   }
 
