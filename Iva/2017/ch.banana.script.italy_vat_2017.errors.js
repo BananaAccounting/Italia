@@ -26,6 +26,7 @@ var ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA = "ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA";
 var ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE = "ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE";
 var ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI = "ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI";
 var ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE = "ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE";
+var ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA = "ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA";
 
 /**
 * return the text error message according to error id
@@ -57,9 +58,11 @@ function getErrorMessage(errorId) {
         case ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE:
             return "Sono stati registrati degli interessi (L-INT) con tipo di versamento mensile";
         case ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI:
-            return "La registrazione degli interessi %1% EUR %2 manca o non è corretta."
+            return "La registrazione degli interessi %1% EUR %2 manca o non è corretta.";
         case ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE:
-            return "Il codice fiscale è obbligatorio in assenza della partita iva. %1"
+            return "Il codice fiscale è obbligatorio in assenza della partita iva. %1";
+        case ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA:
+            return "Le registrazioni per la ventilazione dei corrispettivi mancano o non sono corrette. Calcolato (C-VEN): %1, registrato (C-REG): %2";
     }
     return "";
 }

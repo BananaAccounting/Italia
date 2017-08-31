@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-30
+// @pubdate = 2017-08-31
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -553,7 +553,7 @@ function loadJournalData_AddTotals(period, periodComplete) {
       //if (!Banana.SDecimal.isZero(currentObject.totaleGiornaliero))
         registri[register][key] = currentObject;
     }
-    //tutti i codici IVA eccetto C-VEN perché devono essere ventilati e l'imponibile è da calcolare in base agli acquisti
+    //tutti i codici IVA eccetto C-VEN (corrispettivi da ventilare con aliquota 0%) devono essere inclusi 
     if (gr != "C-VEN") {
       if (!registri[register].totaliAliquota)
         registri[register].totaliAliquota = [];
@@ -634,7 +634,6 @@ function loadJournalData_AddTotals(period, periodComplete) {
 
   return period;
 }
-
 function loadJournalData_Ventilazione(corrispettivi, periodComplete) {
   var acquistiPerRivendita = [];
   //Ventilazione corrispettivi
@@ -918,6 +917,7 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
   headerRow = table.getHeader().addRow();
   headerRow.addCell("Data");
   headerRow.addCell("Cod.IVA");
+  headerRow.addCell("Gr.IVA");
   headerRow.addCell("Des.cod.IVA");
   headerRow.addCell("Fatt.normali", "right");
   headerRow.addCell("Fatt.fiscali", "right");
@@ -943,15 +943,18 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
       continue;
     row = table.addRow();
     var date = key.substring(0, key.indexOf('|'));
-    row.addCell(Banana.Converter.toLocaleDateFormat(date, "dd/mm/yy"), "right");
+    row.addCell(Banana.Converter.toLocaleDateFormat(date, "dd/mm/yy"), "");
     row.addCell(corrispettivi[key].vatCode, "");
     var vatCodeDes = '';
+    var vatCodeGr = '';
     var tableVatCodes = Banana.document.table("VatCodes");
     if (tableVatCodes) {
       var vatCodeRow = tableVatCodes.findRowByValue("VatCode", corrispettivi[key].vatCode);
       if (vatCodeRow)
         vatCodeDes = vatCodeRow.value("Description");
+        vatCodeGr = vatCodeRow.value("Gr");
     }
+    row.addCell(vatCodeGr, "");
     row.addCell(vatCodeDes, "");
     row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(corrispettivi[key].contoFattureNormali)), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(corrispettivi[key].contoFattureFiscali)), "right");
@@ -970,9 +973,9 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
     tot7 = Banana.SDecimal.add(corrispettivi[key].contoRicevuteFiscali, tot7);
     tot8 = Banana.SDecimal.add(corrispettivi[key].totaleGiornaliero, tot8);
   }  
-  //Totale
+  
   row = table.addRow();
-  row.addCell("", "", 3);
+  row.addCell("", "", 4);
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot1)), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot2)), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot3)), "right total");
@@ -1030,68 +1033,82 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
   //Riepilogo IVA PER ALIQUOTA
   if (!corrispettivi.totaliAliquota)
     return true;
-  var table = report.addTable("corrispettivi_table");
+  var table = report.addTable("corrispettivi_riepilogo_table");
   var row = table.addRow();
-  row.addCell("", "", 4);
   var title = "#RIEPILOGO PER ALIQUOTA IVA CORRISPETTIVI (" + getPeriodText(period) + ")";
   row.addCell(title, "bold");
-  row.addCell("", "", 5);
+  row.addCell("", "", 3);
   var tot1=0;
   var tot2=0;
-  var totNonDed = 0;
   for (var vatRate in corrispettivi.totaliAliquota) {
     row = table.addRow();
-    row.addCell("", "", 4);
     row.addCell("IVA " + vatRate + "%");
-    row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(corrispettivi.totaliAliquota[vatRate].vatTaxableDed), "right");
-    row.addCell("");
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(corrispettivi.totaliAliquota[vatRate].vatPosted), "right");
     tot1 = Banana.SDecimal.add(corrispettivi.totaliAliquota[vatRate].vatTaxableDed, tot1);
     tot2 = Banana.SDecimal.add(corrispettivi.totaliAliquota[vatRate].vatPosted, tot2);
-    totNonDed = Banana.SDecimal.add(corrispettivi.totaliAliquota[vatRate].vatTaxableNonDed, totNonDed);
   }  
   row = table.addRow();
-  row.addCell("", "", 4);
   row.addCell("# T O T A L E", "bold");
-  row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
-  row.addCell("");
   row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
   
   //Riepilogo IVA per CODICE
   row = table.addRow();
-  row.addCell("", "", 10);
-  row = table.addRow();
   row.addCell("", "", 4);
+  row = table.addRow();
   row.addCell("#RIEPILOGO PER CODICE IVA CORRISPETTIVI (" + getPeriodText(period) + ")", "bold");
-  row.addCell("", "", 5);
+  row.addCell("", "", 3);
   var tot1=0;
   var tot2=0;
   for (var vatCode in corrispettivi.totaliCodice) {
     row = table.addRow();
-    row.addCell("", "", 4);
     row.addCell(vatCode + " " +corrispettivi.totaliCodice[vatCode].vatCodeDes);
-    row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(corrispettivi.totaliCodice[vatCode].vatTaxable), "right");
-    row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(corrispettivi.totaliCodice[vatCode].vatRate), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(corrispettivi.totaliCodice[vatCode].vatAmount), "right");
     tot1 = Banana.SDecimal.add(corrispettivi.totaliCodice[vatCode].vatTaxable, tot1);
     tot2 = Banana.SDecimal.add(corrispettivi.totaliCodice[vatCode].vatAmount, tot2);
   }  
   row = table.addRow();
-  row.addCell("", "", 4);
   row.addCell("# T OT A L E", "bold");
-  row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
   row.addCell("");
-  row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
+  
+  printRegisterCorrispettivi_ControllaVentilazione(report, period);
 
   return true;
+}
+
+/*Controlla se registrazioni per la ventilazione dei corrispettivi corrispondono al calcolo.*/
+function printRegisterCorrispettivi_ControllaVentilazione(report, period) {
+  var ventilazioneCalcolata = 0;
+  var ventilazioneRegistrata = 0;
+  
+  var corrispettivi = period.registri["corrispettivi"];
+  var corrispettiviCalcolati = period.acquistiPerRivendita;
+
+  for (var key in period.acquistiPerRivendita) {
+    ventilazioneCalcolata = Banana.SDecimal.add(period.acquistiPerRivendita[key].iva, ventilazioneCalcolata);
+  }
+
+  for (var vatCode in corrispettivi.totaliCodice) {
+    if (corrispettivi.totaliCodice[vatCode].gr == "C-REG")
+      ventilazioneRegistrata = Banana.SDecimal.add(corrispettivi.totaliCodice[vatCode].vatAmount, ventilazioneRegistrata);
+  }
+
+  if (!Banana.SDecimal.isZero(ventilazioneCalcolata) && !Banana.SDecimal.isZero(ventilazioneRegistrata)) {
+    //var differenza = Banana.SDecimal.subtract(ventilazioneRegistrata, ventilazioneCalcolata);
+    if (ventilazioneCalcolata != ventilazioneRegistrata) {
+      var msg = getErrorMessage(ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA);
+      msg = msg.replace("%1",  Banana.Converter.toLocaleNumberFormat(ventilazioneCalcolata) );
+      msg = msg.replace("%2", Banana.Converter.toLocaleNumberFormat(ventilazioneRegistrata) );
+      report.addParagraph(msg, "warning");
+    }
+  }
 }
 
 function printSummary(report, stylesheet, period) {
@@ -1108,6 +1125,7 @@ function printSummary(report, stylesheet, period) {
   }
   if (period.registri["corrispettivi"]) {
     printSummary_Table(report, stylesheet, period.registri["corrispettivi"], "RIEPILOGO GENERALE IVA CORRISPETTIVI");
+    printRegisterCorrispettivi_ControllaVentilazione(report, period);
   }
   if (period.registri["acquisti"]) {
     //controlla se ci sono importi non deducibili
@@ -1131,10 +1149,11 @@ function printSummary_Table(report, stylesheet, data, title) {
   var table = report.addTable("summary_table");
   if (title.length>0) {
     row = table.addRow();
-    row.addCell(title, "center title1", 5); 
+    row.addCell(title, "center title1", 6); 
   }
   row = table.addRow();
   row.addCell("Cod.IVA", "underlined center");
+  row.addCell("Gr.IVA", "underlined center");
   row.addCell("Aliquota", "underlined center");
   row.addCell("Descrizione", "underlined center");
   row.addCell("Imponibile", "underlined center");
@@ -1143,6 +1162,7 @@ function printSummary_Table(report, stylesheet, data, title) {
   for (var vatCode in data.totaliCodice) {
     row = table.addRow();
     row.addCell(vatCode, "");
+    row.addCell(data.totaliCodice[vatCode].gr, "right");
     row.addCell(data.totaliCodice[vatCode].vatRate, "right");
     row.addCell(data.totaliCodice[vatCode].vatCodeDes);
     if (title.toLowerCase().indexOf("indetraibile")>0) {
@@ -1167,7 +1187,7 @@ function printSummary_Table(report, stylesheet, data, title) {
 
   //Totale
   row = table.addRow();
-  row.addCell("", "", 2);
+  row.addCell("", "", 3);
   row.addCell("TOTALI", "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right total");
@@ -1197,6 +1217,8 @@ function setStyle(report, stylesheet, param) {
   /*tables*/
   stylesheet.addStyle(".register_table", "width:100%;");
   stylesheet.addStyle(".corrispettivi_table", "width:100%;");
+  stylesheet.addStyle(".corrispettivi_calcolo_ventilazione_table", "width:100%;");
+  stylesheet.addStyle(".corrispettivi_riepilogo_table", "width:100%;");
   stylesheet.addStyle(".summary_table", "width:100%;");
   
 }
