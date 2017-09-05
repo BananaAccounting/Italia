@@ -14,7 +14,7 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italy_vat_2017.report.registri.js
-// @description = IVA Italia 2017: Registri IVA...
+// @description = IVA Italia 2017 / Registri IVA...
 // @doctype = *;110
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.errors.js
@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-31
+// @pubdate = 2017-09-05
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -78,6 +78,9 @@ function settingsDialog() {
   var stampaDefinitivaCheckBox = dialog.tabWidget.findChild('stampaDefinitivaCheckBox');
   if (stampaDefinitivaCheckBox)
     stampaDefinitivaCheckBox.checked = param.stampaDefinitiva;
+  var stampaOrizzontaleCheckBox = dialog.tabWidget.findChild('stampaOrizzontaleCheckBox');
+  if (stampaOrizzontaleCheckBox)
+    stampaOrizzontaleCheckBox.checked = param.stampaOrizzontale;
   var inizioNumerazionePagineSpinBox = dialog.tabWidget.findChild('inizioNumerazionePagineSpinBox');
   if (inizioNumerazionePagineSpinBox) {
     if (param.inizioNumerazionePagine.length>0)
@@ -198,6 +201,8 @@ function settingsDialog() {
     param.numerazioneAutomatica = numerazioneAutomaticaCheckBox.checked;
   if (stampaDefinitivaCheckBox)
     param.stampaDefinitiva = stampaDefinitivaCheckBox.checked;
+  if (stampaOrizzontaleCheckBox)
+    param.stampaOrizzontale = stampaOrizzontaleCheckBox.checked;
   if (inizioNumerazionePagineSpinBox)
       param.inizioNumerazionePagine = inizioNumerazionePagineSpinBox.value.toString();
   //Testi
@@ -1187,7 +1192,10 @@ function setStyle(report, stylesheet, param) {
   if (!stylesheet) {
     stylesheet = report.newStyleSheet();
   }
-  stylesheet.addStyle("@page", "size:portrait;margin:2em;font-size: 9px; ");
+  if (param.stampaOrizzontale)
+    stylesheet.addStyle("@page", "size:landscape;margin:2em;font-size: 9px; ");
+  else
+    stylesheet.addStyle("@page", "size:portrait;margin:2em;font-size: 9px; ");
   if (param.stampaDefinitiva)
     stylesheet.addStyle("@page", "fill-empty-area:dash 0.5 black; ");
   stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");

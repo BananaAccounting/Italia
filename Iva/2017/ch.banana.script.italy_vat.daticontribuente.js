@@ -14,7 +14,7 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italy_vat.daticontribuente.js
-// @description = IVA Italia: Dati contribuente...
+// @description = IVA Italia / Dati contribuente...
 // @doctype = *;110
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.journal.js

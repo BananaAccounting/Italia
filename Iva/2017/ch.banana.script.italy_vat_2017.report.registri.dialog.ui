@@ -307,6 +307,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="stampaOrizzontaleCheckBox">
+         <property name="text">
+          <string>Stampa pagina &amp;orizzontale</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="2">
           <spacer name="horizontalSpacer_5">
@@ -440,9 +447,11 @@
   <tabstop>visualizzaDataOraCheckBox</tabstop>
   <tabstop>numerazioneAutomaticaCheckBox</tabstop>
   <tabstop>stampaDefinitivaCheckBox</tabstop>
+  <tabstop>stampaOrizzontaleCheckBox</tabstop>
   <tabstop>inizioNumerazionePagineSpinBox</tabstop>
   <tabstop>testoRegistriComboBox</tabstop>
   <tabstop>testoGroupBox</tabstop>
+  <tabstop>testoLineEdit</tabstop>
  </tabstops>
  <resources/>
  <connections>
