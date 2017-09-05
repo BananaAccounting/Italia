@@ -1188,8 +1188,10 @@ function readAccountingData(param) {
     param.fileInfo["BasicCurrency"] = Banana.document.info("AccountingDataBase", "BasicCurrency");
     param.fileInfo["OpeningDate"] = Banana.document.info("AccountingDataBase", "OpeningDate");
     param.fileInfo["ClosureDate"] = Banana.document.info("AccountingDataBase", "ClosureDate");
-    param.fileInfo["CustomersGroup"] = Banana.document.info("AccountingDataBase", "CustomersGroup");
-    param.fileInfo["SuppliersGroup"] = Banana.document.info("AccountingDataBase", "SuppliersGroup");
+    if (Banana.document.info("AccountingDataBase", "CustomersGroup"))
+      param.fileInfo["CustomersGroup"] = Banana.document.info("AccountingDataBase", "CustomersGroup");
+    if (Banana.document.info("AccountingDataBase", "SuppliersGroup"))
+      param.fileInfo["SuppliersGroup"] = Banana.document.info("AccountingDataBase", "SuppliersGroup");
     param.fileInfo["Address"]["Company"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Company"));
     param.fileInfo["Address"]["Courtesy"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Courtesy"));
     param.fileInfo["Address"]["Name"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Name"));

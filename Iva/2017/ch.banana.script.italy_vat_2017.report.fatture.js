@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-25
+// @pubdate = 2017-09-05
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -262,6 +262,11 @@ function exec(inData) {
 
   //add accounting data and journal
   param = readAccountingData(param);
+  //Controlla se sono impostati i gruppi clienti/fornitori
+  if (param.fileInfo["CustomersGroup"].length<=0 && param.fileInfo["SuppliersGroup"].length<=0) {
+    var msg = getErrorMessage(ID_ERR_GRUPPI_CLIENTIFORNITORI_MANCANTI);
+    Banana.document.addMessage( msg, ID_ERR_GRUPPI_CLIENTIFORNITORI_MANCANTI);
+  }
   param = loadJournalData(param);
   param.schemaRefs = init_schemarefs();
   param.namespaces = init_namespaces();
@@ -357,6 +362,7 @@ function init_schemarefs()
 };
 
 function loadJournalData(param) {
+
   //per il momento c'è un unico periodo non controlla il tipo di versamento mensile o trimestrale
   param.data = {};  
   param.datiContribuente.liqTipoVersamento = -1;

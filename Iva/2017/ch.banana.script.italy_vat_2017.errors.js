@@ -27,6 +27,7 @@ var ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE = "ID_ERR_LIQUIDAZIONE_INTE
 var ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI = "ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI";
 var ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE = "ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE";
 var ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA = "ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA";
+var ID_ERR_GRUPPI_CLIENTIFORNITORI_MANCANTI = "ID_ERR_GRUPPI_CLIENTIFORNITORI_MANCANTI";
 
 /**
 * return the text error message according to error id
@@ -63,6 +64,8 @@ function getErrorMessage(errorId) {
             return "Il codice fiscale è obbligatorio in assenza della partita iva. %1";
         case ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA:
             return "Le registrazioni per la ventilazione dei corrispettivi mancano o non sono corrette. Calcolato (C-VEN): %1, registrato (C-REG): %2";
+        case ID_ERR_GRUPPI_CLIENTIFORNITORI_MANCANTI:
+            return "Gruppi Clienti/Fornitori non definiti. Impostare i gruppi con il comando Conta2 - Clienti(e/o Fornitori) - Impostazioni";
     }
     return "";
 }
