@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-05
+// @pubdate = 2017-09-07
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -472,7 +472,31 @@ function printVatReport_rows(customers_suppliers, table, param) {
 	  rowType = "creditore";
     var row = table.addRow();
     row.addCell(rowType, "rowName");
-    row.addCell(xml_unescapeString(customers_suppliers[i]["Description"]),"rowName",4);
+    var cell = row.addCell("","rowName",4);
+    cell.addParagraph(xml_unescapeString(customers_suppliers[i]["Description"]));
+    var address = "";
+    var content = customers_suppliers[i]["Street"];
+    if (content && content.length>0)
+      address = xml_unescapeString(content) + " ";
+    content = customers_suppliers[i]["AddressExtra"];
+    if (content && content.length>0)
+      address += xml_unescapeString(content) + " ";
+    content = customers_suppliers[i]["POBox"];
+    if (content && content.length>0)
+      address += xml_unescapeString(content) + " ";
+    content = customers_suppliers[i]["PostalCode"];
+    if (content && content.length>0)
+      address += xml_unescapeString(content) + " ";
+    content = customers_suppliers[i]["Locality"];
+    if (content && content.length>0)
+      address += xml_unescapeString(content) + " ";
+    content = customers_suppliers[i]["Region"];
+    if (content && content.length>0)
+      address += xml_unescapeString(content) + " ";
+    content = customers_suppliers[i]["Country"];
+    if (content && content.length>0)
+      address += xml_unescapeString(content) + " ";
+    cell.addParagraph(address);
     row.addCell(getCountryCode(customers_suppliers[i]),"rowName",2);
     row.addCell(customers_suppliers[i]["VatNumber"],"rowName",2);
     row.addCell(customers_suppliers[i]["FiscalNumber"],"rowName",6);

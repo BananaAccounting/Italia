@@ -788,9 +788,6 @@ function loadJournal(param)
         else if (vatGr.indexOf("-REV")>=0) {
           jsonLine["IT_Natura"] = 'N6';
         }
-        else if (vatGr.indexOf("-EU")>=0) {
-          jsonLine["IT_Natura"] = 'N7';
-        }
       }
     }
 
