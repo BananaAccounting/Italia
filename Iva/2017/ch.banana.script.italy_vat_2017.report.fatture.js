@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-07
+// @pubdate = 2017-09-08
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -317,6 +317,9 @@ function getCountryCode(jsonObject) {
   if (countryCode == 'switzerland' || countryCode == 'schweiz'|| countryCode == 'suisse'|| countryCode == 'svizzera') {
     countryCode = 'ch';
   }
+  if (countryCode == 'japan' || countryCode == 'jpn') {
+    countryCode = 'jp';
+  }
   return countryCode.toUpperCase();
 }
 
@@ -373,10 +376,21 @@ function loadJournalData(param) {
     param.data = loadJournal(param.data);
   }
 
-  //Per la comunicazione DTE (Dati fatture emesse tiene solamente le righe del registro Vendite e Corrispettivi
-  //Per la comunicazine DTR (Dati fatture ricevute tiene solamente le righe del registro Acquisti
+  //Per la comunicazione DTE (Dati fatture emesse tiene solamente le righe del registro Vendite e
+  //Fatture corrispettivi, scontrini esclusi)
+  //Per la comunicazine DTR (Dati fatture ricevute tiene solamente le righe del registro Acquisti)
   //In questo modo vengono escluse le autofatture
   
+  var corrispettiviNormali = '';
+  var corrispettiviScontrini = '';
+  var ricevuteFiscali = '';
+  if (param.datiContribuente && param.datiContribuente.contoCorrispettiviNormali)
+    corrispettiviNormali = param.datiContribuente.contoCorrispettiviNormali;
+  if (param.datiContribuente && param.datiContribuente.contoCorrispettiviScontrini)
+    corrispettiviScontrini = param.datiContribuente.contoCorrispettiviScontrini;
+  if (param.datiContribuente && param.datiContribuente.contoRicevuteFiscali)
+    ricevuteFiscali = param.datiContribuente.contoRicevuteFiscali;
+
   if (param.blocco == 'DTE') {
     var checkedCustomers = {};
     for (var i in param.data.customers) {
@@ -386,6 +400,12 @@ function loadJournalData(param) {
         if (accountObj.rows[j]["IT_Registro"]=="Acquisti")
           continue;
         else if (accountObj.rows[j]["VatExtraInfo"]=="ESCL")
+          continue;
+        else if (corrispettiviNormali.length>0 && accountObj.rows[j]["VatTwinAccount"]==corrispettiviNormali)
+          continue;
+        else if (corrispettiviScontrini.length>0 && accountObj.rows[j]["VatTwinAccount"]==corrispettiviScontrini)
+          continue;
+        else if (ricevuteFiscali.length>0 && accountObj.rows[j]["VatTwinAccount"]==ricevuteFiscali)
           continue;
         checkedRows.push(accountObj.rows[j]);
       }

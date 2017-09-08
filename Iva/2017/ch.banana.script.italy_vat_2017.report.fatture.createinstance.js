@@ -167,7 +167,8 @@ function createInstance_Blocco2(accountObj, param)
     xbrlCessionarioCommittente =  xml_createElementWithValidation("IdentificativiFiscali",xbrlIdentificativiFiscali,0);
 
     //Se non è presente la partita IVA (facoltativa) il codice fiscale è obbligatorio
-    if (accountObj["VatNumber"].length<=0 && accountObj["FiscalNumber"].length<=0) {
+    var countryCode = getCountryCode(accountObj);
+    if (accountObj["VatNumber"].length<=0 && accountObj["FiscalNumber"].length<=0 && countryCode == "IT") {
       var msg = getErrorMessage(ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE);
       msg = msg.replace("%1", msgContext );
       Banana.document.addMessage( msg, ID_ERR_VERSIONE);
@@ -192,8 +193,6 @@ function createInstance_Blocco2(accountObj, param)
         address += ' ';
       address += accountObj["AddressExtra"];
     }
-
-    var countryCode = getCountryCode(accountObj);
 
     var xbrSede = xml_createElementWithValidation("Indirizzo", address,1,'1...60',msgContext);
     if (countryCode == "IT" || (accountObj["PostalCode"] && accountObj["PostalCode"].length==5))
