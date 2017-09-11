@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-08
+// @pubdate = 2017-09-11
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -43,22 +43,28 @@ function settingsDialog() {
   
   var accountingData = {};
   accountingData = readAccountingData(accountingData);
-  if (accountingData.accountingYear.length<=0) {
-    return false;
-  }
+  if (param.annoSelezionato.length<=0)
+    param.annoSelezionato = accountingData.openingYear;
   
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.fatture.dialog.ui");
   //Groupbox periodo
   var index = 0;
-  if (param.periodoSelezionato == 's')
-    index = parseInt(param.periodoValoreSemestre);
+  if (param.periodoSelezionato == 'm')
+    index = parseInt(param.periodoValoreMese);
   else if (param.periodoSelezionato == 'q')
-    index = parseInt(param.periodoValoreTrimestre) + 3;
-  else if (param.periodoSelezionato == 'm')
-    index = parseInt(param.periodoValoreMese) + 8;
-
-  dialog.periodoGroupBox.title += ' ' + accountingData.accountingYear;
+    index = parseInt(param.periodoValoreTrimestre) + 13;
+  else if (param.periodoSelezionato == 's')
+    index = parseInt(param.periodoValoreSemestre) + 18;
+  else if (param.periodoSelezionato == 'y')
+    index = 21;
   dialog.periodoGroupBox.periodoComboBox.currentIndex = index;
+  //Groupbox anno per il momento impostati fissi perché non è possibile caricare gli anni sul combobox
+  var index = 0;
+  if (param.annoSelezionato == '2017')
+    index = 1;
+  else if (param.annoSelezionato == '2018')
+    index = 2;
+  dialog.periodoGroupBox.annoComboBox.currentIndex = index;
 
   var progressivo = parseInt(param.progressivoInvio, 10);
   if (!progressivo)
@@ -103,20 +109,31 @@ function settingsDialog() {
   //Salvataggio dati
   //Groupbox periodo
   var index = parseInt(dialog.periodoGroupBox.periodoComboBox.currentIndex.toString());
-  if (index < 0)
+  if (index < 0 || index == 12 || index == 17 || index == 20)
     index = 0;
-  if (index <=1) {
-    param.periodoSelezionato = 's';
-    param.periodoValoreSemestre = index.toString();
-  }
-  else if (index > 2 && index < 7) {
-    param.periodoSelezionato = 'q';
-    param.periodoValoreTrimestre = (index-3).toString();
-  }
-  else if (index > 7) {
+  if (index < 12) {
     param.periodoSelezionato = 'm';
-    param.periodoValoreMese = (index-8).toString();
+    param.periodoValoreMese = index.toString();
   }
+  else if (index > 12 && index < 17) {
+    param.periodoSelezionato = 'q';
+    param.periodoValoreTrimestre = (index-13).toString();
+  }
+  else if (index > 17 && index < 20) {
+    param.periodoSelezionato = 's';
+    param.periodoValoreSemestre = (index-18).toString();
+  }
+  else {
+    param.periodoSelezionato = 'y';
+  }
+  //Groupbox anno
+  var index = parseInt(dialog.periodoGroupBox.annoComboBox.currentIndex.toString());
+  if (index <=0)
+    param.annoSelezionato = '2016';
+  else if (index ==1)
+    param.annoSelezionato = '2017';
+  else if (index ==2)
+    param.annoSelezionato = '2018';
 
   progressivo = dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text;
   progressivo = parseInt(progressivo, 10);
@@ -262,11 +279,6 @@ function exec(inData) {
 
   //add accounting data and journal
   param = readAccountingData(param);
-  //Controlla se sono impostati i gruppi clienti/fornitori
-  if (param.fileInfo["CustomersGroup"].length<=0 && param.fileInfo["SuppliersGroup"].length<=0) {
-    var msg = getErrorMessage(ID_ERR_GRUPPI_CLIENTIFORNITORI_MANCANTI);
-    Banana.document.addMessage( msg, ID_ERR_GRUPPI_CLIENTIFORNITORI_MANCANTI);
-  }
   param = loadJournalData(param);
   param.schemaRefs = init_schemarefs();
   param.namespaces = init_namespaces();
@@ -331,6 +343,7 @@ function initParam()
   param.blocco = 'DTE';
   param.progressivoInvio = '';
 
+  param.annoSelezionato = '';
   param.periodoSelezionato = 'm';
   param.periodoValoreMese = '';
   param.periodoValoreTrimestre = '';
@@ -392,6 +405,11 @@ function loadJournalData(param) {
     ricevuteFiscali = param.datiContribuente.contoRicevuteFiscali;
 
   if (param.blocco == 'DTE') {
+    //avvisa se il gruppo clienti non è impostato
+    if (param.fileInfo["CustomersGroup"].length<=0) {
+      var msg = getErrorMessage(ID_ERR_GRUPPO_CLIENTI_MANCANTE);
+      Banana.document.addMessage( msg, ID_ERR_GRUPPO_CLIENTI_MANCANTE);
+    }
     var checkedCustomers = {};
     for (var i in param.data.customers) {
       var checkedRows = [];
@@ -417,6 +435,11 @@ function loadJournalData(param) {
     param.data.customers = checkedCustomers;
   }
   else if (param.blocco == 'DTR') {
+    //avvisa se il gruppo fornitori non è impostato
+    if (param.fileInfo["SuppliersGroup"].length<=0) {
+      var msg = getErrorMessage(ID_ERR_GRUPPO_FORNITORI_MANCANTE);
+      Banana.document.addMessage( msg, ID_ERR_GRUPPO_FORNITORI_MANCANTE);
+    }
     var checkedSuppliers = {};
     for (var i in param.data.suppliers) {
       var checkedRows = [];
@@ -599,6 +622,8 @@ function verifyParam(param) {
   if(!param.progressivoInvio)
     param.progressivoInvio = '';
 
+  if (!param.annoSelezionato)
+    param.annoSelezionato = '';
   if (!param.periodoSelezionato)
     param.periodoSelezionato = 'm';
   if (!param.periodoValoreMese)

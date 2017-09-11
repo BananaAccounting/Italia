@@ -34,6 +34,10 @@ function createPeriods(param) {
   if (!param)
     return param;
 
+  if (!param.annoSelezionato || param.annoSelezionato.length<=0)
+    param.annoSelezionato = param.openingYear;
+  if (param.annoSelezionato.length<=0)
+    return param;
   // --------------------------------------------------------------------------------
   //MESE param.periodoSelezionato == 'm'
   // --------------------------------------------------------------------------------
@@ -41,21 +45,21 @@ function createPeriods(param) {
     var currentPeriod = {};
     var month = parseInt(param.periodoValoreMese) + 1;
     if (month === 11 || month === 4 || month === 6 || month === 9) {
-      currentPeriod.startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01";
-      currentPeriod.endDate = param.accountingYear.toString() + zeroPad(month, 2) + "30";
+      currentPeriod.startDate = param.annoSelezionato.toString() + zeroPad(month, 2) + "01";
+      currentPeriod.endDate = param.annoSelezionato.toString() + zeroPad(month, 2) + "30";
     }
     //month with 28 or 29 days
     else if (month === 2) {
       var day = 28;
-      if (param.accountingYear % 4 == 0 && (param.accountingYear % 100 != 0 || param.accountingYear % 400 == 0))
+      if (param.annoSelezionato % 4 == 0 && (param.annoSelezionato % 100 != 0 || param.annoSelezionato % 400 == 0))
         day = 29;
-      currentPeriod.startDate = param.accountingYear.toString() + "0201";
-      currentPeriod.endDate = param.accountingYear.toString()+ "02" + day.toString() ;
+      currentPeriod.startDate = param.annoSelezionato.toString() + "0201";
+      currentPeriod.endDate = param.annoSelezionato.toString()+ "02" + day.toString() ;
     }
     //months with 31 days
     else {
-      currentPeriod.startDate = param.accountingYear.toString() + zeroPad(month, 2) + "01";
-      currentPeriod.endDate = param.accountingYear.toString() + zeroPad(month, 2) + "31";
+      currentPeriod.startDate = param.annoSelezionato.toString() + zeroPad(month, 2) + "01";
+      currentPeriod.endDate = param.annoSelezionato.toString() + zeroPad(month, 2) + "31";
     }
 
     //se il tipo di versamento è trimestrale avvisa che è stato selezionato un mese
@@ -77,69 +81,69 @@ function createPeriods(param) {
     if (param.datiContribuente.liqTipoVersamento == 0) {
       if (param.periodoValoreTrimestre === "0") {
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0101";
-        currentPeriod.endDate = param.accountingYear.toString() + "0131";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0101";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0131";
         periods.push(currentPeriod);
 
         var day = 28;
-        if (param.accountingYear % 4 == 0 && (param.accountingYear % 100 != 0 || param.accountingYear % 400 == 0))
+        if (param.annoSelezionato % 4 == 0 && (param.annoSelezionato % 100 != 0 || param.annoSelezionato % 400 == 0))
           day = 29;
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0201";
-        currentPeriod.endDate = param.accountingYear.toString() + "02" + day.toString();
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0201";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "02" + day.toString();
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0301";
-        currentPeriod.endDate = param.accountingYear.toString() + "0331";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0301";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0331";
         periods.push(currentPeriod);
       }
       else if (param.periodoValoreTrimestre === "1") {
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0401";
-        currentPeriod.endDate = param.accountingYear.toString() + "0430";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0401";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0430";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0501";
-        currentPeriod.endDate = param.accountingYear.toString() + "0531";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0501";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0531";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0601";
-        currentPeriod.endDate = param.accountingYear.toString() + "0630";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0601";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0630";
         periods.push(currentPeriod);
       }
       else if (param.periodoValoreTrimestre === "2") {
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0701";
-        currentPeriod.endDate = param.accountingYear.toString() + "0731";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0701";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0731";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0801";
-        currentPeriod.endDate = param.accountingYear.toString() + "0831";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0801";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0831";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0901";
-        currentPeriod.endDate = param.accountingYear.toString() + "0930";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0901";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0930";
         periods.push(currentPeriod);
       }
       else if (param.periodoValoreTrimestre === "3") {
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "1001";
-        currentPeriod.endDate = param.accountingYear.toString() + "1031";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "1001";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "1031";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "1101";
-        currentPeriod.endDate = param.accountingYear.toString() + "1130";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "1101";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "1130";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "1201";
-        currentPeriod.endDate = param.accountingYear.toString() + "1231";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "1201";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "1231";
         periods.push(currentPeriod);
       }
     }
@@ -147,20 +151,20 @@ function createPeriods(param) {
     else {
       var currentPeriod = {};
       if (param.periodoValoreTrimestre === "0") {
-        currentPeriod.startDate = param.accountingYear.toString() + "0101";
-        currentPeriod.endDate = param.accountingYear.toString() + "0331";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0101";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0331";
       }
       else if (param.periodoValoreTrimestre === "1") {
-        currentPeriod.startDate = param.accountingYear.toString() + "0401";
-        currentPeriod.endDate = param.accountingYear.toString() + "0630";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0401";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0630";
       }
       else if (param.periodoValoreTrimestre === "2") {
-        currentPeriod.startDate = param.accountingYear.toString() + "0701";
-        currentPeriod.endDate = param.accountingYear.toString() + "0930";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0701";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0930";
       }
       else if (param.periodoValoreTrimestre === "3") {
-        currentPeriod.startDate = param.accountingYear.toString() + "1001";
-        currentPeriod.endDate = param.accountingYear.toString() + "1231";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "1001";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "1231";
       }
       periods.push(currentPeriod);
     }
@@ -173,67 +177,67 @@ function createPeriods(param) {
     if (param.datiContribuente.liqTipoVersamento == 0) {
       if (param.periodoValoreSemestre === "0") {
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0101";
-        currentPeriod.endDate = param.accountingYear.toString() + "0131";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0101";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0131";
         periods.push(currentPeriod);
 
         var day = 28;
-        if (param.accountingYear % 4 == 0 && (param.accountingYear % 100 != 0 || param.accountingYear % 400 == 0))
+        if (param.annoSelezionato % 4 == 0 && (param.annoSelezionato % 100 != 0 || param.annoSelezionato % 400 == 0))
           day = 29;
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0201";
-        currentPeriod.endDate = param.accountingYear.toString() + "02" + day.toString();
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0201";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "02" + day.toString();
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0301";
-        currentPeriod.endDate = param.accountingYear.toString() + "0331";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0301";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0331";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0401";
-        currentPeriod.endDate = param.accountingYear.toString() + "0430";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0401";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0430";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0501";
-        currentPeriod.endDate = param.accountingYear.toString() + "0531";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0501";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0531";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0601";
-        currentPeriod.endDate = param.accountingYear.toString() + "0630";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0601";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0630";
         periods.push(currentPeriod);
       }
       else if (param.periodoValoreSemestre === "1") {
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0701";
-        currentPeriod.endDate = param.accountingYear.toString() + "0731";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0701";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0731";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0801";
-        currentPeriod.endDate = param.accountingYear.toString() + "0831";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0801";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0831";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0901";
-        currentPeriod.endDate = param.accountingYear.toString() + "0930";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0901";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0930";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "1001";
-        currentPeriod.endDate = param.accountingYear.toString() + "1031";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "1001";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "1031";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "1101";
-        currentPeriod.endDate = param.accountingYear.toString() + "1130";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "1101";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "1130";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "1201";
-        currentPeriod.endDate = param.accountingYear.toString() + "1231";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "1201";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "1231";
         periods.push(currentPeriod);
       }
     }
@@ -241,24 +245,24 @@ function createPeriods(param) {
     else if (param.datiContribuente.liqTipoVersamento == 1) {
       if (param.periodoValoreSemestre === "0") {
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0101";
-        currentPeriod.endDate = param.accountingYear.toString() + "0331";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0101";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0331";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0401";
-        currentPeriod.endDate = param.accountingYear.toString() + "0630";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0401";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0630";
         periods.push(currentPeriod);
       }
       else if (param.periodoValoreSemestre === "1") {
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0701";
-        currentPeriod.endDate = param.accountingYear.toString() + "0930";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0701";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0930";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "1001";
-        currentPeriod.endDate = param.accountingYear.toString() + "1231";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "1001";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "1231";
         periods.push(currentPeriod);
       }
     }
@@ -266,13 +270,13 @@ function createPeriods(param) {
     else {
       var currentPeriod = {};
       if (param.periodoValoreSemestre === "0") {
-        currentPeriod.startDate = param.accountingYear.toString() + "0101";
-        currentPeriod.endDate = param.accountingYear.toString() + "0630";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0101";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0630";
         periods.push(currentPeriod);
       }
       else if (param.periodoValoreSemestre === "1") {
-        currentPeriod.startDate = param.accountingYear.toString() + "0701";
-        currentPeriod.endDate = param.accountingYear.toString() + "1231";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0701";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "1231";
         periods.push(currentPeriod);
       }
     }
@@ -283,88 +287,88 @@ function createPeriods(param) {
   else if (param.periodoSelezionato == 'y') {
     if (param.datiContribuente.liqTipoVersamento == 0) {
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0101";
-        currentPeriod.endDate = param.accountingYear.toString() + "0131";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0101";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0131";
         periods.push(currentPeriod);
 
         var day = 28;
-        if (param.accountingYear % 4 == 0 && (param.accountingYear % 100 != 0 || param.accountingYear % 400 == 0))
+        if (param.annoSelezionato % 4 == 0 && (param.annoSelezionato % 100 != 0 || param.annoSelezionato % 400 == 0))
           day = 29;
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0201";
-        currentPeriod.endDate = param.accountingYear.toString() + "02" + day.toString();
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0201";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "02" + day.toString();
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0301";
-        currentPeriod.endDate = param.accountingYear.toString() + "0331";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0301";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0331";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0401";
-        currentPeriod.endDate = param.accountingYear.toString() + "0430";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0401";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0430";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0501";
-        currentPeriod.endDate = param.accountingYear.toString() + "0531";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0501";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0531";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0601";
-        currentPeriod.endDate = param.accountingYear.toString() + "0630";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0601";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0630";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0701";
-        currentPeriod.endDate = param.accountingYear.toString() + "0731";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0701";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0731";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0801";
-        currentPeriod.endDate = param.accountingYear.toString() + "0831";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0801";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0831";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "0901";
-        currentPeriod.endDate = param.accountingYear.toString() + "0930";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "0901";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "0930";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "1001";
-        currentPeriod.endDate = param.accountingYear.toString() + "1031";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "1001";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "1031";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "1101";
-        currentPeriod.endDate = param.accountingYear.toString() + "1130";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "1101";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "1130";
         periods.push(currentPeriod);
 
         var currentPeriod = {};
-        currentPeriod.startDate = param.accountingYear.toString() + "1201";
-        currentPeriod.endDate = param.accountingYear.toString() + "1231";
+        currentPeriod.startDate = param.annoSelezionato.toString() + "1201";
+        currentPeriod.endDate = param.annoSelezionato.toString() + "1231";
         periods.push(currentPeriod);
     }
     //Tipo versamento trimestrale
     else if (param.datiContribuente.liqTipoVersamento == 1){
       var currentPeriod = {};
-      currentPeriod.startDate = param.accountingYear.toString() + "0101";
-      currentPeriod.endDate = param.accountingYear.toString() + "0331";
+      currentPeriod.startDate = param.annoSelezionato.toString() + "0101";
+      currentPeriod.endDate = param.annoSelezionato.toString() + "0331";
       periods.push(currentPeriod);
 
       var currentPeriod = {};
-      currentPeriod.startDate = param.accountingYear.toString() + "0401";
-      currentPeriod.endDate = param.accountingYear.toString() + "0630";
+      currentPeriod.startDate = param.annoSelezionato.toString() + "0401";
+      currentPeriod.endDate = param.annoSelezionato.toString() + "0630";
       periods.push(currentPeriod);
 
       var currentPeriod = {};
-      currentPeriod.startDate = param.accountingYear.toString() + "0701";
-      currentPeriod.endDate = param.accountingYear.toString() + "0930";
+      currentPeriod.startDate = param.annoSelezionato.toString() + "0701";
+      currentPeriod.endDate = param.annoSelezionato.toString() + "0930";
       periods.push(currentPeriod);
 
       var currentPeriod = {};
-      currentPeriod.startDate = param.accountingYear.toString() + "1001";
-      currentPeriod.endDate = param.accountingYear.toString() + "1231";
+      currentPeriod.startDate = param.annoSelezionato.toString() + "1001";
+      currentPeriod.endDate = param.annoSelezionato.toString() + "1231";
       periods.push(currentPeriod);
      }
      //Tipo di versamento non definito
@@ -1208,19 +1212,19 @@ function readAccountingData(param) {
     param.fileInfo["Address"]["VatNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "VatNumber"));
   }
 
-  var accountingOpeningDate = param.fileInfo["OpeningDate"];
-  var accountingClosureDate = param.fileInfo["ClosureDate"];
+  param.accountingOpeningDate = '';
+  param.accountingClosureDate = '';
+  if (param.fileInfo["OpeningDate"])
+    param.accountingOpeningDate = param.fileInfo["OpeningDate"];
+  if (param.fileInfo["ClosureDate"])
+    param.accountingClosureDate = param.fileInfo["ClosureDate"];
 
-  var openingYear = 0;
-  var closureYear = 0;
-  if (accountingOpeningDate.length >= 10)
-    openingYear = accountingOpeningDate.substring(0, 4);
-  if (accountingClosureDate.length >= 10)
-    closureYear = accountingClosureDate.substring(0, 4);
-
-  param.accountingYear = '';
-  if (openingYear > 0 && openingYear === closureYear)
-    param.accountingYear = openingYear;
+  param.openingYear = '';
+  param.closureYear = '';
+  if (param.accountingOpeningDate.length >= 10)
+    param.openingYear = param.accountingOpeningDate.substring(0, 4);
+  if (param.accountingClosureDate.length >= 10)
+    param.closureYear = param.accountingClosureDate.substring(0, 4);
 
   //Dati contribuente
   param.datiContribuente = {};

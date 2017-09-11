@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-05
+// @pubdate = 2017-09-11
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -41,25 +41,36 @@ function settingsDialog() {
   
   var accountingData = {};
   accountingData = readAccountingData(accountingData);
-  if (accountingData.accountingYear.length<=0) {
-    return false;
-  }
+  if (param.annoSelezionato.length<=0)
+    param.annoSelezionato = accountingData.openingYear;
 
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.liquidazione.dialog.ui");
   //Groupbox periodo
+  var index = 0;
   if (param.periodoSelezionato == 'm')
-    dialog.periodoGroupBox.meseRadioButton.checked = true;
+    index = parseInt(param.periodoValoreMese);
   else if (param.periodoSelezionato == 'q')
-    dialog.periodoGroupBox.trimestreRadioButton.checked = true;
-
-  //dialog.periodoGroupBox.title += " " + accountingData.accountingYear;
-  dialog.periodoGroupBox.meseComboBox.currentIndex = param.periodoValoreMese;
-  dialog.periodoGroupBox.trimestreComboBox.currentIndex = param.periodoValoreTrimestre;
+    index = parseInt(param.periodoValoreTrimestre) + 13;
+  else if (param.periodoSelezionato == 's')
+    index = parseInt(param.periodoValoreSemestre) + 18;
+  else if (param.periodoSelezionato == 'y')
+    index = 21;
+  dialog.periodoGroupBox.periodoComboBox.currentIndex = index;
+  //Groupbox anno per il momento impostati fissi perché non è possibile caricare gli anni sul combobox
+  var index = 0;
+  if (param.annoSelezionato == '2017')
+    index = 1;
+  else if (param.annoSelezionato == '2018')
+    index = 2;
+  dialog.periodoGroupBox.annoComboBox.currentIndex = index;
   
   //Groupbox comunicazione
   dialog.intestazioneGroupBox.cfLabel_2.text = accountingData.datiContribuente.codiceFiscale;
   dialog.intestazioneGroupBox.partitaIvaLabel_2.text = accountingData.datiContribuente.partitaIva;
-  dialog.intestazioneGroupBox.annoImpostaLabel_2.text = accountingData.accountingYear;
+  var accountingYear = accountingData.openingYear;
+  if (accountingYear != accountingData.closureYear)
+    accountingYear +=  "-" + accountingData.closureYear;
+  dialog.intestazioneGroupBox.annoImpostaLabel_2.text = accountingYear;
 
   var progressivo = parseInt(param.comunicazioneProgressivo, 10);
   if (!progressivo)
@@ -94,7 +105,7 @@ function settingsDialog() {
     dialog.accept();
   }
   dialog.enableButtons = function () {
-    if (accountingData.datiContribuente.liqTipoVersamento == 0) {
+    /*if (accountingData.datiContribuente.liqTipoVersamento == 0) {
         dialog.periodoGroupBox.meseRadioButton.enabled = true;
         dialog.periodoGroupBox.meseComboBox.enabled = true;
     }
@@ -110,7 +121,7 @@ function settingsDialog() {
     else if (dialog.periodoGroupBox.trimestreRadioButton.checked) {
         dialog.periodoGroupBox.meseComboBox.enabled = false;
         dialog.periodoGroupBox.trimestreComboBox.enabled = true;
-    }
+    }*/
   }
   dialog.showHelp = function () {
     Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
@@ -119,8 +130,8 @@ function settingsDialog() {
   dialog.buttonBox.accepted.connect(dialog, "checkdata");
   dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
   //dialog.liquidazioneGroupBox.tipoVersamentoComboBox['currentIndexChanged(QString)'].connect(dialog, "enableButtons");
-  dialog.periodoGroupBox.trimestreRadioButton.clicked.connect(dialog, "enableButtons");
-  dialog.periodoGroupBox.meseRadioButton.clicked.connect(dialog, "enableButtons");
+  //dialog.periodoGroupBox.trimestreRadioButton.clicked.connect(dialog, "enableButtons");
+  //dialog.periodoGroupBox.meseRadioButton.clicked.connect(dialog, "enableButtons");
   
   //Visualizzazione dialogo
   Banana.application.progressBar.pause();
@@ -132,12 +143,32 @@ function settingsDialog() {
 
   //Salvataggio dati
   //Groupbox periodo
-  param.periodoValoreTrimestre = dialog.periodoGroupBox.trimestreComboBox.currentIndex.toString();
-  param.periodoValoreMese = dialog.periodoGroupBox.meseComboBox.currentIndex.toString();
-  if (dialog.periodoGroupBox.meseRadioButton.checked)
+  var index = parseInt(dialog.periodoGroupBox.periodoComboBox.currentIndex.toString());
+  if (index < 0 || index == 12 || index == 17 || index == 20)
+    index = 0;
+  if (index < 12) {
     param.periodoSelezionato = 'm';
-  else if (dialog.periodoGroupBox.trimestreRadioButton.checked)
+    param.periodoValoreMese = index.toString();
+  }
+  else if (index > 12 && index < 17) {
     param.periodoSelezionato = 'q';
+    param.periodoValoreTrimestre = (index-13).toString();
+  }
+  else if (index > 17 && index < 20) {
+    param.periodoSelezionato = 's';
+    param.periodoValoreSemestre = (index-18).toString();
+  }
+  else {
+    param.periodoSelezionato = 'y';
+  }
+  //Groupbox anno
+  var index = parseInt(dialog.periodoGroupBox.annoComboBox.currentIndex.toString());
+  if (index <=0)
+    param.annoSelezionato = '2016';
+  else if (index ==1)
+    param.annoSelezionato = '2017';
+  else if (index ==2)
+    param.annoSelezionato = '2018';
   
   //Groupbox comunicazione
   progressivo = dialog.intestazioneGroupBox.progressivoInvioLineEdit.text;
@@ -380,6 +411,7 @@ function initParam()
   param.comunicazioneFirmaIntermediario = true;
   param.comunicazioneUltimoMese = '';
 
+  param.annoSelezionato = '';
   param.periodoSelezionato = 'm';
   param.periodoValoreMese = '';
   param.periodoValoreTrimestre = '';
@@ -836,6 +868,9 @@ function verifyParam(param) {
     param.comunicazioneFirmaIntermediario = false;
   if (!param.comunicazioneUltimoMese)
     param.comunicazioneUltimoMese = '';
+
+  if (!param.annoSelezionato)
+    param.annoSelezionato = '';
   if (!param.periodoSelezionato)
     param.periodoSelezionato = 'm';
   if (!param.periodoValoreMese)
@@ -844,6 +879,7 @@ function verifyParam(param) {
     param.periodoValoreTrimestre = '';
   if (!param.periodoValoreSemestre)
     param.periodoValoreSemestre = '';
+  
   if (!param.outputScript)
     param.outputScript = 0;
 

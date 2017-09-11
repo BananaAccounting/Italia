@@ -43,9 +43,6 @@ function settingsDialog() {
   
   var accountingData = {};
   accountingData = readAccountingData(accountingData);
-  if (accountingData.accountingYear.length<=0) {
-    return false;
-  }
 
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat.daticontribuente.dialog.ui");
   

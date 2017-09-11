@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-05
+// @pubdate = 2017-09-11
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -43,27 +43,33 @@ function settingsDialog() {
   
   var accountingData = {};
   accountingData = readAccountingData(accountingData);
-  if (accountingData.accountingYear.length<=0) {
-    return false;
-  }
+  if (param.annoSelezionato.length<=0)
+    param.annoSelezionato = accountingData.openingYear;
   
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.registri.dialog.ui");
   //Groupbox periodo
-  var meseRadioButton = dialog.tabWidget.findChild('meseRadioButton');
-  var trimestreRadioButton = dialog.tabWidget.findChild('trimestreRadioButton');
-  var annoRadioButton = dialog.tabWidget.findChild('annoRadioButton');
-  var trimestreComboBox = dialog.tabWidget.findChild('trimestreComboBox');
-  var meseComboBox = dialog.tabWidget.findChild('meseComboBox');
-  if (param.periodoSelezionato == 'm' && meseRadioButton)
-    meseRadioButton.checked = true;
-  else if (param.periodoSelezionato == 'q' && trimestreRadioButton)
-    trimestreRadioButton.checked = true;
-  else if (param.periodoSelezionato == 'y' && annoRadioButton)
-    annoRadioButton.checked = true;
-  if (meseComboBox)
-    meseComboBox.currentIndex = param.periodoValoreMese;
-  if (trimestreComboBox)
-    trimestreComboBox.currentIndex = param.periodoValoreTrimestre;
+  var index = 0;
+  if (param.periodoSelezionato == 'm')
+    index = parseInt(param.periodoValoreMese);
+  else if (param.periodoSelezionato == 'q')
+    index = parseInt(param.periodoValoreTrimestre) + 13;
+  else if (param.periodoSelezionato == 's')
+    index = parseInt(param.periodoValoreSemestre) + 18;
+  else if (param.periodoSelezionato == 'y')
+    index = 21;
+  var periodoComboBox = dialog.tabWidget.findChild('periodoComboBox');
+  if (periodoComboBox)
+    periodoComboBox.currentIndex = index;
+  //Groupbox anno per il momento impostati fissi perché non è possibile caricare gli anni sul combobox
+  var index = 0;
+  if (param.annoSelezionato == '2017')
+    index = 1;
+  else if (param.annoSelezionato == '2018')
+    index = 2;
+  var annoComboBox = dialog.tabWidget.findChild('annoComboBox');
+  if (annoComboBox)
+    annoComboBox.currentIndex = index;
+
   //Tipo registro
   var tipoRegistroComboBox = dialog.tabWidget.findChild('tipoRegistroComboBox');
   if (tipoRegistroComboBox)
@@ -119,7 +125,7 @@ function settingsDialog() {
     dialog.accept();
   }
   dialog.enableButtons = function () {
-    if (meseRadioButton && meseRadioButton.checked) {
+    /*if (meseRadioButton && meseRadioButton.checked) {
         meseComboBox.enabled = true;
         trimestreComboBox.enabled = false;
     }
@@ -130,7 +136,7 @@ function settingsDialog() {
     else {
         meseComboBox.enabled = false;
         trimestreComboBox.enabled = false;
-    }
+    }*/
     //Testi
     if (tempTestoRegistriCurrentIndex == '0') {
       tempStampaTestoRegistroAcquisti = testoGroupBox.checked;
@@ -167,9 +173,9 @@ function settingsDialog() {
   dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
   testoRegistriComboBox['currentIndexChanged(QString)'].connect(dialog, "enableButtons");
   testoGroupBox.clicked.connect(dialog, "enableButtons");
-  trimestreRadioButton.clicked.connect(dialog, "enableButtons");
-  meseRadioButton.clicked.connect(dialog, "enableButtons");
-  annoRadioButton.clicked.connect(dialog, "enableButtons");
+  //trimestreRadioButton.clicked.connect(dialog, "enableButtons");
+  //meseRadioButton.clicked.connect(dialog, "enableButtons");
+  //annoRadioButton.clicked.connect(dialog, "enableButtons");
   
   //Visualizzazione dialogo
   Banana.application.progressBar.pause();
@@ -181,16 +187,33 @@ function settingsDialog() {
 
   //Salvataggio dati
   //Groupbox periodo
-  if (trimestreRadioButton.checked)
-    param.periodoSelezionato = 'q';
-  else if (annoRadioButton.checked)
-    param.periodoSelezionato = 'y';
-  else
+  var index = parseInt(periodoComboBox.currentIndex.toString());
+  if (index < 0 || index == 12 || index == 17 || index == 20)
+    index = 0;
+  if (index < 12) {
     param.periodoSelezionato = 'm';
-  if (meseComboBox)
-    param.periodoValoreMese = meseComboBox.currentIndex.toString();
-  if (trimestreComboBox)
-    param.periodoValoreTrimestre = trimestreComboBox.currentIndex.toString();
+    param.periodoValoreMese = index.toString();
+  }
+  else if (index > 12 && index < 17) {
+    param.periodoSelezionato = 'q';
+    param.periodoValoreTrimestre = (index-13).toString();
+  }
+  else if (index > 17 && index < 20) {
+    param.periodoSelezionato = 's';
+    param.periodoValoreSemestre = (index-18).toString();
+  }
+  else {
+    param.periodoSelezionato = 'y';
+  }
+  //Groupbox anno
+  var index = parseInt(annoComboBox.currentIndex.toString());
+  if (index <=0)
+    param.annoSelezionato = '2016';
+  else if (index ==1)
+    param.annoSelezionato = '2017';
+  else if (index ==2)
+    param.annoSelezionato = '2018';
+
   //Tipo registro
   if (tipoRegistroComboBox)
     param.tipoRegistro = tipoRegistroComboBox.currentIndex.toString();
@@ -304,8 +327,11 @@ function addPageHeader(report, stylesheet, param)
   cell_right1.addParagraph("pag. ", "right").addFieldPageNr();
 
   //cell_right
+  var period = "/" + param.openingYear;
+  if (param.openingYear != param.closureYear)
+    period +=  "-" + param.closureYear;
   var cell_right2 = row.addCell("", "header_cell_right");
-  cell_right2.addParagraph("/" + param.accountingYear, "right");
+  cell_right2.addParagraph(period, "period");
 
   //add style
   stylesheet.addStyle(".header_table", "margin-top:1em;width:100%;");
@@ -481,6 +507,7 @@ function initParam()
   param.testoRegistroVendite = '';
   param.testoRegistroCorrispettivi = '';
 
+  param.annoSelezionato = '';
   param.periodoSelezionato = 'm';
   param.periodoValoreMese = '';
   param.periodoValoreTrimestre = '';
@@ -1249,6 +1276,8 @@ function verifyParam(param) {
   if (!param.testoRegistroCorrispettivi)
    param.testoRegistroCorrispettivi = '';
 
+  if (!param.annoSelezionato)
+    param.annoSelezionato = '';
    if (!param.periodoSelezionato)
     param.periodoSelezionato = 'm';
   if (!param.periodoValoreMese)
