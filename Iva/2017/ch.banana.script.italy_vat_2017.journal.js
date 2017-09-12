@@ -670,23 +670,41 @@ function loadJournal(param)
       value = Banana.SDecimal.invert(value);
     jsonLine["IT_Lordo"] = value;
 
+/*
+3. Dati relativi ai campi “detraibile” e “deducibile”
+
+Uno dei dati che può essere fornito è quello relativo alla percentuale di
+detraibilità o, in alternativa, alla deducibilità del costo riportato in fattura. Tale
+dato, la cui indicazione è facoltativa, è riferito all’eventuale deducibilità o
+detraibilità del costo ai fini delle imposte sui redditi in capo all’acquirente o
+committente persona fisica che non opera nell’esercizio di impresa, arte o
+professione (cfr., pagina 11 delle specifiche tecniche “Detraibile: contiene il
+valore percentuale di detraibilità se gli importi si riferiscono a spese detraibili.
+Deducibile: indica se gli importi si riferiscono a spese deducibili ai fini di
+imposte diverse dall’Iva”). A titolo di esempio, qualora la fattura sia emessa da
+una impresa edile nei confronti di un cliente privato in relazione a lavori di
+ristrutturazione edilizia, il 50% del costo riportato nel documento potrebbe essere
+portato in detrazione dei redditi del cliente: in tal caso, l’informazione – se
+disponibile – potrebbe essere riportata nell’apposito campo della comunicazione.
+Si precisa che la compilazione di uno dei due campi in oggetto esclude la
+compilazione dell’altro. 
+
+La % detraibile può essere diversa dalla % non imponibile di Banana
+I due dati sono facoltativi, si prevede l'aggiunta di due colonne nella tabella registrazioni,
+nelle quali l'utente può inserire la % manualmente
+*/
     //IT_Detraibile
     //IT_Deducibile
     jsonLine["IT_Detraibile"] = '';
     jsonLine["IT_Deducibile"] = '';
-    value = filteredRows[i].value("VatPercentNonDeductible");
-    if (!Banana.SDecimal.isZero(value))
-      value = Banana.SDecimal.subtract('100', value);
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    jsonLine["IT_Detraibile"] = value;
 
     //IT_ImponibileDetraibile
     //IT_ImponibileNonDetraibile
     jsonLine["IT_ImponibileDetraibile"] = '';
     jsonLine["IT_ImponibileNonDetraibile"] = '';
-    value = jsonLine["IT_Detraibile"];
+    value = filteredRows[i].value("VatPercentNonDeductible");
     if (!Banana.SDecimal.isZero(value)) {
+      value = Banana.SDecimal.subtract('100', value);
       var rate = Banana.SDecimal.round(value, {'decimals':2});
       var taxable = filteredRows[i].value("VatTaxable");
       var amount = taxable * rate /100;
@@ -774,7 +792,8 @@ function loadJournal(param)
       var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
       if (rowVatCodes) {
         var vatGr = rowVatCodes.value("Gr");
-        if (vatGr.indexOf("-FC2")>=0) {
+        var rowVatCode = rowVatCodes.value("VatCode");
+        if (rowVatCode.indexOf("-FC2")>=0) {
           jsonLine["IT_Natura"] = 'N1';
         }
         else if (vatGr.indexOf("-FC")>=0) {

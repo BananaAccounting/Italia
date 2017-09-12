@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-11
+// @pubdate = 2017-09-12
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -489,10 +489,7 @@ function printVatReport(report, stylesheet, param) {
   headerRow.addCell("Ctrpart.", "center");
   headerRow.addCell("Cod.IVA", "center");
   headerRow.addCell("Gr.IVA", "center");
-  var cell = headerRow.addCell("", "center");
-  var paragraph = cell.addParagraph("Imponibile");
-  paragraph.addLineBreak();
-  paragraph.addText("Non imponib.");
+  headerRow.addCell("Imponibile", "center");
   headerRow.addCell("Imposta", "center");
   headerRow.addCell("Aliquota", "center");
   headerRow.addCell("Natura", "center");
@@ -559,7 +556,7 @@ function printVatReport_rows(customers_suppliers, table, param) {
       if (!Banana.SDecimal.isZero(value))
         value = Banana.SDecimal.abs(value);
       row.addCell(Banana.Converter.toLocaleNumberFormat(value,2,false), "row amount");
-      value = jsonObj["IT_IvaContabilizzata"];
+      value = jsonObj["IT_ImportoIva"];
       if (!Banana.SDecimal.isZero(value))
         value = Banana.SDecimal.abs(value);
       row.addCell(Banana.Converter.toLocaleNumberFormat(value,2,false), "row amount");

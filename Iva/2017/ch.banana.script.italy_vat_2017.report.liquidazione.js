@@ -519,6 +519,12 @@ function loadVatCodes(param, _startDate, _endDate)
   vatAmounts["A"] = sumVatAmounts(vatAmounts, ["A-IM","A-NI","A-ES","A-NE","A-ED"]);
   
   //Calcola la liquidazione prorata sugli acquisti se presente
+  /* i soggetti che esercitano un’attività che dà luogo sia ad operazioni imponibili, per le quali è previsto il diritto alla detrazione dell’IVA sugli acquisti, 
+  * sia ad operazioni esenti, per le quali, invece, *  non è previsto il diritto alla detrazione dell’IVA sugli acquisti, devono determinare, ai sensi del 
+  * successivo art. 19-bis, il cosiddetto pro-rata generale di detraibilità. 
+  * Esso rappresenta una percentuale da applicare al totale dell’IVA sugli acquisti,
+  * che, determina l’ammontare di imposta detraibile
+  */
   if (!Banana.SDecimal.isZero(param.datiContribuente.liqPercProrata)) {
     var percProrata = Banana.SDecimal.round(param.datiContribuente.liqPercProrata, {'decimals':2});
     var amountProrata = Banana.SDecimal.abs(vatAmounts["A"].vatPosted) * percProrata /100;
