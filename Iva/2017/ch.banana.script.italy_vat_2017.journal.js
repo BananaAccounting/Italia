@@ -503,42 +503,47 @@ function loadJournal(param)
     var vatTwinAccountId = filteredRows[i].value("VatTwinAccount");
     var accountDebitId = filteredRows[i].value("AccountDebit");
     var accountCreditId = filteredRows[i].value("AccountCredit");
+    if (!accountDebitId && !accountCreditId) {
+      //contabilità entrate-uscite
+      accountDebitId = filteredRows[i].value("Account");
+      accountCreditId = filteredRows[i].value("Category");
+    }
 
-    if (accountId in param.customers) {
+    if (accountId && accountId in param.customers) {
       isCustomer = true;
     }
-    else if (contraAccountId in param.customers) {
+    else if (contraAccountId && contraAccountId in param.customers) {
       isCustomer = true;
       accountId = contraAccountId;
     }
-    else if (vatTwinAccountId in param.customers) {
+    else if (vatTwinAccountId && vatTwinAccountId in param.customers) {
       isCustomer = true;
       accountId = vatTwinAccountId;
     }
-    else if (accountDebitId in param.customers) {
+    else if (accountDebitId && accountDebitId in param.customers) {
       isCustomer = true;
       accountId = accountDebitId;
     }
-    else if (accountCreditId in param.customers) {
+    else if (accountCreditId && accountCreditId in param.customers) {
       isCustomer = true;
       accountId = accountCreditId;
     }
-    else if (accountId in param.suppliers) {
+    else if (accountId && accountId in param.suppliers) {
       isSupplier = true;
     }
-    else if (contraAccountId in param.suppliers) {
+    else if (contraAccountId && contraAccountId in param.suppliers) {
       isSupplier = true;
       accountId = contraAccountId;
     }
-    else if (vatTwinAccountId in param.suppliers) {
+    else if (vatTwinAccountId && vatTwinAccountId in param.suppliers) {
       isSupplier = true;
       accountId = vatTwinAccountId;
     }
-    else if (accountDebitId in param.suppliers) {
+    else if (accountDebitId && accountDebitId in param.suppliers) {
       isSupplier = true;
       accountId = accountDebitId;
     }
-    else if (accountCreditId in param.suppliers) {
+    else if (accountCreditId && accountCreditId in param.suppliers) {
       isSupplier = true;
       accountId = accountCreditId;
     }
