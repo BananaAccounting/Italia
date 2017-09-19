@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-12
+// @pubdate = 2017-09-18
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -95,8 +95,8 @@ function settingsDialog() {
   dialog.showHelp = function () {
     Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
   }
-  dialog.buttonBox.accepted.connect(dialog, "checkdata");
-  dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
+  dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
+  dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
   
   Banana.application.progressBar.pause();
   dialog.enableButtons();
@@ -291,6 +291,7 @@ function exec(inData) {
     addPageHeader(report, stylesheet, param);
     setStyle(report, stylesheet);
     printVatReport(report, stylesheet, param);
+    printVatCodesTotal(report, stylesheet, param);
     if (debug) {
       report.addPageBreak();
       _debug_printJournal(param.data, report, stylesheet);
@@ -306,33 +307,6 @@ function exec(inData) {
 
   //return xml content
   return output;
-}
-
-function getCountryCode(jsonObject) {
-  var countryCode = 'it';
-  if (!jsonObject)
-    return countryCode.toUpperCase();
-  if (jsonObject["CountryCode"] && jsonObject["CountryCode"].length>0)
-    countryCode = jsonObject["CountryCode"];
-  else if (jsonObject["Country"] && jsonObject["Country"].length>0)
-    countryCode = jsonObject["Country"];
-  countryCode = countryCode.toLowerCase();
-  if (countryCode == 'italy' || countryCode == 'italia') {
-    countryCode = 'it';
-  }
-  if (countryCode == 'germany' || countryCode == 'germania' || countryCode == 'deutschland') {
-    countryCode = 'de';
-  }
-  if (countryCode == 'france' || countryCode == 'francia') {
-    countryCode = 'fr';
-  }
-  if (countryCode == 'switzerland' || countryCode == 'schweiz'|| countryCode == 'suisse'|| countryCode == 'svizzera') {
-    countryCode = 'ch';
-  }
-  if (countryCode == 'japan' || countryCode == 'jpn') {
-    countryCode = 'jp';
-  }
-  return countryCode.toUpperCase();
 }
 
 function initParam()
@@ -414,7 +388,8 @@ function loadJournalData(param) {
     for (var i in param.data.customers) {
       var checkedRows = [];
       var accountObj = param.data.customers[i];
-      for (var j in accountObj.rows) {
+      //for (var j in accountObj.rows) {
+      for (var j=0; j<accountObj.rows.length;j++) {
         if (accountObj.rows[j]["IT_Registro"]=="Acquisti")
           continue;
         else if (accountObj.rows[j]["VatExtraInfo"]=="ESCL")
@@ -462,6 +437,123 @@ function loadJournalData(param) {
   return param;
 }
 
+/*
+ * stampa tabella di controllo, riassunto per codici iva 
+*/
+function printVatCodesTotal(report, stylesheet, param) {
+  //Data
+  if (param.data.customers.length<=0 && param.data.suppliers.length<=0)
+    return;
+
+  var totaliCodice = [];
+  if (param.blocco == 'DTE') {
+    totaliCodice = printVatCodesTotal_rows(param.data.customers);
+  }
+  else if (param.blocco == 'DTR'){
+    totaliCodice = printVatCodesTotal_rows(param.data.suppliers);
+  }
+ 
+  //Column names
+  var tot1=0;
+  var tot2=0;
+  var tot3=0;
+  var table = report.addTable("vatcodes_table");
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell("TOTALI DI PERIODO PER CODICE (" + getPeriodText(param.data) + ")", "title", 7); 
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell("Cod.IVA", "header");
+  headerRow.addCell("Gr.IVA", "header");
+  headerRow.addCell("Aliquota", "right header");
+  headerRow.addCell("Descrizione", "header expand");
+  headerRow.addCell("Imponibile", "right header");
+  headerRow.addCell("Imposta", "right header");
+  headerRow.addCell("Imposta indetraibile", "right header");
+
+  var sorted_keys = Object.keys(totaliCodice).sort();
+  for (var i=0; i<sorted_keys.length;i++) {
+    var vatCode = sorted_keys[i];
+    row = table.addRow();
+    row.addCell(vatCode, "");
+    row.addCell(totaliCodice[vatCode].gr, "");
+    row.addCell(totaliCodice[vatCode].vatRate, "right");
+    row.addCell(totaliCodice[vatCode].vatCodeDes);
+    row.addCell(Banana.Converter.toLocaleNumberFormat(totaliCodice[vatCode].vatTaxable), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(totaliCodice[vatCode].vatAmount), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(totaliCodice[vatCode].vatNonDed), "right");
+    tot1 = Banana.SDecimal.add(totaliCodice[vatCode].vatTaxable, tot1);
+    tot2 = Banana.SDecimal.add(totaliCodice[vatCode].vatAmount, tot2);
+    tot3 = Banana.SDecimal.add(totaliCodice[vatCode].vatNonDed, tot3);
+  }
+
+  //Totale
+  row = table.addRow();
+  row.addCell("", "", 3);
+  row.addCell("Totale", "total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot3), "right total");
+  
+  //Add style
+  stylesheet.addStyle(".vatcodes_table", "width:100%;margin-top:20px;");
+  stylesheet.addStyle(".vatcodes_table td", "border:0.5em solid black;padding:3px;");
+  stylesheet.addStyle(".vatcodes_table td.header", "font-weight:bold;background-color:#dddddd");
+  stylesheet.addStyle(".vatcodes_table td.title", "font-weight:bold;border:0px;background-color:#ffffff;");
+  stylesheet.addStyle(".vatcodes_table td.total", "font-weight:bold;");
+}
+
+function printVatCodesTotal_rows(customers) {
+  var totaliCodice = [];
+  for (var id in customers) {
+    for (var index in customers[id].rows) {
+      var vatCode = customers[id].rows[index].JVatCodeWithoutSign;
+      var vatRate = customers[id].rows[index].IT_Aliquota;
+      var vatAmount = customers[id].rows[index].IT_ImportoIva;
+      var vatPosted = customers[id].rows[index].IT_IvaContabilizzata;
+      var vatNonDed = customers[id].rows[index].VatNonDeductible;
+      var vatTaxable = customers[id].rows[index].IT_Imponibile;
+      var vatTaxableDed = customers[id].rows[index].IT_ImponibileDetraibile;
+      var vatTaxableNonDed = customers[id].rows[index].IT_ImponibileNonDetraibile;
+      var vatPercNonDed = customers[id].rows[index].VatPercentNonDeductible;
+      var vatGross = customers[id].rows[index].IT_Lordo;
+      var gr = customers[id].rows[index].IT_Gr_IVA;
+
+      if (vatCode && vatCode.length>0) {
+        if (totaliCodice[vatCode]) {
+          totaliCodice[vatCode].vatAmount = Banana.SDecimal.add(totaliCodice[vatCode].vatAmount, vatAmount);
+          totaliCodice[vatCode].vatPosted = Banana.SDecimal.add(totaliCodice[vatCode].vatPosted, vatPosted);
+          totaliCodice[vatCode].vatNonDed = Banana.SDecimal.add(totaliCodice[vatCode].vatNonDed, vatNonDed);
+          totaliCodice[vatCode].vatTaxable = Banana.SDecimal.add(totaliCodice[vatCode].vatTaxable, vatTaxable);
+          totaliCodice[vatCode].vatTaxableDed = Banana.SDecimal.add(totaliCodice[vatCode].vatTaxableDed, vatTaxableDed);
+          totaliCodice[vatCode].vatTaxableNonDed = Banana.SDecimal.add(totaliCodice[vatCode].vatTaxableNonDed, vatTaxableNonDed);
+          totaliCodice[vatCode].vatGross = Banana.SDecimal.add(totaliCodice[vatCode].vatGross, vatGross);
+        }
+        else {
+          totaliCodice[vatCode] = {};
+          totaliCodice[vatCode].vatAmount = vatAmount;
+          totaliCodice[vatCode].vatPosted = vatPosted;
+          totaliCodice[vatCode].vatNonDed = vatNonDed;
+          totaliCodice[vatCode].vatTaxable = vatTaxable;
+          totaliCodice[vatCode].vatTaxableDed = vatTaxableDed;
+          totaliCodice[vatCode].vatTaxableNonDed = vatTaxableNonDed;
+          totaliCodice[vatCode].vatPercNonDed = vatPercNonDed;
+          totaliCodice[vatCode].vatGross = vatGross;
+          totaliCodice[vatCode].vatRate = vatRate;
+          totaliCodice[vatCode].vatCodeDes = '';
+          totaliCodice[vatCode].gr = gr;
+          var tableVatCodes = Banana.document.table("VatCodes");
+          if (tableVatCodes) {
+            var vatCodeRow = tableVatCodes.findRowByValue("VatCode", vatCode);
+            if (vatCodeRow)
+              totaliCodice[vatCode].vatCodeDes = vatCodeRow.value("Description");
+          }
+        }
+      }
+    }
+  }
+
+  return totaliCodice;
+}
+
 function printVatReport(report, stylesheet, param) {
 
   if (param.data.customers.length<=0 && param.data.suppliers.length<=0)
@@ -503,6 +595,7 @@ function printVatReport(report, stylesheet, param) {
   else if (param.blocco == 'DTR'){
     printVatReport_rows(param.data.suppliers, table, param)
   }
+  
 }
 
 function printVatReport_rows(customers_suppliers, table, param) {
@@ -547,7 +640,12 @@ function printVatReport_rows(customers_suppliers, table, param) {
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JInvoiceIssueDate"]), "row");
       row.addCell(jsonObj["IT_DocInvoice"], "row");
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JDate"]), "row");
-      row.addCell(xml_unescapeString(jsonObj["JDescription"]), "row");
+      var descrizione = xml_unescapeString(jsonObj["JDescription"]);
+      if (descrizione.startsWith("[IVA] ")>0)
+        descrizione = descrizione.substr(6, descrizione.length);
+      else if (descrizione.startsWith("[VAT/Sales tax] ")>0)
+        descrizione = descrizione.substr(16, descrizione.length);
+      row.addCell(descrizione, "row");
       row.addCell(jsonObj["JAccount"], "row amount");
       row.addCell(jsonObj["JContraAccount"], "row amount");
       row.addCell(jsonObj["JVatCodeWithoutSign"], "row amount");
@@ -596,12 +694,12 @@ function setStyle(report, stylesheet) {
   stylesheet.addStyle("thead", "font-weight: bold;background-color:#eeeeee;");
   stylesheet.addStyle("td", "padding:1px;vertical-align:top;");
 
-  stylesheet.addStyle(".amount", "text-align: right;border:1px solid black; ");
+  stylesheet.addStyle(".amount", "text-align: right;border:0.5em solid black; ");
   stylesheet.addStyle(".center", "text-align: center;");
   stylesheet.addStyle(".notes", "padding: 2em;font-style:italic;");
   stylesheet.addStyle(".right", "text-align: right;");
-  stylesheet.addStyle(".row.amount", "border:1px solid black;");
-  stylesheet.addStyle(".rowName", "font-weight: bold;padding-top:5px;border-top:1px solid black;");
+  stylesheet.addStyle(".row.amount", "border:0.5em solid black");
+  stylesheet.addStyle(".rowName", "font-weight: bold;padding-top:5px;border-top:0.5em solid black");
   stylesheet.addStyle(".warning", "color: red;font-size:8px;");
 
   /*vatrepor_table*/

@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-11
+// @pubdate = 2017-09-18
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -125,18 +125,6 @@ function settingsDialog() {
     dialog.accept();
   }
   dialog.enableButtons = function () {
-    /*if (meseRadioButton && meseRadioButton.checked) {
-        meseComboBox.enabled = true;
-        trimestreComboBox.enabled = false;
-    }
-    else if (trimestreRadioButton &&trimestreRadioButton.checked) {
-        meseComboBox.enabled = false;
-        trimestreComboBox.enabled = true;
-    }
-    else {
-        meseComboBox.enabled = false;
-        trimestreComboBox.enabled = false;
-    }*/
     //Testi
     if (tempTestoRegistriCurrentIndex == '0') {
       tempStampaTestoRegistroAcquisti = testoGroupBox.checked;
@@ -169,13 +157,13 @@ function settingsDialog() {
   dialog.showHelp = function () {
     Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
   }
-  dialog.buttonBox.accepted.connect(dialog, "checkdata");
-  dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
-  testoRegistriComboBox['currentIndexChanged(QString)'].connect(dialog, "enableButtons");
-  testoGroupBox.clicked.connect(dialog, "enableButtons");
-  //trimestreRadioButton.clicked.connect(dialog, "enableButtons");
-  //meseRadioButton.clicked.connect(dialog, "enableButtons");
-  //annoRadioButton.clicked.connect(dialog, "enableButtons");
+  dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
+  dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
+  if (testoRegistriComboBox['currentIndexChanged(QString)'])
+     testoRegistriComboBox['currentIndexChanged(QString)'].connect(dialog, dialog.enableButtons);
+  else
+     testoRegistriComboBox.currentIndexChanged.connect(dialog, dialog.enableButtons);
+  testoGroupBox.clicked.connect(dialog, dialog.enableButtons);
   
   //Visualizzazione dialogo
   Banana.application.progressBar.pause();
@@ -437,59 +425,6 @@ function exec(inData) {
 
 }
 
-function getPeriodText(param) {
-
-  var fromDate = Banana.Converter.toDate(param.startDate);
-  var toDate = Banana.Converter.toDate(param.endDate);
-  var firstDayOfPeriod = 1;
-  var lastDayOfPeriod = new Date(toDate.getFullYear(),toDate.getMonth()+1,0).getDate().toString();
-  
-  //se le date non corrispondono al primo giorno del mese (fromDate) e all'ultimo giorno del mese (toDate) ritorna il periodo esatto
-  if (fromDate.getDate() != firstDayOfPeriod || toDate.getDate() != lastDayOfPeriod)
-    return "dal: " + Banana.Converter.toLocaleDateFormat(param.startDate) + " al " + Banana.Converter.toLocaleDateFormat(param.endDate);
-
-  if (fromDate.getMonth() === toDate.getMonth()) {
-    var mese = fromDate.getMonth()+1;
-    if (mese == 1)
-      mese = "gennaio";
-    else if (mese == 2)
-      mese = "febbraio";
-    else if (mese == 3)
-      mese = "marzo";
-    else if (mese == 4)
-      mese = "aprile";
-    else if (mese == 5)
-      mese = "maggio";
-    else if (mese == 6)
-      mese = "giugno";
-    else if (mese == 7)
-      mese = "luglio";
-    else if (mese == 8)
-      mese = "agosto";
-    else if (mese == 9)
-      mese = "settembre";
-    else if (mese == 10)
-      mese = "ottobre";
-    else if (mese == 11)
-      mese = "novembre";
-    else if (mese == 12)
-      mese = "dicembre";
-    mese +=  " " + fromDate.getFullYear();
-    return mese;
-  }
-
-  var q = [1,2,3,4];
-  var q1 = q[Math.floor(fromDate.getMonth() / 3)];  
-  var q2 = q[Math.floor(toDate.getMonth() / 3)];  
-  if (q1 === q2)
-    return q1.toString() + ". trimestre " + fromDate.getFullYear();
-
-  if (fromDate.getFullYear() === toDate.getFullYear())
-    return fromDate.getFullYear().toString();
-
-  return "";
-}
-
 function initParam()
 {
   var param = {};
@@ -503,6 +438,7 @@ function initParam()
   param.stampaTestoRegistroAcquisti = false;
   param.stampaTestoRegistroVendite = false;
   param.stampaTestoRegistroCorrispettivi = false;
+  param.stampaOrizzontale = false;
   param.testoRegistroAcquisti = '';
   param.testoRegistroVendite = '';
   param.testoRegistroCorrispettivi = '';

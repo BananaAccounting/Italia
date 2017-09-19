@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-11
+// @pubdate = 2017-09-18
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -105,33 +105,16 @@ function settingsDialog() {
     dialog.accept();
   }
   dialog.enableButtons = function () {
-    /*if (accountingData.datiContribuente.liqTipoVersamento == 0) {
-        dialog.periodoGroupBox.meseRadioButton.enabled = true;
-        dialog.periodoGroupBox.meseComboBox.enabled = true;
-    }
-    else {
-        dialog.periodoGroupBox.meseRadioButton.enabled = false;
-        dialog.periodoGroupBox.meseComboBox.enabled = false;
-        dialog.periodoGroupBox.trimestreRadioButton.checked = true;
-    }
-    if (dialog.periodoGroupBox.meseRadioButton.checked) {
-        dialog.periodoGroupBox.meseComboBox.enabled = true;
-        dialog.periodoGroupBox.trimestreComboBox.enabled = false;
-    }
-    else if (dialog.periodoGroupBox.trimestreRadioButton.checked) {
-        dialog.periodoGroupBox.meseComboBox.enabled = false;
-        dialog.periodoGroupBox.trimestreComboBox.enabled = true;
-    }*/
   }
   dialog.showHelp = function () {
     Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
   }
   var index='';
-  dialog.buttonBox.accepted.connect(dialog, "checkdata");
-  dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
-  //dialog.liquidazioneGroupBox.tipoVersamentoComboBox['currentIndexChanged(QString)'].connect(dialog, "enableButtons");
-  //dialog.periodoGroupBox.trimestreRadioButton.clicked.connect(dialog, "enableButtons");
-  //dialog.periodoGroupBox.meseRadioButton.clicked.connect(dialog, "enableButtons");
+  dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
+  dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
+  //dialog.liquidazioneGroupBox.tipoVersamentoComboBox['currentIndexChanged(QString)'].connect(dialog, dialog.enableButtons);
+  //dialog.periodoGroupBox.trimestreRadioButton.clicked.connect(dialog, dialog.enableButtons);
+  //dialog.periodoGroupBox.meseRadioButton.clicked.connect(dialog, dialog.enableButtons);
   
   //Visualizzazione dialogo
   Banana.application.progressBar.pause();

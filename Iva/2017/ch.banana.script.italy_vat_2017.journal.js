@@ -410,6 +410,101 @@ function getAccount(accountId) {
 }
 
 /*
+ * Ritorna il codice paese lunghezza 2 caratteri
+ */
+function getCountryCode(jsonObject) {
+  var countryCode = 'it';
+  if (!jsonObject)
+    return countryCode.toUpperCase();
+  if (jsonObject["CountryCode"] && jsonObject["CountryCode"].length>0)
+    countryCode = jsonObject["CountryCode"];
+  else if (jsonObject["Country"] && jsonObject["Country"].length>0)
+    countryCode = jsonObject["Country"];
+  countryCode = countryCode.toLowerCase();
+  if (countryCode == 'italy' || countryCode == 'italia') {
+    countryCode = 'it';
+  }
+  if (countryCode == 'germany' || countryCode == 'germania' || countryCode == 'deutschland') {
+    countryCode = 'de';
+  }
+  if (countryCode == 'france' || countryCode == 'francia') {
+    countryCode = 'fr';
+  }
+  if (countryCode == 'switzerland' || countryCode == 'schweiz'|| countryCode == 'suisse'|| countryCode == 'svizzera') {
+    countryCode = 'ch';
+  }
+  if (countryCode == 'japan' || countryCode == 'jpn') {
+    countryCode = 'jp';
+  }
+  return countryCode.toUpperCase();
+}
+
+/*
+ * Ritorna il periodo come stringa da utilizzare nei titoli dei reports
+ */
+function getPeriodText(param) {
+
+  if (!param.startDate || !param.endDate)
+    return "";
+
+  var fromDate = Banana.Converter.toDate(param.startDate);
+  var toDate = Banana.Converter.toDate(param.endDate);
+  var firstDayOfPeriod = 1;
+  var lastDayOfPeriod = new Date(toDate.getFullYear(),toDate.getMonth()+1,0).getDate().toString();
+  
+  //se le date non corrispondono al primo giorno del mese (fromDate) e all'ultimo giorno del mese (toDate) ritorna il periodo esatto
+  if (fromDate.getDate() != firstDayOfPeriod || toDate.getDate() != lastDayOfPeriod)
+    return "dal: " + Banana.Converter.toLocaleDateFormat(param.startDate) + " al " + Banana.Converter.toLocaleDateFormat(param.endDate);
+
+  if (fromDate.getMonth() === toDate.getMonth()) {
+    var mese = fromDate.getMonth()+1;
+    if (mese == 1)
+      mese = "gennaio";
+    else if (mese == 2)
+      mese = "febbraio";
+    else if (mese == 3)
+      mese = "marzo";
+    else if (mese == 4)
+      mese = "aprile";
+    else if (mese == 5)
+      mese = "maggio";
+    else if (mese == 6)
+      mese = "giugno";
+    else if (mese == 7)
+      mese = "luglio";
+    else if (mese == 8)
+      mese = "agosto";
+    else if (mese == 9)
+      mese = "settembre";
+    else if (mese == 10)
+      mese = "ottobre";
+    else if (mese == 11)
+      mese = "novembre";
+    else if (mese == 12)
+      mese = "dicembre";
+    mese +=  " " + fromDate.getFullYear();
+    return mese;
+  }
+
+  var q = [1,2,3,4];
+  var q1 = q[Math.floor(fromDate.getMonth() / 3)];  
+  var q2 = q[Math.floor(toDate.getMonth() / 3)];  
+  if (q1 === q2)
+    return q1.toString() + ". trimestre " + fromDate.getFullYear();
+
+  var s = [1,2];
+  var s1 = q[Math.floor(fromDate.getMonth() / 6)];  
+  var s2 = q[Math.floor(toDate.getMonth() / 6)];  
+  if (s1 === s2)
+    return s1.toString() + ". semestre " + fromDate.getFullYear();
+
+  if (fromDate.getFullYear() === toDate.getFullYear())
+    return fromDate.getFullYear().toString();
+
+  return "";
+}
+
+/*
  * Riprende l'elenco delle registrazioni iva che appartengono al gruppo clienti/fornitori
  * Ritorna il parametro iniziale con l'aggiunta del giornale e dell'elenco registrazioni iva 
  *
@@ -568,6 +663,7 @@ function loadJournal(param)
     jsonLine["IT_ClienteTipologia"] = '';
     jsonLine["IT_ClientePartitaIva"] = '';
     jsonLine["IT_ClienteCodiceFiscale"] = '';
+    jsonLine["IT_ClienteIDPaese"] = '';
 
     if (isCustomer)
       jsonLine["IT_ClienteTipologia"] = 'C';
@@ -586,6 +682,7 @@ function loadJournal(param)
            intestazione = accountId + "/" + accountObj["VatNumber"] + " " + accountObj["Description"];
          }
          jsonLine["IT_ClienteIntestazione"] = intestazione;
+         jsonLine["IT_ClienteIDPaese"] = getCountryCode(accountObj);
       }
     }
 
@@ -736,8 +833,8 @@ nelle quali l'utente può inserire la % manualmente
     //TD05 Nota di debito
     //TD07 Fattura semplificata
     //TD08 Nota di credito semplificata
-    //TD10 Fattura di acquisto intracomunitario beni
-    //TD11 Fattura di acquisto intracomunitario servizi
+    //TD10 Fattura di acquisto intracomunitario beni (IdPaese != IT)
+    //TD11 Fattura di acquisto intracomunitario servizi (IdPaese != IT)
     jsonLine["IT_TipoDoc"] = '';
     var tipoDoc = filteredRows[i].value("JInvoiceDocType");
     if (tipoDoc.length<=0)
@@ -777,6 +874,27 @@ nelle quali l'utente può inserire la % manualmente
           jsonLine["IT_TipoDoc"] = 'TD10';
         }
       }
+    }
+
+    //Controllo IdPaese e TipoDocumento 
+    //Valori ammessi per fornitori esteri TipoDoc 10 per acquisti beni e TipoDoc 11 per acquisto servizi
+    var tipoDocumentoCorretto = true;
+    if (isSupplier && jsonLine["IT_ClienteIDPaese"] == "IT") {
+      if (jsonLine["IT_TipoDoc"] == 'TD10' || jsonLine["IT_TipoDoc"] == 'TD11') {
+        tipoDocumentoCorretto = false;
+      }
+    }
+    else if (isSupplier && jsonLine["IT_ClienteIDPaese"].length>0){
+      if (jsonLine["IT_TipoDoc"] != 'TD10' && jsonLine["IT_TipoDoc"] != 'TD11') {
+        tipoDocumentoCorretto = false;
+      }
+    }
+    if (!tipoDocumentoCorretto) {
+      var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
+      msg += getErrorMessage(ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO);
+      msg = msg.replace("%1", jsonLine["IT_TipoDoc"] );
+      msg = msg.replace("%2", jsonLine["IT_ClienteIDPaese"] );
+      Banana.document.addMessage( msg, ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO);
     }
 
     //IT_Natura
@@ -873,13 +991,13 @@ nelle quali l'utente può inserire la % manualmente
       if (!param.customers[accountId].rows)
         param.customers[accountId].rows = [];
       param.customers[accountId].rows.push(jsonLine);
+      //console.log(jsonLine["Description"]);
     }
     else if (isSupplier) {
       if (!param.suppliers[accountId].rows)
         param.suppliers[accountId].rows = [];
       param.suppliers[accountId].rows.push(jsonLine);
     }
-
     //Write rows for debugging purposes
     /*var jsonString = filteredRows[i].toJSON();
     var jsonObj = JSON.parse(jsonString);
@@ -964,6 +1082,14 @@ function loadJournal_setColumns(param, journalColumns) {
       column.title = "VatNonDed";
       column.index = 13;
     }
+    else if (column.name == "DateDocument") {
+      column.type = "date";
+      column.index = 14;
+    }
+    else if (column.name == "JInvoiceIssueDate") {
+      column.type = "date";
+      column.index = 15;
+    }
     param.columns[j] = column;
   }
 
@@ -971,203 +1097,173 @@ function loadJournal_setColumns(param, journalColumns) {
   var column = {};
   column.name = "IT_Natura";
   column.title = "IT_Natura";
-  column.visible = true;
   column.type = "description";
   column.index = 1000;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Lordo";
   column.title = "IT_Lordo";
-  column.visible = true;
   column.type = "amount";
   column.index = 1001;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ImportoIva";
   column.title = "IT_ImportoIva";
-  column.visible = true;
   column.type = "amount";
   column.index = 1002;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_IvaContabilizzata";
   column.title = "IT_IvaContabilizzata";
-  column.visible = true;
   column.type = "amount";
   column.index = 1003;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Imponibile";
   column.title = "IT_Imponibile";
-  column.visible = true;
   column.type = "amount";
   column.index = 1004;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ImponibileDetraibile";
   column.title = "IT_ImponibileDetraibile";
-  column.visible = true;
   column.type = "amount";
   column.index = 1005;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ImponibileNonDetraibile";
   column.title = "IT_ImponibileNonDetraibile";
-  column.visible = true;
   column.type = "amount";
   column.index = 1006;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Detraibile";
   column.title = "IT_Detraibile";
-  column.visible = true;
   column.type = "amount";
   column.index = 1007;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Deducibile";
   column.title = "IT_Deducibile";
-  column.visible = true;
   column.type = "amount";
   column.index = 1008;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Aliquota";
   column.title = "IT_Aliquota";
-  column.visible = true;
   column.type = "amount";
   column.index = 1009;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Gr_IVA";
   column.title = "IT_Gr_IVA";
-  column.visible = true;
   column.type = "description";
   column.index = 1010;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Gr1_IVA";
   column.title = "IT_Gr1_IVA";
-  column.visible = true;
   column.type = "description";
   column.index = 1011;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_Registro";
   column.title = "IT_Registro";
-  column.visible = true;
   column.type = "description";
   column.index = 1012;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ProgRegistro";
   column.title = "IT_ProgRegistro";
-  column.visible = true;
   column.type = "description";
   column.index = 1013;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_DocInvoice";
   column.title = "IT_DocInvoice";
-  column.visible = true;
   column.type = "description";
   column.index = 1014;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_TipoDoc";
   column.title = "IT_TipoDoc";
-  column.visible = true;
   column.type = "description";
   column.index = 1015;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteConto";
   column.title = "IT_ClienteConto";
-  column.visible = true;
   column.type = "description";
   column.index = 1016;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteDescrizione";
   column.title = "IT_ClienteDescrizione";
-  column.visible = true;
   column.type = "description";
   column.index = 1017;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteIntestazione";
   column.title = "IT_ClienteIntestazione";
-  column.visible = true;
   column.type = "description";
   column.index = 1018;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteTipologia";
   column.title = "IT_ClienteTipologia";
-  column.visible = true;
   column.type = "description";
   column.index = 1019;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClientePartitaIva";
   column.title = "IT_ClientePartitaIva";
-  column.visible = true;
   column.type = "description";
   column.index = 1020;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteCodiceFiscale";
   column.title = "IT_ClienteCodiceFiscale";
-  column.visible = true;
   column.type = "description";
   column.index = 1021;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrFattureNormali";
   column.title = "IT_CorrFattureNormali";
-  column.visible = true;
   column.index = 1022;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrFattureFiscali";
   column.title = "IT_CorrFattureFiscali";
-  column.visible = true;
   column.index = 1023;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrFattureScontrini";
   column.title = "IT_CorrFattureScontrini";
-  column.visible = true;
   column.index = 1024;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrFattureDifferite";
   column.title = "IT_CorrFattureDifferite";
-  column.visible = true;
   column.index = 1025;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrispettiviNormali";
   column.title = "IT_CorrispettiviNormali";
-  column.visible = true;
   column.index = 1026;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrispettiviScontrini";
   column.title = "IT_CorrispettiviScontrini";
-  column.visible = true;
   column.index = 1027;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrRicevuteFiscali";
   column.title = "IT_CorrRicevuteFiscali";
-  column.visible = true;
   column.index = 1028;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrTotaleGiornaliero";
   column.title = "IT_CorrTotaleGiornaliero";
-  column.visible = true;
   column.index = 1029;
   param.columns[j++] = column;
   return param;

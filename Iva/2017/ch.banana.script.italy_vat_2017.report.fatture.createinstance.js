@@ -160,9 +160,13 @@ function createInstance_Blocco2(accountObj, param)
   var xbrlCessionarioCommittente = '';
   if (accountObj) {
     //2.2.1   <IdentificativiFiscali>
-    var xbrlIdentificativiFiscali = xml_createElementWithValidation("IdPaese", getCountryCode(accountObj),0,'2',msgContext);
-    xbrlIdentificativiFiscali += xml_createElementWithValidation("IdCodice", accountObj["VatNumber"],0,'1...28',msgContext);
-    xbrlIdentificativiFiscali = xml_createElementWithValidation("IdFiscaleIVA",xbrlIdentificativiFiscali,0);
+    var xbrlIdentificativiFiscali = '';
+    //IDFiscaleIVA viene scritto solamente se c'è la partita iva
+    if (accountObj["VatNumber"].length>0) {
+      xbrlIdentificativiFiscali = xml_createElementWithValidation("IdPaese", getCountryCode(accountObj),0,'2',msgContext);
+      xbrlIdentificativiFiscali += xml_createElementWithValidation("IdCodice", accountObj["VatNumber"],0,'1...28',msgContext);
+      xbrlIdentificativiFiscali = xml_createElementWithValidation("IdFiscaleIVA",xbrlIdentificativiFiscali,0);
+    }
     xbrlIdentificativiFiscali += xml_createElementWithValidation("CodiceFiscale", accountObj["FiscalNumber"],0,'11...16',msgContext);
     xbrlCessionarioCommittente =  xml_createElementWithValidation("IdentificativiFiscali",xbrlIdentificativiFiscali,0);
 
