@@ -1,0 +1,5 @@
+Account	Description	BClass	Gr	VatNumber	FiscalNumber	NamePrefix	FirstName	FamilyName	OrganisationName	Street	AddressExtra	PostalCode	Locality	Region	Country	CountryCode	Language	PhoneMain	PhoneMobile	Fax	EmailWork	Website	DateOfBirth	PaymentTermInDays	CreditLimit	BankName	BankIban	BankClearing
+6000	cliente A	1	CL																									
+6001	cliente B	1	CL																									
+6002	cliente C	1	CL																									
+
