@@ -26,6 +26,10 @@ var ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA = "ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA";
 var ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE = "ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE";
 var ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI = "ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI";
 var ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE = "ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE";
+var ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO = "ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO";
+var ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA = "ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA";
+var ID_ERR_GRUPPO_CLIENTI_MANCANTE = "ID_ERR_GRUPPO_CLIENTI_MANCANTE";
+var ID_ERR_GRUPPO_FORNITORI_MANCANTE = "ID_ERR_GRUPPO_FORNITORI_MANCANTE";
 
 /**
 * return the text error message according to error id
@@ -57,9 +61,17 @@ function getErrorMessage(errorId) {
         case ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE:
             return "Sono stati registrati degli interessi (L-INT) con tipo di versamento mensile";
         case ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI:
-            return "La registrazione degli interessi %1% EUR %2 manca o non è corretta."
+            return "La registrazione degli interessi %1% EUR %2 manca o non è corretta.";
         case ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE:
-            return "Il codice fiscale è obbligatorio in assenza della partita iva. %1"
+            return "Il codice fiscale è obbligatorio in assenza della partita iva. %1";
+        case ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO:
+            return "TipoDocumento %1 non ammesso con IdPaese %2";
+        case ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA:
+            return "Le registrazioni per la ventilazione dei corrispettivi mancano o non sono corrette. Calcolato (C-VEN): %1, registrato (C-REG): %2";
+        case ID_ERR_GRUPPO_CLIENTI_MANCANTE:
+            return "Gruppo Clienti non definito. Impostare il gruppo con il comando Conta2 - Clienti - Impostazioni";
+        case ID_ERR_GRUPPO_FORNITORI_MANCANTE:
+            return "Gruppo Fornitori non definito. Impostare il gruppo con il comando Conta2 - Fornitori - Impostazioni";
     }
     return "";
 }

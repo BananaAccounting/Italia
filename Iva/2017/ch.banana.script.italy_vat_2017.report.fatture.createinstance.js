@@ -160,14 +160,19 @@ function createInstance_Blocco2(accountObj, param)
   var xbrlCessionarioCommittente = '';
   if (accountObj) {
     //2.2.1   <IdentificativiFiscali>
-    var xbrlIdentificativiFiscali = xml_createElementWithValidation("IdPaese", getCountryCode(accountObj),0,'2',msgContext);
-    xbrlIdentificativiFiscali += xml_createElementWithValidation("IdCodice", accountObj["VatNumber"],0,'1...28',msgContext);
-    xbrlIdentificativiFiscali = xml_createElementWithValidation("IdFiscaleIVA",xbrlIdentificativiFiscali,0);
+    var xbrlIdentificativiFiscali = '';
+    //IDFiscaleIVA viene scritto solamente se c'è la partita iva
+    if (accountObj["VatNumber"].length>0) {
+      xbrlIdentificativiFiscali = xml_createElementWithValidation("IdPaese", getCountryCode(accountObj),0,'2',msgContext);
+      xbrlIdentificativiFiscali += xml_createElementWithValidation("IdCodice", accountObj["VatNumber"],0,'1...28',msgContext);
+      xbrlIdentificativiFiscali = xml_createElementWithValidation("IdFiscaleIVA",xbrlIdentificativiFiscali,0);
+    }
     xbrlIdentificativiFiscali += xml_createElementWithValidation("CodiceFiscale", accountObj["FiscalNumber"],0,'11...16',msgContext);
     xbrlCessionarioCommittente =  xml_createElementWithValidation("IdentificativiFiscali",xbrlIdentificativiFiscali,0);
 
     //Se non è presente la partita IVA (facoltativa) il codice fiscale è obbligatorio
-    if (accountObj["VatNumber"].length<=0 && accountObj["FiscalNumber"].length<=0) {
+    var countryCode = getCountryCode(accountObj);
+    if (accountObj["VatNumber"].length<=0 && accountObj["FiscalNumber"].length<=0 && countryCode == "IT") {
       var msg = getErrorMessage(ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE);
       msg = msg.replace("%1", msgContext );
       Banana.document.addMessage( msg, ID_ERR_VERSIONE);
@@ -192,8 +197,6 @@ function createInstance_Blocco2(accountObj, param)
         address += ' ';
       address += accountObj["AddressExtra"];
     }
-
-    var countryCode = getCountryCode(accountObj);
 
     var xbrSede = xml_createElementWithValidation("Indirizzo", address,1,'1...60',msgContext);
     if (countryCode == "IT" || (accountObj["PostalCode"] && accountObj["PostalCode"].length==5))
@@ -221,8 +224,14 @@ function createInstance_Blocco2(accountObj, param)
           xbrlDatiGenerali += xml_createElementWithValidation("DataRegistrazione", accountObj.rows[i]["JDate"],1,'10',msgContext);
         var xbrlContent = xml_createElementWithValidation("DatiGenerali", xbrlDatiGenerali,1);
         //2.2.3.1  <DatiRiepilogo>
-        var xbrlDatiRiepilogo = xml_createElementWithValidation("ImponibileImporto", accountObj.rows[i]["IT_Imponibile"],1,'4...15',msgContext);
-        var xbrlContent4 = xml_createElementWithValidation("Imposta", accountObj.rows[i]["IT_Imposta"],0,'4...15',msgContext);
+        var itImponibile = accountObj.rows[i]["IT_Imponibile"];
+        if (!Banana.SDecimal.isZero(itImponibile))
+          itImponibile = Banana.SDecimal.abs(itImponibile);
+        var itImportoIva = accountObj.rows[i]["IT_ImportoIva"];
+        if (!Banana.SDecimal.isZero(itImportoIva))
+          itImportoIva = Banana.SDecimal.abs(itImportoIva);
+        var xbrlDatiRiepilogo = xml_createElementWithValidation("ImponibileImporto", itImponibile,1,'4...15',msgContext);
+        var xbrlContent4 = xml_createElementWithValidation("Imposta", itImportoIva,0,'4...15',msgContext);
         xbrlContent4 += xml_createElementWithValidation("Aliquota", accountObj.rows[i]["IT_Aliquota"],0,'4...6',msgContext);
         xbrlDatiRiepilogo += xml_createElementWithValidation("DatiIVA",xbrlContent4,1);
         if (accountObj.rows[i]["IT_Natura"].length)

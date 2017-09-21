@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>440</width>
+    <width>486</width>
     <height>518</height>
    </rect>
   </property>
@@ -1082,24 +1082,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <layout class="QGridLayout" name="gridLayout_5">
-            <item row="0" column="0">
-             <widget class="QLabel" name="fatturenormaliLabel">
-              <property name="text">
-               <string notr="true">Fatture normali</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QComboBox" name="fatturenormaliComboBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
+           <layout class="QGridLayout" name="gridLayout_3">
             <item row="1" column="0">
              <widget class="QLabel" name="fatturefiscaliLabel">
               <property name="text">
@@ -1107,8 +1090,32 @@
               </property>
              </widget>
             </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="fatturenormaliLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="1">
-             <widget class="QComboBox" name="fatturefiscaliComboBox"/>
+             <widget class="QLineEdit" name="fatturefiscaliLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="fatturenormaliLabel">
+              <property name="text">
+               <string notr="true">Fatture normali</string>
+              </property>
+             </widget>
             </item>
             <item row="2" column="0">
              <widget class="QLabel" name="fatturescontriniLabel">
@@ -1118,7 +1125,14 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QComboBox" name="fatturescontriniComboBox"/>
+             <widget class="QLineEdit" name="fatturescontriniLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
             </item>
             <item row="3" column="0">
              <widget class="QLabel" name="fatturedifferiteLabel">
@@ -1128,7 +1142,14 @@
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="QComboBox" name="fatturedifferiteComboBox"/>
+             <widget class="QLineEdit" name="fatturedifferiteLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
             </item>
             <item row="4" column="0">
              <widget class="QLabel" name="corrispettivinormaliLabel">
@@ -1137,8 +1158,35 @@
               </property>
              </widget>
             </item>
+            <item row="5" column="1">
+             <widget class="QLineEdit" name="corrispettiviscontriniLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
             <item row="4" column="1">
-             <widget class="QComboBox" name="corrispettivinormaliComboBox"/>
+             <widget class="QLineEdit" name="corrispettivinormaliLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="QLineEdit" name="ricevutefiscaliLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
             </item>
             <item row="5" column="0">
              <widget class="QLabel" name="corrispettiviscontriniLabel">
@@ -1147,9 +1195,6 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="1">
-             <widget class="QComboBox" name="corrispettiviscontriniComboBox"/>
-            </item>
             <item row="6" column="0">
              <widget class="QLabel" name="ricevutefiscaliLabel">
               <property name="text">
@@ -1157,8 +1202,18 @@
               </property>
              </widget>
             </item>
-            <item row="6" column="1">
-             <widget class="QComboBox" name="ricevutefiscaliComboBox"/>
+            <item row="0" column="2">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </item>
@@ -1225,13 +1280,13 @@
   <tabstop>tipoversamentoComboBox</tabstop>
   <tabstop>ivaprorataDoubleSpinBox</tabstop>
   <tabstop>percinteressiDoubleSpinBox</tabstop>
-  <tabstop>fatturenormaliComboBox</tabstop>
-  <tabstop>fatturefiscaliComboBox</tabstop>
-  <tabstop>fatturescontriniComboBox</tabstop>
-  <tabstop>fatturedifferiteComboBox</tabstop>
-  <tabstop>corrispettivinormaliComboBox</tabstop>
-  <tabstop>corrispettiviscontriniComboBox</tabstop>
-  <tabstop>ricevutefiscaliComboBox</tabstop>
+  <tabstop>fatturenormaliLineEdit</tabstop>
+  <tabstop>fatturefiscaliLineEdit</tabstop>
+  <tabstop>fatturescontriniLineEdit</tabstop>
+  <tabstop>fatturedifferiteLineEdit</tabstop>
+  <tabstop>corrispettivinormaliLineEdit</tabstop>
+  <tabstop>corrispettiviscontriniLineEdit</tabstop>
+  <tabstop>ricevutefiscaliLineEdit</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -1242,8 +1297,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>308</x>
-     <y>538</y>
+     <x>317</x>
+     <y>508</y>
     </hint>
     <hint type="destinationlabel">
      <x>204</x>

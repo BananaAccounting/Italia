@@ -59,7 +59,13 @@ function createInstance_Comunicazione(param)
   var codiceFiscale = param.datiContribuente.codiceFiscale;
   var partitaIva = param.datiContribuente.partitaIva;
   var xbrlCodiceFiscale = xml_createElementWithValidation("iv:CodiceFiscale", codiceFiscale,1,'11...16',msgContext);
-  var xbrlAnnoImposta = xml_createElementWithValidation("iv:AnnoImposta", param.accountingYear,1,'4',msgContext);
+  
+  var accountingYear = param.openingYear;
+  if (accountingYear != param.closureYear) {
+    //prende l'anno dal periodo selezionato
+  }
+  
+  var xbrlAnnoImposta = xml_createElementWithValidation("iv:AnnoImposta", accountingYear,1,'4',msgContext);
   var xbrlPartitaIva = xml_createElementWithValidation("iv:PartitaIVA", partitaIva,1,'11',msgContext);
 
   var xbrlUltimoMese = '';

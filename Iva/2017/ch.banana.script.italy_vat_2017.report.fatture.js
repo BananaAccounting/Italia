@@ -14,7 +14,7 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italy_vat_2017.report.fatture.js
-// @description = IVA Italia 2017: Comunicazione dati fatture (spesometro)...
+// @description = IVA Italia 2017 / Comunicazione dati fatture (spesometro)...
 // @doctype = *;110
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.report.fatture.createinstance.js
@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-14
+// @pubdate = 2017-09-18
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -43,22 +43,28 @@ function settingsDialog() {
   
   var accountingData = {};
   accountingData = readAccountingData(accountingData);
-  if (accountingData.accountingYear.length<=0) {
-    return false;
-  }
+  if (param.annoSelezionato.length<=0)
+    param.annoSelezionato = accountingData.openingYear;
   
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.fatture.dialog.ui");
   //Groupbox periodo
   var index = 0;
-  if (param.periodoSelezionato == 's')
-    index = parseInt(param.periodoValoreSemestre);
+  if (param.periodoSelezionato == 'm')
+    index = parseInt(param.periodoValoreMese);
   else if (param.periodoSelezionato == 'q')
-    index = parseInt(param.periodoValoreTrimestre) + 3;
-  else if (param.periodoSelezionato == 'm')
-    index = parseInt(param.periodoValoreMese) + 8;
-
-  dialog.periodoGroupBox.title += ' ' + accountingData.accountingYear;
+    index = parseInt(param.periodoValoreTrimestre) + 13;
+  else if (param.periodoSelezionato == 's')
+    index = parseInt(param.periodoValoreSemestre) + 18;
+  else if (param.periodoSelezionato == 'y')
+    index = 21;
   dialog.periodoGroupBox.periodoComboBox.currentIndex = index;
+  //Groupbox anno per il momento impostati fissi perché non è possibile caricare gli anni sul combobox
+  var index = 0;
+  if (param.annoSelezionato == '2017')
+    index = 1;
+  else if (param.annoSelezionato == '2018')
+    index = 2;
+  dialog.periodoGroupBox.annoComboBox.currentIndex = index;
 
   var progressivo = parseInt(param.progressivoInvio, 10);
   if (!progressivo)
@@ -89,8 +95,8 @@ function settingsDialog() {
   dialog.showHelp = function () {
     Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
   }
-  dialog.buttonBox.accepted.connect(dialog, "checkdata");
-  dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
+  dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
+  dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
   
   Banana.application.progressBar.pause();
   dialog.enableButtons();
@@ -103,20 +109,31 @@ function settingsDialog() {
   //Salvataggio dati
   //Groupbox periodo
   var index = parseInt(dialog.periodoGroupBox.periodoComboBox.currentIndex.toString());
-  if (index < 0)
+  if (index < 0 || index == 12 || index == 17 || index == 20)
     index = 0;
-  if (index <=1) {
-    param.periodoSelezionato = 's';
-    param.periodoValoreSemestre = index.toString();
-  }
-  else if (index > 2 && index < 7) {
-    param.periodoSelezionato = 'q';
-    param.periodoValoreTrimestre = (index-3).toString();
-  }
-  else if (index > 7) {
+  if (index < 12) {
     param.periodoSelezionato = 'm';
-    param.periodoValoreMese = (index-8).toString();
+    param.periodoValoreMese = index.toString();
   }
+  else if (index > 12 && index < 17) {
+    param.periodoSelezionato = 'q';
+    param.periodoValoreTrimestre = (index-13).toString();
+  }
+  else if (index > 17 && index < 20) {
+    param.periodoSelezionato = 's';
+    param.periodoValoreSemestre = (index-18).toString();
+  }
+  else {
+    param.periodoSelezionato = 'y';
+  }
+  //Groupbox anno
+  var index = parseInt(dialog.periodoGroupBox.annoComboBox.currentIndex.toString());
+  if (index <=0)
+    param.annoSelezionato = '2016';
+  else if (index ==1)
+    param.annoSelezionato = '2017';
+  else if (index ==2)
+    param.annoSelezionato = '2018';
 
   progressivo = dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text;
   progressivo = parseInt(progressivo, 10);
@@ -142,11 +159,21 @@ function settingsDialog() {
   return true;
 }
 
-function addHeader(report, param)
+function addPageHeader(report, stylesheet, param)
 {
   // Page header
   var pageHeader = report.getHeader();
   
+  //Tabella
+  var table = pageHeader.addTable("header_table");
+  table.addColumn("header_col_left");
+  table.addColumn("header_col_center");
+  table.addColumn("header_col_right");
+  
+  //cell_left
+  var row = table.addRow();
+  var cell_left = row.addCell("", "header_cell_left");
+
   var line1 = param.datiContribuente.societa;
   if (line1.length)
     line1 += " ";
@@ -155,33 +182,56 @@ function addHeader(report, param)
   if (param.datiContribuente.nome.length)
     line1 += param.datiContribuente.nome;
   if (line1.length)
-    pageHeader.addParagraph(line1);
+    cell_left.addParagraph(line1);
   
   var line2 = '';
-  if (param.datiContribuente.cap.length)
-    line2 = param.datiContribuente.cap + " ";
-  if (param.datiContribuente.comune.length)
-    line2 += param.datiContribuente.comune + " ";
-  if (param.datiContribuente.provincia.length)
-    line2 += "(" +  param.datiContribuente.provincia + ")";
+  if (param.datiContribuente.indirizzo.length)
+    line2 = param.datiContribuente.indirizzo + " ";
+  if (param.datiContribuente.ncivico.length)
+    line2 += " " + param.datiContribuente.ncivico;
   if (line2.length)
-    pageHeader.addParagraph(line2);
-  
+    cell_left.addParagraph(line2);
+
   var line3 = '';
-  if (param.datiContribuente.partitaIva.length)
-    line3 = "Partita IVA: " + param.datiContribuente.partitaIva;
+  if (param.datiContribuente.cap.length)
+    line3 = param.datiContribuente.cap + " ";
+  if (param.datiContribuente.comune.length)
+    line3 += param.datiContribuente.comune + " ";
+  if (param.datiContribuente.provincia.length)
+    line3 += "(" +  param.datiContribuente.provincia + ")";
   if (line3.length)
-    pageHeader.addParagraph(line3, "vatNumber");
-}
+    cell_left.addParagraph(line3);
+  
+  var line4 = '';
+  if (param.datiContribuente.partitaIva.length)
+    line4 = "P.IVA: " + param.datiContribuente.partitaIva;
+  if (line4.length)
+    cell_left.addParagraph(line4, "vatNumber");
+  
+  //cell_center
+  var cell_center = row.addCell("", "header_cell_center");
+  var periodo = Banana.Converter.toLocaleDateFormat(param.data.startDate);
+  periodo +=" - " + Banana.Converter.toLocaleDateFormat(param.data.endDate);
+  periodo += " blocco " + param.blocco;
+  cell_center.addParagraph("Comunicazione dati fatture", "title center");
+  cell_center.addParagraph(periodo, "period center");
 
-function addFooter(report, param)
-{
-  //Page footer
-  var reportFooter = report.getFooter();
-  reportFooter.addClass("center");
-  reportFooter.addParagraph("N1 escluse ex art. 15, N2 non soggette, N3 non imponibili, N4 esenti, N5 regime del margine/IVA non esposta in fattura, N6 inversione contabile (reverse charge), N7 IVA assolta in altro stato UE", "notes");
-  reportFooter.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()) + " Pagina ").addFieldPageNr();
-
+  //cell_right
+  var cell_right = row.addCell("", "header_cell_right");
+  cell_right.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()), "right");
+  cell_right.addParagraph(" Pagina ", "right").addFieldPageNr();
+ 
+  //add style
+  stylesheet.addStyle(".header_table", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".header_col_left", "width:33%");
+  stylesheet.addStyle(".header_col_center", "flexible-width:always");
+  stylesheet.addStyle(".header_col_right", "width:33%");
+  stylesheet.addStyle(".header_cell_left", "font-size:8px");
+  stylesheet.addStyle(".header_cell_center", "font-size:8px");
+  stylesheet.addStyle(".header_cell_right", "font-size:8px");
+  stylesheet.addStyle(".center", "text-align: center;");
+  stylesheet.addStyle(".period", "padding-bottom: 1em;");
+  stylesheet.addStyle(".right", "text-align: right;");
 }
 
 function exec(inData) {
@@ -237,11 +287,11 @@ function exec(inData) {
 
   if (param.outputScript==0 && output != "@Cancel") {
     var report = Banana.Report.newReport("Dati delle fatture emesse e ricevute");
-    var stylesheet = Banana.Report.newStyleSheet();
+    var stylesheet = Banana.Report.newStyleSheet(); 
+    addPageHeader(report, stylesheet, param);
     setStyle(report, stylesheet);
-    addHeader(report, param);
-    addFooter(report, param);
     printVatReport(report, stylesheet, param);
+    printVatCodesTotal(report, stylesheet, param);
     if (debug) {
       report.addPageBreak();
       _debug_printJournal(param.data, report, stylesheet);
@@ -259,30 +309,6 @@ function exec(inData) {
   return output;
 }
 
-function getCountryCode(jsonObject) {
-  var countryCode = 'it';
-  if (!jsonObject)
-    return countryCode.toUpperCase();
-  if (jsonObject["CountryCode"] && jsonObject["CountryCode"].length>0)
-    countryCode = jsonObject["CountryCode"];
-  else if (jsonObject["Country"] && jsonObject["Country"].length>0)
-    countryCode = jsonObject["Country"];
-  countryCode = countryCode.toLowerCase();
-  if (countryCode == 'italy' || countryCode == 'italia') {
-    countryCode = 'it';
-  }
-  if (countryCode == 'germany' || countryCode == 'germania' || countryCode == 'deutschland') {
-    countryCode = 'de';
-  }
-  if (countryCode == 'france' || countryCode == 'francia') {
-    countryCode = 'fr';
-  }
-  if (countryCode == 'switzerland' || countryCode == 'schweiz'|| countryCode == 'suisse'|| countryCode == 'svizzera') {
-    countryCode = 'ch';
-  }
-  return countryCode.toUpperCase();
-}
-
 function initParam()
 {
   var param = {};
@@ -291,6 +317,7 @@ function initParam()
   param.blocco = 'DTE';
   param.progressivoInvio = '';
 
+  param.annoSelezionato = '';
   param.periodoSelezionato = 'm';
   param.periodoValoreMese = '';
   param.periodoValoreTrimestre = '';
@@ -325,6 +352,7 @@ function init_schemarefs()
 };
 
 function loadJournalData(param) {
+
   //per il momento c'è un unico periodo non controlla il tipo di versamento mensile o trimestrale
   param.data = {};  
   param.datiContribuente.liqTipoVersamento = -1;
@@ -335,19 +363,42 @@ function loadJournalData(param) {
     param.data = loadJournal(param.data);
   }
 
-  //Per la comunicazione DTE (Dati fatture emesse tiene solamente le righe del registro Vendite e Corrispettivi
-  //Per la comunicazine DTR (Dati fatture ricevute tiene solamente le righe del registro Acquisti
+  //Per la comunicazione DTE (Dati fatture emesse tiene solamente le righe del registro Vendite e
+  //Fatture corrispettivi, scontrini esclusi)
+  //Per la comunicazine DTR (Dati fatture ricevute tiene solamente le righe del registro Acquisti)
   //In questo modo vengono escluse le autofatture
   
+  var corrispettiviNormali = '';
+  var corrispettiviScontrini = '';
+  var ricevuteFiscali = '';
+  if (param.datiContribuente && param.datiContribuente.contoCorrispettiviNormali)
+    corrispettiviNormali = param.datiContribuente.contoCorrispettiviNormali;
+  if (param.datiContribuente && param.datiContribuente.contoCorrispettiviScontrini)
+    corrispettiviScontrini = param.datiContribuente.contoCorrispettiviScontrini;
+  if (param.datiContribuente && param.datiContribuente.contoRicevuteFiscali)
+    ricevuteFiscali = param.datiContribuente.contoRicevuteFiscali;
+
   if (param.blocco == 'DTE') {
+    //avvisa se il gruppo clienti non è impostato
+    if (param.fileInfo["CustomersGroup"].length<=0) {
+      var msg = getErrorMessage(ID_ERR_GRUPPO_CLIENTI_MANCANTE);
+      Banana.document.addMessage( msg, ID_ERR_GRUPPO_CLIENTI_MANCANTE);
+    }
     var checkedCustomers = {};
     for (var i in param.data.customers) {
       var checkedRows = [];
       var accountObj = param.data.customers[i];
-      for (var j in accountObj.rows) {
+      //for (var j in accountObj.rows) {
+      for (var j=0; j<accountObj.rows.length;j++) {
         if (accountObj.rows[j]["IT_Registro"]=="Acquisti")
           continue;
         else if (accountObj.rows[j]["VatExtraInfo"]=="ESCL")
+          continue;
+        else if (corrispettiviNormali.length>0 && accountObj.rows[j]["VatTwinAccount"]==corrispettiviNormali)
+          continue;
+        else if (corrispettiviScontrini.length>0 && accountObj.rows[j]["VatTwinAccount"]==corrispettiviScontrini)
+          continue;
+        else if (ricevuteFiscali.length>0 && accountObj.rows[j]["VatTwinAccount"]==ricevuteFiscali)
           continue;
         checkedRows.push(accountObj.rows[j]);
       }
@@ -359,6 +410,11 @@ function loadJournalData(param) {
     param.data.customers = checkedCustomers;
   }
   else if (param.blocco == 'DTR') {
+    //avvisa se il gruppo fornitori non è impostato
+    if (param.fileInfo["SuppliersGroup"].length<=0) {
+      var msg = getErrorMessage(ID_ERR_GRUPPO_FORNITORI_MANCANTE);
+      Banana.document.addMessage( msg, ID_ERR_GRUPPO_FORNITORI_MANCANTE);
+    }
     var checkedSuppliers = {};
     for (var i in param.data.suppliers) {
       var checkedRows = [];
@@ -381,22 +437,131 @@ function loadJournalData(param) {
   return param;
 }
 
+/*
+ * stampa tabella di controllo, riassunto per codici iva 
+*/
+function printVatCodesTotal(report, stylesheet, param) {
+  //Data
+  if (param.data.customers.length<=0 && param.data.suppliers.length<=0)
+    return;
+
+  var totaliCodice = [];
+  if (param.blocco == 'DTE') {
+    totaliCodice = printVatCodesTotal_rows(param.data.customers);
+  }
+  else if (param.blocco == 'DTR'){
+    totaliCodice = printVatCodesTotal_rows(param.data.suppliers);
+  }
+ 
+  //Column names
+  var tot1=0;
+  var tot2=0;
+  var tot3=0;
+  var table = report.addTable("vatcodes_table");
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell("TOTALI DI PERIODO PER CODICE (" + getPeriodText(param.data) + ")", "title", 7); 
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell("Cod.IVA", "header");
+  headerRow.addCell("Gr.IVA", "header");
+  headerRow.addCell("Aliquota", "right header");
+  headerRow.addCell("Descrizione", "header expand");
+  headerRow.addCell("Imponibile", "right header");
+  headerRow.addCell("Imposta", "right header");
+  headerRow.addCell("Imposta indetraibile", "right header");
+
+  var sorted_keys = Object.keys(totaliCodice).sort();
+  for (var i=0; i<sorted_keys.length;i++) {
+    var vatCode = sorted_keys[i];
+    row = table.addRow();
+    row.addCell(vatCode, "");
+    row.addCell(totaliCodice[vatCode].gr, "");
+    row.addCell(totaliCodice[vatCode].vatRate, "right");
+    row.addCell(totaliCodice[vatCode].vatCodeDes);
+    row.addCell(Banana.Converter.toLocaleNumberFormat(totaliCodice[vatCode].vatTaxable), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(totaliCodice[vatCode].vatAmount), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(totaliCodice[vatCode].vatNonDed), "right");
+    tot1 = Banana.SDecimal.add(totaliCodice[vatCode].vatTaxable, tot1);
+    tot2 = Banana.SDecimal.add(totaliCodice[vatCode].vatAmount, tot2);
+    tot3 = Banana.SDecimal.add(totaliCodice[vatCode].vatNonDed, tot3);
+  }
+
+  //Totale
+  row = table.addRow();
+  row.addCell("", "", 3);
+  row.addCell("Totale", "total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot3), "right total");
+  
+  //Add style
+  stylesheet.addStyle(".vatcodes_table", "width:100%;margin-top:20px;");
+  stylesheet.addStyle(".vatcodes_table td", "border:0.5em solid black;padding:3px;");
+  stylesheet.addStyle(".vatcodes_table td.header", "font-weight:bold;background-color:#dddddd");
+  stylesheet.addStyle(".vatcodes_table td.title", "font-weight:bold;border:0px;background-color:#ffffff;");
+  stylesheet.addStyle(".vatcodes_table td.total", "font-weight:bold;");
+}
+
+function printVatCodesTotal_rows(customers) {
+  var totaliCodice = [];
+  for (var id in customers) {
+    for (var index in customers[id].rows) {
+      var vatCode = customers[id].rows[index].JVatCodeWithoutSign;
+      var vatRate = customers[id].rows[index].IT_Aliquota;
+      var vatAmount = customers[id].rows[index].IT_ImportoIva;
+      var vatPosted = customers[id].rows[index].IT_IvaContabilizzata;
+      var vatNonDed = customers[id].rows[index].VatNonDeductible;
+      var vatTaxable = customers[id].rows[index].IT_Imponibile;
+      var vatTaxableDed = customers[id].rows[index].IT_ImponibileDetraibile;
+      var vatTaxableNonDed = customers[id].rows[index].IT_ImponibileNonDetraibile;
+      var vatPercNonDed = customers[id].rows[index].VatPercentNonDeductible;
+      var vatGross = customers[id].rows[index].IT_Lordo;
+      var gr = customers[id].rows[index].IT_Gr_IVA;
+
+      if (vatCode && vatCode.length>0) {
+        if (totaliCodice[vatCode]) {
+          totaliCodice[vatCode].vatAmount = Banana.SDecimal.add(totaliCodice[vatCode].vatAmount, vatAmount);
+          totaliCodice[vatCode].vatPosted = Banana.SDecimal.add(totaliCodice[vatCode].vatPosted, vatPosted);
+          totaliCodice[vatCode].vatNonDed = Banana.SDecimal.add(totaliCodice[vatCode].vatNonDed, vatNonDed);
+          totaliCodice[vatCode].vatTaxable = Banana.SDecimal.add(totaliCodice[vatCode].vatTaxable, vatTaxable);
+          totaliCodice[vatCode].vatTaxableDed = Banana.SDecimal.add(totaliCodice[vatCode].vatTaxableDed, vatTaxableDed);
+          totaliCodice[vatCode].vatTaxableNonDed = Banana.SDecimal.add(totaliCodice[vatCode].vatTaxableNonDed, vatTaxableNonDed);
+          totaliCodice[vatCode].vatGross = Banana.SDecimal.add(totaliCodice[vatCode].vatGross, vatGross);
+        }
+        else {
+          totaliCodice[vatCode] = {};
+          totaliCodice[vatCode].vatAmount = vatAmount;
+          totaliCodice[vatCode].vatPosted = vatPosted;
+          totaliCodice[vatCode].vatNonDed = vatNonDed;
+          totaliCodice[vatCode].vatTaxable = vatTaxable;
+          totaliCodice[vatCode].vatTaxableDed = vatTaxableDed;
+          totaliCodice[vatCode].vatTaxableNonDed = vatTaxableNonDed;
+          totaliCodice[vatCode].vatPercNonDed = vatPercNonDed;
+          totaliCodice[vatCode].vatGross = vatGross;
+          totaliCodice[vatCode].vatRate = vatRate;
+          totaliCodice[vatCode].vatCodeDes = '';
+          totaliCodice[vatCode].gr = gr;
+          var tableVatCodes = Banana.document.table("VatCodes");
+          if (tableVatCodes) {
+            var vatCodeRow = tableVatCodes.findRowByValue("VatCode", vatCode);
+            if (vatCodeRow)
+              totaliCodice[vatCode].vatCodeDes = vatCodeRow.value("Description");
+          }
+        }
+      }
+    }
+  }
+
+  return totaliCodice;
+}
+
 function printVatReport(report, stylesheet, param) {
 
   if (param.data.customers.length<=0 && param.data.suppliers.length<=0)
     return;
 
   //Print table
-  //Title
-  var table = report.addTable("table1");
+  var table = report.addTable("vatreport_table");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Comunicazione dei dati delle fatture", "title", 15);
-  //Period
-  var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(param.data.startDate);
-  periodo +=" al " + Banana.Converter.toLocaleDateFormat(param.data.endDate);
-  periodo += " blocco " + param.blocco;
-  headerRow = table.getHeader().addRow();
-  headerRow.addCell(periodo, "period",  15);
 
   //Column names
   headerRow = table.getHeader().addRow();
@@ -416,10 +581,7 @@ function printVatReport(report, stylesheet, param) {
   headerRow.addCell("Ctrpart.", "center");
   headerRow.addCell("Cod.IVA", "center");
   headerRow.addCell("Gr.IVA", "center");
-  var cell = headerRow.addCell("", "center");
-  var paragraph = cell.addParagraph("Imponibile");
-  paragraph.addLineBreak();
-  paragraph.addText("Non imponib.");
+  headerRow.addCell("Imponibile", "center");
   headerRow.addCell("Imposta", "center");
   headerRow.addCell("Aliquota", "center");
   headerRow.addCell("Natura", "center");
@@ -433,6 +595,7 @@ function printVatReport(report, stylesheet, param) {
   else if (param.blocco == 'DTR'){
     printVatReport_rows(param.data.suppliers, table, param)
   }
+  
 }
 
 function printVatReport_rows(customers_suppliers, table, param) {
@@ -442,7 +605,31 @@ function printVatReport_rows(customers_suppliers, table, param) {
 	  rowType = "creditore";
     var row = table.addRow();
     row.addCell(rowType, "rowName");
-    row.addCell(xml_unescapeString(customers_suppliers[i]["Description"]),"rowName",4);
+    var cell = row.addCell("","rowName",4);
+    cell.addParagraph(xml_unescapeString(customers_suppliers[i]["Description"]));
+    var address = "";
+    var content = customers_suppliers[i]["Street"];
+    if (content && content.length>0)
+      address = xml_unescapeString(content) + " ";
+    content = customers_suppliers[i]["AddressExtra"];
+    if (content && content.length>0)
+      address += xml_unescapeString(content) + " ";
+    content = customers_suppliers[i]["POBox"];
+    if (content && content.length>0)
+      address += xml_unescapeString(content) + " ";
+    content = customers_suppliers[i]["PostalCode"];
+    if (content && content.length>0)
+      address += xml_unescapeString(content) + " ";
+    content = customers_suppliers[i]["Locality"];
+    if (content && content.length>0)
+      address += xml_unescapeString(content) + " ";
+    content = customers_suppliers[i]["Region"];
+    if (content && content.length>0)
+      address += xml_unescapeString(content) + " ";
+    content = customers_suppliers[i]["Country"];
+    if (content && content.length>0)
+      address += xml_unescapeString(content) + " ";
+    cell.addParagraph(address);
     row.addCell(getCountryCode(customers_suppliers[i]),"rowName",2);
     row.addCell(customers_suppliers[i]["VatNumber"],"rowName",2);
     row.addCell(customers_suppliers[i]["FiscalNumber"],"rowName",6);
@@ -453,13 +640,24 @@ function printVatReport_rows(customers_suppliers, table, param) {
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JInvoiceIssueDate"]), "row");
       row.addCell(jsonObj["IT_DocInvoice"], "row");
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JDate"]), "row");
-      row.addCell(xml_unescapeString(jsonObj["JDescription"]), "row");
+      var descrizione = xml_unescapeString(jsonObj["JDescription"]);
+      if (descrizione.startsWith("[IVA] ")>0)
+        descrizione = descrizione.substr(6, descrizione.length);
+      else if (descrizione.startsWith("[VAT/Sales tax] ")>0)
+        descrizione = descrizione.substr(16, descrizione.length);
+      row.addCell(descrizione, "row");
       row.addCell(jsonObj["JAccount"], "row amount");
       row.addCell(jsonObj["JContraAccount"], "row amount");
       row.addCell(jsonObj["JVatCodeWithoutSign"], "row amount");
       row.addCell(jsonObj["IT_Gr_IVA"], "row amount");
-      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["IT_Imponibile"],2,false), "row amount");
-      row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["IT_Imposta"],2,false), "row amount");
+      var value = jsonObj["IT_Imponibile"];
+      if (!Banana.SDecimal.isZero(value))
+        value = Banana.SDecimal.abs(value);
+      row.addCell(Banana.Converter.toLocaleNumberFormat(value,2,false), "row amount");
+      value = jsonObj["IT_ImportoIva"];
+      if (!Banana.SDecimal.isZero(value))
+        value = Banana.SDecimal.abs(value);
+      row.addCell(Banana.Converter.toLocaleNumberFormat(value,2,false), "row amount");
       row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["IT_Aliquota"],2,false), "row amount");
       row.addCell(jsonObj["IT_Natura"], "row amount");
       row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["IT_Detraibile"],2,false), "row amount");
@@ -495,17 +693,17 @@ function setStyle(report, stylesheet) {
   stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
   stylesheet.addStyle("thead", "font-weight: bold;background-color:#eeeeee;");
   stylesheet.addStyle("td", "padding:1px;vertical-align:top;");
-  stylesheet.addStyle("td.title", "background-color:#ffffff;font-size:10px;");
-  stylesheet.addStyle("td.period", "background-color:#ffffff;");
-  stylesheet.addStyle(".amount", "text-align: right;border:1px solid black; ");
+
+  stylesheet.addStyle(".amount", "text-align: right;border:0.5em solid black; ");
   stylesheet.addStyle(".center", "text-align: center;");
   stylesheet.addStyle(".notes", "padding: 2em;font-style:italic;");
-  stylesheet.addStyle(".period", "padding-bottom: 1em;");
   stylesheet.addStyle(".right", "text-align: right;");
-  stylesheet.addStyle(".row.amount", "border:1px solid black;");
-  stylesheet.addStyle(".rowName", "font-weight: bold;padding-top:5px;border-top:1px solid black;");
-  stylesheet.addStyle(".table1", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".row.amount", "border:0.5em solid black");
+  stylesheet.addStyle(".rowName", "font-weight: bold;padding-top:5px;border-top:0.5em solid black");
   stylesheet.addStyle(".warning", "color: red;font-size:8px;");
+
+  /*vatrepor_table*/
+  stylesheet.addStyle(".vatreport_table", "margin-top:1em;width:100%;");
 
 }
 
@@ -519,6 +717,8 @@ function verifyParam(param) {
   if(!param.progressivoInvio)
     param.progressivoInvio = '';
 
+  if (!param.annoSelezionato)
+    param.annoSelezionato = '';
   if (!param.periodoSelezionato)
     param.periodoSelezionato = 'm';
   if (!param.periodoValoreMese)

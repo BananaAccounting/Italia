@@ -16,7 +16,7 @@ Si tratta di capire se generiamo un documento XML
 
 ## Funzionalità non supportate o da chiarire
 * Registrazioni IVA che non appartengono ai clienti e fornitori (senza fattura) sono da includere nella trasmissione?
-* Controllare iva detraibile / deducibile
+* iva detraibile / deducibile: informazioni non obbligatorie, sarebbe necessario aggiungere due colonne nella tabella registrazioni perché la percentuale iva detraibile potrebbe non essere collegata con la colonna di Banana 'iva non deducibile'. Sono dei dati che l'utente deve potere inserire manualmente 
 * Controllare codici e operazioni IVA intracomunitari e reverse charge
  
 ## Parametri applicativo 

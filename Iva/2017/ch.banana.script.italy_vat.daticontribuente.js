@@ -14,13 +14,13 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italy_vat.daticontribuente.js
-// @description = IVA Italia: Dati contribuente...
+// @description = IVA Italia / Dati contribuente...
 // @doctype = *;110
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-11
+// @pubdate = 2017-08-23
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -33,9 +33,9 @@ function settingsDialog() {
   var param = initParam();
   var savedParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
   //compatibilità con una prima versione
-  if (savedParam.length <= 0) {
+  /*if (savedParam.length <= 0) {
     savedParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat_2017.daticontribuente.js");
-  }
+  }*/
   if (savedParam.length > 0) {
     param = JSON.parse(savedParam);
   }
@@ -43,9 +43,6 @@ function settingsDialog() {
   
   var accountingData = {};
   accountingData = readAccountingData(accountingData);
-  if (accountingData.accountingYear.length<=0) {
-    return false;
-  }
 
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat.daticontribuente.dialog.ui");
   
@@ -115,16 +112,28 @@ function settingsDialog() {
     else  
       ivaprorataDoubleSpinBox.value = 0;
   }
-  
   //Numeri conto corrispettivi
-  /*dialog.tabWidget.tab_2.groupBox_2.fatturenormaliComboBox.currentIndex = param.contoFattureNormali;
-  dialog.tabWidget.tab_2.groupBox_2.fatturefiscaliComboBox.currentIndex = param.contoFattureFiscali;
-  dialog.tabWidget.tab_2.groupBox_2.fatturescontriniComboBox.currentIndex = param.contoFattureScontrini;
-  dialog.tabWidget.tab_2.groupBox_2.fatturedifferiteComboBox.currentIndex = param.contoFattureDifferite;
-  dialog.tabWidget.tab_2.groupBox_2.corrispettivinormaliComboBox.currentIndex = param.contoCorrispettiviNormali;
-  dialog.tabWidget.tab_2.groupBox_2.corrispettiviscontriniComboBox.currentIndex = param.contoCorrispettiviScontrini;
-  dialog.tabWidget.tab_2.groupBox_2.ricevutefiscaliComboBox.currentIndex = param.contoRicevuteFiscali;*/
-
+  var fatturenormaliLineEdit = dialog.tabWidget.findChild('fatturenormaliLineEdit');
+  if (fatturenormaliLineEdit)
+    fatturenormaliLineEdit.text = param.contoFattureNormali;
+  var fatturefiscaliLineEdit = dialog.tabWidget.findChild('fatturefiscaliLineEdit');
+  if (fatturefiscaliLineEdit)
+    fatturefiscaliLineEdit.text = param.contoFattureFiscali;
+  var fatturescontriniLineEdit = dialog.tabWidget.findChild('fatturescontriniLineEdit');
+  if (fatturescontriniLineEdit)
+    fatturescontriniLineEdit.text = param.contoFattureScontrini;
+  var fatturedifferiteLineEdit = dialog.tabWidget.findChild('fatturedifferiteLineEdit');
+  if (fatturedifferiteLineEdit)
+    fatturedifferiteLineEdit.text = param.contoFattureDifferite;
+  var corrispettivinormaliLineEdit = dialog.tabWidget.findChild('corrispettivinormaliLineEdit');
+  if (corrispettivinormaliLineEdit)
+    corrispettivinormaliLineEdit.text = param.contoCorrispettiviNormali;
+  var corrispettiviscontriniLineEdit = dialog.tabWidget.findChild('corrispettiviscontriniLineEdit');
+  if (corrispettiviscontriniLineEdit)
+    corrispettiviscontriniLineEdit.text = param.contoCorrispettiviScontrini;
+  var ricevutefiscaliLineEdit = dialog.tabWidget.findChild('ricevutefiscaliLineEdit');
+  if (ricevutefiscaliLineEdit)
+    ricevutefiscaliLineEdit.text = param.contoRicevuteFiscali;
 
   //dialog functions
   dialog.checkdata = function () {
@@ -198,6 +207,21 @@ function settingsDialog() {
       param.liqPercInteressi = percinteressiDoubleSpinBox.value.toString();
   if (ivaprorataDoubleSpinBox)
       param.liqPercProrata = ivaprorataDoubleSpinBox.value.toString();
+  //Numeri conto corrispettivi
+  if (fatturenormaliLineEdit)
+    param.contoFattureNormali = fatturenormaliLineEdit.text;
+  if (fatturefiscaliLineEdit)
+    param.contoFattureFiscali = fatturefiscaliLineEdit.text;
+  if (fatturescontriniLineEdit)
+    param.contoFattureScontrini = fatturescontriniLineEdit.text;
+  if (fatturedifferiteLineEdit)
+    param.contoFattureDifferite = fatturedifferiteLineEdit.text;
+  if (corrispettivinormaliLineEdit)
+    param.contoCorrispettiviNormali = corrispettivinormaliLineEdit.text;
+  if (corrispettiviscontriniLineEdit)
+    param.contoCorrispettiviScontrini = corrispettiviscontriniLineEdit.text;
+  if (ricevutefiscaliLineEdit)
+    param.contoRicevuteFiscali = ricevutefiscaliLineEdit.text;
 
   var paramToString = JSON.stringify(param);
   Banana.document.setScriptSettings("ch.banana.script.italy_vat.daticontribuente.js", paramToString);
@@ -210,6 +234,63 @@ function exec() {
     return false;
 
   return settingsDialog();
+}
+
+/*
+ * Ritorna la colonna del giornale associata al conto corrispettivi
+ */
+function getColonnaCorrispettivi(accountId) {
+  if (!Banana.document || accountId.length<=0)
+    return '';
+  var savedParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
+  if (savedParam.length <= 0) 
+    return '';
+  var param = JSON.parse(savedParam);
+
+  if (param.contoFattureNormali && accountId == param.contoFattureNormali)
+    return "IT_CorrFattureNormali";
+  if (param.contoFattureFiscali && accountId == param.contoFattureFiscali)
+    return "IT_CorrFattureFiscali";
+  if (param.contoFattureScontrini && accountId == param.contoFattureScontrini)
+    return "IT_CorrFattureScontrini";
+  if (param.contoFattureDifferite && accountId == param.contoFattureDifferite)
+    return "IT_CorrFattureDifferite";
+  if (param.contoCorrispettiviNormali && accountId == param.contoCorrispettiviNormali)
+    return "IT_CorrispettiviNormali";
+  if (param.contoCorrispettiviScontrini && accountId == param.contoCorrispettiviScontrini)
+    return "IT_CorrispettiviScontrini";
+  if (param.contoRicevuteFiscali && accountId == param.contoRicevuteFiscali)
+    return "IT_CorrRicevuteFiscali";
+
+  return '';
+}
+/*
+ * Ritorna il conto che ha come descrizione accountDes
+ * Serve per proporre i conti corrispettivi predefiniti 
+ * 
+ */
+function getContoCorrispettivi(accountDes) {
+  if (!Banana.document || accountDes.length<=0)
+    return '';
+
+  var search = accountDes.toLowerCase();
+
+  var table = Banana.document.table('Accounts');
+  if (table) {
+    for (var i = 0; i < table.rowCount; i++) {
+      var tRow = table.row(i);
+      var accountId = tRow.value("Account");
+      if (accountId.length<=0)
+        continue;
+      var currentDes = tRow.value("Description").toLowerCase();
+      if (currentDes.length<=0)
+        continue;
+      currentDes = currentDes.replace("  ", " ");
+      if (currentDes.indexOf(search)>=0)
+        return accountId;
+    }
+  }
+  return '';
 }
 
 function initParam(param)
@@ -234,18 +315,20 @@ function initParam(param)
   param.telefono = '';
   param.fax = '';
   param.email = '';
+  //Tipo versamento liqTipoVersamento == 0 mensile ==1 trimestrale
   param.liqTipoVersamento = '';
   param.liqPercInteressi = '';
   param.liqPercProrata = '';
 
   //Conti corrispettivi
-  /*param.contoFattureNormali = '';
+  //Se tutti i corrispettivi sono vuoti propone i conti trovati nella tabella conti
+  param.contoFattureNormali = '';
   param.contoFattureFiscali = '';
   param.contoFattureScontrini = '';
   param.contoFattureDifferite = '';
   param.contoCorrispettiviNormali = '';
   param.contoCorrispettiviScontrini = '';
-  param.contoRicevuteFiscali = '';*/
+  param.contoRicevuteFiscali = '';
 
   return param;
 }
@@ -291,20 +374,20 @@ function verifyDatiContribuente(param) {
     param.liqPercInteressi = '';
   if (!param.liqPercProrata)
     param.liqPercProrata = '';
-  /*if (!param.contoFattureNormali)
-    param.contoFattureNormali = '';
-  if (!paramcontoFattureFiscali
-    param.contoFattureFiscali = '';
+  if (!param.contoFattureNormali)
+    param.contoFattureNormali = getContoCorrispettivi("fatture normali");
+  if (!param.contoFattureFiscali)
+    param.contoFattureFiscali = getContoCorrispettivi("fatture fiscali");
   if (!param.contoFattureScontrini)
-    param.contoFattureScontrini = '';
+    param.contoFattureScontrini = getContoCorrispettivi("fatture scontrini");
   if (!param.contoFattureDifferite)
-    param.contoFattureDifferite = '';
+    param.contoFattureDifferite = getContoCorrispettivi("fatture differite");
   if (!param.contoCorrispettiviNormali)
-    param.contoCorrispettiviNormali = '';
+    param.contoCorrispettiviNormali = getContoCorrispettivi("corrispettivi normali");
   if (!param.contoCorrispettiviScontrini)
-    param.contoCorrispettiviScontrini = '';
+    param.contoCorrispettiviScontrini = getContoCorrispettivi("corrispettivi scontrini");
   if (!param.contoRicevuteFiscali)
-    param.contoRicevuteFiscali = '';*/
+    param.contoRicevuteFiscali = getContoCorrispettivi("ricevute fiscali");
   
   return param;
 }

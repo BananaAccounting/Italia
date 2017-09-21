@@ -14,7 +14,7 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italy_vat_2017.report.liquidazione.js
-// @description = IVA Italia 2017: Comunicazione periodica IVA...
+// @description = IVA Italia 2017 / Comunicazione periodica IVA...
 // @doctype = *;110
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.createinstance.js
@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-11
+// @pubdate = 2017-09-18
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -41,25 +41,36 @@ function settingsDialog() {
   
   var accountingData = {};
   accountingData = readAccountingData(accountingData);
-  if (accountingData.accountingYear.length<=0) {
-    return false;
-  }
+  if (param.annoSelezionato.length<=0)
+    param.annoSelezionato = accountingData.openingYear;
 
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.liquidazione.dialog.ui");
   //Groupbox periodo
+  var index = 0;
   if (param.periodoSelezionato == 'm')
-    dialog.periodoGroupBox.meseRadioButton.checked = true;
+    index = parseInt(param.periodoValoreMese);
   else if (param.periodoSelezionato == 'q')
-    dialog.periodoGroupBox.trimestreRadioButton.checked = true;
-
-  //dialog.periodoGroupBox.title += " " + accountingData.accountingYear;
-  dialog.periodoGroupBox.meseComboBox.currentIndex = param.periodoValoreMese;
-  dialog.periodoGroupBox.trimestreComboBox.currentIndex = param.periodoValoreTrimestre;
+    index = parseInt(param.periodoValoreTrimestre) + 13;
+  else if (param.periodoSelezionato == 's')
+    index = parseInt(param.periodoValoreSemestre) + 18;
+  else if (param.periodoSelezionato == 'y')
+    index = 21;
+  dialog.periodoGroupBox.periodoComboBox.currentIndex = index;
+  //Groupbox anno per il momento impostati fissi perché non è possibile caricare gli anni sul combobox
+  var index = 0;
+  if (param.annoSelezionato == '2017')
+    index = 1;
+  else if (param.annoSelezionato == '2018')
+    index = 2;
+  dialog.periodoGroupBox.annoComboBox.currentIndex = index;
   
   //Groupbox comunicazione
   dialog.intestazioneGroupBox.cfLabel_2.text = accountingData.datiContribuente.codiceFiscale;
   dialog.intestazioneGroupBox.partitaIvaLabel_2.text = accountingData.datiContribuente.partitaIva;
-  dialog.intestazioneGroupBox.annoImpostaLabel_2.text = accountingData.accountingYear;
+  var accountingYear = accountingData.openingYear;
+  if (accountingYear != accountingData.closureYear)
+    accountingYear +=  "-" + accountingData.closureYear;
+  dialog.intestazioneGroupBox.annoImpostaLabel_2.text = accountingYear;
 
   var progressivo = parseInt(param.comunicazioneProgressivo, 10);
   if (!progressivo)
@@ -94,33 +105,16 @@ function settingsDialog() {
     dialog.accept();
   }
   dialog.enableButtons = function () {
-    if (accountingData.datiContribuente.liqTipoVersamento == 0) {
-        dialog.periodoGroupBox.meseRadioButton.enabled = true;
-        dialog.periodoGroupBox.meseComboBox.enabled = true;
-    }
-    else {
-        dialog.periodoGroupBox.meseRadioButton.enabled = false;
-        dialog.periodoGroupBox.meseComboBox.enabled = false;
-        dialog.periodoGroupBox.trimestreRadioButton.checked = true;
-    }
-    if (dialog.periodoGroupBox.meseRadioButton.checked) {
-        dialog.periodoGroupBox.meseComboBox.enabled = true;
-        dialog.periodoGroupBox.trimestreComboBox.enabled = false;
-    }
-    else if (dialog.periodoGroupBox.trimestreRadioButton.checked) {
-        dialog.periodoGroupBox.meseComboBox.enabled = false;
-        dialog.periodoGroupBox.trimestreComboBox.enabled = true;
-    }
   }
   dialog.showHelp = function () {
     Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
   }
   var index='';
-  dialog.buttonBox.accepted.connect(dialog, "checkdata");
-  dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
-  //dialog.liquidazioneGroupBox.tipoVersamentoComboBox['currentIndexChanged(QString)'].connect(dialog, "enableButtons");
-  dialog.periodoGroupBox.trimestreRadioButton.clicked.connect(dialog, "enableButtons");
-  dialog.periodoGroupBox.meseRadioButton.clicked.connect(dialog, "enableButtons");
+  dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
+  dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
+  //dialog.liquidazioneGroupBox.tipoVersamentoComboBox['currentIndexChanged(QString)'].connect(dialog, dialog.enableButtons);
+  //dialog.periodoGroupBox.trimestreRadioButton.clicked.connect(dialog, dialog.enableButtons);
+  //dialog.periodoGroupBox.meseRadioButton.clicked.connect(dialog, dialog.enableButtons);
   
   //Visualizzazione dialogo
   Banana.application.progressBar.pause();
@@ -132,12 +126,32 @@ function settingsDialog() {
 
   //Salvataggio dati
   //Groupbox periodo
-  param.periodoValoreTrimestre = dialog.periodoGroupBox.trimestreComboBox.currentIndex.toString();
-  param.periodoValoreMese = dialog.periodoGroupBox.meseComboBox.currentIndex.toString();
-  if (dialog.periodoGroupBox.meseRadioButton.checked)
+  var index = parseInt(dialog.periodoGroupBox.periodoComboBox.currentIndex.toString());
+  if (index < 0 || index == 12 || index == 17 || index == 20)
+    index = 0;
+  if (index < 12) {
     param.periodoSelezionato = 'm';
-  else if (dialog.periodoGroupBox.trimestreRadioButton.checked)
+    param.periodoValoreMese = index.toString();
+  }
+  else if (index > 12 && index < 17) {
     param.periodoSelezionato = 'q';
+    param.periodoValoreTrimestre = (index-13).toString();
+  }
+  else if (index > 17 && index < 20) {
+    param.periodoSelezionato = 's';
+    param.periodoValoreSemestre = (index-18).toString();
+  }
+  else {
+    param.periodoSelezionato = 'y';
+  }
+  //Groupbox anno
+  var index = parseInt(dialog.periodoGroupBox.annoComboBox.currentIndex.toString());
+  if (index <=0)
+    param.annoSelezionato = '2016';
+  else if (index ==1)
+    param.annoSelezionato = '2017';
+  else if (index ==2)
+    param.annoSelezionato = '2018';
   
   //Groupbox comunicazione
   progressivo = dialog.intestazioneGroupBox.progressivoInvioLineEdit.text;
@@ -170,11 +184,20 @@ function settingsDialog() {
   return true;
 }
 
-function addHeader(report, param)
+function addPageHeader(report, stylesheet, param)
 {
   // Page header
   var pageHeader = report.getHeader();
+
+  //Tabella
+  var table = pageHeader.addTable("header_table");
+  table.addColumn("header_col_left");
+  table.addColumn("header_col_right");
   
+  //cell_left
+  var row = table.addRow();
+  var cell_left = row.addCell("", "header_cell_left");
+
   var line1 = param.datiContribuente.societa;
   if (line1.length)
     line1 += " ";
@@ -183,31 +206,46 @@ function addHeader(report, param)
   if (param.datiContribuente.nome.length)
     line1 += param.datiContribuente.nome;
   if (line1.length)
-    pageHeader.addParagraph(line1);
+    cell_left.addParagraph(line1);
   
   var line2 = '';
-  if (param.datiContribuente.cap.length)
-    line2 = param.datiContribuente.cap + " ";
-  if (param.datiContribuente.comune.length)
-    line2 += param.datiContribuente.comune + " ";
-  if (param.datiContribuente.provincia.length)
-    line2 += "(" +  param.datiContribuente.provincia + ")";
+  if (param.datiContribuente.indirizzo.length)
+    line2 = param.datiContribuente.indirizzo + " ";
+  if (param.datiContribuente.ncivico.length)
+    line2 += " " + param.datiContribuente.ncivico;
   if (line2.length)
-    pageHeader.addParagraph(line2);
-  
-  var line3 = '';
-  if (param.datiContribuente.partitaIva.length)
-    line3 = "Partita IVA: " + param.datiContribuente.partitaIva;
-  if (line3.length)
-    pageHeader.addParagraph(line3, "vatNumber");
-}
+    cell_left.addParagraph(line2);
 
-function addFooter(report, param)
-{
-  //Page footer
-  var pageFooter = report.getFooter();
-  pageFooter.addClass("center");
-  pageFooter.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()) + " Pagina ").addFieldPageNr();
+  var line3 = '';
+  if (param.datiContribuente.cap.length)
+    line3 = param.datiContribuente.cap + " ";
+  if (param.datiContribuente.comune.length)
+    line3 += param.datiContribuente.comune + " ";
+  if (param.datiContribuente.provincia.length)
+    line3 += "(" +  param.datiContribuente.provincia + ")";
+  if (line3.length)
+    cell_left.addParagraph(line3);
+  
+  var line4 = '';
+  if (param.datiContribuente.partitaIva.length)
+    line4 = "P.IVA: " + param.datiContribuente.partitaIva;
+  if (line4.length)
+    cell_left.addParagraph(line4, "vatNumber");
+  
+  //cell_right
+  var cell_right = row.addCell("", "header_cell_right");
+  cell_right.addParagraph("Comunicazione periodica IVA", "right");
+  cell_right.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()), "right");
+  cell_right.addParagraph(" Pagina ", "right").addFieldPageNr();
+ 
+  //add style
+  stylesheet.addStyle(".header_table", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".header_col_left", "width:50%");
+  stylesheet.addStyle(".header_col_right", "width:49%");
+  stylesheet.addStyle(".header_cell_left", "font-size:8px");
+  stylesheet.addStyle(".header_cell_right", "font-size:8px");
+  stylesheet.addStyle(".period", "padding-bottom: 1em;");
+  stylesheet.addStyle(".right", "text-align: right;");
 }
 
 function calculateInterestAmount(param) {
@@ -262,9 +300,8 @@ function exec(inData) {
     //print preview
     var report = Banana.Report.newReport("Report title");
     var stylesheet = Banana.Report.newStyleSheet();
+    addPageHeader(report, stylesheet, param);
     setStyle(report, stylesheet);
-    addHeader(report, param);
-    addFooter(report, param);
 
     //Data
     for (var index=0; index<param.vatPeriods.length; index++) {
@@ -357,6 +394,7 @@ function initParam()
   param.comunicazioneFirmaIntermediario = true;
   param.comunicazioneUltimoMese = '';
 
+  param.annoSelezionato = '';
   param.periodoSelezionato = 'm';
   param.periodoValoreMese = '';
   param.periodoValoreTrimestre = '';
@@ -464,6 +502,12 @@ function loadVatCodes(param, _startDate, _endDate)
   vatAmounts["A"] = sumVatAmounts(vatAmounts, ["A-IM","A-NI","A-ES","A-NE","A-ED"]);
   
   //Calcola la liquidazione prorata sugli acquisti se presente
+  /* i soggetti che esercitano un’attività che dà luogo sia ad operazioni imponibili, per le quali è previsto il diritto alla detrazione dell’IVA sugli acquisti, 
+  * sia ad operazioni esenti, per le quali, invece, *  non è previsto il diritto alla detrazione dell’IVA sugli acquisti, devono determinare, ai sensi del 
+  * successivo art. 19-bis, il cosiddetto pro-rata generale di detraibilità. 
+  * Esso rappresenta una percentuale da applicare al totale dell’IVA sugli acquisti,
+  * che, determina l’ammontare di imposta detraibile
+  */
   if (!Banana.SDecimal.isZero(param.datiContribuente.liqPercProrata)) {
     var percProrata = Banana.SDecimal.round(param.datiContribuente.liqPercProrata, {'decimals':2});
     var amountProrata = Banana.SDecimal.abs(vatAmounts["A"].vatPosted) * percProrata /100;
@@ -735,13 +779,14 @@ function setStyle(report, stylesheet) {
   if (!stylesheet) {
     stylesheet = report.newStyleSheet();
   }
-  stylesheet.addStyle("phead", "font-size: 12px, font-weight: bold; margin-bottom: 1em");
+  stylesheet.addStyle("@page", "size:portrait;margin:2em;margin-left:4em;font-size:12px; ");
+  stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
   stylesheet.addStyle("thead", "font-weight: bold");
-  stylesheet.addStyle("td", "padding-right: 1em");
+  stylesheet.addStyle("td", "padding-right: 1em;vertical-align:top;");
+  
   stylesheet.addStyle(".amount", "text-align: right");
   stylesheet.addStyle(".center", "text-align: center");
   stylesheet.addStyle(".period", "font-size: 12px;font-weight: bold;padding-top: 2em;");
-  stylesheet.addStyle(".vatNumber", "font-size: 10px");
   stylesheet.addStyle(".warning", "color: red;font-size:8px;");
   stylesheet.addStyle(".total1", "border-bottom:1px double black;font-weight:bold;padding-top:10px;");
   stylesheet.addStyle(".total2", "border-bottom:1px double black;font-weight:bold;padding-top:10px;");
@@ -812,6 +857,9 @@ function verifyParam(param) {
     param.comunicazioneFirmaIntermediario = false;
   if (!param.comunicazioneUltimoMese)
     param.comunicazioneUltimoMese = '';
+
+  if (!param.annoSelezionato)
+    param.annoSelezionato = '';
   if (!param.periodoSelezionato)
     param.periodoSelezionato = 'm';
   if (!param.periodoValoreMese)
@@ -820,6 +868,7 @@ function verifyParam(param) {
     param.periodoValoreTrimestre = '';
   if (!param.periodoValoreSemestre)
     param.periodoValoreSemestre = '';
+  
   if (!param.outputScript)
     param.outputScript = 0;
 
