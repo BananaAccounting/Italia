@@ -1,0 +1,1313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DatiContribuenteDialog</class>
+ <widget class="QDialog" name="DatiContribuenteDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>486</width>
+    <height>518</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string notr="true">Dati contribuente</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Dati anagrafici</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string notr="true">Dati anagrafici del soggetto cui si riferisce la comunicazione</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="codicefiscaleLabel">
+              <property name="text">
+               <string notr="true">&amp;Codice fiscale</string>
+              </property>
+              <property name="buddy">
+               <cstring>codicefiscaleLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="codicefiscaleLineEdit"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="partitaivaLabel">
+              <property name="text">
+               <string notr="true">&amp;Partita IVA</string>
+              </property>
+              <property name="buddy">
+               <cstring>partitaivaLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="partitaivaLineEdit"/>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="codiceattivitaLabel">
+              <property name="text">
+               <string notr="true">Codice &amp;attività (ATECO 2007)</string>
+              </property>
+              <property name="buddy">
+               <cstring>codiceattivitaLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="codiceattivitaLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>13</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="3" column="1">
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>13</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="tipoContribuenteLabel">
+              <property name="text">
+               <string notr="true">&amp;Tipo contribuente</string>
+              </property>
+              <property name="buddy">
+               <cstring>tipoContribuenteComboBox</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QComboBox" name="tipoContribuenteComboBox">
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Persona fisica</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Persona giuridica</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="societaLabel">
+              <property name="text">
+               <string notr="true">&amp;Denominazione società</string>
+              </property>
+              <property name="buddy">
+               <cstring>societaLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QLineEdit" name="societaLineEdit"/>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="cognomeLabel">
+              <property name="text">
+               <string notr="true">C&amp;ognome</string>
+              </property>
+              <property name="buddy">
+               <cstring>cognomeLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="QLineEdit" name="cognomeLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>10</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="nomeLabel">
+              <property name="text">
+               <string notr="true">&amp;Nome</string>
+              </property>
+              <property name="buddy">
+               <cstring>nomeLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <widget class="QLineEdit" name="nomeLineEdit"/>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="indirizzoLabel">
+              <property name="text">
+               <string notr="true">&amp;Indirizzo</string>
+              </property>
+              <property name="buddy">
+               <cstring>indirizzoLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1">
+             <widget class="QLineEdit" name="indirizzoLineEdit"/>
+            </item>
+            <item row="9" column="0">
+             <widget class="QLabel" name="ncivicoLabel">
+              <property name="text">
+               <string>&amp;N. civico</string>
+              </property>
+              <property name="buddy">
+               <cstring>ncivicoLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="QLineEdit" name="ncivicoLineEdit"/>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="10" column="0">
+             <widget class="QLabel" name="localitaLabel">
+              <property name="text">
+               <string notr="true">CAP/Comune</string>
+              </property>
+              <property name="buddy">
+               <cstring>capLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QLineEdit" name="capLineEdit">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>50</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="comuneLineEdit"/>
+              </item>
+             </layout>
+            </item>
+            <item row="11" column="0">
+             <widget class="QLabel" name="provinciaLabel">
+              <property name="text">
+               <string notr="true">Pro&amp;vincia/Nazione</string>
+              </property>
+              <property name="buddy">
+               <cstring>provinciaComboBox</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <widget class="QComboBox" name="provinciaComboBox">
+                <item>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>AG</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>AL</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>AN</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>AO</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>AQ</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>AR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>AP</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>AT</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>AV</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BA</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BT</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BL</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BN</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BG</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BI</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BO</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BZ</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CA</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CL</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CB</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CI</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CE</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CT</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CZ</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CH</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CO</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>KR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CN</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>EN</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>FM</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>FE</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>FI</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>FG</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>FC</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>FR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>GE</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>GO</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>GR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>IM</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>IS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>SP</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>LT</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>LE</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>LC</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>LI</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>LO</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>LU</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>MC</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>MN</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>MS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>MT</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>VS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>ME</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>MI</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>MO</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>MB</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>NA</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>NO</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>NU</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>OG</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>OT</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>OR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PD</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PA</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PV</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PG</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PU</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PE</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PC</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PI</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PT</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PN</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PZ</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>PO</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>RG</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>RA</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>RC</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>RE</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>RI</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>RN</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>RM</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>RO</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>SA</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>SS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>SV</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>SI</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>SR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>SO</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>TA</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>TE</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>TR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>TO</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>TP</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>TN</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>TV</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>TS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>UD</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>VA</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>VE</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>VB</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>VC</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>VR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>VV</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>VI</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>VT</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="nazioneComboBox">
+                <item>
+                 <property name="text">
+                  <string>Italia</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="12" column="0">
+             <widget class="QLabel" name="telefonoLabel">
+              <property name="text">
+               <string notr="true">Tele&amp;fono (prefisso e numero)</string>
+              </property>
+              <property name="buddy">
+               <cstring>telefonoLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="1">
+             <widget class="QLineEdit" name="telefonoLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>10</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="13" column="0">
+             <widget class="QLabel" name="faxLabel">
+              <property name="text">
+               <string notr="true">Fa&amp;x - Prefisso e numero</string>
+              </property>
+              <property name="buddy">
+               <cstring>faxLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="13" column="1">
+             <widget class="QLineEdit" name="faxLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>10</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="0">
+             <widget class="QLabel" name="emailLabel">
+              <property name="text">
+               <string notr="true">Indirizzo di posta &amp;elettronica</string>
+              </property>
+              <property name="buddy">
+               <cstring>emailLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="1">
+             <widget class="QLineEdit" name="emailLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>10</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Dati IVA</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <spacer name="horizontalSpacer_9">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>13</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="tipoversamentoLabel">
+           <property name="text">
+            <string notr="true">Tipo versamento</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QComboBox" name="tipoversamentoComboBox">
+           <item>
+            <property name="text">
+             <string>Mensile</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Trimestrale</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="2">
+          <widget class="QDoubleSpinBox" name="percinteressiDoubleSpinBox">
+           <property name="suffix">
+            <string notr="true">%</string>
+           </property>
+           <property name="maximum">
+            <double>100.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="percinteressiLabel">
+           <property name="text">
+            <string notr="true">Interessi trimestrali (%)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <spacer name="horizontalSpacer_11">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>13</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="2">
+          <widget class="QDoubleSpinBox" name="ivaprorataDoubleSpinBox">
+           <property name="suffix">
+            <string notr="true">%</string>
+           </property>
+           <property name="maximum">
+            <double>100.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="ivaprorataLabel">
+           <property name="text">
+            <string notr="true">Gestione IVA Pro-rata %</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <spacer name="horizontalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>13</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string notr="true">Numeri conto per registro corrispettivi</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="1" column="0">
+             <widget class="QLabel" name="fatturefiscaliLabel">
+              <property name="text">
+               <string notr="true">Fatture fiscali</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="fatturenormaliLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="fatturefiscaliLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="fatturenormaliLabel">
+              <property name="text">
+               <string notr="true">Fatture normali</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="fatturescontriniLabel">
+              <property name="text">
+               <string notr="true">Fatture scontrini</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="fatturescontriniLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="fatturedifferiteLabel">
+              <property name="text">
+               <string notr="true">Fatture differite</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="fatturedifferiteLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="corrispettivinormaliLabel">
+              <property name="text">
+               <string notr="true">Corrispettivi normali</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QLineEdit" name="corrispettiviscontriniLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="corrispettivinormaliLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="QLineEdit" name="ricevutefiscaliLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="corrispettiviscontriniLabel">
+              <property name="text">
+               <string notr="true">Corrispettivi scontrini</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="ricevutefiscaliLabel">
+              <property name="text">
+               <string notr="true">Ricevute fiscali</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>126</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>56</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>codicefiscaleLineEdit</tabstop>
+  <tabstop>partitaivaLineEdit</tabstop>
+  <tabstop>codiceattivitaLineEdit</tabstop>
+  <tabstop>tipoContribuenteComboBox</tabstop>
+  <tabstop>societaLineEdit</tabstop>
+  <tabstop>cognomeLineEdit</tabstop>
+  <tabstop>nomeLineEdit</tabstop>
+  <tabstop>indirizzoLineEdit</tabstop>
+  <tabstop>ncivicoLineEdit</tabstop>
+  <tabstop>capLineEdit</tabstop>
+  <tabstop>comuneLineEdit</tabstop>
+  <tabstop>provinciaComboBox</tabstop>
+  <tabstop>nazioneComboBox</tabstop>
+  <tabstop>telefonoLineEdit</tabstop>
+  <tabstop>faxLineEdit</tabstop>
+  <tabstop>emailLineEdit</tabstop>
+  <tabstop>tipoversamentoComboBox</tabstop>
+  <tabstop>ivaprorataDoubleSpinBox</tabstop>
+  <tabstop>percinteressiDoubleSpinBox</tabstop>
+  <tabstop>fatturenormaliLineEdit</tabstop>
+  <tabstop>fatturefiscaliLineEdit</tabstop>
+  <tabstop>fatturescontriniLineEdit</tabstop>
+  <tabstop>fatturedifferiteLineEdit</tabstop>
+  <tabstop>corrispettivinormaliLineEdit</tabstop>
+  <tabstop>corrispettiviscontriniLineEdit</tabstop>
+  <tabstop>ricevutefiscaliLineEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>DatiContribuenteDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>317</x>
+     <y>508</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>204</x>
+     <y>308</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>checkdata()</slot>
+ </slots>
+</ui>

@@ -11,7 +11,7 @@ Vedi [Roadmap Spesometro 2017](https://www.banana.ch/it/node/9944)
 * [File con tabella Codici e Gruppi IVA 2017 di riferimento](https://github.com/BananaAccounting/Italia/raw/master/Iva/2017/TestCases/InventatoIVA2017.ac2)
 
 
-## Riferimenti
+## Riferimenti IVA
 * [Spesometro 2017: dati obbligatori da comunicare e scadenza](http://www.informazionefiscale.it/Spesometro-2017-dati-da-comunicare-e-scadenza)
 * [Comunicazioni Liquidazioni periodiche IVA](http://www.informazionefiscale.it/IMG/pdf/comunicazione_liquidazioni_iva_trimestrali_modello.pdf) documento PDF
 * [Specifiche tecniche fatture e corrispettivi](http://www.agenziaentrate.gov.it/wps/content/nsilib/nsi/strumenti/specifiche+tecniche/specifiche+tecniche+comunicazioni/fatture+e+corrispettivi+st)   
@@ -19,3 +19,10 @@ Vedi [Roadmap Spesometro 2017](https://www.banana.ch/it/node/9944)
 http://www.guidafisco.it/modello-comunicazione-periodica-iva-istruzioni-agenzia-entrate-1885)
 
 Nella cartella [Specifiche tecniche](https://github.com/BananaAccounting/Italia/tree/master/Iva/2017/Specifiche) si trova la documentazione relativa.
+
+## Riferimenti Contabilità
+
+* [Contabilità ordinaria e semplificata](http://www.marchegianionline.net/appro/appro_961.htm)
+* [Contabilità  semplificata](http://www.marchegianionline.net/appro/appro_1444.htm)
+* [Regime di cassa dal 2017](http://www.fiscooggi.it/normativa-e-prassi/articolo/regime-cassa-imprese-minori-arrivano-chiarimenti-dell-agenzia)
+* [Regime di cassa dal 2017, più conciso](http://www.altalex.com/documents/leggi/2017/04/13/nuovo-regime-di-determinazione-del-reddito-per-le-imprese-minori-disciplina-irpef-ed-irap)

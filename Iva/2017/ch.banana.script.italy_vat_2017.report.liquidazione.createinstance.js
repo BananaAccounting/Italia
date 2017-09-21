@@ -1,4 +1,4 @@
-// Copyright [2016] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2017] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ function createInstance(param)
     return "@Cancel";
 
   //<Fornitura> root element
-  var xbrlContent = '\n' + xbrlIntestazione + xbrlComunicazione;
+  var xbrlContent = xbrlIntestazione + xbrlComunicazione;
   var attrsNamespaces = {};
   for (var j in param.namespaces) {
     var prefix = param.namespaces[j]['prefix'];
@@ -37,7 +37,7 @@ function createInstance(param)
     if (schema.length > 0) {
       if (!attrsNamespaces['xsi:schemaLocation'])
         attrsNamespaces['xsi:schemaLocation'] = '';
-      if (attrsNamespaces['xsi:schemaLocation'].length>0)
+      else if (attrsNamespaces['xsi:schemaLocation'].length>0)
         attrsNamespaces['xsi:schemaLocation'] += " ";
       attrsNamespaces['xsi:schemaLocation'] = attrsNamespaces['xsi:schemaLocation'] + schema;
     }
@@ -46,9 +46,9 @@ function createInstance(param)
 
   //Output
   var results = [];
-  results.push("<?xml version='1.0' encoding='UTF-8'?>");
+  results.push("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
   results.push(xbrlContent);
-  return results.join ('\n');
+  return results.join ('');
 
 }
 
@@ -56,56 +56,62 @@ function createInstance_Comunicazione(param)
 {
   var msgContext = '<iv:Frontespizio>';
 
-  var codiceFiscale = param.fileInfo["Address"]["FiscalNumber"];
-  var partitaIva = param.fileInfo["Address"]["VatNumber"];
-  var xbrlCodiceFiscale = xml_createElementWithValidation("iv:CodiceFiscale", codiceFiscale,1,'11...16',msgContext) + '\n';
-  var xbrlAnnoImposta = xml_createElementWithValidation("iv:AnnoImposta", param.accountingYear,1,'4',msgContext) + '\n';
-  var xbrlPartitaIva = xml_createElementWithValidation("iv:PartitaIVA", partitaIva,1,'11',msgContext) + '\n';
+  var codiceFiscale = param.datiContribuente.codiceFiscale;
+  var partitaIva = param.datiContribuente.partitaIva;
+  var xbrlCodiceFiscale = xml_createElementWithValidation("iv:CodiceFiscale", codiceFiscale,1,'11...16',msgContext);
+  
+  var accountingYear = param.openingYear;
+  if (accountingYear != param.closureYear) {
+    //prende l'anno dal periodo selezionato
+  }
+  
+  var xbrlAnnoImposta = xml_createElementWithValidation("iv:AnnoImposta", accountingYear,1,'4',msgContext);
+  var xbrlPartitaIva = xml_createElementWithValidation("iv:PartitaIVA", partitaIva,1,'11',msgContext);
 
   var xbrlUltimoMese = '';
   if (parseInt(param.comunicazioneUltimoMese)>0) {
-    xbrlUltimoMese = xml_createElementWithValidation("iv:UltimoMese", param.comunicazioneUltimoMese, 0, '1...2', msgContext) + '\n';
+    xbrlUltimoMese = xml_createElementWithValidation("iv:UltimoMese", param.comunicazioneUltimoMese, 0, '1...2', msgContext);
   }
   
   var xbrlCFDichiarante = '';
   if (param.comunicazioneCFDichiarante.length>0)
-    xbrlCFDichiarante = xml_createElementWithValidation("iv:CFDichiarante", xml_escapeString(param.comunicazioneCFDichiarante), 0, '16', msgContext) + '\n';
+    xbrlCFDichiarante = xml_createElementWithValidation("iv:CFDichiarante", xml_escapeString(param.comunicazioneCFDichiarante), 0, '16', msgContext);
 
   var xbrlCodiceCaricaDichiarante = '';
   if (parseInt(param.comunicazioneCodiceCaricaDichiarante)>0)
-    xbrlCodiceCaricaDichiarante = xml_createElementWithValidation("iv:CodiceCaricaDichiarante", param.comunicazioneCodiceCaricaDichiarante, 0, '1...2', msgContext) + '\n';
+    xbrlCodiceCaricaDichiarante = xml_createElementWithValidation("iv:CodiceCaricaDichiarante", param.comunicazioneCodiceCaricaDichiarante, 0, '1...2', msgContext);
 
   var xbrlCFIntermediario = '';
   if (param.comunicazioneCFIntermediario.length>0)
-    xbrlCFIntermediario = xml_createElementWithValidation("iv:CFIntermediario", xml_escapeString(param.comunicazioneCFIntermediario), 0, '16', msgContext) + '\n';
+    xbrlCFIntermediario = xml_createElementWithValidation("iv:CFIntermediario", xml_escapeString(param.comunicazioneCFIntermediario), 0, '16', msgContext);
 
   var xbrlImpegno = '';
   var xbrlDataImpegno = '';
   if (param.comunicazioneImpegno.length>0) {
-    xbrlImpegno = xml_createElementWithValidation("iv:ImpegnoPresentazione", xml_escapeString(param.comunicazioneImpegno), 0, '1', msgContext) + '\n';
+    xbrlImpegno = xml_createElementWithValidation("iv:ImpegnoPresentazione", xml_escapeString(param.comunicazioneImpegno), 0, '1', msgContext);
     if (param.comunicazioneImpegnoData.length==10) {
       var anno = param.comunicazioneImpegnoData.substr(0,4);
       var mese = param.comunicazioneImpegnoData.substr(5,2);
       var giorno = param.comunicazioneImpegnoData.substr(8,2);
       var dataImpegno = giorno+mese+anno;
-      xbrlDataImpegno = xml_createElementWithValidation("iv:DataImpegno", dataImpegno, 0, '8', msgContext) + '\n';
+      xbrlDataImpegno = xml_createElementWithValidation("iv:DataImpegno", dataImpegno, 0, '8', msgContext);
     }
   }
 
   var firmaDichiarazione = "0";
   if (param.comunicazioneFirmaDichiarazione)
     firmaDichiarazione = "1";
-  var xbrlFirmaDichiarazione = xml_createElement("iv:FirmaDichiarazione", firmaDichiarazione) + '\n';
+  var xbrlFirmaDichiarazione = xml_createElement("iv:FirmaDichiarazione", firmaDichiarazione);
 
   var firmaIntermediario = "0";
   if (param.comunicazioneFirmaIntermediario)
     firmaIntermediario = "1";
-  var xbrlFirmaIntermediario = xml_createElement("iv:FirmaIntermediario", firmaIntermediario) + '\n';
+  var xbrlFirmaIntermediario = xml_createElement("iv:FirmaIntermediario", firmaIntermediario);
 
-  var xbrlContent = '\n' + xbrlCodiceFiscale + xbrlAnnoImposta + xbrlPartitaIva + xbrlUltimoMese + xbrlFirmaDichiarazione + xbrlCFDichiarante + xbrlCodiceCaricaDichiarante + 
+  var xbrlContent = xbrlCodiceFiscale + xbrlAnnoImposta + xbrlPartitaIva + xbrlUltimoMese + xbrlCFDichiarante + xbrlCodiceCaricaDichiarante + xbrlFirmaDichiarazione + 
     xbrlCFIntermediario + xbrlImpegno + xbrlDataImpegno + xbrlFirmaIntermediario;
   
-  var xbrlFrontespizio = '\n' + xml_createElement("iv:Frontespizio", xbrlContent) + '\n';
+  var xbrlFrontespizio = xml_createElement("iv:Frontespizio", xbrlContent);
   
   if (param.vatPeriods.length>5) {
     //messaggio errore max 5 moduli
@@ -116,11 +122,11 @@ function createInstance_Comunicazione(param)
     xbrlModulo += createInstance_Modulo(param.vatPeriods[index]);
   }
 
-  var xbrlDatiContabili =  xml_createElement("iv:DatiContabili", xbrlModulo) + '\n';
+  var xbrlDatiContabili =  xml_createElement("iv:DatiContabili", xbrlModulo);
   
   xbrlContent = xbrlFrontespizio + xbrlDatiContabili;
 
-  var xbrlComunicazione =  xml_createElement("iv:Comunicazione", xbrlContent, {'identificativo':param.comunicazioneProgressivo}) + '\n';
+  var xbrlComunicazione =  xml_createElement("iv:Comunicazione", xbrlContent, {'identificativo':param.comunicazioneProgressivo});
   return xbrlComunicazione;
 
 }
@@ -129,19 +135,19 @@ function createInstance_Intestazione(param)
 {
   var msgContext = '<Intestazione>';
   
-  var xbrlCodiceFornitura = xml_createElement("iv:CodiceFornitura", "IVP17") + '\n';
+  var xbrlCodiceFornitura = xml_createElement("iv:CodiceFornitura", "IVP17");
 
   var xbrlCodiceFiscaleDichiarante = '';
   if (param.comunicazioneCFDichiarante.length>0)
-    xbrlCodiceFiscaleDichiarante = xml_createElementWithValidation("iv:CodiceFiscaleDichiarante", xml_escapeString(param.comunicazioneCFDichiarante), 0, '16', msgContext) + '\n';
+    xbrlCodiceFiscaleDichiarante = xml_createElementWithValidation("iv:CodiceFiscaleDichiarante", xml_escapeString(param.comunicazioneCFDichiarante), 0, '16', msgContext);
 
   var xbrlCodiceCarica = '';
   if (parseInt(param.comunicazioneCodiceCaricaDichiarante)>0)
-    xbrlCodiceCarica = xml_createElementWithValidation("iv:CodiceCarica", param.comunicazioneCodiceCaricaDichiarante, 0, '1...2', msgContext) + '\n';
+    xbrlCodiceCarica = xml_createElementWithValidation("iv:CodiceCarica", param.comunicazioneCodiceCaricaDichiarante, 0, '1...2', msgContext);
 
-  var xbrlContent =  '\n' + xbrlCodiceFornitura + xbrlCodiceFiscaleDichiarante + xbrlCodiceCarica;
+  var xbrlContent =  xbrlCodiceFornitura + xbrlCodiceFiscaleDichiarante + xbrlCodiceCarica;
   
-  var xbrlIntestazione =  xml_createElement("iv:Intestazione", xbrlContent) + '\n';
+  var xbrlIntestazione =  xml_createElement("iv:Intestazione", xbrlContent);
   return xbrlIntestazione;
 }
 
@@ -151,26 +157,18 @@ function createInstance_Modulo(param)
 
   var xbrlMese = '';
   var xbrlTrimestre = '';
-  if (param.tipoVersamento == 0)
-    xbrlMese = xml_createElementWithValidation("iv:Mese", getPeriod("m", param),0,'1...2',msgContext) + '\n';
+  if (param.datiContribuente.liqTipoVersamento == 0)
+    xbrlMese = xml_createElementWithValidation("iv:Mese", getPeriod("m", param),0,'1...2',msgContext);
   else
-    xbrlTrimestre = xml_createElementWithValidation("iv:Trimestre", getPeriod("q", param),0,'1',msgContext) + '\n';
+    xbrlTrimestre = xml_createElementWithValidation("iv:Trimestre", getPeriod("q", param),0,'1',msgContext);
   
   var xbrlTotaleOperazioniAttive = xml_createElementWithValidation("iv:TotaleOperazioniAttive", createInstance_Modulo_GetVatAmount("OPATTIVE", "vatTaxable", param),0,'4...16',msgContext);
-  if (xbrlTotaleOperazioniAttive.length>0)
-    xbrlTotaleOperazioniAttive += '\n';
 
   var xbrlTotaleOperazioniPassive = xml_createElementWithValidation("iv:TotaleOperazioniPassive", createInstance_Modulo_GetVatAmount("OPPASSIVE", "vatTaxable", param),0,'4...16',msgContext);
-  if (xbrlTotaleOperazioniPassive.length>0)
-    xbrlTotaleOperazioniPassive += '\n';
 
   var xbrlIvaEsigibile = xml_createElementWithValidation("iv:IvaEsigibile", createInstance_Modulo_GetVatAmount("OPATTIVE", "vatPosted", param),0,'4...16',msgContext);
-  if (xbrlIvaEsigibile.length>0)
-    xbrlIvaEsigibile += '\n';
 
   var xbrlIvaDetratta = xml_createElementWithValidation("iv:IvaDetratta", createInstance_Modulo_GetVatAmount("OPPASSIVE", "vatPosted", param),0,'4...16',msgContext);
-  if (xbrlIvaDetratta.length>0)
-    xbrlIvaDetratta += '\n';
 
   var xbrlIvaDovuta = '';
   var xbrlIvaCredito = '';
@@ -178,10 +176,6 @@ function createInstance_Modulo(param)
     xbrlIvaDovuta = xml_createElementWithValidation("iv:IvaDovuta", createInstance_Modulo_GetVatAmount("OPDIFFERENZA", "vatPosted", param),0,'4...16',msgContext);
   else
     xbrlIvaCredito = xml_createElementWithValidation("iv:IvaCredito", createInstance_Modulo_GetVatAmount("OPDIFFERENZA", "vatPosted", param),0,'4...16',msgContext);
-  if (xbrlIvaDovuta.length>0)
-    xbrlIvaDovuta += '\n';
-  if (xbrlIvaCredito.length>0)
-    xbrlIvaCredito += '\n';
 
   var xbrlDebitoPeriodoPrecedente = '';
   var xbrlCreditoPeriodoPrecedente = '';
@@ -189,22 +183,31 @@ function createInstance_Modulo(param)
     xbrlDebitoPeriodoPrecedente = xml_createElementWithValidation("iv:DebitoPrecedente", createInstance_Modulo_GetVatAmount("L-CI", "vatPosted", param),0,'4...16',msgContext);
   else
     xbrlCreditoPeriodoPrecedente = xml_createElementWithValidation("iv:CreditoPeriodoPrecedente", createInstance_Modulo_GetVatAmount("L-CI", "vatPosted", param),0,'4...16',msgContext);
-  if (xbrlDebitoPeriodoPrecedente.length>0)
-    xbrlDebitoPeriodoPrecedente += '\n';
-  if (xbrlCreditoPeriodoPrecedente.length>0)
-    xbrlCreditoPeriodoPrecedente += '\n';
 
   var xbrlCreditoAnnoPrecedente = xml_createElementWithValidation("iv:CreditoAnnoPrecedente", createInstance_Modulo_GetVatAmount("L-CIA", "vatPosted", param),0,'4...16',msgContext);
-  if (xbrlCreditoAnnoPrecedente.length>0)
-    xbrlCreditoAnnoPrecedente += '\n';
 
-  var xbrlInteressiDovuti = xml_createElementWithValidation("iv:InteressiDovuti", createInstance_Modulo_GetVatAmount("L-INT", "vatPosted", param),0,'4...16',msgContext);
-  if (xbrlInteressiDovuti.length>0)
-    xbrlInteressiDovuti += '\n';
+  var amountInteressi = 0;
+  if (param["L-INT"] && param["L-INT"].vatPosted)
+    amountInteressi = Banana.SDecimal.abs(param["L-INT"].vatPosted);
+  var amountInteressiCalcolati = 0;
+  if (param.datiContribuente.liqTipoVersamento == 1)
+    amountInteressiCalcolati = calculateInterestAmount(param);
+  //se suddivisione mensile e ci sono registrazioni di interessi dà un warning
+  if (param.datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
+    var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
+    msg = msg.replace("%1", param.datiContribuente.liqPercInteressi );
+    msg = msg.replace("%2", amountInteressiCalcolati );
+    Banana.document.addMessage( msg, ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
+  }
+  else if (param.datiContribuente.liqTipoVersamento == 0 && amountInteressi.length>0) {
+      var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE);
+      Banana.document.addMessage( msg, ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE);
+  }
+  //Riprende interessi con importo formattato
+  var amountInteressi = createInstance_Modulo_GetVatAmount("L-INT", "vatPosted", param);
+  var xbrlInteressiDovuti = xml_createElementWithValidation("iv:InteressiDovuti", amountInteressi,0,'4...16',msgContext);
 
   var xbrlAcconto = xml_createElementWithValidation("iv:Acconto", createInstance_Modulo_GetVatAmount("L-AC", "vatPosted", param),0,'4...16',msgContext);
-  if (xbrlAcconto.length>0)
-    xbrlAcconto += '\n';
 
   var xbrlImportoDaVersare = '';
   var xbrlImportoACredito = '';
@@ -212,14 +215,10 @@ function createInstance_Modulo(param)
     xbrlImportoDaVersare = xml_createElementWithValidation("iv:ImportoDaVersare", createInstance_Modulo_GetVatAmount("Total", "vatPosted", param),0,'4...16',msgContext);
   else
     xbrlImportoACredito = xml_createElementWithValidation("iv:ImportoACredito", createInstance_Modulo_GetVatAmount("Total", "vatPosted", param),0,'4...16',msgContext);
-  if (xbrlImportoDaVersare.length>0)
-    xbrlImportoDaVersare += '\n';
-  if (xbrlImportoACredito.length>0)
-    xbrlImportoACredito += '\n';
 
-  xbrlContent = '\n' + xbrlMese + xbrlTrimestre + xbrlTotaleOperazioniAttive + xbrlTotaleOperazioniPassive + xbrlIvaEsigibile + xbrlIvaDetratta + xbrlIvaDovuta + xbrlIvaCredito;
+  xbrlContent = xbrlMese + xbrlTrimestre + xbrlTotaleOperazioniAttive + xbrlTotaleOperazioniPassive + xbrlIvaEsigibile + xbrlIvaDetratta + xbrlIvaDovuta + xbrlIvaCredito;
   xbrlContent += xbrlDebitoPeriodoPrecedente + xbrlCreditoPeriodoPrecedente + xbrlCreditoAnnoPrecedente + xbrlInteressiDovuti + xbrlAcconto + xbrlImportoDaVersare + xbrlImportoACredito;
-  var xbrlModulo = '\n' + xml_createElement("iv:Modulo", xbrlContent);
+  var xbrlModulo = xml_createElement("iv:Modulo", xbrlContent);
   return xbrlModulo;
 }
 

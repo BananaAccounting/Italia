@@ -1,4 +1,4 @@
-// Copyright [2016] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2017] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,9 +30,14 @@ function xml_createElement(name,content,attributes){
   if (attributes) { // tests false if this arg is missing!
     att_str = xml_formatAttributes(attributes);
   }
-  content = content.toString()
+  
+  if (content === undefined)
+    content = '';
+  else
+    content = content.toString()
+  
   var xml='';
-  if (!content){
+  if (content.length<=0){
     xml='<' + name + att_str + '/>';
   }
   else {
@@ -52,16 +57,19 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
     att_str = xml_formatAttributes(attributes);
   }
   
-  content = content.toString()
-  var xml='';
-  if (content) {
-    xml='<' + name + att_str + '>' + content + '</'+name+'>';
-  }
-  else {
+  if (content === undefined)
     content = '';
+  else
+    content = content.toString()
+  
+  var xml='';
+  if (content.length<=0) {
     if (mandatory>0) {
       xml='<' + name + att_str + '/>';
     }
+  }
+  else {
+    xml='<' + name + att_str + '>' + content + '</'+name+'>';
   }
   var fixedLen = 0;
   var minLen = 0;
@@ -154,7 +162,7 @@ function xml_formatAttributes(attributes) {
   var use_quote, escape, quote_to_escape;
   var att_str;
   var re;
-  var result = '';
+  var result = ' ';
    
   for (var att in attributes) {
     att_value = attributes[att];
@@ -175,8 +183,9 @@ function xml_formatAttributes(attributes) {
     // Determine which quote type to use around 
     // the attribute value
     if (apos_pos === -1 && quot_pos === -1) {
-      att_str = ' ' + att + "='" + att_value +  "'";
-      result += att_str + '\n';
+      //att_str = att + "='" + att_value +  "'";
+      att_str = att + '="' + att_value +  '"';
+      result += att_str + ' ';
       continue;
     }
     
@@ -194,13 +203,46 @@ function xml_formatAttributes(attributes) {
     
     // Escape only the right kind of quote
     re = new RegExp(use_quote,'g');
-    att_str = ' ' + att + '=' + use_quote + 
+    att_str = att + '=' + use_quote + 
       att_value.replace(re, escape) + use_quote;
-    result += att_str + '\n';
+    result += att_str + ' ';
   }
-  if (result.endsWith('\n'))
+  if (result.endsWith(' '))
     result = result.substr(0, result.length-1);
   return result;
+}
+
+function formatXml(xml) {
+    var formatted = '';
+    var reg = /(>)(<)(\/*)/g;
+    xml = xml.replace(reg, '$1\r\n$2$3');
+    var pad = 0;
+
+    xml = xml.split('\r\n');
+    for(var index = 0; index < xml.length; index++){
+      var node = xml[index]; // element
+      var indent = 0;
+      if (node.match( /.+<\/\w[^>]*>$/ )) {
+          indent = 0;
+      } else if (node.match( /^<\/\w/ )) {
+          if (pad != 0) {
+              pad -= 1;
+          }
+      } else if (node.match( /^<\w([^>]*[^\/])?>.*$/ )) {
+          indent = 1;
+      } else {
+          indent = 0;
+      }
+
+      var padding = '';
+      for (var i = 0; i < pad; i++) {
+          padding += '  ';
+      }
+
+      formatted += padding + node + '\r\n';
+      pad += indent;
+    }
+    return formatted;
 }
 
 //  Checks that string starts with the specific string
