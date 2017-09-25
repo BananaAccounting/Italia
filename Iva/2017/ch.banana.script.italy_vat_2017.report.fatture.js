@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-18
+// @pubdate = 2017-09-21
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -388,7 +388,7 @@ function loadJournalData(param) {
     for (var i in param.data.customers) {
       var checkedRows = [];
       var accountObj = param.data.customers[i];
-      //for (var j in accountObj.rows) {
+      if (accountObj && accountObj.rows) {
       for (var j=0; j<accountObj.rows.length;j++) {
         if (accountObj.rows[j]["IT_Registro"]=="Acquisti")
           continue;
@@ -401,6 +401,7 @@ function loadJournalData(param) {
         else if (ricevuteFiscali.length>0 && accountObj.rows[j]["VatTwinAccount"]==ricevuteFiscali)
           continue;
         checkedRows.push(accountObj.rows[j]);
+      }
       }
       if (checkedRows.length>0) {
         accountObj.rows = checkedRows;

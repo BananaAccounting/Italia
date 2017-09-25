@@ -905,6 +905,7 @@ nelle quali l'utente può inserire la % manualmente
     //N5 regime del margine / IVA non esposta in fattura ex art. 74-ter
     //N6 inversione contabile (reverse charge)
     //N7 IVA assolta in altro stato UE, vendite a distanza o prestazioni di servizi di telecomunicazioni
+    //Il codice natura può essere sovrascritto alla colonna VatExtraInfo oppure dalla colonna Gr1 della tabella codici iva
     jsonLine["IT_Natura"] = '';
     var vatExtraInfo = filteredRows[i].value("VatExtraInfo");
     if (vatExtraInfo.startsWith("N") && vatExtraInfo.length==2) {
@@ -915,8 +916,26 @@ nelle quali l'utente può inserire la % manualmente
       var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
       if (rowVatCodes) {
         var vatGr = rowVatCodes.value("Gr");
-        var rowVatCode = rowVatCodes.value("VatCode");
-        if (rowVatCode.indexOf("-FC2")>=0) {
+        var vatGr1 = rowVatCodes.value("Gr1");
+        vatGr1 = vatGr1.toUpperCase();
+        var rowVatDescription = rowVatCodes.value("Description");
+        if (!rowVatDescription)
+          rowVatDescription = "";
+        rowVatDescription = rowVatDescription.toLowerCase();
+        rowVatDescription = rowVatDescription.replace(" ","");
+        if (vatGr1 && vatGr1.startsWith("N") && vatGr1.length==2) {
+          jsonLine["IT_Natura"] = vatGr1;
+        }
+        else if (rowVatDescription.indexOf("art.15")>0) {
+          jsonLine["IT_Natura"] = 'N1';
+        }
+        else if (rowVatDescription.indexOf("art.74")>0) {
+          jsonLine["IT_Natura"] = 'N5';
+        }
+        else if (rowVatDescription.indexOf("art.7")>0) {
+          jsonLine["IT_Natura"] = 'N3';
+        }
+        else if (rowVatDescription.indexOf("art.3")>0) {
           jsonLine["IT_Natura"] = 'N1';
         }
         else if (vatGr.indexOf("-FC")>=0) {

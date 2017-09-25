@@ -20,7 +20,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-08-23
+// @pubdate = 2017-09-21
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -154,9 +154,12 @@ function settingsDialog() {
   dialog.showHelp = function () {
     Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
   }
-  dialog.buttonBox.accepted.connect(dialog, "checkdata");
-  dialog.buttonBox.helpRequested.connect(dialog, "showHelp");
-  tipoContribuenteComboBox['currentIndexChanged(QString)'].connect(dialog, "enableButtons");
+  dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
+  dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
+  if (tipoContribuenteComboBox['currentIndexChanged(QString)'])
+     tipoContribuenteComboBox['currentIndexChanged(QString)'].connect(dialog, dialog.enableButtons);
+  else
+     tipoContribuenteComboBox.currentIndexChanged.connect(dialog, dialog.enableButtons);
   
   //Visualizzazione dialogo
   Banana.application.progressBar.pause();

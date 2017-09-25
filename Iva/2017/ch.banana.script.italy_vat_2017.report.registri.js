@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-18
+// @pubdate = 2017-09-21
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -1052,11 +1052,15 @@ function printRegisterCorrispettivi_ControllaVentilazione(report, period) {
   for (var key in period.acquistiPerRivendita) {
     ventilazioneCalcolata = Banana.SDecimal.add(period.acquistiPerRivendita[key].iva, ventilazioneCalcolata);
   }
+  if (!Banana.SDecimal.isZero(ventilazioneCalcolata))
+    ventilazioneCalcolata = Banana.SDecimal.round(ventilazioneCalcolata, {'decimals':2});
 
   for (var vatCode in corrispettivi.totaliCodice) {
     if (corrispettivi.totaliCodice[vatCode].gr == "C-REG")
       ventilazioneRegistrata = Banana.SDecimal.add(corrispettivi.totaliCodice[vatCode].vatAmount, ventilazioneRegistrata);
   }
+  if (!Banana.SDecimal.isZero(ventilazioneRegistrata))
+    ventilazioneRegistrata = Banana.SDecimal.round(ventilazioneRegistrata, {'decimals':2});
 
   if (!Banana.SDecimal.isZero(ventilazioneCalcolata) || !Banana.SDecimal.isZero(ventilazioneRegistrata)) {
     //var differenza = Banana.SDecimal.subtract(ventilazioneRegistrata, ventilazioneCalcolata);
