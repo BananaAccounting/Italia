@@ -607,7 +607,20 @@ function printVatReport_rows(customers_suppliers, table, param) {
     var row = table.addRow();
     row.addCell(rowType, "rowName");
     var cell = row.addCell("","rowName",4);
-    cell.addParagraph(xml_unescapeString(customers_suppliers[i]["Description"]));
+    var description = '';
+    if (customers_suppliers[i]["OrganisationName"] && customers_suppliers[i]["OrganisationName"].length>0) {
+      description = customers_suppliers[i]["OrganisationName"];
+    }
+    else if (!customers_suppliers[i]["FirstName"] || customers_suppliers[i]["FirstName"].length<=0) {
+      description = customers_suppliers[i]["FamilyName"];
+    }
+    else {
+      description = customers_suppliers[i]["FirstName"] + " " + customers_suppliers[i]["FamilyName"];
+    }
+    if (description.length>0)
+      cell.addParagraph(xml_unescapeString(description));
+    else
+      cell.addParagraph(getErrorMessage(ID_ERR_DATIFATTURE_NOMINATIVO_MANCANTE), "error");
     var address = "";
     var content = customers_suppliers[i]["Street"];
     if (content && content.length>0)
@@ -638,8 +651,8 @@ function printVatReport_rows(customers_suppliers, table, param) {
       var jsonObj = customers_suppliers[i].rows[j];
       var row = table.addRow();
       row.addCell(jsonObj["IT_TipoDoc"], "row");
-      row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JInvoiceIssueDate"]), "row");
-      row.addCell(jsonObj["IT_DocInvoice"], "row");
+      row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["IT_DataDoc"]), "row");
+      row.addCell(jsonObj["IT_NoDoc"], "row");
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JDate"]), "row");
       var descrizione = xml_unescapeString(jsonObj["JDescription"]);
       if (descrizione.startsWith("[IVA] ")>0)
@@ -697,6 +710,7 @@ function setStyle(report, stylesheet) {
 
   stylesheet.addStyle(".amount", "text-align: right;border:0.5em solid black; ");
   stylesheet.addStyle(".center", "text-align: center;");
+  stylesheet.addStyle(".error", "color:red;");
   stylesheet.addStyle(".notes", "padding: 2em;font-style:italic;");
   stylesheet.addStyle(".right", "text-align: right;");
   stylesheet.addStyle(".row.amount", "border:0.5em solid black");

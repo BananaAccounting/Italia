@@ -820,12 +820,23 @@ nelle quali l'utente può inserire la % manualmente
       jsonLine["IT_ImponibileDetraibile"] = taxable;
     }
 
-    //IT_DocInvoice
-    jsonLine["IT_DocInvoice"] = '';
+    //IT_NoDoc
+    jsonLine["IT_NoDoc"] = '';
     var noDoc = xml_escapeString(filteredRows[i].value("DocInvoice"));
     if (noDoc.length<=0)
       noDoc =  xml_escapeString(filteredRows[i].value("Doc"));
-    jsonLine["IT_DocInvoice"] = noDoc;
+    jsonLine["IT_NoDoc"] = noDoc;
+
+    //IT_DataDoc
+    //Se è utilizzata la colonna DocInvoice viene ripresa la data di emissione fattura JInvoiceIssueDate
+    //Altrimenti se si utilizza la colonna DateDocument viene ripresa questa oppure la data di registrazione Date
+    jsonLine["IT_DataDoc"] = '';
+    if (filteredRows[i].value("DocInvoice") && filteredRows[i].value("DocInvoice").length>0)
+      jsonLine["IT_DataDoc"] = filteredRows[i].value("JInvoiceIssueDate");
+    else if (filteredRows[i].value("DateDocument") && filteredRows[i].value("DateDocument").length>0)
+      jsonLine["IT_DataDoc"] = filteredRows[i].value("DateDocument");
+    else
+      jsonLine["IT_DataDoc"] = filteredRows[i].value("Date");
 
     //IT_TipoDoc
     //TD01 Fattura  
@@ -1101,14 +1112,6 @@ function loadJournal_setColumns(param, journalColumns) {
       column.title = "VatNonDed";
       column.index = 13;
     }
-    else if (column.name == "DateDocument") {
-      column.type = "date";
-      column.index = 14;
-    }
-    else if (column.name == "JInvoiceIssueDate") {
-      column.type = "date";
-      column.index = 15;
-    }
     param.columns[j] = column;
   }
 
@@ -1198,92 +1201,98 @@ function loadJournal_setColumns(param, journalColumns) {
   column.index = 1013;
   param.columns[j++] = column;
   var column = {};
-  column.name = "IT_DocInvoice";
-  column.title = "IT_DocInvoice";
+  column.name = "IT_NoDoc";
+  column.title = "IT_NoDoc";
   column.type = "description";
   column.index = 1014;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_DataDoc";
+  column.title = "IT_DataDoc";
+  column.type = "description";
+  column.index = 1015;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_TipoDoc";
   column.title = "IT_TipoDoc";
   column.type = "description";
-  column.index = 1015;
+  column.index = 1016;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteConto";
   column.title = "IT_ClienteConto";
   column.type = "description";
-  column.index = 1016;
+  column.index = 1017;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteDescrizione";
   column.title = "IT_ClienteDescrizione";
   column.type = "description";
-  column.index = 1017;
+  column.index = 1018;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteIntestazione";
   column.title = "IT_ClienteIntestazione";
   column.type = "description";
-  column.index = 1018;
+  column.index = 1019;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteTipologia";
   column.title = "IT_ClienteTipologia";
   column.type = "description";
-  column.index = 1019;
+  column.index = 1020;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClientePartitaIva";
   column.title = "IT_ClientePartitaIva";
   column.type = "description";
-  column.index = 1020;
+  column.index = 1021;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_ClienteCodiceFiscale";
   column.title = "IT_ClienteCodiceFiscale";
   column.type = "description";
-  column.index = 1021;
+  column.index = 1022;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrFattureNormali";
   column.title = "IT_CorrFattureNormali";
-  column.index = 1022;
+  column.index = 1023;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrFattureFiscali";
   column.title = "IT_CorrFattureFiscali";
-  column.index = 1023;
+  column.index = 1024;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrFattureScontrini";
   column.title = "IT_CorrFattureScontrini";
-  column.index = 1024;
+  column.index = 1025;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrFattureDifferite";
   column.title = "IT_CorrFattureDifferite";
-  column.index = 1025;
+  column.index = 1026;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrispettiviNormali";
   column.title = "IT_CorrispettiviNormali";
-  column.index = 1026;
+  column.index = 1027;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrispettiviScontrini";
   column.title = "IT_CorrispettiviScontrini";
-  column.index = 1027;
+  column.index = 1028;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrRicevuteFiscali";
   column.title = "IT_CorrRicevuteFiscali";
-  column.index = 1028;
+  column.index = 1029;
   param.columns[j++] = column;
   var column = {};
   column.name = "IT_CorrTotaleGiornaliero";
   column.title = "IT_CorrTotaleGiornaliero";
-  column.index = 1029;
+  column.index = 1030;
   param.columns[j++] = column;
   return param;
 }

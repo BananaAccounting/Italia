@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-21
+// @pubdate = 2017-09-26
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -74,6 +74,13 @@ function settingsDialog() {
   var tipoRegistroComboBox = dialog.tabWidget.findChild('tipoRegistroComboBox');
   if (tipoRegistroComboBox)
     tipoRegistroComboBox.currentIndex = param.tipoRegistro;
+  //Colonna protocollo
+  index = 0;
+  if (param.colonnaProtocollo == 'Doc')
+    index = 1;
+  var colProtocolloComboBox = dialog.tabWidget.findChild('colProtocolloComboBox');
+  if (colProtocolloComboBox)
+    colProtocolloComboBox.currentIndex = index;
   //Opzioni
   var visualizzaDataOraCheckBox = dialog.tabWidget.findChild('visualizzaDataOraCheckBox');
   if (visualizzaDataOraCheckBox)
@@ -205,6 +212,11 @@ function settingsDialog() {
   //Tipo registro
   if (tipoRegistroComboBox)
     param.tipoRegistro = tipoRegistroComboBox.currentIndex.toString();
+  //Colonna protocollo
+  param.colonnaProtocollo = 'DocProtocol';
+  index = parseInt(colProtocolloComboBox.currentIndex.toString());
+  if (index == 1)
+    param.colonnaProtocollo = 'Doc';
   //Opzioni
   if (visualizzaDataOraCheckBox)
     param.visualizzaDataOra = visualizzaDataOraCheckBox.checked;
@@ -430,6 +442,7 @@ function initParam()
   var param = {};
 
   param.tipoRegistro = 0;
+  param.colonnaProtocollo = 'DocProtocol';
   param.visualizzaDataOra = false;
   param.numerazioneAutomatica = false;
   param.stampaDefinitiva = false;
@@ -460,6 +473,7 @@ function loadJournalData(param) {
   for (var i=0; i<periods.length; i++) {
     periods[i] = loadJournal(periods[i]);
     periods[i].numerazioneAutomatica = param.numerazioneAutomatica;
+    periods[i].colonnaProtocollo = param.colonnaProtocollo;
     param.periods.push(periods[i]);
   }
 
@@ -670,7 +684,7 @@ function printLiquidazione(report, stylesheet, param, startDate, endDate) {
   param.vatPeriods = [];
   param = loadVatCodes(param, startDate, endDate);
   if (param.vatPeriods.length>0) {
-    report.addParagraph(" ", "title2");
+    report.addParagraph(" ", "h2");
     printVatReport2(report, stylesheet, param.vatPeriods[0]);
     return true;
   }
@@ -683,7 +697,8 @@ function printLiquidazioneAnnuale(report, stylesheet, param) {
   period.endDate = param.fileInfo["ClosureDate"];
   period = loadJournal(period);
   period = loadJournalData_AddTotals(period, period);
-  report.addParagraph("LIQUIDAZIONE ANNUALE IVA " + getPeriodText(param.vatPeriods[0]), "title");
+  report.addParagraph("LIQUIDAZIONE ANNUALE IVA", "h1");
+  report.addParagraph(getPeriodText(param.vatPeriods[0]), "h1_period");
   printSummary(report, stylesheet, period);
 
   param.vatPeriods = [];
@@ -697,25 +712,26 @@ function printLiquidazioneAnnuale(report, stylesheet, param) {
 
 function printRegister(report, stylesheet, period, register) {
   
-   if (!period.registri[register] || (!period.registri[register].totaliAliquota && !period.registri[register].totaliCodice))
+  if (!period.registri[register] || (!period.registri[register].totaliAliquota && !period.registri[register].totaliCodice))
     return false;
   
   //Titolo
-  report.addParagraph("REGISTRO IVA " + register.toUpperCase() + " " + getPeriodText(period), "title");
+  report.addParagraph("REGISTRO IVA " + register.toUpperCase(), "h1");
+  report.addParagraph(getPeriodText(period), "h1_period");
 
   //Tabella
   var table = report.addTable("register_table");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("N.Prot.", "right");
-  headerRow.addCell("Data Reg.", "right");
-  headerRow.addCell("Data Doc", "right");
-  headerRow.addCell("Descrizione");
-  headerRow.addCell("N.Doc");
-  headerRow.addCell("Tot.Doc", "right");
-  headerRow.addCell("Imponibile", "right");
-  headerRow.addCell("Cod.IVA", "right");
-  headerRow.addCell("%", "right");
-  headerRow.addCell("Imposta", "right");
+  headerRow.addCell("N.Prot.", "title right");
+  headerRow.addCell("Data Reg.", "title right");
+  headerRow.addCell("Data Doc", "title right");
+  headerRow.addCell("Descrizione", "title");
+  headerRow.addCell("N.Doc", "title");
+  headerRow.addCell("Tot.Doc", "title right");
+  headerRow.addCell("Imponibile", "title right");
+  headerRow.addCell("Cod.IVA", "title right");
+  headerRow.addCell("%", "title right");
+  headerRow.addCell("Imposta", "title right");
 
   //Righe
   var totCol1=0;
@@ -727,9 +743,13 @@ function printRegister(report, stylesheet, period, register) {
     if (period.journal.rows[index].IT_Registro.toLowerCase() != register.toLowerCase())
       continue;
 
+    //Progressivo registro
     var progRegistro = period.journal.rows[index].DocProtocol;
     if (period.numerazioneAutomatica)
       progRegistro = period.journal.rows[index].IT_ProgRegistro;
+    else if (period.colonnaProtocollo == 'Doc')
+      progRegistro = period.journal.rows[index].Doc;
+
     var vatCode = period.journal.rows[index].JVatCodeWithoutSign;
     var vatRate = period.journal.rows[index].IT_Aliquota;
     var vatAmount = period.journal.rows[index].IT_ImportoIva;
@@ -739,14 +759,14 @@ function printRegister(report, stylesheet, period, register) {
     var row = table.addRow();
     row.addCell(progRegistro, "right");
     row.addCell(Banana.Converter.toLocaleDateFormat(period.journal.rows[index].JDate, "dd/mm/yy"), "right");
-    row.addCell(Banana.Converter.toLocaleDateFormat(period.journal.rows[index].JInvoiceIssueDate, "dd/mm/yy"), "right");
+    row.addCell(Banana.Converter.toLocaleDateFormat(period.journal.rows[index].IT_DataDoc, "dd/mm/yy"), "right");
     var cell = row.addCell();
     var descrizione = xml_unescapeString(period.journal.rows[index].IT_ClienteIntestazione);
     if (descrizione.length>1)
       cell.addParagraph(descrizione);
     if (period.journal.rows[index].Description.length>0)
       cell.addParagraph(period.journal.rows[index].Description);
-    row.addCell(period.journal.rows[index].IT_DocInvoice, "right");
+    row.addCell(period.journal.rows[index].IT_NoDoc, "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatGross), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatTaxable), "right");
     row.addCell(vatCode, "right");
@@ -772,12 +792,12 @@ function printRegister(report, stylesheet, period, register) {
   //Riepilogo IVA PER ALIQUOTA DETRAIBILE
   var row = table.addRow();
   var title = "TOTALI DI PERIODO PER ALIQUOTA - Registro " + register.toUpperCase() + " (" + getPeriodText(period) + ")";
-  row.addCell(title, "title2", 10);
+  row.addCell(title, "h2", 10);
   if (register.toLowerCase() == "acquisti") {
     row = table.addRow();
     row.addCell("", "", 10);
     row = table.addRow();
-    row.addCell("TOTALE IVA DETRAIBILE", "title3", 10);
+    row.addCell("TOTALE IVA DETRAIBILE", "h4", 10);
   }
   var tot1=0;
   var tot2=0;
@@ -807,7 +827,7 @@ function printRegister(report, stylesheet, period, register) {
     row = table.addRow();
     row.addCell("", "", 10);
     row = table.addRow();
-    row.addCell("TOTALE IVA INDETRAIBILE", "title3", 10);
+    row.addCell("TOTALE IVA INDETRAIBILE", "h4", 10);
     var tot1=0;
     var tot2=0;
     for (var vatRate in period.registri[register].totaliAliquota) {
@@ -834,7 +854,7 @@ function printRegister(report, stylesheet, period, register) {
   row = table.addRow();
   row.addCell("", "", 10);
   row = table.addRow();
-  row.addCell("TOTALI DI PERIODO PER CODICI - Registro " + register.toUpperCase() + " (" + getPeriodText(period) + ")", "title2", 10);
+  row.addCell("TOTALI DI PERIODO PER CODICI - Registro " + register.toUpperCase() + " (" + getPeriodText(period) + ")", "h2", 10);
   var tot1=0;
   var tot2=0;
   for (var vatCode in period.registri[register].totaliCodice) {
@@ -855,6 +875,10 @@ function printRegister(report, stylesheet, period, register) {
   row.addCell("");
   row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
+  
+  //LIQUIDAZIONE
+  //report.addPageBreak();
+  //printSummary(report, stylesheet, period);
 
   return true;
 }
@@ -866,7 +890,8 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
     return false;
   
   //Titolo
-  report.addParagraph("REGISTRO IVA " + register.toUpperCase() + " " + getPeriodText(period), "title");
+  report.addParagraph("REGISTRO IVA " + register.toUpperCase(), "h1");
+  report.addParagraph(getPeriodText(period), "h1_period");
  
   //Tabella REGISTRO DEI CORRISPETTIVI 
   var table = report.addTable("corrispettivi_table");
@@ -996,7 +1021,7 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
   var table = report.addTable("corrispettivi_riepilogo_table");
   var row = table.addRow();
   var title = "#RIEPILOGO PER ALIQUOTA IVA CORRISPETTIVI (" + getPeriodText(period) + ")";
-  row.addCell(title, "bold");
+  row.addCell(title, "h4");
   row.addCell("", "", 3);
   var tot1=0;
   var tot2=0;
@@ -1079,7 +1104,8 @@ function printSummary(report, stylesheet, period) {
     return false;
 
   //Titolo
-  report.addParagraph("PROSPETTO DI LIQUIDAZIONE IVA " + getPeriodText(period), "title");
+  report.addParagraph("PROSPETTO DI LIQUIDAZIONE IVA", "h1");
+  report.addParagraph(getPeriodText(period), "h1_period");
 
   if (period.registri["vendite"]) {
     printSummary_Table(report, stylesheet, period.registri["vendite"], "RIEPILOGO GENERALE IVA VENDITE");
@@ -1110,7 +1136,7 @@ function printSummary_Table(report, stylesheet, data, title) {
   var table = report.addTable("summary_table");
   if (title.length>0) {
     row = table.addRow();
-    row.addCell(title, "title2", 6); 
+    row.addCell(title, "h2", 6); 
   }
   row = table.addRow();
   row.addCell("Cod.IVA", "bold");
@@ -1166,7 +1192,7 @@ function setStyle(report, stylesheet, param) {
   if (param.stampaDefinitiva)
     stylesheet.addStyle("@page", "fill-empty-area:dash 0.5 black; ");
   stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
-  stylesheet.addStyle("thead", "font-weight: bold");
+  stylesheet.addStyle("thead", "font-weight:bold;background-color:#6699cc;color:#ffffff;");
   stylesheet.addStyle("td", "padding-right: 0em;");
   stylesheet.addStyle("td.underlined", "border-bottom: 1px solid black");
   stylesheet.addStyle(".amount", "text-align: right");
@@ -1175,9 +1201,12 @@ function setStyle(report, stylesheet, param) {
   stylesheet.addStyle(".period", "padding-bottom: 1em;padding-top:0;");
   stylesheet.addStyle(".center", "text-align: center");
   stylesheet.addStyle(".right", "text-align: right");
-  stylesheet.addStyle(".title", "font-weight:bold;padding:0.3em;background-color:#6699cc;color:#ffffff;");
-  stylesheet.addStyle(".title2", "font-weight:bold;border-top:1px solid black;padding-top:1em;");
-  stylesheet.addStyle(".title3", "font-weight:bold;");
+  stylesheet.addStyle(".title", "padding: 0.4em;");
+  stylesheet.addStyle(".h1", "font-weight:bold;font-size:12px;text-align: center;");
+  stylesheet.addStyle(".h1_period", "font-weight:bold;font-size:9px;padding-bottom:2em;text-align: center;");
+  stylesheet.addStyle(".h2", "font-weight:bold;padding:0.3em;background-color:#eeeeee;color:#333333;");
+  stylesheet.addStyle(".h3", "font-weight:bold;border-top:1px solid black;padding-top:1em;");
+  stylesheet.addStyle(".h4", "font-weight:bold;");
   stylesheet.addStyle(".total", "font-weight:bold;padding-bottom:20px;");
   stylesheet.addStyle(".warning", "color: red;");
   /*tables*/
@@ -1193,6 +1222,8 @@ function setStyle(report, stylesheet, param) {
 function verifyParam(param) {
   if (!param.tipoRegistro)
     param.tipoRegistro = 0;
+  if (!param.colonnaProtocollo)
+    param.colonnaProtocollo = 'DocProtocol';
   if (!param.visualizzaDataOra)
     param.visualizzaDataOra = false;
   if (!param.numerazioneAutomatica)
@@ -1209,6 +1240,8 @@ function verifyParam(param) {
     param.stampaTestoRegistroVendite = false;
   if (!param.stampaTestoRegistroCorrispettivi)
     param.stampaTestoRegistroCorrispettivi = false;
+  if (!param.stampaOrizzontale)
+    param.stampaOrizzontale = false;
   if (!param.testoRegistroAcquisti)
     param.testoRegistroAcquisti = '';
   if (!param.testoRegistroVendite)
