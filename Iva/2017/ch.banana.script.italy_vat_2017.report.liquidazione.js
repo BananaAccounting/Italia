@@ -640,11 +640,11 @@ function printVatReport2(report, stylesheet, param) {
 
   //Print table
   var table = report.addTable("table2");
-  var headerRow = table.getHeader().addRow();
+  /*var headerRow = table.getHeader().addRow();
   headerRow.addCell("");
   headerRow.addCell("");
   headerRow.addCell("");
-  headerRow.addCell("");
+  headerRow.addCell("");*/
 
   //Print vat amounts
   var row = table.addRow();

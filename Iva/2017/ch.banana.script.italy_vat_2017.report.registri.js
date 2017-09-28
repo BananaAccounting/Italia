@@ -263,6 +263,45 @@ function settingsDialog() {
   return true;
 }
 
+function addPageFooter(report, stylesheet, param)
+{
+  // Page footer
+  var pageFooter = report.getFooter();
+
+  //Tabella
+  var table = pageFooter.addTable("footer_table");
+  table.addColumn("footer_col_left");
+  table.addColumn("footer_col_center");
+  table.addColumn("footer_col_right");
+
+  //cell_left
+  var row = table.addRow();
+  var cell_left = row.addCell("", "footer_cell_left");
+
+  //cell_center
+  var cell_center = row.addCell("", "footer_cell_center");
+  var datestring = '';
+  if (param.visualizzaDataOra) {
+    var d = new Date();
+    var datestring = ("0" + d.getDate()).slice(-2) + "/" + ("0"+(d.getMonth()+1)).slice(-2) + "/" + d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);  
+  }
+  cell_center.addParagraph(datestring, "center");
+
+  //cell_right
+  var row = table.addRow();
+  var cell_right = row.addCell("", "footer_cell_right");
+
+  //add style
+  stylesheet.addStyle(".footer_table", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".footer_col_left", "width:33%;");
+  stylesheet.addStyle(".footer_col_center", "width:33%;");
+  stylesheet.addStyle(".footer_col_right", "width:33%");
+  stylesheet.addStyle(".footer_cell_left", "font-size:9px");
+  stylesheet.addStyle(".footer_cell_center", "font-size:9px;padding-right:0;margin-right:0;");
+  stylesheet.addStyle(".footer_cell_right", "font-size:9px;padding-left:0;margin-left:0;");
+  stylesheet.addStyle(".center", "text-align: center;");
+}
+
 function addPageHeader(report, stylesheet, param)
 {
   // Page header
@@ -315,12 +354,18 @@ function addPageHeader(report, stylesheet, param)
   
   //cell_center
   var cell_center = row.addCell("", "header_cell_center");
-  var datestring = '';
-  if (param.visualizzaDataOra) {
-    var d = new Date();
-    var datestring = ("0" + d.getDate()).slice(-2) + "/" + ("0"+(d.getMonth()+1)).slice(-2) + "/" + d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);  
-  }
-  cell_center.addParagraph(datestring, "");
+  var text = '';
+  if (param.tipoRegistro == 0)
+    text = 'Registro IVA Vendite';
+  else if (param.tipoRegistro == 1)
+    text = 'Registro IVA Acquisti';
+  else if (param.tipoRegistro == 2)
+    text = 'Registro IVA Corrispettivi';
+  else if (param.tipoRegistro == 3)
+    text = 'Liquidazione IVA';
+  else if (param.tipoRegistro == 4)
+    text = 'Registro IVA unico';
+  cell_center.addParagraph(text, "");
 
   //cell_right1
   var cell_right1 = row.addCell("", "header_cell_right");
@@ -331,18 +376,18 @@ function addPageHeader(report, stylesheet, param)
   if (param.openingYear != param.closureYear)
     period +=  "-" + param.closureYear;
   var cell_right2 = row.addCell("", "header_cell_right");
-  cell_right2.addParagraph(period, "period");
+  cell_right2.addParagraph(period, "period_header");
 
   //add style
   stylesheet.addStyle(".header_table", "margin-top:1em;width:100%;");
-  stylesheet.addStyle(".header_col_left", "width:46%;");
-  stylesheet.addStyle(".header_col_center", "width:45%;");
-  stylesheet.addStyle(".header_col_right1", "width:4%");
-  stylesheet.addStyle(".header_col_right2", "width:4%");
+  stylesheet.addStyle(".header_col_left", "width:43%;");
+  stylesheet.addStyle(".header_col_center", "width:44%;");
+  stylesheet.addStyle(".header_col_right1", "width:5%");
+  stylesheet.addStyle(".header_col_right2", "width:5%");
   stylesheet.addStyle(".header_cell_left", "font-size:9px");
   stylesheet.addStyle(".header_cell_center", "font-size:9px;padding-right:0;margin-right:0;");
   stylesheet.addStyle(".header_cell_right", "font-size:9px;padding-left:0;margin-left:0;");
-  stylesheet.addStyle(".period", "padding-bottom: 1em;");
+  stylesheet.addStyle(".period_header", "padding-bottom: 1em;padding-top:0;");
   stylesheet.addStyle(".right", "text-align: right;");
 }
 
@@ -379,36 +424,36 @@ function exec(inData) {
   /*if (param.inizioNumerazionePagine)
    report.setFirstPageNumber(param.inizioNumerazionePagine);*/
   addPageHeader(report, stylesheet, param);
+  addPageFooter(report, stylesheet, param);
   setStyle(report, stylesheet, param);
   
   //Print data
   var printed = false;
   for (var i=0; i<param.periods.length; i++) {
-    if (param.tipoRegistro == 1 || param.tipoRegistro == 0) {
+    if (param.tipoRegistro == 0 || param.tipoRegistro == 4) {
       printed = printRegister(report, stylesheet, param.periods[i], 'vendite');
     }
-    if (param.tipoRegistro == 2 || param.tipoRegistro == 0) {
+    if (param.tipoRegistro == 1 || param.tipoRegistro == 4) {
       if (printed) {
         report.addPageBreak();
         printed = false;
       }
       printed = printRegister(report, stylesheet, param.periods[i], 'acquisti');
     }
-    if (param.tipoRegistro == 3 || param.tipoRegistro == 0) {
+    if (param.tipoRegistro == 2 || param.tipoRegistro == 4) {
       if (printed) {
         report.addPageBreak();
         printed = false;
       }
       printed = printRegisterCorrispettivi(report, stylesheet, param.periods[i]);
     }
-    if (param.tipoRegistro == 4 || param.tipoRegistro == 0) {
-      if (printed) {
-        report.addPageBreak();
-        printed = false;
-      }
-      printed = printSummary(report, stylesheet, param.periods[i]);
-      printed = printLiquidazione(report, stylesheet, param, param.periods[i].startDate, param.periods[i].endDate);
+    if (param.tipoRegistro == 3 || param.tipoRegistro == 4) {
     }
+    if (printed) {
+      report.addPageBreak();
+      printed = false;
+    }
+    printed = printLiquidazione(report, stylesheet, param, param.periods[i]);
     if (printed && i+1<param.periods.length) {
       report.addPageBreak();
       printed = false;
@@ -416,7 +461,7 @@ function exec(inData) {
   }
 
   //Liquidazione annuale finale
-  if (param.periodoSelezionato == "y" && ( param.tipoRegistro == 4 || param.tipoRegistro == 0)) {
+  if (param.periodoSelezionato == "y") {
     if (printed) {
       report.addPageBreak();
       printed = false;
@@ -467,7 +512,7 @@ function initParam()
 
 function loadJournalData(param) {
   //per il momento c'è un unico periodo non controlla il tipo di versamento mensile o trimestrale
-  //param.datiContribuente.liqTipoVersamento = -1;
+  param.datiContribuente.liqTipoVersamento = -1;
   param.periods = [];
   var periods = createPeriods(param);
   for (var i=0; i<periods.length; i++) {
@@ -680,11 +725,17 @@ function loadJournalData_Ventilazione(corrispettivi, periodComplete) {
   return acquistiPerRivendita;
 }
 
-function printLiquidazione(report, stylesheet, param, startDate, endDate) {
+function printLiquidazione(report, stylesheet, param, period) {
+
+  var startDate = period.startDate;
+  var endDate = period.endDate;
+  report.addParagraph("Prospetto di liquidazione IVA", "h1");
+  report.addParagraph(getPeriodText(period), "h1_period");
+  printed = printSummary(report, stylesheet, period);
   param.vatPeriods = [];
   param = loadVatCodes(param, startDate, endDate);
   if (param.vatPeriods.length>0) {
-    report.addParagraph(" ", "h2");
+    report.addParagraph("RIEPILOGO IVA", "h2");
     printVatReport2(report, stylesheet, param.vatPeriods[0]);
     return true;
   }
@@ -697,7 +748,7 @@ function printLiquidazioneAnnuale(report, stylesheet, param) {
   period.endDate = param.fileInfo["ClosureDate"];
   period = loadJournal(period);
   period = loadJournalData_AddTotals(period, period);
-  report.addParagraph("LIQUIDAZIONE ANNUALE IVA", "h1");
+  report.addParagraph("Liquidazione annuale IVA", "h1");
   report.addParagraph(getPeriodText(param.vatPeriods[0]), "h1_period");
   printSummary(report, stylesheet, period);
 
@@ -716,7 +767,12 @@ function printRegister(report, stylesheet, period, register) {
     return false;
   
   //Titolo
-  report.addParagraph("REGISTRO IVA " + register.toUpperCase(), "h1");
+  var titolo = '';
+  if (register == 'vendite')
+    titolo = 'Registro fatture emesse';
+  else if (register == 'acquisti')
+    titolo = 'Registro degli acquisti';
+  report.addParagraph(titolo, "h1");
   report.addParagraph(getPeriodText(period), "h1_period");
 
   //Tabella
@@ -890,24 +946,24 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
     return false;
   
   //Titolo
-  report.addParagraph("REGISTRO IVA " + register.toUpperCase(), "h1");
+  report.addParagraph("Registro dei corrispettivi", "h1");
   report.addParagraph(getPeriodText(period), "h1_period");
  
   //Tabella REGISTRO DEI CORRISPETTIVI 
   var table = report.addTable("corrispettivi_table");
   headerRow = table.getHeader().addRow();
-  headerRow.addCell("Data");
-  headerRow.addCell("Cod.IVA");
-  headerRow.addCell("Gr.IVA");
-  headerRow.addCell("Des.cod.IVA");
-  headerRow.addCell("Fatt.normali", "right");
-  headerRow.addCell("Fatt.fiscali", "right");
-  headerRow.addCell("Fatt.scontr.", "right");
-  headerRow.addCell("Fatt.differ.", "right");
-  headerRow.addCell("Corr.normali", "right");
-  headerRow.addCell("Corr.scontr.", "right");
-  headerRow.addCell("Ric.fiscali", "right");
-  headerRow.addCell("Tot.giorn.", "right");
+  headerRow.addCell("Data", "title");
+  headerRow.addCell("Cod.IVA", "title");
+  headerRow.addCell("Gr.IVA", "title");
+  headerRow.addCell("Des.cod.IVA", "title");
+  headerRow.addCell("Fatt.normali", "title right");
+  headerRow.addCell("Fatt.fiscali", "title right");
+  headerRow.addCell("Fatt.scontr.", "title right");
+  headerRow.addCell("Fatt.differ.", "title right");
+  headerRow.addCell("Corr.normali", "title right");
+  headerRow.addCell("Corr.scontr.", "title right");
+  headerRow.addCell("Ric.fiscali", "title right");
+  headerRow.addCell("Tot.giorn.", "title right");
 
   var tot1=0;
   var tot2=0;
@@ -970,16 +1026,16 @@ function printRegisterCorrispettivi(report, stylesheet, period) {
   //Tabella CALCOLO VENTILAZIONE CORRISPETTIVI
   var table = report.addTable("corrispettivi_calcolo_ventilazione_table");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("CALCOLO VENTILAZIONE CORRISPETTIVI (GR=C-VEN) " + getPeriodText(period), "", 8);
+  headerRow.addCell("CALCOLO VENTILAZIONE CORRISPETTIVI (GR=C-VEN) " + getPeriodText(period), "title h4", 8);
   headerRow = table.getHeader().addRow();
-  headerRow.addCell("Cod.IVA");
-  headerRow.addCell("%IVA");
-  headerRow.addCell("Descrizione");
-  headerRow.addCell("Tot.Acquisti", "right");
-  headerRow.addCell("%Incid.", "right");
-  headerRow.addCell("Tot.corr.da ventilare", "right");
-  headerRow.addCell("Imponibile", "right");
-  headerRow.addCell("Totale Iva", "right");
+  headerRow.addCell("Cod.IVA", "title");
+  headerRow.addCell("%IVA", "title");
+  headerRow.addCell("Descrizione", "title");
+  headerRow.addCell("Tot.Acquisti", "title right");
+  headerRow.addCell("%Incid.", "title right");
+  headerRow.addCell("Tot.corr.da ventilare", "title right");
+  headerRow.addCell("Imponibile", "title right");
+  headerRow.addCell("Totale Iva", "title right");
 
   tot1=0;
   tot2=0;
@@ -1103,10 +1159,6 @@ function printSummary(report, stylesheet, period) {
   if (!period.registri["vendite"] && !period.registri["acquisti"] && !period.registri["corrispettivi"])
     return false;
 
-  //Titolo
-  report.addParagraph("PROSPETTO DI LIQUIDAZIONE IVA", "h1");
-  report.addParagraph(getPeriodText(period), "h1_period");
-
   if (period.registri["vendite"]) {
     printSummary_Table(report, stylesheet, period.registri["vendite"], "RIEPILOGO GENERALE IVA VENDITE");
   }
@@ -1198,7 +1250,7 @@ function setStyle(report, stylesheet, param) {
   stylesheet.addStyle(".amount", "text-align: right");
   stylesheet.addStyle(".bold", "font-weight:bold");
   stylesheet.addStyle(".expand", "width:100%;");
-  stylesheet.addStyle(".period", "padding-bottom: 1em;padding-top:0;");
+  stylesheet.addStyle(".period", "padding-bottom: 1em;padding-top:1em;");
   stylesheet.addStyle(".center", "text-align: center");
   stylesheet.addStyle(".right", "text-align: right");
   stylesheet.addStyle(".title", "padding: 0.4em;");
@@ -1206,7 +1258,7 @@ function setStyle(report, stylesheet, param) {
   stylesheet.addStyle(".h1_period", "font-weight:bold;font-size:9px;padding-bottom:2em;text-align: center;");
   stylesheet.addStyle(".h2", "font-weight:bold;padding:0.3em;background-color:#eeeeee;color:#333333;");
   stylesheet.addStyle(".h3", "font-weight:bold;border-top:1px solid black;padding-top:1em;");
-  stylesheet.addStyle(".h4", "font-weight:bold;");
+  stylesheet.addStyle(".h4", "font-weight:bold;background-color:#ffffff;color:#000000;");
   stylesheet.addStyle(".total", "font-weight:bold;padding-bottom:20px;");
   stylesheet.addStyle(".warning", "color: red;");
   /*tables*/

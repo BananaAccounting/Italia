@@ -50,11 +50,6 @@
          </property>
          <item>
           <property name="text">
-           <string>Registro IVA unico</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
            <string>Vendite</string>
           </property>
          </item>
@@ -71,6 +66,11 @@
          <item>
           <property name="text">
            <string>Liquidazione</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Registro IVA unico</string>
           </property>
          </item>
         </widget>
@@ -386,15 +386,12 @@
       </layout>
       <zorder>periodoGroupBox</zorder>
       <zorder>tipoRegistroLabel</zorder>
-      <zorder>tipoRegistroLabel_2</zorder>
       <zorder>stampaDefinitivaCheckBox</zorder>
       <zorder>stampaOrizzontaleCheckBox</zorder>
       <zorder>visualizzaDataOraCheckBox</zorder>
-      <zorder>horizontalSpacer</zorder>
-      <zorder>inizionumerazionepagineLabel</zorder>
-      <zorder></zorder>
+      <zorder>tipoRegistroComboBox</zorder>
       <zorder>numerazioneAutomaticaCheckBox</zorder>
-      <zorder></zorder>
+      <zorder>verticalSpacer_2</zorder>
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
