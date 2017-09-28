@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-18
+// @pubdate = 2017-09-28
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -469,7 +469,8 @@ function loadVatCodes(param, _startDate, _endDate)
   vatAmounts["C-VEN"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = findVatCodes(tableVatCodes, "Gr", "C-REG");
   vatAmounts["C-REG"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatAmounts["C"] = sumVatAmounts(vatAmounts, ["C-NVE","C-VEN","C-REG"]);
+  //C-VEN non vengono sommati IN C perché devono essere registrati con il gruppo C-REG
+  vatAmounts["C"] = sumVatAmounts(vatAmounts, ["C-NVE","C-REG"]);
   
   // A = Acquisti
   vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-RI");
