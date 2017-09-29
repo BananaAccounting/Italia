@@ -884,6 +884,12 @@ nelle quali l'utente può inserire la % manualmente
         else if (vatGr && vatGr.indexOf("EU")>=0) {
           jsonLine["IT_TipoDoc"] = 'TD10';
         }
+        else if (vatGr && vatGr.indexOf("REV-S")>=0 && jsonLine["IT_ClienteIDPaese"] != "IT") {
+          jsonLine["IT_TipoDoc"] = 'TD11';
+        }
+        else if (vatGr && vatGr.indexOf("REV")>=0 && jsonLine["IT_ClienteIDPaese"] != "IT") {
+          jsonLine["IT_TipoDoc"] = 'TD10';
+        }
       }
     }
 

@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-21
+// @pubdate = 2017-09-29
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -562,6 +562,22 @@ function printVatReport(report, stylesheet, param) {
 
   //Print table
   var table = report.addTable("vatreport_table");
+  table.addColumn("vatreport_table_col01");
+  table.addColumn("vatreport_table_col02");
+  table.addColumn("vatreport_table_col03");
+  table.addColumn("vatreport_table_col04");
+  table.addColumn("vatreport_table_col05");
+  table.addColumn("vatreport_table_col06");
+  table.addColumn("vatreport_table_col07");
+  table.addColumn("vatreport_table_col08");
+  table.addColumn("vatreport_table_col09");
+  table.addColumn("vatreport_table_col10");
+  table.addColumn("vatreport_table_col11");
+  table.addColumn("vatreport_table_col12");
+  table.addColumn("vatreport_table_col13");
+  table.addColumn("vatreport_table_col14");
+  table.addColumn("vatreport_table_col15");
+  
   var headerRow = table.getHeader().addRow();
 
   //Column names
@@ -719,6 +735,7 @@ function setStyle(report, stylesheet) {
 
   /*vatrepor_table*/
   stylesheet.addStyle(".vatreport_table", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".vatreport_table_col05", "width:25%;");
 
 }
 
