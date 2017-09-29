@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>323</width>
-    <height>403</height>
+    <width>277</width>
+    <height>393</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -458,39 +458,22 @@
    <item>
     <widget class="QGroupBox" name="stampaGroupBox">
      <property name="title">
-      <string>Stampa</string>
+      <string>Crea</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QRadioButton" name="stampaReportRadioButton">
-          <property name="text">
-           <string>F&amp;ormulario</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="stampaXmlRadioButton">
-          <property name="text">
-           <string>&amp;File xml per trasmissione</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+       <widget class="QRadioButton" name="stampaReportRadioButton">
+        <property name="text">
+         <string>&amp;Anteprima di controllo</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="stampaXmlRadioButton">
+        <property name="text">
+         <string>&amp;File XML per trasmissione</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

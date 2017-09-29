@@ -292,6 +292,7 @@ function exec(inData) {
     setStyle(report, stylesheet);
     printVatReport(report, stylesheet, param);
     printVatCodesTotal(report, stylesheet, param);
+    printExcludedRows(report, stylesheet, param);
     if (debug) {
       report.addPageBreak();
       _debug_printJournal(param.data, report, stylesheet);
@@ -436,6 +437,82 @@ function loadJournalData(param) {
   }
 
   return param;
+}
+
+/*
+ * stampa tabella di controllo, visualizzando tutte le registrazioni con iva escluse
+* ad esempio per registrazioni composte nelle quali il cliente/fornitore non appare nella prima riga 
+*/
+function printExcludedRows(report, stylesheet, param) {
+
+  //Data
+  if (param.data.customers.length<=0 && param.data.suppliers.length<=0)
+    return;
+
+  //Colonne da visualizzare del giornale
+  var sortedColumns = [];
+  sortedColumns.push(1015); //IT_DataDoc
+  sortedColumns.push(1014); //IT_NoDoc
+  sortedColumns.push(4); //Description
+  sortedColumns.push(5); //VatCode
+  sortedColumns.push(1001); //IT_Lordo
+  sortedColumns.push(1002); //IT_ImportoIva
+  sortedColumns.push(1004); //IT_Imponibile
+  sortedColumns.push(1017); //IT_ClienteConto
+  sortedColumns.push(14); //JRowOrigin
+  sortedColumns.push(15); //JTableOrigin
+
+  //Title
+  var table = report.addTable("tableJournal");
+  for (var i =0; i<13;i++) {
+    table.addColumn("tableJournal_col" + i.toString());
+  }
+  
+  //Header
+  var headerRow = table.getHeader().addRow();
+  headerRow.addCell("TABELLA DI CONTROLLO, REGISTRAZIONI ESCLUSE (" + getPeriodText(param.data) + ")", "title",  sortedColumns.length);
+  var headerRow = table.getHeader().addRow();
+  for (var i in sortedColumns) {
+    var index = sortedColumns[i];
+    for (var j in param.data.journal.columns) {
+      if (param.data.journal.columns[j].index == index) {
+        var columnTitle = param.data.journal.columns[j].title;
+        if (columnTitle.length>8)
+          columnTitle = columnTitle.substring(0, 7) + ".";
+        headerRow.addCell(columnTitle);
+        break;
+      }
+    }
+  }
+
+  // Print data
+  // Stampa solamente le registrazioni non valide IT_RegistrazioneValida = ''
+  var row = table.addRow();
+  for (var i=0; i < param.data.journal.rows.length;i++) {
+    var jsonObj = param.data.journal.rows[i];
+    var registrazioneValida = jsonObj['IT_RegistrazioneValida'];
+    if (registrazioneValida.length>0)
+      continue;
+    var row = table.addRow();
+    for (var j in sortedColumns) {
+      var index = sortedColumns[j];
+      for (var k in param.data.journal.columns) {
+        if (param.data.journal.columns[k].index == index) {
+          var content = jsonObj[param.data.journal.columns[k].name];
+          row.addCell(content, param.data.journal.columns[k].type);
+          break;
+        }
+      }
+    }
+  }
+  //Style
+  stylesheet.addStyle(".tableJournal", "width:100%;margin-top:20px;");
+  stylesheet.addStyle(".tableJournal td", "border:0.5em solid black;");
+  stylesheet.addStyle(".tableJournal td.header", "font-weight:bold;background-color:#dddddd");
+  stylesheet.addStyle(".tableJournal td.title", "font-weight:bold;border:0px;background-color:#ffffff;");
+  stylesheet.addStyle(".tableJournal_col03", "width:25%;");
+  stylesheet.addStyle(".description", "text-align: right;border:0.5em solid black; ");
+
 }
 
 /*

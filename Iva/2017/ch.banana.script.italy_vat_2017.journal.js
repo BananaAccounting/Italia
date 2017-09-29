@@ -1022,16 +1022,23 @@ nelle quali l'utente può inserire la % manualmente
       }
     }
 
+    //IT_RegistrazioneValida
+    //Serve per sapere se la riga IVA è stata inclusa nelle registrazioni clienti/fornitori
+    //Quelle scartate verranno segnalate in una tabella di controllo
+    jsonLine["IT_RegistrazioneValida"] = '';
+
     //Aggiunge la riga nei parametri
     if (isCustomer) {
       if (!param.customers[accountId].rows)
         param.customers[accountId].rows = [];
+      jsonLine["IT_RegistrazioneValida"] = '1';
       param.customers[accountId].rows.push(jsonLine);
       //console.log(jsonLine["Description"]);
     }
     else if (isSupplier) {
       if (!param.suppliers[accountId].rows)
         param.suppliers[accountId].rows = [];
+      jsonLine["IT_RegistrazioneValida"] = '1';
       param.suppliers[accountId].rows.push(jsonLine);
     }
     //Write rows for debugging purposes
@@ -1117,6 +1124,14 @@ function loadJournal_setColumns(param, journalColumns) {
     else if (column.name == "VatNonDeductible") {
       column.title = "VatNonDed";
       column.index = 13;
+    }
+    else if (column.name == "JRowOrigin") {
+      column.title = "JRowOrigin";
+      column.index = 14;
+    }
+    else if (column.name == "JTableOrigin") {
+      column.title = "JTableOrigin";
+      column.index = 15;
     }
     param.columns[j] = column;
   }
@@ -1299,6 +1314,11 @@ function loadJournal_setColumns(param, journalColumns) {
   column.name = "IT_CorrTotaleGiornaliero";
   column.title = "IT_CorrTotaleGiornaliero";
   column.index = 1030;
+  param.columns[j++] = column;
+  var column = {};
+  column.name = "IT_RegistrazioneValida";
+  column.title = "IT_RegistrazioneValida";
+  column.index = 1031;
   param.columns[j++] = column;
   return param;
 }
