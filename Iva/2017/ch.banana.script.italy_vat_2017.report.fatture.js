@@ -445,8 +445,17 @@ function loadJournalData(param) {
 */
 function printExcludedRows(report, stylesheet, param) {
 
-  //Data
-  if (param.data.customers.length<=0 && param.data.suppliers.length<=0)
+  //Visualizza solamente se ci sono righe escluse
+  var found=false;
+  for (var i=0; i < param.data.journal.rows.length;i++) {
+    var jsonObj = param.data.journal.rows[i];
+    var registrazioneValida = jsonObj['IT_RegistrazioneValida'];
+    if (registrazioneValida.length<=0) {
+      found = true;
+      break;
+    }
+  }
+  if (!found)
     return;
 
   //Colonne da visualizzare del giornale
@@ -470,7 +479,7 @@ function printExcludedRows(report, stylesheet, param) {
   
   //Header
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("TABELLA DI CONTROLLO, REGISTRAZIONI ESCLUSE (" + getPeriodText(param.data) + ")", "title",  sortedColumns.length);
+  headerRow.addCell("TABELLA DI CONTROLLO, REGISTRAZIONI ESCLUSE DALLA COMUNICAZIONE (" + getPeriodText(param.data) + ")", "title",  sortedColumns.length);
   var headerRow = table.getHeader().addRow();
   for (var i in sortedColumns) {
     var index = sortedColumns[i];
