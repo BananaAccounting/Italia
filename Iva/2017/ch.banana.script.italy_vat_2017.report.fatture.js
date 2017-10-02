@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-29
+// @pubdate = 2017-10-02
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -79,6 +79,9 @@ function settingsDialog() {
   if (param.blocco == "DTR")
     bloccoId = 1;
   dialog.bloccoGroupBox.bloccoComboBox.currentIndex = bloccoId;
+
+  //Groupbox opzioni
+  dialog.opzioniGroupBox.esigibilitaIvaCheckBox.checked = param.esigibilitaIva;
 
   //Groupbox stampa
   if (param.outputScript==1)
@@ -148,6 +151,9 @@ function settingsDialog() {
   else
     param.blocco = "DTE";
   
+  //Groupbox opzioni
+  param.esigibilitaIva = dialog.opzioniGroupBox.esigibilitaIvaCheckBox.checked;
+
   //Groupbox stampa
   if (dialog.stampaGroupBox.stampaXmlRadioButton.checked)
     param.outputScript = 1;
@@ -317,7 +323,8 @@ function initParam()
   param.codiceCarica = '';
   param.blocco = 'DTE';
   param.progressivoInvio = '';
-
+  param.esigibilitaIva = false;
+  
   param.annoSelezionato = '';
   param.periodoSelezionato = 'm';
   param.periodoValoreMese = '';
@@ -834,6 +841,8 @@ function verifyParam(param) {
     param.blocco = 'DTE';
   if(!param.progressivoInvio)
     param.progressivoInvio = '';
+  if (!param.esigibilitaIva)
+    param.esigibilitaIva = false;
 
   if (!param.annoSelezionato)
     param.annoSelezionato = '';

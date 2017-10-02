@@ -240,6 +240,8 @@ function createInstance_Blocco2(accountObj, param)
           xbrlDatiRiepilogo += xml_createElementWithValidation("Detraibile", accountObj.rows[i]["IT_Detraibile"],0,'4...6');
         if (accountObj.rows[i]["IT_Deducibile"].length)
           xbrlDatiRiepilogo += xml_createElementWithValidation("Deducibile",accountObj.rows[i]["IT_Deducibile"],0,'2');
+        if (accountObj.rows[i]["IT_EsigibilitaIva"].length && param.esigibilitaIva)
+          xbrlDatiRiepilogo += xml_createElementWithValidation("EsigibilitaIVA",accountObj.rows[i]["IT_EsigibilitaIva"],0,'1');
         xbrlContent += xml_createElementWithValidation("DatiRiepilogo", xbrlDatiRiepilogo,1);
         xbrlDatiFatturaBody +=  xml_createElementWithValidation("DatiFatturaBody" + param.blocco, xbrlContent,1);
       }

@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>277</width>
-    <height>393</height>
+    <width>332</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Comunicazione Dati fatture</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_5">
+  <layout class="QVBoxLayout" name="verticalLayout_6">
    <item>
     <widget class="QGroupBox" name="periodoGroupBox">
      <property name="title">
@@ -479,6 +479,24 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="opzioniGroupBox">
+     <property name="title">
+      <string>Opzioni</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <widget class="QCheckBox" name="esigibilitaIvaCheckBox">
+        <property name="text">
+         <string>&amp;Pubblica sempre il tag EsigibilitaIVA</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+     <zorder>esigibilitaIvaCheckBox</zorder>
+     <zorder>esigibilitaIvaCheckBox</zorder>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -504,6 +522,7 @@
   <zorder>buttonBox</zorder>
   <zorder>stampaGroupBox</zorder>
   <zorder>bloccoGroupBox</zorder>
+  <zorder>opzioniGroupBox</zorder>
  </widget>
  <tabstops>
   <tabstop>periodoComboBox</tabstop>
@@ -514,6 +533,7 @@
   <tabstop>codiceCaricaComboBox</tabstop>
   <tabstop>stampaReportRadioButton</tabstop>
   <tabstop>stampaXmlRadioButton</tabstop>
+  <tabstop>esigibilitaIvaCheckBox</tabstop>
  </tabstops>
  <resources/>
  <connections>
