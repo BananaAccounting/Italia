@@ -532,7 +532,7 @@ function loadJournal(param)
 
   //Variabili per numerazione registro
   var progRegistri = {};
-  var previousIndexGroup = 0;
+  var previousIndexGroup = -1;
   
   //Salva i nomi delle colonne del giornale
   var tColumnNames = journal.columnNames;

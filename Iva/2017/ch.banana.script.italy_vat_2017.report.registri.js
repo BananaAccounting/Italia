@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-28
+// @pubdate = 2017-10-02
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -427,33 +427,13 @@ function exec(inData) {
   addPageFooter(report, stylesheet, param);
   setStyle(report, stylesheet, param);
   
-  //Stampa annuale
   if (param.periodoSelezionato == "y") {
-    printCompletePeriod(report, stylesheet, param);
+    //Stampa annuale
+    printPeriodComplete(report, stylesheet, param);
   }
-  //Stampa del periodo
   else {
-    var printed = false;
-    for (var i=0; i<param.periods.length; i++) {
-      if (param.tipoRegistro == 0 || param.tipoRegistro == 4) {
-        printed = printRegister(report, stylesheet, param.periods[i], 'vendite');
-      }
-      if (param.tipoRegistro == 1 || param.tipoRegistro == 4) {
-        if (printed)
-          report.addPageBreak();
-        printed = printRegister(report, stylesheet, param.periods[i], 'acquisti');
-      }
-      if (param.tipoRegistro == 2 || param.tipoRegistro == 4) {
-        if (printed)
-          report.addPageBreak();
-        printed = printRegisterCorrispettivi(report, stylesheet, param.periods[i]);
-      }
-      if (printed)
-        report.addPageBreak();
-      printed = printLiquidazione(report, stylesheet, param, param.periods[i]);
-      if (printed && i+1<param.periods.length)
-        report.addPageBreak();
-    }
+    //Stampa dei periodi selezionati
+    printPeriods(report, stylesheet, param);
   }
 
   //Debug
@@ -509,7 +489,6 @@ function loadJournalData(param) {
     param.periods.push(periods[i]);
   }
 
-  //Raggruppa per codici e aliquote
   //PeriodComplete serve per il calcolo dei corrispettivi da ventilare (acquisti per rivendita)
   for (var i=0; i<param.periods.length; i++) {
     var periodComplete = {};
@@ -712,15 +691,22 @@ function loadJournalData_Ventilazione(corrispettivi, periodComplete) {
   return acquistiPerRivendita;
 }
 
-function printCompletePeriod(report, stylesheet, param) {
-  //calcola il periodo completo
+function printPeriodComplete(report, stylesheet, param) {
+  //Stampa registro annuale
   var periodComplete = {};
   periodComplete.startDate = param.fileInfo["OpeningDate"];
   periodComplete.endDate = param.fileInfo["ClosureDate"];
+  periodComplete.numerazioneAutomatica = param.numerazioneAutomatica;
+  periodComplete.colonnaProtocollo = param.colonnaProtocollo;
   periodComplete = loadJournal(periodComplete);
   periodComplete = loadJournalData_AddTotals(periodComplete, periodComplete);
   
   //stampa registri vendite, acquisti e corrispettivi con periodo completo
+  //tipoRegistro 0 = vendite
+  //tipoRegistro 1 = acquisti
+  //tipoRegistro 2 = corrispettivi
+  //tipoRegistro 3 = liquidazione
+  //tipoRegistro 4 = registro iva unico
   var printed = false;
   if (param.tipoRegistro == 0 || param.tipoRegistro == 4) {
     printed = printRegister(report, stylesheet, periodComplete, 'vendite');
@@ -750,6 +736,39 @@ function printCompletePeriod(report, stylesheet, param) {
   return true;
 }
 
+function printPeriods(report, stylesheet, param) {
+  //Stampa registri
+  //tipoRegistro 0 = vendite
+  //tipoRegistro 1 = acquisti
+  //tipoRegistro 2 = corrispettivi
+  //tipoRegistro 3 = liquidazione
+  //tipoRegistro 4 = registro iva unico
+  var printed = false;
+  for (var i=0; i<param.periods.length; i++) {
+    if (param.tipoRegistro == 0 || param.tipoRegistro == 4) {
+      printed = printRegister(report, stylesheet, param.periods[i], 'vendite');
+    }
+    if (param.tipoRegistro == 1 || param.tipoRegistro == 4) {
+      if (printed)
+        report.addPageBreak();
+      printed = printRegister(report, stylesheet, param.periods[i], 'acquisti');
+    }
+    if (param.tipoRegistro == 2 || param.tipoRegistro == 4) {
+      if (printed)
+        report.addPageBreak();
+      printed = printRegisterCorrispettivi(report, stylesheet, param.periods[i]);
+    }
+    if (param.tipoRegistro == 3 || param.tipoRegistro == 0 || param.tipoRegistro == 4) {
+      if (printed)
+        report.addPageBreak();
+      printed = printLiquidazione(report, stylesheet, param, param.periods[i]);
+    }
+    if (printed && i+1<param.periods.length)
+      report.addPageBreak();
+  }
+  return true;
+}
+
 function printLiquidazione(report, stylesheet, param, period) {
 
   var startDate = period.startDate;
@@ -773,7 +792,7 @@ function printRegister(report, stylesheet, period, register) {
   if (register == 'vendite')
     titolo = 'Registro fatture emesse';
   else if (register == 'acquisti')
-    titolo = 'Registro degli acquisti';
+    titolo = 'Registro fatture ricevute';
 
   if (!period.registri[register] || (!period.registri[register].totaliAliquota && !period.registri[register].totaliCodice)) {
     report.addParagraph(titolo, "h1");
@@ -782,6 +801,26 @@ function printRegister(report, stylesheet, period, register) {
     return true;
   }
   
+  //Sort delle regitrazioni
+  var transactions = [];
+  for (var index in period.journal.rows) {
+    if (typeof period.journal.rows[index] !== "object")
+      continue;
+    if (period.journal.rows[index].IT_Registro.toLowerCase() != register.toLowerCase())
+      continue;
+    var row = period.journal.rows[index];
+    var progRegistro = row.DocProtocol;
+    if (period.numerazioneAutomatica)
+      progRegistro = row.IT_ProgRegistro;
+    else if (period.colonnaProtocollo == 'Doc')
+      progRegistro = row.Doc;
+    row.IT_ProgRegistro = progRegistro;
+    transactions.push(row);
+  }
+  // Sort per progressivo registro
+  transactions.sort(sortBy_ProgRegistro);  
+
+
   //Tabella
   var table = report.addTable("register_table");
   var headerRow = table.getHeader().addRow();
@@ -804,36 +843,25 @@ function printRegister(report, stylesheet, period, register) {
   var totCol1=0;
   var totCol2=0;
   var totCol3=0;
-  for (var index in period.journal.rows) {
-    if (typeof period.journal.rows[index] !== "object")
-      continue;
-    if (period.journal.rows[index].IT_Registro.toLowerCase() != register.toLowerCase())
-      continue;
+  for (var index in transactions) {
 
-    //Progressivo registro
-    var progRegistro = period.journal.rows[index].DocProtocol;
-    if (period.numerazioneAutomatica)
-      progRegistro = period.journal.rows[index].IT_ProgRegistro;
-    else if (period.colonnaProtocollo == 'Doc')
-      progRegistro = period.journal.rows[index].Doc;
-
-    var vatCode = period.journal.rows[index].JVatCodeWithoutSign;
-    var vatRate = period.journal.rows[index].IT_Aliquota;
-    var vatAmount = period.journal.rows[index].IT_ImportoIva;
-    var vatTaxable = period.journal.rows[index].IT_Imponibile;
-    var vatGross = period.journal.rows[index].IT_Lordo;
+    var vatCode = transactions[index].JVatCodeWithoutSign;
+    var vatRate = transactions[index].IT_Aliquota;
+    var vatAmount = transactions[index].IT_ImportoIva;
+    var vatTaxable = transactions[index].IT_Imponibile;
+    var vatGross = transactions[index].IT_Lordo;
 
     var row = table.addRow();
-    row.addCell(progRegistro, "right");
-    row.addCell(Banana.Converter.toLocaleDateFormat(period.journal.rows[index].JDate, "dd/mm/yy"), "right");
-    row.addCell(Banana.Converter.toLocaleDateFormat(period.journal.rows[index].IT_DataDoc, "dd/mm/yy"), "right");
+    row.addCell(transactions[index].IT_ProgRegistro, "right");
+    row.addCell(Banana.Converter.toLocaleDateFormat(transactions[index].JDate, "dd/mm/yy"), "right");
+    row.addCell(Banana.Converter.toLocaleDateFormat(transactions[index].IT_DataDoc, "dd/mm/yy"), "right");
     var cell = row.addCell();
-    var descrizione = xml_unescapeString(period.journal.rows[index].IT_ClienteIntestazione);
+    var descrizione = xml_unescapeString(transactions[index].IT_ClienteIntestazione);
     if (descrizione.length>1)
       cell.addParagraph(descrizione);
-    if (period.journal.rows[index].Description.length>0)
-      cell.addParagraph(period.journal.rows[index].Description);
-    row.addCell(period.journal.rows[index].IT_NoDoc, "right");
+    if (transactions[index].Description.length>0)
+      cell.addParagraph(transactions[index].Description);
+    row.addCell(transactions[index].IT_NoDoc, "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatGross), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatTaxable), "right");
     row.addCell(vatCode, "right");
@@ -1333,8 +1361,34 @@ function verifyParam(param) {
 * output integers with leading zeros
 */
 function zeroPad(num, places) {
-    if (num.toString().length > places)
-        num = 0;
-    var zero = places - num.toString().length + 1;
-    return Array(+(zero > 0 && zero)).join("0") + num;
+  if (num.toString().length > places)
+      num = 0;
+  var zero = places - num.toString().length + 1;
+  return Array(+(zero > 0 && zero)).join("0") + num;
+}
+
+/** Sort transactions by date */
+this.sort = function( transactions) {
+  var sortedTransactions = transactions.sort(_sort);
+  if (transactions.length<=0)
+    return transactions;
+  var i=0;
+  var previousProgr = parseInt(transactions[0].IT_ProgRegistro);
+  while (i<transactions.length) {
+    var progr = parseInt(transactions[i].IT_ProgRegistro);
+    if (previousProgr > 0 && previousProgr > progr)
+      return transactions.reverse();
+    else if (previousProgr > 0 && previousProgr < progr)
+      return transactions;
+    i++;
+  }
+  return transactions;
+ }
+
+ function sortBy_ProgRegistro(a,b) {
+  if (parseInt(a.IT_ProgRegistro) < parseInt(b.IT_ProgRegistro))
+    return -1;
+  if (parseInt(a.IT_ProgRegistro) > parseInt(b.IT_ProgRegistro))
+    return 1;
+  return 0;
 }
