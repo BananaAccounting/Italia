@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-10-02
+// @pubdate = 2017-10-03
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -452,12 +452,17 @@ function loadJournalData(param) {
 */
 function printExcludedRows(report, stylesheet, param) {
 
-  //Visualizza solamente se ci sono righe escluse
+  //Visualizza solamente se ci sono righe escluse per il registro corrente
+  var registroCorrente = 'Vendite';
+  if (param.blocco == 'DTR')
+    registroCorrente = 'Acquisti';
+
   var found=false;
   for (var i=0; i < param.data.journal.rows.length;i++) {
     var jsonObj = param.data.journal.rows[i];
     var registrazioneValida = jsonObj['IT_RegistrazioneValida'];
-    if (registrazioneValida.length<=0) {
+    var registro = jsonObj['IT_Registro'];
+    if ((!registrazioneValida || registrazioneValida.length<=0) && registro == registroCorrente) {
       found = true;
       break;
     }
@@ -475,12 +480,13 @@ function printExcludedRows(report, stylesheet, param) {
   sortedColumns.push(1002); //IT_ImportoIva
   sortedColumns.push(1004); //IT_Imponibile
   sortedColumns.push(1017); //IT_ClienteConto
+  sortedColumns.push(1013); //IT_Registro
   sortedColumns.push(14); //JRowOrigin
   sortedColumns.push(15); //JTableOrigin
 
   //Title
   var table = report.addTable("tableJournal");
-  for (var i =0; i<13;i++) {
+  for (var i =0; i<14;i++) {
     table.addColumn("tableJournal_col" + i.toString());
   }
   
@@ -507,16 +513,17 @@ function printExcludedRows(report, stylesheet, param) {
   for (var i=0; i < param.data.journal.rows.length;i++) {
     var jsonObj = param.data.journal.rows[i];
     var registrazioneValida = jsonObj['IT_RegistrazioneValida'];
-    if (registrazioneValida.length>0)
-      continue;
-    var row = table.addRow();
-    for (var j in sortedColumns) {
-      var index = sortedColumns[j];
-      for (var k in param.data.journal.columns) {
-        if (param.data.journal.columns[k].index == index) {
-          var content = jsonObj[param.data.journal.columns[k].name];
-          row.addCell(content, param.data.journal.columns[k].type);
-          break;
+    var registro = jsonObj['IT_Registro'];
+    if ((!registrazioneValida || registrazioneValida.length<=0) && registro == registroCorrente) {
+      var row = table.addRow();
+      for (var j in sortedColumns) {
+        var index = sortedColumns[j];
+        for (var k in param.data.journal.columns) {
+          if (param.data.journal.columns[k].index == index) {
+            var content = jsonObj[param.data.journal.columns[k].name];
+            row.addCell(content, param.data.journal.columns[k].type);
+            break;
+          }
         }
       }
     }
