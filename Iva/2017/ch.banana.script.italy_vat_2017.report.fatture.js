@@ -359,17 +359,11 @@ function init_schemarefs()
   return schemaRefs;
 };
 
-function loadJournalData(param) {
-
-  //per il momento c'è un unico periodo non controlla il tipo di versamento mensile o trimestrale
-  param.data = {};  
-  param.datiContribuente.liqTipoVersamento = -1;
-  var periods = createPeriods(param);
-  if (periods.length>0) {
-    param.data.startDate = periods[0].startDate;
-    param.data.endDate = periods[0].endDate;
-    param.data = loadJournal(param.data);
-  }
+/*
+* controlla se la riga può essere stampata nello spesometro
+* ad esempio righe con codice ESCL vengono escluse oppure scontrini fiscali
+*/
+function isValidRow(row, param) {
 
   //Per la comunicazione DTE (Dati fatture emesse tiene solamente le righe del registro Vendite e
   //Fatture corrispettivi, scontrini esclusi)
@@ -387,6 +381,41 @@ function loadJournalData(param) {
     ricevuteFiscali = param.datiContribuente.contoRicevuteFiscali;
 
   if (param.blocco == 'DTE') {
+    if (row["IT_Registro"]=="Acquisti")
+      return false;
+    else if (row["VatExtraInfo"]=="ESCL")
+      return false;
+    else if (corrispettiviNormali.length>0 && row["VatTwinAccount"]==corrispettiviNormali)
+      return false;
+    else if (corrispettiviScontrini.length>0 && row["VatTwinAccount"]==corrispettiviScontrini)
+      return false;
+    else if (ricevuteFiscali.length>0 && row["VatTwinAccount"]==ricevuteFiscali)
+      return false;
+    return true;
+  }
+  else if (param.blocco == 'DTR') {
+    if (row["IT_Registro"]=="Vendite" || row["IT_Registro"]=="Corrispettivi")
+      return false;
+    else if (row["VatExtraInfo"]=="ESCL")
+      return false;
+    return true;
+  }
+  return false;
+}
+
+function loadJournalData(param) {
+
+  //per il momento c'è un unico periodo non controlla il tipo di versamento mensile o trimestrale
+  param.data = {};  
+  param.datiContribuente.liqTipoVersamento = -1;
+  var periods = createPeriods(param);
+  if (periods.length>0) {
+    param.data.startDate = periods[0].startDate;
+    param.data.endDate = periods[0].endDate;
+    param.data = loadJournal(param.data);
+  }
+
+  if (param.blocco == 'DTE') {
     //avvisa se il gruppo clienti non è impostato
     if (param.fileInfo["CustomersGroup"].length<=0) {
       var msg = getErrorMessage(ID_ERR_GRUPPO_CLIENTI_MANCANTE);
@@ -398,15 +427,8 @@ function loadJournalData(param) {
       var accountObj = param.data.customers[i];
       if (accountObj && accountObj.rows) {
       for (var j=0; j<accountObj.rows.length;j++) {
-        if (accountObj.rows[j]["IT_Registro"]=="Acquisti")
-          continue;
-        else if (accountObj.rows[j]["VatExtraInfo"]=="ESCL")
-          continue;
-        else if (corrispettiviNormali.length>0 && accountObj.rows[j]["VatTwinAccount"]==corrispettiviNormali)
-          continue;
-        else if (corrispettiviScontrini.length>0 && accountObj.rows[j]["VatTwinAccount"]==corrispettiviScontrini)
-          continue;
-        else if (ricevuteFiscali.length>0 && accountObj.rows[j]["VatTwinAccount"]==ricevuteFiscali)
+        var isValid = isValidRow(accountObj.rows[j], param);
+        if (!isValid)
           continue;
         checkedRows.push(accountObj.rows[j]);
       }
@@ -429,9 +451,8 @@ function loadJournalData(param) {
       var checkedRows = [];
       var accountObj = param.data.suppliers[i];
       for (var j in accountObj.rows) {
-        if (accountObj.rows[j]["IT_Registro"]=="Vendite" || accountObj.rows[j]["IT_Registro"]=="Corrispettivi")
-          continue;
-        else if (accountObj.rows[j]["VatExtraInfo"]=="ESCL")
+        var isValid = isValidRow(accountObj.rows[j], param);
+        if (!isValid)
           continue;
         checkedRows.push(accountObj.rows[j]);
       }
@@ -453,7 +474,7 @@ function loadJournalData(param) {
 function printExcludedRows(report, stylesheet, param) {
 
   //Visualizza solamente se ci sono righe escluse per il registro corrente
-  var registroCorrente = 'Vendite';
+  var registroCorrente = 'Vendite|Corrispettivi';
   if (param.blocco == 'DTR')
     registroCorrente = 'Acquisti';
 
@@ -462,7 +483,8 @@ function printExcludedRows(report, stylesheet, param) {
     var jsonObj = param.data.journal.rows[i];
     var registrazioneValida = jsonObj['IT_RegistrazioneValida'];
     var registro = jsonObj['IT_Registro'];
-    if ((!registrazioneValida || registrazioneValida.length<=0) && registro == registroCorrente) {
+    var isValid = isValidRow(jsonObj, param);
+    if ((!registrazioneValida || registrazioneValida.length<=0 || !isValid) && registroCorrente.indexOf(registro)>=0) {
       found = true;
       break;
     }
@@ -499,8 +521,8 @@ function printExcludedRows(report, stylesheet, param) {
     for (var j in param.data.journal.columns) {
       if (param.data.journal.columns[j].index == index) {
         var columnTitle = param.data.journal.columns[j].title;
-        if (columnTitle.length>8)
-          columnTitle = columnTitle.substring(0, 7) + ".";
+        /*if (columnTitle.length>8)
+          columnTitle = columnTitle.substring(0, 7) + ".";*/
         headerRow.addCell(columnTitle);
         break;
       }
@@ -509,12 +531,16 @@ function printExcludedRows(report, stylesheet, param) {
 
   // Print data
   // Stampa solamente le registrazioni non valide IT_RegistrazioneValida = ''
+  var tot1=0;
+  var tot2=0;
+  var tot3=0;
   var row = table.addRow();
   for (var i=0; i < param.data.journal.rows.length;i++) {
     var jsonObj = param.data.journal.rows[i];
     var registrazioneValida = jsonObj['IT_RegistrazioneValida'];
     var registro = jsonObj['IT_Registro'];
-    if ((!registrazioneValida || registrazioneValida.length<=0) && registro == registroCorrente) {
+    var isValid = isValidRow(jsonObj, param);
+    if ((!registrazioneValida || registrazioneValida.length<=0 || !isValid) && registroCorrente.indexOf(registro)>=0) {
       var row = table.addRow();
       for (var j in sortedColumns) {
         var index = sortedColumns[j];
@@ -526,8 +552,20 @@ function printExcludedRows(report, stylesheet, param) {
           }
         }
       }
+      tot1 = Banana.SDecimal.add(jsonObj['IT_Lordo'], tot1);
+      tot2 = Banana.SDecimal.add(jsonObj['IT_ImportoIva'], tot2);
+      tot3 = Banana.SDecimal.add(jsonObj['IT_Imponibile'], tot3);
     }
   }
+  
+  //Totale
+  row = table.addRow();
+  row.addCell("", "total", 4);
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot3), "right total");
+  row.addCell("", "", 4);
+
   //Style
   stylesheet.addStyle(".tableJournal", "width:100%;margin-top:20px;");
   stylesheet.addStyle(".tableJournal td", "border:0.5em solid black;");
@@ -535,6 +573,7 @@ function printExcludedRows(report, stylesheet, param) {
   stylesheet.addStyle(".tableJournal td.title", "font-weight:bold;border:0px;background-color:#ffffff;");
   stylesheet.addStyle(".tableJournal_col03", "width:25%;");
   stylesheet.addStyle(".description", "text-align: right;border:0.5em solid black; ");
+  stylesheet.addStyle(".total", "font-weight:bold;");
 
 }
 
