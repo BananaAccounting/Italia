@@ -218,8 +218,8 @@ function createInstance_Blocco2(accountObj, param)
         msgContext = '[' + accountObj.rows[i]["JTableOrigin"] + ': Riga ' + (parseInt(accountObj.rows[i]["JRowOrigin"])+1).toString() +'] <DatiFatturaBody' + param.blocco + '>';
         //2.2.3.1  <DatiGenerali>
         var xbrlDatiGenerali = xml_createElementWithValidation("TipoDocumento", accountObj.rows[i]["IT_TipoDoc"],1,'4',msgContext);
-        xbrlDatiGenerali += xml_createElementWithValidation("Data", accountObj.rows[i]["JInvoiceIssueDate"],1,'10',msgContext);
-        xbrlDatiGenerali += xml_createElementWithValidation("Numero", accountObj.rows[i]["IT_DocInvoice"],1,'1...20',msgContext);
+        xbrlDatiGenerali += xml_createElementWithValidation("Data", accountObj.rows[i]["IT_DataDoc"],1,'10',msgContext);
+        xbrlDatiGenerali += xml_createElementWithValidation("Numero", accountObj.rows[i]["IT_NoDoc"],1,'1...20',msgContext);
         if (param.blocco == 'DTR')
           xbrlDatiGenerali += xml_createElementWithValidation("DataRegistrazione", accountObj.rows[i]["JDate"],1,'10',msgContext);
         var xbrlContent = xml_createElementWithValidation("DatiGenerali", xbrlDatiGenerali,1);
@@ -240,6 +240,8 @@ function createInstance_Blocco2(accountObj, param)
           xbrlDatiRiepilogo += xml_createElementWithValidation("Detraibile", accountObj.rows[i]["IT_Detraibile"],0,'4...6');
         if (accountObj.rows[i]["IT_Deducibile"].length)
           xbrlDatiRiepilogo += xml_createElementWithValidation("Deducibile",accountObj.rows[i]["IT_Deducibile"],0,'2');
+        if (accountObj.rows[i]["IT_EsigibilitaIva"].length && param.esigibilitaIva)
+          xbrlDatiRiepilogo += xml_createElementWithValidation("EsigibilitaIVA",accountObj.rows[i]["IT_EsigibilitaIva"],0,'1');
         xbrlContent += xml_createElementWithValidation("DatiRiepilogo", xbrlDatiRiepilogo,1);
         xbrlDatiFatturaBody +=  xml_createElementWithValidation("DatiFatturaBody" + param.blocco, xbrlContent,1);
       }

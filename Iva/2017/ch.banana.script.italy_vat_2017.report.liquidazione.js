@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-18
+// @pubdate = 2017-09-29
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -469,7 +469,8 @@ function loadVatCodes(param, _startDate, _endDate)
   vatAmounts["C-VEN"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = findVatCodes(tableVatCodes, "Gr", "C-REG");
   vatAmounts["C-REG"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatAmounts["C"] = sumVatAmounts(vatAmounts, ["C-NVE","C-VEN","C-REG"]);
+  //C-VEN non vengono sommati IN C perché devono essere registrati con il gruppo C-REG
+  vatAmounts["C"] = sumVatAmounts(vatAmounts, ["C-NVE","C-REG"]);
   
   // A = Acquisti
   vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-RI");
@@ -482,6 +483,8 @@ function loadVatCodes(param, _startDate, _endDate)
   vatAmounts["A-IM-AL"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-RI-REV");
   vatAmounts["A-IM-RI-REV"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-RI-REV-S");
+  vatAmounts["A-IM-RI-REV-S"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM-RI-EU");
   vatAmounts["A-IM-RI-EU"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = findVatCodes(tableVatCodes, "Gr", "A-IM");
@@ -497,7 +500,7 @@ function loadVatCodes(param, _startDate, _endDate)
   vatCodes = findVatCodes(tableVatCodes, "Gr", "A-ED");
   vatAmounts["A-ED"] = Banana.document.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
 
-  vatAmounts["A-IM"] = sumVatAmounts(vatAmounts, ["A-IM","A-IM-RI","A-IM-BA","A-IM-BN","A-IM-AL","A-IM-RI-REV","A-IM-RI-EU"]);
+  vatAmounts["A-IM"] = sumVatAmounts(vatAmounts, ["A-IM","A-IM-RI","A-IM-BA","A-IM-BN","A-IM-AL","A-IM-RI-REV","A-IM-RI-REV-S","A-IM-RI-EU"]);
   vatAmounts["A-NI"] = sumVatAmounts(vatAmounts, ["A-NI","A-NI-X"]);
   vatAmounts["A"] = sumVatAmounts(vatAmounts, ["A-IM","A-NI","A-ES","A-NE","A-ED"]);
   
@@ -563,6 +566,7 @@ function loadVatCodes(param, _startDate, _endDate)
   vatAmounts["A-IM-BN"].style = "total4";
   vatAmounts["A-IM-AL"].style = "total4";
   vatAmounts["A-IM-RI-REV"].style = "total4";
+  vatAmounts["A-IM-RI-REV-S"].style = "total4";
   vatAmounts["A-IM-RI-EU"].style = "total4";
   vatAmounts["A-IM"].style = "total3";
   vatAmounts["A-NI-X"].style = "total4";
@@ -640,11 +644,11 @@ function printVatReport2(report, stylesheet, param) {
 
   //Print table
   var table = report.addTable("table2");
-  var headerRow = table.getHeader().addRow();
+  /*var headerRow = table.getHeader().addRow();
   headerRow.addCell("");
   headerRow.addCell("");
   headerRow.addCell("");
-  headerRow.addCell("");
+  headerRow.addCell("");*/
 
   //Print vat amounts
   var row = table.addRow();

@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-18
+// @pubdate = 2017-10-03
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -79,6 +79,9 @@ function settingsDialog() {
   if (param.blocco == "DTR")
     bloccoId = 1;
   dialog.bloccoGroupBox.bloccoComboBox.currentIndex = bloccoId;
+
+  //Groupbox opzioni
+  dialog.opzioniGroupBox.esigibilitaIvaCheckBox.checked = param.esigibilitaIva;
 
   //Groupbox stampa
   if (param.outputScript==1)
@@ -148,6 +151,9 @@ function settingsDialog() {
   else
     param.blocco = "DTE";
   
+  //Groupbox opzioni
+  param.esigibilitaIva = dialog.opzioniGroupBox.esigibilitaIvaCheckBox.checked;
+
   //Groupbox stampa
   if (dialog.stampaGroupBox.stampaXmlRadioButton.checked)
     param.outputScript = 1;
@@ -292,6 +298,7 @@ function exec(inData) {
     setStyle(report, stylesheet);
     printVatReport(report, stylesheet, param);
     printVatCodesTotal(report, stylesheet, param);
+    printExcludedRows(report, stylesheet, param);
     if (debug) {
       report.addPageBreak();
       _debug_printJournal(param.data, report, stylesheet);
@@ -316,7 +323,8 @@ function initParam()
   param.codiceCarica = '';
   param.blocco = 'DTE';
   param.progressivoInvio = '';
-
+  param.esigibilitaIva = false;
+  
   param.annoSelezionato = '';
   param.periodoSelezionato = 'm';
   param.periodoValoreMese = '';
@@ -351,17 +359,11 @@ function init_schemarefs()
   return schemaRefs;
 };
 
-function loadJournalData(param) {
-
-  //per il momento c'è un unico periodo non controlla il tipo di versamento mensile o trimestrale
-  param.data = {};  
-  param.datiContribuente.liqTipoVersamento = -1;
-  var periods = createPeriods(param);
-  if (periods.length>0) {
-    param.data.startDate = periods[0].startDate;
-    param.data.endDate = periods[0].endDate;
-    param.data = loadJournal(param.data);
-  }
+/*
+* controlla se la riga può essere stampata nello spesometro
+* ad esempio righe con codice ESCL vengono escluse oppure scontrini fiscali
+*/
+function isValidRow(row, param) {
 
   //Per la comunicazione DTE (Dati fatture emesse tiene solamente le righe del registro Vendite e
   //Fatture corrispettivi, scontrini esclusi)
@@ -379,6 +381,41 @@ function loadJournalData(param) {
     ricevuteFiscali = param.datiContribuente.contoRicevuteFiscali;
 
   if (param.blocco == 'DTE') {
+    if (row["IT_Registro"]=="Acquisti")
+      return false;
+    else if (row["VatExtraInfo"]=="ESCL")
+      return false;
+    else if (corrispettiviNormali.length>0 && row["VatTwinAccount"]==corrispettiviNormali)
+      return false;
+    else if (corrispettiviScontrini.length>0 && row["VatTwinAccount"]==corrispettiviScontrini)
+      return false;
+    else if (ricevuteFiscali.length>0 && row["VatTwinAccount"]==ricevuteFiscali)
+      return false;
+    return true;
+  }
+  else if (param.blocco == 'DTR') {
+    if (row["IT_Registro"]=="Vendite" || row["IT_Registro"]=="Corrispettivi")
+      return false;
+    else if (row["VatExtraInfo"]=="ESCL")
+      return false;
+    return true;
+  }
+  return false;
+}
+
+function loadJournalData(param) {
+
+  //per il momento c'è un unico periodo non controlla il tipo di versamento mensile o trimestrale
+  param.data = {};  
+  param.datiContribuente.liqTipoVersamento = -1;
+  var periods = createPeriods(param);
+  if (periods.length>0) {
+    param.data.startDate = periods[0].startDate;
+    param.data.endDate = periods[0].endDate;
+    param.data = loadJournal(param.data);
+  }
+
+  if (param.blocco == 'DTE') {
     //avvisa se il gruppo clienti non è impostato
     if (param.fileInfo["CustomersGroup"].length<=0) {
       var msg = getErrorMessage(ID_ERR_GRUPPO_CLIENTI_MANCANTE);
@@ -388,19 +425,13 @@ function loadJournalData(param) {
     for (var i in param.data.customers) {
       var checkedRows = [];
       var accountObj = param.data.customers[i];
-      //for (var j in accountObj.rows) {
+      if (accountObj && accountObj.rows) {
       for (var j=0; j<accountObj.rows.length;j++) {
-        if (accountObj.rows[j]["IT_Registro"]=="Acquisti")
-          continue;
-        else if (accountObj.rows[j]["VatExtraInfo"]=="ESCL")
-          continue;
-        else if (corrispettiviNormali.length>0 && accountObj.rows[j]["VatTwinAccount"]==corrispettiviNormali)
-          continue;
-        else if (corrispettiviScontrini.length>0 && accountObj.rows[j]["VatTwinAccount"]==corrispettiviScontrini)
-          continue;
-        else if (ricevuteFiscali.length>0 && accountObj.rows[j]["VatTwinAccount"]==ricevuteFiscali)
+        var isValid = isValidRow(accountObj.rows[j], param);
+        if (!isValid)
           continue;
         checkedRows.push(accountObj.rows[j]);
+      }
       }
       if (checkedRows.length>0) {
         accountObj.rows = checkedRows;
@@ -420,9 +451,8 @@ function loadJournalData(param) {
       var checkedRows = [];
       var accountObj = param.data.suppliers[i];
       for (var j in accountObj.rows) {
-        if (accountObj.rows[j]["IT_Registro"]=="Vendite" || accountObj.rows[j]["IT_Registro"]=="Corrispettivi")
-          continue;
-        else if (accountObj.rows[j]["VatExtraInfo"]=="ESCL")
+        var isValid = isValidRow(accountObj.rows[j], param);
+        if (!isValid)
           continue;
         checkedRows.push(accountObj.rows[j]);
       }
@@ -435,6 +465,116 @@ function loadJournalData(param) {
   }
 
   return param;
+}
+
+/*
+ * stampa tabella di controllo, visualizzando tutte le registrazioni con iva escluse
+* ad esempio per registrazioni composte nelle quali il cliente/fornitore non appare nella prima riga 
+*/
+function printExcludedRows(report, stylesheet, param) {
+
+  //Visualizza solamente se ci sono righe escluse per il registro corrente
+  var registroCorrente = 'Vendite|Corrispettivi';
+  if (param.blocco == 'DTR')
+    registroCorrente = 'Acquisti';
+
+  var found=false;
+  for (var i=0; i < param.data.journal.rows.length;i++) {
+    var jsonObj = param.data.journal.rows[i];
+    var registrazioneValida = jsonObj['IT_RegistrazioneValida'];
+    var registro = jsonObj['IT_Registro'];
+    var isValid = isValidRow(jsonObj, param);
+    if ((!registrazioneValida || registrazioneValida.length<=0 || !isValid) && registroCorrente.indexOf(registro)>=0) {
+      found = true;
+      break;
+    }
+  }
+  if (!found)
+    return;
+
+  //Colonne da visualizzare del giornale
+  var sortedColumns = [];
+  sortedColumns.push(1015); //IT_DataDoc
+  sortedColumns.push(1014); //IT_NoDoc
+  sortedColumns.push(4); //Description
+  sortedColumns.push(5); //VatCode
+  sortedColumns.push(1001); //IT_Lordo
+  sortedColumns.push(1002); //IT_ImportoIva
+  sortedColumns.push(1004); //IT_Imponibile
+  sortedColumns.push(1017); //IT_ClienteConto
+  sortedColumns.push(1013); //IT_Registro
+  sortedColumns.push(14); //JRowOrigin
+  sortedColumns.push(15); //JTableOrigin
+
+  //Title
+  var table = report.addTable("tableJournal");
+  for (var i =0; i<14;i++) {
+    table.addColumn("tableJournal_col" + i.toString());
+  }
+  
+  //Header
+  var headerRow = table.getHeader().addRow();
+  headerRow.addCell("TABELLA DI CONTROLLO, REGISTRAZIONI ESCLUSE DALLA COMUNICAZIONE (" + getPeriodText(param.data) + ")", "title",  sortedColumns.length);
+  var headerRow = table.getHeader().addRow();
+  for (var i in sortedColumns) {
+    var index = sortedColumns[i];
+    for (var j in param.data.journal.columns) {
+      if (param.data.journal.columns[j].index == index) {
+        var columnTitle = param.data.journal.columns[j].title;
+        /*if (columnTitle.length>8)
+          columnTitle = columnTitle.substring(0, 7) + ".";*/
+        headerRow.addCell(columnTitle);
+        break;
+      }
+    }
+  }
+
+  // Print data
+  // Stampa solamente le registrazioni non valide IT_RegistrazioneValida = ''
+  var tot1=0;
+  var tot2=0;
+  var tot3=0;
+  var row = table.addRow();
+  for (var i=0; i < param.data.journal.rows.length;i++) {
+    var jsonObj = param.data.journal.rows[i];
+    var registrazioneValida = jsonObj['IT_RegistrazioneValida'];
+    var registro = jsonObj['IT_Registro'];
+    var isValid = isValidRow(jsonObj, param);
+    if ((!registrazioneValida || registrazioneValida.length<=0 || !isValid) && registroCorrente.indexOf(registro)>=0) {
+      var row = table.addRow();
+      for (var j in sortedColumns) {
+        var index = sortedColumns[j];
+        for (var k in param.data.journal.columns) {
+          if (param.data.journal.columns[k].index == index) {
+            var content = jsonObj[param.data.journal.columns[k].name];
+            row.addCell(content, param.data.journal.columns[k].type);
+            break;
+          }
+        }
+      }
+      tot1 = Banana.SDecimal.add(jsonObj['IT_Lordo'], tot1);
+      tot2 = Banana.SDecimal.add(jsonObj['IT_ImportoIva'], tot2);
+      tot3 = Banana.SDecimal.add(jsonObj['IT_Imponibile'], tot3);
+    }
+  }
+  
+  //Totale
+  row = table.addRow();
+  row.addCell("", "total", 4);
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(tot3), "right total");
+  row.addCell("", "", 4);
+
+  //Style
+  stylesheet.addStyle(".tableJournal", "width:100%;margin-top:20px;");
+  stylesheet.addStyle(".tableJournal td", "border:0.5em solid black;");
+  stylesheet.addStyle(".tableJournal td.header", "font-weight:bold;background-color:#dddddd");
+  stylesheet.addStyle(".tableJournal td.title", "font-weight:bold;border:0px;background-color:#ffffff;");
+  stylesheet.addStyle(".tableJournal_col03", "width:25%;");
+  stylesheet.addStyle(".description", "text-align: right;border:0.5em solid black; ");
+  stylesheet.addStyle(".total", "font-weight:bold;");
+
 }
 
 /*
@@ -561,6 +701,22 @@ function printVatReport(report, stylesheet, param) {
 
   //Print table
   var table = report.addTable("vatreport_table");
+  table.addColumn("vatreport_table_col01");
+  table.addColumn("vatreport_table_col02");
+  table.addColumn("vatreport_table_col03");
+  table.addColumn("vatreport_table_col04");
+  table.addColumn("vatreport_table_col05");
+  table.addColumn("vatreport_table_col06");
+  table.addColumn("vatreport_table_col07");
+  table.addColumn("vatreport_table_col08");
+  table.addColumn("vatreport_table_col09");
+  table.addColumn("vatreport_table_col10");
+  table.addColumn("vatreport_table_col11");
+  table.addColumn("vatreport_table_col12");
+  table.addColumn("vatreport_table_col13");
+  table.addColumn("vatreport_table_col14");
+  table.addColumn("vatreport_table_col15");
+  
   var headerRow = table.getHeader().addRow();
 
   //Column names
@@ -606,7 +762,20 @@ function printVatReport_rows(customers_suppliers, table, param) {
     var row = table.addRow();
     row.addCell(rowType, "rowName");
     var cell = row.addCell("","rowName",4);
-    cell.addParagraph(xml_unescapeString(customers_suppliers[i]["Description"]));
+    var description = '';
+    if (customers_suppliers[i]["OrganisationName"] && customers_suppliers[i]["OrganisationName"].length>0) {
+      description = customers_suppliers[i]["OrganisationName"];
+    }
+    else if (!customers_suppliers[i]["FirstName"] || customers_suppliers[i]["FirstName"].length<=0) {
+      description = customers_suppliers[i]["FamilyName"];
+    }
+    else {
+      description = customers_suppliers[i]["FirstName"] + " " + customers_suppliers[i]["FamilyName"];
+    }
+    if (description.length>0)
+      cell.addParagraph(xml_unescapeString(description));
+    else
+      cell.addParagraph(getErrorMessage(ID_ERR_DATIFATTURE_NOMINATIVO_MANCANTE), "error");
     var address = "";
     var content = customers_suppliers[i]["Street"];
     if (content && content.length>0)
@@ -637,8 +806,8 @@ function printVatReport_rows(customers_suppliers, table, param) {
       var jsonObj = customers_suppliers[i].rows[j];
       var row = table.addRow();
       row.addCell(jsonObj["IT_TipoDoc"], "row");
-      row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JInvoiceIssueDate"]), "row");
-      row.addCell(jsonObj["IT_DocInvoice"], "row");
+      row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["IT_DataDoc"]), "row");
+      row.addCell(jsonObj["IT_NoDoc"], "row");
       row.addCell(Banana.Converter.toLocaleDateFormat(jsonObj["JDate"]), "row");
       var descrizione = xml_unescapeString(jsonObj["JDescription"]);
       if (descrizione.startsWith("[IVA] ")>0)
@@ -696,6 +865,7 @@ function setStyle(report, stylesheet) {
 
   stylesheet.addStyle(".amount", "text-align: right;border:0.5em solid black; ");
   stylesheet.addStyle(".center", "text-align: center;");
+  stylesheet.addStyle(".error", "color:red;");
   stylesheet.addStyle(".notes", "padding: 2em;font-style:italic;");
   stylesheet.addStyle(".right", "text-align: right;");
   stylesheet.addStyle(".row.amount", "border:0.5em solid black");
@@ -704,6 +874,7 @@ function setStyle(report, stylesheet) {
 
   /*vatrepor_table*/
   stylesheet.addStyle(".vatreport_table", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".vatreport_table_col05", "width:25%;");
 
 }
 
@@ -716,6 +887,8 @@ function verifyParam(param) {
     param.blocco = 'DTE';
   if(!param.progressivoInvio)
     param.progressivoInvio = '';
+  if (!param.esigibilitaIva)
+    param.esigibilitaIva = false;
 
   if (!param.annoSelezionato)
     param.annoSelezionato = '';

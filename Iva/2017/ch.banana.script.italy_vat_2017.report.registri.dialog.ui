@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>351</width>
-    <height>415</height>
+    <width>372</width>
+    <height>391</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,6 +24,57 @@
        <string>Opzioni</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="tipoRegistroLabel">
+         <property name="text">
+          <string notr="true">Registro da stampare:</string>
+         </property>
+         <property name="buddy">
+          <cstring>tipoRegistroComboBox</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="tipoRegistroComboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>0</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>Vendite</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Acquisti</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Corrispettivi</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Liquidazione</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Registro IVA unico</string>
+          </property>
+         </item>
+        </widget>
+       </item>
        <item>
         <widget class="QGroupBox" name="periodoGroupBox">
          <property name="title">
@@ -183,74 +234,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="tipoRegistroLabel">
-         <property name="text">
-          <string notr="true">Registro da stampare:</string>
-         </property>
-         <property name="buddy">
-          <cstring>tipoRegistroComboBox</cstring>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QComboBox" name="tipoRegistroComboBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>150</width>
-             <height>0</height>
-            </size>
-           </property>
-           <item>
-            <property name="text">
-             <string>Registro IVA unico</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Vendite</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Acquisti</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Corrispettivi</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Liquidazioni</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -265,20 +248,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="visualizzaDataOraCheckBox">
-         <property name="text">
-          <string notr="true">Visualizza &amp;data e ora di stampa nel registro</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="numerazioneAutomaticaCheckBox">
-         <property name="text">
-          <string notr="true">&amp;Numerazione automatica colonna N. Protocollo</string>
-         </property>
-        </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="stampaDefinitivaCheckBox">
@@ -298,21 +267,22 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="visualizzaDataOraCheckBox">
+         <property name="text">
+          <string notr="true">Visualizza &amp;data e ora di stampa nel registro</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="numerazioneAutomaticaCheckBox">
+         <property name="text">
+          <string notr="true">&amp;Numerazione automatica colonna N. Protocollo</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="2">
-          <spacer name="horizontalSpacer_5">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>78</width>
-             <height>17</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="1">
           <widget class="QSpinBox" name="inizioNumerazionePagineSpinBox">
            <property name="minimum">
             <number>1</number>
@@ -332,6 +302,72 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>78</width>
+             <height>17</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="tipoRegistroLabel_2">
+           <property name="text">
+            <string notr="true">Colonna Numero protocollo:</string>
+           </property>
+           <property name="buddy">
+            <cstring>tipoRegistroComboBox</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="colProtocolloComboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>0</height>
+            </size>
+           </property>
+           <item>
+            <property name="text">
+             <string>DocProtocollo[DocProtocol]</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Doc[Doc]</string>
+            </property>
+           </item>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -348,6 +384,14 @@
         </spacer>
        </item>
       </layout>
+      <zorder>periodoGroupBox</zorder>
+      <zorder>tipoRegistroLabel</zorder>
+      <zorder>stampaDefinitivaCheckBox</zorder>
+      <zorder>stampaOrizzontaleCheckBox</zorder>
+      <zorder>visualizzaDataOraCheckBox</zorder>
+      <zorder>tipoRegistroComboBox</zorder>
+      <zorder>numerazioneAutomaticaCheckBox</zorder>
+      <zorder>verticalSpacer_2</zorder>
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
@@ -422,14 +466,15 @@
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
+  <tabstop>tipoRegistroComboBox</tabstop>
   <tabstop>periodoComboBox</tabstop>
   <tabstop>annoComboBox</tabstop>
-  <tabstop>tipoRegistroComboBox</tabstop>
-  <tabstop>visualizzaDataOraCheckBox</tabstop>
-  <tabstop>numerazioneAutomaticaCheckBox</tabstop>
   <tabstop>stampaDefinitivaCheckBox</tabstop>
   <tabstop>stampaOrizzontaleCheckBox</tabstop>
+  <tabstop>visualizzaDataOraCheckBox</tabstop>
+  <tabstop>numerazioneAutomaticaCheckBox</tabstop>
   <tabstop>inizioNumerazionePagineSpinBox</tabstop>
+  <tabstop>colProtocolloComboBox</tabstop>
   <tabstop>testoRegistriComboBox</tabstop>
   <tabstop>testoGroupBox</tabstop>
   <tabstop>testoLineEdit</tabstop>
