@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>332</width>
+    <width>379</width>
     <height>440</height>
    </rect>
   </property>
@@ -475,6 +475,20 @@
         </property>
        </widget>
       </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QRadioButton" name="annullamentoRadioButton">
+          <property name="text">
+           <string>File XML &amp;annullamento IdFile</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="idFileLineEdit"/>
+        </item>
+       </layout>
+      </item>
      </layout>
     </widget>
    </item>
@@ -492,8 +506,6 @@
        </widget>
       </item>
      </layout>
-     <zorder>esigibilitaIvaCheckBox</zorder>
-     <zorder>esigibilitaIvaCheckBox</zorder>
     </widget>
    </item>
    <item>
@@ -533,6 +545,8 @@
   <tabstop>codiceCaricaComboBox</tabstop>
   <tabstop>stampaReportRadioButton</tabstop>
   <tabstop>stampaXmlRadioButton</tabstop>
+  <tabstop>annullamentoRadioButton</tabstop>
+  <tabstop>idFileLineEdit</tabstop>
   <tabstop>esigibilitaIvaCheckBox</tabstop>
  </tabstops>
  <resources/>

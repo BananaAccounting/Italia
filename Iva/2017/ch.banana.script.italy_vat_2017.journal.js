@@ -895,6 +895,9 @@ EsibilitaIva
         else if (vatGr && vatGr.indexOf("REV")>=0 && jsonLine["IT_ClienteIDPaese"] != "IT") {
           jsonLine["IT_TipoDoc"] = 'TD10';
         }
+        else if (vatGr && vatGr.indexOf("-X")>=0 && jsonLine["IT_ClienteIDPaese"] != "IT") {
+          jsonLine["IT_TipoDoc"] = 'TD10';
+        }
       }
     }
 
