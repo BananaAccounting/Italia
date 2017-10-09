@@ -504,6 +504,69 @@ function getPeriodText(param) {
   return "";
 }
 
+function isMemberOfEuropeanUnion(_country)
+{
+  if (_country.length<=0)
+    return false;
+  var country = _country.toLowerCase();
+  if (country== "at" || country=="austria")
+    return true;
+  if (country== "be" || country=="belgio" || country=="belgium")
+    return true;
+  if (country== "bg" || country=="bulgaria")
+    return true;
+  if (country== "cy" || country=="cipro" || country=="cyprus")
+    return true;
+  if (country== "cz" || country=="repubbica ceca" || country=="czech republic")
+    return true;
+  if (country== "de" || country=="germania" || country=="germany")
+    return true;
+  if (country== "dk" || country=="danimarca" || country=="denmark")
+    return true;
+  if (country== "ee" || country=="estonia")
+    return true;
+  if (country== "el" || country=="grecia" || country=="greece")
+    return true;
+  if (country== "es" || country=="spagna" || country=="spain")
+    return true;
+  if (country== "fi" || country=="finlandia" || country=="finland")
+    return true;
+  if (country== "fr" || country=="francia" || country=="france")
+    return true;
+  if (country== "hr" || country=="croazia" || country=="croatia")
+    return true;
+  if (country== "hu" || country=="ungheria" || country=="hungary")
+    return true;
+  if (country== "ie" || country=="irlanda" || country=="ireland")
+    return true;
+  if (country== "it" || country=="italia" || country=="italy")
+    return true;
+  if (country== "lt" || country=="lituania")
+    return true;
+  if (country== "lu" || country=="lussemburgo" || country=="luxembourg")
+    return true;
+  if (country== "lv" || country=="lettonia")
+    return true;
+  if (country== "mt" || country=="malta")
+    return true;
+  if (country== "nl" || country=="paesi bassi" || country=="olanda")
+    return true;
+  if (country== "pl" || country=="polonia" || country=="poland")
+    return true;
+  if (country== "pt" || country=="portogallo" || country=="portugal")
+    return true;
+  if (country== "ro" || country=="romania")
+    return true;
+  if (country== "se" || country=="svezia" || country=="sweden")
+    return true;
+  if (country== "si" || country=="slovenia")
+    return true;
+  if (country== "sk" || country=="slovacchia" || country=="slovakia")
+    return true;
+  if (country== "uk" || country=="regno unito" || country=="united kingdom")
+    return true;
+  return false;
+}
 /*
  * Riprende l'elenco delle registrazioni iva che appartengono al gruppo clienti/fornitori
  * Ritorna il parametro iniziale con l'aggiunta del giornale e dell'elenco registrazioni iva 
@@ -879,9 +942,13 @@ EsibilitaIva
       }
     }
 
+    //TD10 TD11 per acquisti intracee,TD07 fattura semplificata,TD01 per tutte le altre
     if (vatCode.length && isSupplier) {
+      var isMemberEU = false;
+      if (jsonLine["IT_ClienteIDPaese"].length>0 && jsonLine["IT_ClienteIDPaese"]!="IT")
+        isMemberEU = isMemberOfEuropeanUnion(jsonLine["IT_ClienteIDPaese"]);
       var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
-      if (rowVatCodes) {
+      if (rowVatCodes && isMemberEU) {
         var vatGr = rowVatCodes.value("Gr");
         if (vatGr && vatGr.indexOf("EU-S")>=0) {
           jsonLine["IT_TipoDoc"] = 'TD11';
@@ -889,27 +956,23 @@ EsibilitaIva
         else if (vatGr && vatGr.indexOf("EU")>=0) {
           jsonLine["IT_TipoDoc"] = 'TD10';
         }
-        else if (vatGr && vatGr.indexOf("REV-S")>=0 && jsonLine["IT_ClienteIDPaese"] != "IT") {
+        else if (vatGr && vatGr.indexOf("REV-S")>=0) {
           jsonLine["IT_TipoDoc"] = 'TD11';
         }
-        else if (vatGr && vatGr.indexOf("REV")>=0 && jsonLine["IT_ClienteIDPaese"] != "IT") {
-          jsonLine["IT_TipoDoc"] = 'TD10';
-        }
-        else if (vatGr && vatGr.indexOf("-X")>=0 && jsonLine["IT_ClienteIDPaese"] != "IT") {
+        else if (vatGr && vatGr.indexOf("REV")>=0) {
           jsonLine["IT_TipoDoc"] = 'TD10';
         }
       }
     }
 
     //Controllo IdPaese e TipoDocumento 
-    //Valori ammessi per fornitori esteri TipoDoc 10 per acquisti beni e TipoDoc 11 per acquisto servizi
     var tipoDocumentoCorretto = true;
     if (isSupplier && jsonLine["IT_ClienteIDPaese"] == "IT") {
       if (jsonLine["IT_TipoDoc"] == 'TD10' || jsonLine["IT_TipoDoc"] == 'TD11') {
         tipoDocumentoCorretto = false;
       }
     }
-    else if (isSupplier && jsonLine["IT_ClienteIDPaese"].length>0){
+    else if (isSupplier && jsonLine["IT_ClienteIDPaese"].length>0 && isMemberOfEuropeanUnion(jsonLine["IT_ClienteIDPaese"])){
       if (jsonLine["IT_TipoDoc"] != 'TD10' && jsonLine["IT_TipoDoc"] != 'TD11') {
         tipoDocumentoCorretto = false;
       }
