@@ -175,7 +175,7 @@ function createInstance_Blocco2(accountObj, param)
     if (accountObj["VatNumber"].length<=0 && accountObj["FiscalNumber"].length<=0 && countryCode == "IT") {
       var msg = getErrorMessage(ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE);
       msg = msg.replace("%1", msgContext );
-      Banana.document.addMessage( msg, ID_ERR_VERSIONE);
+      Banana.document.addMessage( msg, ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE);
     }
 
     //2.2.2   <AltriDatiIdentificativi>
@@ -283,4 +283,52 @@ function createInstance_DatiFatturaHeader(param)
   var xbrlContent = xbrlProgressivo + xbrlDichiarante;
   var xbrlHeader =  xml_createElement("DatiFatturaHeader", xbrlContent);
   return xbrlHeader;
+}
+
+/*
+* metodo che genera il file xml di annullamento
+*/
+function createInstanceAnnullamento(param)
+{
+  //<DatiFatturaHeader>
+  var xbrlContent = createInstance_DatiFatturaHeader(param);
+
+  //<DatiFattura> root element
+  var attrsNamespaces = {};
+  attrsNamespaces["versione"] = "DAT20";
+  for (var j in param.namespaces) {
+    var prefix = param.namespaces[j]['prefix'];
+    var namespace = param.namespaces[j]['namespace'];
+    if (prefix.length > 0)
+      attrsNamespaces[prefix] = namespace;
+  }
+  for (var j in param.schemaRefs) {
+    var schema = param.schemaRefs[j];
+    if (schema.length > 0) {
+      if (!attrsNamespaces["xsi:schemaLocation"])
+        attrsNamespaces["xsi:schemaLocation"] = "";
+      else if (attrsNamespaces["xsi:schemaLocation"].length>0)
+        attrsNamespaces["xsi:schemaLocation"] += " ";
+      attrsNamespaces["xsi:schemaLocation"] = attrsNamespaces["xsi:schemaLocation"] + schema;
+    }
+  }
+  
+  //IdFile annullamento
+  //Controlla se è vuoto
+  if (!param.idFile || param.idFile.length<=0) {
+    var msg = getErrorMessage(ID_ERR_DATIFATTURE_MANCA_IDFILE);
+    Banana.document.addMessage( msg, ID_ERR_DATIFATTURE_MANCA_IDFILE);
+  }
+
+  var xbrlIdFile = xml_createElement('IdFile', param.idFile);
+  xbrlContent += xml_createElement('ANN', xbrlIdFile);
+  
+  //Chiusura
+  xbrlContent = xml_createElement("ns2:DatiFattura", xbrlContent, attrsNamespaces);
+
+  //Output
+  var results = [];
+  results.push("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+  results.push(xbrlContent);
+  return results.join ('');
 }

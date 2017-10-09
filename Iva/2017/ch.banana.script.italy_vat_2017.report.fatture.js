@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-10-03
+// @pubdate = 2017-10-06
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -69,7 +69,7 @@ function settingsDialog() {
   var progressivo = parseInt(param.progressivoInvio, 10);
   if (!progressivo)
     progressivo = 1;
-  else if (param.outputScript==1)
+  else if (param.outputScript==1 || param.outputScript==3)
     progressivo += 1;
   progressivo = zeroPad(progressivo, 5);
   dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text = progressivo;
@@ -86,8 +86,11 @@ function settingsDialog() {
   //Groupbox stampa
   if (param.outputScript==1)
     dialog.stampaGroupBox.stampaXmlRadioButton.checked = true;
+  else if (param.outputScript==3)
+    dialog.stampaGroupBox.annullamentoRadioButton.checked = true;
   else  
     dialog.stampaGroupBox.stampaReportRadioButton.checked = true;
+  dialog.stampaGroupBox.idFileLineEdit.text = param.idFile;
 
   //dialog functions
   dialog.checkdata = function () {
@@ -157,8 +160,11 @@ function settingsDialog() {
   //Groupbox stampa
   if (dialog.stampaGroupBox.stampaXmlRadioButton.checked)
     param.outputScript = 1;
+  else if (dialog.stampaGroupBox.annullamentoRadioButton.checked)
+    param.outputScript = 3;
   else
     param.outputScript = 0;
+  param.idFile = dialog.stampaGroupBox.idFileLineEdit.text;
 
   var paramToString = JSON.stringify(param);
   Banana.document.setScriptSettings(paramToString);
@@ -288,9 +294,17 @@ function exec(inData) {
   param = loadJournalData(param);
   param.schemaRefs = init_schemarefs();
   param.namespaces = init_namespaces();
+
+  if (param.outputScript==3 && output != "@Cancel") {
+    //xml file di annullamento
+    var output = createInstanceAnnullamento(param);
+    output = formatXml(output);
+    saveData(output, param);
+    return;
+  }
   
   var output = createInstance(param);
-
+  
   if (param.outputScript==0 && output != "@Cancel") {
     var report = Banana.Report.newReport("Dati delle fatture emesse e ricevute");
     var stylesheet = Banana.Report.newStyleSheet(); 
@@ -324,6 +338,7 @@ function initParam()
   param.blocco = 'DTE';
   param.progressivoInvio = '';
   param.esigibilitaIva = false;
+  param.idFile = '';
   
   param.annoSelezionato = '';
   param.periodoSelezionato = 'm';
@@ -334,7 +349,8 @@ function initParam()
   /*
   0 = create print preview report
   1 = create file xml 
-  2 = return xml string */
+  2 = return xml string 
+  3 = create file xml annullamento */
   param.outputScript = 0;
   
   return param;
@@ -889,6 +905,8 @@ function verifyParam(param) {
     param.progressivoInvio = '';
   if (!param.esigibilitaIva)
     param.esigibilitaIva = false;
+  if (!param.idFile)
+    param.idFile = '';
 
   if (!param.annoSelezionato)
     param.annoSelezionato = '';
