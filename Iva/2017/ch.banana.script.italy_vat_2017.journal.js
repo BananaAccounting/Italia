@@ -993,7 +993,8 @@ EsibilitaIva
     //N5 regime del margine / IVA non esposta in fattura ex art. 74-ter
     //N6 inversione contabile (reverse charge)
     //N7 IVA assolta in altro stato UE, vendite a distanza o prestazioni di servizi di telecomunicazioni
-    //Il codice natura può essere sovrascritto alla colonna VatExtraInfo oppure dalla colonna Gr1 della tabella codici iva
+    //Il codice natura può essere sovrascritto dalla colonna VatExtraInfo oppure dalla colonna Gr1 della tabella codici iva
+    //Se presente ESCL, la registrazione viene esclusa
     jsonLine["IT_Natura"] = '';
     var vatExtraInfo = filteredRows[i].value("VatExtraInfo");
     if (vatExtraInfo.startsWith("N") && vatExtraInfo.length==2) {
@@ -1011,7 +1012,10 @@ EsibilitaIva
           rowVatDescription = "";
         rowVatDescription = rowVatDescription.toLowerCase();
         rowVatDescription = rowVatDescription.replace(" ","");
-        if (vatGr1 && vatGr1.startsWith("N") && vatGr1.length==2) {
+        if (vatGr1.length==2 && vatGr1.startsWith("N")) {
+          jsonLine["IT_Natura"] = vatGr1;
+        }
+        else if (vatGr1 == "ESCL") {
           jsonLine["IT_Natura"] = vatGr1;
         }
         else if (rowVatDescription.indexOf("art.15")>0) {

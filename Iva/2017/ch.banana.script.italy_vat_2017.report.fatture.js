@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-10-06
+// @pubdate = 2017-10-16
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -399,7 +399,7 @@ function isValidRow(row, param) {
   if (param.blocco == 'DTE') {
     if (row["IT_Registro"]=="Acquisti")
       return false;
-    else if (row["VatExtraInfo"]=="ESCL")
+    else if (row["VatExtraInfo"]=="ESCL" || row["IT_Natura"]=="ESCL")
       return false;
     else if (corrispettiviNormali.length>0 && row["VatTwinAccount"]==corrispettiviNormali)
       return false;
