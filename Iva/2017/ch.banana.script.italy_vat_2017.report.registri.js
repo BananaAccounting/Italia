@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-10-31
+// @pubdate = 2017-10-30
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
