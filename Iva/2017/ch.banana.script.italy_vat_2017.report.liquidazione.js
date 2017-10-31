@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-29
+// @pubdate = 2017-10-31
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -523,7 +523,8 @@ function loadVatCodes(param, _startDate, _endDate)
   vatAmounts["L-CI"] = Banana.document.vatCurrentBalance("L-CI", _startDate, _endDate);
   vatAmounts["L-CIA"] = Banana.document.vatCurrentBalance("L-CIA", _startDate, _endDate);
   vatAmounts["L-INT"] = Banana.document.vatCurrentBalance("L-INT", _startDate, _endDate);
-  vatAmounts["L"] = sumVatAmounts(vatAmounts, ["L-AC","L-CI","L-CIA","L-INT"]);
+  vatAmounts["L-RI"] = Banana.document.vatCurrentBalance("L-RI", _startDate, _endDate);
+  vatAmounts["L"] = sumVatAmounts(vatAmounts, ["L-AC","L-CI","L-CIA","L-INT","L-RI"]);
 
   // Get vat total from report
   vatAmounts["Total"] = sumVatAmounts(vatAmounts, ["V","C","A","L"]);
@@ -720,7 +721,7 @@ function printVatReport2(report, stylesheet, param) {
   row = table.addRow();
   row.addCell("VP11");
   row.addCell("Crediti d'imposta", "description");
-  row.addCell("", "amount");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param["L-RI"].vatPosted)), "amount");
   row.addCell("");
 
   row = table.addRow();

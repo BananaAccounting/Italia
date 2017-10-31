@@ -213,37 +213,29 @@ function createInstance_Blocco2(accountObj, param)
     */
     //2.2.3 <DatiFatturaBodyDTE> o 3.2.3 <DatiFatturaBodyDTR>
     var xbrlDatiFatturaBody = '';
+    var prevNoDoc = '';
+    var prevDataDoc = '';
     for (var i in accountObj.rows) {
       if (accountObj.rows[i]) {
         msgContext = '[' + accountObj.rows[i]["JTableOrigin"] + ': Riga ' + (parseInt(accountObj.rows[i]["JRowOrigin"])+1).toString() +'] <DatiFatturaBody' + param.blocco + '>';
+        var noDoc = accountObj.rows[i]["IT_NoDoc"];
+        var dataDoc =  accountObj.rows[i]["IT_DataDoc"];
+        if (prevNoDoc == noDoc && prevDataDoc == dataDoc) {
+          continue;
+        }
         //2.2.3.1  <DatiGenerali>
         var xbrlDatiGenerali = xml_createElementWithValidation("TipoDocumento", accountObj.rows[i]["IT_TipoDoc"],1,'4',msgContext);
-        xbrlDatiGenerali += xml_createElementWithValidation("Data", accountObj.rows[i]["IT_DataDoc"],1,'10',msgContext);
-        xbrlDatiGenerali += xml_createElementWithValidation("Numero", accountObj.rows[i]["IT_NoDoc"],1,'1...20',msgContext);
+        xbrlDatiGenerali += xml_createElementWithValidation("Data", dataDoc,1,'10',msgContext);
+        xbrlDatiGenerali += xml_createElementWithValidation("Numero", noDoc,1,'1...20',msgContext);
         if (param.blocco == 'DTR')
           xbrlDatiGenerali += xml_createElementWithValidation("DataRegistrazione", accountObj.rows[i]["JDate"],1,'10',msgContext);
         var xbrlContent = xml_createElementWithValidation("DatiGenerali", xbrlDatiGenerali,1);
         //2.2.3.1  <DatiRiepilogo>
-        var itImponibile = accountObj.rows[i]["IT_Imponibile"];
-        if (!Banana.SDecimal.isZero(itImponibile))
-          itImponibile = Banana.SDecimal.abs(itImponibile);
-        var itImportoIva = accountObj.rows[i]["IT_ImportoIva"];
-        if (!Banana.SDecimal.isZero(itImportoIva))
-          itImportoIva = Banana.SDecimal.abs(itImportoIva);
-        var xbrlDatiRiepilogo = xml_createElementWithValidation("ImponibileImporto", itImponibile,1,'4...15',msgContext);
-        var xbrlContent4 = xml_createElementWithValidation("Imposta", itImportoIva,0,'4...15',msgContext);
-        xbrlContent4 += xml_createElementWithValidation("Aliquota", accountObj.rows[i]["IT_Aliquota"],0,'4...6',msgContext);
-        xbrlDatiRiepilogo += xml_createElementWithValidation("DatiIVA",xbrlContent4,1);
-        if (accountObj.rows[i]["IT_Natura"].length)
-          xbrlDatiRiepilogo += xml_createElementWithValidation("Natura", accountObj.rows[i]["IT_Natura"],0,'2');
-        if (accountObj.rows[i]["IT_Detraibile"].length)
-          xbrlDatiRiepilogo += xml_createElementWithValidation("Detraibile", accountObj.rows[i]["IT_Detraibile"],0,'4...6');
-        if (accountObj.rows[i]["IT_Deducibile"].length)
-          xbrlDatiRiepilogo += xml_createElementWithValidation("Deducibile",accountObj.rows[i]["IT_Deducibile"],0,'2');
-        if (accountObj.rows[i]["IT_EsigibilitaIva"].length && param.esigibilitaIva)
-          xbrlDatiRiepilogo += xml_createElementWithValidation("EsigibilitaIVA",accountObj.rows[i]["IT_EsigibilitaIva"],0,'1');
-        xbrlContent += xml_createElementWithValidation("DatiRiepilogo", xbrlDatiRiepilogo,1);
+        var xbrlDatiRiepilogo = createInstance_Blocco2_DatiRiepilogo(noDoc, dataDoc, accountObj.rows, param);
+        xbrlContent += xbrlDatiRiepilogo;
         xbrlDatiFatturaBody +=  xml_createElementWithValidation("DatiFatturaBody" + param.blocco, xbrlContent,1);
+        prevNoDoc = noDoc;
+        prevDataDoc = dataDoc;
       }
     }
     if (xbrlDatiFatturaBody.length>0) {
@@ -252,6 +244,48 @@ function createInstance_Blocco2(accountObj, param)
   }
   var xbrlContent =  xml_createElement(tag, xbrlCessionarioCommittente);
   return xbrlContent;
+}
+
+/*
+* Blocco 2.2.3.1  <DatiRiepilogo>
+* Occorrenze: <1.1000>
+* Per ogni aliquota iva contenuta nella fattura è necessario creare un tag <DatiRiepilogo>
+* <DatiFatturaBodyDTE><DatiGenerali></DatiGenerali><DatiRiepilogo></DatiRiepilogo><DatiRiepilogo></DatiRiepilogo></DatiFatturaBodyDTE>
+*/
+function createInstance_Blocco2_DatiRiepilogo(noDoc, dataDoc, rows, param)
+{
+  var output = '';
+  if (noDoc.length<=0 && dataDoc.length<=0)
+    return output;
+  for (var i in rows) {
+    if (rows[i]) {
+      var currentNoDoc = rows[i]["IT_NoDoc"];
+      var currentDataDoc = rows[i]["IT_DataDoc"];
+      if (currentNoDoc != noDoc || currentDataDoc != dataDoc )
+        continue;
+      var msgContext = '[' + rows[i]["JTableOrigin"] + ': Riga ' + (parseInt(rows[i]["JRowOrigin"])+1).toString() +'] <DatiRiepilogo> Documento No ' + noDoc;
+      var itImponibile = rows[i]["IT_Imponibile"];
+      if (!Banana.SDecimal.isZero(itImponibile))
+        itImponibile = Banana.SDecimal.abs(itImponibile);
+      var itImportoIva = rows[i]["IT_ImportoIva"];
+      if (!Banana.SDecimal.isZero(itImportoIva))
+        itImportoIva = Banana.SDecimal.abs(itImportoIva);
+      var xbrlDatiRiepilogo = xml_createElementWithValidation("ImponibileImporto", itImponibile,1,'4...15',msgContext);
+      var xbrlDatiIVA = xml_createElementWithValidation("Imposta", itImportoIva,0,'4...15',msgContext);
+      xbrlDatiIVA += xml_createElementWithValidation("Aliquota", rows[i]["IT_Aliquota"],0,'4...6',msgContext);
+      xbrlDatiRiepilogo += xml_createElementWithValidation("DatiIVA",xbrlDatiIVA,1);
+      if (rows[i]["IT_Natura"].length)
+        xbrlDatiRiepilogo += xml_createElementWithValidation("Natura", rows[i]["IT_Natura"],0,'2');
+      if (rows[i]["IT_Detraibile"].length)
+        xbrlDatiRiepilogo += xml_createElementWithValidation("Detraibile", rows[i]["IT_Detraibile"],0,'4...6');
+      if (rows[i]["IT_Deducibile"].length)
+        xbrlDatiRiepilogo += xml_createElementWithValidation("Deducibile",rows[i]["IT_Deducibile"],0,'2');
+      if (rows[i]["IT_EsigibilitaIva"].length && param.esigibilitaIva)
+        xbrlDatiRiepilogo += xml_createElementWithValidation("EsigibilitaIVA",rows[i]["IT_EsigibilitaIva"],0,'1');
+      output += xml_createElementWithValidation("DatiRiepilogo", xbrlDatiRiepilogo,1);
+    }
+  }
+  return output;
 }
 
 /*
