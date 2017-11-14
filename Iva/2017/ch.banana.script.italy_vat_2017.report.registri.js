@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-11-07
+// @pubdate = 2017-11-14
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -795,10 +795,10 @@ function printRegister(report, stylesheet, period, register) {
     titolo = 'Registro fatture ricevute';
 
   if (!period.registri[register] || (!period.registri[register].totaliAliquota && !period.registri[register].totaliCodice)) {
-    report.addParagraph(titolo, "h1");
+    /*report.addParagraph(titolo, "h1");
     report.addParagraph(getPeriodText(period), "h1_period");
-    report.addParagraph("Nessun movimento trovato nel periodo", "");
-    return true;
+    report.addParagraph("Nessun movimento trovato nel periodo", "");*/
+    return false;
   }
   
   //Sort delle regitrazioni
@@ -980,16 +980,16 @@ function printRegister(report, stylesheet, period, register) {
 
 function printRegisterCorrispettivi(report, stylesheet, period) {
 
+  var register = "corrispettivi";
+  if (!period.registri[register]) {
+    //report.addParagraph("Nessun movimento trovato nel periodo", "");
+    return false;
+  }
+
   //Titolo
   report.addParagraph("Registro dei corrispettivi", "h1");
   report.addParagraph(getPeriodText(period), "h1_period");
 
-  var register = "corrispettivi";
-  if (!period.registri[register]) {
-    report.addParagraph("Nessun movimento trovato nel periodo", "");
-    return true;
-  }
-    
   //Tabella REGISTRO DEI CORRISPETTIVI 
   var table = report.addTable("corrispettivi_table");
   headerRow = table.getHeader().addRow();

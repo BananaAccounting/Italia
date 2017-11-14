@@ -249,10 +249,9 @@ function addPageHeader(report, stylesheet, param)
 }
 
 function calculateInterestAmount(param) {
-  var vatTotalWithoutInterest = substractVatAmounts(param["Total"], param["L"]);
-  if (Banana.SDecimal.sign(vatTotalWithoutInterest.vatPosted)<=0) {
+  if (Banana.SDecimal.sign(param["TotalWithoutInterests"].vatPosted)<=0) {
     var interestRate = Banana.SDecimal.round(param.datiContribuente.liqPercInteressi, {'decimals':2});
-    var interestAmount = Banana.SDecimal.abs(vatTotalWithoutInterest.vatPosted) * interestRate /100;
+    var interestAmount = Banana.SDecimal.abs(param["TotalWithoutInterests"].vatPosted) * interestRate /100;
     interestAmount = Banana.SDecimal.roundNearest(interestAmount, '0.01');
     return interestAmount.toString();
   }
@@ -522,13 +521,33 @@ function loadVatCodes(param, _startDate, _endDate)
   vatAmounts["L-AC"] = Banana.document.vatCurrentBalance("L-AC", _startDate, _endDate);
   vatAmounts["L-CI"] = Banana.document.vatCurrentBalance("L-CI", _startDate, _endDate);
   vatAmounts["L-CIA"] = Banana.document.vatCurrentBalance("L-CIA", _startDate, _endDate);
+  vatAmounts["L-CO"] = Banana.document.vatCurrentBalance("L-CO", _startDate, _endDate);
   vatAmounts["L-INT"] = Banana.document.vatCurrentBalance("L-INT", _startDate, _endDate);
   vatAmounts["L-RI"] = Banana.document.vatCurrentBalance("L-RI", _startDate, _endDate);
-  vatAmounts["L"] = sumVatAmounts(vatAmounts, ["L-AC","L-CI","L-CIA","L-INT","L-RI"]);
 
-  // Get vat total from report
+  //se periodo liquidazione corrisponde all'intero anno, include L-CIA (credito inizio anno), altrimenti include L-CI (credito iniziale)
+  var isYear = false;
+  if (param.accountingOpeningDate == _startDate && param.accountingClosureDate == _endDate)
+    isYear = true;
+
+  var emptyAmount = {
+  vatAmount : 0,
+  vatTaxable : 0,
+  vatNotDeductible : 0,
+  vatPosted : 0
+  };
+  if (isYear) {
+    vatAmounts["L-CI"] = emptyAmount;
+  }
+  else {
+    vatAmounts["L-CIA"] = emptyAmount;
+  }
+
+  // Get vat total for report
+  vatAmounts["L"] = sumVatAmounts(vatAmounts, ["L-AC","L-CI","L-CIA","L-CO","L-INT","L-RI"]);
   vatAmounts["Total"] = sumVatAmounts(vatAmounts, ["V","C","A","L"]);
-
+  vatAmounts["TotalWithoutInterests"] = substractVatAmounts(vatAmounts["Total"], vatAmounts["L-INT"]);
+  
   // Get vat total from Banana
   vatAmounts["BananaTotal"] = getVatTotalFromBanana(_startDate, _endDate);
   
@@ -544,7 +563,11 @@ function loadVatCodes(param, _startDate, _endDate)
   //Differenza operazioni
   vatAmounts["OPDIFFERENZA"] = sumVatAmounts(vatAmounts, ["OPATTIVE","OPPASSIVE"]);
   
-    /* just for printing */
+  // Totali per report
+  vatAmounts["CREDITI"] = sumVatAmounts(vatAmounts, ["L-CO","L-RI"]);
+
+  
+  /* just for printing */
   vatAmounts["V-IM-BA"].style = "total4";
   vatAmounts["V-IM-REV"].style = "total4";
   vatAmounts["V-IM-EU"].style = "total4";
@@ -721,7 +744,7 @@ function printVatReport2(report, stylesheet, param) {
   row = table.addRow();
   row.addCell("VP11");
   row.addCell("Crediti d'imposta", "description");
-  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param["L-RI"].vatPosted)), "amount");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(param["CREDITI"].vatPosted)), "amount");
   row.addCell("");
 
   row = table.addRow();
