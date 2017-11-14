@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-10-30
+// @pubdate = 2017-11-07
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -1386,9 +1386,11 @@ this.sort = function( transactions) {
  }
 
  function sortBy_ProgRegistro(a,b) {
-  if (parseInt(a.IT_ProgRegistro) < parseInt(b.IT_ProgRegistro))
+  var  value_a  = a.IT_ProgRegistro.replace(/[^0-9]+/, '');
+  var  value_b  = b.IT_ProgRegistro.replace(/[^0-9]+/, '');
+  if (parseInt(value_a) < parseInt(value_b))
     return -1;
-  if (parseInt(a.IT_ProgRegistro) > parseInt(b.IT_ProgRegistro))
+  if (parseInt(value_a) > parseInt(value_b))
     return 1;
   return 0;
 }
