@@ -573,10 +573,16 @@ function isMemberOfEuropeanUnion(_country)
  *
  * @param	parametro con data inizio/fine periodo
  */
-function loadJournal(param)
+function loadJournal(param) {
+  return loadJournal(param, true);
+}
+function loadJournal(param, warningMessages)
 {
   if (!Banana.document || !param || typeof (Banana.document.journalCustomersSuppliers) === 'undefined')
     return false;
+
+  if (!warningMessages)
+    warningMessages=false;
 
   var journal = Banana.document.journalCustomersSuppliers(
     Banana.document.ORIGINTYPE_CURRENT, Banana.document.ACCOUNTTYPE_NORMAL);
@@ -649,8 +655,8 @@ function loadJournal(param)
     var currentDate = Banana.Converter.stringToDate(value, "YYYY-MM-DD");
     if (currentDate >= periodStart && currentDate <= periodEnd)
       validPeriod = true;
-    if (!validPeriod)
-      continue;
+    /*if (!validPeriod)
+      continue;*/
 
     //La registrazione IVA deve contenere un conto cliente/fornitore
     /*TODO: vedere se si può semplificare controllando meno campi*/
@@ -977,7 +983,7 @@ EsibilitaIva
         tipoDocumentoCorretto = false;
       }
     }
-    if (!tipoDocumentoCorretto) {
+    if (!tipoDocumentoCorretto && warningMessages) {
       var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
       msg += getErrorMessage(ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO);
       msg = msg.replace("%1", jsonLine["IT_TipoDoc"] );
@@ -1006,6 +1012,7 @@ EsibilitaIva
       if (rowVatCodes) {
         var vatGr = rowVatCodes.value("Gr");
         var vatGr1 = rowVatCodes.value("Gr1");
+        var vatRate = rowVatCodes.value("VatRate");
         vatGr1 = vatGr1.toUpperCase();
         var rowVatDescription = rowVatCodes.value("Description");
         if (!rowVatDescription)
@@ -1042,7 +1049,7 @@ EsibilitaIva
         else if (vatGr.startsWith("V-NE") || vatGr.startsWith("A-NE")) {
           jsonLine["IT_Natura"] = 'N5';
         }
-        else if (vatGr.indexOf("-REV")>=0) {
+        else if (vatGr.indexOf("-REV")>=0 && Banana.SDecimal.isZero(vatRate)) {
           jsonLine["IT_Natura"] = 'N6';
         }
       }
@@ -1055,6 +1062,7 @@ EsibilitaIva
 
     //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
     //Eccezione: fatture ricevute con natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
+    if (warningMessages) {
     if (jsonLine["IT_Natura"].length>0) {
       if (isSupplier && jsonLine["IT_Natura"] == "N6") {
         if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
@@ -1064,18 +1072,22 @@ EsibilitaIva
       }
       else {
         if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
-          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE) + jsonLine["IT_Natura"];
           Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
         }
       }
     }
-    //Se il campo Natura non è valorizzato, lo devono essere i campi Imposta e Aliquota
-    //Controlla solamente registro vendite/acquisti
-    else if (jsonLine["IT_Registro"]== "Acquisti" || jsonLine["IT_Registro"] == "Vendite") {
-      if (Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota)) {
-        msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
-        Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+    else {
+      //Se il campo Natura non è valorizzato, lo devono essere i campi Imposta e Aliquota
+      //Controlla solamente registro vendite/acquisti
+      if (jsonLine["IT_Registro"]== "Acquisti" || jsonLine["IT_Registro"] == "Vendite") {
+        if (Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota) ) {
+          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+          Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+          Banana.document.addMessage( "isSupplier", ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+        }
       }
+    }
     }
 
     //Corrispettivi
@@ -1103,6 +1115,9 @@ EsibilitaIva
     jsonLine["IT_RegistrazioneValida"] = '';
 
     //Aggiunge la riga nei parametri
+    if (!validPeriod)
+      continue;
+
     if (isCustomer) {
       if (!param.customers[accountId].rows)
         param.customers[accountId].rows = [];

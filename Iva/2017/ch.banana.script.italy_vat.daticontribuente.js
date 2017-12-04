@@ -14,13 +14,13 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italy_vat.daticontribuente.js
-// @description = IVA Italia / Dati contribuente...
+// @description = Dati contribuente...
 // @doctype = *;110
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-09-21
+// @pubdate = 2017-12-04
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1

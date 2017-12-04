@@ -14,7 +14,7 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italy_vat_2017.report.fatture.js
-// @description = IVA Italia 2017 / Comunicazione dati fatture (spesometro)...
+// @description = Comunicazione dati fatture (spesometro)...
 // @doctype = *;110
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.report.fatture.createinstance.js
@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-10-17
+// @pubdate = 2017-12-04
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1

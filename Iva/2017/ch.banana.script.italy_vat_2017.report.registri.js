@@ -14,7 +14,7 @@
 //
 // @api = 1.0
 // @id = ch.banana.script.italy_vat_2017.report.registri.js
-// @description = IVA Italia 2017 / Registri IVA...
+// @description = Registri IVA...
 // @doctype = *;110
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.errors.js
@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-11-14
+// @pubdate = 2017-12-04
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -227,7 +227,7 @@ function settingsDialog() {
   if (stampaOrizzontaleCheckBox)
     param.stampaOrizzontale = stampaOrizzontaleCheckBox.checked;
   if (inizioNumerazionePagineSpinBox)
-      param.inizioNumerazionePagine = inizioNumerazionePagineSpinBox.value.toString();
+      param.inizioNumerazionePagine = parseInt(inizioNumerazionePagineSpinBox.value.toString());
   //Testi
   param.testoRegistriComboBoxIndex = testoRegistriComboBox.currentIndex.toString();
   if (param.testoRegistriComboBoxIndex == 0) {
@@ -414,9 +414,8 @@ function exec(inData) {
     param = JSON.parse(Banana.document.getScriptSettings());
   }
   
-  //add accounting data and journal
+  //add accounting data
   param = readAccountingData(param);
-  param = loadJournalData(param);
 
   var report = Banana.Report.newReport("Registri IVA");
   var stylesheet = Banana.Report.newStyleSheet();
@@ -447,6 +446,17 @@ function exec(inData) {
   Banana.Report.preview(report, stylesheet);
   return;
 
+}
+
+function formatAmount(amount) {
+  var amountFormatted = amount;
+  if (amountFormatted)
+    amountFormatted = Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(amountFormatted))
+  else
+      amountFormatted = "";
+  if (Banana.SDecimal.isZero(amountFormatted))
+    return "";
+  return amountFormatted;
 }
 
 function initParam()
@@ -483,7 +493,7 @@ function loadJournalData(param) {
   param.periods = [];
   var periods = createPeriods(param);
   for (var i=0; i<periods.length; i++) {
-    periods[i] = loadJournal(periods[i]);
+    periods[i] = loadJournal(periods[i], true);
     periods[i].numerazioneAutomatica = param.numerazioneAutomatica;
     periods[i].colonnaProtocollo = param.colonnaProtocollo;
     param.periods.push(periods[i]);
@@ -494,8 +504,9 @@ function loadJournalData(param) {
     var periodComplete = {};
     periodComplete.startDate = param.fileInfo["OpeningDate"];
     periodComplete.endDate = param.periods[i].endDate;
-    periodComplete = loadJournal(periodComplete);
+    periodComplete = loadJournal(periodComplete, false);
     param.periods[i] = loadJournalData_AddTotals(param.periods[i], periodComplete);
+    param.periods[i].periodComplete = periodComplete;
   }
 
   return param;
@@ -693,13 +704,14 @@ function loadJournalData_Ventilazione(corrispettivi, periodComplete) {
 
 function printPeriodComplete(report, stylesheet, param) {
   //Stampa registro annuale
-  var periodComplete = {};
-  periodComplete.startDate = param.fileInfo["OpeningDate"];
-  periodComplete.endDate = param.fileInfo["ClosureDate"];
-  periodComplete.numerazioneAutomatica = param.numerazioneAutomatica;
-  periodComplete.colonnaProtocollo = param.colonnaProtocollo;
-  periodComplete = loadJournal(periodComplete);
-  periodComplete = loadJournalData_AddTotals(periodComplete, periodComplete);
+  var period = {};
+  period.startDate = param.fileInfo["OpeningDate"];
+  period.endDate = param.fileInfo["ClosureDate"];
+  period.numerazioneAutomatica = param.numerazioneAutomatica;
+  period.colonnaProtocollo = param.colonnaProtocollo;
+  period = loadJournal(period);
+  period = loadJournalData_AddTotals(period, period);
+  period.periodComplete = period;
   
   //stampa registri vendite, acquisti e corrispettivi con periodo completo
   //tipoRegistro 0 = vendite
@@ -709,30 +721,37 @@ function printPeriodComplete(report, stylesheet, param) {
   //tipoRegistro 4 = registro iva unico
   var printed = false;
   if (param.tipoRegistro == 0 || param.tipoRegistro == 4) {
-    printed = printRegister(report, stylesheet, periodComplete, 'vendite');
+    printed = printRegister(report, stylesheet, period, 'vendite');
     if (printed)
       report.addPageBreak();
   }
   if (param.tipoRegistro == 1 || param.tipoRegistro == 4) {
-    printed = printRegister(report, stylesheet, periodComplete, 'acquisti');
+    printed = printRegister(report, stylesheet, period, 'acquisti');
     if (printed)
       report.addPageBreak();
   }
   if (param.tipoRegistro == 2 || param.tipoRegistro == 4) {
-    printed = printRegisterCorrispettivi(report, stylesheet, periodComplete);
+    printed = printRegisterCorrispettivi(report, stylesheet, period);
     if (printed)
       report.addPageBreak();
   }
-  //Aggiunge Prospetto liquidazione iva per l'intero periodo + Riepilogo iva  
+  //Aggiunge sempre Prospetto liquidazione iva per l'intero periodo + Riepilogo iva  
   report.addParagraph("Liquidazione annuale IVA", "h1");
-  report.addParagraph(getPeriodText(periodComplete), "h1_period");
-  printed = printSummary(report, stylesheet, periodComplete);
+  report.addParagraph(getPeriodText(period), "h1_period");
+  printed = printSummary(report, stylesheet, period);
+  
   param.vatPeriods = [];
-  param = loadVatCodes(param, periodComplete.startDate, periodComplete.endDate);
-  if (param.vatPeriods.length>0) {
-    report.addParagraph("RIEPILOGO IVA", "h2");
-    printVatReport2(report, stylesheet, param.vatPeriods[0]);
+  param = loadVatCodes(param, period.startDate, period.endDate);
+  if (param.vatPeriods.length > 0) {
+    param.vatPeriods[0]["OPATTIVE"] = sumVatAmounts(param.vatPeriods[0], ["V","C"]);
+    param.vatPeriods[0]["OPDIFFERENZA"] = sumVatAmounts(param.vatPeriods[0], ["OPATTIVE","OPPASSIVE"]);
+    param.vatPeriods[0]["L-CI"] = {};
+    param.vatPeriods[0]["L-CIA"] = Banana.document.vatCurrentBalance("L-CIA", period.startDate, period.endDate);
+    param.vatPeriods[0]["L-CO"] = Banana.document.vatCurrentBalance("L-CO", period.startDate, period.endDate);
+    param.vatPeriods[0]["L"] = sumVatAmounts(param.vatPeriods[0], ["L-AC","L-CIA","L-CO","L-INT","L-RI","L-SP"]);
+    param.vatPeriods[0]["Total"] = sumVatAmounts(param.vatPeriods[0], ["V","C","A","L"]);
   }
+  printed = printLiquidazione(report, stylesheet, param, period);
   return true;
 }
 
@@ -744,6 +763,7 @@ function printPeriods(report, stylesheet, param) {
   //tipoRegistro 3 = liquidazione
   //tipoRegistro 4 = registro iva unico
   var printed = false;
+  param = loadJournalData(param);
   for (var i=0; i<param.periods.length; i++) {
     if (param.tipoRegistro == 0 || param.tipoRegistro == 4) {
       printed = printRegister(report, stylesheet, param.periods[i], 'vendite');
@@ -759,6 +779,18 @@ function printPeriods(report, stylesheet, param) {
       printed = printRegisterCorrispettivi(report, stylesheet, param.periods[i]);
     }
     if (param.tipoRegistro == 3 || param.tipoRegistro == 0 || param.tipoRegistro == 4) {
+      param.vatPeriods = [];
+      param = loadVatCodes(param, param.periods[i].startDate, param.periods[i].endDate);
+      if (param.vatPeriods.length > 0) {
+        param.vatPeriods[0]["OPATTIVE"] = sumVatAmounts(param.vatPeriods[0], ["V","C"]);
+        param.vatPeriods[0]["OPDIFFERENZA"] = sumVatAmounts(param.vatPeriods[0], ["OPATTIVE","OPPASSIVE"]);
+        param.vatPeriods[0]["L-CI"] = Banana.document.vatCurrentBalance("L-CI", param.periods[i].startDate, param.periods[i].endDate);
+        param.vatPeriods[0]["L-CIA"] = Banana.document.vatCurrentBalance("L-CIA", param.periods[i].periodComplete.startDate, param.periods[i].periodComplete.endDate);
+        param.vatPeriods[0]["L-CO"] = Banana.document.vatCurrentBalance("L-CO", param.periods[i].periodComplete.startDate, param.periods[i].periodComplete.endDate);
+        param.vatPeriods[0]["L-RI"] = {};
+        param.vatPeriods[0]["L"] = sumVatAmounts(param.vatPeriods[0], ["L-AC","L-CI","L-CIA","L-CO","L-INT","L-SP"]);
+        param.vatPeriods[0]["Total"] = sumVatAmounts(param.vatPeriods[0], ["V","C","A","L"]);
+      }
       if (printed)
         report.addPageBreak();
       printed = printLiquidazione(report, stylesheet, param, param.periods[i]);
@@ -771,16 +803,225 @@ function printPeriods(report, stylesheet, param) {
 
 function printLiquidazione(report, stylesheet, param, period) {
 
-  var startDate = period.startDate;
-  var endDate = period.endDate;
+  //Tabella Prospetto di liquidazione IVA
   report.addParagraph("Prospetto di liquidazione IVA", "h1");
   report.addParagraph(getPeriodText(period), "h1_period");
   printed = printSummary(report, stylesheet, period);
-  param.vatPeriods = [];
-  param = loadVatCodes(param, startDate, endDate);
-  if (param.vatPeriods.length>0) {
-    report.addParagraph("RIEPILOGO IVA", "h2");
-    printVatReport2(report, stylesheet, param.vatPeriods[0]);
+  if (printed)
+    report.addPageBreak();
+
+  //Tabella Riepilogo IVA
+  report.addParagraph("Riepilogo IVA", "h1");
+  report.addParagraph("Periodo: " + getPeriodText(param.vatPeriods[0]), "h1_period");
+  var table = report.addTable("vat_table");
+  
+  //Totale operazioni attive
+  var amount = param.vatPeriods[0]["OPATTIVE"].vatTaxable;
+  var row = table.addRow();
+  row.addCell("Totale operazioni attive (al netto dell'IVA)", "description");
+  if (Banana.SDecimal.sign(amount)<0) {
+    row.addCell(formatAmount(amount), "amount");
+    row.addCell("");
+  }
+  else {
+    row.addCell("");
+    row.addCell(formatAmount(amount), "amount");
+  }
+
+  //Totale operazioni passive
+  amount = param.vatPeriods[0]["OPPASSIVE"].vatTaxable;
+  row = table.addRow();
+  row.addCell("Totale operazioni passive (al netto dell'IVA)", "description");
+  if (Banana.SDecimal.sign(amount)<0) {
+    row.addCell(formatAmount(amount), "amount");
+    row.addCell("");
+  }
+  else {
+    row.addCell("");
+    row.addCell(formatAmount(amount), "amount");
+  }
+
+  //Riga di separazione
+  var row = table.addRow();
+  row.addCell("", "separator", 3);
+
+  //Riga di titolo
+  var row = table.addRow();
+  row.addCell("", "description bold");
+  row.addCell("DEBITO", "amount bold");
+  row.addCell("CREDITO", "amount bold");
+  
+  //IVA esigibile
+  amount = param.vatPeriods[0]["OPATTIVE"].vatPosted;
+  row = table.addRow();
+  row.addCell("IVA esigibile", "description");
+  if (Banana.SDecimal.sign(amount)<0) {
+    row.addCell(formatAmount(amount), "amount");
+    row.addCell("");
+  }
+  else {
+    row.addCell("");
+    row.addCell(formatAmount(amount), "amount");
+  }
+  
+  //IVA detratta
+  amount = param.vatPeriods[0]["OPPASSIVE"].vatPosted;
+  row = table.addRow();
+  var description = "IVA detratta";
+  if (!Banana.SDecimal.isZero(param.vatPeriods[0].datiContribuente.liqPercProrata))
+    description = "IVA detratta (Prorata: " + Banana.SDecimal.round(param.vatPeriods[0].datiContribuente.liqPercProrata, {'decimals':2}).toString() + "%)";
+  row.addCell(description, "description");
+  if (Banana.SDecimal.sign(amount)<0) {
+    row.addCell(formatAmount(amount), "amount");
+    row.addCell("");
+  }
+  else {
+    row.addCell("");
+    row.addCell(formatAmount(amount), "amount");
+  }
+
+  //Saldo IVA di periodo (IVA esigibile - IVA detratta)
+  amount = param.vatPeriods[0]["OPDIFFERENZA"].vatPosted;
+  row = table.addRow();
+  row.addCell("Saldo IVA di periodo (mensile o trimestrale)", "description");
+  if (Banana.SDecimal.sign(amount)<=0) {
+    row.addCell(formatAmount(amount), "amount");
+    row.addCell("");
+  }
+  else {
+    row.addCell("");
+    row.addCell(formatAmount(amount), "amount");
+  }
+  
+  //Credito IVA periodo precedente (mensile o trimestrale)
+  amount = param.vatPeriods[0]["L-CI"].vatPosted;
+  row = table.addRow();
+  row.addCell("Credito IVA periodo precedente (mensile o trimestrale)", "description");
+  if (Banana.SDecimal.sign(amount)<=0) {
+    row.addCell(formatAmount(amount), "amount");
+    row.addCell("");
+  }
+  else {
+    row.addCell("");
+    row.addCell(formatAmount(amount), "amount");
+  }
+
+  //Ammontare dei versamenti
+  amount = param.vatPeriods[0]["L-RI"].vatPosted;
+  if (!Banana.SDecimal.isZero(amount)) {
+    row = table.addRow();
+    row.addCell("Ammontare dei versamenti", "description");
+    if (Banana.SDecimal.sign(amount)<=0) {
+      row.addCell(formatAmount(amount), "amount");
+      row.addCell("");
+    }
+    else {
+      row.addCell("");
+      row.addCell(formatAmount(amount), "amount");
+    }
+  }
+  
+  //Credito o debito IVA di periodo (IVA esigibile - IVA detratta - Credito IVA periodo precedente)
+  amount = Banana.SDecimal.add(param.vatPeriods[0]["OPDIFFERENZA"].vatPosted, param.vatPeriods[0]["L-CI"].vatPosted);
+  row = table.addRow();
+  row.addCell("Credito o debito IVA di periodo", "description");
+  if (Banana.SDecimal.sign(amount)<=0) {
+    row.addCell(formatAmount(amount), "amount");
+    row.addCell("");
+  }
+  else {
+    row.addCell("");
+    row.addCell(formatAmount(amount), "amount");
+  }
+
+  //Riga di separazione
+  var row = table.addRow();
+  row.addCell("", "separator", 3);
+
+  //Credito IVA anno precedente
+  amount = param.vatPeriods[0]["L-CIA"].vatPosted;
+  row = table.addRow();
+  row.addCell("Credito IVA anno precedente", "description");
+  if (Banana.SDecimal.sign(amount)<0) {
+    row.addCell(formatAmount(amount), "amount");
+    row.addCell("");
+  }
+  else {
+    row.addCell("");
+    row.addCell(formatAmount(amount), "amount");
+  }
+
+  //Credito IVA anno precedente compensato F24
+  amount = param.vatPeriods[0]["L-CO"].vatPosted;
+  row = table.addRow();
+  row.addCell("Credito IVA anno precedente compensato F24", "description");
+  if (Banana.SDecimal.sign(amount)<0) {
+    row.addCell(formatAmount(amount), "amount");
+    row.addCell("");
+  }
+  else {
+    row.addCell("");
+    row.addCell(formatAmount(amount), "amount");
+  }
+
+  //Riga di separazione
+  var row = table.addRow();
+  row.addCell("", "separator", 3);
+
+  //Interessi dovuti
+  amount = param.vatPeriods[0]["L-INT"].vatPosted
+  row = table.addRow();
+  row.addCell("Interessi dovuti per liquidazioni trimestrali", "description");
+  if (Banana.SDecimal.sign(amount)<=0) {
+    row.addCell(formatAmount(amount), "amount");
+    row.addCell("");
+  }
+  else {
+    row.addCell("");
+    row.addCell(formatAmount(amount), "amount");
+  }
+  /*propone interessi trimestrali se importo è diverso da quello visualizzato*/
+  /*var amountInteressi = 0;
+  if (param.vatPeriods[0]["L-INT"] && param.vatPeriods[0]["L-INT"].vatPosted)
+    amountInteressi = Banana.SDecimal.abs(param.vatPeriods[0]["L-INT"].vatPosted);
+  var amountInteressiCalcolati = 0;
+  if (param.vatPeriods[0].datiContribuente.liqTipoVersamento == 1)
+    amountInteressiCalcolati = calculateInterestAmount(param.vatPeriods[0]);
+  if (param.vatPeriods[0].datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
+    var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
+    msg = msg.replace("%1", param.vatPeriods[0].datiContribuente.liqPercInteressi );
+    msg = msg.replace("%2", Banana.Converter.toLocaleNumberFormat(amountInteressiCalcolati) );
+    row.addCell(msg, "amount warning");
+  }
+  else if (param.vatPeriods[0].datiContribuente.liqTipoVersamento == 0 && amountInteressi != amountInteressiCalcolati)
+    row.addCell(getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE), "amount warning");
+  else
+    row.addCell("");*/
+
+  //Acconto dovuto
+  amount = param.vatPeriods[0]["L-AC"].vatPosted;
+  row = table.addRow();
+  row.addCell("Acconto dovuto", "description");
+  if (Banana.SDecimal.sign(amount)<=0) {
+    row.addCell(formatAmount(amount), "amount");
+    row.addCell("");
+  }
+  else {
+    row.addCell("");
+    row.addCell(formatAmount(amount), "amount");
+  }
+
+  //Saldo finale di periodo
+  amount = param.vatPeriods[0]["Total"].vatPosted;
+  row = table.addRow();
+  row.addCell("Saldo finale di periodo", "description bold");
+  if (Banana.SDecimal.sign(amount)<=0) {
+    row.addCell(formatAmount(amount), "amount bold");
+    row.addCell("");
+  }
+  else {
+    row.addCell("");
+    row.addCell(formatAmount(amount), "amount bold");
   }
   return true;
 }
@@ -1310,6 +1551,8 @@ function setStyle(report, stylesheet, param) {
   stylesheet.addStyle(".corrispettivi_calcolo_ventilazione_table", "width:100%;");
   stylesheet.addStyle(".corrispettivi_riepilogo_table", "width:100%;");
   stylesheet.addStyle(".summary_table", "width:100%;");
+  stylesheet.addStyle(".vat_table td", "padding-bottom:2px;");
+  stylesheet.addStyle(".vat_table td.separator", "border-top:1px solid black;");
   
 }
 
