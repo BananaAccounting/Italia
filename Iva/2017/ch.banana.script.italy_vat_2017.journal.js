@@ -573,16 +573,10 @@ function isMemberOfEuropeanUnion(_country)
  *
  * @param	parametro con data inizio/fine periodo
  */
-function loadJournal(param) {
-  return loadJournal(param, true);
-}
-function loadJournal(param, warningMessages)
+function loadJournal(param)
 {
   if (!Banana.document || !param || typeof (Banana.document.journalCustomersSuppliers) === 'undefined')
     return false;
-
-  if (!warningMessages)
-    warningMessages=false;
 
   var journal = Banana.document.journalCustomersSuppliers(
     Banana.document.ORIGINTYPE_CURRENT, Banana.document.ACCOUNTTYPE_NORMAL);
@@ -983,7 +977,7 @@ EsibilitaIva
         tipoDocumentoCorretto = false;
       }
     }
-    if (!tipoDocumentoCorretto && warningMessages) {
+    if (!tipoDocumentoCorretto) {
       var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
       msg += getErrorMessage(ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO);
       msg = msg.replace("%1", jsonLine["IT_TipoDoc"] );
@@ -1062,7 +1056,6 @@ EsibilitaIva
 
     //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
     //Eccezione: fatture ricevute con natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
-    if (warningMessages) {
     if (jsonLine["IT_Natura"].length>0) {
       if (isSupplier && jsonLine["IT_Natura"] == "N6") {
         if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
@@ -1084,10 +1077,8 @@ EsibilitaIva
         if (Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota) ) {
           msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
           Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
-          Banana.document.addMessage( "isSupplier", ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
         }
       }
-    }
     }
 
     //Corrispettivi
