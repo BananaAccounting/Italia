@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-12-05
+// @pubdate = 2017-12-10
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -729,27 +729,29 @@ function printDocument(report, stylesheet, param) {
     //tipoRegistro 4 = registro iva unico
     if (param.tipoRegistro == 0 || param.tipoRegistro == 4) {
       printed = printRegistroAcquistiVendite(report, stylesheet, param.periods[i], 'vendite');
+      if (printed)
+        report.addPageBreak();
     }
     //tipoRegistro 3 = liquidazione
     if (param.tipoRegistro == 0 || param.tipoRegistro == 3 || param.tipoRegistro == 4) {
       param = printDocument_LoadVatCodes(param, param.periods[i]);
-      if (printed)
-        report.addPageBreak();
       printed = printLiquidazione(report, stylesheet, param, param.periods[i]);
+      if (printed && (param.periods[i].registri["acquisti"] || param.periods[i].registri["corrispettivi"]))
+        report.addPageBreak();
     }
     //tipoRegistro 1 = acquisti
     if (param.tipoRegistro == 1 || param.tipoRegistro == 4) {
-      if (printed)
-        report.addPageBreak();
       printed = printRegistroAcquistiVendite(report, stylesheet, param.periods[i], 'acquisti');
+      if (printed && param.periods[i].registri["corrispettivi"])
+        report.addPageBreak();
     }
     //tipoRegistro 2 = corrispettivi
     if (param.tipoRegistro == 2 || param.tipoRegistro == 4) {
+      printed = printRegistroCorrispettivi(report, stylesheet, param.periods[i]);
       if (printed)
         report.addPageBreak();
-      printed = printRegistroCorrispettivi(report, stylesheet, param.periods[i]);
     }
-    if (printed && i+1<param.periods.length)
+    if (i+1<param.periods.length)
       report.addPageBreak();
   }
   return true;
@@ -758,26 +760,28 @@ function printDocument(report, stylesheet, param) {
 function printDocument_LoadVatCodes(param, period) {
   param.vatPeriods = [];
   param = loadVatCodes(param, period.startDate, period.endDate);
-  if (param.vatPeriods.length > 0) {
-    if (param.periodoSelezionato == "y") {
-      param.vatPeriods[0]["OPATTIVE"] = sumVatAmounts(param.vatPeriods[0], ["V","C"]);
-      param.vatPeriods[0]["OPDIFFERENZA"] = sumVatAmounts(param.vatPeriods[0], ["OPATTIVE","OPPASSIVE"]);
-      param.vatPeriods[0]["L-CI"] = {};
-      param.vatPeriods[0]["L-CIA"] = Banana.document.vatCurrentBalance("L-CIA", period.startDate, period.endDate);
-      param.vatPeriods[0]["L-CO"] = Banana.document.vatCurrentBalance("L-CO", period.startDate, period.endDate);
-      param.vatPeriods[0]["L"] = sumVatAmounts(param.vatPeriods[0], ["L-AC","L-CIA","L-CO","L-INT","L-RI","L-SP"]);
-      param.vatPeriods[0]["Total"] = sumVatAmounts(param.vatPeriods[0], ["V","C","A","L"]);
-    }
-    else {
-      param.vatPeriods[0]["OPATTIVE"] = sumVatAmounts(param.vatPeriods[0], ["V","C"]);
-      param.vatPeriods[0]["OPDIFFERENZA"] = sumVatAmounts(param.vatPeriods[0], ["OPATTIVE","OPPASSIVE"]);
-      param.vatPeriods[0]["L-CI"] = Banana.document.vatCurrentBalance("L-CI", period.startDate, period.endDate);
-      param.vatPeriods[0]["L-CIA"] = Banana.document.vatCurrentBalance("L-CIA", period.periodComplete.startDate, period.periodComplete.endDate);
-      param.vatPeriods[0]["L-CO"] = Banana.document.vatCurrentBalance("L-CO", period.periodComplete.startDate, period.periodComplete.endDate);
-      param.vatPeriods[0]["L-RI"] = {};
-      param.vatPeriods[0]["L"] = sumVatAmounts(param.vatPeriods[0], ["L-AC","L-CI","L-CIA","L-CO","L-INT","L-SP"]);
-      param.vatPeriods[0]["Total"] = sumVatAmounts(param.vatPeriods[0], ["V","C","A","L"]);
-    }
+  if (param.vatPeriods.length <= 0)
+    return param;
+
+  if (period.startDate == period.periodComplete.startDate && period.endDate == period.periodComplete.endDate) {
+    //periodo anno completo bisogna escludere crediti di periodo
+    param.vatPeriods[0]["OPATTIVE"] = sumVatAmounts(param.vatPeriods[0], ["V","C"]);
+    param.vatPeriods[0]["OPDIFFERENZA"] = sumVatAmounts(param.vatPeriods[0], ["OPATTIVE","OPPASSIVE"]);
+    param.vatPeriods[0]["L-CI"] = {};
+    param.vatPeriods[0]["L-CIA"] = Banana.document.vatCurrentBalance("L-CIA", period.startDate, period.endDate);
+    param.vatPeriods[0]["L-CO"] = Banana.document.vatCurrentBalance("L-CO", period.startDate, period.endDate);
+    param.vatPeriods[0]["L"] = sumVatAmounts(param.vatPeriods[0], ["L-AC","L-CIA","L-CO","L-INT","L-RI","L-SP"]);
+    param.vatPeriods[0]["Total"] = sumVatAmounts(param.vatPeriods[0], ["V","C","A","L"]);
+  }
+  else {
+    param.vatPeriods[0]["OPATTIVE"] = sumVatAmounts(param.vatPeriods[0], ["V","C"]);
+    param.vatPeriods[0]["OPDIFFERENZA"] = sumVatAmounts(param.vatPeriods[0], ["OPATTIVE","OPPASSIVE"]);
+    param.vatPeriods[0]["L-CI"] = Banana.document.vatCurrentBalance("L-CI", period.startDate, period.endDate);
+    param.vatPeriods[0]["L-CIA"] = Banana.document.vatCurrentBalance("L-CIA", period.periodComplete.startDate, period.periodComplete.endDate);
+    param.vatPeriods[0]["L-CO"] = Banana.document.vatCurrentBalance("L-CO", period.periodComplete.startDate, period.periodComplete.endDate);
+    param.vatPeriods[0]["L-RI"] = {};
+    param.vatPeriods[0]["L"] = sumVatAmounts(param.vatPeriods[0], ["L-AC","L-CI","L-CIA","L-CO","L-INT","L-SP"]);
+    param.vatPeriods[0]["Total"] = sumVatAmounts(param.vatPeriods[0], ["V","C","A","L"]);
   }
   return param;
 }
@@ -1120,7 +1124,6 @@ function printRegistroAcquistiVendite(report, stylesheet, period, register) {
   }
   // Sort per progressivo registro
   transactions.sort(sortBy_ProgRegistro);  
-
 
   //Tabella
   var table = report.addTable("register_table");
