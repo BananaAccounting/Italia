@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-12-10
+// @pubdate = 2017-12-11
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -736,7 +736,7 @@ function printDocument(report, stylesheet, param) {
     if (param.tipoRegistro == 0 || param.tipoRegistro == 3 || param.tipoRegistro == 4) {
       param = printDocument_LoadVatCodes(param, param.periods[i]);
       printed = printLiquidazione(report, stylesheet, param, param.periods[i]);
-      if (printed && (param.periods[i].registri["acquisti"] || param.periods[i].registri["corrispettivi"]))
+      if (printed && param.tipoRegistro == 4 && (param.periods[i].registri["acquisti"] || param.periods[i].registri["corrispettivi"]))
         report.addPageBreak();
     }
     //tipoRegistro 1 = acquisti
@@ -748,8 +748,6 @@ function printDocument(report, stylesheet, param) {
     //tipoRegistro 2 = corrispettivi
     if (param.tipoRegistro == 2 || param.tipoRegistro == 4) {
       printed = printRegistroCorrispettivi(report, stylesheet, param.periods[i]);
-      if (printed)
-        report.addPageBreak();
     }
     if (i+1<param.periods.length)
       report.addPageBreak();
