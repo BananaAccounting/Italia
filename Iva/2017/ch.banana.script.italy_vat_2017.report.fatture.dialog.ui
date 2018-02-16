@@ -501,7 +501,7 @@
       <item>
        <widget class="QCheckBox" name="esigibilitaIvaCheckBox">
         <property name="text">
-         <string>&amp;Pubblica sempre il tag EsigibilitaIVA</string>
+         <string>&amp;Pubblica tag EsigibilitaIVA</string>
         </property>
        </widget>
       </item>

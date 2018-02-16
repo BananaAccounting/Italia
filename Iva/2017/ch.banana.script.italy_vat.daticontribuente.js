@@ -15,12 +15,12 @@
 // @api = 1.0
 // @id = ch.banana.script.italy_vat.daticontribuente.js
 // @description = Dati contribuente...
-// @doctype = *;110
+// @doctype = 100.110;110.110;130.110;100.130
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-12-04
+// @pubdate = 2018-02-15
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1

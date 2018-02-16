@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2017-12-11
+// @pubdate = 2018-02-15
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -723,34 +723,34 @@ function loadJournalData_Ventilazione(corrispettivi, periodComplete) {
 }
 
 function printDocument(report, stylesheet, param) {
-  var printed = false;
+  var addPageBreak = false;
   for (var i=0; i<param.periods.length; i++) {
     //tipoRegistro 0 = vendite
     //tipoRegistro 4 = registro iva unico
     if (param.tipoRegistro == 0 || param.tipoRegistro == 4) {
-      printed = printRegistroAcquistiVendite(report, stylesheet, param.periods[i], 'vendite');
+      var printed = printRegistroAcquistiVendite(report, stylesheet, param.periods[i], 'vendite', addPageBreak);
       if (printed)
-        report.addPageBreak();
+        addPageBreak = true;
     }
     //tipoRegistro 3 = liquidazione
     if (param.tipoRegistro == 0 || param.tipoRegistro == 3 || param.tipoRegistro == 4) {
       param = printDocument_LoadVatCodes(param, param.periods[i]);
-      printed = printLiquidazione(report, stylesheet, param, param.periods[i]);
-      if (printed && param.tipoRegistro == 4 && (param.periods[i].registri["acquisti"] || param.periods[i].registri["corrispettivi"]))
-        report.addPageBreak();
+      var printed = printLiquidazione(report, stylesheet, param, param.periods[i], addPageBreak);
+      if (printed)
+        addPageBreak = true;
     }
     //tipoRegistro 1 = acquisti
     if (param.tipoRegistro == 1 || param.tipoRegistro == 4) {
-      printed = printRegistroAcquistiVendite(report, stylesheet, param.periods[i], 'acquisti');
-      if (printed && param.periods[i].registri["corrispettivi"])
-        report.addPageBreak();
+      var printed = printRegistroAcquistiVendite(report, stylesheet, param.periods[i], 'acquisti', addPageBreak);
+      if (printed)
+        addPageBreak = true;
     }
     //tipoRegistro 2 = corrispettivi
     if (param.tipoRegistro == 2 || param.tipoRegistro == 4) {
-      printed = printRegistroCorrispettivi(report, stylesheet, param.periods[i]);
+      var printed = printRegistroCorrispettivi(report, stylesheet, param.periods[i], addPageBreak);
     }
-    if (i+1<param.periods.length)
-      report.addPageBreak();
+    //if (i+1<param.periods.length)
+    //  report.addPageBreak();
   }
   return true;
 }
@@ -784,7 +784,10 @@ function printDocument_LoadVatCodes(param, period) {
   return param;
 }
 
-function printLiquidazione(report, stylesheet, param, period) {
+function printLiquidazione(report, stylesheet, param, period, addPageBreak) {
+
+  if (addPageBreak)
+    report.addPageBreak();
 
   //Tabella Prospetto di liquidazione IVA
   report.addParagraph("Prospetto di liquidazione IVA", "h1");
@@ -1088,7 +1091,7 @@ function printLiquidazione_SummaryTable(report, stylesheet, data, title) {
 
 }
 
-function printRegistroAcquistiVendite(report, stylesheet, period, register) {
+function printRegistroAcquistiVendite(report, stylesheet, period, register, addPageBreak) {
   
   //Titolo
   var titolo = '';
@@ -1104,6 +1107,9 @@ function printRegistroAcquistiVendite(report, stylesheet, period, register) {
     return false;
   }
   
+  if (addPageBreak)
+    report.addPageBreak();
+
   //Sort delle regitrazioni
   var transactions = [];
   for (var index in period.journal.rows) {
@@ -1276,13 +1282,16 @@ function printRegistroAcquistiVendite(report, stylesheet, period, register) {
   return true;
 }
 
-function printRegistroCorrispettivi(report, stylesheet, period) {
+function printRegistroCorrispettivi(report, stylesheet, period, addPageBreak) {
 
   var register = "corrispettivi";
   if (!period.registri[register]) {
     //report.addParagraph("Nessun movimento trovato nel periodo", "");
     return false;
   }
+
+  if (addPageBreak)
+    report.addPageBreak();
 
   //Titolo
   report.addParagraph("Registro dei corrispettivi", "h1");
@@ -1372,9 +1381,9 @@ function printRegistroCorrispettivi(report, stylesheet, period) {
   headerRow.addCell("Descrizione", "title");
   headerRow.addCell("Tot.Acquisti", "title right");
   headerRow.addCell("%Incid.", "title right");
-  headerRow.addCell("Tot.corr.da ventilare", "title right");
+  headerRow.addCell("Corrispettivi lordi", "title right");
   headerRow.addCell("Imponibile", "title right");
-  headerRow.addCell("Totale Iva", "title right");
+  headerRow.addCell("Imposta", "title right");
 
   tot1=0;
   tot2=0;
@@ -1388,13 +1397,13 @@ function printRegistroCorrispettivi(report, stylesheet, period) {
     row.addCell(period.acquistiPerRivendita[key].vatRate, "");
     row.addCell(period.acquistiPerRivendita[key].vatCodeDes, "");
     row.addCell(Banana.Converter.toLocaleNumberFormat(period.acquistiPerRivendita[key].totaleAcquisti), "right");
-    row.addCell(Banana.Converter.toLocaleNumberFormat(period.acquistiPerRivendita[key].incidenza), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(period.acquistiPerRivendita[key].incidenza*100), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(period.acquistiPerRivendita[key].daVentilare), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(period.acquistiPerRivendita[key].imponibile), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(period.acquistiPerRivendita[key].iva), "right");
 
     tot1 = Banana.SDecimal.add(period.acquistiPerRivendita[key].totaleAcquisti, tot1);
-    tot2 = Banana.SDecimal.add(period.acquistiPerRivendita[key].incidenza, tot2);
+    tot2 = Banana.SDecimal.add(period.acquistiPerRivendita[key].incidenza*100, tot2);
     tot3 = Banana.SDecimal.add(period.acquistiPerRivendita[key].daVentilare, tot3);
     tot4 = Banana.SDecimal.add(period.acquistiPerRivendita[key].imponibile, tot4);
     tot5 = Banana.SDecimal.add(period.acquistiPerRivendita[key].iva, tot5);

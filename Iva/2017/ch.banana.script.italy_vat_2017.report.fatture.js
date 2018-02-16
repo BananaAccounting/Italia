@@ -613,14 +613,19 @@ function printVatCodesTotal(report, stylesheet, param) {
   var tot1=0;
   var tot2=0;
   var tot3=0;
+  var columnCount = 7;
+  if (param.esigibilitaIva)
+    columnCount = 8;
   var table = report.addTable("vatcodes_table");
   headerRow = table.getHeader().addRow();
-  headerRow.addCell("TOTALI DI PERIODO PER CODICE (" + getPeriodText(param.data) + ")", "title", 7); 
+  headerRow.addCell("TOTALI DI PERIODO PER CODICE (" + getPeriodText(param.data) + ")", "title", columnCount); 
   headerRow = table.getHeader().addRow();
   headerRow.addCell("Cod.IVA", "header");
   headerRow.addCell("Gr.IVA", "header");
+  if (param.esigibilitaIva)
+    headerRow.addCell("Esigibilità", "header expand");
   headerRow.addCell("Aliquota", "right header");
-  headerRow.addCell("Descrizione", "header expand");
+  headerRow.addCell("Descrizione", "header");
   headerRow.addCell("Imponibile", "right header");
   headerRow.addCell("Imposta", "right header");
   headerRow.addCell("Imposta indetraibile", "right header");
@@ -631,8 +636,10 @@ function printVatCodesTotal(report, stylesheet, param) {
     row = table.addRow();
     row.addCell(vatCode, "");
     row.addCell(totaliCodice[vatCode].gr, "");
+    if (param.esigibilitaIva)
+      row.addCell(totaliCodice[vatCode].esigibilita, "");
     row.addCell(totaliCodice[vatCode].vatRate, "right");
-    row.addCell(totaliCodice[vatCode].vatCodeDes);
+    row.addCell(totaliCodice[vatCode].vatCodeDes, "expand");
     row.addCell(Banana.Converter.toLocaleNumberFormat(totaliCodice[vatCode].vatTaxable), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(totaliCodice[vatCode].vatAmount), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(totaliCodice[vatCode].vatNonDed), "right");
@@ -643,7 +650,10 @@ function printVatCodesTotal(report, stylesheet, param) {
 
   //Totale
   row = table.addRow();
-  row.addCell("", "", 3);
+  row.addCell("", "", 2);
+  if (param.esigibilitaIva)
+    row.addCell("", "");
+  row.addCell("", "");
   row.addCell("Totale", "total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right total");
@@ -652,6 +662,7 @@ function printVatCodesTotal(report, stylesheet, param) {
   //Add style
   stylesheet.addStyle(".vatcodes_table", "width:100%;margin-top:20px;");
   stylesheet.addStyle(".vatcodes_table td", "border:0.5em solid black;padding:3px;");
+  stylesheet.addStyle(".expand", "width:250px;");
   stylesheet.addStyle(".vatcodes_table td.header", "font-weight:bold;background-color:#dddddd");
   stylesheet.addStyle(".vatcodes_table td.title", "font-weight:bold;border:0px;background-color:#ffffff;");
   stylesheet.addStyle(".vatcodes_table td.total", "font-weight:bold;");
@@ -663,6 +674,7 @@ function printVatCodesTotal_rows(customers) {
     for (var index in customers[id].rows) {
       var vatCode = customers[id].rows[index].JVatCodeWithoutSign;
       var vatRate = customers[id].rows[index].IT_Aliquota;
+      var esigibilita = customers[id].rows[index].IT_EsigibilitaIva;
       var vatAmount = customers[id].rows[index].IT_ImportoIva;
       var vatPosted = customers[id].rows[index].IT_IvaContabilizzata;
       var vatNonDed = customers[id].rows[index].VatNonDeductible;
@@ -694,6 +706,7 @@ function printVatCodesTotal_rows(customers) {
           totaliCodice[vatCode].vatPercNonDed = vatPercNonDed;
           totaliCodice[vatCode].vatGross = vatGross;
           totaliCodice[vatCode].vatRate = vatRate;
+          totaliCodice[vatCode].esigibilita = esigibilita;
           totaliCodice[vatCode].vatCodeDes = '';
           totaliCodice[vatCode].gr = gr;
           var tableVatCodes = Banana.document.table("VatCodes");
