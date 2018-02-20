@@ -760,7 +760,10 @@ function printDocument_LoadVatCodes(param, period) {
   param = loadVatCodes(param, period.startDate, period.endDate);
   if (param.vatPeriods.length <= 0)
     return param;
-
+  //OPATTIVE non include la liquidazione nella stampa dei registri
+  param.vatPeriods[0]["OPATTIVE"] = sumVatAmounts(param.vatPeriods[0], ["V","C"]);
+  param.vatPeriods[0]["OPDIFFERENZA"] = sumVatAmounts(param.vatPeriods[0], ["OPATTIVE","OPPASSIVE"]);
+  
   //commentato perché lasciato calcolo nel modulo liquidazione (loadVatCodes)
   /*if (period.startDate == period.periodComplete.startDate && period.endDate == period.periodComplete.endDate) {
     //periodo anno completo bisogna escludere crediti di periodo
