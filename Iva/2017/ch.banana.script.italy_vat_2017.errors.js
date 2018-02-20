@@ -72,7 +72,7 @@ function getErrorMessage(errorId) {
         case ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO:
             return "TipoDocumento %1 non ammesso con IdPaese %2";
         case ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA:
-            return "Le registrazioni per la ventilazione dei corrispettivi mancano o non sono corrette. Calcolato (C-VEN): %1, registrato (C-REG): %2";
+            return "Le registrazioni per la ventilazione dei corrispettivi non corrispondono a quanto calcolato su base annua. Calcolato (C-VEN): %1, registrato (C-REG): %2";
         case ID_ERR_GRUPPO_CLIENTI_MANCANTE:
             return "Gruppo Clienti non definito. Impostare il gruppo con il comando Conta2 - Clienti - Impostazioni";
         case ID_ERR_GRUPPO_FORNITORI_MANCANTE:
