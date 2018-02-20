@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.report.liquidazione.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2018-02-15
+// @pubdate = 2018-02-20
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -761,7 +761,8 @@ function printDocument_LoadVatCodes(param, period) {
   if (param.vatPeriods.length <= 0)
     return param;
 
-  if (period.startDate == period.periodComplete.startDate && period.endDate == period.periodComplete.endDate) {
+  //commentato perché lasciato calcolo nel modulo liquidazione (loadVatCodes)
+  /*if (period.startDate == period.periodComplete.startDate && period.endDate == period.periodComplete.endDate) {
     //periodo anno completo bisogna escludere crediti di periodo
     param.vatPeriods[0]["OPATTIVE"] = sumVatAmounts(param.vatPeriods[0], ["V","C"]);
     param.vatPeriods[0]["OPDIFFERENZA"] = sumVatAmounts(param.vatPeriods[0], ["OPATTIVE","OPPASSIVE"]);
@@ -780,7 +781,15 @@ function printDocument_LoadVatCodes(param, period) {
     param.vatPeriods[0]["L-RI"] = {};
     param.vatPeriods[0]["L"] = sumVatAmounts(param.vatPeriods[0], ["L-AC","L-CI","L-CIA","L-CO","L-INT","L-SP"]);
     param.vatPeriods[0]["Total"] = sumVatAmounts(param.vatPeriods[0], ["V","C","A","L"]);
-  }
+  }*/
+
+  //confronto di due date
+  //var periodStart = Banana.Converter.toDate(period.startDate);
+  //var periodEnd = Banana.Converter.toDate(period.endDate);
+  //var periodCompleteStart = Banana.Converter.toDate(param.fileInfo["OpeningDate"]);
+  //var periodCompleteEnd = Banana.Converter.toDate(param.fileInfo["ClosureDate"]);
+  //if (periodStart.getTime() === periodCompleteStart.getTime() && periodEnd.getTime() === periodCompleteEnd.getTime())
+
   return param;
 }
 
