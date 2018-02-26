@@ -5,10 +5,8 @@
     <file>ch.banana.script.italy_vat_2017.errors.js</file>
     <file>ch.banana.script.italy_vat_2017.journal.js</file>
     <file>ch.banana.script.italy_vat_2017.report.fatture.js</file>
-    <file>ch.banana.script.italy_vat_2017.report.fatture.createinstance.js</file>
     <file>ch.banana.script.italy_vat_2017.report.fatture.dialog.ui</file>
     <file>ch.banana.script.italy_vat_2017.report.liquidazione.js</file>
-    <file>ch.banana.script.italy_vat_2017.report.liquidazione.createinstance.js</file>
     <file>ch.banana.script.italy_vat_2017.report.liquidazione.dialog.ui</file>
     <file>ch.banana.script.italy_vat_2017.report.registri.js</file>
     <file>ch.banana.script.italy_vat_2017.report.registri.dialog.ui</file>

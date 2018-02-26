@@ -1,4 +1,4 @@
-// Copyright [2017] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2018] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,23 +12,1101 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// @includejs = ch.banana.script.italy_vat.daticontribuente.js
 
 /*
- * ------------------------------------ REPORT IVA ITALIA 2017 ------------------------------------
+ * ------------------------------------ REPORT IVA ITALIA 2017 -----------------------------------
  *
- * Metodi che riprendono i dati dal file contabile ac2 (giornale, dati base, tabella conti)
+ * Journal() classe che contiene le registrazioni con iva 
+ * raggruppate per cliente/fornitore
  *
- * ------------------------------------------------------------------------------------------------
+ * -----------------------------------------------------------------------------------------------
 */
+
+function Journal(banDocument) {
+  this.banDocument = banDocument;
+  if (this.banDocument === undefined)
+    this.banDocument = Banana.document;
+  /*elenco completo registrazioni iva con dati supplementari per le stampe fiscali*/
+  this.transactions = [];
+  /* colonne del giornale*/
+  this.columns = {};
+  /*elenco clienti*/
+  this.customers = {};
+  /*elenco fornitori*/
+  this.suppliers = {};
+}
+/*
+*  Filtra i dati del giornale escludendo le registrazioni di apertura/chiusura e assestamento
+*  metodo utilizzato da document.journalCustomersSuppliers in Journal.load()
+ */
+Journal.prototype.filter = function(row, index, table) {
+  //only normal transaction with vat
+  //OperationType_None = 0, OperationType_Opening = 1, OperationType_CarryForward = 2,
+  //OperationType_Transaction = 3, OperationType_Closure = 4, OperationType_Total = 6
+  /*var operationType = row.value("JOperationType");
+  if (operationType && operationType != this.banDocument.OPERATIONTYPE_TRANSACTION)
+    return false;
+  var vatOperation = row.value("JVatIsVatOperation");
+  if (!vatOperation)
+    return false;
+  var originFile = row.value("JOriginFile");
+  if (originFile ==! "C")
+    return false;*/
+
+  return true;
+}
+
+/*
+ * Ritorna l'elenco delle registrazioni e dei clienti/fornitori per il periodo indicato
+ */
+Journal.prototype.getPeriod = function(startDate, endDate) {
+  var periodStart = Banana.Converter.toDate(startDate);
+  var periodEnd = Banana.Converter.toDate(endDate);
+  var data = {};
+  data.startDate = startDate;
+  data.endDate = endDate;
+  data.customers = {};
+  data.suppliers = {};
+  data.transactions = [];
+  data.columns = this.columns;
+
+  for (var i=0; i < this.transactions.length;i++) {
+    var jsonLine = this.transactions[i];
+    var content = jsonLine["JDate"];
+    var currentDate = Banana.Converter.stringToDate(content, "YYYY-MM-DD");
+    if (currentDate >= periodStart && currentDate <= periodEnd) {
+      data.transactions.push(jsonLine);
+      var accountId = jsonLine["IT_ClienteConto"];
+      var accountType = jsonLine["IT_ClienteTipologia"];
+      var accountObj = new Utils(this.banDocument).getAccount(accountId);
+      if (accountType == 'C') {
+        if (!data.customers[accountId])
+          data.customers[accountId] = accountObj;
+        if (!data.customers[accountId].transactions)
+          data.customers[accountId].transactions = [];
+        data.customers[accountId].transactions.push(jsonLine);
+      }
+      else if (accountType == 'F') {
+        if (!data.suppliers[accountId])
+          data.suppliers[accountId] = accountObj;
+        if (!data.suppliers[accountId].transactions)
+          data.suppliers[accountId].transactions = [];
+        data.suppliers[accountId].transactions.push(jsonLine);
+      }
+    }
+  }
+  return data;
+}
+
+/*
+ * Legge il giornale journalCustomersSuppliers e riprende le registrazioni con iva in this.transactions
+ * Suddivide le registrazioni per clienti e fornitori in this.customers e this.suppliers
+ * Non viene filtrato un periodo, ma riprende tutte le registrazioni dell'anno corrente
+ * Come parametro di journalCustomersSuppliers, utilizzato ACCOUNTTYPE_NONE invece di ACCOUNTTYPE_NORMAL 
+ * per riprendere anche i clienti/fornitori definiti come centri di costo (ACCOUNTTYPE_CC3)
+ */
+Journal.prototype.load = function() {
+  this.transactions = [];
+  this.customers = {};
+  this.suppliers = {};
+  if (!this.banDocument || typeof (this.banDocument.journalCustomersSuppliers) === 'undefined')
+    return;
+  var journal = this.banDocument.journalCustomersSuppliers(
+    this.banDocument.ORIGINTYPE_CURRENT, this.banDocument.ACCOUNTTYPE_NONE);
+  var filteredRows = journal.findRows(this.filter);
+  var tableVatCodes = this.banDocument.table('VatCodes');
+
+  if (!journal || !filteredRows || !tableVatCodes)
+    return;
+
+  //Conti corrispettivi
+  var mapCorrispettivi = new Utils(this.banDocument).getColumnsCorrispettivi();
+  
+  //Variabili per numerazione registro
+  var progRegistri = {};
+  var previousIndexGroup = -1;
+  
+  //Salva i nomi delle colonne del giornale
+  this.setColumns(journal.columnNames);
+
+  //Riprende l'elenco clienti/fornitori in this.customers e this.suppliers
+  //Solamente righe con JInvoiceRowCustomerSupplier=1 (cliente) or JInvoiceRowCustomerSupplier=2 (fornitore)
+  for (var i = 0; i < filteredRows.length; i++) {
+    var isCustomer=false;
+    var isSupplier=false;
+    if (filteredRows[i].value("JInvoiceRowCustomerSupplier")==1)
+      isCustomer=true;
+    else if (filteredRows[i].value("JInvoiceRowCustomerSupplier")==2)
+      isSupplier=true;
+    if (!isCustomer && !isSupplier)
+      continue;
+
+    var accountId = filteredRows[i].value("JAccount");
+    if (accountId && accountId.length>0) {
+      var accountObj = new Utils(this.banDocument).getAccount(accountId);
+      if (accountObj) {
+        if (isCustomer) {
+          this.customers[accountId] = accountObj;
+        }
+        else {
+          this.suppliers[accountId] = accountObj;
+        }
+      }
+    }
+  }
+
+  //Riprende le registrazioni IVA in this.transactions
+  for (var i = 0; i < filteredRows.length; i++) {
+    //Solo operazioni IVA
+    var isVatOperation = filteredRows[i].value("JVatIsVatOperation");
+    if (!isVatOperation)
+      continue;
+    //La registrazione IVA deve contenere un conto cliente/fornitore
+    var isCustomer=false;
+    var isSupplier=false;
+    var accountId = filteredRows[i].value("JAccount");
+    var contraAccountId = filteredRows[i].value("JContraAccount");
+    var vatTwinAccountId = filteredRows[i].value("VatTwinAccount");
+    var accountDebitId = filteredRows[i].value("AccountDebit");
+    var accountCreditId = filteredRows[i].value("AccountCredit");
+    if (!accountDebitId && !accountCreditId) {
+      //contabilità entrate-uscite
+      accountDebitId = filteredRows[i].value("Account");
+      accountCreditId = filteredRows[i].value("Category");
+    }
+    //clienti o fornitori definiti come centri di costo
+    var accountCC1 = filteredRows[i].value("JCC1");
+    if (accountCC1 && accountCC1.length)
+      accountCC1 = "." + accountCC1;
+    var accountCC2 = filteredRows[i].value("JCC2");
+    if (accountCC2 && accountCC2.length)
+      accountCC2 = "," + accountCC2;
+    var accountCC3 = filteredRows[i].value("JCC3");
+    if (accountCC3 && accountCC3.length)
+      accountCC3 = ";" + accountCC3;
+
+    if (accountId && accountId in this.customers) {
+      isCustomer = true;
+    }
+    else if (contraAccountId && contraAccountId in this.customers) {
+      isCustomer = true;
+      accountId = contraAccountId;
+    }
+    else if (vatTwinAccountId && vatTwinAccountId in this.customers) {
+      isCustomer = true;
+      accountId = vatTwinAccountId;
+    }
+    else if (accountDebitId && accountDebitId in this.customers) {
+      isCustomer = true;
+      accountId = accountDebitId;
+    }
+    else if (accountCreditId && accountCreditId in this.customers) {
+      isCustomer = true;
+      accountId = accountCreditId;
+    }
+    else if (accountCC1 && accountCC1 in this.customers) {
+      isCustomer = true;
+      accountId = accountCC1;
+    }
+    else if (accountCC2 && accountCC2 in this.customers) {
+      isCustomer = true;
+      accountId = accountCC2;
+    }
+    else if (accountCC3 && accountCC3 in this.customers) {
+      isCustomer = true;
+      accountId = accountCC3;
+    }
+    else if (accountId && accountId in this.suppliers) {
+      isSupplier = true;
+    }
+    else if (contraAccountId && contraAccountId in this.suppliers) {
+      isSupplier = true;
+      accountId = contraAccountId;
+    }
+    else if (vatTwinAccountId && vatTwinAccountId in this.suppliers) {
+      isSupplier = true;
+      accountId = vatTwinAccountId;
+    }
+    else if (accountDebitId && accountDebitId in this.suppliers) {
+      isSupplier = true;
+      accountId = accountDebitId;
+    }
+    else if (accountCreditId && accountCreditId in this.suppliers) {
+      isSupplier = true;
+      accountId = accountCreditId;
+    }
+    else if (accountCC1 && accountCC1 in this.suppliers) {
+      isSupplier = true;
+      accountId = accountCC1;
+    }
+    else if (accountCC2 && accountCC2 in this.suppliers) {
+      isSupplier = true;
+      accountId = accountCC2;
+    }
+    else if (accountCC3 && accountCC3 in this.suppliers) {
+      isSupplier = true;
+      accountId = accountCC3;
+    }
+
+    //Crea un oggetto json dove vengono salvate tutte le informazioni della riga
+    //e aggiunto in this.transactions
+    var jsonLine = {};
+    for (var j in this.columns) {
+      var columnName = this.columns[j].name;
+      value = filteredRows[i].value(columnName);
+      if (value) {
+        jsonLine[columnName] = xml_escapeString(value);
+      }
+      else {
+        jsonLine[columnName] = '';
+      }
+    }
+
+    //Nell'oggetto jsonLine vengono salvati anche i dati supplementari calcolati
+    jsonLine["IT_ClienteConto"] = accountId;
+    jsonLine["IT_ClienteCodiceFiscale"] = '';
+    jsonLine["IT_ClienteDescrizione"] = '';
+    jsonLine["IT_ClienteIDPaese"] = '';
+    jsonLine["IT_ClienteIntestazione"] = '';
+    jsonLine["IT_ClientePartitaIva"] = '';
+    jsonLine["IT_ClienteTipologia"] = '';
+    if (isCustomer)
+      jsonLine["IT_ClienteTipologia"] = 'C';
+    else if (isSupplier)
+      jsonLine["IT_ClienteTipologia"] = 'F';
+
+    var accountObj = {};
+    if (accountId.length>0 && isCustomer) {
+      accountObj = this.customers[accountId];
+    }
+    else if (accountId.length>0 && isSupplier) {
+      accountObj = this.suppliers[accountId];
+    }
+    if (accountObj["Description"]) {
+      jsonLine["IT_ClienteDescrizione"] = accountObj["Description"];
+      jsonLine["IT_ClientePartitaIva"] = accountObj["VatNumber"];
+      jsonLine["IT_ClienteCodiceFiscale"] = accountObj["FiscalNumber"];
+      var intestazione = accountId + " " + accountObj["Description"];
+      if (accountObj["VatNumber"].length>0) {
+        intestazione = accountId + "/" + accountObj["VatNumber"] + " " + accountObj["Description"];
+      }
+      jsonLine["IT_ClienteIntestazione"] = intestazione;
+      jsonLine["IT_ClienteIDPaese"] = new Utils(this.banDocument).getCountryCode(accountObj);
+    }
+
+    //IT_Aliquota
+    //IT_Gr_IVA
+    //IT_Gr1_IVA
+    //IT_Registro
+    jsonLine["IT_Aliquota"] = '';
+    jsonLine["IT_Gr_IVA"] = '';
+    jsonLine["IT_Gr1_IVA"] = '';
+    jsonLine["IT_Registro"] = '';
+    var vatCode = filteredRows[i].value("JVatCodeWithoutSign");
+    if (vatCode.length) {
+      var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
+      if (rowVatCodes) {
+        var percAssoluta = rowVatCodes.value("VatRate");
+        if (Banana.SDecimal.isZero(percAssoluta))
+          percAssoluta = '0.00';
+        jsonLine["IT_Aliquota"] = percAssoluta;
+        var gr = rowVatCodes.value("Gr");
+        jsonLine["IT_Gr_IVA"] = gr;
+        jsonLine["IT_Registro"] = gr;
+        if (gr.indexOf('-')>0 || gr.length==1) {
+          var gr0 = gr.substr(0,1);
+          if (gr0 == "A")
+            jsonLine["IT_Registro"] = "Acquisti";
+          else if (gr0 == "V")
+            jsonLine["IT_Registro"] = "Vendite";
+          else if (gr0 == "C")
+            jsonLine["IT_Registro"] = "Corrispettivi";
+          else if (gr0 == "L")
+            jsonLine["IT_Registro"] = "Liquidazioni";
+        }
+
+        var gr1 = rowVatCodes.value("Gr1");
+        jsonLine["IT_Gr1_IVA"] = gr1;
+      }
+    }
+
+    //IT_ProgRegistro
+    var registro = jsonLine["IT_Registro"];
+    var noProgressivo = 0;
+    if (progRegistri[registro])
+      noProgressivo = parseInt(progRegistri[registro]);
+    var indexGroup = filteredRows[i].value("JContraAccountGroup") ;
+    if (indexGroup != previousIndexGroup) {
+      noProgressivo += 1;
+    }
+    previousIndexGroup = indexGroup;
+    progRegistri[registro] = noProgressivo;
+    jsonLine["IT_ProgRegistro"] = noProgressivo.toString();
+
+    //IT_Imponibile
+    //Tolto il segno perché nel file xml non esiste imponibile negativo? (controllare)
+    jsonLine["IT_Imponibile"] = '';
+    value = filteredRows[i].value("JVatTaxable");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
+      value = Banana.SDecimal.invert(value);
+    jsonLine["IT_Imponibile"] = value;
+
+    //IT_ImportoIva
+    jsonLine["IT_ImportoIva"] = '';
+    value = filteredRows[i].value("VatAmount");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
+      value = Banana.SDecimal.invert(value);
+    jsonLine["IT_ImportoIva"] = value;
+
+    //IT_IvaContabilizzata
+    jsonLine["IT_IvaContabilizzata"] = '';
+    value = filteredRows[i].value("VatPosted");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
+      value = Banana.SDecimal.invert(value);
+    jsonLine["IT_IvaContabilizzata"] = value;
+
+    //IT_Lordo
+    jsonLine["IT_Lordo"] = '';
+    value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
+      value = Banana.SDecimal.invert(value);
+    jsonLine["IT_Lordo"] = value;
+
+/*
+3. Dati relativi ai campi “detraibile” e “deducibile”
+
+Uno dei dati che può essere fornito è quello relativo alla percentuale di
+detraibilità o, in alternativa, alla deducibilità del costo riportato in fattura. Tale
+dato, la cui indicazione è facoltativa, è riferito all’eventuale deducibilità o
+detraibilità del costo ai fini delle imposte sui redditi in capo all’acquirente o
+committente persona fisica che non opera nell’esercizio di impresa, arte o
+professione (cfr., pagina 11 delle specifiche tecniche “Detraibile: contiene il
+valore percentuale di detraibilità se gli importi si riferiscono a spese detraibili.
+Deducibile: indica se gli importi si riferiscono a spese deducibili ai fini di
+imposte diverse dall’Iva”). A titolo di esempio, qualora la fattura sia emessa da
+una impresa edile nei confronti di un cliente privato in relazione a lavori di
+ristrutturazione edilizia, il 50% del costo riportato nel documento potrebbe essere
+portato in detrazione dei redditi del cliente: in tal caso, l’informazione – se
+disponibile – potrebbe essere riportata nell’apposito campo della comunicazione.
+Si precisa che la compilazione di uno dei due campi in oggetto esclude la
+compilazione dell’altro. 
+
+La % detraibile può essere diversa dalla % non imponibile di Banana
+I due dati sono facoltativi, si prevede l'aggiunta di due colonne nella tabella registrazioni,
+nelle quali l'utente può inserire la % manualmente
+
+EsibilitaIva
+(i valori ammessi sono “I” per esigibilità immediata, “D” per esigibilità differita e “S” per scissione dei pagamenti). 
+*/
+    //IT_Detraibile
+    //IT_Deducibile
+    //IT_EsigibilitaIva
+    jsonLine["IT_Detraibile"] = '';
+    jsonLine["IT_Deducibile"] = '';
+    jsonLine["IT_EsigibilitaIva"] = 'I';
+
+    //IT_ImponibileDetraibile
+    //IT_ImponibileNonDetraibile
+    jsonLine["IT_ImponibileDetraibile"] = '';
+    jsonLine["IT_ImponibileNonDetraibile"] = '';
+    value = filteredRows[i].value("VatPercentNonDeductible");
+    if (!Banana.SDecimal.isZero(value)) {
+      value = Banana.SDecimal.subtract('100', value);
+      var rate = Banana.SDecimal.round(value, {'decimals':2});
+      var taxable = filteredRows[i].value("VatTaxable");
+      var amount = taxable * rate /100;
+      amount = Banana.SDecimal.roundNearest(amount, '0.01');
+      jsonLine["IT_ImponibileDetraibile"] = amount;
+      amount = Banana.SDecimal.subtract(taxable, amount);
+      jsonLine["IT_ImponibileNonDetraibile"] = amount;
+    }
+    else {
+      var taxable = filteredRows[i].value("VatTaxable");
+      jsonLine["IT_ImponibileDetraibile"] = taxable;
+    }
+
+    //IT_NoDoc
+    jsonLine["IT_NoDoc"] = '';
+    var noDoc = xml_escapeString(filteredRows[i].value("DocInvoice"));
+    if (noDoc.length<=0)
+      noDoc =  xml_escapeString(filteredRows[i].value("Doc"));
+    jsonLine["IT_NoDoc"] = noDoc;
+
+    //IT_DataDoc
+    //Se è utilizzata la colonna DocInvoice viene ripresa la data di emissione fattura JInvoiceIssueDate
+    //Altrimenti se si utilizza la colonna DateDocument viene ripresa questa oppure la data di registrazione Date
+    jsonLine["IT_DataDoc"] = '';
+    if (filteredRows[i].value("DocInvoice") && filteredRows[i].value("DocInvoice").length>0)
+      jsonLine["IT_DataDoc"] = filteredRows[i].value("JInvoiceIssueDate");
+    else if (filteredRows[i].value("DateDocument") && filteredRows[i].value("DateDocument").length>0)
+      jsonLine["IT_DataDoc"] = filteredRows[i].value("DateDocument");
+    else
+      jsonLine["IT_DataDoc"] = filteredRows[i].value("Date");
+
+    //IT_TipoDoc
+    //TD01 Fattura  
+    //TD04 Nota di credito  
+    //TD05 Nota di debito
+    //TD07 Fattura semplificata
+    //TD08 Nota di credito semplificata
+    //TD10 Fattura di acquisto intracomunitario beni (IdPaese != IT)
+    //TD11 Fattura di acquisto intracomunitario servizi (IdPaese != IT)
+    jsonLine["IT_TipoDoc"] = '';
+    var tipoDoc = filteredRows[i].value("JInvoiceDocType");
+    if (tipoDoc.length<=0)
+      tipoDoc =  filteredRows[i].value("DocType");
+
+    if (jsonLine["JVatNegative"]  == '1') {
+      if (isCustomer) {
+        if (tipoDoc == '14' || tipoDoc == '12')
+          jsonLine["IT_TipoDoc"] = 'TD05';
+        else
+          jsonLine["IT_TipoDoc"] = 'TD01';
+      }
+      else if (isSupplier) {
+        jsonLine["IT_TipoDoc"] = 'TD04';
+      }
+    }
+    else {
+      if (isCustomer) {
+        jsonLine["IT_TipoDoc"] = 'TD04';
+      }
+      else if (isSupplier) {
+        if (tipoDoc == '24' || tipoDoc == '22')
+          jsonLine["IT_TipoDoc"] = 'TD05';
+        else
+          jsonLine["IT_TipoDoc"] = 'TD01';
+      }
+    }
+
+    //TD10 TD11 per acquisti intracee,TD07 fattura semplificata,TD01 per tutte le altre
+    if (vatCode.length && isSupplier) {
+      var isMemberEU = false;
+      if (jsonLine["IT_ClienteIDPaese"].length>0 && jsonLine["IT_ClienteIDPaese"]!="IT")
+        isMemberEU = new Utils(this.banDocument).isMemberOfEuropeanUnion(jsonLine["IT_ClienteIDPaese"]);
+      var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
+      if (rowVatCodes && isMemberEU) {
+        var vatGr = rowVatCodes.value("Gr");
+        if (vatGr && vatGr.indexOf("EU-S")>=0) {
+          jsonLine["IT_TipoDoc"] = 'TD11';
+        }
+        else if (vatGr && vatGr.indexOf("EU")>=0) {
+          jsonLine["IT_TipoDoc"] = 'TD10';
+        }
+        else if (vatGr && vatGr.indexOf("REV-S")>=0) {
+          jsonLine["IT_TipoDoc"] = 'TD11';
+        }
+        else if (vatGr && vatGr.indexOf("REV")>=0) {
+          jsonLine["IT_TipoDoc"] = 'TD10';
+        }
+      }
+    }
+
+    //Controllo IdPaese e TipoDocumento 
+    var tipoDocumentoCorretto = true;
+    if (isSupplier && jsonLine["IT_ClienteIDPaese"] == "IT") {
+      if (jsonLine["IT_TipoDoc"] == 'TD10' || jsonLine["IT_TipoDoc"] == 'TD11') {
+        tipoDocumentoCorretto = false;
+      }
+    }
+    else if (isSupplier && jsonLine["IT_ClienteIDPaese"].length>0 && new Utils(this.banDocument).isMemberOfEuropeanUnion(jsonLine["IT_ClienteIDPaese"])){
+      if (jsonLine["IT_TipoDoc"] != 'TD10' && jsonLine["IT_TipoDoc"] != 'TD11') {
+        tipoDocumentoCorretto = false;
+      }
+    }
+    if (!tipoDocumentoCorretto) {
+      var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
+      msg += getErrorMessage(ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO);
+      msg = msg.replace("%1", jsonLine["IT_TipoDoc"] );
+      msg = msg.replace("%2", jsonLine["IT_ClienteIDPaese"] );
+      this.banDocument.addMessage( msg, ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO);
+    }
+
+    //IT_Natura
+    //N1 esclusa ex art. 15 (bollo, spese anticipate in nome e per conto della controparte, omaggi, interessi moratori, ecc.)
+    //N2 non soggetta (Fuori campo IVA/Escluso IVA, codice da utilizzare per i contribuenti minimi e forfettari)
+    //N3 non imponibile (esportazione, cessione di beni intra UE)
+    //N4 esente (esente art. 10 D.P.R. 633/72) 
+    //N5 regime del margine / IVA non esposta in fattura ex art. 74-ter
+    //N6 inversione contabile (reverse charge)
+    //N7 IVA assolta in altro stato UE, vendite a distanza o prestazioni di servizi di telecomunicazioni
+    //Il codice natura può essere sovrascritto dalla colonna VatExtraInfo oppure dalla colonna Gr1 della tabella codici iva
+    //Se presente ESCL, la registrazione viene esclusa
+    jsonLine["IT_Natura"] = '';
+    var vatExtraInfo = filteredRows[i].value("VatExtraInfo");
+    if (vatExtraInfo.startsWith("N") && vatExtraInfo.length==2) {
+      var test = vatExtraInfo.substring(vatExtraInfo,1);
+      jsonLine["IT_Natura"] = vatExtraInfo;
+    }
+    if (jsonLine["IT_Natura"].length<=0) {
+      var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
+      if (rowVatCodes) {
+        var vatGr = rowVatCodes.value("Gr");
+        var vatGr1 = rowVatCodes.value("Gr1");
+        var vatRate = rowVatCodes.value("VatRate");
+        vatGr1 = vatGr1.toUpperCase();
+        var rowVatDescription = rowVatCodes.value("Description");
+        if (!rowVatDescription)
+          rowVatDescription = "";
+        rowVatDescription = rowVatDescription.toLowerCase();
+        rowVatDescription = rowVatDescription.replace(" ","");
+        if (vatGr1.length==2 && vatGr1.startsWith("N")) {
+          jsonLine["IT_Natura"] = vatGr1;
+        }
+        else if (vatGr1 == "ESCL") {
+          jsonLine["IT_Natura"] = vatGr1;
+        }
+        else if (rowVatDescription.indexOf("art.15")>0) {
+          jsonLine["IT_Natura"] = 'N1';
+        }
+        else if (rowVatDescription.indexOf("art.74")>0) {
+          jsonLine["IT_Natura"] = 'N5';
+        }
+        else if (rowVatDescription.indexOf("art.7")>0) {
+          jsonLine["IT_Natura"] = 'N3';
+        }
+        else if (rowVatDescription.indexOf("art.3")>0) {
+          jsonLine["IT_Natura"] = 'N1';
+        }
+        else if (vatGr.indexOf("-FC")>=0) {
+          jsonLine["IT_Natura"] = 'N2';
+        }
+        else if (vatGr.startsWith("V-NI") || vatGr.startsWith("A-NI")) {
+          jsonLine["IT_Natura"] = 'N3';
+        }
+        else if (vatGr.startsWith("V-ES") || vatGr.startsWith("A-ES")) {
+          jsonLine["IT_Natura"] = 'N4';
+        }
+        else if (vatGr.startsWith("V-NE") || vatGr.startsWith("A-NE")) {
+          jsonLine["IT_Natura"] = 'N5';
+        }
+        else if (vatGr.indexOf("-REV")>=0 && Banana.SDecimal.isZero(vatRate)) {
+          jsonLine["IT_Natura"] = 'N6';
+        }
+      }
+    }
+
+    //Controllo IT_Natura e aliquota
+    var aliquota = jsonLine["IT_Aliquota"];
+    var imposta = jsonLine["IT_IvaContabilizzata"];
+    var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
+
+    //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
+    //Eccezione: fatture ricevute con natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
+    if (jsonLine["IT_Natura"].length>0) {
+      if (isSupplier && jsonLine["IT_Natura"] == "N6") {
+        if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
+          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
+          this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
+        }
+      }
+      else {
+        if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
+          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE) + jsonLine["IT_Natura"];
+          this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+        }
+      }
+    }
+    else {
+      //Se il campo Natura non è valorizzato, lo devono essere i campi Imposta e Aliquota
+      //Controlla solamente registro vendite/acquisti
+      if (jsonLine["IT_Registro"]== "Acquisti" || jsonLine["IT_Registro"] == "Vendite") {
+        if (Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota) ) {
+          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+          this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+        }
+      }
+    }
+
+    //Corrispettivi
+    jsonLine["IT_CorrFattureNormali"] = '';
+    jsonLine["IT_CorrFattureFiscali"] = '';
+    jsonLine["IT_CorrFattureScontrini"] = '';
+    jsonLine["IT_CorrFattureDifferite"] = '';
+    jsonLine["IT_CorrispettiviNormali"] = '';
+    jsonLine["IT_CorrispettiviScontrini"] = '';
+    jsonLine["IT_CorrRicevuteFiscali"] = '';
+    jsonLine["IT_CorrTotaleGiornaliero"] = '';
+    var contoIvaAssociato = filteredRows[i].value("VatTwinAccount");
+    if (contoIvaAssociato.length && vatCode.length) {
+      var colonnaCorrispettivi = '';
+      if (mapCorrispettivi.hasOwnProperty(contoIvaAssociato))
+        colonnaCorrispettivi = mapCorrispettivi[contoIvaAssociato];
+      if (colonnaCorrispettivi.length) {
+        var lordo = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
+        jsonLine[colonnaCorrispettivi] = lordo;
+        jsonLine["IT_CorrTotaleGiornaliero"] = lordo;
+      }
+    }
+
+    //IT_RegistrazioneValida
+    //Serve per sapere se la riga IVA è stata inclusa nelle registrazioni clienti/fornitori
+    //Quelle scartate verranno segnalate in una tabella di controllo
+    jsonLine["IT_RegistrazioneValida"] = '';
+
+    if (isCustomer) {
+      if (!this.customers[accountId].transactions)
+        this.customers[accountId].transactions = [];
+      jsonLine["IT_RegistrazioneValida"] = '1';
+      this.customers[accountId].transactions.push(jsonLine);
+    }
+    else if (isSupplier) {
+      if (!this.suppliers[accountId].transactions)
+        this.suppliers[accountId].transactions = [];
+      jsonLine["IT_RegistrazioneValida"] = '1';
+      this.suppliers[accountId].transactions.push(jsonLine);
+    }
+    //Write transactions for debugging purposes
+    /*var jsonString = filteredRows[i].toJSON();
+    var jsonObj = JSON.parse(jsonString);
+    this.transactionsTest.push(jsonObj);*/
+    this.transactions.push(jsonLine);
+  }
+ 
+}
+
+Journal.prototype.setColumns = function(journalColumns) {
+  this.columns = {};
+  for (var j = 0; j < journalColumns.length; j++) {
+    var column = {};
+    column.name = journalColumns[j];
+    column.title = journalColumns[j];
+    column.type = "amount";
+    column.index = -1;
+    if (column.name == "JDate") {
+      column.type = "date";
+      column.index = 1;
+    }
+    else if (column.name == "Doc") {
+      column.type = "description";
+      column.index = 3;
+    }
+    else if (column.name == "DocInvoice") {
+      column.title = "Invoice";
+      column.type = "description";
+      column.index = 5;
+    }
+    else if (column.name == "DocProtocol") {
+      column.title = "DocProt";
+      column.type = "description";
+      column.index = 7;
+    }
+    else if (column.name == "JDescription") {
+      column.type = "description";
+      column.index = 9;
+    }
+    else if (column.name == "VatCode") {
+      column.index = 11;
+    }
+    else if (column.name == "VatRate") {
+      column.index = 13;
+    }
+    else if (column.name == "VatRateEffective") {
+      column.title = "VatRateEff";
+      column.index = 15;
+    }
+    else if (column.name == "VatAmount") {
+      column.index = 17;
+    }
+    else if (column.name == "VatTaxable") {
+      column.title = "VatTax";
+      column.index = 19;
+    }
+    else if (column.name == "JVatTaxable") {
+      column.title = "JVatTax";
+      column.index = 21;
+    }
+    else if (column.name == "VatPosted") {
+      column.title = "VatPosted";
+      column.index = 23;
+    }
+    else if (column.name == "VatPercentNonDeductible") {
+      column.title = "VatPercNonDed";
+      column.index = 25;
+    }
+    else if (column.name == "VatNonDeductible") {
+      column.title = "VatNonDed";
+      column.index = 27;
+    }
+    else if (column.name == "JRowOrigin") {
+      column.title = "JRowOrigin";
+      column.index = 29;
+    }
+    else if (column.name == "JTableOrigin") {
+      column.title = "JTableOrigin";
+      column.index = 31;
+    }
+    this.columns[j] = column;
+  }
+  
+  //Additional columns
+  var column = {};
+  column.name = "IT_Natura";
+  column.title = "IT_Natura";
+  column.type = "description";
+  column.index = 1000;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_Lordo";
+  column.title = "IT_Lordo";
+  column.type = "amount";
+  column.index = 1001;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ImportoIva";
+  column.title = "IT_ImportoIva";
+  column.type = "amount";
+  column.index = 1002;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_IvaContabilizzata";
+  column.title = "IT_IvaContab";
+  column.type = "amount";
+  column.index = 1003;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_Imponibile";
+  column.title = "IT_Imponibile";
+  column.type = "amount";
+  column.index = 1004;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ImponibileDetraibile";
+  column.title = "IT_ImponibDetr";
+  column.type = "amount";
+  column.index = 1005;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ImponibileNonDetraibile";
+  column.title = "IT_ImponibNonDetr";
+  column.type = "amount";
+  column.index = 1006;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_Detraibile";
+  column.title = "IT_Detr";
+  column.type = "amount";
+  column.index = 1007;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_Deducibile";
+  column.title = "IT_Deduc";
+  column.type = "amount";
+  column.index = 1008;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_EsigibilitaIva";
+  column.title = "IT_EsigibIva";
+  column.type = "amount";
+  column.index = 1009;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_Aliquota";
+  column.title = "IT_Aliquota";
+  column.type = "amount";
+  column.index = 1010;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_Gr_IVA";
+  column.title = "IT_Gr_IVA";
+  column.type = "description";
+  column.index = 1011;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_Gr1_IVA";
+  column.title = "IT_Gr1_IVA";
+  column.type = "description";
+  column.index = 1012;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_Registro";
+  column.title = "IT_Registro";
+  column.type = "description";
+  column.index = 1013;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ProgRegistro";
+  column.title = "IT_ProgReg";
+  column.type = "description";
+  column.index = 1014;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_NoDoc";
+  column.title = "IT_NoDoc";
+  column.type = "description";
+  column.index = 1015;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_DataDoc";
+  column.title = "IT_DataDoc";
+  column.type = "description";
+  column.index = 1016;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_TipoDoc";
+  column.title = "IT_TipoDoc";
+  column.type = "description";
+  column.index = 1017;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ClienteConto";
+  column.title = "IT_Conto";
+  column.type = "description";
+  column.index = 1018;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ClienteDescrizione";
+  column.title = "IT_Descrizione";
+  column.type = "description";
+  column.index = 1019;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ClienteIntestazione";
+  column.title = "IT_Intestazione";
+  column.type = "description";
+  column.index = 1020;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ClienteTipologia";
+  column.title = "IT_Tipologia";
+  column.type = "description";
+  column.index = 1021;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ClientePartitaIva";
+  column.title = "IT_PI";
+  column.type = "description";
+  column.index = 1022;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_ClienteCodiceFiscale";
+  column.title = "IT_CF";
+  column.type = "description";
+  column.index = 1023;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrFattureNormali";
+  column.title = "IT_CorrFatNormali";
+  column.index = 1024;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrFattureFiscali";
+  column.title = "IT_CorrFatFiscali";
+  column.index = 1025;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrFattureScontrini";
+  column.title = "IT_CorrFatScontr";
+  column.index = 1026;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrFattureDifferite";
+  column.title = "IT_CorrFatDifferite";
+  column.index = 1027
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrispettiviNormali";
+  column.title = "IT_CorrNormali";
+  column.index = 1028;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrispettiviScontrini";
+  column.title = "IT_CorrScontr";
+  column.index = 1029;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrRicevuteFiscali";
+  column.title = "IT_CorrRicFiscali";
+  column.index = 1030;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_CorrTotaleGiornaliero";
+  column.title = "IT_CorrGiornal";
+  column.index = 1031;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_RegistrazioneValida";
+  column.title = "IT_RegValida";
+  column.index = 1032;
+  this.columns[j++] = column;
+  
+}
+
+Journal.prototype.sortNumber = function(a, b) {
+    return a - b;
+}
+
+/*
+ * Funzione di debug per la stampa del giornale di controllo
+ */
+Journal.prototype._debugPrintJournal = function(report, stylesheet) {
+
+  //Column count
+  var sortedColumns = [];
+  for (var i in this.columns) {
+    if (this.columns[i].index>=0 && !this.columns[i].name.startsWith("IT_"))
+      sortedColumns.push(this.columns[i].index);
+  }
+  sortedColumns.sort(this.sortNumber);  
+
+  //Title
+  var table = report.addTable("tableJournal");
+  var headerRow = table.getHeader().addRow();
+  headerRow.addCell("Registrazioni IVA Italia", "title",  sortedColumns.length);
+  
+  //Header
+  var headerRow = table.getHeader().addRow();
+  for (var i in sortedColumns) {
+    var index = sortedColumns[i];
+    for (var j in this.columns) {
+      if (this.columns[j].index == index) {
+        var columnTitle = this.columns[j].title;
+        /*if (columnTitle.length>8)
+          columnTitle = columnTitle.substring(0, 7) + ".";*/
+        headerRow.addCell(columnTitle);
+        break;
+      }
+    }
+  }
+
+  // Print data
+  var row = table.addRow();
+  for (var i=0; i < this.transactions.length;i++) {
+    var jsonObj = this.transactions[i];
+    var row = table.addRow();
+    for (var j in sortedColumns) {
+      var index = sortedColumns[j];
+      for (var k in this.columns) {
+        if (this.columns[k].index == index) {
+          var content = jsonObj[this.columns[k].name];
+          row.addCell(content, this.columns[k].type);
+          break;
+        }
+      }
+    }
+  }
+  
+  //style
+  stylesheet.addStyle(".tableJournalCustomersSuppliers", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".tableJournalCustomersSuppliers td", "border:1px solid #333333");
+  stylesheet.addStyle(".tableJournal", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".tableJournal td", "border:1px solid #333333");
+  
+  stylesheet.addStyle(".title", "background-color:#ffffff;border:1px solid #ffffff;font-size:10px;");
+  stylesheet.addStyle(".period", "background-color:#ffffff;border:1px solid #ffffff;");
+  stylesheet.addStyle(".amount", "text-align:right;");
+
+}
+
+/*
+ * Funzione di debug per la stampa del giornale di controllo
+ */
+Journal.prototype._debugPrintCustomersSuppliers = function(report, stylesheet) {
+  //Column count
+  var sortedColumns = [];
+  for (var i in this.columns) {
+    if (this.columns[i].index>=0 && this.columns[i].name.startsWith("IT_"))
+      sortedColumns.push(this.columns[i].index);
+  }
+  sortedColumns.sort(this.sortNumber);  
+
+  //Title
+  var table = report.addTable("tableJournalCustomersSuppliers");
+  var headerRow = table.getHeader().addRow();
+  headerRow.addCell("Customers/Suppliers", "title",  sortedColumns.length);
+  
+  //Period
+  /*var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(param.startDate);
+  periodo +=" al " + Banana.Converter.toLocaleDateFormat(param.endDate);
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell(periodo, "period",  sortedColumns.length);*/
+  
+  //Header
+  var headerRow = table.getHeader().addRow();
+  for (var i in sortedColumns) {
+    var index = sortedColumns[i];
+    for (var j in this.columns) {
+      if (this.columns[j].index == index) {
+        var columnTitle = this.columns[j].title;
+        headerRow.addCell(columnTitle);
+        break;
+      }
+    }
+  }
+
+  // Print data
+  var row = table.addRow();
+  row.addCell("------------------- customers -------------------", "", sortedColumns.length);
+  for (var i in this.customers) {
+    for (var j in this.customers[i].transactions) {
+      var rowJsonObj = this.customers[i].transactions[j];
+      //console.log(JSON.stringify(rowJsonObj));
+      var row = table.addRow();
+      for (var k in sortedColumns) {
+        var index = sortedColumns[k];
+        for (var l in this.columns) {
+          if (this.columns[l].index == index) {
+            var columnName = this.columns[l].name;
+            var content = rowJsonObj[columnName];
+            if (content && content.length>11 && this.columns[l].type == "description")
+              content = content.substring(0,10) + "...";
+            row.addCell(content, this.columns[l].type);
+            break;
+          }
+        }
+      }
+    }
+  }
+  
+  var row = table.addRow();
+  row.addCell("------------------- suppliers -------------------", "", sortedColumns.length);
+  for (var i in this.suppliers) {
+    for (var j in this.suppliers[i].transactions) {
+      var rowJsonObj = this.suppliers[i].transactions[j];
+      var row = table.addRow();
+      for (var k in sortedColumns) {
+        var index = sortedColumns[k];
+        for (var l in this.columns) {
+          if (this.columns[l].index == index) {
+            var columnName = this.columns[l].name;
+            var content = rowJsonObj[columnName];
+            if (content && content.length>11 && this.columns[l].type == "description")
+              content = content.substring(0,10) + "...";
+            row.addCell(content, this.columns[l].type);
+            break;
+          }
+        }
+      }
+    }
+  }
+  
+}
+
+/* -----------------------------------------------------------------------------------------------
+* Utils() classe che contiene metodi per facilitare la creazione di periodi, 
+* la ripresa di conti e codici nazioni
+* ------------------------------------------------------------------------------------------------
+*/
+function Utils(banDocument) {
+  this.banDocument = banDocument;
+  if (this.banDocument === undefined)
+    this.banDocument = Banana.document;
+}
 
 /*
  * Crea i periodi in base alle impostazioni del dialogo: periodo selezionato e tipo versamento(mensile o trimestrale)
  * Ritorna un array dei periodi
- *
- * @param
+ * @param contiene il periodo selezionato
  */
-function createPeriods(param) {
+Utils.prototype.createPeriods = function(param) {
   var periods = [];
 
   if (!param)
@@ -65,7 +1143,7 @@ function createPeriods(param) {
     //se il tipo di versamento è trimestrale avvisa che è stato selezionato un mese
     if (param.datiContribuente.liqTipoVersamento == 1) {
       var msg = getErrorMessage(ID_ERR_TIPOVERSAMENTO);
-      Banana.document.addMessage( msg, ID_ERR_TIPOVERSAMENTO);
+      this.banDocument.addMessage( msg, ID_ERR_TIPOVERSAMENTO);
       currentPeriod.startDate = '';
       currentPeriod.endDate = '';
     }
@@ -384,19 +1462,18 @@ function createPeriods(param) {
 
 /*
  * Ritorna un oggetto json con i dati del cliente o fornitore ripresi dalla tabella conti(indirizzo, saldo, ...)
- *
- * @accountId	numero conto cliente/fornitore
+ * @accountId	conto id presente nella tabella conti
  */
-function getAccount(accountId) {
+Utils.prototype.getAccount = function(_accountId) {
   var jsonObj = {};
-  if (!accountId || accountId.length <= 0)
+  if (!_accountId || _accountId.length <= 0)
     return jsonObj;
-  if (!Banana.document)
+  if (!this.banDocument)
     return jsonObj;
 
-  var tableAccounts = Banana.document.table('Accounts');
+  var tableAccounts = this.banDocument.table('Accounts');
   if (tableAccounts) {
-    var row = tableAccounts.findRowByValue('Account', accountId);
+    var row = tableAccounts.findRowByValue('Account', _accountId);
     if (row) {
       var jsonString = row.toJSON();
       jsonObj = JSON.parse(jsonString);
@@ -410,9 +1487,65 @@ function getAccount(accountId) {
 }
 
 /*
+ * Ritorna la colonna del giornale associata al conto corrispettivi
+ * I conti corrispettivi vengono assegnati nel dialogo Dati Contribuente
+ */
+Utils.prototype.getColumnCorrispettivi = function(accountId) {
+  if (!this.banDocument || accountId.length<=0)
+    return '';
+  var param = new DatiContribuente(this.banDocument).loadParam();
+  if (!param)
+    return '';
+
+  if (param.contoFattureNormali && accountId == param.contoFattureNormali)
+    return "IT_CorrFattureNormali";
+  if (param.contoFattureFiscali && accountId == param.contoFattureFiscali)
+    return "IT_CorrFattureFiscali";
+  if (param.contoFattureScontrini && accountId == param.contoFattureScontrini)
+    return "IT_CorrFattureScontrini";
+  if (param.contoFattureDifferite && accountId == param.contoFattureDifferite)
+    return "IT_CorrFattureDifferite";
+  if (param.contoCorrispettiviNormali && accountId == param.contoCorrispettiviNormali)
+    return "IT_CorrispettiviNormali";
+  if (param.contoCorrispettiviScontrini && accountId == param.contoCorrispettiviScontrini)
+    return "IT_CorrispettiviScontrini";
+  if (param.contoRicevuteFiscali && accountId == param.contoRicevuteFiscali)
+    return "IT_CorrRicevuteFiscali";
+
+  return '';
+}
+
+/*
+ * Ritorna i conti associati ai corrispettivi in un map
+*/
+Utils.prototype.getColumnsCorrispettivi = function() {
+  var mapCorrispettivi = {};
+  if (!this.banDocument)
+    return mapCorrispettivi;
+  var param = new DatiContribuente(this.banDocument).loadParam();
+  if (param) {
+    if (param.contoFattureNormali && param.contoFattureNormali.length>0)
+      mapCorrispettivi[param.contoFattureNormali] = "IT_CorrFattureNormali";
+    if (param.contoFattureFiscali && param.contoFattureFiscali.length>0)
+      mapCorrispettivi[param.contoFattureFiscali] = "IT_CorrFattureFiscali";
+    if (param.contoFattureScontrini && param.contoFattureScontrini.length>0)
+      mapCorrispettivi[param.contoFattureScontrini] = "IT_CorrFattureScontrini";
+    if (param.contoFattureDifferite && param.contoFattureDifferite.length>0)
+      mapCorrispettivi[param.contoFattureDifferite] = "IT_CorrFattureDifferite";
+    if (param.contoCorrispettiviNormali && param.contoCorrispettiviNormali.length>0)
+      mapCorrispettivi[param.contoCorrispettiviNormali] = "IT_CorrispettiviNormali";
+    if (param.contoCorrispettiviScontrini && param.contoCorrispettiviScontrini.length>0)
+      mapCorrispettivi[param.contoCorrispettiviScontrini] = "IT_CorrispettiviScontrini";
+    if (param.contoRicevuteFiscali && param.contoRicevuteFiscali.length>0)
+      mapCorrispettivi[param.contoRicevuteFiscali] = "IT_CorrRicevuteFiscali";
+  }
+  return mapCorrispettivi;  
+}
+
+/*
  * Ritorna il codice paese lunghezza 2 caratteri
  */
-function getCountryCode(jsonObject) {
+Utils.prototype.getCountryCode = function(jsonObject) {
   var countryCode = 'it';
   if (!jsonObject)
     return countryCode.toUpperCase();
@@ -442,19 +1575,17 @@ function getCountryCode(jsonObject) {
 /*
  * Ritorna il periodo come stringa da utilizzare nei titoli dei reports
  */
-function getPeriodText(param) {
-
-  if (!param.startDate || !param.endDate)
+Utils.prototype.getPeriodText = function(period) {
+  if (!period.startDate || !period.endDate)
     return "";
-
-  var fromDate = Banana.Converter.toDate(param.startDate);
-  var toDate = Banana.Converter.toDate(param.endDate);
+  var fromDate = Banana.Converter.toDate(period.startDate);
+  var toDate = Banana.Converter.toDate(period.endDate);
   var firstDayOfPeriod = 1;
   var lastDayOfPeriod = new Date(toDate.getFullYear(),toDate.getMonth()+1,0).getDate().toString();
   
   //se le date non corrispondono al primo giorno del mese (fromDate) e all'ultimo giorno del mese (toDate) ritorna il periodo esatto
   if (fromDate.getDate() != firstDayOfPeriod || toDate.getDate() != lastDayOfPeriod)
-    return "dal: " + Banana.Converter.toLocaleDateFormat(param.startDate) + " al " + Banana.Converter.toLocaleDateFormat(param.endDate);
+    return "dal: " + Banana.Converter.toLocaleDateFormat(_startDate) + " al " + Banana.Converter.toLocaleDateFormat(_endDate);
 
   if (fromDate.getMonth() === toDate.getMonth()) {
     var mese = fromDate.getMonth()+1;
@@ -504,8 +1635,7 @@ function getPeriodText(param) {
   return "";
 }
 
-function isMemberOfEuropeanUnion(_country)
-{
+Utils.prototype.isMemberOfEuropeanUnion = function(_country) {
   if (_country.length<=0)
     return false;
   var country = _country.toLowerCase();
@@ -567,861 +1697,13 @@ function isMemberOfEuropeanUnion(_country)
     return true;
   return false;
 }
-/*
- * Riprende l'elenco delle registrazioni iva che appartengono al gruppo clienti/fornitori
- * Ritorna il parametro iniziale con l'aggiunta del giornale e dell'elenco registrazioni iva 
- *
- * @param	parametro con data inizio/fine periodo
- */
-function loadJournal(param)
-{
-  if (!Banana.document || !param || typeof (Banana.document.journalCustomersSuppliers) === 'undefined')
-    return false;
-
-  var journal = Banana.document.journalCustomersSuppliers(
-    Banana.document.ORIGINTYPE_CURRENT, Banana.document.ACCOUNTTYPE_NORMAL);
-  var filteredRows = journal.findRows(loadJournal_filter);
-  var tableVatCodes = Banana.document.table('VatCodes');
-
-  if (!journal || !filteredRows || !tableVatCodes)
-    return false;
-
-  var periodStart = Banana.Converter.toDate(param.startDate);
-  var periodEnd = Banana.Converter.toDate(param.endDate);
-  param.customers = {};
-  param.suppliers = {};
-  param.journal = {};
-  param.journal.rows = [];
-
-  //Variabili per numerazione registro
-  var progRegistri = {};
-  var previousIndexGroup = -1;
-  
-  //Salva i nomi delle colonne del giornale
-  var tColumnNames = journal.columnNames;
-  param.journal = loadJournal_setColumns(param.journal, tColumnNames);
-
-  //Carica l'elenco clienti/fornitori
-  for (var i = 0; i < filteredRows.length; i++) {
-    //Controllo periodo
-    var validPeriod = false;
-    var value = filteredRows[i].value("JDate");
-    var currentDate = Banana.Converter.stringToDate(value, "YYYY-MM-DD");
-    if (currentDate >= periodStart && currentDate <= periodEnd)
-      validPeriod = true;
-    if (!validPeriod)
-      continue;
-
-    //Solamente righe con JInvoiceRowCustomerSupplier=1 (cliente) or JInvoiceRowCustomerSupplier=2 (fornitore)
-    var isCustomer=false;
-    var isSupplier=false;
-    if (filteredRows[i].value("JInvoiceRowCustomerSupplier")==1)
-      isCustomer=true;
-    else if (filteredRows[i].value("JInvoiceRowCustomerSupplier")==2)
-      isSupplier=true;
-    if (!isCustomer && !isSupplier)
-      continue;
-
-    var accountId = filteredRows[i].value("JAccount");
-    if (accountId && accountId.length>0) {
-      var accountObj = getAccount(accountId);
-      if (accountObj) {
-        if (isCustomer) {
-          param.customers[accountId] = accountObj;
-        }
-        else {
-          param.suppliers[accountId] = accountObj;
-        }
-      }
-    }
-  }
-  
-  //Carica le registrazioni IVA
-  for (var i = 0; i < filteredRows.length; i++) {
-    //Solo operazioni IVA
-    var isVatOperation = filteredRows[i].value("JVatIsVatOperation");
-    if (!isVatOperation)
-      continue;
-
-    //Controllo periodo
-    var validPeriod = false;
-    var value = filteredRows[i].value("JDate");
-    var currentDate = Banana.Converter.stringToDate(value, "YYYY-MM-DD");
-    if (currentDate >= periodStart && currentDate <= periodEnd)
-      validPeriod = true;
-    /*if (!validPeriod)
-      continue;*/
-
-    //La registrazione IVA deve contenere un conto cliente/fornitore
-    /*TODO: vedere se si può semplificare controllando meno campi*/
-    var isCustomer=false;
-    var isSupplier=false;
-    var accountId = filteredRows[i].value("JAccount");
-    var contraAccountId = filteredRows[i].value("JContraAccount");
-    var vatTwinAccountId = filteredRows[i].value("VatTwinAccount");
-    var accountDebitId = filteredRows[i].value("AccountDebit");
-    var accountCreditId = filteredRows[i].value("AccountCredit");
-    if (!accountDebitId && !accountCreditId) {
-      //contabilità entrate-uscite
-      accountDebitId = filteredRows[i].value("Account");
-      accountCreditId = filteredRows[i].value("Category");
-    }
-
-    if (accountId && accountId in param.customers) {
-      isCustomer = true;
-    }
-    else if (contraAccountId && contraAccountId in param.customers) {
-      isCustomer = true;
-      accountId = contraAccountId;
-    }
-    else if (vatTwinAccountId && vatTwinAccountId in param.customers) {
-      isCustomer = true;
-      accountId = vatTwinAccountId;
-    }
-    else if (accountDebitId && accountDebitId in param.customers) {
-      isCustomer = true;
-      accountId = accountDebitId;
-    }
-    else if (accountCreditId && accountCreditId in param.customers) {
-      isCustomer = true;
-      accountId = accountCreditId;
-    }
-    else if (accountId && accountId in param.suppliers) {
-      isSupplier = true;
-    }
-    else if (contraAccountId && contraAccountId in param.suppliers) {
-      isSupplier = true;
-      accountId = contraAccountId;
-    }
-    else if (vatTwinAccountId && vatTwinAccountId in param.suppliers) {
-      isSupplier = true;
-      accountId = vatTwinAccountId;
-    }
-    else if (accountDebitId && accountDebitId in param.suppliers) {
-      isSupplier = true;
-      accountId = accountDebitId;
-    }
-    else if (accountCreditId && accountCreditId in param.suppliers) {
-      isSupplier = true;
-      accountId = accountCreditId;
-    }
-
-    //Crea un oggetto json dove vengono salvate tutte le informazioni della riga
-    var jsonLine = {};
-    for (var j = 0; j < tColumnNames.length; j++) {
-      var columnName = tColumnNames[j];
-      value = filteredRows[i].value(columnName);
-      if (value) {
-        jsonLine[columnName] = xml_escapeString(value);
-      }
-      else {
-        jsonLine[columnName] = '';
-      }
-    }
-
-    //Dati supplementari
-    jsonLine["IT_ClienteConto"] = '';
-    jsonLine["IT_ClienteDescrizione"] = '';
-    jsonLine["IT_ClienteIntestazione"] = '';
-    jsonLine["IT_ClienteTipologia"] = '';
-    jsonLine["IT_ClientePartitaIva"] = '';
-    jsonLine["IT_ClienteCodiceFiscale"] = '';
-    jsonLine["IT_ClienteIDPaese"] = '';
-
-    if (isCustomer)
-      jsonLine["IT_ClienteTipologia"] = 'C';
-    else if (isSupplier)
-      jsonLine["IT_ClienteTipologia"] = 'F';
-
-    if (isCustomer || isSupplier) {
-      jsonLine["IT_ClienteConto"] = accountId;
-      var accountObj = getAccount(accountId);
-      if (accountObj) {
-         jsonLine["IT_ClienteDescrizione"] = accountObj["Description"];
-         jsonLine["IT_ClientePartitaIva"] = accountObj["VatNumber"];
-         jsonLine["IT_ClienteCodiceFiscale"] = accountObj["FiscalNumber"];
-         var intestazione = accountId + " " + accountObj["Description"];
-         if (accountObj["VatNumber"].length>0) {
-           intestazione = accountId + "/" + accountObj["VatNumber"] + " " + accountObj["Description"];
-         }
-         jsonLine["IT_ClienteIntestazione"] = intestazione;
-         jsonLine["IT_ClienteIDPaese"] = getCountryCode(accountObj);
-      }
-    }
-
-    //IT_Aliquota
-    //IT_Gr_IVA
-    //IT_Gr1_IVA
-    //IT_Registro
-    jsonLine["IT_Aliquota"] = '';
-    jsonLine["IT_Gr_IVA"] = '';
-    jsonLine["IT_Gr1_IVA"] = '';
-    jsonLine["IT_Registro"] = '';
-    var vatCode = filteredRows[i].value("JVatCodeWithoutSign");
-    if (vatCode.length) {
-      var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
-      if (rowVatCodes) {
-        var percAssoluta = rowVatCodes.value("VatRate");
-        if (Banana.SDecimal.isZero(percAssoluta))
-          percAssoluta = '0.00';
-        jsonLine["IT_Aliquota"] = percAssoluta;
-        var gr = rowVatCodes.value("Gr");
-        jsonLine["IT_Gr_IVA"] = gr;
-        jsonLine["IT_Registro"] = gr;
-        if (gr.indexOf('-')>0 || gr.length==1) {
-          var gr0 = gr.substr(0,1);
-          if (gr0 == "A")
-            jsonLine["IT_Registro"] = "Acquisti";
-          else if (gr0 == "V")
-            jsonLine["IT_Registro"] = "Vendite";
-          else if (gr0 == "C")
-            jsonLine["IT_Registro"] = "Corrispettivi";
-          else if (gr0 == "L")
-            jsonLine["IT_Registro"] = "Liquidazioni";
-        }
-
-        var gr1 = rowVatCodes.value("Gr1");
-        jsonLine["IT_Gr1_IVA"] = gr1;
-      }
-    }
-
-    //IT_ProgRegistro
-    var registro = jsonLine["IT_Registro"];
-    var noProgressivo = 0;
-    if (progRegistri[registro])
-      noProgressivo = parseInt(progRegistri[registro]);
-    var indexGroup = filteredRows[i].value("JContraAccountGroup") ;
-    if (indexGroup != previousIndexGroup) {
-      noProgressivo += 1;
-    }
-    previousIndexGroup = indexGroup;
-    progRegistri[registro] = noProgressivo;
-    jsonLine["IT_ProgRegistro"] = noProgressivo.toString();
-
-    //IT_Imponibile
-    //Tolto il segno perché nel file xml non esiste imponibile negativo? (controllare)
-    jsonLine["IT_Imponibile"] = '';
-    value = filteredRows[i].value("JVatTaxable");
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
-      value = Banana.SDecimal.invert(value);
-    jsonLine["IT_Imponibile"] = value;
-
-    //IT_ImportoIva
-    jsonLine["IT_ImportoIva"] = '';
-    value = filteredRows[i].value("VatAmount");
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
-      value = Banana.SDecimal.invert(value);
-    jsonLine["IT_ImportoIva"] = value;
-
-    //IT_IvaContabilizzata
-    jsonLine["IT_IvaContabilizzata"] = '';
-    value = filteredRows[i].value("VatPosted");
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
-      value = Banana.SDecimal.invert(value);
-    jsonLine["IT_IvaContabilizzata"] = value;
-
-    //IT_Lordo
-    jsonLine["IT_Lordo"] = '';
-    value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
-      value = Banana.SDecimal.invert(value);
-    jsonLine["IT_Lordo"] = value;
-
-/*
-3. Dati relativi ai campi “detraibile” e “deducibile”
-
-Uno dei dati che può essere fornito è quello relativo alla percentuale di
-detraibilità o, in alternativa, alla deducibilità del costo riportato in fattura. Tale
-dato, la cui indicazione è facoltativa, è riferito all’eventuale deducibilità o
-detraibilità del costo ai fini delle imposte sui redditi in capo all’acquirente o
-committente persona fisica che non opera nell’esercizio di impresa, arte o
-professione (cfr., pagina 11 delle specifiche tecniche “Detraibile: contiene il
-valore percentuale di detraibilità se gli importi si riferiscono a spese detraibili.
-Deducibile: indica se gli importi si riferiscono a spese deducibili ai fini di
-imposte diverse dall’Iva”). A titolo di esempio, qualora la fattura sia emessa da
-una impresa edile nei confronti di un cliente privato in relazione a lavori di
-ristrutturazione edilizia, il 50% del costo riportato nel documento potrebbe essere
-portato in detrazione dei redditi del cliente: in tal caso, l’informazione – se
-disponibile – potrebbe essere riportata nell’apposito campo della comunicazione.
-Si precisa che la compilazione di uno dei due campi in oggetto esclude la
-compilazione dell’altro. 
-
-La % detraibile può essere diversa dalla % non imponibile di Banana
-I due dati sono facoltativi, si prevede l'aggiunta di due colonne nella tabella registrazioni,
-nelle quali l'utente può inserire la % manualmente
-
-EsibilitaIva
-(i valori ammessi sono “I” per esigibilità immediata, “D” per esigibilità differita e “S” per scissione dei pagamenti). 
-*/
-    //IT_Detraibile
-    //IT_Deducibile
-    //IT_EsigibilitaIva
-    jsonLine["IT_Detraibile"] = '';
-    jsonLine["IT_Deducibile"] = '';
-    jsonLine["IT_EsigibilitaIva"] = 'I';
-    if (jsonLine["IT_Gr_IVA"] == "V-ED")
-      jsonLine["IT_EsigibilitaIva"] = 'D';
-
-    //IT_ImponibileDetraibile
-    //IT_ImponibileNonDetraibile
-    jsonLine["IT_ImponibileDetraibile"] = '';
-    jsonLine["IT_ImponibileNonDetraibile"] = '';
-    value = filteredRows[i].value("VatPercentNonDeductible");
-    if (!Banana.SDecimal.isZero(value)) {
-      value = Banana.SDecimal.subtract('100', value);
-      var rate = Banana.SDecimal.round(value, {'decimals':2});
-      var taxable = filteredRows[i].value("VatTaxable");
-      var amount = taxable * rate /100;
-      amount = Banana.SDecimal.roundNearest(amount, '0.01');
-      jsonLine["IT_ImponibileDetraibile"] = amount;
-      amount = Banana.SDecimal.subtract(taxable, amount);
-      jsonLine["IT_ImponibileNonDetraibile"] = amount;
-    }
-    else {
-      var taxable = filteredRows[i].value("VatTaxable");
-      jsonLine["IT_ImponibileDetraibile"] = taxable;
-    }
-
-    //IT_NoDoc
-    jsonLine["IT_NoDoc"] = '';
-    var noDoc = xml_escapeString(filteredRows[i].value("DocInvoice"));
-    if (noDoc.length<=0)
-      noDoc =  xml_escapeString(filteredRows[i].value("Doc"));
-    jsonLine["IT_NoDoc"] = noDoc;
-
-    //IT_DataDoc
-    //Se è utilizzata la colonna DocInvoice viene ripresa la data di emissione fattura JInvoiceIssueDate
-    //Altrimenti se si utilizza la colonna DateDocument viene ripresa questa oppure la data di registrazione Date
-    jsonLine["IT_DataDoc"] = '';
-    if (filteredRows[i].value("DocInvoice") && filteredRows[i].value("DocInvoice").length>0)
-      jsonLine["IT_DataDoc"] = filteredRows[i].value("JInvoiceIssueDate");
-    else if (filteredRows[i].value("DateDocument") && filteredRows[i].value("DateDocument").length>0)
-      jsonLine["IT_DataDoc"] = filteredRows[i].value("DateDocument");
-    else
-      jsonLine["IT_DataDoc"] = filteredRows[i].value("Date");
-
-    //IT_TipoDoc
-    //TD01 Fattura  
-    //TD04 Nota di credito  
-    //TD05 Nota di debito
-    //TD07 Fattura semplificata
-    //TD08 Nota di credito semplificata
-    //TD10 Fattura di acquisto intracomunitario beni (IdPaese != IT)
-    //TD11 Fattura di acquisto intracomunitario servizi (IdPaese != IT)
-    jsonLine["IT_TipoDoc"] = '';
-    var tipoDoc = filteredRows[i].value("JInvoiceDocType");
-    if (tipoDoc.length<=0)
-      tipoDoc =  filteredRows[i].value("DocType");
-
-    if (jsonLine["JVatNegative"]  == '1') {
-      if (isCustomer) {
-        if (tipoDoc == '14' || tipoDoc == '12')
-          jsonLine["IT_TipoDoc"] = 'TD05';
-        else
-          jsonLine["IT_TipoDoc"] = 'TD01';
-      }
-      else if (isSupplier) {
-        jsonLine["IT_TipoDoc"] = 'TD04';
-      }
-    }
-    else {
-      if (isCustomer) {
-        jsonLine["IT_TipoDoc"] = 'TD04';
-      }
-      else if (isSupplier) {
-        if (tipoDoc == '24' || tipoDoc == '22')
-          jsonLine["IT_TipoDoc"] = 'TD05';
-        else
-          jsonLine["IT_TipoDoc"] = 'TD01';
-      }
-    }
-
-    //TD10 TD11 per acquisti intracee,TD07 fattura semplificata,TD01 per tutte le altre
-    if (vatCode.length && isSupplier) {
-      var isMemberEU = false;
-      if (jsonLine["IT_ClienteIDPaese"].length>0 && jsonLine["IT_ClienteIDPaese"]!="IT")
-        isMemberEU = isMemberOfEuropeanUnion(jsonLine["IT_ClienteIDPaese"]);
-      var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
-      if (rowVatCodes && isMemberEU) {
-        var vatGr = rowVatCodes.value("Gr");
-        if (vatGr && vatGr.indexOf("EU-S")>=0) {
-          jsonLine["IT_TipoDoc"] = 'TD11';
-        }
-        else if (vatGr && vatGr.indexOf("EU")>=0) {
-          jsonLine["IT_TipoDoc"] = 'TD10';
-        }
-        else if (vatGr && vatGr.indexOf("REV-S")>=0) {
-          jsonLine["IT_TipoDoc"] = 'TD11';
-        }
-        else if (vatGr && vatGr.indexOf("REV")>=0) {
-          jsonLine["IT_TipoDoc"] = 'TD10';
-        }
-      }
-    }
-
-    //Controllo IdPaese e TipoDocumento 
-    var tipoDocumentoCorretto = true;
-    if (isSupplier && jsonLine["IT_ClienteIDPaese"] == "IT") {
-      if (jsonLine["IT_TipoDoc"] == 'TD10' || jsonLine["IT_TipoDoc"] == 'TD11') {
-        tipoDocumentoCorretto = false;
-      }
-    }
-    else if (isSupplier && jsonLine["IT_ClienteIDPaese"].length>0 && isMemberOfEuropeanUnion(jsonLine["IT_ClienteIDPaese"])){
-      if (jsonLine["IT_TipoDoc"] != 'TD10' && jsonLine["IT_TipoDoc"] != 'TD11') {
-        tipoDocumentoCorretto = false;
-      }
-    }
-    if (!tipoDocumentoCorretto) {
-      var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
-      msg += getErrorMessage(ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO);
-      msg = msg.replace("%1", jsonLine["IT_TipoDoc"] );
-      msg = msg.replace("%2", jsonLine["IT_ClienteIDPaese"] );
-      Banana.document.addMessage( msg, ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO);
-    }
-
-    //IT_Natura
-    //N1 esclusa ex art. 15 (bollo, spese anticipate in nome e per conto della controparte, omaggi, interessi moratori, ecc.)
-    //N2 non soggetta (Fuori campo IVA/Escluso IVA, codice da utilizzare per i contribuenti minimi e forfettari)
-    //N3 non imponibile (esportazione, cessione di beni intra UE)
-    //N4 esente (esente art. 10 D.P.R. 633/72) 
-    //N5 regime del margine / IVA non esposta in fattura ex art. 74-ter
-    //N6 inversione contabile (reverse charge)
-    //N7 IVA assolta in altro stato UE, vendite a distanza o prestazioni di servizi di telecomunicazioni
-    //Il codice natura può essere sovrascritto dalla colonna VatExtraInfo oppure dalla colonna Gr1 della tabella codici iva
-    //Se presente ESCL, la registrazione viene esclusa
-    jsonLine["IT_Natura"] = '';
-    var vatExtraInfo = filteredRows[i].value("VatExtraInfo");
-    if (vatExtraInfo.startsWith("N") && vatExtraInfo.length==2) {
-      var test = vatExtraInfo.substring(vatExtraInfo,1);
-      jsonLine["IT_Natura"] = vatExtraInfo;
-    }
-    if (jsonLine["IT_Natura"].length<=0) {
-      var rowVatCodes = tableVatCodes.findRowByValue('VatCode', vatCode);
-      if (rowVatCodes) {
-        var vatGr = rowVatCodes.value("Gr");
-        var vatGr1 = rowVatCodes.value("Gr1");
-        var vatRate = rowVatCodes.value("VatRate");
-        vatGr1 = vatGr1.toUpperCase();
-        var rowVatDescription = rowVatCodes.value("Description");
-        if (!rowVatDescription)
-          rowVatDescription = "";
-        rowVatDescription = rowVatDescription.toLowerCase();
-        rowVatDescription = rowVatDescription.replace(" ","");
-        if (vatGr1.length==2 && vatGr1.startsWith("N")) {
-          jsonLine["IT_Natura"] = vatGr1;
-        }
-        else if (vatGr1 == "ESCL") {
-          jsonLine["IT_Natura"] = vatGr1;
-        }
-        else if (rowVatDescription.indexOf("art.15")>0) {
-          jsonLine["IT_Natura"] = 'N1';
-        }
-        else if (rowVatDescription.indexOf("art.74")>0) {
-          jsonLine["IT_Natura"] = 'N5';
-        }
-        else if (rowVatDescription.indexOf("art.7")>0) {
-          jsonLine["IT_Natura"] = 'N3';
-        }
-        else if (rowVatDescription.indexOf("art.3")>0) {
-          jsonLine["IT_Natura"] = 'N1';
-        }
-        else if (vatGr.indexOf("-FC")>=0) {
-          jsonLine["IT_Natura"] = 'N2';
-        }
-        else if (vatGr.startsWith("V-NI") || vatGr.startsWith("A-NI")) {
-          jsonLine["IT_Natura"] = 'N3';
-        }
-        else if (vatGr.startsWith("V-ES") || vatGr.startsWith("A-ES")) {
-          jsonLine["IT_Natura"] = 'N4';
-        }
-        else if (vatGr.startsWith("V-NE") || vatGr.startsWith("A-NE")) {
-          jsonLine["IT_Natura"] = 'N5';
-        }
-        else if (vatGr.indexOf("-REV")>=0 && Banana.SDecimal.isZero(vatRate)) {
-          jsonLine["IT_Natura"] = 'N6';
-        }
-      }
-    }
-
-    //Controllo IT_Natura e aliquota
-    var aliquota = jsonLine["IT_Aliquota"];
-    var imposta = jsonLine["IT_IvaContabilizzata"];
-    var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
-
-    //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
-    //Eccezione: fatture ricevute con natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
-    if (jsonLine["IT_Natura"].length>0) {
-      if (isSupplier && jsonLine["IT_Natura"] == "N6") {
-        if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
-          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
-          Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
-        }
-      }
-      else {
-        if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
-          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE) + jsonLine["IT_Natura"];
-          Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
-        }
-      }
-    }
-    else {
-      //Se il campo Natura non è valorizzato, lo devono essere i campi Imposta e Aliquota
-      //Controlla solamente registro vendite/acquisti
-      if (jsonLine["IT_Registro"]== "Acquisti" || jsonLine["IT_Registro"] == "Vendite") {
-        if (Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota) ) {
-          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
-          Banana.document.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
-        }
-      }
-    }
-
-    //Corrispettivi
-    jsonLine["IT_CorrFattureNormali"] = '';
-    jsonLine["IT_CorrFattureFiscali"] = '';
-    jsonLine["IT_CorrFattureScontrini"] = '';
-    jsonLine["IT_CorrFattureDifferite"] = '';
-    jsonLine["IT_CorrispettiviNormali"] = '';
-    jsonLine["IT_CorrispettiviScontrini"] = '';
-    jsonLine["IT_CorrRicevuteFiscali"] = '';
-    jsonLine["IT_CorrTotaleGiornaliero"] = '';
-    var contoIvaAssociato = filteredRows[i].value("VatTwinAccount");
-    if (contoIvaAssociato.length && vatCode.length) {
-      var colonnaCorrispettivi = getColonnaCorrispettivi(contoIvaAssociato);
-      if (colonnaCorrispettivi.length) {
-        var lordo = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
-        jsonLine[colonnaCorrispettivi] = lordo;
-        jsonLine["IT_CorrTotaleGiornaliero"] = lordo;
-      }
-    }
-
-    //IT_RegistrazioneValida
-    //Serve per sapere se la riga IVA è stata inclusa nelle registrazioni clienti/fornitori
-    //Quelle scartate verranno segnalate in una tabella di controllo
-    jsonLine["IT_RegistrazioneValida"] = '';
-
-    //Aggiunge la riga nei parametri
-    if (!validPeriod)
-      continue;
-
-    if (isCustomer) {
-      if (!param.customers[accountId].rows)
-        param.customers[accountId].rows = [];
-      jsonLine["IT_RegistrazioneValida"] = '1';
-      param.customers[accountId].rows.push(jsonLine);
-      //console.log(jsonLine["Description"]);
-    }
-    else if (isSupplier) {
-      if (!param.suppliers[accountId].rows)
-        param.suppliers[accountId].rows = [];
-      jsonLine["IT_RegistrazioneValida"] = '1';
-      param.suppliers[accountId].rows.push(jsonLine);
-    }
-    //Write rows for debugging purposes
-    /*var jsonString = filteredRows[i].toJSON();
-    var jsonObj = JSON.parse(jsonString);
-    param.journal.rows.push(jsonObj);*/
-    param.journal.rows.push(jsonLine);
-
-  }
-  
-  return param;
-  
-}
-
-function loadJournal_filter(row, index, table) {
-  //only normal transaction with vat
-  //OperationType_None = 0, OperationType_Opening = 1, OperationType_CarryForward = 2,
-  //OperationType_Transaction = 3, OperationType_Closure = 4, OperationType_Total = 6
-  var operationType = row.value("JOperationType");
-  if (operationType && operationType != Banana.document.OPERATIONTYPE_TRANSACTION)
-    return false;
-
-  return true;
-}
-
-function loadJournal_setColumns(param, journalColumns) {
-  if (!param)
-    return param;
-  
-  param.columns = {};
-  for (var j = 0; j < journalColumns.length; j++) {
-    var column = {};
-    column.name = journalColumns[j];
-    column.title = journalColumns[j];
-    column.type = "amount";
-    column.index = -1;
-    if (column.name == "Date") {
-      column.type = "date";
-      column.index = 1;
-    }
-    else if (column.name == "Doc") {
-      column.type = "description";
-      column.index = 2;
-    }
-    else if (column.name == "DocProtocol") {
-      column.title = "DocProt";
-      column.type = "description";
-      column.index = 3;
-    }
-    else if (column.name == "Description") {
-      column.type = "description";
-      column.index = 4;
-    }
-    else if (column.name == "VatCode") {
-      column.index = 5;
-    }
-    else if (column.name == "VatRate") {
-      column.index = 6;
-    }
-    else if (column.name == "VatRateEffective") {
-      column.title = "VatRateEff";
-      column.index = 7;
-    }
-    else if (column.name == "VatAmount") {
-      column.index = 8;
-    }
-    else if (column.name == "VatTaxable") {
-      column.title = "VatTax";
-      column.index = 9;
-    }
-    else if (column.name == "JVatTaxable") {
-      column.title = "JVatTax";
-      column.index = 10;
-    }
-    else if (column.name == "VatPosted") {
-      column.title = "VatPosted";
-      column.index = 11;
-    }
-    else if (column.name == "VatPercentNonDeductible") {
-      column.title = "VatPercNonDed";
-      column.index = 12;
-    }
-    else if (column.name == "VatNonDeductible") {
-      column.title = "VatNonDed";
-      column.index = 13;
-    }
-    else if (column.name == "JRowOrigin") {
-      column.title = "JRowOrigin";
-      column.index = 14;
-    }
-    else if (column.name == "JTableOrigin") {
-      column.title = "JTableOrigin";
-      column.index = 15;
-    }
-    param.columns[j] = column;
-  }
-
-  //Additional columns
-  var column = {};
-  column.name = "IT_Natura";
-  column.title = "IT_Natura";
-  column.type = "description";
-  column.index = 1000;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_Lordo";
-  column.title = "IT_Lordo";
-  column.type = "amount";
-  column.index = 1001;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_ImportoIva";
-  column.title = "IT_ImportoIva";
-  column.type = "amount";
-  column.index = 1002;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_IvaContabilizzata";
-  column.title = "IT_IvaContabilizzata";
-  column.type = "amount";
-  column.index = 1003;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_Imponibile";
-  column.title = "IT_Imponibile";
-  column.type = "amount";
-  column.index = 1004;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_ImponibileDetraibile";
-  column.title = "IT_ImponibileDetraibile";
-  column.type = "amount";
-  column.index = 1005;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_ImponibileNonDetraibile";
-  column.title = "IT_ImponibileNonDetraibile";
-  column.type = "amount";
-  column.index = 1006;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_Detraibile";
-  column.title = "IT_Detraibile";
-  column.type = "amount";
-  column.index = 1007;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_Deducibile";
-  column.title = "IT_Deducibile";
-  column.type = "amount";
-  column.index = 1008;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_EsigibilitaIva";
-  column.title = "IT_EsigibilitaIva";
-  column.type = "amount";
-  column.index = 1009;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_Aliquota";
-  column.title = "IT_Aliquota";
-  column.type = "amount";
-  column.index = 1010;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_Gr_IVA";
-  column.title = "IT_Gr_IVA";
-  column.type = "description";
-  column.index = 1011;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_Gr1_IVA";
-  column.title = "IT_Gr1_IVA";
-  column.type = "description";
-  column.index = 1012;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_Registro";
-  column.title = "IT_Registro";
-  column.type = "description";
-  column.index = 1013;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_ProgRegistro";
-  column.title = "IT_ProgRegistro";
-  column.type = "description";
-  column.index = 1014;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_NoDoc";
-  column.title = "IT_NoDoc";
-  column.type = "description";
-  column.index = 1015;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_DataDoc";
-  column.title = "IT_DataDoc";
-  column.type = "description";
-  column.index = 1016;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_TipoDoc";
-  column.title = "IT_TipoDoc";
-  column.type = "description";
-  column.index = 1017;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_ClienteConto";
-  column.title = "IT_ClienteConto";
-  column.type = "description";
-  column.index = 1018;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_ClienteDescrizione";
-  column.title = "IT_ClienteDescrizione";
-  column.type = "description";
-  column.index = 1019;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_ClienteIntestazione";
-  column.title = "IT_ClienteIntestazione";
-  column.type = "description";
-  column.index = 1020;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_ClienteTipologia";
-  column.title = "IT_ClienteTipologia";
-  column.type = "description";
-  column.index = 1021;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_ClientePartitaIva";
-  column.title = "IT_ClientePartitaIva";
-  column.type = "description";
-  column.index = 1022;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_ClienteCodiceFiscale";
-  column.title = "IT_ClienteCodiceFiscale";
-  column.type = "description";
-  column.index = 1023;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_CorrFattureNormali";
-  column.title = "IT_CorrFattureNormali";
-  column.index = 1024;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_CorrFattureFiscali";
-  column.title = "IT_CorrFattureFiscali";
-  column.index = 1025;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_CorrFattureScontrini";
-  column.title = "IT_CorrFattureScontrini";
-  column.index = 1026;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_CorrFattureDifferite";
-  column.title = "IT_CorrFattureDifferite";
-  column.index = 1027
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_CorrispettiviNormali";
-  column.title = "IT_CorrispettiviNormali";
-  column.index = 1028;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_CorrispettiviScontrini";
-  column.title = "IT_CorrispettiviScontrini";
-  column.index = 1029;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_CorrRicevuteFiscali";
-  column.title = "IT_CorrRicevuteFiscali";
-  column.index = 1030;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_CorrTotaleGiornaliero";
-  column.title = "IT_CorrTotaleGiornaliero";
-  column.index = 1031;
-  param.columns[j++] = column;
-  var column = {};
-  column.name = "IT_RegistrazioneValida";
-  column.title = "IT_RegistrazioneValida";
-  column.index = 1032;
-  param.columns[j++] = column;
-  return param;
-}
+ 
 
 /*
  * Riprende i dati base della contabilità leggendo la tabella FileInfo (Strumenti - Tabella Info)
- * Riprende anche i dati contribuente salvati dallo script id  @id = ch.banana.script.italy_vat.daticontribuente.js
- *
- * @param	parametro iniziale dove vengono salvati i dati letti
+ * @param	parametro iniziale dove vengono aggiunti i dati letti
  */
-function readAccountingData(param) {
-  if (!param)
-    return param;
-
+Utils.prototype.readAccountingData = function(param) {
   //Table FileInfo
   param.fileInfo = {};
   param.fileInfo["BasicCurrency"] = "";
@@ -1448,31 +1730,31 @@ function readAccountingData(param) {
   param.fileInfo["Address"]["FiscalNumber"] = "";
   param.fileInfo["Address"]["VatNumber"] = "";
   
-  if (Banana.document.info) {
-    param.fileInfo["BasicCurrency"] = Banana.document.info("AccountingDataBase", "BasicCurrency");
-    param.fileInfo["OpeningDate"] = Banana.document.info("AccountingDataBase", "OpeningDate");
-    param.fileInfo["ClosureDate"] = Banana.document.info("AccountingDataBase", "ClosureDate");
-    if (Banana.document.info("AccountingDataBase", "CustomersGroup"))
-      param.fileInfo["CustomersGroup"] = Banana.document.info("AccountingDataBase", "CustomersGroup");
-    if (Banana.document.info("AccountingDataBase", "SuppliersGroup"))
-      param.fileInfo["SuppliersGroup"] = Banana.document.info("AccountingDataBase", "SuppliersGroup");
-    param.fileInfo["Address"]["Company"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Company"));
-    param.fileInfo["Address"]["Courtesy"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Courtesy"));
-    param.fileInfo["Address"]["Name"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Name"));
-    param.fileInfo["Address"]["FamilyName"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FamilyName"));
-    param.fileInfo["Address"]["Address1"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address1"));
-    param.fileInfo["Address"]["Address2"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Address2"));
-    param.fileInfo["Address"]["Zip"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Zip"));
-    param.fileInfo["Address"]["City"] = xml_escapeString(Banana.document.info("AccountingDataBase", "City"));
-    param.fileInfo["Address"]["State"] = xml_escapeString(Banana.document.info("AccountingDataBase", "State"));
-    param.fileInfo["Address"]["Country"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Country"));
-    param.fileInfo["Address"]["Web"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Web"));
-    param.fileInfo["Address"]["Email"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Email"));
-    param.fileInfo["Address"]["Phone"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Phone"));
-    param.fileInfo["Address"]["Mobile"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Mobile"));
-    param.fileInfo["Address"]["Fax"] = xml_escapeString(Banana.document.info("AccountingDataBase", "Fax"));
-    param.fileInfo["Address"]["FiscalNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "FiscalNumber"));
-    param.fileInfo["Address"]["VatNumber"] = xml_escapeString(Banana.document.info("AccountingDataBase", "VatNumber"));
+  if (this.banDocument.info) {
+    param.fileInfo["BasicCurrency"] = this.banDocument.info("AccountingDataBase", "BasicCurrency");
+    param.fileInfo["OpeningDate"] = this.banDocument.info("AccountingDataBase", "OpeningDate");
+    param.fileInfo["ClosureDate"] = this.banDocument.info("AccountingDataBase", "ClosureDate");
+    if (this.banDocument.info("AccountingDataBase", "CustomersGroup"))
+      param.fileInfo["CustomersGroup"] = this.banDocument.info("AccountingDataBase", "CustomersGroup");
+    if (this.banDocument.info("AccountingDataBase", "SuppliersGroup"))
+      param.fileInfo["SuppliersGroup"] = this.banDocument.info("AccountingDataBase", "SuppliersGroup");
+    param.fileInfo["Address"]["Company"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Company"));
+    param.fileInfo["Address"]["Courtesy"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Courtesy"));
+    param.fileInfo["Address"]["Name"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Name"));
+    param.fileInfo["Address"]["FamilyName"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "FamilyName"));
+    param.fileInfo["Address"]["Address1"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Address1"));
+    param.fileInfo["Address"]["Address2"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Address2"));
+    param.fileInfo["Address"]["Zip"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Zip"));
+    param.fileInfo["Address"]["City"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "City"));
+    param.fileInfo["Address"]["State"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "State"));
+    param.fileInfo["Address"]["Country"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Country"));
+    param.fileInfo["Address"]["Web"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Web"));
+    param.fileInfo["Address"]["Email"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Email"));
+    param.fileInfo["Address"]["Phone"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Phone"));
+    param.fileInfo["Address"]["Mobile"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Mobile"));
+    param.fileInfo["Address"]["Fax"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Fax"));
+    param.fileInfo["Address"]["FiscalNumber"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "FiscalNumber"));
+    param.fileInfo["Address"]["VatNumber"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "VatNumber"));
   }
 
   param.accountingOpeningDate = '';
@@ -1489,184 +1771,5 @@ function readAccountingData(param) {
   if (param.accountingClosureDate.length >= 10)
     param.closureYear = param.accountingClosureDate.substring(0, 4);
 
-  //Dati contribuente
-  param.datiContribuente = {};
-  var datiContribuenteParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
-  //compatibilità con una prima versione
-  /*if (datiContribuenteParam.length <= 0) {
-    datiContribuenteParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat_2017.daticontribuente.js");
-  }*/
-  if (datiContribuenteParam.length > 0) {
-    param.datiContribuente = JSON.parse(datiContribuenteParam);
-  }
-  //Verifica parametri
-  param.datiContribuente = verifyDatiContribuente(param.datiContribuente);
-  
   return param;
-}
-
-/*
- * Funzione di debug per la stampa del giornale di controllo
- */
-function _debug_printCustomersSuppliers(param, report, stylesheet) {
-  if (!param)
-    return param;
-
-  //Column count
-  var sortedColumns = [];
-  for (var i in param.journal.columns) {
-    if (param.journal.columns[i].index>=0)
-      sortedColumns.push(param.journal.columns[i].index);
-  }
-  sortedColumns.sort(_debug_sortNumber);  
-
-  //Title
-  var table = report.addTable("tableJournalCustomersSuppliers");
-  var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Customers/Suppliers", "title",  sortedColumns.length);
-  
-  //Period
-  var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(param.startDate);
-  periodo +=" al " + Banana.Converter.toLocaleDateFormat(param.endDate);
-  headerRow = table.getHeader().addRow();
-  headerRow.addCell(periodo, "period",  sortedColumns.length);
-  
-  //Header
-  var headerRow = table.getHeader().addRow();
-  for (var i in sortedColumns) {
-    var index = sortedColumns[i];
-    for (var j in param.journal.columns) {
-      if (param.journal.columns[j].index == index) {
-        var columnTitle = param.journal.columns[j].title;
-        headerRow.addCell(columnTitle);
-        break;
-      }
-    }
-  }
-
-  // Print data
-  var row = table.addRow();
-  row.addCell("------------------- customers -------------------", "", sortedColumns.length);
-  for (var i in param.customers) {
-    for (var j in param.customers[i].rows) {
-      var rowJsonObj = param.customers[i].rows[j];
-      var row = table.addRow();
-      for (var k in sortedColumns) {
-        var index = sortedColumns[k];
-        for (var l in param.journal.columns) {
-          if (param.journal.columns[l].index == index) {
-            var columnName = param.journal.columns[l].name;
-            var content = rowJsonObj[columnName];
-            if (content.length>11 && param.journal.columns[l].type == "description")
-              content = content.substring(0,10) + "...";
-            row.addCell(content, param.journal.columns[l].type);
-            break;
-          }
-        }
-      }
-    }
-  }
-  
-  var row = table.addRow();
-  row.addCell("------------------- suppliers -------------------", "", sortedColumns.length);
-  for (var i in param.suppliers) {
-    for (var j in param.suppliers[i].rows) {
-      var rowJsonObj = param.suppliers[i].rows[j];
-      var row = table.addRow();
-      for (var k in sortedColumns) {
-        var index = sortedColumns[k];
-        for (var l in param.journal.columns) {
-          if (param.journal.columns[l].index == index) {
-            var columnName = param.journal.columns[l].name;
-            var content = rowJsonObj[columnName];
-            if (content.length>11 && param.journal.columns[l].type == "description")
-              content = content.substring(0,10) + "...";
-            row.addCell(content, param.journal.columns[l].type);
-            break;
-          }
-        }
-      }
-    }
-  }
-  
-  _debug_printJournal_addStyle(stylesheet);
-
-}
-
-/*
- * Funzione di debug per la stampa del giornale di controllo
- */
-function _debug_printJournal(param, report, stylesheet) {
-  if (!param)
-    return param;
-
-  //Column count
-  var sortedColumns = [];
-  for (var i in param.journal.columns) {
-    if (param.journal.columns[i].index>=0)
-      sortedColumns.push(param.journal.columns[i].index);
-  }
-  sortedColumns.sort(_debug_sortNumber);  
-
-  //Title
-  var table = report.addTable("tableJournal");
-  var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Registrazioni IVA Italia", "title",  sortedColumns.length);
-  
-  //Period
-  var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(param.startDate);
-  periodo +=" al " + Banana.Converter.toLocaleDateFormat(param.endDate);
-  headerRow = table.getHeader().addRow();
-  headerRow.addCell(periodo, "period",  sortedColumns.length);
-  
-  //Header
-  var headerRow = table.getHeader().addRow();
-  for (var i in sortedColumns) {
-    var index = sortedColumns[i];
-    for (var j in param.journal.columns) {
-      if (param.journal.columns[j].index == index) {
-        var columnTitle = param.journal.columns[j].title;
-        /*if (columnTitle.length>8)
-          columnTitle = columnTitle.substring(0, 7) + ".";*/
-        headerRow.addCell(columnTitle);
-        break;
-      }
-    }
-  }
-
-  // Print data
-  var row = table.addRow();
-  for (var i=0; i < param.journal.rows.length;i++) {
-    var jsonObj = param.journal.rows[i];
-    var row = table.addRow();
-    for (var j in sortedColumns) {
-      var index = sortedColumns[j];
-      for (var k in param.journal.columns) {
-        if (param.journal.columns[k].index == index) {
-          var content = jsonObj[param.journal.columns[k].name];
-          row.addCell(content, param.journal.columns[k].type);
-          break;
-        }
-      }
-    }
-  }
-  
-  _debug_printJournal_addStyle(stylesheet);
-
-}
-
-function _debug_printJournal_addStyle(stylesheet) {
-  //style
-  stylesheet.addStyle(".tableJournalCustomersSuppliers", "margin-top:1em;width:100%;");
-  stylesheet.addStyle(".tableJournalCustomersSuppliers td", "border:1px solid #333333");
-  stylesheet.addStyle(".tableJournal", "margin-top:1em;width:100%;");
-  stylesheet.addStyle(".tableJournal td", "border:1px solid #333333");
-  
-  stylesheet.addStyle(".title", "background-color:#ffffff;border:1px solid #ffffff;font-size:10px;");
-  stylesheet.addStyle(".period", "background-color:#ffffff;border:1px solid #ffffff;");
-  stylesheet.addStyle(".amount", "text-align:right;");
-}
-
-function _debug_sortNumber(a,b) {
-    return a - b;
 }

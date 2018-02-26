@@ -92,7 +92,8 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
     msg = msg.replace("%3", fixedLen);
     if (context)
       msg = context + ': ' +  msg;
-    Banana.document.addMessage( msg, ID_ERR_XML_LUNGHEZZA_NONVALIDA);
+    if (Banana.document)
+      Banana.document.addMessage( msg, ID_ERR_XML_LUNGHEZZA_NONVALIDA);
   }
   else if (maxLen && content.length > maxLen && xml.length>0) {
     if (!content.length)
@@ -103,7 +104,8 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
     msg = msg.replace("%3", maxLen);
     if (context)
       msg = context + ': ' +  msg;
-    Banana.document.addMessage( msg, ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA);
+    if (Banana.document)
+      Banana.document.addMessage( msg, ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA);
   }
   else if (minLen && content.length < minLen && xml.length>0) {
     if (!content.length)
@@ -114,7 +116,8 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
     msg = msg.replace("%3", minLen);
     if (context)
       msg = context + ': ' +  msg;
-    Banana.document.addMessage( msg, ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA);
+    if (Banana.document)
+      Banana.document.addMessage( msg, ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA);
   }
   return xml;
 }
