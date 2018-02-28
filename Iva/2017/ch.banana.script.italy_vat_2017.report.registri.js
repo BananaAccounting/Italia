@@ -141,10 +141,10 @@ function settingsDialog() {
     stampaOrizzontaleCheckBox.checked = registri.param.stampaOrizzontale;
   var inizioNumerazionePagineSpinBox = dialog.tabWidget.findChild('inizioNumerazionePagineSpinBox');
   if (inizioNumerazionePagineSpinBox) {
-    if (registri.param.inizioNumerazionePagine.length>0)
-      inizioNumerazionePagineSpinBox.value = parseInt(registri.param.inizioNumerazionePagine);
-    else  
-      inizioNumerazionePagineSpinBox.value = 1;
+    var nInizio = parseInt(registri.param.inizioNumerazionePagine);
+    if (nInizio <= 0)
+      nInizio = 1;
+    inizioNumerazionePagineSpinBox.value = nInizio;
   }
   //Testi
   var testoRegistriComboBox = dialog.tabWidget.findChild('testoRegistriComboBox');
@@ -272,7 +272,7 @@ function settingsDialog() {
   if (stampaOrizzontaleCheckBox)
     registri.param.stampaOrizzontale = stampaOrizzontaleCheckBox.checked;
   if (inizioNumerazionePagineSpinBox)
-      registri.param.inizioNumerazionePagine = parseInt(inizioNumerazionePagineSpinBox.value.toString());
+      registri.param.inizioNumerazionePagine = inizioNumerazionePagineSpinBox.value.toString();
   //Testi
   registri.param.testoRegistriComboBoxIndex = testoRegistriComboBox.currentIndex.toString();
   if (registri.param.testoRegistriComboBoxIndex == 0) {
@@ -426,6 +426,12 @@ Registri.prototype.addPageHeader = function(report, stylesheet) {
   cell_center.addParagraph(text, "");
 
   //cell_right1
+  if (typeof (report.setFirstPageNumber) !== 'undefined') {
+    var nInizio = 1;
+    if (parseInt(this.param.inizioNumerazionePagine)>1)
+      nInizio = parseInt(this.param.inizioNumerazionePagine);
+    report.setFirstPageNumber(parseInt(this.param.inizioNumerazionePagine));
+  }
   var cell_right1 = row.addCell("", "header_cell_right");
   cell_right1.addParagraph("pag. ", "right").addFieldPageNr();
 
