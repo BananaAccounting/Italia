@@ -412,6 +412,10 @@ EsibilitaIva
     jsonLine["IT_Detraibile"] = '';
     jsonLine["IT_Deducibile"] = '';
     jsonLine["IT_EsigibilitaIva"] = 'I';
+    if (jsonLine["IT_Gr_IVA"] == "V-ED")
+      jsonLine["IT_EsigibilitaIva"] = 'D';
+    else if (jsonLine["IT_Gr_IVA"] == "A-ED")
+      jsonLine["IT_EsigibilitaIva"] = 'D';
 
     //IT_ImponibileDetraibile
     //IT_ImponibileNonDetraibile
