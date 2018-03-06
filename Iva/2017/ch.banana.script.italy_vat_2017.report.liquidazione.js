@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-02-23
+// @pubdate = 2018-03-06
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -98,9 +98,9 @@ function settingsDialog() {
   else if (liquidazione.param.periodoSelezionato == 'q')
     index = parseInt(liquidazione.param.periodoValoreTrimestre) + 13;
   else if (liquidazione.param.periodoSelezionato == 's')
-    index = parseInt(liquidazione.param.periodoValoreSemestre) + 18;
+    index = parseInt(liquidazione.param.periodoValoreSemestre) + 19;
   else if (liquidazione.param.periodoSelezionato == 'y')
-    index = 21;
+    index = 22;
   dialog.periodoGroupBox.periodoComboBox.currentIndex = index;
   //Groupbox anno per il momento impostati fissi perché non è possibile caricare gli anni sul combobox
   var index = 0;
@@ -173,19 +173,19 @@ function settingsDialog() {
   //Salvataggio dati
   //Groupbox periodo
   var index = parseInt(dialog.periodoGroupBox.periodoComboBox.currentIndex.toString());
-  if (index < 0 || index == 12 || index == 17 || index == 20)
+  if (index < 0 || index == 12 || index == 18 || index == 21)
     index = 0;
   if (index < 12) {
     liquidazione.param.periodoSelezionato = 'm';
     liquidazione.param.periodoValoreMese = index.toString();
   }
-  else if (index > 12 && index < 17) {
+  else if (index > 12 && index < 18) {
     liquidazione.param.periodoSelezionato = 'q';
     liquidazione.param.periodoValoreTrimestre = (index-13).toString();
   }
-  else if (index > 17 && index < 20) {
+  else if (index > 18 && index < 21) {
     liquidazione.param.periodoSelezionato = 's';
-    liquidazione.param.periodoValoreSemestre = (index-18).toString();
+    liquidazione.param.periodoValoreSemestre = (index-19).toString();
   }
   else {
     liquidazione.param.periodoSelezionato = 'y';
@@ -389,7 +389,7 @@ LiquidazionePeriodica.prototype.createInstanceComunicazione = function() {
 
   var xbrlCFIntermediario = '';
   if (this.param.comunicazioneCFIntermediario.length>0)
-    xbrlCFIntermediario = xml_createElementWithValidation("iv:CFIntermediario", xml_escapeString(this.param.comunicazioneCFIntermediario), 0, '16', msgContext);
+    xbrlCFIntermediario = xml_createElementWithValidation("iv:CFIntermediario", xml_escapeString(this.param.comunicazioneCFIntermediario), 0, '11...16', msgContext);
 
   var xbrlImpegno = '';
   var xbrlDataImpegno = '';
@@ -490,23 +490,27 @@ LiquidazionePeriodica.prototype.createInstanceModulo = function(period) {
 
   var xbrlCreditoAnnoPrecedente = xml_createElementWithValidation("iv:CreditoAnnoPrecedente", this.createInstanceModuloGetVatAmount("L-CIA", "vatPosted", period),0,'4...16',msgContext);
 
-  var amountInteressi = 0;
-  if (period["L-INT"] && period["L-INT"].vatPosted)
-    amountInteressi = Banana.SDecimal.abs(period["L-INT"].vatPosted);
-  var amountInteressiCalcolati = 0;
-  if (period.datiContribuente.liqTipoVersamento == 1)
-    amountInteressiCalcolati = this.calculateInterestAmount(period);
-  //se suddivisione mensile e ci sono registrazioni di interessi dà un warning
-  if (period.datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
-    var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
-    msg = msg.replace("%1", period.datiContribuente.liqPercInteressi );
-    msg = msg.replace("%2", amountInteressiCalcolati );
-    this.banDocument.addMessage( msg, ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
-  }
-  else if (period.datiContribuente.liqTipoVersamento == 0 && amountInteressi.length>0) {
+  //disabilita controllo interessi nel periodo iv trimestre iva speciali
+  if (this.getPeriod("q", period)!="4") {
+    var amountInteressi = 0;
+    if (period["L-INT"] && period["L-INT"].vatPosted)
+      amountInteressi = Banana.SDecimal.abs(period["L-INT"].vatPosted);
+    var amountInteressiCalcolati = 0;
+    if (period.datiContribuente.liqTipoVersamento == 1)
+      amountInteressiCalcolati = this.calculateInterestAmount(period);
+    //se suddivisione mensile e ci sono registrazioni di interessi dà un warning
+    if (period.datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
+      var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
+      msg = msg.replace("%1", period.datiContribuente.liqPercInteressi );
+      msg = msg.replace("%2", amountInteressiCalcolati );
+      this.banDocument.addMessage( msg, ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
+    }
+    else if (period.datiContribuente.liqTipoVersamento == 0 && amountInteressi.length>0) {
       var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE);
       this.banDocument.addMessage( msg, ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE);
+    }
   }
+  
   //Riprende interessi con importo formattato
   var amountInteressi = this.createInstanceModuloGetVatAmount("L-INT", "vatPosted", period);
   var xbrlInteressiDovuti = xml_createElementWithValidation("iv:InteressiDovuti", amountInteressi,0,'4...16',msgContext);
@@ -579,8 +583,19 @@ LiquidazionePeriodica.prototype.getPeriod = function(format, period) {
     var q = [1,2,3,4];
     var q1 = q[Math.floor(fromDate.getMonth() / 3)];  
     var q2 = q[Math.floor(toDate.getMonth() / 3)];  
-    if (q1 === q2)
+    if (q1 === q2 && fromDate.getMonth() != toDate.getMonth()) {
+      if (q1 == 4) {
+       //La codifica export nel xml del IV trimestre è 5  
+       //La codifica export nel xml del IV trimestre IVA speciali è 4
+       //in periodoValoreTrimestre il primo trimestre è 0, il quarto è 3, il quarto speciale è 4
+       //se è selezionato l'anno e il periodo corrisponde al 4. trimestre si ritorna 5
+       if (this.param.periodoSelezionato == "q" && this.param.periodoValoreTrimestre == "3")
+         return "5";
+       else if (this.param.periodoSelezionato == "y")
+         return "5";
+      }
       return q1.toString();
+    }
   }
   return "";
 }
@@ -868,7 +883,10 @@ LiquidazionePeriodica.prototype.printDocument = function(report, stylesheet) {
 
 LiquidazionePeriodica.prototype.printVatReport1 = function(report, stylesheet, period) {
   //Period
-  report.addParagraph("Periodo: " + Banana.Converter.toLocaleDateFormat(period.startDate) + " - " + Banana.Converter.toLocaleDateFormat(period.endDate), "period");
+  var periodText = "";
+  if (this.getPeriod("q", period)=="4")
+    periodText = " (IV trimestre IVA speciali)" + period.startDate + " " + period.endDate + " " + this.getPeriod("q", period);
+  report.addParagraph("Periodo: " + Banana.Converter.toLocaleDateFormat(period.startDate) + " - " + Banana.Converter.toLocaleDateFormat(period.endDate) + periodText, "period");
   
   //Print table
   var table = report.addTable("table1");
@@ -907,7 +925,10 @@ LiquidazionePeriodica.prototype.printVatReport1 = function(report, stylesheet, p
 
 LiquidazionePeriodica.prototype.printVatReport2 = function(report, stylesheet, period) {
   //Period
-  report.addParagraph("Periodo: " + Banana.Converter.toLocaleDateFormat(period.startDate) + " - " + Banana.Converter.toLocaleDateFormat(period.endDate), "period");
+  var periodText = "";
+  if (this.getPeriod("q", period)=="4")
+    periodText = " (IV trimestre IVA speciali)";
+  report.addParagraph("Periodo: " + Banana.Converter.toLocaleDateFormat(period.startDate) + " - " + Banana.Converter.toLocaleDateFormat(period.endDate) + periodText, "period");
 
   //Print table
   var table = report.addTable("table2");
@@ -994,24 +1015,31 @@ LiquidazionePeriodica.prototype.printVatReport2 = function(report, stylesheet, p
   row.addCell("VP12");
   row.addCell("Interessi dovuti per liquidazioni trimestrali", "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(period["L-INT"].vatPosted)), "amount");
-  /*propone interessi trimestrali se importo è diverso da quello visualizzato*/
-  var amountInteressi = 0;
-  if (period["L-INT"] && period["L-INT"].vatPosted)
-    amountInteressi = Banana.SDecimal.abs(period["L-INT"].vatPosted);
-  var amountInteressiCalcolati = 0;
-  if (period.datiContribuente.liqTipoVersamento == 1)
-    amountInteressiCalcolati = this.calculateInterestAmount(period);
-  if (period.datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
-    var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
-    msg = msg.replace("%1", period.datiContribuente.liqPercInteressi );
-    msg = msg.replace("%2", Banana.Converter.toLocaleNumberFormat(amountInteressiCalcolati) );
-    row.addCell(msg, "amount warning");
+  
+  //propone interessi trimestrali se importo è diverso da quello visualizzato
+  //disabilita controllo interessi nel periodo iv trimestre iva speciali
+  if (this.getPeriod("q", period)!="4") {
+    var amountInteressi = 0;
+    if (period["L-INT"] && period["L-INT"].vatPosted)
+      amountInteressi = Banana.SDecimal.abs(period["L-INT"].vatPosted);
+    var amountInteressiCalcolati = 0;
+    if (period.datiContribuente.liqTipoVersamento == 1)
+      amountInteressiCalcolati = this.calculateInterestAmount(period);
+    if (period.datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
+      var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
+      msg = msg.replace("%1", period.datiContribuente.liqPercInteressi );
+      msg = msg.replace("%2", Banana.Converter.toLocaleNumberFormat(amountInteressiCalcolati) );
+      row.addCell(msg, "amount warning");
+    }
+    else if (period.datiContribuente.liqTipoVersamento == 0 && amountInteressi != amountInteressiCalcolati)
+      row.addCell(getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE), "amount warning");
+    else
+      row.addCell("");
   }
-  else if (period.datiContribuente.liqTipoVersamento == 0 && amountInteressi != amountInteressiCalcolati)
-    row.addCell(getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE), "amount warning");
-  else
+  else {
     row.addCell("");
-
+  }
+  
   row = table.addRow();
   row.addCell("VP13");
   row.addCell("Acconto dovuto", "description");

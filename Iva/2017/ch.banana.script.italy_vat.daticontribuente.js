@@ -20,7 +20,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2018-02-15
+// @pubdate = 2018-03-06
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -38,11 +38,11 @@ function exec() {
 function settingsDialog() {
 
   var datiContribuente = new DatiContribuente(Banana.document);
-  var savedParam = Banana.document.getScriptSettings();
+  var savedParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
   if (savedParam.length > 0) {
     datiContribuente.setParam(JSON.parse(savedParam));
   }
-  
+
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat.daticontribuente.dialog.ui");
   //Dati anagrafici
   var tipoContribuenteComboBox = dialog.tabWidget.findChild('tipoContribuenteComboBox');

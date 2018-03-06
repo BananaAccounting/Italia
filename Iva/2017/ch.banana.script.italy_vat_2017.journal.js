@@ -1212,7 +1212,8 @@ Utils.prototype.createPeriods = function(param) {
         currentPeriod.endDate = param.annoSelezionato.toString() + "0930";
         periods.push(currentPeriod);
       }
-      else if (param.periodoValoreTrimestre === "3") {
+      //liquidazione iva ha anche periodo trimestre 5.IV trimestrali speciali  (periodoValoreTrimestre=4)
+      else if (param.periodoValoreTrimestre === "3" || param.periodoValoreTrimestre === "4") {
         var currentPeriod = {};
         currentPeriod.startDate = param.annoSelezionato.toString() + "1001";
         currentPeriod.endDate = param.annoSelezionato.toString() + "1031";
@@ -1244,7 +1245,8 @@ Utils.prototype.createPeriods = function(param) {
         currentPeriod.startDate = param.annoSelezionato.toString() + "0701";
         currentPeriod.endDate = param.annoSelezionato.toString() + "0930";
       }
-      else if (param.periodoValoreTrimestre === "3") {
+      //liquidazione iva ha anche periodo trimestre 5.IV trimestrali speciali  (periodoValoreTrimestre=4)
+      else if (param.periodoValoreTrimestre === "3" || param.periodoValoreTrimestre === "4") {
         currentPeriod.startDate = param.annoSelezionato.toString() + "1001";
         currentPeriod.endDate = param.annoSelezionato.toString() + "1231";
       }
