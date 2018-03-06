@@ -885,7 +885,7 @@ LiquidazionePeriodica.prototype.printVatReport1 = function(report, stylesheet, p
   //Period
   var periodText = "";
   if (this.getPeriod("q", period)=="4")
-    periodText = " (IV trimestre IVA speciali)" + period.startDate + " " + period.endDate + " " + this.getPeriod("q", period);
+    periodText = " (IV trimestre IVA speciali)";
   report.addParagraph("Periodo: " + Banana.Converter.toLocaleDateFormat(period.startDate) + " - " + Banana.Converter.toLocaleDateFormat(period.endDate) + periodText, "period");
   
   //Print table
