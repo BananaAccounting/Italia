@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LibroGiornaleDialog</class>
+ <widget class="QDialog" name="LibroGiornaleDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>339</width>
+    <height>330</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string notr="true">Giornale singoli movimenti</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <widget class="QGroupBox" name="periodoGroupBox">
+     <property name="title">
+      <string notr="true">Periodo</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="annoRadioButton">
+          <property name="text">
+           <string notr="true">&amp;Anno contabile</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="annoLabel">
+          <property name="text">
+           <string notr="true">annocontabile</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="trimestreRadioButton">
+          <property name="text">
+           <string notr="true">&amp;Trimestre</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="trimestreComboBox">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string notr="true">1. trimestre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">2. trimestre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">3. trimestre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">4. trimestre</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QRadioButton" name="meseRadioButton">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string notr="true">&amp;Mese</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="meseComboBox">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string notr="true">Gennaio</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Febbraio</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Marzo</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Aprile</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Maggio</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Giugno</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Luglio</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Agosto</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Settembre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Ottobre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Novembre</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Dicembre</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QRadioButton" name="dataRadioButton">
+          <property name="text">
+           <string notr="true">&amp;Data dal</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QDateEdit" name="dalDateEdit">
+            <property name="displayFormat">
+             <string>dd/MM/yyyy</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="alLabelText">
+            <property name="text">
+             <string notr="true">al</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDateEdit" name="alDateEdit">
+            <property name="displayFormat">
+             <string>dd/MM/yyyy</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="opzioniGroupBox">
+     <property name="title">
+      <string>Opzioni</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="ordinamentoLabelText">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string notr="true">&amp;Ordinamento</string>
+          </property>
+          <property name="buddy">
+           <cstring>ordinamentoComboBox</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="ordinamentoComboBox">
+          <property name="minimumSize">
+           <size>
+            <width>110</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <item>
+           <property name="text">
+            <string>Data</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>DataDocumento</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>DataValuta</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>10</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="regsitrazioniAperturaCheckBox">
+        <property name="text">
+         <string notr="true">Aggiungi registrazioni apertura</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>58</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>annoRadioButton</tabstop>
+  <tabstop>trimestreRadioButton</tabstop>
+  <tabstop>trimestreComboBox</tabstop>
+  <tabstop>meseRadioButton</tabstop>
+  <tabstop>meseComboBox</tabstop>
+  <tabstop>dataRadioButton</tabstop>
+  <tabstop>dalDateEdit</tabstop>
+  <tabstop>alDateEdit</tabstop>
+  <tabstop>ordinamentoComboBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>LibroGiornaleDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>204</x>
+     <y>308</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>checkdata()</slot>
+ </slots>
+</ui>
