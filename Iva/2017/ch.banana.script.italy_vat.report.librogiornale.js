@@ -18,6 +18,7 @@
 // @doctype = 100.110;110.110;130.110;100.130
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
+// @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
 // @pubdate = 2018-03-07
@@ -41,11 +42,11 @@ function exec() {
 
   var libroGiornale = new LibroGiornale(Banana.document);
   libroGiornale.setParam(param);
-  //libroGiornale.loadData();
+  libroGiornale.loadData();
 
   var report = Banana.Report.newReport("Libro giornale");
   var stylesheet = Banana.Report.newStyleSheet(); 
-  //libroGiornale.printDocument(report, stylesheet);
+  libroGiornale.printDocument(report, stylesheet);
   Banana.Report.preview(report, stylesheet);
 
 }
@@ -83,12 +84,8 @@ function settingsDialog() {
       fromDate = Banana.Converter.stringToDate(accountingData.accountingOpeningDate, "YYYY-MM-DD");
       toDate = Banana.Converter.stringToDate(accountingData.accountingClosureDate, "YYYY-MM-DD");
   }
-  console.log(fromDate);
-  console.log(toDate);
   fromDate = Banana.Converter.toInternalDateFormat(fromDate, "dd/mm/yyyy");
   toDate = Banana.Converter.toInternalDateFormat(toDate, "dd/mm/yyyy");
-  console.log(fromDate);
-  console.log(toDate);
   dialog.periodoGroupBox.dalDateEdit.setDate(fromDate);
   dialog.periodoGroupBox.alDateEdit.setDate(toDate);
   
@@ -209,12 +206,148 @@ function LibroGiornale(banDocument) {
   this.banDocument = banDocument;
   if (this.banDocument === undefined)
     this.banDocument = Banana.document;
+  this.init();
   this.initParam();
 }
 
 
+LibroGiornale.prototype.addPageFooter = function(report, stylesheet) {
+
+  // Page footer
+  if (report === undefined || stylesheet === undefined)
+    return;
+
+  var pageFooter = report.getFooter();
+
+  //Tabella
+  var table = pageFooter.addTable("footer_table");
+  table.addColumn("footer_col_left");
+  table.addColumn("footer_col_center");
+  table.addColumn("footer_col_right");
+
+  //cell_left
+  var row = table.addRow();
+  var cell_left = row.addCell("", "footer_cell_left");
+
+  //cell_center
+  var cell_center = row.addCell("", "footer_cell_center");
+  var datestring = '';
+  var d = new Date();
+  var datestring = ("0" + d.getDate()).slice(-2) + "/" + ("0"+(d.getMonth()+1)).slice(-2) + "/" + d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);  
+  cell_center.addParagraph(datestring, "center");
+
+  //cell_right
+  var row = table.addRow();
+  var cell_right = row.addCell("", "footer_cell_right");
+
+  //add style
+  stylesheet.addStyle(".footer_table", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".footer_col_left", "width:33%;");
+  stylesheet.addStyle(".footer_col_center", "width:33%;");
+  stylesheet.addStyle(".footer_col_right", "width:33%");
+  stylesheet.addStyle(".footer_cell_left", "font-size:9px");
+  stylesheet.addStyle(".footer_cell_center", "font-size:9px;padding-right:0;margin-right:0;");
+  stylesheet.addStyle(".footer_cell_right", "font-size:9px;padding-left:0;margin-left:0;");
+  stylesheet.addStyle(".center", "text-align: center;");
+}
+
+LibroGiornale.prototype.addPageHeader = function(report, stylesheet) {
+  // Page header
+  var pageHeader = report.getHeader();
+  
+  //Tabella
+  var table = pageHeader.addTable("header_table");
+  table.addColumn("header_col_left");
+  table.addColumn("header_col_center");
+  table.addColumn("header_col_right");
+  
+  //cell_left
+  var row = table.addRow();
+  var cell_left = row.addCell("", "header_cell_left");
+
+  var line1 = this.param.datiContribuente.societa;
+  if (line1.length)
+    line1 += " ";
+  if (this.param.datiContribuente.cognome.length)
+    line1 += this.param.datiContribuente.cognome;
+  if (this.param.datiContribuente.nome.length)
+    line1 += this.param.datiContribuente.nome;
+  if (line1.length)
+    cell_left.addParagraph(line1);
+  
+  var line2 = '';
+  if (this.param.datiContribuente.indirizzo.length)
+    line2 = this.param.datiContribuente.indirizzo + " ";
+  if (this.param.datiContribuente.ncivico.length)
+    line2 += " " + this.param.datiContribuente.ncivico;
+  if (line2.length)
+    cell_left.addParagraph(line2);
+
+  var line3 = '';
+  if (this.param.datiContribuente.cap.length)
+    line3 = this.param.datiContribuente.cap + " ";
+  if (this.param.datiContribuente.comune.length)
+    line3 += this.param.datiContribuente.comune + " ";
+  if (this.param.datiContribuente.provincia.length)
+    line3 += "(" +  this.param.datiContribuente.provincia + ")";
+  if (line3.length)
+    cell_left.addParagraph(line3);
+  
+  var line4 = '';
+  if (this.param.datiContribuente.partitaIva.length)
+    line4 = "P.IVA: " + this.param.datiContribuente.partitaIva;
+  if (line4.length)
+    cell_left.addParagraph(line4, "vatNumber");
+  
+  //cell_center
+  var cell_center = row.addCell("", "header_cell_center");
+  var periodo = Banana.Converter.toLocaleDateFormat(this.period.startDate);
+  periodo +=" - " + Banana.Converter.toLocaleDateFormat(this.period.endDate);
+  cell_center.addParagraph("Libro giornale", "title center");
+  cell_center.addParagraph(periodo, "period center");
+
+  //cell_right
+  var cell_right = row.addCell("", "header_cell_right");
+  cell_right.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()), "right");
+  cell_right.addParagraph(" Pagina ", "right").addFieldPageNr();
+ 
+  //add style
+  stylesheet.addStyle(".header_table", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".header_col_left", "width:33%");
+  stylesheet.addStyle(".header_col_center", "flexible-width:always");
+  stylesheet.addStyle(".header_col_right", "width:33%");
+  stylesheet.addStyle(".header_cell_left", "font-size:8px");
+  stylesheet.addStyle(".header_cell_center", "font-size:8px");
+  stylesheet.addStyle(".header_cell_right", "font-size:8px");
+  stylesheet.addStyle(".center", "text-align: center;");
+  stylesheet.addStyle(".period", "padding-bottom: 1em;");
+  stylesheet.addStyle(".right", "text-align: right;");
+}
+
+/*
+*  Filtra i dati del giornale escludendo le registrazioni dei centri di costo
+ */
+LibroGiornale.prototype.filter = function(row, index, table) {
+  if (!table.periodStart || !table.periodEnd)
+    return false;
+  var currentDate = Banana.Converter.stringToDate(row.value("JDate"), "YYYY-MM-DD");
+  if (currentDate && currentDate >= table.periodStart && currentDate <= table.periodEnd) {
+    return true;
+  }
+  return false;
+}
+
 LibroGiornale.prototype.getParam = function() {
   return this.param;
+}
+
+LibroGiornale.prototype.init = function() {
+  this.journal = {};
+  this.transactions = {};
+  this.columns = {};
+  this.period = {};
+  this.period.startDate="";
+  this.period.endDate="";
 }
 
 LibroGiornale.prototype.initParam = function() {
@@ -233,9 +366,144 @@ LibroGiornale.prototype.initParam = function() {
 
 }
 
+LibroGiornale.prototype.loadData = function() {
+  this.init();
+  this.param.datiContribuente = new DatiContribuente(this.banDocument).loadParam();
+  var utils = new Utils(this.banDocument);
+  this.param = utils.readAccountingData(this.param);
+  //con datiContribuente.liqTipoVersamento=-1 crea un unico periodo in createPeriods()
+  this.param.datiContribuente.liqTipoVersamento = -1;
+  var periods = utils.createPeriods(this.param);
+  if (periods.length>0) {
+    this.period.startDate = periods[0].startDate;
+    this.period.endDate = periods[0].endDate; 
+  }
+  
+  if (this.period.startDate.length<=0 || this.period.endDate.length<=0)
+    return;
+
+  this.journal = this.banDocument.journal(
+    this.banDocument.ORIGINTYPE_CURRENT, this.banDocument.ACCOUNTTYPE_NONE);
+  this.journal.periodStart = Banana.Converter.toDate(this.period.startDate);
+  this.journal.periodEnd =  Banana.Converter.toDate(this.period.endDate);
+  this.transactions = this.journal.findRows(this.filter);
+  this.setColumns();
+}
+
+LibroGiornale.prototype.printDocument = function(report, stylesheet) {
+  this.addPageHeader(report, stylesheet);
+  this.addPageFooter(report, stylesheet);
+  this.setStyle(report, stylesheet);
+  
+  //Table
+  var table = report.addTable("tableJournal");
+  var headerRow = table.getHeader().addRow();
+  for (var i in this.columns) {
+    //console.log(JSON.stringify(this.columns[i]));
+    var columnTitle = this.columns[i].title;
+    headerRow.addCell(columnTitle);
+  }
+
+  // Print data
+  for (var i in this.transactions) {
+    var jsonObj = this.transactions[i];
+    console.log(JSON.stringify(jsonObj));
+    var row = table.addRow();
+    for (var j in this.columns) {
+      var columnName = this.columns[j].name;
+      var columnType = this.columns[j].type;
+      var content = jsonObj.value(columnName);
+      if (columnType == "date")
+        content = Banana.Converter.toLocaleDateFormat(content, "dd/mm/yy")
+      row.addCell(content, columnType);
+    }
+  }
+}
+
+LibroGiornale.prototype.setColumns = function() {
+  this.columns = [];
+  var column = {};
+  column.name = "IT_NoProgressivo";
+  column.title = "N.Prog.";
+  column.type = "description";
+  this.columns.push(column);
+  var column = {};
+  column.name = "Date";
+  column.title = "Data reg.";
+  column.type = "date";
+  this.columns.push(column);
+  var column = {};
+  column.name = "Doc";
+  column.title = column.name;
+  column.type = "description";
+  this.columns.push(column);
+  var column = {};
+  column.name = "DateDocument";
+  column.title = "Data Doc";
+  column.type = "date";
+  this.columns.push(column);
+  var column = {};
+  column.name = "JAccount";
+  column.title = "N. conto";
+  column.type = "description";
+  this.columns.push(column);
+  var column = {};
+  column.name = "JAccountDescription";
+  column.title = "Des. conto";
+  column.type = "description";
+  this.columns.push(column);
+  var column = {};
+  column.name = "JDebitAmount";
+  column.title = "Importo dare";
+  column.type = "amount";
+  this.columns.push(column);
+  var column = {};
+  column.name = "JCreditAmount";
+  column.title = "Importo avere";
+  column.type = "amount";
+  this.columns.push(column);
+  var column = {};
+  column.name = "Description";
+  column.title = "Des. movimento";
+  column.type = "description";
+  this.columns.push(column);
+  var column = {};
+  column.name = "JBalance";
+  column.title = "Saldo";
+  column.type = "amount";
+  this.columns.push(column);
+  
+}
+
 LibroGiornale.prototype.setParam = function(param) {
   this.param = param;
   this.verifyParam();
+}
+
+LibroGiornale.prototype.setStyle = function(report, stylesheet) {
+  if (!stylesheet) {
+    stylesheet = report.newStyleSheet();
+  }
+  stylesheet.addStyle("@page", "size:landscape;margin:2em;font-size: 8px; ");
+  stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
+  stylesheet.addStyle("thead", "font-weight: bold;background-color:#eeeeee;");
+  stylesheet.addStyle("td", "padding:1px;vertical-align:top;");
+
+  stylesheet.addStyle(".amount", "text-align: right;border:0.5em solid black; ");
+  stylesheet.addStyle(".center", "text-align: center;");
+  stylesheet.addStyle(".error", "color:red;");
+  stylesheet.addStyle(".notes", "padding: 2em;font-style:italic;");
+  stylesheet.addStyle(".period", "background-color:#ffffff;border:1px solid #ffffff;");
+  stylesheet.addStyle(".right", "text-align: right;");
+  stylesheet.addStyle(".row.amount", "border:0.5em solid black");
+  stylesheet.addStyle(".rowName", "font-weight: bold;padding-top:5px;border-top:0.5em solid black");
+  stylesheet.addStyle(".title", "background-color:#ffffff;border:1px solid #ffffff;font-size:10px;");
+  stylesheet.addStyle(".warning", "color: red;font-size:8px;");
+
+  /*tables*/
+  stylesheet.addStyle(".tableJournal", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".tableJournal td", "border:1px solid #333333");
+  
 }
 
 LibroGiornale.prototype.verifyParam = function() {
@@ -258,4 +526,3 @@ LibroGiornale.prototype.verifyParam = function() {
   if (!this.param.periodoValoreDataAl)
     this.param.periodoValoreDataAl = '';
 }
-
