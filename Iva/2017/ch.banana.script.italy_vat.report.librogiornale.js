@@ -93,8 +93,6 @@ function settingsDialog() {
   var index = 0;
   if (libroGiornale.param.colonnaOrdinamento == 'DataDocumento')
     index = 1;
-  else if (libroGiornale.param.colonnaOrdinamento == 'DataValuta')
-    index = 2;
   dialog.opzioniGroupBox.ordinamentoComboBox.currentIndex = index;
   dialog.opzioniGroupBox.regsitrazioniAperturaCheckBox.checked = libroGiornale.param.aggiungiAperture;
 
@@ -191,11 +189,9 @@ function settingsDialog() {
   libroGiornale.param.aggiungiAperture = dialog.opzioniGroupBox.regsitrazioniAperturaCheckBox.checked;
   index = parseInt(dialog.opzioniGroupBox.ordinamentoComboBox.currentIndex.toString());
   if (index == 0)
-    libroGiornale.param.colonnaOrdinamento = 'Data';
+    libroGiornale.param.colonnaOrdinamento = '';
   else if (index == 1)
     libroGiornale.param.colonnaOrdinamento = 'DataDocumento';
-  else if (index == 2)
-    libroGiornale.param.colonnaOrdinamento = 'DataValuta';
 
   var paramToString = JSON.stringify(libroGiornale.param);
   Banana.document.setScriptSettings(paramToString);
@@ -209,7 +205,6 @@ function LibroGiornale(banDocument) {
   this.init();
   this.initParam();
 }
-
 
 LibroGiornale.prototype.addPageFooter = function(report, stylesheet) {
 
@@ -324,26 +319,13 @@ LibroGiornale.prototype.addPageHeader = function(report, stylesheet) {
   stylesheet.addStyle(".right", "text-align: right;");
 }
 
-/*
-*  Filtra i dati del giornale escludendo le registrazioni dei centri di costo
- */
-LibroGiornale.prototype.filter = function(row, index, table) {
-  if (!table.periodStart || !table.periodEnd)
-    return false;
-  var currentDate = Banana.Converter.stringToDate(row.value("JDate"), "YYYY-MM-DD");
-  if (currentDate && currentDate >= table.periodStart && currentDate <= table.periodEnd) {
-    return true;
-  }
-  return false;
-}
-
 LibroGiornale.prototype.getParam = function() {
   return this.param;
 }
 
 LibroGiornale.prototype.init = function() {
   this.journal = {};
-  this.transactions = {};
+  this.transactions = [];
   this.columns = {};
   this.period = {};
   this.period.startDate="";
@@ -374,20 +356,76 @@ LibroGiornale.prototype.loadData = function() {
   //con datiContribuente.liqTipoVersamento=-1 crea un unico periodo in createPeriods()
   this.param.datiContribuente.liqTipoVersamento = -1;
   var periods = utils.createPeriods(this.param);
+  console.log(JSON.stringify(this.param));
   if (periods.length>0) {
     this.period.startDate = periods[0].startDate;
     this.period.endDate = periods[0].endDate; 
   }
   
-  if (this.period.startDate.length<=0 || this.period.endDate.length<=0)
+  if (!this.period.startDate || !this.period.endDate || this.period.startDate.length<=0 || this.period.endDate.length<=0)
     return;
 
   this.journal = this.banDocument.journal(
     this.banDocument.ORIGINTYPE_CURRENT, this.banDocument.ACCOUNTTYPE_NONE);
-  this.journal.periodStart = Banana.Converter.toDate(this.period.startDate);
-  this.journal.periodEnd =  Banana.Converter.toDate(this.period.endDate);
-  this.transactions = this.journal.findRows(this.filter);
-  this.setColumns();
+
+  //Map
+  for (i=1; i<this.journal.rows.length; i++) {
+    var transaction = this.journal.rows[i];
+    var jsonTransaction = JSON.parse(transaction.toJSON());
+    var date = Banana.Converter.toInternalDateFormat(jsonTransaction["Date"],"yyyymmdd");
+    var startDate = Banana.Converter.toInternalDateFormat(this.period.startDate,"yyyy-mm-dd");
+    var endDate =Banana.Converter.toInternalDateFormat(this.period.endDate,"yyyy-mm-dd");
+    if (date.length>0 && date >= startDate  && date <= endDate) {
+      var mappedTransaction = this.mapTransaction(transaction);
+      mappedTransaction['_RowNr'].value = i;
+      this.transactions.push( mappedTransaction);
+    }
+  }
+
+  //Sort per data
+  if (this.param.colonnaOrdinamento == "DataDocumento")
+    this.transactions.sort(this.sortByDateDocument);  
+  else
+    this.transactions.sort(this.sortByDate);
+
+}
+
+LibroGiornale.prototype.mapTransaction = function(element) {
+  var mappedLine = {};
+
+  var headers = [
+    {'name' : 'Date', 'title' : 'Data', 'type' : 'date'},
+    {'name' : 'Doc', 'title' : 'Doc', 'type' : 'text'},
+    {'name' : 'DateDocument', 'title' : 'Data Doc', 'type' : 'date'},
+    {'name' : 'JAccount', 'title' : 'N. conto', 'type' : 'text'},
+    {'name' : 'JAccountDescription', 'title' : 'Des. conto', 'type' : 'text'},
+    {'name' : 'JDebitAmount', 'title' : 'Importo dare', 'type' : 'amount'},
+    {'name' : 'JCreditAmount', 'title' : 'Importo avere', 'type' : 'amount'},
+    {'name' : 'Description', 'title' : 'Des. movimento', 'type' : 'text'},
+    {'name' : 'JBalance', 'title' : 'Saldo', 'type' : 'amount'},
+    {'name' : 'JRowOrigin', 'title' : 'JRowOrigin', 'type' : 'text'},
+  ];
+
+  for (var i = 0; i < headers.length; i++) {
+    var header = headers[i];
+    mappedLine[header.name] = {};
+    if (element.value(header.name) && element.value(header.name).length>0) {
+      mappedLine[header.name].value = element.value(header.name);
+    }
+    else {
+      mappedLine[header.name].value = "";
+    }
+    mappedLine[header.name].title = header.title;
+    mappedLine[header.name].type = header.type;
+  }
+
+  //aggiunge un campo progressivo per mantenere il sort iniziale delle righe
+  mappedLine['_RowNr'] = {};
+  mappedLine['_RowNr'].value='';
+  mappedLine['_RowNr'].title='_RowNr';
+  mappedLine['_RowNr'].type='amount';
+  
+  return mappedLine;
 }
 
 LibroGiornale.prototype.printDocument = function(report, stylesheet) {
@@ -395,84 +433,28 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
   this.addPageFooter(report, stylesheet);
   this.setStyle(report, stylesheet);
   
-  //Table
+  //Table header
   var table = report.addTable("tableJournal");
   var headerRow = table.getHeader().addRow();
-  for (var i in this.columns) {
-    //console.log(JSON.stringify(this.columns[i]));
-    var columnTitle = this.columns[i].title;
-    headerRow.addCell(columnTitle);
-  }
-
-  // Print data
-  for (var i in this.transactions) {
-    var jsonObj = this.transactions[i];
-    console.log(JSON.stringify(jsonObj));
-    var row = table.addRow();
-    for (var j in this.columns) {
-      var columnName = this.columns[j].name;
-      var columnType = this.columns[j].type;
-      var content = jsonObj.value(columnName);
-      if (columnType == "date")
-        content = Banana.Converter.toLocaleDateFormat(content, "dd/mm/yy")
-      row.addCell(content, columnType);
+  if (this.transactions.length>0) {
+    for (var column in this.transactions[0]) {
+      //console.log(JSON.stringify(column));
+      var columnTitle = this.transactions[0][column].title;
+      var columnType = this.transactions[0][column].type;
+      headerRow.addCell(columnTitle, columnType);
     }
   }
-}
-
-LibroGiornale.prototype.setColumns = function() {
-  this.columns = [];
-  var column = {};
-  column.name = "IT_NoProgressivo";
-  column.title = "N.Prog.";
-  column.type = "description";
-  this.columns.push(column);
-  var column = {};
-  column.name = "Date";
-  column.title = "Data reg.";
-  column.type = "date";
-  this.columns.push(column);
-  var column = {};
-  column.name = "Doc";
-  column.title = column.name;
-  column.type = "description";
-  this.columns.push(column);
-  var column = {};
-  column.name = "DateDocument";
-  column.title = "Data Doc";
-  column.type = "date";
-  this.columns.push(column);
-  var column = {};
-  column.name = "JAccount";
-  column.title = "N. conto";
-  column.type = "description";
-  this.columns.push(column);
-  var column = {};
-  column.name = "JAccountDescription";
-  column.title = "Des. conto";
-  column.type = "description";
-  this.columns.push(column);
-  var column = {};
-  column.name = "JDebitAmount";
-  column.title = "Importo dare";
-  column.type = "amount";
-  this.columns.push(column);
-  var column = {};
-  column.name = "JCreditAmount";
-  column.title = "Importo avere";
-  column.type = "amount";
-  this.columns.push(column);
-  var column = {};
-  column.name = "Description";
-  column.title = "Des. movimento";
-  column.type = "description";
-  this.columns.push(column);
-  var column = {};
-  column.name = "JBalance";
-  column.title = "Saldo";
-  column.type = "amount";
-  this.columns.push(column);
   
+  // Print data
+  for (var i = 0; i < this.transactions.length; i++) {
+    var row = table.addRow();
+    var transaction = this.transactions[i];
+    for (var column in transaction) {
+      var columnValue = transaction[column].value;
+      var columnType = transaction[column].type;
+      row.addCell(columnValue, columnType);
+    }
+  }
 }
 
 LibroGiornale.prototype.setParam = function(param) {
@@ -506,6 +488,34 @@ LibroGiornale.prototype.setStyle = function(report, stylesheet) {
   
 }
 
+LibroGiornale.prototype.sortByDate = function(a, b) {
+  if (a["Date"].value > b["Date"].value) {
+    return 1;
+  } else if (a["Date"].value < b["Date"].value){
+    return -1;
+  } else {
+    if (a["_RowNr"].value > b["_RowNr"].value) {
+      return 1;
+    } else if (a["_RowNr"].value < b["_RowNr"].value)
+      return -1;
+  }
+  return 0;
+}
+
+LibroGiornale.prototype.sortByDateDocument = function(a, b) {
+  if (a["DateDocument"].value > b["DateDocument"].value) {
+    return 1;
+  } else if (a["DateDocument"].value < b["DateDocument"].value){
+    return -1;
+  } else {
+    if (a["_RowNr"].value > b["_RowNr"].value) {
+      return 1;
+    } else if (a["_RowNr"].value < b["_RowNr"].value)
+      return -1;
+  }
+  return 0;
+}
+
 LibroGiornale.prototype.verifyParam = function() {
 
   if (!this.param.colonnaOrdinamento)
@@ -526,3 +536,4 @@ LibroGiornale.prototype.verifyParam = function() {
   if (!this.param.periodoValoreDataAl)
     this.param.periodoValoreDataAl = '';
 }
+

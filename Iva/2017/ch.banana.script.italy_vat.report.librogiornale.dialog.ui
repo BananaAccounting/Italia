@@ -241,11 +241,6 @@
             <string>DataDocumento</string>
            </property>
           </item>
-          <item>
-           <property name="text">
-            <string>DataValuta</string>
-           </property>
-          </item>
          </widget>
         </item>
        </layout>
