@@ -95,6 +95,7 @@ function settingsDialog() {
     index = 1;
   dialog.opzioniGroupBox.ordinamentoComboBox.currentIndex = index;
   dialog.opzioniGroupBox.regsitrazioniAperturaCheckBox.checked = libroGiornale.param.aggiungiAperture;
+  dialog.opzioniGroupBox.stampaOrizzontaleCheckBox.checked = libroGiornale.param.stampaOrizzontale;
 
   //Metodi del dialogo
   dialog.checkdata = function () {
@@ -187,6 +188,7 @@ function settingsDialog() {
   
   //opzioni
   libroGiornale.param.aggiungiAperture = dialog.opzioniGroupBox.regsitrazioniAperturaCheckBox.checked;
+  libroGiornale.param.stampaOrizzontale = dialog.opzioniGroupBox.stampaOrizzontaleCheckBox.checked;
   index = parseInt(dialog.opzioniGroupBox.ordinamentoComboBox.currentIndex.toString());
   if (index == 0)
     libroGiornale.param.colonnaOrdinamento = '';
@@ -352,6 +354,7 @@ LibroGiornale.prototype.initParam = function() {
   
   this.param.colonnaOrdinamento = '';
   this.param.aggiungiAperture = false;
+  this.param.stampaOrizzontale = false;
 
   /*periodoSelezionato y=anno, q=trimestre, m=mese, c=personalizzato*/
   this.param.annoSelezionato = '';
@@ -575,7 +578,9 @@ LibroGiornale.prototype.setStyle = function(report, stylesheet) {
   if (!stylesheet) {
     stylesheet = report.newStyleSheet();
   }
-  stylesheet.addStyle("@page", "size:landscape;margin:2em;font-size: 8px; ");
+  if (this.param.stampaOrizzontale)
+    stylesheet.addStyle("@page").setAttribute("size", "landscape");
+  stylesheet.addStyle("@page", "margin:2em;font-size: 8px; ");
   stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
   stylesheet.addStyle("thead", "font-weight: bold;background-color:#eeeeee;");
   stylesheet.addStyle("td", "padding:2px;vertical-align:top;");
@@ -632,6 +637,8 @@ LibroGiornale.prototype.verifyParam = function() {
     this.param.colonnaOrdinamento = '';
   if (!this.param.aggiungiAperture)
     this.param.aggiungiAperture = false;
+  if (!this.param.stampaOrizzontale)
+    this.param.stampaOrizzontale = false;
 
   if (!this.param.annoSelezionato)
     this.param.annoSelezionato = '';
