@@ -1127,8 +1127,8 @@ Utils.prototype.createPeriods = function(param) {
     var currentPeriod = {};
     var month = parseInt(param.periodoValoreMese) + 1;
     if (month === 11 || month === 4 || month === 6 || month === 9) {
-      currentPeriod.startDate = param.annoSelezionato.toString() + zeroPad(month, 2) + "01";
-      currentPeriod.endDate = param.annoSelezionato.toString() + zeroPad(month, 2) + "30";
+      currentPeriod.startDate = param.annoSelezionato.toString() + new Utils(this.banDocument).zeroPad(month, 2) + "01";
+      currentPeriod.endDate = param.annoSelezionato.toString() + new Utils(this.banDocument).zeroPad(month, 2) + "30";
     }
     //month with 28 or 29 days
     else if (month === 2) {
@@ -1140,8 +1140,8 @@ Utils.prototype.createPeriods = function(param) {
     }
     //months with 31 days
     else {
-      currentPeriod.startDate = param.annoSelezionato.toString() + zeroPad(month, 2) + "01";
-      currentPeriod.endDate = param.annoSelezionato.toString() + zeroPad(month, 2) + "31";
+      currentPeriod.startDate = param.annoSelezionato.toString() + new Utils(this.banDocument).zeroPad(month, 2) + "01";
+      currentPeriod.endDate = param.annoSelezionato.toString() + new Utils(this.banDocument).zeroPad(month, 2) + "31";
     }
 
     //se il tipo di versamento è trimestrale avvisa che è stato selezionato un mese
@@ -1778,4 +1778,14 @@ Utils.prototype.readAccountingData = function(param) {
     param.closureYear = param.accountingClosureDate.substring(0, 4);
 
   return param;
+}
+
+/**
+* output integers with leading zeros
+*/
+Utils.prototype.zeroPad = function(num, places) {
+    if (num.toString().length > places)
+        num = 0;
+    var zero = places - num.toString().length + 1;
+    return Array(+(zero > 0 && zero)).join("0") + num;
 }

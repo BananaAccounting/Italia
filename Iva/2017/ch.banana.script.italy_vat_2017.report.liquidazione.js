@@ -123,7 +123,7 @@ function settingsDialog() {
     progressivo = 1;
   else if (liquidazione.param.outputScript==1)
     progressivo += 1;
-  progressivo = zeroPad(progressivo, 5);
+  progressivo = new Utils(this.banDocument).zeroPad(progressivo, 5);
   dialog.intestazioneGroupBox.progressivoInvioLineEdit.text = progressivo;
   dialog.intestazioneGroupBox.cfDichiaranteLineEdit.text = liquidazione.param.comunicazioneCFDichiarante;
   dialog.intestazioneGroupBox.codiceCaricaComboBox.currentIndex = liquidazione.param.comunicazioneCodiceCaricaDichiarante;
@@ -204,7 +204,7 @@ function settingsDialog() {
   progressivo = parseInt(progressivo, 10);
   if (!progressivo)
     progressivo = 1;
-  liquidazione.param.comunicazioneProgressivo = zeroPad(progressivo, 5);
+  liquidazione.param.comunicazioneProgressivo = new Utils(this.banDocument).zeroPad(progressivo, 5);
   liquidazione.param.comunicazioneCFDichiarante = dialog.intestazioneGroupBox.cfDichiaranteLineEdit.text;
   liquidazione.param.comunicazioneCodiceCaricaDichiarante = dialog.intestazioneGroupBox.codiceCaricaComboBox.currentIndex.toString();
   liquidazione.param.comunicazioneCFIntermediario = dialog.intestazioneGroupBox.cfIntermediarioLineEdit.text;
@@ -228,16 +228,6 @@ function settingsDialog() {
   var paramToString = JSON.stringify(liquidazione.param);
   Banana.document.setScriptSettings(paramToString);
   return true;
-}
-
-/**
-* output integers with leading zeros
-*/
-function zeroPad(num, places) {
-  if (num.toString().length > places)
-      num = 0;
-  var zero = places - num.toString().length + 1;
-  return Array(+(zero > 0 && zero)).join("0") + num;
 }
 
 function LiquidazionePeriodica(banDocument) {

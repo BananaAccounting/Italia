@@ -147,7 +147,7 @@ function settingsDialog() {
     progressivo = 1;
   else if (datiFatture.param.outputScript==1 || datiFatture.param.outputScript==3)
     progressivo += 1;
-  progressivo = zeroPad(progressivo, 5);
+  progressivo = new Utils(this.banDocument).zeroPad(progressivo, 5);
   dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text = progressivo;
   dialog.datiFatturaHeaderGroupBox.cfDichiaranteLineEdit.text = datiFatture.param.codicefiscaleDichiarante;
   dialog.datiFatturaHeaderGroupBox.codiceCaricaComboBox.currentIndex = datiFatture.param.codiceCarica;
@@ -221,7 +221,7 @@ function settingsDialog() {
   progressivo = parseInt(progressivo, 10);
   if (!progressivo)
     progressivo = 1;
-  datiFatture.param.progressivoInvio = zeroPad(progressivo, 5);
+  datiFatture.param.progressivoInvio = new Utils(this.banDocument).zeroPad(progressivo, 5);
   datiFatture.param.codicefiscaleDichiarante = dialog.datiFatturaHeaderGroupBox.cfDichiaranteLineEdit.text;
   datiFatture.param.codiceCarica = dialog.datiFatturaHeaderGroupBox.codiceCaricaComboBox.currentIndex.toString();
   var bloccoId = dialog.bloccoGroupBox.bloccoComboBox.currentIndex.toString();
@@ -245,16 +245,6 @@ function settingsDialog() {
   var paramToString = JSON.stringify(datiFatture.param);
   Banana.document.setScriptSettings(paramToString);
   return true;
-}
-
-/**
-* output integers with leading zeros
-*/
-function zeroPad(num, places) {
-    if (num.toString().length > places)
-        num = 0;
-    var zero = places - num.toString().length + 1;
-    return Array(+(zero > 0 && zero)).join("0") + num;
 }
 
 function DatiFatture(banDocument) {
