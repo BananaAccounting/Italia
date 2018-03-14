@@ -287,7 +287,8 @@ LiquidazionePeriodica.prototype.addPageHeader = function(report, stylesheet) {
   //cell_right
   var cell_right = row.addCell("", "header_cell_right");
   cell_right.addParagraph("Comunicazione periodica IVA", "right");
-  cell_right.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()), "right");
+  var pDate = cell_right.addParagraph(Banana.Converter.toLocaleDateFormat(new Date()), "right");
+  pDate.excludeFromTest();
   cell_right.addParagraph(" Pagina ", "right").addFieldPageNr();
  
   //add style
