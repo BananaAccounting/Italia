@@ -17,11 +17,12 @@
 // @description = Libro giornale...
 // @doctype = 100.110;110.110;130.110;100.130
 // @encoding = utf-8
+// @includejs = ch.banana.script.italy_vat_2017.errors.js
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2018-03-07
+// @pubdate = 2018-03-16
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -43,7 +44,6 @@ function exec() {
   var libroGiornale = new LibroGiornale(Banana.document);
   libroGiornale.setParam(param);
   libroGiornale.loadData();
-
   var report = Banana.Report.newReport("Libro giornale");
   var stylesheet = Banana.Report.newStyleSheet(); 
   libroGiornale.printDocument(report, stylesheet);
@@ -60,8 +60,7 @@ function settingsDialog() {
   
   var accountingData = {};
   accountingData = new Utils(Banana.document).readAccountingData(accountingData);
-  if (!libroGiornale.param.annoSelezionato || libroGiornale.param.annoSelezionato.length<=0)
-    libroGiornale.param.annoSelezionato = accountingData.openingYear;
+  libroGiornale.param.annoSelezionato = accountingData.openingYear;
   
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat.report.librogiornale.dialog.ui");
   
@@ -76,6 +75,8 @@ function settingsDialog() {
   else
     dialog.periodoGroupBox.annoRadioButton.checked = true;
   dialog.periodoGroupBox.annoLabel.text = libroGiornale.param.annoSelezionato;
+  if (accountingData.openingYear != accountingData.closureYear)
+    dialog.periodoGroupBox.annoLabel.text += "/" + accountingData.closureYear;
   dialog.periodoGroupBox.trimestreComboBox.currentIndex = parseInt(libroGiornale.param.periodoValoreTrimestre);
   dialog.periodoGroupBox.meseComboBox.currentIndex = parseInt(libroGiornale.param.periodoValoreMese);
   var fromDate = libroGiornale.param.periodoDataDal;
@@ -190,6 +191,30 @@ function settingsDialog() {
   libroGiornale.param.periodoValoreMese = index.toString();
   libroGiornale.param.periodoDataDal = dialog.periodoGroupBox.dalDateEdit.text < 10 ? "0" + dialog.periodoGroupBox.dalDateEdit.text : dialog.periodoGroupBox.dalDateEdit.text;
   libroGiornale.param.periodoDataAl = dialog.periodoGroupBox.alDateEdit.text < 10 ? "0" + dialog.periodoGroupBox.alDateEdit.text : dialog.periodoGroupBox.alDateEdit.text;
+  //Reimposta l'anno per contabilità che non iniziano al 1. gennaio
+  if (accountingData.openingYear != accountingData.closureYear &&
+    (libroGiornale.param.periodoSelezionato == 'q' || libroGiornale.param.periodoSelezionato == 'm')) {
+    libroGiornale.param.datiContribuente.liqTipoVersamento = -1;
+    var periods = new Utils(Banana.document).createPeriods(libroGiornale.param);
+    if (periods.length>0) {
+      var accountingStartDate = Banana.Converter.toInternalDateFormat(accountingData.accountingOpeningDate,"yyyy-mm-dd");
+      var periodStartDate = Banana.Converter.toInternalDateFormat(periods[0].startDate,"yyyymmdd");
+      if (periodStartDate < accountingStartDate)
+        libroGiornale.param.annoSelezionato = accountingData.closureYear;
+    }
+    /*var startDate = Banana.Converter.toInternalDateFormat(accountingData.accountingOpeningDate,"yyyy-mm-dd");
+    var endDate =Banana.Converter.toInternalDateFormat(accountingData.accountingClosureDate,"yyyy-mm-dd");
+    var newStartDate = Banana.Converter.stringToDate(accountingData.accountingOpeningDate, "YYYY-MM-DD");
+    var days = 0;
+    if (libroGiornale.param.periodoSelezionato == 'q')
+      days = parseInt(libroGiornale.param.periodoValoreTrimestre)*90+1;
+    else if (libroGiornale.param.periodoSelezionato == 'm')
+      days = parseInt(libroGiornale.param.periodoValoreMese)*30+1;
+    newStartDate.setDate(newStartDate.getDate() + days);
+    console.log("new start date " + newStartDate.toString());
+    if (newStartDate < startDate)
+      libroGiornale.param.annoSelezionato = accountingData.closureYear*/
+  }
   
   //opzioni
   libroGiornale.param.aggiungiAperture = dialog.opzioniGroupBox.regsitrazioniAperturaCheckBox.checked;
@@ -401,6 +426,7 @@ LibroGiornale.prototype.loadData = function() {
     //con datiContribuente.liqTipoVersamento=-1 crea un unico periodo in createPeriods()
     this.param.datiContribuente.liqTipoVersamento = -1;
     var periods = utils.createPeriods(this.param);
+    //console.log(JSON.stringify(this.param));
     if (periods.length>0) {
       this.period.startDate = periods[0].startDate;
       this.period.endDate = periods[0].endDate; 
@@ -408,42 +434,46 @@ LibroGiornale.prototype.loadData = function() {
   }
   if (!this.period.startDate || !this.period.endDate || this.period.startDate.length<=0 || this.period.endDate.length<=0)
     return;
-
-  //journal
+  
+  //lettura del giornale e caricamento dei dati in transactions
   this.journal = this.banDocument.journal(
     this.banDocument.ORIGINTYPE_CURRENT, this.banDocument.ACCOUNTTYPE_NONE);
 
-  //Map in transactions
+  Banana.application.progressBar.start(this.journal.rowCount);
   var inizioNProgr = parseInt(this.param.inizioNumProgressiva);
   if (!inizioNProgr || inizioNProgr<=0)
     inizioNProgr=1;
-  for (i=0; i<this.journal.rows.length; i++) {
-    var transaction = this.journal.rows[i];
-    var jsonTransaction = JSON.parse(transaction.toJSON());
-
-    //only transactions with valid date
-    if (jsonTransaction["JDate"].length<=0)
-      continue;
-    
-    //opening
-    var operationType = jsonTransaction["JOperationType"];
+  for (i=0; i<this.journal.rowCount; i++) {
+    var tRow = this.journal.row(i);
+    //include le aperture in base ai parametri
+    var operationType = tRow.value('JOperationType');
     if (!this.param.aggiungiAperture && parseInt(operationType)==1) {
+      if (!Banana.application.progressBar.step())
+        break;
       continue;
     }
-
-    var mappedTransaction = this.mapTransaction(transaction);
+    //salva in transactions    
+    var mappedTransaction = this.mapTransaction(tRow);
     mappedTransaction['NoProgr'].value = inizioNProgr;
     this.transactions.push( mappedTransaction);
-    console.log(mappedTransaction['Description'].value + " " + mappedTransaction['NoProgr'].value);
+    //Versione 9.02 setText() non definito
+    //Banana.application.progressBar.setText("row " + i + " " + mappedTransaction['Description'].value + " " + mappedTransaction['NoProgr'].value);
     inizioNProgr += 1;
+    if (!Banana.application.progressBar.step())
+      break;
   }
+  Banana.application.progressBar.finish();
 
   //Sort per data
-  /*if (this.param.colonnaOrdinamento == "DataDocumento")
+  if (this.param.colonnaOrdinamento == "DataDocumento")
     this.transactions.sort(this.sortByDateDocument);  
   else
-    this.transactions.sort(this.sortByDate);*/
-
+    this.transactions.sort(this.sortByDate);
+  
+  //Reimposta il numero progressivo
+  for (var i = 0; i < this.transactions.length; i++) {
+    this.transactions[i]["NoProgr"].value = i+1;
+  }
 }
 
 LibroGiornale.prototype.mapTransaction = function(element) {
@@ -468,12 +498,6 @@ LibroGiornale.prototype.mapTransaction = function(element) {
   if (mappedLine['Description'].value.length<=0)
     mappedLine['Description'].value = element.value("JDescription");
   
-  //aggiunge un campo progressivo per mantenere il sort iniziale delle righe
-  /*mappedLine['_RowNr'] = {};
-  mappedLine['_RowNr'].value='';
-  mappedLine['_RowNr'].title='_RowNr';
-  mappedLine['_RowNr'].type='amount';*/
-  
   return mappedLine;
 }
 
@@ -485,7 +509,7 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
   //Print debug columns starting with _
   var excludeDebugColumns=true;
   
-  //Table header
+  //Intestazione tabella
   var headers = this.getFields();
   var table = report.addTable("tableJournal");
   var headerRow = table.getHeader().addRow();
@@ -496,17 +520,21 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
     headerRow.addCell(header.title, "center");
   }
   
-  //Sum Totals
+  //Calcolo totali apertura e chiusura
   var totalsOpening={};
   var totalsFinal={};
+  var totalBalance = 0;
   var startDate = Banana.Converter.toInternalDateFormat(this.period.startDate,"yyyy-mm-dd");
   var endDate =Banana.Converter.toInternalDateFormat(this.period.endDate,"yyyy-mm-dd");
   //stampa la riga se è nel periodo altrimenti memorizza il totale inizio periodo
   for (var i = 0; i < this.transactions.length; i++) {
     var transaction = this.transactions[i];
     var date = Banana.Converter.toInternalDateFormat(transaction["Date"].value,"yyyymmdd");
+    totalBalance = Banana.SDecimal.add(totalBalance, transaction["JDebitAmount"].value);
+    totalBalance = Banana.SDecimal.subtract(totalBalance, transaction["JCreditAmount"].value);
+    transaction["JBalance"].value = totalBalance;
     for (var column in transaction) {
-      if (transaction[column].type == "amount") {
+      if (transaction[column].type == "amount" && column != "JBalance") {
         if (date >= startDate  && date <= endDate) {
           totalsFinal[column] = Banana.SDecimal.add(transaction[column].value, totalsFinal[column]);
         }
@@ -517,15 +545,15 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
     }
   }
   
-  //Print totalsOpening
-  var printTotal=false;
+  //Stampa prima riga riporto saldi periodo precedente
+  var printCarryForward=false;
   for (var column in totalsOpening) {
     if (!Banana.SDecimal.isZero(column)) {
-      printTotal=true;
+      printCarryForward=true;
       break;
     }
   }
-  if (printTotal) {
+  if (printCarryForward) {
     var row = table.addRow();
     for (var i = 0; i < headers.length; i++) {
       if (headers[i].title.startsWith("_") && excludeDebugColumns)
@@ -543,8 +571,7 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
     }
   }
 
-  //Print rows
-  var totalBalance=0;
+  //Stampa movimenti
   var probableIndexGroup=0;
   var previousProbableIndexGroup = 0;
   var className="even";
@@ -564,11 +591,6 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
         if (headers[j].title.startsWith("_") && excludeDebugColumns)
            continue;
         var column = headers[j].name;
-        if (column == "JBalance") {
-          totalBalance = Banana.SDecimal.add(totalBalance, transaction["JDebitAmount"].value);
-          totalBalance = Banana.SDecimal.subtract(totalBalance, transaction["JCreditAmount"].value);
-          transaction["JBalance"].value = totalBalance;
-        }
         var columnValue = transaction[column].value;
         var columnType = transaction[column].type;
         if (columnType == "amount") {
@@ -583,7 +605,7 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
     previousProbableIndexGroup = probableIndexGroup;
   }
   
-  //Print totalsFinal
+  //Stampa riga di totale
   var row = table.addRow();
   for (var i = 0; i < headers.length; i++) {
     if (headers[i].title.startsWith("_") && excludeDebugColumns)
@@ -593,6 +615,11 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
       text = "Totale";
     if (headers[i].type == "amount") {
       var columnValue = Banana.Converter.toLocaleNumberFormat(totalsFinal[headers[i].name]);
+      if (headers[i].name == "JBalance") {
+        columnValue = totalsFinal["JDebitAmount"];
+        columnValue = Banana.SDecimal.subtract(columnValue, totalsFinal["JCreditAmount"]);
+        columnValue = Banana.Converter.toLocaleNumberFormat(columnValue);
+      }
       row.addCell(columnValue, headers[i].type + " total");
     }
     else {
@@ -600,7 +627,7 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
     }
   }
 
-  //Print totalsGlobal
+  //Stampa riga totale globale
   var row = table.addRow();
   for (var i = 0; i < headers.length; i++) {
     if (headers[i].title.startsWith("_") && excludeDebugColumns)
@@ -610,6 +637,11 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
       text = "Totale complessivo";
     if (headers[i].type == "amount") {
       var amount = Banana.SDecimal.add(totalsOpening[headers[i].name], totalsFinal[headers[i].name]);
+      if (headers[i].name == "JBalance") {
+        amount = Banana.SDecimal.add(totalsOpening["JDebitAmount"], totalsFinal["JDebitAmount"]);
+        amount = Banana.SDecimal.subtract(amount, totalsOpening["JCreditAmount"]);
+        amount = Banana.SDecimal.subtract(amount, totalsFinal["JCreditAmount"]);
+      }
       var columnValue = Banana.Converter.toLocaleNumberFormat(amount);
       row.addCell(columnValue, headers[i].type + " total");
     }
