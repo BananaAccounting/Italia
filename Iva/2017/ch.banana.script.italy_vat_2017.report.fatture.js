@@ -1,4 +1,4 @@
-// Copyright [2017] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2018] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-03-06
+// @pubdate = 2018-03-16
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -484,10 +484,18 @@ DatiFatture.prototype.createInstanceBlocco2 = function(accountObj) {
     xbrlCessionarioCommittente =  xml_createElementWithValidation("IdentificativiFiscali",xbrlIdentificativiFiscali,0);
 
     //Se non è presente la partita IVA (facoltativa) il codice fiscale è obbligatorio
-    if (accountObj["VatNumber"].length<=0 && accountObj["FiscalNumber"].length<=0 && countryCode == "IT") {
-      var msg = getErrorMessage(ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE);
-      msg = msg.replace("%1", msgContext );
-      this.banDocument.addMessage( msg, ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE);
+    if (accountObj["VatNumber"].length<=0 && accountObj["FiscalNumber"].length<=0) {
+      if (countryCode == "IT") {
+        var msg = getErrorMessage(ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE);
+        msg = msg.replace("%1", msgContext );
+        this.banDocument.addMessage( msg, ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE);
+      }
+      else {
+        //Per l'estero se non si conosce la partita IVA è necessario sostituirla con 11 nove: 99999999999
+        var msg = getErrorMessage(ID_ERR_DATIFATTURE_MANCA_PARTITAIVA);
+        msg = msg.replace("%1", msgContext );
+        this.banDocument.addMessage( msg, ID_ERR_DATIFATTURE_MANCA_PARTITAIVA);
+      }
     }
 
     //2.2.2   <AltriDatiIdentificativi>
@@ -1224,6 +1232,7 @@ DatiFatture.prototype.saveData = function(output) {
   fileName = Banana.IO.getSaveFileName("Save as", fileName, "XML file (*.xml);;All files (*)")
   if (fileName.length) {
     var file = Banana.IO.getLocalFile(fileName)
+    file.codecName = "UTF-8";
     file.write(output);
     if (file.errorString) {
       Banana.Ui.showInformation("Write error", file.errorString);
