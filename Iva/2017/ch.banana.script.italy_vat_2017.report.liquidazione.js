@@ -1,4 +1,4 @@
-// Copyright [2017] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2018] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-03-06
+// @pubdate = 2018-03-16
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -1056,6 +1056,7 @@ LiquidazionePeriodica.prototype.saveData = function(output) {
   fileName = Banana.IO.getSaveFileName("Save as", fileName, "XML file (*.xml);;All files (*)")
   if (fileName.length) {
     var file = Banana.IO.getLocalFile(fileName)
+    file.codecName = "UTF-8";
     file.write(output);
     if (file.errorString) {
       Banana.Ui.showInformation("Write error", file.errorString);

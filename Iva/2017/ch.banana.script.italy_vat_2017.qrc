@@ -1,16 +1,18 @@
 <!DOCTYPE RCC><RCC version="1.0">
  <qresource>
-    <file>ch.banana.script.italy_vat.daticontribuente.js</file>
     <file>ch.banana.script.italy_vat.daticontribuente.dialog.ui</file>
+    <file>ch.banana.script.italy_vat.daticontribuente.js</file>
+    <file>ch.banana.script.italy_vat.report.librogiornale.dialog.ui</file>
+    <file>ch.banana.script.italy_vat.report.librogiornale.js</file>
     <file>ch.banana.script.italy_vat_2017.errors.js</file>
     <file>ch.banana.script.italy_vat_2017.journal.js</file>
-    <file>ch.banana.script.italy_vat_2017.report.fatture.js</file>
-    <file>ch.banana.script.italy_vat_2017.report.fatture.dialog.ui</file>
-    <file>ch.banana.script.italy_vat_2017.report.liquidazione.js</file>
-    <file>ch.banana.script.italy_vat_2017.report.liquidazione.dialog.ui</file>
-    <file>ch.banana.script.italy_vat_2017.report.registri.js</file>
-    <file>ch.banana.script.italy_vat_2017.report.registri.dialog.ui</file>
-    <file>ch.banana.script.italy_vat_2017.xml.js</file>
     <file>ch.banana.script.italy_vat_2017.manifest.json</file>
+    <file>ch.banana.script.italy_vat_2017.report.fatture.dialog.ui</file>
+    <file>ch.banana.script.italy_vat_2017.report.fatture.js</file>
+    <file>ch.banana.script.italy_vat_2017.report.liquidazione.dialog.ui</file>
+    <file>ch.banana.script.italy_vat_2017.report.liquidazione.js</file>
+    <file>ch.banana.script.italy_vat_2017.report.registri.dialog.ui</file>
+    <file>ch.banana.script.italy_vat_2017.report.registri.js</file>
+    <file>ch.banana.script.italy_vat_2017.xml.js</file>
  </qresource>
 </RCC>
