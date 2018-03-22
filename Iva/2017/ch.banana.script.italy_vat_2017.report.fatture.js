@@ -34,6 +34,16 @@ function exec(inData) {
   if (!Banana.document)
     return "@Cancel";
 
+  var progressBar = Banana.application.progressBar;
+  if (typeof(Banana.application.progressBar.setText) === 'undefined') {
+     Banana.application.progressBar.setText = function(text) {
+        return;
+     }
+  }
+  if (typeof(progressBar.showDetails) === 'undefined') {
+     Banana.application.progressBar.showDetails = false;
+  }
+
   // Check version
   if (typeof (Banana.document.journalCustomersSuppliers) === 'undefined') {
     var msg = getErrorMessage(ID_ERR_VERSIONE);
@@ -62,6 +72,10 @@ function exec(inData) {
     }
   }
 
+  progressBar.start(3);
+  progressBar.showDetails = true;
+  progressBar.setText("Dati fatture");
+
   var param = {};
   if (inData.length>0) {
     param = JSON.parse(inData);
@@ -77,15 +91,26 @@ function exec(inData) {
   datiFatture.loadData();
   if (datiFatture.param.outputScript==3) {
     //xml file di annullamento
+    if (!progressBar.step())
+      return;
+    progressBar.setText("Export");
     var output = datiFatture.createInstanceAnnullamento();
     output = formatXml(output);
     datiFatture.saveData(output);
     return;
   }
 
+  if (!progressBar.step())
+    return;
+
+  progressBar.setText("Istanze");
   var output = datiFatture.createInstance();
   
+  if (!progressBar.step())
+    return;
+
   if (datiFatture.param.outputScript==0 && output != "@Cancel") {
+    progressBar.setText("Report");
     var report = Banana.Report.newReport("Dati delle fatture emesse e ricevute");
     var stylesheet = Banana.Report.newStyleSheet(); 
     datiFatture.printDocument(report, stylesheet);
@@ -97,10 +122,13 @@ function exec(inData) {
   }
   else if (datiFatture.param.outputScript==1 && output != "@Cancel") {
     //xml file
+    progressBar.setText("Export");
     output = formatXml(output);
     datiFatture.saveData(output);
     return;
   }
+
+  progressBar.finish();
 
   //return xml content
   return output;
@@ -765,18 +793,30 @@ DatiFatture.prototype.isValidRow = function(row) {
 }
 
 DatiFatture.prototype.loadData = function() {
+  var progressBar = Banana.application.progressBar;
+  progressBar.start(4);
+
   //per il momento c'è un unico periodo non controlla il tipo di versamento mensile o trimestrale
   var utils = new Utils(this.banDocument);
   this.param = utils.readAccountingData(this.param);
   this.param.datiContribuente = new DatiContribuente(this.banDocument).loadParam();
   this.param.datiContribuente.liqTipoVersamento = -1;
+  if (!progressBar.step())
+     return;
+  progressBar.setText("Giornale");
   var journal = new Journal(this.banDocument);
   journal.load();
   this.param.data = {};  
+  if (!progressBar.step())
+     return;
+  progressBar.setText("Periodi");
   var periods = utils.createPeriods(this.param);
   if (periods.length>0)
     this.param.data = journal.getPeriod(periods[0].startDate, periods[0].endDate); 
 
+  if (!progressBar.step())
+    return;
+  progressBar.setText("Gruppi");
   if (this.param.blocco == 'DTE') {
     //avvisa se il gruppo clienti non è impostato
     if (this.param.fileInfo["CustomersGroup"].length<=0) {
@@ -784,47 +824,64 @@ DatiFatture.prototype.loadData = function() {
       this.banDocument.addMessage( msg, ID_ERR_GRUPPO_CLIENTI_MANCANTE);
     }
     var checkedCustomers = {};
+    progressBar.start(this.param.data.customers.length);
+    progressBar.setText("DTE");
     for (var i in this.param.data.customers) {
       var checkedRows = [];
       var accountObj = this.param.data.customers[i];
       if (accountObj && accountObj.transactions) {
-      for (var j=0; j<accountObj.transactions.length;j++) {
-        var isValid = this.isValidRow(accountObj.transactions[j]);
-        if (!isValid)
-          continue;
-        checkedRows.push(accountObj.transactions[j]);
-      }
+        progressBar.start(accountObj.transactions.length + 1);
+        for (var j=0; j<accountObj.transactions.length;j++) {
+          if (!progressBar.step())
+            return;
+          var isValid = this.isValidRow(accountObj.transactions[j]);
+          if (!isValid)
+            continue;
+          checkedRows.push(accountObj.transactions[j]);
+        }
+        progressBar.finish();
       }
       if (checkedRows.length>0) {
         accountObj.transactions = checkedRows;
         checkedCustomers[i] = accountObj;
       }
     }
+    progressBar.finish();
     this.param.data.customers = checkedCustomers;
-  }
-  else if (this.param.blocco == 'DTR') {
+
+  }  else if (this.param.blocco == 'DTR') {
     //avvisa se il gruppo fornitori non è impostato
     if (this.param.fileInfo["SuppliersGroup"].length<=0) {
       var msg = getErrorMessage(ID_ERR_GRUPPO_FORNITORI_MANCANTE);
       this.banDocument.addMessage( msg, ID_ERR_GRUPPO_FORNITORI_MANCANTE);
     }
     var checkedSuppliers = {};
+    progressBar.start(this.param.data.suppliers.length);
+    progressBar.setText("DTR");
     for (var i in this.param.data.suppliers) {
       var checkedRows = [];
       var accountObj = this.param.data.suppliers[i];
+      progressBar.start(accountObj.transactions.length + 1);
       for (var j in accountObj.transactions) {
+        if (!progressBar.step())
+          return;
         var isValid = this.isValidRow(accountObj.transactions[j]);
         if (!isValid)
           continue;
         checkedRows.push(accountObj.transactions[j]);
       }
+      progressBar.finish();
       if (checkedRows.length>0) {
         accountObj.transactions = checkedRows;
         checkedSuppliers[i] = accountObj;
       }
+      if (!progressBar.step())
+        return;
     }
+    progressBar.finish();
     this.param.data.suppliers = checkedSuppliers;
   }
+  progressBar.finish();
 }
 
 DatiFatture.prototype.printDocument = function(report, stylesheet) {

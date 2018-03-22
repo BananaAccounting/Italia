@@ -119,6 +119,10 @@ Journal.prototype.load = function() {
   if (!journal || !filteredRows || !tableVatCodes)
     return;
 
+  var progressBar = Banana.application.progressBar;
+  progressBar.start(3);
+  progressBar.setText("Corrispettivi");
+
   //Conti corrispettivi
   var mapCorrispettivi = new Utils(this.banDocument).getColumnsCorrispettivi();
   
@@ -131,7 +135,12 @@ Journal.prototype.load = function() {
 
   //Riprende l'elenco clienti/fornitori in this.customers e this.suppliers
   //Solamente righe con JInvoiceRowCustomerSupplier=1 (cliente) or JInvoiceRowCustomerSupplier=2 (fornitore)
+  progressBar.setText("Elenco clienti/fornitori");
+  progressBar.start(filteredRows.length + 1);
   for (var i = 0; i < filteredRows.length; i++) {
+    if (!progressBar.step())
+      return;
+    progressBar.setText(i.toString());
     var isCustomer=false;
     var isSupplier=false;
     if (filteredRows[i].value("JInvoiceRowCustomerSupplier")==1)
@@ -154,9 +163,15 @@ Journal.prototype.load = function() {
       }
     }
   }
+  progressBar.finish();
 
   //Riprende le registrazioni IVA in this.transactions
+  progressBar.setText("Registrazioni iva");
+  progressBar.start(filteredRows.length + 1);
   for (var i = 0; i < filteredRows.length; i++) {
+    if (!progressBar.step())
+      return;
+    progressBar.setText(i.toString());
     //Solo operazioni IVA
     var isVatOperation = filteredRows[i].value("JVatIsVatOperation");
     if (!isVatOperation)
@@ -674,7 +689,9 @@ EsibilitaIva
     this.transactionsTest.push(jsonObj);*/
     this.transactions.push(jsonLine);
   }
- 
+  progressBar.finish();
+
+  progressBar.finish();
 }
 
 Journal.prototype.setColumns = function(journalColumns) {

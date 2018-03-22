@@ -236,7 +236,6 @@ function DatiContribuente(banDocument) {
   this.initParam();
 }
 
-
 /*
  * Ritorna il conto che ha come descrizione accountDes
  * Serve per proporre i conti corrispettivi predefiniti 
@@ -248,22 +247,31 @@ DatiContribuente.prototype.matchContoCorrispettivi = function(accountDes) {
 
   var search = accountDes.toLowerCase();
 
-  var table = this.banDocument.table('Accounts');
-  if (table) {
-    for (var i = 0; i < table.rowCount; i++) {
-      var tRow = table.row(i);
-      var accountId = tRow.value("Account");
-      if (accountId.length<=0)
-        continue;
-      var currentDes = tRow.value("Description").toLowerCase();
-      if (currentDes.length<=0)
-        continue;
-      currentDes = currentDes.replace("  ", " ");
-      if (currentDes.indexOf(search)>=0)
-        return accountId;
+  var returnValue = '';
+    var table = this.banDocument.table('Accounts');
+    if (table) {
+      var progressBar = Banana.application.progressBar;
+      progressBar.start(table.rowCount + 1);
+      for (var i = 0; i < table.rowCount; i++) {
+        if (!progressBar.step(i.toString()))
+           return;
+        var currentDes = table.value(i, "Description").toLowerCase();
+        if (currentDes.length <= 0)
+          continue;
+        if (currentDes.indexOf("  ") >= 0)
+          currentDes = currentDes.replace("  ", " ");
+        if (currentDes.indexOf(search) >= 0) {
+          var accountId = table.value(i, "Account");
+        if (accountId.length <= 0)
+          continue;
+        returnValue = accountId;
+        break;
+      }
     }
   }
-  return '';
+
+  progressBar.finish();
+  return returnValue;
 }
 
 DatiContribuente.prototype.getParam = function() {
@@ -322,6 +330,8 @@ DatiContribuente.prototype.setParam = function(param) {
 }
 
 DatiContribuente.prototype.verifyParam = function() {
+  var progressBar = Banana.application.progressBar;
+  progressBar.start("Dati base", 8);
   if (!this.param.tipoContribuente)
     this.param.tipoContribuente = 0;
   if (!this.param.codiceFiscale)
@@ -360,19 +370,34 @@ DatiContribuente.prototype.verifyParam = function() {
     this.param.liqPercInteressi = '';
   if (!this.param.liqPercProrata)
     this.param.liqPercProrata = '';
+  if (!progressBar.step()) return;
+  progressBar.setText("Fatture normali");
   if (!this.param.contoFattureNormali)
     this.param.contoFattureNormali = this.matchContoCorrispettivi("fatture normali");
+  if (!progressBar.step()) return;
+  progressBar.setText("Fatture fiscali");
   if (!this.param.contoFattureFiscali)
     this.param.contoFattureFiscali = this.matchContoCorrispettivi("fatture fiscali");
+  if (!progressBar.step()) return;
+  progressBar.setText("Fatture scontrini");
   if (!this.param.contoFattureScontrini)
     this.param.contoFattureScontrini = this.matchContoCorrispettivi("fatture scontrini");
+  if (!progressBar.step()) return;
+  progressBar.setText("Fatture differite");
   if (!this.param.contoFattureDifferite)
     this.param.contoFattureDifferite = this.matchContoCorrispettivi("fatture differite");
+  if (!progressBar.step()) return;
+  progressBar.setText("Corrispettivi normali");
   if (!this.param.contoCorrispettiviNormali)
     this.param.contoCorrispettiviNormali = this.matchContoCorrispettivi("corrispettivi normali");
+  if (!progressBar.step()) return;
+  progressBar.setText("Corrispettivi scontrini");
   if (!this.param.contoCorrispettiviScontrini)
     this.param.contoCorrispettiviScontrini = this.matchContoCorrispettivi("corrispettivi scontrini");
+  if (!progressBar.step()) return;
+  progressBar.setText("Ricevute fiscali");
   if (!this.param.contoRicevuteFiscali)
     this.param.contoRicevuteFiscali = this.matchContoCorrispettivi("ricevute fiscali");
+  progressBar.finish();
 }
 
