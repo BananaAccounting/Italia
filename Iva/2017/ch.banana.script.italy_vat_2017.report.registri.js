@@ -1,4 +1,4 @@
-// Copyright [2017] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2018] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,14 +23,14 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-03-06
+// @pubdate = 2018-03-23
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
 
 var debug = false;
 
-function exec(inData) {
+function exec(inData, options) {
 
   if (!Banana.document)
     return "@Cancel";
@@ -46,6 +46,9 @@ function exec(inData) {
   var param = {};
   if (inData.length>0) {
     param = JSON.parse(inData);
+  }
+  else if (options && options.useLastSettings) {
+    param = JSON.parse(Banana.document.getScriptSettings());
   }
   else {
     if (!settingsDialog())

@@ -236,44 +236,6 @@ function DatiContribuente(banDocument) {
   this.initParam();
 }
 
-/*
- * Ritorna il conto che ha come descrizione accountDes
- * Serve per proporre i conti corrispettivi predefiniti 
- * 
- */
-DatiContribuente.prototype.matchContoCorrispettivi = function(accountDes) {
-  if (!this.banDocument || accountDes.length<=0)
-    return '';
-
-  var search = accountDes.toLowerCase();
-
-  var returnValue = '';
-    var table = this.banDocument.table('Accounts');
-    if (table) {
-      var progressBar = Banana.application.progressBar;
-      progressBar.start(table.rowCount + 1);
-      for (var i = 0; i < table.rowCount; i++) {
-        if (!progressBar.step(i.toString()))
-           return;
-        var currentDes = table.value(i, "Description").toLowerCase();
-        if (currentDes.length <= 0)
-          continue;
-        if (currentDes.indexOf("  ") >= 0)
-          currentDes = currentDes.replace("  ", " ");
-        if (currentDes.indexOf(search) >= 0) {
-          var accountId = table.value(i, "Account");
-        if (accountId.length <= 0)
-          continue;
-        returnValue = accountId;
-        break;
-      }
-    }
-  }
-
-  progressBar.finish();
-  return returnValue;
-}
-
 DatiContribuente.prototype.getParam = function() {
   return this.param;
 }
@@ -304,7 +266,6 @@ DatiContribuente.prototype.initParam = function() {
   this.param.liqPercProrata = '';
 
   //Conti corrispettivi
-  //Se tutti i corrispettivi sono vuoti propone i conti trovati nella tabella conti
   this.param.contoFattureNormali = '';
   this.param.contoFattureFiscali = '';
   this.param.contoFattureScontrini = '';
@@ -312,10 +273,10 @@ DatiContribuente.prototype.initParam = function() {
   this.param.contoCorrispettiviNormali = '';
   this.param.contoCorrispettiviScontrini = '';
   this.param.contoRicevuteFiscali = '';
-
 }
 
 DatiContribuente.prototype.loadParam = function() {
+  this.banDocument.addMessage( "called DatiContribuente.prototype.loadParam()");
   this.param = {};
   var savedParam = this.banDocument.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
   if (savedParam.length > 0)
@@ -325,13 +286,12 @@ DatiContribuente.prototype.loadParam = function() {
 }
 
 DatiContribuente.prototype.setParam = function(param) {
+  this.banDocument.addMessage( "called DatiContribuente.prototype.setParam()");
   this.param = param;
   this.verifyParam();
 }
 
 DatiContribuente.prototype.verifyParam = function() {
-  var progressBar = Banana.application.progressBar;
-  progressBar.start("Dati base", 8);
   if (!this.param.tipoContribuente)
     this.param.tipoContribuente = 0;
   if (!this.param.codiceFiscale)
@@ -370,34 +330,76 @@ DatiContribuente.prototype.verifyParam = function() {
     this.param.liqPercInteressi = '';
   if (!this.param.liqPercProrata)
     this.param.liqPercProrata = '';
-  if (!progressBar.step()) return;
-  progressBar.setText("Fatture normali");
+  //conti corrispettivi
   if (!this.param.contoFattureNormali)
-    this.param.contoFattureNormali = this.matchContoCorrispettivi("fatture normali");
-  if (!progressBar.step()) return;
-  progressBar.setText("Fatture fiscali");
+    this.param.contoFattureNormali = '';
   if (!this.param.contoFattureFiscali)
-    this.param.contoFattureFiscali = this.matchContoCorrispettivi("fatture fiscali");
-  if (!progressBar.step()) return;
-  progressBar.setText("Fatture scontrini");
+    this.param.contoFattureFiscali = '';
   if (!this.param.contoFattureScontrini)
-    this.param.contoFattureScontrini = this.matchContoCorrispettivi("fatture scontrini");
-  if (!progressBar.step()) return;
-  progressBar.setText("Fatture differite");
+    this.param.contoFattureScontrini = '';
   if (!this.param.contoFattureDifferite)
-    this.param.contoFattureDifferite = this.matchContoCorrispettivi("fatture differite");
-  if (!progressBar.step()) return;
-  progressBar.setText("Corrispettivi normali");
+    this.param.contoFattureDifferite = '';
   if (!this.param.contoCorrispettiviNormali)
-    this.param.contoCorrispettiviNormali = this.matchContoCorrispettivi("corrispettivi normali");
-  if (!progressBar.step()) return;
-  progressBar.setText("Corrispettivi scontrini");
+    this.param.contoCorrispettiviNormali = '';
   if (!this.param.contoCorrispettiviScontrini)
-    this.param.contoCorrispettiviScontrini = this.matchContoCorrispettivi("corrispettivi scontrini");
-  if (!progressBar.step()) return;
-  progressBar.setText("Ricevute fiscali");
+    this.param.contoCorrispettiviScontrini = '';
   if (!this.param.contoRicevuteFiscali)
-    this.param.contoRicevuteFiscali = this.matchContoCorrispettivi("ricevute fiscali");
-  progressBar.finish();
+    this.param.contoRicevuteFiscali = '';
+  
+  this.verifyParamContiCorrispettivi();
+}
+
+DatiContribuente.prototype.verifyParamContiCorrispettivi = function() {
+  //Se tutti i corrispettivi sono vuoti propone i conti trovati nella tabella conti
+  //Viene eseguito un'unica volta
+  if (this.param.contoFattureNormali.length<=0 &&
+    this.param.contoFattureFiscali.length<=0 &&
+    this.param.contoFattureScontrini.length<=0 &&
+    this.param.contoFattureDifferite.length<=0 &&
+    this.param.contoCorrispettiviNormali.length<=0 &&
+    this.param.contoCorrispettiviScontrini.length<=0 &&
+    this.param.contoRicevuteFiscali.length<=0) {
+    this.banDocument.addMessage( "called verifyContiCorrispettivi()");
+    var table = this.banDocument.table('Accounts');
+    if (table) {
+      var progressBar = Banana.application.progressBar;
+      if (typeof(progressBar.setText) !== 'undefined')
+        progressBar.setText("Tabella conti");
+      progressBar.start(table.rowCount + 1);
+      for (var i = 0; i < table.rowCount; i++) {
+        progressBar.step(i.toString());
+        var accountId = table.value(i, "Account");
+        if (accountId.length <= 0)
+          continue;
+        var currentDes = table.value(i, "Description").toLowerCase();
+        if (currentDes.length <= 0)
+          continue;
+        if (currentDes.indexOf("  ") >= 0)
+          currentDes = currentDes.replace("  ", " ");
+        if (currentDes.indexOf("fatture normali") >= 0) {
+          this.param.contoFattureNormali = accountId;
+        }
+        else if (currentDes.indexOf("fatture fiscali") >= 0) {
+          this.param.contoFattureFiscali = accountId;
+        }
+        else if (currentDes.indexOf("fatture scontrini") >= 0) {
+          this.param.contoFattureScontrini = accountId;
+        }
+        else if (currentDes.indexOf("fatture differite") >= 0) {
+          this.param.contoFattureDifferite = accountId;
+        }
+        else if (currentDes.indexOf("corrispettivi normali") >= 0) {
+          this.param.contoCorrispettiviNormali = accountId;
+        }
+        else if (currentDes.indexOf("corrispettivi scontrini") >= 0) {
+          this.param.contoCorrispettiviScontrini = accountId;
+        }
+        else if (currentDes.indexOf("ricevute fiscali") >= 0) {
+          this.param.contoRicevuteFiscali = accountId;
+        }
+      }
+      progressBar.finish();
+    }
+  }
 }
 

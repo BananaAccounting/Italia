@@ -120,11 +120,11 @@ Journal.prototype.load = function() {
     return;
 
   var progressBar = Banana.application.progressBar;
+  var t0 = new Date();
   progressBar.start(3);
-  progressBar.setText("Corrispettivi");
 
   //Conti corrispettivi
-  var mapCorrispettivi = new Utils(this.banDocument).getColumnsCorrispettivi();
+  var mapCorrispettivi = new Utils(this.banDocument).getMapContiCorrispettivi();
   
   //Variabili per numerazione registro
   var progRegistri = {};
@@ -135,12 +135,17 @@ Journal.prototype.load = function() {
 
   //Riprende l'elenco clienti/fornitori in this.customers e this.suppliers
   //Solamente righe con JInvoiceRowCustomerSupplier=1 (cliente) or JInvoiceRowCustomerSupplier=2 (fornitore)
-  progressBar.setText("Elenco clienti/fornitori");
+  progressBar.finish();
+  //this.printElapsedTime("Corrispettivi", t0);
+
+  t0 = new Date();
+  if (typeof(progressBar.setText) !== 'undefined')
+    progressBar.setText("Elenco clienti/fornitori");
   progressBar.start(filteredRows.length + 1);
   for (var i = 0; i < filteredRows.length; i++) {
     if (!progressBar.step())
       return;
-    progressBar.setText(i.toString());
+    //progressBar.setText(i.toString());
     var isCustomer=false;
     var isSupplier=false;
     if (filteredRows[i].value("JInvoiceRowCustomerSupplier")==1)
@@ -164,14 +169,17 @@ Journal.prototype.load = function() {
     }
   }
   progressBar.finish();
+  //this.printElapsedTime("Elenco clienti/fornitori", t0);
 
   //Riprende le registrazioni IVA in this.transactions
-  progressBar.setText("Registrazioni iva");
+  t0 = new Date();
+  if (typeof(progressBar.setText) !== 'undefined')
+    progressBar.setText("Registrazioni IVA");
   progressBar.start(filteredRows.length + 1);
   for (var i = 0; i < filteredRows.length; i++) {
     if (!progressBar.step())
       return;
-    progressBar.setText(i.toString());
+    //progressBar.setText(i.toString());
     //Solo operazioni IVA
     var isVatOperation = filteredRows[i].value("JVatIsVatOperation");
     if (!isVatOperation)
@@ -690,9 +698,23 @@ EsibilitaIva
     this.transactions.push(jsonLine);
   }
   progressBar.finish();
-
-  progressBar.finish();
+  //this.printElapsedTime("Registrazioni iva", t0);
 }
+
+Journal.prototype.printElapsedTime = function(functionName, t0) {
+  var t1 = new Date();
+  var millis = t1.valueOf() - t0.valueOf();
+  var minutes = Math.floor(millis / 60000);
+  var seconds = ((millis % 60000) / 1000).toFixed(0);
+  if (minutes == 0 && seconds == 0) {
+    this.banDocument.addMessage( functionName + " milliseconds: " + millis);
+  }
+  else {
+    var timeString = (seconds == 60 ? (minutes+1) + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
+    this.banDocument.addMessage( functionName + " " + timeString);
+  }
+}
+
 
 Journal.prototype.setColumns = function(journalColumns) {
   this.columns = {};
@@ -1513,35 +1535,33 @@ Utils.prototype.getAccount = function(_accountId) {
  * Ritorna la colonna del giornale associata al conto corrispettivi
  * I conti corrispettivi vengono assegnati nel dialogo Dati Contribuente
  */
-Utils.prototype.getColumnCorrispettivi = function(accountId) {
+Utils.prototype.getContoCorrispettivi = function(accountId) {
   if (!this.banDocument || accountId.length<=0)
     return '';
   var param = new DatiContribuente(this.banDocument).loadParam();
-  if (!param)
-    return '';
-
-  if (param.contoFattureNormali && accountId == param.contoFattureNormali)
-    return "IT_CorrFattureNormali";
-  if (param.contoFattureFiscali && accountId == param.contoFattureFiscali)
-    return "IT_CorrFattureFiscali";
-  if (param.contoFattureScontrini && accountId == param.contoFattureScontrini)
-    return "IT_CorrFattureScontrini";
-  if (param.contoFattureDifferite && accountId == param.contoFattureDifferite)
-    return "IT_CorrFattureDifferite";
-  if (param.contoCorrispettiviNormali && accountId == param.contoCorrispettiviNormali)
-    return "IT_CorrispettiviNormali";
-  if (param.contoCorrispettiviScontrini && accountId == param.contoCorrispettiviScontrini)
-    return "IT_CorrispettiviScontrini";
-  if (param.contoRicevuteFiscali && accountId == param.contoRicevuteFiscali)
-    return "IT_CorrRicevuteFiscali";
-
+  if (param) {
+    if (param.contoFattureNormali && accountId == param.contoFattureNormali)
+      return "IT_CorrFattureNormali";
+    if (param.contoFattureFiscali && accountId == param.contoFattureFiscali)
+      return "IT_CorrFattureFiscali";
+    if (param.contoFattureScontrini && accountId == param.contoFattureScontrini)
+      return "IT_CorrFattureScontrini";
+    if (param.contoFattureDifferite && accountId == param.contoFattureDifferite)
+      return "IT_CorrFattureDifferite";
+    if (param.contoCorrispettiviNormali && accountId == param.contoCorrispettiviNormali)
+      return "IT_CorrispettiviNormali";
+    if (param.contoCorrispettiviScontrini && accountId == param.contoCorrispettiviScontrini)
+      return "IT_CorrispettiviScontrini";
+    if (param.contoRicevuteFiscali && accountId == param.contoRicevuteFiscali)
+      return "IT_CorrRicevuteFiscali";
+  }
   return '';
 }
 
 /*
  * Ritorna i conti associati ai corrispettivi in un map
 */
-Utils.prototype.getColumnsCorrispettivi = function() {
+Utils.prototype.getMapContiCorrispettivi = function() {
   var mapCorrispettivi = {};
   if (!this.banDocument)
     return mapCorrispettivi;
@@ -1721,7 +1741,6 @@ Utils.prototype.isMemberOfEuropeanUnion = function(_country) {
   return false;
 }
  
-
 /*
  * Riprende i dati base della contabilità leggendo la tabella FileInfo (Strumenti - Tabella Info)
  * @param	parametro iniziale dove vengono aggiunti i dati letti

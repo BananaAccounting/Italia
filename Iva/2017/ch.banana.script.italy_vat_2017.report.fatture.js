@@ -22,27 +22,17 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-03-16
+// @pubdate = 2018-03-23
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
 
 var debug = false;
 
-function exec(inData) {
+function exec(inData, options) {
 
   if (!Banana.document)
     return "@Cancel";
-
-  var progressBar = Banana.application.progressBar;
-  if (typeof(Banana.application.progressBar.setText) === 'undefined') {
-     Banana.application.progressBar.setText = function(text) {
-        return;
-     }
-  }
-  if (typeof(progressBar.showDetails) === 'undefined') {
-     Banana.application.progressBar.showDetails = false;
-  }
 
   // Check version
   if (typeof (Banana.document.journalCustomersSuppliers) === 'undefined') {
@@ -72,13 +62,12 @@ function exec(inData) {
     }
   }
 
-  progressBar.start(3);
-  progressBar.showDetails = true;
-  progressBar.setText("Dati fatture");
-
   var param = {};
   if (inData.length>0) {
     param = JSON.parse(inData);
+  }
+  else if (options && options.useLastSettings) {
+    param = JSON.parse(Banana.document.getScriptSettings());
   }
   else {
     if (!settingsDialog())
@@ -91,26 +80,15 @@ function exec(inData) {
   datiFatture.loadData();
   if (datiFatture.param.outputScript==3) {
     //xml file di annullamento
-    if (!progressBar.step())
-      return;
-    progressBar.setText("Export");
     var output = datiFatture.createInstanceAnnullamento();
     output = formatXml(output);
     datiFatture.saveData(output);
     return;
   }
 
-  if (!progressBar.step())
-    return;
-
-  progressBar.setText("Istanze");
   var output = datiFatture.createInstance();
   
-  if (!progressBar.step())
-    return;
-
   if (datiFatture.param.outputScript==0 && output != "@Cancel") {
-    progressBar.setText("Report");
     var report = Banana.Report.newReport("Dati delle fatture emesse e ricevute");
     var stylesheet = Banana.Report.newStyleSheet(); 
     datiFatture.printDocument(report, stylesheet);
@@ -122,13 +100,10 @@ function exec(inData) {
   }
   else if (datiFatture.param.outputScript==1 && output != "@Cancel") {
     //xml file
-    progressBar.setText("Export");
     output = formatXml(output);
     datiFatture.saveData(output);
     return;
   }
-
-  progressBar.finish();
 
   //return xml content
   return output;
@@ -811,20 +786,21 @@ DatiFatture.prototype.loadData = function() {
   this.param.datiContribuente.liqTipoVersamento = -1;
   if (!progressBar.step())
      return;
-  progressBar.setText("Giornale");
+  if (typeof(progressBar.setText) !== 'undefined')
+    progressBar.setText("Giornale");
   var journal = new Journal(this.banDocument);
   journal.load();
   this.param.data = {};  
   if (!progressBar.step())
      return;
-  progressBar.setText("Periodi");
+  if (typeof(progressBar.setText) !== 'undefined')
+    progressBar.setText("Periodi");
   var periods = utils.createPeriods(this.param);
   if (periods.length>0)
     this.param.data = journal.getPeriod(periods[0].startDate, periods[0].endDate); 
 
   if (!progressBar.step())
     return;
-  progressBar.setText("Gruppi");
   if (this.param.blocco == 'DTE') {
     //avvisa se il gruppo clienti non è impostato
     if (this.param.fileInfo["CustomersGroup"].length<=0) {
@@ -833,7 +809,8 @@ DatiFatture.prototype.loadData = function() {
     }
     var checkedCustomers = {};
     progressBar.start(this.param.data.customers.length);
-    progressBar.setText("DTE");
+    if (typeof(progressBar.setText) !== 'undefined')
+      progressBar.setText("DTE");
     for (var i in this.param.data.customers) {
       var checkedRows = [];
       var accountObj = this.param.data.customers[i];
@@ -865,7 +842,8 @@ DatiFatture.prototype.loadData = function() {
     }
     var checkedSuppliers = {};
     progressBar.start(this.param.data.suppliers.length);
-    progressBar.setText("DTR");
+    if (typeof(progressBar.setText) !== 'undefined')
+      progressBar.setText("DTR");
     for (var i in this.param.data.suppliers) {
       var checkedRows = [];
       var accountObj = this.param.data.suppliers[i];

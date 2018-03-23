@@ -22,12 +22,12 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-03-16
+// @pubdate = 2018-03-23
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
 
-function exec(inData) {
+function exec(inData, options) {
 
   if (!Banana.document)
     return "@Cancel";
@@ -43,6 +43,9 @@ function exec(inData) {
   var param = {};
   if (inData.length>0) {
     param = JSON.parse(inData);
+  }
+  else if (options && options.useLastSettings) {
+    param = JSON.parse(Banana.document.getScriptSettings());
   }
   else {
     if (!settingsDialog())
