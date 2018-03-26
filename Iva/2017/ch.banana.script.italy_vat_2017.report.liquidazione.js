@@ -22,12 +22,12 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-03-16
+// @pubdate = 2018-03-23
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
 
-function exec(inData) {
+function exec(inData, options) {
 
   if (!Banana.document)
     return "@Cancel";
@@ -43,6 +43,9 @@ function exec(inData) {
   var param = {};
   if (inData.length>0) {
     param = JSON.parse(inData);
+  }
+  else if (options && options.useLastSettings) {
+    param = JSON.parse(Banana.document.getScriptSettings());
   }
   else {
     if (!settingsDialog())
@@ -85,7 +88,7 @@ function settingsDialog() {
     liquidazione.setParam(JSON.parse(savedParam));
   }
   var accountingData = {};
-  accountingData.datiContribuente = new DatiContribuente(Banana.document).loadParam();
+  accountingData.datiContribuente = new DatiContribuente(Banana.document).readParam();
   accountingData = new Utils(Banana.document).readAccountingData(accountingData);
   if (liquidazione.param.annoSelezionato.length<=0)
     liquidazione.param.annoSelezionato = accountingData.openingYear;
@@ -662,7 +665,7 @@ LiquidazionePeriodica.prototype.initSchemarefs = function() {
 LiquidazionePeriodica.prototype.loadData = function() {
   var utils = new Utils(this.banDocument);
   this.param = utils.readAccountingData(this.param);
-  this.param.datiContribuente = new DatiContribuente(this.banDocument).loadParam();
+  this.param.datiContribuente = new DatiContribuente(this.banDocument).readParam();
   this.param.vatPeriods = [];
   var periods = utils.createPeriods(this.param);
   for (var i=0; i<periods.length; i++) {
