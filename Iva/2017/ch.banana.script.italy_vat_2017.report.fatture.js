@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-03-23
+// @pubdate = 2018-03-26
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -92,10 +92,15 @@ function exec(inData, options) {
     var report = Banana.Report.newReport("Dati delle fatture emesse e ricevute");
     var stylesheet = Banana.Report.newStyleSheet(); 
     datiFatture.printDocument(report, stylesheet);
-    /*if (debug) {
+    if (debug) {
       report.addPageBreak();
-      _debug_printJournal(datiFatture.param.data, report, stylesheet);
-    }*/
+      var journal = new Journal(this.banDocument);
+      journal.load();
+      report.addPageBreak();
+      journal._debugPrintJournal(report, stylesheet);
+      report.addPageBreak();
+      journal._debugPrintCustomersSuppliers(report, stylesheet);
+    }
     Banana.Report.preview(report, stylesheet);
   }
   else if (datiFatture.param.outputScript==1 && output != "@Cancel") {
@@ -782,7 +787,7 @@ DatiFatture.prototype.loadData = function() {
   //per il momento c'è un unico periodo non controlla il tipo di versamento mensile o trimestrale
   var utils = new Utils(this.banDocument);
   this.param = utils.readAccountingData(this.param);
-  this.param.datiContribuente = new DatiContribuente(this.banDocument).loadParam();
+  this.param.datiContribuente = new DatiContribuente(this.banDocument).readParam();
   this.param.datiContribuente.liqTipoVersamento = -1;
   if (!progressBar.step())
      return;

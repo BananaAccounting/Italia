@@ -89,7 +89,7 @@ function settingsDialog() {
   }
   
   var accountingData = {};
-  accountingData.datiContribuente = new DatiContribuente(Banana.document).loadParam();
+  accountingData.datiContribuente = new DatiContribuente(Banana.document).readParam();
   accountingData = new Utils(Banana.document).readAccountingData(accountingData);
   if (registri.param.annoSelezionato.length<=0)
     registri.param.annoSelezionato = accountingData.openingYear;
@@ -500,7 +500,7 @@ Registri.prototype.initParam = function() {
 Registri.prototype.loadData = function() {
   var utils = new Utils(this.banDocument);
   this.param = utils.readAccountingData(this.param);
-  this.param.datiContribuente = new DatiContribuente(this.banDocument).loadParam();
+  this.param.datiContribuente = new DatiContribuente(this.banDocument).readParam();
   var journal = new Journal(this.banDocument);
   journal.load(); 
 

@@ -418,7 +418,7 @@ LibroGiornale.prototype.loadData = function() {
   this.init();
 
   //period
-  this.param.datiContribuente = new DatiContribuente(this.banDocument).loadParam();
+  this.param.datiContribuente = new DatiContribuente(this.banDocument).readParam();
   var utils = new Utils(this.banDocument);
   this.param = utils.readAccountingData(this.param);
   if (this.param.periodoSelezionato == 'c') {

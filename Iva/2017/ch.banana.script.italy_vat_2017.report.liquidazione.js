@@ -88,7 +88,7 @@ function settingsDialog() {
     liquidazione.setParam(JSON.parse(savedParam));
   }
   var accountingData = {};
-  accountingData.datiContribuente = new DatiContribuente(Banana.document).loadParam();
+  accountingData.datiContribuente = new DatiContribuente(Banana.document).readParam();
   accountingData = new Utils(Banana.document).readAccountingData(accountingData);
   if (liquidazione.param.annoSelezionato.length<=0)
     liquidazione.param.annoSelezionato = accountingData.openingYear;
@@ -665,7 +665,7 @@ LiquidazionePeriodica.prototype.initSchemarefs = function() {
 LiquidazionePeriodica.prototype.loadData = function() {
   var utils = new Utils(this.banDocument);
   this.param = utils.readAccountingData(this.param);
-  this.param.datiContribuente = new DatiContribuente(this.banDocument).loadParam();
+  this.param.datiContribuente = new DatiContribuente(this.banDocument).readParam();
   this.param.vatPeriods = [];
   var periods = utils.createPeriods(this.param);
   for (var i=0; i<periods.length; i++) {

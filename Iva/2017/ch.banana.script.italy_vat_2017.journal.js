@@ -131,21 +131,24 @@ Journal.prototype.load = function() {
   var previousIndexGroup = -1;
   
   //Salva i nomi delle colonne del giornale
-  this.setColumns(journal.columnNames);
+  //this.setColumns(journal.columnNames);
+  this.setColumns();
 
   //Riprende l'elenco clienti/fornitori in this.customers e this.suppliers
   //Solamente righe con JInvoiceRowCustomerSupplier=1 (cliente) or JInvoiceRowCustomerSupplier=2 (fornitore)
   progressBar.finish();
-  //this.printElapsedTime("Corrispettivi", t0);
+  this.printElapsedTime("Corrispettivi", t0);
 
   t0 = new Date();
   if (typeof(progressBar.setText) !== 'undefined')
     progressBar.setText("Elenco clienti/fornitori");
   progressBar.start(filteredRows.length + 1);
+  
   for (var i = 0; i < filteredRows.length; i++) {
     if (!progressBar.step())
       return;
-    //progressBar.setText(i.toString());
+    if (typeof(progressBar.setText) !== 'undefined')
+      progressBar.setText(i.toString());
     var isCustomer=false;
     var isSupplier=false;
     if (filteredRows[i].value("JInvoiceRowCustomerSupplier")==1)
@@ -169,17 +172,19 @@ Journal.prototype.load = function() {
     }
   }
   progressBar.finish();
-  //this.printElapsedTime("Elenco clienti/fornitori", t0);
+  this.printElapsedTime("Elenco clienti/fornitori", t0);
 
   //Riprende le registrazioni IVA in this.transactions
   t0 = new Date();
   if (typeof(progressBar.setText) !== 'undefined')
     progressBar.setText("Registrazioni IVA");
   progressBar.start(filteredRows.length + 1);
+  
   for (var i = 0; i < filteredRows.length; i++) {
     if (!progressBar.step())
       return;
-    //progressBar.setText(i.toString());
+    if (typeof(progressBar.setText) !== 'undefined')
+      progressBar.setText(i.toString());
     //Solo operazioni IVA
     var isVatOperation = filteredRows[i].value("JVatIsVatOperation");
     if (!isVatOperation)
@@ -663,6 +668,7 @@ EsibilitaIva
     jsonLine["IT_CorrRicevuteFiscali"] = '';
     jsonLine["IT_CorrTotaleGiornaliero"] = '';
     var contoIvaAssociato = filteredRows[i].value("VatTwinAccount");
+    //es. contenuto mapCorrispettivi    //{"4100":"IT_CorrFattureNormali","4101":"IT_CorrFattureFiscali","4102":"IT_CorrFattureScontrini","4103":"IT_CorrFattureDifferite","4104":"IT_CorrispettiviNormali","4105":"IT_CorrispettiviScontrini","4106":"IT_CorrRicevuteFiscali"}
     if (contoIvaAssociato.length && vatCode.length) {
       var colonnaCorrispettivi = '';
       if (mapCorrispettivi.hasOwnProperty(contoIvaAssociato))
@@ -698,7 +704,7 @@ EsibilitaIva
     this.transactions.push(jsonLine);
   }
   progressBar.finish();
-  //this.printElapsedTime("Registrazioni iva", t0);
+  this.printElapsedTime("Registrazioni iva", t0);
 }
 
 Journal.prototype.printElapsedTime = function(functionName, t0) {
@@ -707,89 +713,160 @@ Journal.prototype.printElapsedTime = function(functionName, t0) {
   var minutes = Math.floor(millis / 60000);
   var seconds = ((millis % 60000) / 1000).toFixed(0);
   if (minutes == 0 && seconds == 0) {
-    this.banDocument.addMessage( functionName + " milliseconds: " + millis);
+    var timeString = Banana.SDecimal.round(millis/1000, {'decimals':2});
+    console.log( functionName + " elapsed time " + timeString + " s");
   }
   else {
     var timeString = (seconds == 60 ? (minutes+1) + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
-    this.banDocument.addMessage( functionName + " " + timeString);
+    console.log( functionName + " elapsed time " + timeString);
   }
 }
 
 
-Journal.prototype.setColumns = function(journalColumns) {
+Journal.prototype.setColumns = function() {
   this.columns = {};
-  for (var j = 0; j < journalColumns.length; j++) {
-    var column = {};
-    column.name = journalColumns[j];
-    column.title = journalColumns[j];
-    column.type = "amount";
-    column.index = -1;
-    if (column.name == "JDate") {
-      column.type = "date";
-      column.index = 1;
-    }
-    else if (column.name == "Doc") {
-      column.type = "description";
-      column.index = 3;
-    }
-    else if (column.name == "DocInvoice") {
-      column.title = "Invoice";
-      column.type = "description";
-      column.index = 5;
-    }
-    else if (column.name == "DocProtocol") {
-      column.title = "DocProt";
-      column.type = "description";
-      column.index = 7;
-    }
-    else if (column.name == "JDescription") {
-      column.type = "description";
-      column.index = 9;
-    }
-    else if (column.name == "VatCode") {
-      column.index = 11;
-    }
-    else if (column.name == "VatRate") {
-      column.index = 13;
-    }
-    else if (column.name == "VatRateEffective") {
-      column.title = "VatRateEff";
-      column.index = 15;
-    }
-    else if (column.name == "VatAmount") {
-      column.index = 17;
-    }
-    else if (column.name == "VatTaxable") {
-      column.title = "VatTax";
-      column.index = 19;
-    }
-    else if (column.name == "JVatTaxable") {
-      column.title = "JVatTax";
-      column.index = 21;
-    }
-    else if (column.name == "VatPosted") {
-      column.title = "VatPosted";
-      column.index = 23;
-    }
-    else if (column.name == "VatPercentNonDeductible") {
-      column.title = "VatPercNonDed";
-      column.index = 25;
-    }
-    else if (column.name == "VatNonDeductible") {
-      column.title = "VatNonDed";
-      column.index = 27;
-    }
-    else if (column.name == "JRowOrigin") {
-      column.title = "JRowOrigin";
-      column.index = 29;
-    }
-    else if (column.name == "JTableOrigin") {
-      column.title = "JTableOrigin";
-      column.index = 31;
-    }
-    this.columns[j] = column;
-  }
-  
+  var j=0;
+
+  //Journal columns
+  var column = {};
+  column.name = "JDate";
+  column.title = "JDate";
+  column.type = "date";
+  column.index = 1;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "Doc";
+  column.title = "Doc";
+  column.type = "description";
+  column.index = 3;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "DocInvoice";
+  column.title = "DocInvoice";
+  column.type = "description";
+  column.index = 5;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "DocProtocol";
+  column.title = "DocProt";
+  column.type = "description";
+  column.index = 7;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "JDescription";
+  column.title = "JDescription";
+  column.type = "description";
+  column.index = 9;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "VatCode";
+  column.title = "VatCode";
+  column.type = "description";
+  column.index = 11;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "VatRate";
+  column.title = "VatRate";
+  column.type = "amount";
+  column.index = 13;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "VatRateEffective";
+  column.title = "VatRateEff";
+  column.type = "amount";
+  column.index = 15;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "VatAmount";
+  column.title = "VatAmount";
+  column.type = "amount";
+  column.index = 17;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "VatTaxable";
+  column.title = "VatTax";
+  column.type = "amount";
+  column.index = 19;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "JVatTaxable";
+  column.title = "JVatTax";
+  column.type = "amount";
+  column.index = 21;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "VatPosted";
+  column.title = "VatPosted";
+  column.type = "amount";
+  column.index = 23;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "VatPercentNonDeductible";
+  column.title = "VatPercNonDed";
+  column.type = "amount";
+  column.index = 25;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "VatNonDeductible";
+  column.title = "VatNonDed";
+  column.type = "amount";
+  column.index = 27;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "JRowOrigin";
+  column.title = "JRowOrigin";
+  column.type = "description";
+  column.index = 29;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "JTableOrigin";
+  column.title = "JTableOrigin";
+  column.type = "description";
+  column.index = 31;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "Description";
+  column.title = "Description";
+  column.type = "description";
+  column.index = -1;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "JAccount";
+  column.title = "JAccount";
+  column.type = "description";
+  column.index = -1;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "JContraAccount";
+  column.title = "JContraAccount";
+  column.type = "description";
+  column.index = -1;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "JVatCodeWithoutSign";
+  column.title = "JVatCodeWithoutSign";
+  column.type = "description";
+  column.index = -1;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "JVatNegative";
+  column.title = "JVatNegative";
+  column.type = "amount";
+  column.index = -1;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "VatExtraInfo";
+  column.title = "VatExtraInfo";
+  column.type = "amount";
+  column.index = -1;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "VatTwinAccount";
+  column.title = "VatTwinAccount";
+  column.type = "amount";
+  column.index = -1;
+  this.columns[j++] = column;
+
   //Additional columns
   var column = {};
   column.name = "IT_Natura";
@@ -995,7 +1072,7 @@ Journal.prototype._debugPrintJournal = function(report, stylesheet) {
   //Column count
   var sortedColumns = [];
   for (var i in this.columns) {
-    if (this.columns[i].index>=0 && !this.columns[i].name.startsWith("IT_"))
+    //if (this.columns[i].index>=0 && !this.columns[i].name.startsWith("IT_"))
       sortedColumns.push(this.columns[i].index);
   }
   sortedColumns.sort(this.sortNumber);  
@@ -1003,7 +1080,7 @@ Journal.prototype._debugPrintJournal = function(report, stylesheet) {
   //Title
   var table = report.addTable("tableJournal");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Registrazioni IVA Italia", "title",  sortedColumns.length);
+  headerRow.addCell("(DEBUG) - Registrazioni IVA Italia", "title",  sortedColumns.length);
   
   //Header
   var headerRow = table.getHeader().addRow();
@@ -1064,7 +1141,7 @@ Journal.prototype._debugPrintCustomersSuppliers = function(report, stylesheet) {
   //Title
   var table = report.addTable("tableJournalCustomersSuppliers");
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell("Customers/Suppliers", "title",  sortedColumns.length);
+  headerRow.addCell("(DEBUG) Clienti/Fornitori", "title",  sortedColumns.length);
   
   //Period
   /*var periodo = "Periodo dal " + Banana.Converter.toLocaleDateFormat(param.startDate);
@@ -1538,7 +1615,7 @@ Utils.prototype.getAccount = function(_accountId) {
 Utils.prototype.getContoCorrispettivi = function(accountId) {
   if (!this.banDocument || accountId.length<=0)
     return '';
-  var param = new DatiContribuente(this.banDocument).loadParam();
+  var param = new DatiContribuente(this.banDocument).readParam();
   if (param) {
     if (param.contoFattureNormali && accountId == param.contoFattureNormali)
       return "IT_CorrFattureNormali";
@@ -1565,7 +1642,7 @@ Utils.prototype.getMapContiCorrispettivi = function() {
   var mapCorrispettivi = {};
   if (!this.banDocument)
     return mapCorrispettivi;
-  var param = new DatiContribuente(this.banDocument).loadParam();
+  var param = new DatiContribuente(this.banDocument).readParam();
   if (param) {
     if (param.contoFattureNormali && param.contoFattureNormali.length>0)
       mapCorrispettivi[param.contoFattureNormali] = "IT_CorrFattureNormali";

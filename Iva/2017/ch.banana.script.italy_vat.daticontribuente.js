@@ -20,7 +20,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2018-03-06
+// @pubdate = 2018-03-26
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -38,10 +38,7 @@ function exec() {
 function settingsDialog() {
 
   var datiContribuente = new DatiContribuente(Banana.document);
-  var savedParam = Banana.document.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
-  if (savedParam.length > 0) {
-    datiContribuente.setParam(JSON.parse(savedParam));
-  }
+  datiContribuente.readParam();
 
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat.daticontribuente.dialog.ui");
   //Dati anagrafici
@@ -224,8 +221,7 @@ function settingsDialog() {
   if (ricevutefiscaliLineEdit)
     datiContribuente.param.contoRicevuteFiscali = ricevutefiscaliLineEdit.text;
 
-  var paramToString = JSON.stringify(datiContribuente.param);
-  Banana.document.setScriptSettings("ch.banana.script.italy_vat.daticontribuente.js", paramToString);
+  datiContribuente.writeParam();
   return true;
 }
 
@@ -275,8 +271,7 @@ DatiContribuente.prototype.initParam = function() {
   this.param.contoRicevuteFiscali = '';
 }
 
-DatiContribuente.prototype.loadParam = function() {
-  this.banDocument.addMessage( "called DatiContribuente.prototype.loadParam()");
+DatiContribuente.prototype.readParam = function() {
   this.param = {};
   var savedParam = this.banDocument.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
   if (savedParam.length > 0)
@@ -286,7 +281,6 @@ DatiContribuente.prototype.loadParam = function() {
 }
 
 DatiContribuente.prototype.setParam = function(param) {
-  this.banDocument.addMessage( "called DatiContribuente.prototype.setParam()");
   this.param = param;
   this.verifyParam();
 }
@@ -346,20 +340,21 @@ DatiContribuente.prototype.verifyParam = function() {
   if (!this.param.contoRicevuteFiscali)
     this.param.contoRicevuteFiscali = '';
   
-  this.verifyParamContiCorrispettivi();
+  this.verifyParamAggiungiCorrispettivi();
 }
 
-DatiContribuente.prototype.verifyParamContiCorrispettivi = function() {
-  //Se tutti i corrispettivi sono vuoti propone i conti trovati nella tabella conti
-  //Viene eseguito un'unica volta
-  if (this.param.contoFattureNormali.length<=0 &&
+DatiContribuente.prototype.verifyParamAggiungiCorrispettivi = function() {
+  //Vengono proposti i conti corrispettivi ripresi dalla tabella conti
+  //Solamente una prima volta quando i parametri sono ancora vuoti
+  if (this.param.codiceFiscale.length<=0 && 
+    this.param.partitaIva.length<=0 &&
+    this.param.contoFattureNormali.length<=0 &&
     this.param.contoFattureFiscali.length<=0 &&
     this.param.contoFattureScontrini.length<=0 &&
     this.param.contoFattureDifferite.length<=0 &&
     this.param.contoCorrispettiviNormali.length<=0 &&
     this.param.contoCorrispettiviScontrini.length<=0 &&
     this.param.contoRicevuteFiscali.length<=0) {
-    this.banDocument.addMessage( "called verifyContiCorrispettivi()");
     var table = this.banDocument.table('Accounts');
     if (table) {
       var progressBar = Banana.application.progressBar;
@@ -368,6 +363,8 @@ DatiContribuente.prototype.verifyParamContiCorrispettivi = function() {
       progressBar.start(table.rowCount + 1);
       for (var i = 0; i < table.rowCount; i++) {
         progressBar.step(i.toString());
+        if (typeof(progressBar.setText) !== 'undefined')
+          progressBar.setText(i.toString());
         var accountId = table.value(i, "Account");
         if (accountId.length <= 0)
           continue;
@@ -403,3 +400,7 @@ DatiContribuente.prototype.verifyParamContiCorrispettivi = function() {
   }
 }
 
+DatiContribuente.prototype.writeParam = function() {
+  var paramToString = JSON.stringify(this.param);
+  this.banDocument.setScriptSettings("ch.banana.script.italy_vat.daticontribuente.js", paramToString);
+}
