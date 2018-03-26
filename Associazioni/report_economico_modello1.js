@@ -1,4 +1,4 @@
-// Copyright [2015] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2018] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// @id = it.banana.app.report_economico_veneto
+// @id = it.banana.app.report_economico_veneto_modello1
 // @api = 1.0
-// @pubdate = 2015-11-11
+// @pubdate = 2018-03-26
 // @publisher = Banana.ch SA
-// @description = Associazioni - Report economico
+// @description = Associazioni - Bilancio finanziario (modello 1)
 // @task = app.command
 // @doctype = 100.100;110.100
 // @docproperties = associazioni
@@ -57,7 +57,7 @@ function loadForm() {
 
 	/** CONTO ECONOMICO **/
 	//INCOME
-	form.push({"id":"Rt", "description":"RICAVI"});
+	form.push({"id":"Rt", "description":"ENTRATE"});
 	form.push({"id":"R1", "gr":"R1", "bClass":"4", "description":"QUOTE ASSOCIATIVE"});
 	form.push({"id":"R2", "description":"CONTRIBUTI PER PROGETTI E/O ATTIVITÀ (art. 5 L. 266/91)", "sum":"R2.1;R2.2;R2.3;R2.4;R2.5;R2.6;R2.7;R2.8"});
 	form.push({"id":"R2.1", "gr":"R2.1", "bClass":"4", "description":"da soci (specificare a quale titolo)"});
@@ -93,13 +93,13 @@ function loadForm() {
 
 	//We don't include "R5a" in the total group if we are on the APS file
 	if (Banana.document.table("TestiReport").findRowByValue("RowId", "RVENETO").value("Testo") !== "APS") {
-		form.push({"id":"R", "description":"TOTALE RICAVI", "sum":"R1;R2;R3;R4;R5a;R5b;R6;R7;R8"});
+		form.push({"id":"R", "description":"TOTALE ENTRATE", "sum":"R1;R2;R3;R4;R5a;R5b;R6;R7;R8"});
 	} else {
-		form.push({"id":"R", "description":"TOTALE RICAVI", "sum":"R1;R2;R3;R4;R5b;R6;R7;R8"});
+		form.push({"id":"R", "description":"TOTALE ENTRATE", "sum":"R1;R2;R3;R4;R5b;R6;R7;R8"});
 	}
 
 	//EXPENSES
-	form.push({"id":"Ct", "description":"COSTI"});
+	form.push({"id":"Ct", "description":"USCITE"});
 	form.push({"id":"C1", "gr":"C1", "bClass":"3", "description":"RIMBORSI SPESE AI VOLONTARI  (documentate ed effettivamente sostenute)"});
 	form.push({"id":"C2", "description":"ASSICURAZIONI", "sum":"C2.1;C2.2"});
 	form.push({"id":"C2.1", "gr":"C2.1", "bClass":"3", "description":"volontari (malattie, infortuni e resp. civile terzi) - art. 4 L.266/91"});
@@ -116,7 +116,7 @@ function loadForm() {
 	form.push({"id":"C6.3", "gr":"C6.3", "bClass":"3", "description":"per soggetti svantaggiati"});
 	form.push({"id":"C7", "gr":"C7", "bClass":"3", "description":"GODIMENTO BENI DI TERZI (affitti, noleggio attrezzature, diritti Siae,....)"});
 	form.push({"id":"C8", "gr":"C8", "bClass":"3", "description":"ONERI FINANZIARI E PATRIMONIALI (es. interessi passivi su mutui, prestiti, c/c bancario ..)"});
-	form.push({"id":"C9", "gr":"C9", "bClass":"3", "description":"AMMORTAMENTI"});
+	form.push({"id":"C9", "gr":"C9", "bClass":"3", "description":"BENI DUREVOLI"});
 	form.push({"id":"C10", "gr":"C10", "bClass":"3", "description":"IMPOSTE E TASSE"});
 	form.push({"id":"C11", "gr":"C11", "bClass":"3", "description":"RACCOLTE FONDI (vedi allegati Nr. delle singole raccolte fondi di cui ai punti 5.1, 5.2 e 5.3 delle entrate)"});
 	form.push({"id":"C12", "description":"ALTRE USCITE/COSTI", "sum":"C12.1;C12.2;C12.3;C12.4"});
@@ -125,7 +125,7 @@ function loadForm() {
 	form.push({"id":"C12.3", "gr":"C12.3", "bClass":"3", "description":"versate ad altre odv (specificare)"});
 	form.push({"id":"C12.4", "gr":"C12.4", "bClass":"3", "description":"Altro (specificare)"});
 	form.push({"id":"C13", "gr":"C13", "bClass":"3", "description":"PARTITE DI GIRO"});
-	form.push({"id":"C", "description":"TOTALE COSTI", "sum":"C1;C2;C3;C4;C5;C6;C7;C8;C9;C10;C11;C12;C13"});
+	form.push({"id":"C", "description":"TOTALE USCITE", "sum":"C1;C2;C3;C4;C5;C6;C7;C8;C9;C10;C11;C12;C13"});
 
 	//RISULTATO D'ESERCIZIO
 	form.push({"id":"UP", "description":"UTILE/PERDITA D'ESERCIZIO", "sum":"R;-C"});
@@ -149,6 +149,9 @@ function loadForm() {
 	form.push({"id":"PAG", "description":"AVANZO DI GESTIONE"});
 	form.push({"id":"PTP", "description":"TOTALE A PAREGGIO", "sum":"P1;P2.1;P2.2;P3;PAG"});
 
+	//LIQUIDITÀ INIZIALE/FINALE
+	form.push({"id":"LI", "description":"LIQUIDITÀ INIZIALE (cassa+Banca+Titoli)", "sum":"A2.1;A2.2;A2.3"});
+	form.push({"id":"LF", "description":"LIQUIDITÀ FINALE (Liquidità iniziale + totale entrate - totale uscite)", "sum":"LI;R;-C"});
 }
 
 
@@ -270,7 +273,7 @@ function printReport() {
 	var thisYear = Banana.Converter.toDate(Banana.document.info("AccountingDataBase","OpeningDate")).getFullYear();
 	
 	/** TABLE CONTO ECONOMICO **/
-	report.addParagraph(param.headerLeft + " - " + "BILANCIO ECONOMICO (Modello 2) ANNO " + thisYear, "heading2");
+	report.addParagraph(param.headerLeft + " - " + "BILANCIO FINANZIARIO (Modello 1) ANNO " + thisYear, "heading2");
 		
 	var table = report.addTable("table");
 	tableRow = table.addRow();
@@ -282,6 +285,18 @@ function printReport() {
 	tableRow.addCell("Importi parziali", "styleTableHeader", 1);
 	tableRow.addCell("Importi totali", "styleTableHeader", 1);
 
+	// Liquidità iniziale
+	var liqIniziale = getObject(form, "LI");
+	tableRow = table.addRow();
+	tableRow.addCell(liqIniziale["id"], "bold italic", 1);
+	tableRow.addCell(liqIniziale["description"], "bold italic", 4);
+	tableRow.addCell("","",1);
+	tableRow.addCell(getBalance(liqIniziale["id"]), "alignRight bold italic", 1);
+
+	tableRow = table.addRow();
+	tableRow.addCell(" ","",7);
+
+	// Entrate/Uscite
 	for (var k = 0; k < form.length; k++) {
 
 		if (form[k]["id"].substring(0,1) === "R" || form[k]["id"].substring(0,1) === "C" || form[k]["id"].substring(0,2) === "UP") {
@@ -320,6 +335,32 @@ function printReport() {
 			}
 		}
 	}
+
+	tableRow = table.addRow();
+	tableRow.addCell(" ","",7);
+
+	var liqFinale = getObject(form, "LF");
+	tableRow = table.addRow();
+	tableRow.addCell(liqFinale["id"], "bold italic", 1);
+	tableRow.addCell(liqFinale["description"], "bold italic", 4);
+	tableRow.addCell("","",1);
+	tableRow.addCell(getBalance(liqFinale["id"]), "alignRight bold italic", 1);
+
+	var valCassa = getObject(form, "A2.1");
+	var valBanca = getObject(form, "A2.2");
+
+	tableRow = table.addRow();
+	tableRow.addCell("", "", 2);
+	tableRow.addCell("di cui Valori in cassa", "", 3);
+	tableRow.addCell(getBalance(valCassa["id"]), "alignRight", 1);
+	tableRow.addCell("","",1);
+
+	tableRow = table.addRow();
+	tableRow.addCell("", "", 2);
+	tableRow.addCell("di cui Valori presso depositi", "", 3);
+	tableRow.addCell(getBalance(valBanca["id"]), "alignRight", 1);
+	tableRow.addCell("","",1);
+
 
 	report.addPageBreak();
 
