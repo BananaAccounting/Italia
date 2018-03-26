@@ -314,9 +314,9 @@ Journal.prototype.load = function() {
       jsonLine["IT_ClienteDescrizione"] = accountObj["Description"];
       jsonLine["IT_ClientePartitaIva"] = accountObj["VatNumber"];
       jsonLine["IT_ClienteCodiceFiscale"] = accountObj["FiscalNumber"];
-      var intestazione = accountId + " " + accountObj["Description"];
+      var intestazione = accountId + " - " + accountObj["Description"];
       if (accountObj["VatNumber"].length>0) {
-        intestazione = accountId + "/" + accountObj["VatNumber"] + " " + accountObj["Description"];
+        intestazione = "P.I. " + accountObj["VatNumber"] + " - " + accountObj["Description"];
       }
       jsonLine["IT_ClienteIntestazione"] = intestazione;
       jsonLine["IT_ClienteIDPaese"] = new Utils(this.banDocument).getCountryCode(accountObj);
