@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2018-03-23
+// @pubdate = 2018-03-28
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -105,6 +105,10 @@ function settingsDialog() {
   if (inizioNumerazione<=0)
     inizioNumerazione=1;
   dialog.opzioniGroupBox.nProgrSpinBox.value = inizioNumerazione;
+  var righePerPagina = parseInt(libroGiornale.param.righePerPagina);
+  if (righePerPagina<=0)
+    righePerPagina=40;
+  dialog.opzioniGroupBox.righePerPaginaSpinBox.value = righePerPagina;
 
   //Metodi del dialogo
   dialog.checkdata = function () {
@@ -197,6 +201,7 @@ function settingsDialog() {
   //Reimposta l'anno per contabilità che non iniziano al 1. gennaio
   if (accountingData.openingYear != accountingData.closureYear &&
     (libroGiornale.param.periodoSelezionato == 'q' || libroGiornale.param.periodoSelezionato == 'm')) {
+    libroGiornale.param.datiContribuente = {};
     libroGiornale.param.datiContribuente.liqTipoVersamento = -1;
     var periods = new Utils(Banana.document).createPeriods(libroGiornale.param);
     if (periods.length>0) {
@@ -226,6 +231,9 @@ function settingsDialog() {
   libroGiornale.param.inizioNumProgressiva = dialog.opzioniGroupBox.nProgrSpinBox.value.toString();
   if (parseInt(libroGiornale.param.inizioNumProgressiva)<=0)
     libroGiornale.param.inizioNumProgressiva='1';
+  libroGiornale.param.righePerPagina = dialog.opzioniGroupBox.righePerPaginaSpinBox.value.toString();
+  if (parseInt(libroGiornale.param.righePerPagina)<=0)
+    libroGiornale.param.righePerPagina='40';
 
   index = parseInt(dialog.opzioniGroupBox.ordinamentoComboBox.currentIndex.toString());
   if (index == 0)
@@ -277,7 +285,7 @@ LibroGiornale.prototype.addPageFooter = function(report, stylesheet) {
   var cell_right = row.addCell("", "footer_cell_right");
 
   //add style
-  stylesheet.addStyle(".footer_table", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".footer_table", "margin-top:1em; width:100%;");
   stylesheet.addStyle(".footer_col_left", "width:33%;");
   stylesheet.addStyle(".footer_col_center", "width:33%;");
   stylesheet.addStyle(".footer_col_right", "width:33%");
@@ -349,7 +357,7 @@ LibroGiornale.prototype.addPageHeader = function(report, stylesheet) {
   if(year.length)
     year += "/";
   var cell_right = row.addCell("", "header_cell_right");
-  cell_right.addParagraph(year, "right").addFieldPageNr();
+  cell_right.addParagraph(year+"pag.", "right").addFieldPageNr();
  
   //add style
   stylesheet.addStyle(".header_table", "margin-top:1em;width:100%;");
@@ -366,15 +374,14 @@ LibroGiornale.prototype.addPageHeader = function(report, stylesheet) {
 
 LibroGiornale.prototype.getFields = function() {
   var fields = [
-    {'name' : 'NoProgr', 'title' : 'N.Prog.', 'type' : 'number'},
-    {'name' : 'Date', 'title' : 'Data', 'type' : 'date'},
-    {'name' : 'Doc', 'title' : 'Doc', 'type' : 'text'},
-    {'name' : 'DateDocument', 'title' : 'Data Doc', 'type' : 'date'},
-    {'name' : 'JAccount', 'title' : 'N. conto', 'type' : 'text'},
+    {'name' : 'NoProgr', 'title' : 'N.riga', 'type' : 'number'},
+    {'name' : 'Date', 'title' : 'Data reg.', 'type' : 'date'},
+    {'name' : 'DateDocument', 'title' : 'Data doc.', 'type' : 'date'},
+    {'name' : 'JAccount', 'title' : 'Conto', 'type' : 'text'},
     {'name' : 'JAccountDescription', 'title' : 'Des. conto', 'type' : 'text'},
-    {'name' : 'JDebitAmount', 'title' : 'Importo dare', 'type' : 'amount'},
-    {'name' : 'JCreditAmount', 'title' : 'Importo avere', 'type' : 'amount'},
     {'name' : 'Description', 'title' : 'Des. movimento', 'type' : 'text'},
+    {'name' : 'JDebitAmount', 'title' : 'Dare', 'type' : 'amount'},
+    {'name' : 'JCreditAmount', 'title' : 'Avere', 'type' : 'amount'},
     {'name' : 'JBalance', 'title' : 'Saldo', 'type' : 'amount'},
     {'name' : 'JContraAccountGroup', 'title' : '_JContraAccountGroup', 'type' : 'text'},
 
@@ -400,9 +407,10 @@ LibroGiornale.prototype.initParam = function() {
   this.param.colonnaOrdinamento = '';
   this.param.aggiungiAperture = false;
   this.param.stampaOrizzontale = false;
-  this.param.formattaMovStessaReg = false;
+  this.param.formattaMovStessaReg = true;
 
   this.param.inizioNumProgressiva = '1';
+  this.param.righePerPagina = '40';
 
   /*periodoSelezionato y=anno, q=trimestre, m=mese, c=personalizzato*/
   this.param.annoSelezionato = '';
@@ -457,6 +465,8 @@ LibroGiornale.prototype.loadData = function() {
     }
     //salva in transactions    
     var mappedTransaction = this.mapTransaction(tRow);
+    if (mappedTransaction == null)
+      continue;
     mappedTransaction['NoProgr'].value = inizioNProgr;
     this.transactions.push( mappedTransaction);
     //Versione 9.02 setText() non definito
@@ -484,11 +494,13 @@ LibroGiornale.prototype.mapTransaction = function(element) {
 
   var headers = this.getFields();
 
+  var validValue=false;
   for (var i = 0; i < headers.length; i++) {
     var header = headers[i];
     mappedLine[header.name] = {};
     if (element.value(header.name) && element.value(header.name).length>0) {
       mappedLine[header.name].value = element.value(header.name);
+      validValue=true;
     }
     else {
       mappedLine[header.name].value = "";
@@ -497,6 +509,10 @@ LibroGiornale.prototype.mapTransaction = function(element) {
     mappedLine[header.name].type = header.type;
   }
   
+  //se non è stato ripreso nessun valore ritorna null
+  if (!validValue)
+    return null;
+
   //se la descrizione è vuota riprende la descrizione del giornale
   if (mappedLine['Description'].value.length<=0)
     mappedLine['Description'].value = element.value("JDescription");
@@ -520,12 +536,11 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
     var header = headers[i];
     if (header.title.startsWith("_") && excludeDebugColumns)
       continue;
-    headerRow.addCell(header.title, "center");
+    headerRow.addCell(header.title, header.type);
   }
   
-  //Calcolo totali apertura e chiusura
-  var totalsOpening={};
-  var totalsFinal={};
+  //Calcolo totale progressivo e riporto iniziale
+  var carryForwardTotals={};
   var totalBalance = 0;
   var startDate = Banana.Converter.toInternalDateFormat(this.period.startDate,"yyyy-mm-dd");
   var endDate =Banana.Converter.toInternalDateFormat(this.period.endDate,"yyyy-mm-dd");
@@ -538,11 +553,8 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
     transaction["JBalance"].value = totalBalance;
     for (var column in transaction) {
       if (transaction[column].type == "amount" && column != "JBalance") {
-        if (date >= startDate  && date <= endDate) {
-          totalsFinal[column] = Banana.SDecimal.add(transaction[column].value, totalsFinal[column]);
-        }
-        else if (date < startDate) {
-          totalsOpening[column] = Banana.SDecimal.add(transaction[column].value, totalsOpening[column]);
+        if (date < startDate) {
+          carryForwardTotals[column] = Banana.SDecimal.add(transaction[column].value, carryForwardTotals[column]);
         }
       }
     }
@@ -550,8 +562,8 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
   
   //Stampa prima riga riporto saldi periodo precedente
   var printCarryForward=false;
-  for (var column in totalsOpening) {
-    if (!Banana.SDecimal.isZero(column)) {
+  for (var column in carryForwardTotals) {
+    if (!Banana.SDecimal.isZero(carryForwardTotals[column])) {
       printCarryForward=true;
       break;
     }
@@ -565,7 +577,7 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
       if (headers[i].name == "JAccountDescription")
         text = "Riporto precedente";
       if (headers[i].type == "amount") {
-        var columnValue = Banana.Converter.toLocaleNumberFormat(totalsOpening[headers[i].name]);
+        var columnValue = Banana.Converter.toLocaleNumberFormat(carryForwardTotals[headers[i].name]);
         row.addCell(columnValue, headers[i].type + " total");
       }
       else {
@@ -577,19 +589,49 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
   //Stampa movimenti
   var probableIndexGroup=0;
   var previousProbableIndexGroup = 0;
+  var nextProblableIndexGroup = 0;
   var className="even";
+  var printedRow = 0;
+  var pageTotals={};
+  var nRighePerPagina = parseInt(this.param.righePerPagina);
+  if (nRighePerPagina <=0)
+    nRighePerPagina = 40;
   for (var i = 0; i < this.transactions.length; i++) {
     var transaction = this.transactions[i];
     probableIndexGroup = transaction["JContraAccountGroup"].value;
+    nextProblableIndexGroup = probableIndexGroup;
+    if (i+1 < this.transactions.length)
+      nextProblableIndexGroup = this.transactions[i+1]["JContraAccountGroup"].value;
     var date = Banana.Converter.toInternalDateFormat(transaction["Date"].value,"yyyymmdd");
     if (date && date >= startDate  && date <= endDate) {
-      if (probableIndexGroup !== previousProbableIndexGroup) {
-        if (className=="odd")
-          className="even";
-        else
-          className="odd";
+      if (printedRow>0 && parseInt(printedRow % nRighePerPagina) === 0) {
+        this.printDocumentTotal(table, headers, pageTotals, "Totali pagina", excludeDebugColumns);
+        this.printDocumentTotal(table, headers, carryForwardTotals, "Totali generali", excludeDebugColumns);
+        table.addPageBreak();
+        pageTotals = {};
       }
-      var row = table.addRow(className);
+      printedRow++;
+      for (var column in transaction) {
+        if (transaction[column].type == "amount" && column != "JBalance") {
+          pageTotals[column] = Banana.SDecimal.add(transaction[column].value, pageTotals[column]);
+          carryForwardTotals[column] = Banana.SDecimal.add(transaction[column].value, carryForwardTotals[column]);
+        }
+      }
+      var row = table.addRow();
+      if (probableIndexGroup !== previousProbableIndexGroup) {
+        if (className=="odd") {
+          row.addClass("first");
+          className="even";
+        }
+        else {
+          row.addClass("first");
+          className="odd";
+        }
+      }
+      if (nextProblableIndexGroup !== probableIndexGroup) {
+        row.addClass("last");
+      }
+      row.addClass(className);
       for (var j = 0; j < headers.length; j++) {
         if (headers[j].title.startsWith("_") && excludeDebugColumns)
            continue;
@@ -602,57 +644,54 @@ LibroGiornale.prototype.printDocument = function(report, stylesheet) {
         else if (columnType == "date") {
           columnValue = Banana.Converter.toLocaleDateFormat(columnValue);
         }
+        else if (columnType == "text") {
+         if (columnValue.length>30)
+           columnValue = columnValue.substring(0,30) + "...";
+        }
         row.addCell(columnValue, columnType);
       }
     }
     previousProbableIndexGroup = probableIndexGroup;
   }
   
-  //Stampa riga di totale
+  if (printedRow>0 && parseInt(printedRow % nRighePerPagina) !== 0) {
+    this.printDocumentTotal(table, headers, pageTotals, "Totali pagina", excludeDebugColumns);
+    this.printDocumentTotal(table, headers, carryForwardTotals, "Totali generali", excludeDebugColumns);
+  }
+  
+}
+
+LibroGiornale.prototype.printDocumentTotal = function(table, columns, totals, totalsText, excludeDebugColumns) {
+  //Stampa riga di riporto o totale
+  var print=false;
+  for (var column in totals) {
+    if (!Banana.SDecimal.isZero(totals[column])) {
+      print=true;
+      break;
+    }
+  }
+  if (!print)
+    return;
   var row = table.addRow();
-  for (var i = 0; i < headers.length; i++) {
-    if (headers[i].title.startsWith("_") && excludeDebugColumns)
+  for (var i = 0; i < columns.length; i++) {
+    if (columns[i].title.startsWith("_") && excludeDebugColumns)
       continue;
     var text="";
-    if (headers[i].name == "JAccountDescription")
-      text = "Totale";
-    if (headers[i].type == "amount") {
-      var columnValue = Banana.Converter.toLocaleNumberFormat(totalsFinal[headers[i].name]);
-      if (headers[i].name == "JBalance") {
-        columnValue = totalsFinal["JDebitAmount"];
-        columnValue = Banana.SDecimal.subtract(columnValue, totalsFinal["JCreditAmount"]);
+    if (columns[i].name == "JAccountDescription")
+      text = totalsText;
+    if (columns[i].type == "amount") {
+      var columnValue = Banana.Converter.toLocaleNumberFormat(totals[columns[i].name]);
+      if (columns[i].name == "JBalance") {
+        columnValue = totals["JDebitAmount"];
+        columnValue = Banana.SDecimal.subtract(columnValue, totals["JCreditAmount"]);
         columnValue = Banana.Converter.toLocaleNumberFormat(columnValue);
       }
-      row.addCell(columnValue, headers[i].type + " total");
+      row.addCell(columnValue, columns[i].type + " total");
     }
     else {
       row.addCell(text, "text total");
     }
   }
-
-  //Stampa riga totale globale
-  var row = table.addRow();
-  for (var i = 0; i < headers.length; i++) {
-    if (headers[i].title.startsWith("_") && excludeDebugColumns)
-      continue;
-    var text="";
-    if (headers[i].name == "JAccountDescription")
-      text = "Totale complessivo";
-    if (headers[i].type == "amount") {
-      var amount = Banana.SDecimal.add(totalsOpening[headers[i].name], totalsFinal[headers[i].name]);
-      if (headers[i].name == "JBalance") {
-        amount = Banana.SDecimal.add(totalsOpening["JDebitAmount"], totalsFinal["JDebitAmount"]);
-        amount = Banana.SDecimal.subtract(amount, totalsOpening["JCreditAmount"]);
-        amount = Banana.SDecimal.subtract(amount, totalsFinal["JCreditAmount"]);
-      }
-      var columnValue = Banana.Converter.toLocaleNumberFormat(amount);
-      row.addCell(columnValue, headers[i].type + " total");
-    }
-    else {
-      row.addCell(text, "text total");
-    }
-  }
-
 }
 
 LibroGiornale.prototype.setParam = function(param) {
@@ -668,27 +707,25 @@ LibroGiornale.prototype.setStyle = function(report, stylesheet) {
     stylesheet.addStyle("@page").setAttribute("size", "landscape");
   stylesheet.addStyle("@page", "margin:2em;font-size: 8px; ");
   stylesheet.addStyle("phead", "font-weight: bold; margin-bottom: 1em");
-  stylesheet.addStyle("thead", "font-weight: bold;background-color:#ddddddeeeeee;");
+  stylesheet.addStyle("thead", "font-weight: bold;background-color:#ddddddeeeeee;border-bottom:1px solid #333333");
   stylesheet.addStyle("td", "padding:2px;vertical-align:top;");
 
-  stylesheet.addStyle(".amount", "text-align: right;border:0.5em solid black; ");
+  stylesheet.addStyle(".amount", "text-align: right; ");
   stylesheet.addStyle(".center", "text-align: center;");
   stylesheet.addStyle(".error", "color:red;");
   stylesheet.addStyle(".notes", "padding: 2em;font-style:italic;");
   stylesheet.addStyle(".period", "background-color:#ffffff;border:1px solid #ffffff;");
   stylesheet.addStyle(".right", "text-align: right;");
-  stylesheet.addStyle(".row.amount", "border:0.5em solid black");
-  stylesheet.addStyle(".rowName", "font-weight: bold;padding-top:5px;border-top:0.5em solid black");
   stylesheet.addStyle(".total", "font-weight: bold;");
   stylesheet.addStyle(".title", "background-color:#ffffff;border:1px solid #ffffff;font-size:10px;");
   stylesheet.addStyle(".warning", "color: red;font-size:8px;");
 
   /*tables*/
-  stylesheet.addStyle(".tableJournal", "margin-top:1em;width:100%;");
-  stylesheet.addStyle(".tableJournal td", "border:1px solid #333333");
-  if (this.param.formattaMovStessaReg)
-    stylesheet.addStyle(".tableJournal tr.even", "background-color:#eeeeee");
-  
+  stylesheet.addStyle(".tableJournal", "margin-top:1em;width:100%;border-top:1px solid #333333;");
+  if (this.param.formattaMovStessaReg) {
+    stylesheet.addStyle(".tableJournal tr.last td", "border-bottom: 1px dotted #333333;");
+    stylesheet.addStyle(".tableJournal tr.last td", "border-bottom: 1px dotted #333333");
+  }
 }
 
 LibroGiornale.prototype.sortByDate = function(a, b) {
@@ -731,6 +768,8 @@ LibroGiornale.prototype.verifyParam = function() {
     this.param.formattaMovStessaReg = false;
   if (!this.param.inizioNumProgressiva)
     this.param.inizioNumProgressiva = '1';
+  if (!this.param.righePerPagina)
+    this.param.righePerPagina = '40';
 
   if (!this.param.annoSelezionato)
     this.param.annoSelezionato = '';
