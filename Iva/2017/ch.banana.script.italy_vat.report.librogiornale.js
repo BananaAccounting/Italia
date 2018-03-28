@@ -500,7 +500,9 @@ LibroGiornale.prototype.mapTransaction = function(element) {
     mappedLine[header.name] = {};
     if (element.value(header.name) && element.value(header.name).length>0) {
       mappedLine[header.name].value = element.value(header.name);
-      validValue=true;
+      //controlla che ci sia almeno un contenuto data o importo per ritenere valida la riga
+      if (header.type=="amount" || header.type=="date")
+        validValue=true;
     }
     else {
       mappedLine[header.name].value = "";
