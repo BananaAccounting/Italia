@@ -23,7 +23,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-03-23
+// @pubdate = 2018-03-28
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -505,19 +505,21 @@ Registri.prototype.loadData = function() {
   journal.load(); 
 
   this.param.periods = [];
-  var periods = utils.createPeriods(this.param);
-  for (var i=0; i<periods.length; i++) {
-    periods[i] = journal.getPeriod(periods[i].startDate, periods[i].endDate);
-    periods[i].numerazioneAutomatica = this.param.numerazioneAutomatica;
-    periods[i].colonnaProtocollo = this.param.colonnaProtocollo;
-    this.param.periods.push(periods[i]);
-  }
-  //aggiunge l'anno intero se periodo è annuale
+  //aggiunge l'anno intero se periodo è annuale altrimenti i singoli periodi selezionati
   if (this.param.periodoSelezionato == "y") {
     var periodYear = journal.getPeriod(this.param.fileInfo["OpeningDate"], this.param.fileInfo["ClosureDate"]);
     periodYear.numerazioneAutomatica = this.param.numerazioneAutomatica;
     periodYear.colonnaProtocollo = this.param.colonnaProtocollo;
     this.param.periods.push(periodYear);
+  }
+  else {
+    var periods = utils.createPeriods(this.param);
+    for (var i=0; i<periods.length; i++) {
+      periods[i] = journal.getPeriod(periods[i].startDate, periods[i].endDate);
+      periods[i].numerazioneAutomatica = this.param.numerazioneAutomatica;
+      periods[i].colonnaProtocollo = this.param.colonnaProtocollo;
+      this.param.periods.push(periods[i]);
+    }
   }
 
   //PeriodComplete (inizio contabilità/fine periodo selezionato) serve per il calcolo dei corrispettivi da ventilare (acquisti per rivendita)
@@ -527,56 +529,7 @@ Registri.prototype.loadData = function() {
     this.param.periods[i].periodComplete = periodComplete;
   }
   
-/*  this.param = readAccountingData(this.param, this.banDocument);
-  //carica un'unica volta il giornale con l'intero periodo
-  var periodYear = {};
-  periodYear.startDate = this.param.fileInfo["OpeningDate"];
-  periodYear.endDate = this.param.fileInfo["ClosureDate"];
-  periodYear = loadJournal(periodYear, this.banDocument);
-  
-  this.param.periods = [];
-  var periods = createPeriods(this.param, this.banDocument);
-  for (var i=0; i<periods.length; i++) {
-    //periods[i] = loadJournal(periods[i]);
-    periods[i] = this.loadDataPeriod(periodYear.journal, periods[i]);
-    periods[i].numerazioneAutomatica = this.param.numerazioneAutomatica;
-    periods[i].colonnaProtocollo = this.param.colonnaProtocollo;
-    this.param.periods.push(periods[i]);
-  }
-  //aggiunge l'anno intero se periodo è annuale
-  if (this.param.periodoSelezionato == "y") {
-    periodYear.numerazioneAutomatica = this.param.numerazioneAutomatica;
-    periodYear.colonnaProtocollo = this.param.colonnaProtocollo;
-    this.param.periods.push(periodYear);
-  }
-
-  //PeriodComplete (inizio contabilità/fine periodo selezionato) serve per il calcolo dei corrispettivi da ventilare (acquisti per rivendita)
-  for (var i=0; i<this.param.periods.length; i++) {
-    var periodComplete = {};
-    periodComplete.startDate = this.param.fileInfo["OpeningDate"];
-    periodComplete.endDate = this.param.periods[i].endDate;
-    periodComplete = this.loadDataPeriod(periodYear.journal, periodComplete);
-    this.param.periods[i] = this.loadDataTotals(this.param.periods[i], periodComplete);
-    this.param.periods[i].periodComplete = periodComplete;
-  }*/
 }
-
-/*Registri.prototype.loadDataPeriod = function(journal, period) {
-
-  var periodStart = Banana.Converter.toDate(period.startDate);
-  var periodEnd = Banana.Converter.toDate(period.endDate);
-  period.journal = {};
-  period.journal.rows = [];
-
-  for (var i=0; i < journal.rows.length;i++) {
-    var jsonLine = journal.rows[i];
-    var content = jsonLine["JDate"];
-    var currentDate = Banana.Converter.stringToDate(content, "YYYY-MM-DD");
-    if (currentDate >= periodStart && currentDate <= periodEnd)
-      period.journal.rows.push(jsonLine);
-  }
-  return period;
-}*/
 
 Registri.prototype.loadDataTotals = function(period, periodComplete) {
 
