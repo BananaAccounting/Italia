@@ -89,35 +89,45 @@ function settingsDialog() {
   }
   
   var accountingData = {};
-  accountingData.datiContribuente = new DatiContribuente(Banana.document).readParam();
   accountingData = new Utils(Banana.document).readAccountingData(accountingData);
-  if (registri.param.annoSelezionato.length<=0)
-    registri.param.annoSelezionato = accountingData.openingYear;
+  registri.param.annoSelezionato = accountingData.openingYear;
   
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat_2017.report.registri.dialog.ui");
-  //Groupbox periodo
-  var index = 0;
-  if (registri.param.periodoSelezionato == 'm')
-    index = parseInt(registri.param.periodoValoreMese);
-  else if (registri.param.periodoSelezionato == 'q')
-    index = parseInt(registri.param.periodoValoreTrimestre) + 13;
-  else if (registri.param.periodoSelezionato == 's')
-    index = parseInt(registri.param.periodoValoreSemestre) + 18;
-  else if (registri.param.periodoSelezionato == 'y')
-    index = 21;
-  var periodoComboBox = dialog.tabWidget.findChild('periodoComboBox');
-  if (periodoComboBox)
-    periodoComboBox.currentIndex = index;
-  //Groupbox anno per il momento impostati fissi perché non è possibile caricare gli anni sul combobox
-  var index = 0;
-  if (registri.param.annoSelezionato == '2017')
-    index = 1;
-  else if (registri.param.annoSelezionato == '2018')
-    index = 2;
-  var annoComboBox = dialog.tabWidget.findChild('annoComboBox');
-  if (annoComboBox)
-    annoComboBox.currentIndex = index;
-
+  //Lettura dati
+  //periodo
+  var trimestreRadioButton = dialog.tabWidget.findChild('trimestreRadioButton');
+  var trimestreComboBox = dialog.tabWidget.findChild('trimestreComboBox');
+  var meseRadioButton = dialog.tabWidget.findChild('meseRadioButton');
+  var meseComboBox = dialog.tabWidget.findChild('meseComboBox');
+  var dataRadioButton = dialog.tabWidget.findChild('dataRadioButton');
+  var annoRadioButton = dialog.tabWidget.findChild('annoRadioButton');
+  var annoLabel = dialog.tabWidget.findChild('annoLabel');
+  var dalDateEdit = dialog.tabWidget.findChild('dalDateEdit');
+  var alDateEdit = dialog.tabWidget.findChild('alDateEdit');
+  var alLabelText = dialog.tabWidget.findChild('alLabelText');
+  if (registri.param.periodoSelezionato == 'q')
+    trimestreRadioButton.checked = true;
+  else if (registri.param.periodoSelezionato == 'm')
+    meseRadioButton.checked = true;
+  else if (registri.param.periodoSelezionato == 'c')
+    dataRadioButton.checked = true;
+  else
+    annoRadioButton.checked = true;
+  annoLabel.text = registri.param.annoSelezionato;
+  if (accountingData.openingYear != accountingData.closureYear)
+    annoLabel.text += "/" + accountingData.closureYear;
+  trimestreComboBox.currentIndex = parseInt(registri.param.periodoValoreTrimestre);
+  meseComboBox.currentIndex = parseInt(registri.param.periodoValoreMese);
+  var fromDate = registri.param.periodoDataDal;
+  var toDate = registri.param.periodoDataAl;
+  if (!fromDate || !toDate) {
+      fromDate = Banana.Converter.stringToDate(accountingData.accountingOpeningDate, "YYYY-MM-DD");
+      toDate = Banana.Converter.stringToDate(accountingData.accountingClosureDate, "YYYY-MM-DD");
+  }
+  fromDate = Banana.Converter.toInternalDateFormat(fromDate, "dd/mm/yyyy");
+  toDate = Banana.Converter.toInternalDateFormat(toDate, "dd/mm/yyyy");
+  dalDateEdit.setDate(fromDate);
+  alDateEdit.setDate(toDate);
   //Tipo registro
   var tipoRegistroComboBox = dialog.tabWidget.findChild('tipoRegistroComboBox');
   if (tipoRegistroComboBox)
@@ -180,6 +190,55 @@ function settingsDialog() {
     dialog.accept();
   }
   dialog.enableButtons = function () {
+    //Periodo
+    if (annoRadioButton.checked) {
+        trimestreComboBox.enabled = false;
+        trimestreComboBox.update();
+        meseComboBox.enabled = false;
+        meseComboBox.update();
+        dalDateEdit.enabled = false;
+        dalDateEdit.update();
+        alLabelText.enabled = false;
+        alLabelText.update();
+        alDateEdit.enabled = false;
+        alDateEdit.update();
+    }
+    else if (trimestreRadioButton.checked) {
+        trimestreComboBox.enabled = true;
+        trimestreComboBox.update();
+        meseComboBox.enabled = false;
+        meseComboBox.update();
+        dalDateEdit.enabled = false;
+        dalDateEdit.update();
+        alLabelText.enabled = false;
+        alLabelText.update();
+        alDateEdit.enabled = false;
+        alDateEdit.update();
+    }
+    else if (meseRadioButton.checked) {
+        trimestreComboBox.enabled = false;
+        trimestreComboBox.update();
+        meseComboBox.enabled = true;
+        meseComboBox.update();
+        dalDateEdit.enabled = false;
+        dalDateEdit.update();
+        alLabelText.enabled = false;
+        alLabelText.update();
+        alDateEdit.enabled = false;
+        alDateEdit.update();
+    }
+    else if (dataRadioButton.checked) {
+        trimestreComboBox.enabled = false;
+        trimestreComboBox.update();
+        meseComboBox.enabled = false;
+        meseComboBox.update();
+        dalDateEdit.enabled = true;
+        dalDateEdit.update();
+        alLabelText.enabled = true;
+        alLabelText.update();
+        alDateEdit.enabled = true;
+        alDateEdit.update();
+    }
     //Testi
     if (tempTestoRegistriCurrentIndex == '0') {
       tempStampaTestoRegistroAcquisti = testoGroupBox.checked;
@@ -214,6 +273,10 @@ function settingsDialog() {
   }
   dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
   dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
+  annoRadioButton.clicked.connect(dialog.enableButtons);
+  trimestreRadioButton.clicked.connect(dialog.enableButtons);
+  meseRadioButton.clicked.connect(dialog.enableButtons);
+  dataRadioButton.clicked.connect(dialog.enableButtons);
   if (testoRegistriComboBox['currentIndexChanged(QString)'])
      testoRegistriComboBox['currentIndexChanged(QString)'].connect(dialog, dialog.enableButtons);
   else
@@ -229,34 +292,34 @@ function settingsDialog() {
     return false;
 
   //Salvataggio dati
-  //Groupbox periodo
-  var index = parseInt(periodoComboBox.currentIndex.toString());
-  if (index < 0 || index == 12 || index == 17 || index == 20)
-    index = 0;
-  if (index < 12) {
-    registri.param.periodoSelezionato = 'm';
-    registri.param.periodoValoreMese = index.toString();
-  }
-  else if (index > 12 && index < 17) {
+  //periodo
+  if (trimestreRadioButton.checked)
     registri.param.periodoSelezionato = 'q';
-    registri.param.periodoValoreTrimestre = (index-13).toString();
-  }
-  else if (index > 17 && index < 20) {
-    registri.param.periodoSelezionato = 's';
-    registri.param.periodoValoreSemestre = (index-18).toString();
-  }
-  else {
+  else if (meseRadioButton.checked)
+    registri.param.periodoSelezionato = 'm';
+  else if (dataRadioButton.checked)
+    registri.param.periodoSelezionato = 'c';
+  else
     registri.param.periodoSelezionato = 'y';
+  var index = parseInt(trimestreComboBox.currentIndex.toString());
+  registri.param.periodoValoreTrimestre = index.toString();
+  index = parseInt(meseComboBox.currentIndex.toString());
+  registri.param.periodoValoreMese = index.toString();
+  registri.param.periodoDataDal = dalDateEdit.text < 10 ? "0" + dalDateEdit.text : dalDateEdit.text;
+  registri.param.periodoDataAl = alDateEdit.text < 10 ? "0" + alDateEdit.text : alDateEdit.text;
+  //Reimposta l'anno per contabilità che non iniziano al 1. gennaio
+  if (accountingData.openingYear != accountingData.closureYear &&
+    (registri.param.periodoSelezionato == 'q' || registri.param.periodoSelezionato == 'm')) {
+    registri.param.datiContribuente = {};
+    registri.param.datiContribuente.liqTipoVersamento = -1;
+    var periods = new Utils(Banana.document).createPeriods(registri.param);
+    if (periods.length>0) {
+      var accountingStartDate = Banana.Converter.toInternalDateFormat(accountingData.accountingOpeningDate,"yyyy-mm-dd");
+      var periodStartDate = Banana.Converter.toInternalDateFormat(periods[0].startDate,"yyyymmdd");
+      if (periodStartDate < accountingStartDate)
+        registri.param.annoSelezionato = accountingData.closureYear;
+    }
   }
-  //Groupbox anno
-  var index = parseInt(annoComboBox.currentIndex.toString());
-  if (index <=0)
-    registri.param.annoSelezionato = '2016';
-  else if (index ==1)
-    registri.param.annoSelezionato = '2017';
-  else if (index ==2)
-    registri.param.annoSelezionato = '2018';
-
   //Tipo registro
   if (tipoRegistroComboBox)
     registri.param.tipoRegistro = tipoRegistroComboBox.currentIndex.toString();
@@ -495,22 +558,34 @@ Registri.prototype.initParam = function() {
   this.param.periodoValoreMese = '';
   this.param.periodoValoreTrimestre = '';
   this.param.periodoValoreSemestre = '';
+  this.param.periodoDataDal = '';
+  this.param.periodoDataAl = '';
 }
 
 Registri.prototype.loadData = function() {
+  
+  this.param.datiContribuente = new DatiContribuente(this.banDocument).readParam();
   var utils = new Utils(this.banDocument);
   this.param = utils.readAccountingData(this.param);
-  this.param.datiContribuente = new DatiContribuente(this.banDocument).readParam();
   var journal = new Journal(this.banDocument);
   journal.load(); 
 
   this.param.periods = [];
   //aggiunge l'anno intero se periodo è annuale altrimenti i singoli periodi selezionati
-  if (this.param.periodoSelezionato == "y") {
+  if (this.param.periodoSelezionato == 'y') {
     var periodYear = journal.getPeriod(this.param.fileInfo["OpeningDate"], this.param.fileInfo["ClosureDate"]);
     periodYear.numerazioneAutomatica = this.param.numerazioneAutomatica;
     periodYear.colonnaProtocollo = this.param.colonnaProtocollo;
     this.param.periods.push(periodYear);
+  }
+  //periodo custom dal... al...
+  else if (this.param.periodoSelezionato == 'c') {
+    var startDate = Banana.Converter.toInternalDateFormat(this.param.periodoDataDal, "dd/mm/yyyy");
+    var endDate = Banana.Converter.toInternalDateFormat(this.param.periodoDataAl, "dd/mm/yyyy"); 
+    var periodCustom = journal.getPeriod(startDate, endDate);
+    periodCustom.numerazioneAutomatica = this.param.numerazioneAutomatica;
+    periodCustom.colonnaProtocollo = this.param.colonnaProtocollo;
+    this.param.periods.push(periodCustom);
   }
   else {
     var periods = utils.createPeriods(this.param);
@@ -524,6 +599,7 @@ Registri.prototype.loadData = function() {
 
   //PeriodComplete (inizio contabilità/fine periodo selezionato) serve per il calcolo dei corrispettivi da ventilare (acquisti per rivendita)
   for (var i=0; i<this.param.periods.length; i++) {
+    console.log( "this.param.periods[i] " + this.param.periods[i].startDate + " " + this.param.periods[i].endDate);
     var periodComplete = journal.getPeriod(this.param.fileInfo["OpeningDate"], this.param.periods[i].endDate);
     this.param.periods[i] = this.loadDataTotals(this.param.periods[i], periodComplete);
     this.param.periods[i].periodComplete = periodComplete;
@@ -1655,4 +1731,8 @@ Registri.prototype.verifyParam = function() {
     this.param.periodoValoreTrimestre = '';
   if (!this.param.periodoValoreSemestre)
     this.param.periodoValoreSemestre = '';
+  if (!this.param.periodoDataDal)
+    this.param.periodoDataDal = '';
+  if (!this.param.periodoDataAl)
+    this.param.periodoDataAl = '';
 }

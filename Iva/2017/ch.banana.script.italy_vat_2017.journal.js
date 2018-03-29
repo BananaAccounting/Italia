@@ -1261,12 +1261,12 @@ Utils.prototype.createPeriods = function(param) {
     }
 
     //se il tipo di versamento è trimestrale avvisa che è stato selezionato un mese
-    if (param.datiContribuente.liqTipoVersamento == 1) {
+    /*if (param.datiContribuente.liqTipoVersamento == 1) {
       var msg = getErrorMessage(ID_ERR_TIPOVERSAMENTO);
       this.banDocument.addMessage( msg, ID_ERR_TIPOVERSAMENTO);
       currentPeriod.startDate = '';
       currentPeriod.endDate = '';
-    }
+    }*/
     if (currentPeriod.startDate.length>0 && currentPeriod.endDate.length>0) {
       periods.push(currentPeriod);
     }
@@ -1705,7 +1705,7 @@ Utils.prototype.getPeriodText = function(period) {
   
   //se le date non corrispondono al primo giorno del mese (fromDate) e all'ultimo giorno del mese (toDate) ritorna il periodo esatto
   if (fromDate.getDate() != firstDayOfPeriod || toDate.getDate() != lastDayOfPeriod)
-    return "dal: " + Banana.Converter.toLocaleDateFormat(_startDate) + " al " + Banana.Converter.toLocaleDateFormat(_endDate);
+    return "dal: " + Banana.Converter.toLocaleDateFormat(fromDate) + " al " + Banana.Converter.toLocaleDateFormat(toDate);
 
   if (fromDate.getMonth() === toDate.getMonth()) {
     var mese = fromDate.getMonth()+1;
@@ -1737,22 +1737,23 @@ Utils.prototype.getPeriodText = function(period) {
     return mese;
   }
 
-  var q = [1,2,3,4];
-  var q1 = q[Math.floor(fromDate.getMonth() / 3)];  
-  var q2 = q[Math.floor(toDate.getMonth() / 3)];  
-  if (q1 === q2)
-    return q1.toString() + ". trimestre " + fromDate.getFullYear();
+  if (fromDate.getFullYear() === toDate.getFullYear()) {
+    var q = [1,2,3,4];
+    var q1 = q[Math.floor(fromDate.getMonth() / 3)];  
+    var q2 = q[Math.floor(toDate.getMonth() / 3)];  
+    if (q1 === q2)
+      return q1.toString() + ". trimestre " + fromDate.getFullYear();
 
-  var s = [1,2];
-  var s1 = q[Math.floor(fromDate.getMonth() / 6)];  
-  var s2 = q[Math.floor(toDate.getMonth() / 6)];  
-  if (s1 === s2)
-    return s1.toString() + ". semestre " + fromDate.getFullYear();
+    var s = [1,2];
+    var s1 = q[Math.floor(fromDate.getMonth() / 6)];  
+    var s2 = q[Math.floor(toDate.getMonth() / 6)];  
+    if (s1 === s2)
+      return s1.toString() + ". semestre " + fromDate.getFullYear();
 
-  if (fromDate.getFullYear() === toDate.getFullYear())
     return fromDate.getFullYear().toString();
-
-  return "";
+  }
+  //Periodo che non inizia all'1.1, ad esempio 01.09.17/31.08.18
+  return "dal: " + Banana.Converter.toLocaleDateFormat(fromDate) + " al " + Banana.Converter.toLocaleDateFormat(toDate);
 }
 
 Utils.prototype.isMemberOfEuropeanUnion = function(_country) {
