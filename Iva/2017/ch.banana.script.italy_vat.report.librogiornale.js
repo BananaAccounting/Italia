@@ -351,13 +351,11 @@ LibroGiornale.prototype.addPageHeader = function(report, stylesheet) {
   cell_center.addParagraph(periodo, "period center");
 
   //cell_right
-  var year = this.param.openingYear;
-  if (year != this.param.closureYear)
-    year += "-"+this.param.closureYear;
-  if(year.length)
-    year += "/";
+  var period = this.param.annoSelezionato;
+  if (period.length)
+    period += "/";
   var cell_right = row.addCell("", "header_cell_right");
-  cell_right.addParagraph(year+"pag.", "right").addFieldPageNr();
+  cell_right.addParagraph(period + "pag.", "right").addFieldPageNr();
  
   //add style
   stylesheet.addStyle(".header_table", "margin-top:1em;width:100%;");

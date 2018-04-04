@@ -503,9 +503,7 @@ Registri.prototype.addPageHeader = function(report, stylesheet) {
   cell_right1.addParagraph("pag. ", "right").addFieldPageNr();
 
   //cell_right
-  var period = "/" + this.param.openingYear;
-  if (this.param.openingYear != this.param.closureYear)
-    period +=  "-" + this.param.closureYear;
+  var period = "/" + this.param.annoSelezionato;
   var cell_right2 = row.addCell("", "header_cell_right");
   cell_right2.addParagraph(period, "period_header");
 
