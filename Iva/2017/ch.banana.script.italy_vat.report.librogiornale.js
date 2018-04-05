@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2018-03-28
+// @pubdate = 2018-04-05
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -490,23 +490,23 @@ LibroGiornale.prototype.loadData = function() {
 LibroGiornale.prototype.mapTransaction = function(element) {
   var mappedLine = {};
 
-  var headers = this.getFields();
+  var columns = this.getFields();
 
   var validValue=false;
-  for (var i = 0; i < headers.length; i++) {
-    var header = headers[i];
-    mappedLine[header.name] = {};
-    if (element.value(header.name) && element.value(header.name).length>0) {
-      mappedLine[header.name].value = element.value(header.name);
+  for (var i = 0; i < columns.length; i++) {
+    var column = columns[i];
+    mappedLine[column.name] = {};
+    if (element.value(column.name) && element.value(column.name).length>0) {
+      mappedLine[column.name].value = element.value(column.name);
       //controlla che ci sia almeno un contenuto data o importo per ritenere valida la riga
-      if (header.type=="amount" || header.type=="date")
+      if (column.type=="amount" || column.type=="date")
         validValue=true;
     }
     else {
-      mappedLine[header.name].value = "";
+      mappedLine[column.name].value = "";
     }
-    mappedLine[header.name].title = header.title;
-    mappedLine[header.name].type = header.type;
+    mappedLine[column.name].title = column.title;
+    mappedLine[column.name].type = column.type;
   }
   
   //se non è stato ripreso nessun valore ritorna null
@@ -686,10 +686,10 @@ LibroGiornale.prototype.printDocumentTotal = function(table, columns, totals, to
         columnValue = Banana.SDecimal.subtract(columnValue, totals["JCreditAmount"]);
         columnValue = Banana.Converter.toLocaleNumberFormat(columnValue);
       }
-      row.addCell(columnValue, columns[i].type + " total");
+      row.addCell(columnValue, columns[i].type + " total " + totalsText);
     }
     else {
-      row.addCell(text, "text total");
+      row.addCell(text, "text total " + totalsText);
     }
   }
 }
@@ -726,6 +726,8 @@ LibroGiornale.prototype.setStyle = function(report, stylesheet) {
     stylesheet.addStyle(".tableJournal tr.last td", "border-bottom: 1px dotted #333333;");
     stylesheet.addStyle(".tableJournal tr.last td", "border-bottom: 1px dotted #333333");
   }
+  stylesheet.addStyle(".Totali.pagina", "border-top: 1px solid #333333;");
+  stylesheet.addStyle(".Totali.generali", "border-bottom: 1px double #333333;");
 }
 
 LibroGiornale.prototype.sortByDate = function(a, b) {
