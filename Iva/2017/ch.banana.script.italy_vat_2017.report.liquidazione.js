@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-03-23
+// @pubdate = 2018-04-06
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -305,13 +305,37 @@ LiquidazionePeriodica.prototype.addPageHeader = function(report, stylesheet) {
 }
 
 LiquidazionePeriodica.prototype.calculateInterestAmount = function(period) {
-  if (Banana.SDecimal.sign(period["TotalWithoutInterests"].vatPosted)<=0) {
-    var interestRate = Banana.SDecimal.round(period.datiContribuente.liqPercInteressi, {'decimals':2});
-    var interestAmount = Banana.SDecimal.abs(period["TotalWithoutInterests"].vatPosted) * interestRate /100;
-    interestAmount = Banana.SDecimal.roundNearest(interestAmount, '0.01');
-    return interestAmount.toString();
+  var message = {};
+  message.text = "";
+  message.id = "";
+  var amountInteressi = 0;
+  var amountInteressiCalcolati = 0;
+  
+  //interessi solo per iva trimestrale
+  if (period.datiContribuente.liqTipoVersamento == 1) {
+    if (Banana.SDecimal.sign(period["TotalWithoutInterests"].vatPosted)<=0) {
+      var percInteressi = Banana.SDecimal.round(period.datiContribuente.liqPercInteressi, {'decimals':2});
+      amountInteressiCalcolati = Banana.SDecimal.abs(period["TotalWithoutInterests"].vatPosted) * percInteressi /100;
+      amountInteressiCalcolati = Banana.SDecimal.roundNearest(amountInteressiCalcolati, '0.01');
+    }
   }
-  return '';
+  
+  if (period["L-INT"] && period["L-INT"].vatPosted)
+    amountInteressi = Banana.SDecimal.abs(period["L-INT"].vatPosted);
+
+  if (period.datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
+    message.id = ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI;
+    message.text = getErrorMessage(message.id);
+    message.text = message.text.replace("%1", amountInteressiCalcolati );
+    message.text = message.text.replace("%2", Banana.SDecimal.round(period.datiContribuente.liqPercInteressi, {'decimals':2}) );
+    message.text = message.text.replace("%3", amountInteressi );
+  }
+  else if (period.datiContribuente.liqTipoVersamento == 0 && amountInteressi.length>0) {
+    message.id = ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE;
+    message.text = getErrorMessage(message.id);
+  }
+
+  return message;
 }
 
 LiquidazionePeriodica.prototype.createInstance = function() {
@@ -486,23 +510,9 @@ LiquidazionePeriodica.prototype.createInstanceModulo = function(period) {
 
   //disabilita controllo interessi nel periodo iv trimestre iva speciali
   if (this.getPeriod("q", period)!="4") {
-    var amountInteressi = 0;
-    if (period["L-INT"] && period["L-INT"].vatPosted)
-      amountInteressi = Banana.SDecimal.abs(period["L-INT"].vatPosted);
-    var amountInteressiCalcolati = 0;
-    if (period.datiContribuente.liqTipoVersamento == 1)
-      amountInteressiCalcolati = this.calculateInterestAmount(period);
-    //se suddivisione mensile e ci sono registrazioni di interessi dà un warning
-    if (period.datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
-      var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
-      msg = msg.replace("%1", period.datiContribuente.liqPercInteressi );
-      msg = msg.replace("%2", amountInteressiCalcolati );
-      this.banDocument.addMessage( msg, ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
-    }
-    else if (period.datiContribuente.liqTipoVersamento == 0 && amountInteressi.length>0) {
-      var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE);
-      this.banDocument.addMessage( msg, ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE);
-    }
+    var msg = this.calculateInterestAmount(period);
+    if (msg.id.length>0)
+      this.banDocument.addMessage( msg.text, msg.id);
   }
   
   //Riprende interessi con importo formattato
@@ -1013,22 +1023,13 @@ LiquidazionePeriodica.prototype.printVatReport2 = function(report, stylesheet, p
   //propone interessi trimestrali se importo è diverso da quello visualizzato
   //disabilita controllo interessi nel periodo iv trimestre iva speciali
   if (this.getPeriod("q", period)!="4") {
-    var amountInteressi = 0;
-    if (period["L-INT"] && period["L-INT"].vatPosted)
-      amountInteressi = Banana.SDecimal.abs(period["L-INT"].vatPosted);
-    var amountInteressiCalcolati = 0;
-    if (period.datiContribuente.liqTipoVersamento == 1)
-      amountInteressiCalcolati = this.calculateInterestAmount(period);
-    if (period.datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
-      var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
-      msg = msg.replace("%1", period.datiContribuente.liqPercInteressi );
-      msg = msg.replace("%2", Banana.Converter.toLocaleNumberFormat(amountInteressiCalcolati) );
-      row.addCell(msg, "amount warning");
+    var msg = this.calculateInterestAmount(period);
+    if (msg.id.length>0) {
+      row.addCell(msg.text, "amount warning");
     }
-    else if (period.datiContribuente.liqTipoVersamento == 0 && amountInteressi != amountInteressiCalcolati)
-      row.addCell(getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE), "amount warning");
-    else
+    else {
       row.addCell("");
+    }
   }
   else {
     row.addCell("");

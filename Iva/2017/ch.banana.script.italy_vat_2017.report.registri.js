@@ -23,7 +23,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-03-28
+// @pubdate = 2018-04-06
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -1021,7 +1021,20 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   //Interessi dovuti
   amount = this.param.vatPeriods[0]["L-INT"].vatPosted
   row = table.addRow();
-  row.addCell("Interessi dovuti per liquidazioni trimestrali", "description");
+  var cell = row.addCell("Interessi dovuti per liquidazioni trimestrali", "description");
+  /*avvisa se l'interesse calcolato è diverso, non viene calcolato per il 4 trimestre iva speciali e la dichiarazione annuale*/
+  var controllaInteressi = true;
+  if (this.param.periodoSelezionato == "c")
+    controllaInteressi = false;
+  if (this.param.periodoSelezionato == "q" && this.param.periodoValoreTrimestre == "4")
+    controllaInteressi = false;
+  if (controllaInteressi) {
+    var liquidazione = new LiquidazionePeriodica(this.banDocument);
+    var msg = liquidazione.calculateInterestAmount(this.param.vatPeriods[0]);
+    if (msg.id.length>0) {
+      cell.addParagraph(msg.text, "amount warning");
+    }
+  }
   if (Banana.SDecimal.sign(amount)<=0) {
     row.addCell(this.formatAmount(amount), "amount");
     row.addCell("");
@@ -1030,24 +1043,7 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
     row.addCell("");
     row.addCell(this.formatAmount(amount), "amount");
   }
-  /*propone interessi trimestrali se importo è diverso da quello visualizzato*/
-  /*var amountInteressi = 0;
-  if (this.param.vatPeriods[0]["L-INT"] && this.param.vatPeriods[0]["L-INT"].vatPosted)
-    amountInteressi = Banana.SDecimal.abs(this.param.vatPeriods[0]["L-INT"].vatPosted);
-  var amountInteressiCalcolati = 0;
-  if (this.param.vatPeriods[0].datiContribuente.liqTipoVersamento == 1)
-    amountInteressiCalcolati = calculateInterestAmount(this.param.vatPeriods[0]);
-  if (this.param.vatPeriods[0].datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
-    var msg = getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI);
-    msg = msg.replace("%1", this.param.vatPeriods[0].datiContribuente.liqPercInteressi );
-    msg = msg.replace("%2", Banana.Converter.toLocaleNumberFormat(amountInteressiCalcolati) );
-    row.addCell(msg, "amount warning");
-  }
-  else if (this.param.vatPeriods[0].datiContribuente.liqTipoVersamento == 0 && amountInteressi != amountInteressiCalcolati)
-    row.addCell(getErrorMessage(ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE), "amount warning");
-  else
-    row.addCell("");*/
-
+  
   //Acconto dovuto
   amount = this.param.vatPeriods[0]["L-AC"].vatPosted;
   row = table.addRow();

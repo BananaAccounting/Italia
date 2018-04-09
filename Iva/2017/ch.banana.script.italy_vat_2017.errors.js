@@ -63,7 +63,8 @@ function getErrorMessage(errorId) {
         case ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE:
             return "Sono stati registrati degli interessi (L-INT) con tipo di versamento mensile";
         case ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI:
-            return "La registrazione degli interessi %1% EUR %2 manca o non è corretta.";
+            //return "La registrazione degli interessi %1% EUR %2 manca o non è corretta.";
+            return "Interessi calcolati: EUR %1 (%2%), interessi registrati: EUR %3";
         case ID_ERR_DATIFATTURE_MANCA_IDFILE:
             return "IdFile mancante. Per annullare una trasmissione indicare l'Id file associato generato dall'AdE";
         case ID_ERR_DATIFATTURE_MANCA_CODICEFISCALE:
