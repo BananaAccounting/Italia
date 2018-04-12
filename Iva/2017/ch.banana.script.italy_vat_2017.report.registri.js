@@ -815,14 +815,6 @@ Registri.prototype.printDocument = function(report, stylesheet) {
     }
     //tipoRegistro 3 = liquidazione
     if (this.param.tipoRegistro == 0 || this.param.tipoRegistro == 3 || this.param.tipoRegistro == 4) {
-      var liquidazionePeriodica = new LiquidazionePeriodica(this.banDocument);
-      liquidazionePeriodica.setParam(this.param);
-      var vatAmounts = liquidazionePeriodica.loadVatCodes(this.param.periods[i].startDate, this.param.periods[i].endDate);
-      this.param.vatPeriods = [];
-      this.param.vatPeriods.push(vatAmounts);
-      //OPATTIVE non include la liquidazione nella stampa dei registri
-      this.param.vatPeriods[0]["OPATTIVE"] = liquidazionePeriodica.sumVatAmounts(this.param.vatPeriods[0], ["V","C"]);
-      this.param.vatPeriods[0]["OPDIFFERENZA"] = liquidazionePeriodica.sumVatAmounts(this.param.vatPeriods[0], ["OPATTIVE","OPPASSIVE"]);
       var printed = this.printLiquidazione(report, this.param.periods[i], addPageBreak);
       if (printed)
         addPageBreak = true;
@@ -851,6 +843,14 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   if (addPageBreak)
     report.addPageBreak();
 
+  //prepara i dati
+  var liquidazionePeriodica = new LiquidazionePeriodica(this.banDocument);
+  liquidazionePeriodica.setParam(this.param);
+  var vatAmounts = liquidazionePeriodica.loadVatCodes(period.startDate, period.endDate);
+  //OPATTIVE non include la liquidazione nella stampa dei registri
+  vatAmounts["OPATTIVE"] = liquidazionePeriodica.sumVatAmounts(vatAmounts, ["V","C"]);
+  vatAmounts["OPDIFFERENZA"] = liquidazionePeriodica.sumVatAmounts(vatAmounts, ["OPATTIVE","OPPASSIVE"]);
+
   var utils = new Utils(this.banDocument);
 
   //Tabella Prospetto di liquidazione IVA
@@ -862,11 +862,11 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
 
   //Tabella Riepilogo IVA
   report.addParagraph("Riepilogo IVA", "h1");
-  report.addParagraph("Periodo: " + utils.getPeriodText(this.param.vatPeriods[0]), "h1_period");
+  report.addParagraph("Periodo: " + utils.getPeriodText(vatAmounts), "h1_period");
   var table = report.addTable("vat_table");
   
   //Totale operazioni attive
-  var amount = this.param.vatPeriods[0]["OPATTIVE"].vatTaxable;
+  var amount = vatAmounts["OPATTIVE"].vatTaxable;
   var row = table.addRow();
   row.addCell("Totale operazioni attive (al netto dell'IVA)", "description");
   if (Banana.SDecimal.sign(amount)<0) {
@@ -879,7 +879,7 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   }
 
   //Totale operazioni passive
-  amount = this.param.vatPeriods[0]["OPPASSIVE"].vatTaxable;
+  amount = vatAmounts["OPPASSIVE"].vatTaxable;
   row = table.addRow();
   row.addCell("Totale operazioni passive (al netto dell'IVA)", "description");
   if (Banana.SDecimal.sign(amount)<0) {
@@ -902,7 +902,7 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   row.addCell("CREDITO", "amount bold");
   
   //IVA esigibile
-  amount = this.param.vatPeriods[0]["OPATTIVE"].vatPosted;
+  amount = vatAmounts["OPATTIVE"].vatPosted;
   row = table.addRow();
   row.addCell("IVA esigibile", "description");
   if (Banana.SDecimal.sign(amount)<0) {
@@ -915,11 +915,11 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   }
   
   //IVA detratta
-  amount = this.param.vatPeriods[0]["OPPASSIVE"].vatPosted;
+  amount = vatAmounts["OPPASSIVE"].vatPosted;
   row = table.addRow();
   var description = "IVA detratta";
-  if (!Banana.SDecimal.isZero(this.param.vatPeriods[0].datiContribuente.liqPercProrata))
-    description = "IVA detratta (Prorata: " + Banana.SDecimal.round(this.param.vatPeriods[0].datiContribuente.liqPercProrata, {'decimals':2}).toString() + "%)";
+  if (!Banana.SDecimal.isZero(vatAmounts.datiContribuente.liqPercProrata))
+    description = "IVA detratta (Prorata: " + Banana.SDecimal.round(vatAmounts.datiContribuente.liqPercProrata, {'decimals':2}).toString() + "%)";
   row.addCell(description, "description");
   if (Banana.SDecimal.sign(amount)<0) {
     row.addCell(this.formatAmount(amount), "amount");
@@ -931,7 +931,7 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   }
 
   //Saldo IVA di periodo (IVA esigibile - IVA detratta)
-  amount = this.param.vatPeriods[0]["OPDIFFERENZA"].vatPosted;
+  amount = vatAmounts["OPDIFFERENZA"].vatPosted;
   row = table.addRow();
   row.addCell("Saldo IVA di periodo (mensile o trimestrale)", "description");
   if (Banana.SDecimal.sign(amount)<=0) {
@@ -944,7 +944,7 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   }
   
   //Credito IVA periodo precedente (mensile o trimestrale)
-  amount = this.param.vatPeriods[0]["L-CI"].vatPosted;
+  amount = vatAmounts["L-CI"].vatPosted;
   row = table.addRow();
   row.addCell("Credito IVA periodo precedente (mensile o trimestrale)", "description");
   if (Banana.SDecimal.sign(amount)<=0) {
@@ -957,7 +957,7 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   }
 
   //Ammontare dei versamenti
-  amount = this.param.vatPeriods[0]["L-RI"].vatPosted;
+  amount = vatAmounts["L-RI"].vatPosted;
   if (!Banana.SDecimal.isZero(amount)) {
     row = table.addRow();
     row.addCell("Ammontare dei versamenti", "description");
@@ -972,7 +972,7 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   }
   
   //Credito o debito IVA di periodo (IVA esigibile - IVA detratta - Credito IVA periodo precedente)
-  amount = Banana.SDecimal.add(this.param.vatPeriods[0]["OPDIFFERENZA"].vatPosted, this.param.vatPeriods[0]["L-CI"].vatPosted);
+  amount = Banana.SDecimal.add(vatAmounts["OPDIFFERENZA"].vatPosted, vatAmounts["L-CI"].vatPosted);
   row = table.addRow();
   row.addCell("Credito o debito IVA di periodo", "description");
   if (Banana.SDecimal.sign(amount)<=0) {
@@ -989,7 +989,7 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   row.addCell("", "separator", 3);
 
   //Credito IVA anno precedente
-  amount = this.param.vatPeriods[0]["L-CIA"].vatPosted;
+  amount = vatAmounts["L-CIA"].vatPosted;
   row = table.addRow();
   row.addCell("Credito IVA anno precedente", "description");
   if (Banana.SDecimal.sign(amount)<0) {
@@ -1002,7 +1002,7 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   }
 
   //Credito IVA anno precedente compensato F24
-  amount = this.param.vatPeriods[0]["L-CO"].vatPosted;
+  amount = vatAmounts["L-CO"].vatPosted;
   row = table.addRow();
   row.addCell("Credito IVA anno precedente compensato F24", "description");
   if (Banana.SDecimal.sign(amount)<0) {
@@ -1019,18 +1019,14 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   row.addCell("", "separator", 3);
 
   //Interessi dovuti
-  amount = this.param.vatPeriods[0]["L-INT"].vatPosted
+  amount = vatAmounts["L-INT"].vatPosted
   row = table.addRow();
   var cell = row.addCell("Interessi dovuti per liquidazioni trimestrali", "description");
-  /*avvisa se l'interesse calcolato è diverso, non viene calcolato per il 4 trimestre iva speciali e la dichiarazione annuale*/
-  var controllaInteressi = true;
-  if (this.param.periodoSelezionato == "c")
-    controllaInteressi = false;
-  if (this.param.periodoSelezionato == "q" && this.param.periodoValoreTrimestre == "4")
-    controllaInteressi = false;
-  if (controllaInteressi) {
+  //Controllo interessi solo per stampa annuale e trimestrale
+  if (this.param.periodoSelezionato == "y" || (this.param.periodoSelezionato == "q" && this.param.periodoValoreTrimestre != "4")) {
     var liquidazione = new LiquidazionePeriodica(this.banDocument);
-    var msg = liquidazione.calculateInterestAmount(this.param.vatPeriods[0]);
+    liquidazione.setParam(this.param);
+    var msg = liquidazione.calculateInterestAmount(vatAmounts, true);
     if (msg.id.length>0) {
       cell.addParagraph(msg.text, "amount warning");
     }
@@ -1045,7 +1041,7 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   }
   
   //Acconto dovuto
-  amount = this.param.vatPeriods[0]["L-AC"].vatPosted;
+  amount = vatAmounts["L-AC"].vatPosted;
   row = table.addRow();
   row.addCell("Acconto dovuto", "description");
   if (Banana.SDecimal.sign(amount)<=0) {
@@ -1058,7 +1054,7 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   }
 
   //Saldo finale di periodo
-  amount = this.param.vatPeriods[0]["Total"].vatPosted;
+  amount = vatAmounts["Total"].vatPosted;
   row = table.addRow();
   row.addCell("Saldo finale di periodo", "description bold");
   if (Banana.SDecimal.sign(amount)<=0) {

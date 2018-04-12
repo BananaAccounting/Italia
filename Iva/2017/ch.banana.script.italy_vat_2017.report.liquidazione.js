@@ -304,33 +304,68 @@ LiquidazionePeriodica.prototype.addPageHeader = function(report, stylesheet) {
   stylesheet.addStyle(".right", "text-align: right;");
 }
 
+/*
+*  Avvisa se l'interesse calcolato dal progrogramma è diverso dagli interessi registrati
+*  creaPeriodi = false, riprende gli interessi del periodo
+*  creaPeriodi = true, crea i periodi per l'anno e somma gli interessi
+*/
 LiquidazionePeriodica.prototype.calculateInterestAmount = function(period) {
+ /*inizio test
+    //controlla se il periodo è maggiore ad un trimestre
+    var millisecondsPerDay = 24 * 60 * 60 * 1000;
+    var startDate = Banana.Converter.stringToDate(period.startDate, "YYYY-MM-DD");
+    var endDate = Banana.Converter.stringToDate(period.endDate, "YYYY-MM-DD");
+    var totDays = (endDate - startDate)/millisecondsPerDay;
+  fine test*/
+  return this.calculateInterestAmount(period, false);
+}
+
+LiquidazionePeriodica.prototype.calculateInterestAmount = function(period, createPeriods) {
   var message = {};
   message.text = "";
   message.id = "";
-  var amountInteressi = 0;
-  var amountInteressiCalcolati = 0;
-  
+  var amountInterestsCalculated = 0;
+  var amountInterests = Banana.SDecimal.abs(period["L-INT"].vatPosted);
+  var liqTipoVersamento = parseInt(period.datiContribuente.liqTipoVersamento);
+  if (!liqTipoVersamento)
+    liqTipoVersamento = 0;
+
   //interessi solo per iva trimestrale
-  if (period.datiContribuente.liqTipoVersamento == 1) {
-    if (Banana.SDecimal.sign(period["TotalWithoutInterests"].vatPosted)<=0) {
-      var percInteressi = Banana.SDecimal.round(period.datiContribuente.liqPercInteressi, {'decimals':2});
-      amountInteressiCalcolati = Banana.SDecimal.abs(period["TotalWithoutInterests"].vatPosted) * percInteressi /100;
-      amountInteressiCalcolati = Banana.SDecimal.roundNearest(amountInteressiCalcolati, '0.01');
+  if (liqTipoVersamento == 1) {
+
+     var totalWithoutInterests = period["TotalWithoutInterests"].vatPosted;
+     var percInterest = Banana.SDecimal.round(period.datiContribuente.liqPercInteressi, {'decimals':2});
+
+    //se periodo annuale gli interessi vengono suddivisi in quattro trimestri e sommati
+    if (this.param.periodoSelezionato && this.param.periodoSelezionato == "y" && createPeriods) {
+      var utils = new Utils(this.banDocument);
+      var periods = utils.createPeriods(this.param);
+      for (var i=0; i<periods.length; i++) {
+        var vatAmounts = this.loadVatCodes(periods[i].startDate, periods[i].endDate);
+        totalWithoutInterests = vatAmounts["TotalWithoutInterests"].vatPosted;
+        if (Banana.SDecimal.sign(totalWithoutInterests)<=0) {
+          var calculated = Banana.SDecimal.abs(totalWithoutInterests) * percInterest /100;
+          calculated = Banana.SDecimal.roundNearest(calculated, '0.01');
+          amountInterestsCalculated = Banana.SDecimal.add(calculated, amountInterestsCalculated);
+        }
+     }
+    }
+    else {
+      if (Banana.SDecimal.sign(totalWithoutInterests)<=0) {
+        amountInterestsCalculated = Banana.SDecimal.abs(totalWithoutInterests) * percInterest /100;
+        amountInterestsCalculated = Banana.SDecimal.roundNearest(amountInterestsCalculated, '0.01');
+      }
     }
   }
-  
-  if (period["L-INT"] && period["L-INT"].vatPosted)
-    amountInteressi = Banana.SDecimal.abs(period["L-INT"].vatPosted);
 
-  if (period.datiContribuente.liqTipoVersamento == 1 && amountInteressi != amountInteressiCalcolati) {
+  if (liqTipoVersamento == 1 && amountInterests != amountInterestsCalculated) {
     message.id = ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI;
     message.text = getErrorMessage(message.id);
-    message.text = message.text.replace("%1", amountInteressiCalcolati );
+    message.text = message.text.replace("%1", amountInterestsCalculated );
     message.text = message.text.replace("%2", Banana.SDecimal.round(period.datiContribuente.liqPercInteressi, {'decimals':2}) );
-    message.text = message.text.replace("%3", amountInteressi );
+    message.text = message.text.replace("%3", amountInterests );
   }
-  else if (period.datiContribuente.liqTipoVersamento == 0 && amountInteressi.length>0) {
+  else if (liqTipoVersamento == 0 && !Banana.SDecimal.isZero(amountInterests)) {
     message.id = ID_ERR_LIQUIDAZIONE_INTERESSI_VERSAMENTO_MENSILE;
     message.text = getErrorMessage(message.id);
   }
