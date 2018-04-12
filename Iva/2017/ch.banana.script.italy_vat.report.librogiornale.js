@@ -499,8 +499,11 @@ LibroGiornale.prototype.mapTransaction = function(element) {
     if (element.value(column.name) && element.value(column.name).length>0) {
       mappedLine[column.name].value = element.value(column.name);
       //controlla che ci sia almeno un contenuto data o importo per ritenere valida la riga
-      if (column.type=="amount" || column.type=="date")
+      if (column.type=="amount")
         validValue=true;
+      else if (column.type=="date" && (!element.value("Description").startsWith("/*") || !element.value("Description").endsWith("*/"))) {
+        validValue=true;
+      }
     }
     else {
       mappedLine[column.name].value = "";
