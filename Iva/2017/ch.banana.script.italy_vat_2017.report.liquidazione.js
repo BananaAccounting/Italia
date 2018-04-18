@@ -809,12 +809,13 @@ LiquidazionePeriodica.prototype.loadVatCodes = function(_startDate, _endDate) {
   vatAmounts["L-AC"] = this.banDocument.vatCurrentBalance("L-AC", _startDate, _endDate);
   vatAmounts["L-CI"] = this.banDocument.vatCurrentBalance("L-CI", _startDate, _endDate);
   vatAmounts["L-CIA"] = this.banDocument.vatCurrentBalance("L-CIA", _startDate, _endDate);
-  vatAmounts["L-CO"] = this.banDocument.vatCurrentBalance("L-CO", _startDate, _endDate);
+  vatAmounts["L-CO"] = this.banDocument.vatCurrentBalance("L-CO", this.param.accountingOpeningDate, _endDate);
   vatAmounts["L-INT"] = this.banDocument.vatCurrentBalance("L-INT", _startDate, _endDate);
   vatAmounts["L-RI"] = this.banDocument.vatCurrentBalance("L-RI", _startDate, _endDate);
   vatAmounts["L-SP"] = this.banDocument.vatCurrentBalance("L-SP", _startDate, _endDate);
 
-  //se periodo liquidazione corrisponde all'intero anno, include L-CIA (credito inizio anno), altrimenti include L-CI (credito iniziale)
+  //se periodo liquidazione corrisponde all'intero anno i crediti periodo precedente non vengono inclusi
+  //il credito anno precedente viene considerato solamente quello del primo periodo, alcuni utenti riportano il credito anno precedente ad ogni periodo
   var isYear = false;
   if (this.param.accountingOpeningDate == _startDate && this.param.accountingClosureDate == _endDate)
     isYear = true;
@@ -826,10 +827,19 @@ LiquidazionePeriodica.prototype.loadVatCodes = function(_startDate, _endDate) {
   vatPosted : 0
   };
   if (isYear) {
+    //L-CI
     vatAmounts["L-CI"] = emptyAmount;
-  }
-  else {
-    vatAmounts["L-CIA"] = emptyAmount;
+    //L-CIA
+    //liqTipoVersamento == 0 mensile ==1 trimestrale
+    //Se liquidazione annuale tiene conto solo delle registrazioni L-CIA del primo periodo
+    var endDate = Banana.Converter.stringToDate(this.param.accountingOpeningDate, "YYYY-MM-DD");
+    if (!Banana.SDecimal.isZero(this.param.datiContribuente.liqPercProrata)) {
+      endDate.setDate(endDate.getDate() + 90);
+    }
+    else {
+      endDate.setDate(endDate.getDate() + 30);
+    }
+    vatAmounts["L-CIA"] = this.banDocument.vatCurrentBalance("L-CIA", this.param.accountingOpeningDate, endDate);
   }
 
   // Get vat total for report
