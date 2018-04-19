@@ -833,7 +833,7 @@ LiquidazionePeriodica.prototype.loadVatCodes = function(_startDate, _endDate) {
     //liqTipoVersamento == 0 mensile ==1 trimestrale
     //Se liquidazione annuale tiene conto solo delle registrazioni L-CIA del primo periodo
     var endDate = Banana.Converter.stringToDate(this.param.accountingOpeningDate, "YYYY-MM-DD");
-    if (!Banana.SDecimal.isZero(this.param.datiContribuente.liqPercProrata)) {
+    if (!Banana.SDecimal.isZero(this.param.datiContribuente.liqTipoVersamento)) {
       endDate.setDate(endDate.getDate() + 90);
     }
     else {
