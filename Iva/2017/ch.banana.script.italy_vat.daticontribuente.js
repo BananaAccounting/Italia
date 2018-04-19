@@ -20,7 +20,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2018-03-26
+// @pubdate = 2018-04-19
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -147,7 +147,7 @@ function settingsDialog() {
     }
   }
   dialog.showHelp = function () {
-    Banana.Ui.showHelp("ch.banana.script.italy_vat_2017");
+    Banana.Ui.showHelp("ch.banana.script.italy_vat.daticontribuente.dialog.ui");
   }
   dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
   dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
