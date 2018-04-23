@@ -633,27 +633,30 @@ EsibilitaIva
 
     //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
     //Eccezione: fatture ricevute con natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
-    if (jsonLine["IT_Natura"].length>0) {
-      if (isSupplier && jsonLine["IT_Natura"] == "N6") {
-        if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
-          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
-          this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
+    //I codici IVA esclusi non vengono controllati
+    if (jsonLine["IT_Natura"] !== "ESCL") {
+      if (jsonLine["IT_Natura"].length>0) {
+        if (isSupplier && jsonLine["IT_Natura"] == "N6") {
+          if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
+            msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
+            this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
+          }
+        }
+        else {
+          if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
+            msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE) + jsonLine["IT_Natura"];
+            this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+          }
         }
       }
       else {
-        if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
-          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE) + jsonLine["IT_Natura"];
-          this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
-        }
-      }
-    }
-    else {
-      //Se il campo Natura non è valorizzato, lo devono essere i campi Imposta e Aliquota
-      //Controlla solamente registro vendite/acquisti
-      if (jsonLine["IT_Registro"]== "Acquisti" || jsonLine["IT_Registro"] == "Vendite") {
-        if (Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota) ) {
-          msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
-          this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+        //Se il campo Natura non è valorizzato, lo devono essere i campi Imposta e Aliquota
+        //Controlla solamente registro vendite/acquisti
+        if (jsonLine["IT_Registro"]== "Acquisti" || jsonLine["IT_Registro"] == "Vendite") {
+          if (Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota) ) {
+            msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+            this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+          }
         }
       }
     }
@@ -1072,7 +1075,7 @@ Journal.prototype._debugPrintJournal = function(report, stylesheet) {
   //Column count
   var sortedColumns = [];
   for (var i in this.columns) {
-    //if (this.columns[i].index>=0 && !this.columns[i].name.startsWith("IT_"))
+    if (this.columns[i].index>=0)
       sortedColumns.push(this.columns[i].index);
   }
   sortedColumns.sort(this.sortNumber);  

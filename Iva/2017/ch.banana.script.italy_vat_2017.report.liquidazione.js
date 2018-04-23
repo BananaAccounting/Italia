@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-04-19
+// @pubdate = 2018-04-23
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -774,6 +774,8 @@ LiquidazionePeriodica.prototype.loadVatCodes = function(_startDate, _endDate) {
   vatAmounts["A-IM-RI-REV-S"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-RI-EU");
   vatAmounts["A-IM-RI-EU"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-RI-EU-S");
+  vatAmounts["A-IM-RI-EU-S"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM");
   vatAmounts["A-IM"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-NI-X");
@@ -787,7 +789,7 @@ LiquidazionePeriodica.prototype.loadVatCodes = function(_startDate, _endDate) {
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-ED");
   vatAmounts["A-ED"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
 
-  vatAmounts["A-IM"] = this.sumVatAmounts(vatAmounts, ["A-IM","A-IM-RI","A-IM-BA","A-IM-BN","A-IM-AL","A-IM-RI-REV","A-IM-RI-REV-S","A-IM-RI-EU"], this.banDocument);
+  vatAmounts["A-IM"] = this.sumVatAmounts(vatAmounts, ["A-IM","A-IM-RI","A-IM-BA","A-IM-BN","A-IM-AL","A-IM-RI-REV","A-IM-RI-REV-S","A-IM-RI-EU","A-IM-RI-EU-S"], this.banDocument);
   vatAmounts["A-NI"] = this.sumVatAmounts(vatAmounts, ["A-NI","A-NI-X"], this.banDocument);
   vatAmounts["A"] = this.sumVatAmounts(vatAmounts, ["A-IM","A-NI","A-ES","A-NE","A-ED"], this.banDocument);
   
@@ -887,6 +889,7 @@ LiquidazionePeriodica.prototype.loadVatCodes = function(_startDate, _endDate) {
   vatAmounts["A-IM-RI-REV"].style = "total4";
   vatAmounts["A-IM-RI-REV-S"].style = "total4";
   vatAmounts["A-IM-RI-EU"].style = "total4";
+  vatAmounts["A-IM-RI-EU-S"].style = "total4";
   vatAmounts["A-IM"].style = "total3";
   vatAmounts["A-NI-X"].style = "total4";
   vatAmounts["A-NI"].style = "total3";
