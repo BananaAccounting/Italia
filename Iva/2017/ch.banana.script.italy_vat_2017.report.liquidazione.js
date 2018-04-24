@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-04-23
+// @pubdate = 2018-04-24
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -419,12 +419,7 @@ LiquidazionePeriodica.prototype.createInstanceComunicazione = function() {
   var partitaIva = this.param.datiContribuente.partitaIva;
   var xbrlCodiceFiscale = xml_createElementWithValidation("iv:CodiceFiscale", codiceFiscale,1,'11...16',msgContext);
   
-  var accountingYear = this.param.openingYear;
-  if (accountingYear != this.param.closureYear) {
-    //prende l'anno dal periodo selezionato
-  }
-  
-  var xbrlAnnoImposta = xml_createElementWithValidation("iv:AnnoImposta", accountingYear,1,'4',msgContext);
+  var xbrlAnnoImposta = xml_createElementWithValidation("iv:AnnoImposta", this.param.annoSelezionato,1,'4',msgContext);
   var xbrlPartitaIva = xml_createElementWithValidation("iv:PartitaIVA", partitaIva,1,'11',msgContext);
 
   var xbrlUltimoMese = '';
@@ -493,7 +488,12 @@ LiquidazionePeriodica.prototype.createInstanceComunicazione = function() {
 LiquidazionePeriodica.prototype.createInstanceIntestazione = function() {
   var msgContext = '<Intestazione>';
   
-  var xbrlCodiceFornitura = xml_createElement("iv:CodiceFornitura", "IVP17");
+  var annoFornitura = this.param.annoSelezionato;
+  if (!annoFornitura || annoFornitura.length < 4)
+    annoFornitura = "";
+  if (annoFornitura.length>2)
+    annoFornitura = annoFornitura.substring(2);
+  var xbrlCodiceFornitura = xml_createElement("iv:CodiceFornitura", "IVP" + annoFornitura);
 
   var xbrlCodiceFiscaleDichiarante = '';
   if (this.param.comunicazioneCFDichiarante.length>0)
