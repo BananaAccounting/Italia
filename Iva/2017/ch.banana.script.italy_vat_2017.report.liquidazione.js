@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-04-24
+// @pubdate = 2018-04-25
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -473,7 +473,7 @@ LiquidazionePeriodica.prototype.createInstanceComunicazione = function() {
 
   var xbrlModulo = '';
   for (var index=0; index<this.param.vatPeriods.length; index++) {
-    xbrlModulo += this.createInstanceModulo(this.param.vatPeriods[index]);
+    xbrlModulo += this.createInstanceModulo(this.param.vatPeriods[index], index);
   }
 
   var xbrlDatiContabili =  xml_createElement("iv:DatiContabili", xbrlModulo);
@@ -509,16 +509,30 @@ LiquidazionePeriodica.prototype.createInstanceIntestazione = function() {
   return xbrlIntestazione;
 }
 
-LiquidazionePeriodica.prototype.createInstanceModulo = function(period) {
+LiquidazionePeriodica.prototype.createInstanceModulo = function(period, index) {
   var msgContext = '<iv:Modulo>';
 
+  //NumeroModulo vale da 1 a 5 solo a partire dal 2018,nel 2017 il campo non era presente
+  //Ogni Comunicazione può contenere più moduli, sempre partendo da 1
+  //Es. comunicazione del primo trimestre: mese 1 su modulo 1, mese 2 su modulo 2 e mese 3 su modulo 3.
+  //Comunicazione secondo trimestre: mese 4 su modulo 1, mese 5 su modulo 2, mese 6 su modulo 3.
+  var xbrlNumeroModulo = '';
+  if (this.param.annoSelezionato && this.param.annoSelezionato >= 2018) {
+    var numeroModulo = index+1;
+    if (!numeroModulo || numeroModulo<=0)
+      numeroModulo = 1;
+    if (numeroModulo>5)
+      numeroModulo = 5;
+    xbrlNumeroModulo = xml_createElementWithValidation("iv:NumeroModulo", numeroModulo,1,'1',msgContext);
+  }
+  
   var xbrlMese = '';
   var xbrlTrimestre = '';
   if (period.datiContribuente.liqTipoVersamento == 0)
     xbrlMese = xml_createElementWithValidation("iv:Mese", this.getPeriod("m", period),0,'1...2',msgContext);
   else
     xbrlTrimestre = xml_createElementWithValidation("iv:Trimestre", this.getPeriod("q", period),0,'1',msgContext);
-  
+
   var xbrlTotaleOperazioniAttive = xml_createElementWithValidation("iv:TotaleOperazioniAttive", this.createInstanceModuloGetVatAmount("OPATTIVE", "vatTaxable", period),0,'4...16',msgContext);
 
   var xbrlTotaleOperazioniPassive = xml_createElementWithValidation("iv:TotaleOperazioniPassive", this.createInstanceModuloGetVatAmount("OPPASSIVE", "vatTaxable", period),0,'4...16',msgContext);
@@ -563,7 +577,7 @@ LiquidazionePeriodica.prototype.createInstanceModulo = function(period) {
   else
     xbrlImportoACredito = xml_createElementWithValidation("iv:ImportoACredito", this.createInstanceModuloGetVatAmount("Total", "vatPosted", period),0,'4...16',msgContext);
 
-  xbrlContent = xbrlMese + xbrlTrimestre + xbrlTotaleOperazioniAttive + xbrlTotaleOperazioniPassive + xbrlIvaEsigibile + xbrlIvaDetratta + xbrlIvaDovuta + xbrlIvaCredito;
+  xbrlContent = xbrlNumeroModulo + xbrlMese + xbrlTrimestre + xbrlTotaleOperazioniAttive + xbrlTotaleOperazioniPassive + xbrlIvaEsigibile + xbrlIvaDetratta + xbrlIvaDovuta + xbrlIvaCredito;
   xbrlContent += xbrlDebitoPeriodoPrecedente + xbrlCreditoPeriodoPrecedente + xbrlCreditoAnnoPrecedente + xbrlInteressiDovuti + xbrlAcconto + xbrlImportoDaVersare + xbrlImportoACredito;
   var xbrlModulo = xml_createElement("iv:Modulo", xbrlContent);
   return xbrlModulo;
