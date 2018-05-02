@@ -23,7 +23,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-04-19
+// @pubdate = 2018-05-02
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -65,12 +65,13 @@ function exec(inData, options) {
   registri.printDocument(report, stylesheet);
   
   //Debug
-  /*if (debug) {
-    for (var i=0; i<param.periods.length; i++) {
-      report.addPageBreak();
-      _debug_printJournal(registri.param.periods[i], report, stylesheet);
-    }
-  }*/
+  if (debug) {
+    report.addPageBreak();
+    var journal = new Journal(this.banDocument);
+    journal.load();
+    report.addPageBreak();
+    journal._debugPrintJournal(report, stylesheet);
+  }
   
   Banana.Report.preview(report, stylesheet);
   return;
@@ -597,7 +598,7 @@ Registri.prototype.loadData = function() {
 
   //PeriodComplete (inizio contabilità/fine periodo selezionato) serve per il calcolo dei corrispettivi da ventilare (acquisti per rivendita)
   for (var i=0; i<this.param.periods.length; i++) {
-    console.log( "this.param.periods[i] " + this.param.periods[i].startDate + " " + this.param.periods[i].endDate);
+    //console.log( "this.param.periods[i] " + this.param.periods[i].startDate + " " + this.param.periods[i].endDate);
     var periodComplete = journal.getPeriod(this.param.fileInfo["OpeningDate"], this.param.periods[i].endDate);
     this.param.periods[i] = this.loadDataTotals(this.param.periods[i], periodComplete);
     this.param.periods[i].periodComplete = periodComplete;

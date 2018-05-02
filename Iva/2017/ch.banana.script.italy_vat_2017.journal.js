@@ -36,11 +36,9 @@ function Journal(banDocument) {
   this.suppliers = {};
 }
 /*
-*  Filtra i dati del giornale escludendo le registrazioni di apertura/chiusura e assestamento
-*  metodo utilizzato da document.journalCustomersSuppliers in Journal.load()
- */
+*  Filtra i dati del giornale escludendo le registrazioni degli anni precedenti
+*/
 Journal.prototype.filter = function(row, index, table) {
-  //only normal transaction with vat
   //OperationType_None = 0, OperationType_Opening = 1, OperationType_CarryForward = 2,
   //OperationType_Transaction = 3, OperationType_Closure = 4, OperationType_Total = 6
   /*var operationType = row.value("JOperationType");
@@ -48,12 +46,12 @@ Journal.prototype.filter = function(row, index, table) {
     return false;
   var vatOperation = row.value("JVatIsVatOperation");
   if (!vatOperation)
-    return false;
-  var originFile = row.value("JOriginFile");
-  if (originFile ==! "C")
     return false;*/
-
-  return true;
+  var originFile = row.value("JOriginFile");
+  if (originFile === "C") {
+    return true;
+  }
+  return false;
 }
 
 /*
@@ -102,6 +100,8 @@ Journal.prototype.getPeriod = function(startDate, endDate) {
  * Legge il giornale journalCustomersSuppliers e riprende le registrazioni con iva in this.transactions
  * Suddivide le registrazioni per clienti e fornitori in this.customers e this.suppliers
  * Non viene filtrato un periodo, ma riprende tutte le registrazioni dell'anno corrente
+ * registrazioni dell'anno corrente tramite this.filter()
+ * ORIGINTYPE_CURRENT indica riga normale di registrazione (OriginType_Budget e OriginType_Projection sono escluse)
  * Come parametro di journalCustomersSuppliers, utilizzato ACCOUNTTYPE_NONE invece di ACCOUNTTYPE_NORMAL 
  * per riprendere anche i clienti/fornitori definiti come centri di costo (ACCOUNTTYPE_CC3)
  */
@@ -1118,15 +1118,9 @@ Journal.prototype._debugPrintJournal = function(report, stylesheet) {
   }
   
   //style
-  stylesheet.addStyle(".tableJournalCustomersSuppliers", "margin-top:1em;width:100%;");
-  stylesheet.addStyle(".tableJournalCustomersSuppliers td", "border:1px solid #333333");
   stylesheet.addStyle(".tableJournal", "margin-top:1em;width:100%;");
   stylesheet.addStyle(".tableJournal td", "border:1px solid #333333");
   
-  stylesheet.addStyle(".title", "background-color:#ffffff;border:1px solid #ffffff;font-size:10px;");
-  stylesheet.addStyle(".period", "background-color:#ffffff;border:1px solid #ffffff;");
-  stylesheet.addStyle(".amount", "text-align:right;");
-
 }
 
 /*
@@ -1211,6 +1205,10 @@ Journal.prototype._debugPrintCustomersSuppliers = function(report, stylesheet) {
     }
   }
   
+  //style
+  stylesheet.addStyle(".tableJournalCustomersSuppliers", "margin-top:1em;width:100%;");
+  stylesheet.addStyle(".tableJournalCustomersSuppliers td", "border:1px solid #333333");
+
 }
 
 /* -----------------------------------------------------------------------------------------------
