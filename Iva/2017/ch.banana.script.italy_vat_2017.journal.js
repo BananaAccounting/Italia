@@ -129,6 +129,8 @@ Journal.prototype.load = function() {
   //Variabili per numerazione registro
   var progRegistri = {};
   var previousIndexGroup = -1;
+  var previousNoDoc = -1;
+  var previousDataReg = -1;
   
   //Salva i nomi delle colonne del giornale
   //this.setColumns(journal.columnNames);
@@ -358,16 +360,31 @@ Journal.prototype.load = function() {
       }
     }
 
+    //IT_NoDoc
+    jsonLine["IT_NoDoc"] = '';
+    var noDoc = xml_escapeString(filteredRows[i].value("DocInvoice"));
+    if (noDoc.length<=0)
+      noDoc =  xml_escapeString(filteredRows[i].value("Doc"));
+    jsonLine["IT_NoDoc"] = noDoc;
+
     //IT_ProgRegistro
     var registro = jsonLine["IT_Registro"];
     var noProgressivo = 0;
     if (progRegistri[registro])
       noProgressivo = parseInt(progRegistri[registro]);
+    var noDoc = xml_escapeString(filteredRows[i].value("DocInvoice"));
+    var dataReg = filteredRows[i].value("JDate");
     var indexGroup = filteredRows[i].value("JContraAccountGroup") ;
-    if (indexGroup != previousIndexGroup) {
+    console.log(noDoc + " " + dataReg + " " + " " +previousNoDoc + " " +previousDataReg);
+    //Mantiene lo stesso numero di registro se la data di registrazione e il no fattura è lo stesso
+    if (noDoc == previousNoDoc && noDoc.length>0 && dataReg == previousDataReg && dataReg.length>0) {
+    }
+    else if (indexGroup != previousIndexGroup) {
       noProgressivo += 1;
     }
     previousIndexGroup = indexGroup;
+    previousNoDoc = noDoc;
+    previousDataReg = dataReg;
     progRegistri[registro] = noProgressivo;
     jsonLine["IT_ProgRegistro"] = noProgressivo.toString();
 
@@ -444,7 +461,10 @@ EsibilitaIva
       jsonLine["IT_EsigibilitaIva"] = 'D';
     else if (jsonLine["IT_Gr_IVA"] == "A-ED")
       jsonLine["IT_EsigibilitaIva"] = 'D';
-
+    //Operazioni in Split Payment: si deve indicare l’aliquota Iva e l’Iva, nel campo “Esigibilita’ Iva” va indicato “S”.
+    else if (jsonLine["IT_Gr_IVA"] == "V-SP")
+      jsonLine["IT_EsigibilitaIva"] = 'S';
+      
     //IT_ImponibileDetraibile
     //IT_ImponibileNonDetraibile
     jsonLine["IT_ImponibileDetraibile"] = '';
@@ -464,13 +484,6 @@ EsibilitaIva
       var taxable = filteredRows[i].value("VatTaxable");
       jsonLine["IT_ImponibileDetraibile"] = taxable;
     }
-
-    //IT_NoDoc
-    jsonLine["IT_NoDoc"] = '';
-    var noDoc = xml_escapeString(filteredRows[i].value("DocInvoice"));
-    if (noDoc.length<=0)
-      noDoc =  xml_escapeString(filteredRows[i].value("Doc"));
-    jsonLine["IT_NoDoc"] = noDoc;
 
     //IT_DataDoc
     //Se è utilizzata la colonna DocInvoice viene ripresa la data di emissione fattura JInvoiceIssueDate
