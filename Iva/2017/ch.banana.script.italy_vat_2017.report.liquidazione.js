@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-04-25
+// @pubdate = 2018-05-30
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -606,11 +606,12 @@ LiquidazionePeriodica.prototype.createInstanceModuloGetVatAmount = function(vatC
 LiquidazionePeriodica.prototype.findVatCodes = function(table, column, code) {
   var vatCodes = [];
   for (var rowNr=0; rowNr < table.rowCount; rowNr++) {
-  var gr1Codes = table.value(rowNr, column).split(";");
-  if (gr1Codes.indexOf(code) >= 0) {
-    var vatCode = table.value(rowNr, "VatCode").split(";");
-    vatCodes.push(vatCode);
-  }
+    //var rowValue = table.value(rowNr, column).split(";");
+    var rowValue = table.value(rowNr, column);
+    if (rowValue.startsWith(code)) {
+      var vatCode = table.value(rowNr, "VatCode");
+      vatCodes.push(vatCode);
+    }
   }
   return vatCodes;
 }
@@ -759,9 +760,14 @@ LiquidazionePeriodica.prototype.loadVatCodes = function(_startDate, _endDate) {
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "V-ED");
   vatAmounts["V-ED"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
 
-  vatAmounts["V-IM"] = this.sumVatAmounts(vatAmounts, ["V-IM","V-IM-BA","V-IM-REV","V-IM-EU","V-IM-ES"], this.banDocument);
-  vatAmounts["V-NI"] = this.sumVatAmounts(vatAmounts, ["V-NI","V-NI-EU"], this.banDocument);
-  vatAmounts["V"] = this.sumVatAmounts(vatAmounts, ["V-IM","V-NI","V-ES","V-NE","V-ED"], this.banDocument);
+  var vatAmountsTemp = {};
+  vatCodes = this.findVatCodes(tableVatCodes, "Gr", "V-FC");
+  vatAmountsTemp["V-FC"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  
+  //Nel totale vendite i fuori campo vanno esclusi
+  vatCodes = this.findVatCodes(tableVatCodes, "Gr", "V");
+  vatAmounts["V"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatAmounts["V"] = this.substractVatAmounts(vatAmounts["V"], vatAmountsTemp["V-FC"], this.banDocument);
 
   // C = Corrispettivi
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "C-NVE");
@@ -774,22 +780,22 @@ LiquidazionePeriodica.prototype.loadVatCodes = function(_startDate, _endDate) {
   vatAmounts["C"] = this.sumVatAmounts(vatAmounts, ["C-NVE","C-REG"], this.banDocument);
   
   // A = Acquisti
-  vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-RI");
-  vatAmounts["A-IM-RI"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-BA");
   vatAmounts["A-IM-BA"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-BN");
   vatAmounts["A-IM-BN"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-AL");
   vatAmounts["A-IM-AL"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-RI-REV");
-  vatAmounts["A-IM-RI-REV"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-RI-REV-S");
   vatAmounts["A-IM-RI-REV-S"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
-  vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-RI-EU");
-  vatAmounts["A-IM-RI-EU"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-RI-REV");
+  vatAmounts["A-IM-RI-REV"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-RI-EU-S");
   vatAmounts["A-IM-RI-EU-S"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-RI-EU");
+  vatAmounts["A-IM-RI-EU"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM-RI");
+  vatAmounts["A-IM-RI"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-IM");
   vatAmounts["A-IM"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-NI-X");
@@ -803,9 +809,13 @@ LiquidazionePeriodica.prototype.loadVatCodes = function(_startDate, _endDate) {
   vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-ED");
   vatAmounts["A-ED"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
 
-  vatAmounts["A-IM"] = this.sumVatAmounts(vatAmounts, ["A-IM","A-IM-RI","A-IM-BA","A-IM-BN","A-IM-AL","A-IM-RI-REV","A-IM-RI-REV-S","A-IM-RI-EU","A-IM-RI-EU-S"], this.banDocument);
-  vatAmounts["A-NI"] = this.sumVatAmounts(vatAmounts, ["A-NI","A-NI-X"], this.banDocument);
-  vatAmounts["A"] = this.sumVatAmounts(vatAmounts, ["A-IM","A-NI","A-ES","A-NE","A-ED"], this.banDocument);
+  vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A-FC");
+  vatAmountsTemp["A-FC"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  
+  //Nel totale acquisti i fuori campo vanno esclusi
+  vatCodes = this.findVatCodes(tableVatCodes, "Gr", "A");
+  vatAmounts["A"] = this.banDocument.vatCurrentBalance(vatCodes.join("|"), _startDate, _endDate);
+  vatAmounts["A"] = this.substractVatAmounts(vatAmounts["A"], vatAmountsTemp["A-FC"], this.banDocument);
   
   //Calcola la liquidazione prorata sugli acquisti se presente
   /* i soggetti che esercitano un’attività che dà luogo sia ad operazioni imponibili, per le quali è previsto il diritto alla detrazione dell’IVA sugli acquisti, 
