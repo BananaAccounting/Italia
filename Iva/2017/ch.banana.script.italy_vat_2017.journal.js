@@ -347,11 +347,12 @@ Journal.prototype.load = function() {
         var gr = rowVatCodes.value("Gr");
         jsonLine["IT_Gr_IVA"] = gr;
         jsonLine["IT_Registro"] = gr;
+        //split payment L-SP vengono inclusi nel registro vendite/acquisti
         if (gr.indexOf('-')>0 || gr.length==1) {
           var gr0 = gr.substr(0,1);
-          if (gr0 == "A")
+          if (gr0 == "A" || (gr0 == "L" && isSupplier))
             jsonLine["IT_Registro"] = "Acquisti";
-          else if (gr0 == "V")
+          else if (gr0 == "V" || (gr0 == "L" && isCustomer))
             jsonLine["IT_Registro"] = "Vendite";
           else if (gr0 == "C")
             jsonLine["IT_Registro"] = "Corrispettivi";
@@ -465,7 +466,7 @@ Journal.prototype.load = function() {
     
     //In caso di una fattura con più tipi di documento, ad esempio registrazioni di rettifica come uno sconto,
     //viene impostato  il primo tipo di documento, questo perché nel file xml viene raggruppato tutto sotto uno stesso documento
-    var aliquota = jsonLine["IT_Aliquota"];
+    var aliquotaCorrente = jsonLine["IT_Aliquota"];
     for (var key in mapTipiDocumento) {
       if (key == accountId+noDoc) {
         var value = mapTipiDocumento[accountId+noDoc];
@@ -473,13 +474,13 @@ Journal.prototype.load = function() {
         if (values.length>0) {
           //values[0] tipo documento, values[1] prima aliquota trovata che servirà per lo split payment
           jsonLine["IT_TipoDoc"] = values[0];
-          aliquota = values[1];
+          aliquotaCorrente = values[1];
         }
         break;
       }
     }
     noDoc = jsonLine["IT_NoDoc"];
-    mapTipiDocumento[accountId+noDoc] = jsonLine["IT_TipoDoc"] + '_' + aliquota;
+    mapTipiDocumento[accountId+noDoc] = jsonLine["IT_TipoDoc"] + '_' + aliquotaCorrente;
  
     //Controllo IdPaese e TipoDocumento 
     var tipoDocumentoCorretto = true;
@@ -566,13 +567,13 @@ Journal.prototype.load = function() {
     }
 
     //Controllo IT_Natura e aliquota
-    var aliquota = jsonLine["IT_Aliquota"];
+    var aliquota = aliquotaCorrente;
     var imposta = jsonLine["IT_IvaContabilizzata"];
     var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
 
     //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
     //Eccezione: fatture ricevute con natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
-    //I codici IVA esclusi non vengono controllati
+    //I codici IVA esclusi non vengono controllati 
     if (jsonLine["IT_Natura"] !== "ESCL") {
       if (jsonLine["IT_Natura"].length>0) {
         if (isSupplier && jsonLine["IT_Natura"] == "N6") {

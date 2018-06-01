@@ -848,8 +848,8 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   var liquidazionePeriodica = new LiquidazionePeriodica(this.banDocument);
   liquidazionePeriodica.setParam(this.param);
   var vatAmounts = liquidazionePeriodica.loadVatCodes(period.startDate, period.endDate);
-  //OPATTIVE non include la liquidazione nella stampa dei registri
-  vatAmounts["OPATTIVE"] = liquidazionePeriodica.sumVatAmounts(vatAmounts, ["V","C"]);
+  //OPATTIVE non include la liquidazione nella stampa dei registri eccetto lo split payment
+  vatAmounts["OPATTIVE"] = liquidazionePeriodica.sumVatAmounts(vatAmounts, ["V","C","L-SP"]);
   vatAmounts["OPDIFFERENZA"] = liquidazionePeriodica.sumVatAmounts(vatAmounts, ["OPATTIVE","OPPASSIVE"]);
 
   var utils = new Utils(this.banDocument);
