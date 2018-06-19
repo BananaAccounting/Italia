@@ -126,6 +126,10 @@ Journal.prototype.load = function() {
   //Conti corrispettivi
   var mapCorrispettivi = new Utils(this.banDocument).getMapContiCorrispettivi();
   
+  //Map tipi documento perché una fattura può avere solo un tipo documento
+  //key=no cliente+no fattura, value=tipo documento_aliquotaiva
+  var mapTipiDocumento = {};
+  
   //Variabili per numerazione registro
   var progRegistri = {};
   var previousIndexGroup = -1;
@@ -343,11 +347,12 @@ Journal.prototype.load = function() {
         var gr = rowVatCodes.value("Gr");
         jsonLine["IT_Gr_IVA"] = gr;
         jsonLine["IT_Registro"] = gr;
+        //split payment L-SP vengono inclusi nel registro vendite/acquisti
         if (gr.indexOf('-')>0 || gr.length==1) {
           var gr0 = gr.substr(0,1);
-          if (gr0 == "A")
+          if (gr0 == "A" || (gr0 == "L" && isSupplier))
             jsonLine["IT_Registro"] = "Acquisti";
-          else if (gr0 == "V")
+          else if (gr0 == "V" || (gr0 == "L" && isCustomer))
             jsonLine["IT_Registro"] = "Vendite";
           else if (gr0 == "C")
             jsonLine["IT_Registro"] = "Corrispettivi";
@@ -375,7 +380,7 @@ Journal.prototype.load = function() {
     var noDoc = xml_escapeString(filteredRows[i].value("DocInvoice"));
     var dataReg = filteredRows[i].value("JDate");
     var indexGroup = filteredRows[i].value("JContraAccountGroup") ;
-    console.log(noDoc + " " + dataReg + " " + " " +previousNoDoc + " " +previousDataReg);
+    //console.log(noDoc + " " + dataReg + " " + " " +previousNoDoc + " " +previousDataReg);
     //Mantiene lo stesso numero di registro se la data di registrazione e il no fattura è lo stesso
     if (noDoc == previousNoDoc && noDoc.length>0 && dataReg == previousDataReg && dataReg.length>0) {
     }
@@ -387,103 +392,6 @@ Journal.prototype.load = function() {
     previousDataReg = dataReg;
     progRegistri[registro] = noProgressivo;
     jsonLine["IT_ProgRegistro"] = noProgressivo.toString();
-
-    //IT_Imponibile
-    //Tolto il segno perché nel file xml non esiste imponibile negativo? (controllare)
-    jsonLine["IT_Imponibile"] = '';
-    value = filteredRows[i].value("JVatTaxable");
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
-      value = Banana.SDecimal.invert(value);
-    jsonLine["IT_Imponibile"] = value;
-
-    //IT_ImportoIva
-    jsonLine["IT_ImportoIva"] = '';
-    value = filteredRows[i].value("VatAmount");
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
-      value = Banana.SDecimal.invert(value);
-    jsonLine["IT_ImportoIva"] = value;
-
-    //IT_IvaContabilizzata
-    jsonLine["IT_IvaContabilizzata"] = '';
-    value = filteredRows[i].value("VatPosted");
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
-      value = Banana.SDecimal.invert(value);
-    jsonLine["IT_IvaContabilizzata"] = value;
-
-    //IT_Lordo
-    jsonLine["IT_Lordo"] = '';
-    value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
-    if (Banana.SDecimal.isZero(value))
-      value = '0.00';
-    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
-      value = Banana.SDecimal.invert(value);
-    jsonLine["IT_Lordo"] = value;
-
-/*
-3. Dati relativi ai campi “detraibile” e “deducibile”
-
-Uno dei dati che può essere fornito è quello relativo alla percentuale di
-detraibilità o, in alternativa, alla deducibilità del costo riportato in fattura. Tale
-dato, la cui indicazione è facoltativa, è riferito all’eventuale deducibilità o
-detraibilità del costo ai fini delle imposte sui redditi in capo all’acquirente o
-committente persona fisica che non opera nell’esercizio di impresa, arte o
-professione (cfr., pagina 11 delle specifiche tecniche “Detraibile: contiene il
-valore percentuale di detraibilità se gli importi si riferiscono a spese detraibili.
-Deducibile: indica se gli importi si riferiscono a spese deducibili ai fini di
-imposte diverse dall’Iva”). A titolo di esempio, qualora la fattura sia emessa da
-una impresa edile nei confronti di un cliente privato in relazione a lavori di
-ristrutturazione edilizia, il 50% del costo riportato nel documento potrebbe essere
-portato in detrazione dei redditi del cliente: in tal caso, l’informazione – se
-disponibile – potrebbe essere riportata nell’apposito campo della comunicazione.
-Si precisa che la compilazione di uno dei due campi in oggetto esclude la
-compilazione dell’altro. 
-
-La % detraibile può essere diversa dalla % non imponibile di Banana
-I due dati sono facoltativi, si prevede l'aggiunta di due colonne nella tabella registrazioni,
-nelle quali l'utente può inserire la % manualmente
-
-EsibilitaIva
-(i valori ammessi sono “I” per esigibilità immediata, “D” per esigibilità differita e “S” per scissione dei pagamenti). 
-*/
-    //IT_Detraibile
-    //IT_Deducibile
-    //IT_EsigibilitaIva
-    jsonLine["IT_Detraibile"] = '';
-    jsonLine["IT_Deducibile"] = '';
-    jsonLine["IT_EsigibilitaIva"] = 'I';
-    if (jsonLine["IT_Gr_IVA"] == "V-ED")
-      jsonLine["IT_EsigibilitaIva"] = 'D';
-    else if (jsonLine["IT_Gr_IVA"] == "A-ED")
-      jsonLine["IT_EsigibilitaIva"] = 'D';
-    //Operazioni in Split Payment: si deve indicare l’aliquota Iva e l’Iva, nel campo “Esigibilita’ Iva” va indicato “S”.
-    else if (jsonLine["IT_Gr_IVA"] == "V-SP")
-      jsonLine["IT_EsigibilitaIva"] = 'S';
-      
-    //IT_ImponibileDetraibile
-    //IT_ImponibileNonDetraibile
-    jsonLine["IT_ImponibileDetraibile"] = '';
-    jsonLine["IT_ImponibileNonDetraibile"] = '';
-    value = filteredRows[i].value("VatPercentNonDeductible");
-    if (!Banana.SDecimal.isZero(value)) {
-      value = Banana.SDecimal.subtract('100', value);
-      var rate = Banana.SDecimal.round(value, {'decimals':2});
-      var taxable = filteredRows[i].value("VatTaxable");
-      var amount = taxable * rate /100;
-      amount = Banana.SDecimal.roundNearest(amount, '0.01');
-      jsonLine["IT_ImponibileDetraibile"] = amount;
-      amount = Banana.SDecimal.subtract(taxable, amount);
-      jsonLine["IT_ImponibileNonDetraibile"] = amount;
-    }
-    else {
-      var taxable = filteredRows[i].value("VatTaxable");
-      jsonLine["IT_ImponibileDetraibile"] = taxable;
-    }
 
     //IT_DataDoc
     //Se è utilizzata la colonna DocInvoice viene ripresa la data di emissione fattura JInvoiceIssueDate
@@ -504,6 +412,7 @@ EsibilitaIva
     //TD08 Nota di credito semplificata
     //TD10 Fattura di acquisto intracomunitario beni (IdPaese != IT)
     //TD11 Fattura di acquisto intracomunitario servizi (IdPaese != IT)
+    
     jsonLine["IT_TipoDoc"] = '';
     var tipoDoc = filteredRows[i].value("JInvoiceDocType");
     if (tipoDoc.length<=0)
@@ -554,7 +463,25 @@ EsibilitaIva
         }
       }
     }
-
+    
+    //In caso di una fattura con più tipi di documento, ad esempio registrazioni di rettifica come uno sconto,
+    //viene impostato  il primo tipo di documento, questo perché nel file xml viene raggruppato tutto sotto uno stesso documento
+    var aliquotaCorrente = jsonLine["IT_Aliquota"];
+    for (var key in mapTipiDocumento) {
+      if (key == accountId+noDoc) {
+        var value = mapTipiDocumento[accountId+noDoc];
+        var values = value.split("_");
+        if (values.length>0) {
+          //values[0] tipo documento, values[1] prima aliquota trovata che servirà per lo split payment
+          jsonLine["IT_TipoDoc"] = values[0];
+          aliquotaCorrente = values[1];
+        }
+        break;
+      }
+    }
+    noDoc = jsonLine["IT_NoDoc"];
+    mapTipiDocumento[accountId+noDoc] = jsonLine["IT_TipoDoc"] + '_' + aliquotaCorrente;
+ 
     //Controllo IdPaese e TipoDocumento 
     var tipoDocumentoCorretto = true;
     if (isSupplier && jsonLine["IT_ClienteIDPaese"] == "IT") {
@@ -640,13 +567,13 @@ EsibilitaIva
     }
 
     //Controllo IT_Natura e aliquota
-    var aliquota = jsonLine["IT_Aliquota"];
+    var aliquota = aliquotaCorrente;
     var imposta = jsonLine["IT_IvaContabilizzata"];
     var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
 
     //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
     //Eccezione: fatture ricevute con natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
-    //I codici IVA esclusi non vengono controllati
+    //I codici IVA esclusi non vengono controllati 
     if (jsonLine["IT_Natura"] !== "ESCL") {
       if (jsonLine["IT_Natura"].length>0) {
         if (isSupplier && jsonLine["IT_Natura"] == "N6") {
@@ -672,6 +599,124 @@ EsibilitaIva
           }
         }
       }
+    }
+
+    //IT_Imponibile
+    //È possibile il segno negativo per tipi di documento TD01
+    jsonLine["IT_Imponibile"] = '';
+    value = filteredRows[i].value("JVatTaxable");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
+      value = Banana.SDecimal.invert(value);
+    //splitpayment: quando si utilizza il codice L-SP, l'imposta è da invertire
+    else if (jsonLine["IT_Registro"] == "Liquidazioni" && isCustomer)
+      value = Banana.SDecimal.invert(value);
+    jsonLine["IT_Imponibile"] = value;
+
+    //IT_ImportoIva
+    jsonLine["IT_ImportoIva"] = '';
+    value = filteredRows[i].value("VatAmount");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
+      value = Banana.SDecimal.invert(value);
+    else if (jsonLine["IT_Registro"] == "Liquidazioni" && isCustomer)
+      value = Banana.SDecimal.invert(value);
+    jsonLine["IT_ImportoIva"] = value;
+
+    //IT_IvaContabilizzata
+    jsonLine["IT_IvaContabilizzata"] = '';
+    value = filteredRows[i].value("VatPosted");
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
+      value = Banana.SDecimal.invert(value);
+    else if (jsonLine["IT_Registro"] == "Liquidazioni" && isCustomer)
+      value = Banana.SDecimal.invert(value);
+    jsonLine["IT_IvaContabilizzata"] = value;
+
+    //IT_Lordo
+    jsonLine["IT_Lordo"] = '';
+    value = Banana.SDecimal.add(filteredRows[i].value("JVatTaxable"), filteredRows[i].value("VatAmount"));
+    if (Banana.SDecimal.isZero(value))
+      value = '0.00';
+    else if (jsonLine["IT_Registro"] == "Vendite" || jsonLine["IT_Registro"] == "Corrispettivi")
+      value = Banana.SDecimal.invert(value);
+    else if (jsonLine["IT_Registro"] == "Liquidazioni" && isCustomer)
+      value = Banana.SDecimal.invert(value);
+    jsonLine["IT_Lordo"] = value;
+
+/*
+3. Dati relativi ai campi “detraibile” e “deducibile”
+
+Uno dei dati che può essere fornito è quello relativo alla percentuale di
+detraibilità o, in alternativa, alla deducibilità del costo riportato in fattura. Tale
+dato, la cui indicazione è facoltativa, è riferito all’eventuale deducibilità o
+detraibilità del costo ai fini delle imposte sui redditi in capo all’acquirente o
+committente persona fisica che non opera nell’esercizio di impresa, arte o
+professione (cfr., pagina 11 delle specifiche tecniche “Detraibile: contiene il
+valore percentuale di detraibilità se gli importi si riferiscono a spese detraibili.
+Deducibile: indica se gli importi si riferiscono a spese deducibili ai fini di
+imposte diverse dall’Iva”). A titolo di esempio, qualora la fattura sia emessa da
+una impresa edile nei confronti di un cliente privato in relazione a lavori di
+ristrutturazione edilizia, il 50% del costo riportato nel documento potrebbe essere
+portato in detrazione dei redditi del cliente: in tal caso, l’informazione – se
+disponibile – potrebbe essere riportata nell’apposito campo della comunicazione.
+Si precisa che la compilazione di uno dei due campi in oggetto esclude la
+compilazione dell’altro. 
+
+La % detraibile può essere diversa dalla % non imponibile di Banana
+I due dati sono facoltativi, si prevede l'aggiunta di due colonne nella tabella registrazioni,
+nelle quali l'utente può inserire la % manualmente
+
+EsibilitaIva
+(i valori ammessi sono “I” per esigibilità immediata, “D” per esigibilità differita e “S” per scissione dei pagamenti). 
+*/
+    //IT_Detraibile
+    //IT_Deducibile
+    //IT_EsigibilitaIva
+    jsonLine["IT_Detraibile"] = '';
+    jsonLine["IT_Deducibile"] = '';
+    jsonLine["IT_EsigibilitaIva"] = 'I';
+    if (jsonLine["IT_Gr_IVA"].endsWith('-ED'))
+      jsonLine["IT_EsigibilitaIva"] = 'D';
+    //Operazioni in Split Payment: verrà indicato l'imponibile e l’aliquota Iva, nel campo “Esigibilita’ Iva” il codice “S”.
+    //Funziona su codici IVA/Gruppi che terminano con -SP
+    else if (jsonLine["IT_Gr_IVA"].endsWith('-SP') || vatCode.endsWith('-SP')) {
+      jsonLine["IT_EsigibilitaIva"] = 'S';
+      //riprende inoltre l'aliquota iva perché il file xml dà errore se non è impostata l'aliquota
+      for (var key in mapTipiDocumento) {
+        if (key == accountId+noDoc) {
+          var value = mapTipiDocumento[accountId+noDoc];
+          var values = value.split("_");
+          if (values.length>1) {
+            //values[0] tipo documento, values[1] aliquota
+            jsonLine["IT_Aliquota"] = values[1];
+          }
+          break;
+        }
+      }
+    }
+      
+    //IT_ImponibileDetraibile
+    //IT_ImponibileNonDetraibile
+    jsonLine["IT_ImponibileDetraibile"] = '';
+    jsonLine["IT_ImponibileNonDetraibile"] = '';
+    value = filteredRows[i].value("VatPercentNonDeductible");
+    if (!Banana.SDecimal.isZero(value)) {
+      value = Banana.SDecimal.subtract('100', value);
+      var rate = Banana.SDecimal.round(value, {'decimals':2});
+      var taxable = filteredRows[i].value("VatTaxable");
+      var amount = taxable * rate /100;
+      amount = Banana.SDecimal.roundNearest(amount, '0.01');
+      jsonLine["IT_ImponibileDetraibile"] = amount;
+      amount = Banana.SDecimal.subtract(taxable, amount);
+      jsonLine["IT_ImponibileNonDetraibile"] = amount;
+    }
+    else {
+      var taxable = filteredRows[i].value("VatTaxable");
+      jsonLine["IT_ImponibileDetraibile"] = taxable;
     }
 
     //Corrispettivi

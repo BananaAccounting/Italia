@@ -23,7 +23,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-05-02
+// @pubdate = 2018-05-29
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -848,8 +848,8 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   var liquidazionePeriodica = new LiquidazionePeriodica(this.banDocument);
   liquidazionePeriodica.setParam(this.param);
   var vatAmounts = liquidazionePeriodica.loadVatCodes(period.startDate, period.endDate);
-  //OPATTIVE non include la liquidazione nella stampa dei registri
-  vatAmounts["OPATTIVE"] = liquidazionePeriodica.sumVatAmounts(vatAmounts, ["V","C"]);
+  //OPATTIVE non include la liquidazione nella stampa dei registri eccetto lo split payment
+  vatAmounts["OPATTIVE"] = liquidazionePeriodica.sumVatAmounts(vatAmounts, ["V","C","L-SP"]);
   vatAmounts["OPDIFFERENZA"] = liquidazionePeriodica.sumVatAmounts(vatAmounts, ["OPATTIVE","OPPASSIVE"]);
 
   var utils = new Utils(this.banDocument);
@@ -1103,14 +1103,14 @@ Registri.prototype.printLiquidazioneSummaryTable = function(report, data, title)
   var tot2=0;
   var table = report.addTable("summary_table");
   if (title.length>0) {
-    row = table.addRow();
+    var row = table.addRow();
     row.addCell(title, "h2", 6); 
   }
-  row = table.addRow();
+  var row = table.addRow();
   row.addCell("Cod.IVA", "bold");
   row.addCell("Gr.IVA", "bold");
   row.addCell("Aliquota", "right bold");
-  row.addCell("Descrizione", "bold expand");
+  row.addCell("Descrizione", "bold");
   row.addCell("Imponibile", "right bold");
   row.addCell("Imposta", "right bold");
   //registri vendite/acquisti
@@ -1133,10 +1133,13 @@ Registri.prototype.printLiquidazioneSummaryTable = function(report, data, title)
       tot2 = Banana.SDecimal.add(data.totaliCodice[vatCode].vatPosted, tot2);
     }
     else {
+      var amount = data.totaliCodice[vatCode].vatPosted;
+      if (title.toLowerCase().indexOf("acquisti")>0)
+         amount = data.totaliCodice[vatCode].vatAmount;
       row.addCell(Banana.Converter.toLocaleNumberFormat(data.totaliCodice[vatCode].vatTaxable), "right");
-      row.addCell(Banana.Converter.toLocaleNumberFormat(data.totaliCodice[vatCode].vatAmount), "right");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(amount), "right");
       tot1 = Banana.SDecimal.add(data.totaliCodice[vatCode].vatTaxable, tot1);
-      tot2 = Banana.SDecimal.add(data.totaliCodice[vatCode].vatAmount, tot2);
+      tot2 = Banana.SDecimal.add(amount, tot2);
     }
   }
 
@@ -1153,10 +1156,16 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
   
   //Titolo
   var titolo = '';
-  if (register == 'vendite')
+  var totColonne = 10;
+  var span = 1;
+  if (register == 'vendite') {
     titolo = 'Registro fatture emesse';
-  else if (register == 'acquisti')
+  }
+  else if (register == 'acquisti') {
     titolo = 'Registro fatture ricevute';
+    totColonne = 11;
+    span = 2;
+  }
 
   if (!period.registri[register] || (!period.registri[register].totaliAliquota && !period.registri[register].totaliCodice)) {
     /*report.addParagraph(titolo, "h1");
@@ -1189,11 +1198,15 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
 
   //Tabella
   var table = report.addTable("register_table");
+  for (var i=0; i<totColonne; i++) {
+    table.addColumn("col" + i.toString());
+  }
+  
   var headerRow = table.getHeader().addRow();
-  headerRow.addCell(titolo, "h1", 10);
-  var headerRow = table.getHeader().addRow();
-  headerRow.addCell(new Utils(this.banDocument).getPeriodText(period), "h1_period", 10);
-  var headerRow = table.getHeader().addRow();
+  headerRow.addCell(titolo, "h1", totColonne);
+  headerRow = table.getHeader().addRow();
+  headerRow.addCell(new Utils(this.banDocument).getPeriodText(period), "h1_period", totColonne);
+  headerRow = table.getHeader().addRow();
   headerRow.addCell("N.Prot.", "title right");
   headerRow.addCell("Data Reg.", "title right");
   headerRow.addCell("Data Doc", "title right");
@@ -1203,25 +1216,35 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
   headerRow.addCell("Imponibile", "title right");
   headerRow.addCell("Cod.IVA", "title right");
   headerRow.addCell("%", "title right");
-  headerRow.addCell("Imposta", "title right");
-
+  if (register == 'acquisti') {
+    headerRow.addCell("Imposta indetr.", "title right");
+    headerRow.addCell("Imposta detraibile", "title right");
+  }
+  else {
+    headerRow.addCell("Imposta", "title right");
+  }
+  
   //Righe
   var totCol1=0;
   var totCol2=0;
   var totCol3=0;
+  var totCol4=0;
   for (var index in transactions) {
 
     var vatCode = transactions[index].JVatCodeWithoutSign;
     var vatRate = transactions[index].IT_Aliquota;
-    var vatAmount = transactions[index].IT_ImportoIva;
+    var vatPosted = transactions[index].IT_IvaContabilizzata;
+    var vatNonDed = transactions[index].VatNonDeductible;
     var vatTaxable = transactions[index].IT_Imponibile;
     var vatGross = transactions[index].IT_Lordo;
 
     var row = table.addRow();
+    row.addCell("", "separator", totColonne);
+    row = table.addRow();
     row.addCell(transactions[index].IT_ProgRegistro, "right");
     row.addCell(Banana.Converter.toLocaleDateFormat(transactions[index].JDate, "dd/mm/yy"), "right");
     row.addCell(Banana.Converter.toLocaleDateFormat(transactions[index].IT_DataDoc, "dd/mm/yy"), "right");
-    var cell = row.addCell();
+    var cell = row.addCell("");
     var descrizione = xml_unescapeString(transactions[index].IT_ClienteIntestazione);
     if (descrizione.length>1)
       cell.addParagraph(descrizione);
@@ -1232,33 +1255,54 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatTaxable), "right");
     row.addCell(vatCode, "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatRate), "right");
-    row.addCell(Banana.Converter.toLocaleNumberFormat(vatAmount), "right");
-
+    if (register == 'acquisti') {
+      row.addCell(Banana.Converter.toLocaleNumberFormat(vatNonDed), "right");
+      row.addCell(Banana.Converter.toLocaleNumberFormat(vatPosted), "right");
+    }
+    else {
+      row.addCell(Banana.Converter.toLocaleNumberFormat(vatPosted), "right");
+    }
+    
     //Totali
     totCol1 = Banana.SDecimal.add(vatGross, totCol1);
     totCol2 = Banana.SDecimal.add(vatTaxable, totCol2);
-    totCol3 = Banana.SDecimal.add(vatAmount, totCol3);
+    totCol3 = Banana.SDecimal.add(vatNonDed, totCol3);
+    totCol4 = Banana.SDecimal.add(vatPosted, totCol4);
   }
 
   //Riga totale
   var row = table.addRow();
-  row.addCell("", "", 3);
+  row.addCell(" ", "separator", totColonne);
+  row = table.addRow();
+  row.addCell("", "total", 3);
   row.addCell("Totali", "total bold", 2);
-  row.addCell(Banana.Converter.toLocaleNumberFormat(totCol1), "right bold");
-  row.addCell(Banana.Converter.toLocaleNumberFormat(totCol2), "right bold");
-  row.addCell("");
-  row.addCell("");
-  row.addCell(Banana.Converter.toLocaleNumberFormat(totCol3), "right bold");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(totCol1), "right bold total");
+  row.addCell(Banana.Converter.toLocaleNumberFormat(totCol2), "right bold total");
+  row.addCell("", "total");
+  row.addCell("", "total");
+  if (register == 'acquisti') {
+    row.addCell(Banana.Converter.toLocaleNumberFormat(totCol3), "right bold total");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(totCol4), "right bold total");
+  }
+  else {
+    row.addCell(Banana.Converter.toLocaleNumberFormat(totCol4), "right bold total");
+  }
+  row = table.addRow();
+  row.addCell(" ", "separator", totColonne);
 
   //Riepilogo IVA PER ALIQUOTA DETRAIBILE
-  var row = table.addRow();
+  row = table.addRow();
+  row.addCell("", "", totColonne);
+  row = table.addRow();
+  row.addCell("", "", totColonne);
+  row = table.addRow();
   var title = "TOTALI DI PERIODO PER ALIQUOTA - Registro " + register.toUpperCase() + " (" + new Utils(this.banDocument).getPeriodText(period) + ")";
-  row.addCell(title, "h2", 10);
+  row.addCell(title, "h2", totColonne);
   if (register.toLowerCase() == "acquisti") {
     row = table.addRow();
-    row.addCell("", "", 10);
+    row.addCell("", "", totColonne);
     row = table.addRow();
-    row.addCell("TOTALE IVA DETRAIBILE", "h4", 10);
+    row.addCell("TOTALE IVA DETRAIBILE", "h4", totColonne);
   }
   var tot1=0;
   var tot2=0;
@@ -1268,7 +1312,7 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
     row.addCell("IVA " + vatRate + "%", "", 5);
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliAliquota[vatRate].vatTaxableDed), "right");
-    row.addCell("");
+    row.addCell("","", span);
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliAliquota[vatRate].vatPosted), "right");
     tot1 = Banana.SDecimal.add(period.registri[register].totaliAliquota[vatRate].vatTaxableDed, tot1);
@@ -1279,16 +1323,16 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
   row.addCell("Totali", "bold", 5);
   row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
-  row.addCell("");
+  row.addCell("","",span);
   row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
   
-  //Riepilogo IVA PER ALIQUOTA INDETRAIBILE (dovrebbe essere solo per acquisti)
-  if (!Banana.SDecimal.isZero(totNonDed)) {
+  //Riepilogo IVA PER ALIQUOTA INDETRAIBILE (solo per acquisti)
+  if (register.toLowerCase() == "acquisti" && !Banana.SDecimal.isZero(totNonDed)) {
     row = table.addRow();
-    row.addCell("", "", 10);
+    row.addCell("", "", totColonne);
     row = table.addRow();
-    row.addCell("TOTALE IVA INDETRAIBILE", "h4", 10);
+    row.addCell("TOTALE IVA INDETRAIBILE", "h4", totColonne);
     var tot1=0;
     var tot2=0;
     for (var vatRate in period.registri[register].totaliAliquota) {
@@ -1296,7 +1340,7 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
       row.addCell("IVA " + vatRate + "%", "", 5);
       row.addCell("");
       row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliAliquota[vatRate].vatTaxableNonDed), "right");
-      row.addCell("");
+      row.addCell("","",span);
       row.addCell("");
       row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliAliquota[vatRate].vatNonDed), "right");
       tot1 = Banana.SDecimal.add(period.registri[register].totaliAliquota[vatRate].vatTaxableNonDed, tot1);
@@ -1306,16 +1350,16 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
     row.addCell("Totali", "bold", 5);
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
-    row.addCell("");
+    row.addCell("","",span);
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
   }
 
   //Riepilogo IVA per CODICE
   row = table.addRow();
-  row.addCell("", "", 10);
+  row.addCell("", "", totColonne);
   row = table.addRow();
-  row.addCell("TOTALI DI PERIODO PER CODICI - Registro " + register.toUpperCase() + " (" + new Utils(this.banDocument).getPeriodText(period) + ")", "h2", 10);
+  row.addCell("TOTALI DI PERIODO PER CODICI - Registro " + register.toUpperCase() + " (" + new Utils(this.banDocument).getPeriodText(period) + ")", "h2", totColonne);
   var tot1=0;
   var tot2=0;
   for (var vatCode in period.registri[register].totaliCodice) {
@@ -1325,7 +1369,7 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
     row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliCodice[vatCode].vatTaxable), "right");
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliCodice[vatCode].vatRate), "right");
-    row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliCodice[vatCode].vatAmount), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliCodice[vatCode].vatAmount), "right", span);
     tot1 = Banana.SDecimal.add(period.registri[register].totaliCodice[vatCode].vatTaxable, tot1);
     tot2 = Banana.SDecimal.add(period.registri[register].totaliCodice[vatCode].vatAmount, tot2);
   }  
@@ -1333,7 +1377,7 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
   row.addCell("Totali", "bold", 5);
   row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
-  row.addCell("");
+  row.addCell("","",span);
   row.addCell("");
   row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
   
@@ -1646,7 +1690,6 @@ Registri.prototype.setStyle = function(stylesheet) {
   stylesheet.addStyle("td.underlined", "border-bottom: 1px solid black");
   stylesheet.addStyle(".amount", "text-align: right");
   stylesheet.addStyle(".bold", "font-weight:bold");
-  stylesheet.addStyle(".expand", "width:100%;");
   stylesheet.addStyle(".period", "padding-bottom: 1em;padding-top:1em;");
   stylesheet.addStyle(".center", "text-align: center");
   stylesheet.addStyle(".right", "text-align: right");
@@ -1660,7 +1703,9 @@ Registri.prototype.setStyle = function(stylesheet) {
   stylesheet.addStyle(".warning", "color: red;");
   /*tables*/
   stylesheet.addStyle(".register_table", "width:100%;");
-  //stylesheet.addStyle(".register_table td", "border:1px solid black;");
+  stylesheet.addStyle(".register_table td", "vertical-align:top;");
+  stylesheet.addStyle(".register_table td.separator", "border-top:0.1px solid black;padding:1px;");
+  stylesheet.addStyle(".register_table td.total", "border-bottom:1px double black;padding-bottom:5px;");
   stylesheet.addStyle(".corrispettivi_table", "width:100%;");
   stylesheet.addStyle(".corrispettivi_calcolo_ventilazione_table", "width:100%;");
   stylesheet.addStyle(".corrispettivi_riepilogo_table", "width:100%;");

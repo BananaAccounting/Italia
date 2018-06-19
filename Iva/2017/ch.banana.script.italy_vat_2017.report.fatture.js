@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-04-19
+// @pubdate = 2018-06-01
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -93,7 +93,6 @@ function exec(inData, options) {
     var stylesheet = Banana.Report.newStyleSheet(); 
     datiFatture.printDocument(report, stylesheet);
     if (debug) {
-      report.addPageBreak();
       var journal = new Journal(this.banDocument);
       journal.load();
       report.addPageBreak();
@@ -592,10 +591,11 @@ DatiFatture.prototype.createInstanceBlocco2DatiRiepilogo = function(noDoc, dataD
         continue;
       var msgContext = '[' + rows[i]["JTableOrigin"] + ': Riga ' + (parseInt(rows[i]["JRowOrigin"])+1).toString() +'] <DatiRiepilogo> Documento No ' + noDoc;
       var itImponibile = rows[i]["IT_Imponibile"];
-      if (!Banana.SDecimal.isZero(itImponibile))
+      //le note di credito sempre in positivo
+      if (!Banana.SDecimal.isZero(itImponibile) && rows[i]["IT_TipoDoc"] == 'TD04')
         itImponibile = Banana.SDecimal.abs(itImponibile);
       var itImportoIva = rows[i]["IT_ImportoIva"];
-      if (!Banana.SDecimal.isZero(itImportoIva))
+      if (!Banana.SDecimal.isZero(itImportoIva) && rows[i]["IT_TipoDoc"] == 'TD04')
         itImportoIva = Banana.SDecimal.abs(itImportoIva);
       var xbrlDatiRiepilogo = xml_createElementWithValidation("ImponibileImporto", itImponibile,1,'4...15',msgContext);
       var xbrlDatiIVA = xml_createElementWithValidation("Imposta", itImportoIva,0,'4...15',msgContext);
@@ -1249,11 +1249,11 @@ DatiFatture.prototype.printVatReportRows = function(customers_suppliers, table) 
       row.addCell(jsonObj["JVatCodeWithoutSign"], "row amount");
       row.addCell(jsonObj["IT_Gr_IVA"], "row amount");
       var value = jsonObj["IT_Imponibile"];
-      if (!Banana.SDecimal.isZero(value))
+      if (!Banana.SDecimal.isZero(value) && jsonObj["IT_TipoDoc"] == 'TD04')
         value = Banana.SDecimal.abs(value);
       row.addCell(Banana.Converter.toLocaleNumberFormat(value,2,false), "row amount");
       value = jsonObj["IT_ImportoIva"];
-      if (!Banana.SDecimal.isZero(value))
+      if (!Banana.SDecimal.isZero(value) && jsonObj["IT_TipoDoc"] == 'TD04')
         value = Banana.SDecimal.abs(value);
       row.addCell(Banana.Converter.toLocaleNumberFormat(value,2,false), "row amount");
       row.addCell(Banana.Converter.toLocaleNumberFormat(jsonObj["IT_Aliquota"],2,false), "row amount");
