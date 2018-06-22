@@ -481,7 +481,7 @@ Journal.prototype.load = function() {
     }
     noDoc = jsonLine["IT_NoDoc"];
     mapTipiDocumento[accountId+noDoc] = jsonLine["IT_TipoDoc"] + '_' + aliquotaCorrente;
- 
+
     //Controllo IdPaese e TipoDocumento 
     var tipoDocumentoCorretto = true;
     if (isSupplier && jsonLine["IT_ClienteIDPaese"] == "IT") {
@@ -567,7 +567,7 @@ Journal.prototype.load = function() {
     }
 
     //Controllo IT_Natura e aliquota
-    var aliquota = aliquotaCorrente;
+    var aliquota = jsonLine["IT_Aliquota"];
     var imposta = jsonLine["IT_IvaContabilizzata"];
     var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
 
