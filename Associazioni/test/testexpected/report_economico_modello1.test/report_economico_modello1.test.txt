@@ -1,0 +1,213 @@
+%%info_test_name{report_economico_modello1.test}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+%%SCRIPT{/Users/ivan/Documents/GitHub/Italia/Associazioni/test/report_economico_modello1.test.js}
+%
+\begin{testcase}{ReportEconomicoModello1Test}
+\begin{test}{testBananaAppSemplice}
+\begin{reportvalue}{Test report ecomomico modello 1 (contabilità semplice)}
+                  giunta regionale – 8\^{} legislatura \\
+  \\
+ALLEGATO \_A\_ Dgr n.    4314  del   29/12/2009          pag. \\
+  \\
+  \\
+  \\
+Associazione CSV - BILANCIO FINANZIARIO (Modello 1) ANNO 2018 \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Id/Gr1  & Id/Gr1  & Descrizione gruppo/conto  &                                                                 &                                                                 & Importi parziali  & Importi totali \\
+LI  & \multicolumn{4}{l}{LIQUIDITÀ INIZIALE (cassa+Banca+Titoli) } &  & 49'330.00 \\
+\multicolumn{7}{l}{  }\\
+\multicolumn{7}{l}{ENTRATE }\\
+R1  & \multicolumn{4}{l}{QUOTE ASSOCIATIVE } &    & 19'500.00 \\
+R2  & \multicolumn{4}{l}{CONTRIBUTI PER PROGETTI E/O ATTIVITÀ (art. 5 L. 266/91) } &    & 44'500.00 \\
+   & R2.1  & \multicolumn{3}{l}{da soci (specificare a quale titolo) } & 15'000.00  &   \\
+   & R2.2  & \multicolumn{3}{l}{da non soci (specificare a quale titolo) } & 12'500.00  &   \\
+   & R2.3  & \multicolumn{3}{l}{da CSV e Comitato di Gestione } & 0.00  &   \\
+   & R2.4  & \multicolumn{3}{l}{da enti pubblici (comune, provincia, regione, stato) } & 3'000.00  &   \\
+   & R2.5  & \multicolumn{3}{l}{da Comunità europea e da altri organismi internazionali } & 0.00  &   \\
+   & R2.6  & \multicolumn{3}{l}{da altre Odv (specificare a quale titolo) } & 0.00  &   \\
+   & R2.7  & \multicolumn{3}{l}{dal cinque per mille } & 14'000.00  &   \\
+   & R2.8  & \multicolumn{3}{l}{altro (specificare) } & 0.00  &   \\
+R3  & \multicolumn{4}{l}{DONAZIONI DEDUCIBILI E LASCITI TESTAMENTARI - art. 5 L.266/91 } &    & 8'900.00 \\
+   & R3.1  & \multicolumn{3}{l}{da soci } & 8'900.00  &   \\
+   & R3.2  & \multicolumn{3}{l}{da non soci } & 0.00  &   \\
+R4  & \multicolumn{4}{l}{RIMBORSI DERIVANTI DA CONVENZIONI CON ENTI PUBBLICI - art. 5 L.266/91 } &    & 0.00 \\
+R5b  & \multicolumn{4}{l}{ ALTRE ENTRATE DA ATTIVITÀ COMMERCIALI MARGINALI } &    & \\
+   & R5.4  & \multicolumn{3}{l}{cessione di beni prodotti dagli assistiti e dai volontari sempreché la vendita dei prodotti sia curata direttamente dall'organizzazione senza alcun intermediario (D.M. 1995 lett.c) } & 0.00  &   \\
+   & R5.5  & \multicolumn{3}{l}{attività di prestazione di servizi rese in conformità alle finalità istituzionali, non riconducibili nell'ambito applicativo dell'art. 111, comma 3, del TUIR  verso pagamento di corrispettivi specifici che non eccedano del 50\% i costi di diretta imputazione (D.M. 1995 lett. e) } & 0.00  &   \\
+R6  & \multicolumn{4}{l}{ALTRE ENTRATE (comunque ammesse dalla L.266/91) } &    & \\
+   & R6.1  & \multicolumn{3}{l}{rendite patrimoniali (fitti,….) } & 0.00  &   \\
+   & R6.2  & \multicolumn{3}{l}{rendite finanziarie (interessi, dividendi) } & 0.00  &   \\
+   & R6.3  & \multicolumn{3}{l}{altro: specificare  } & 0.00  &   \\
+R7  & \multicolumn{4}{l}{ANTICIPAZIONI DI CASSA } &    & 0.00 \\
+R8  & \multicolumn{4}{l}{PARTITE DI GIRO } &    & 0.00 \\
+R  & \multicolumn{4}{l}{TOTALE ENTRATE } &    & 72'900.00 \\
+\multicolumn{7}{l}{USCITE }\\
+C1  & \multicolumn{4}{l}{RIMBORSI SPESE AI VOLONTARI  (documentate ed effettivamente sostenute) } &    & 10'100.00 \\
+C2  & \multicolumn{4}{l}{ASSICURAZIONI } &    & 1'260.00 \\
+   & C2.1  & \multicolumn{3}{l}{volontari (malattie, infortuni e resp. civile terzi) - art. 4 L.266/91 } & 1'260.00  &   \\
+   & C2.2  & \multicolumn{3}{l}{altre: es. veicoli, immobili,…. } & 0.00  &   \\
+C3  & \multicolumn{4}{l}{PERSONALE OCCORRENTE  A QUALIFICARE E SPECIALIZZARE L’ATTIVITÀ (art. 3 L. 266/91 e art. 3 L.R. 40/1993) } &    & 31'260.00 \\
+   & C3.1  & \multicolumn{3}{l}{dipendenti  } & 25'800.00  &   \\
+   & C3.2  & \multicolumn{3}{l}{atipici e occasionali } & 5'460.00  &   \\
+   & C3.3  & \multicolumn{3}{l}{consulenti (es. fisioterapista) } & 0.00  &   \\
+C4  & \multicolumn{4}{l}{ACQUISTI DI SERVIZI  (es. manutenzione, trasporti, service, consulenza fiscale e del lavoro) } &    & 5'100.00 \\
+C5  & \multicolumn{4}{l}{UTENZE (telefono, luce, riscaldamento,…) } &    & 0.00 \\
+C6  & \multicolumn{4}{l}{MATERIALI DI CONSUMO (cancelleria, postali, materie prime, generi alimentari) } &    & 9'531.00 \\
+   & C6.1  & \multicolumn{3}{l}{per struttura odv } & 9'531.00  &   \\
+   & C6.2  & \multicolumn{3}{l}{per attività } & 0.00  &   \\
+   & C6.3  & \multicolumn{3}{l}{per soggetti svantaggiati } & 0.00  &   \\
+C7  & \multicolumn{4}{l}{GODIMENTO BENI DI TERZI (affitti, noleggio attrezzature, diritti Siae,....) } &    & 11'950.00 \\
+C8  & \multicolumn{4}{l}{ONERI FINANZIARI E PATRIMONIALI (es. interessi passivi su mutui, prestiti, c/c bancario ..) } &    & 0.00 \\
+C9  & \multicolumn{4}{l}{BENI DUREVOLI } &    & 0.00 \\
+C10  & \multicolumn{4}{l}{IMPOSTE E TASSE } &    & 0.00 \\
+C11  & \multicolumn{4}{l}{RACCOLTE FONDI (vedi allegati Nr. delle singole raccolte fondi di cui ai punti 5.1, 5.2 e 5.3 delle entrate) } &    & -2'910.00 \\
+C12  & \multicolumn{4}{l}{ALTRE USCITE/COSTI } &    & 1'000.00 \\
+   & C12.1  & \multicolumn{3}{l}{Contributi a soggetti svantaggiati } & 0.00  &   \\
+   & C12.2  & \multicolumn{3}{l}{Quote associative a odv collegate  (specificare) } & 0.00  &   \\
+   & C12.3  & \multicolumn{3}{l}{versate ad altre odv (specificare) } & 1'000.00  &   \\
+   & C12.4  & \multicolumn{3}{l}{Altro (specificare) } & 0.00  &   \\
+C13  & \multicolumn{4}{l}{PARTITE DI GIRO } &    & 0.00 \\
+C  & \multicolumn{4}{l}{TOTALE USCITE } &    & 67'291.00 \\
+UP  & \multicolumn{4}{l}{UTILE/PERDITA D'ESERCIZIO } &    & 5'609.00 \\
+\multicolumn{7}{l}{  }\\
+LF  & \multicolumn{4}{l}{LIQUIDITÀ FINALE (Liquidità iniziale + totale entrate - totale uscite) } &  & 54'939.00 \\
+\multicolumn{2}{l}{} & \multicolumn{3}{l}{di cui Valori in cassa } & 8'060.00  & \\
+\multicolumn{2}{l}{} & \multicolumn{3}{l}{di cui Valori presso depositi } & 41'270.00  & \\
+\end{longtable}
+Associazione CSV - STATO PATRIMONIALE \\
+\begin{longtable}[l]{ l  l  l }
+Id/Gr1  & Descrizione  & Importi totali \\
+\multicolumn{3}{l}{ATTIVO }\\
+A1  & BENI DUREVOLI  & 32'100.00 \\
+A2.1  & CASSA  & 8'060.00 \\
+A2.2  & BANCA  & 41'270.00 \\
+A2.3  & TITOLI  & 0.00 \\
+A3  & CREDITI  & 23'100.00 \\
+APG  & PERDITA DI GESTIONE  & 0.00 \\
+ATP  & TOTALE A PAREGGIO  & 104'530.00 \\
+\multicolumn{3}{l}{PASSIVO }\\
+P1  & DEBITI  & 42'721.00 \\
+P2.1  & FONDI DI AMMORTAMENTO BENI E ATTREZZATURE  & 25'000.00 \\
+P2.2  & FONDI DI ACCANTONAMENTO  & 6'000.00 \\
+P3  & NETTO  & 25'200.00 \\
+PAG  & AVANZO DI GESTIONE  & 5'609.00 \\
+PTP  & TOTALE A PAREGGIO  & 104'530.00 \\
+\end{longtable}
+Banana Accounting -  Pagina  \\
+\end{reportvalue}
+\keyvalue{Result}{Passed}
+\end{test}
+\begin{test}{testBananaAppDoppia}
+\begin{reportvalue}{Test report ecomomico modello 1 (contabilità doppia)}
+                  giunta regionale – 8\^{} legislatura \\
+  \\
+ALLEGATO \_A\_ Dgr n.    4314  del   29/12/2009          pag. \\
+  \\
+  \\
+  \\
+Associazione CSV - BILANCIO FINANZIARIO (Modello 1) ANNO 2018 \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Id/Gr1  & Id/Gr1  & Descrizione gruppo/conto  &                                                                 &                                                                 & Importi parziali  & Importi totali \\
+LI  & \multicolumn{4}{l}{LIQUIDITÀ INIZIALE (cassa+Banca+Titoli) } &  & 63'830.00 \\
+\multicolumn{7}{l}{  }\\
+\multicolumn{7}{l}{ENTRATE }\\
+R1  & \multicolumn{4}{l}{QUOTE ASSOCIATIVE } &    & 11'500.00 \\
+R2  & \multicolumn{4}{l}{CONTRIBUTI PER PROGETTI E/O ATTIVITÀ (art. 5 L. 266/91) } &    & 61'600.00 \\
+   & R2.1  & \multicolumn{3}{l}{da soci (specificare a quale titolo) } & 24'500.00  &   \\
+   & R2.2  & \multicolumn{3}{l}{da non soci (specificare a quale titolo) } & 9'100.00  &   \\
+   & R2.3  & \multicolumn{3}{l}{da CSV e Comitato di Gestione } & 0.00  &   \\
+   & R2.4  & \multicolumn{3}{l}{da enti pubblici (comune, provincia, regione, stato) } & 3'000.00  &   \\
+   & R2.5  & \multicolumn{3}{l}{da Comunità europea e da altri organismi internazionali } & 0.00  &   \\
+   & R2.6  & \multicolumn{3}{l}{da altre Odv (specificare a quale titolo) } & 0.00  &   \\
+   & R2.7  & \multicolumn{3}{l}{dal cinque per mille } & 25'000.00  &   \\
+   & R2.8  & \multicolumn{3}{l}{altro (specificare) } & 0.00  &   \\
+R3  & \multicolumn{4}{l}{DONAZIONI DEDUCIBILI E LASCITI TESTAMENTARI - art. 5 L.266/91 } &    & 8'900.00 \\
+   & R3.1  & \multicolumn{3}{l}{da soci } & 8'900.00  &   \\
+   & R3.2  & \multicolumn{3}{l}{da non soci } & 0.00  &   \\
+R4  & \multicolumn{4}{l}{RIMBORSI DERIVANTI DA CONVENZIONI CON ENTI PUBBLICI - art. 5 L.266/91 } &    & 0.00 \\
+R5b  & \multicolumn{4}{l}{ ALTRE ENTRATE DA ATTIVITÀ COMMERCIALI MARGINALI } &    & 0.00 \\
+   & R5.4  & \multicolumn{3}{l}{cessione di beni prodotti dagli assistiti e dai volontari sempreché la vendita dei prodotti sia curata direttamente dall'organizzazione senza alcun intermediario (D.M. 1995 lett.c) } & 0.00  &   \\
+   & R5.5  & \multicolumn{3}{l}{attività di prestazione di servizi rese in conformità alle finalità istituzionali, non riconducibili nell'ambito applicativo dell'art. 111, comma 3, del TUIR  verso pagamento di corrispettivi specifici che non eccedano del 50\% i costi di diretta imputazione (D.M. 1995 lett. e) } & 0.00  &   \\
+R6  & \multicolumn{4}{l}{ALTRE ENTRATE (comunque ammesse dalla L.266/91) } &    & 0.00 \\
+   & R6.1  & \multicolumn{3}{l}{rendite patrimoniali (fitti,….) } & 0.00  &   \\
+   & R6.2  & \multicolumn{3}{l}{rendite finanziarie (interessi, dividendi) } & 0.00  &   \\
+   & R6.3  & \multicolumn{3}{l}{altro: specificare  } & 0.00  &   \\
+R7  & \multicolumn{4}{l}{ANTICIPAZIONI DI CASSA } &    & 0.00 \\
+R8  & \multicolumn{4}{l}{PARTITE DI GIRO } &    & 0.00 \\
+R  & \multicolumn{4}{l}{TOTALE ENTRATE } &    & 82'000.00 \\
+\multicolumn{7}{l}{USCITE }\\
+C1  & \multicolumn{4}{l}{RIMBORSI SPESE AI VOLONTARI  (documentate ed effettivamente sostenute) } &    & 8'100.00 \\
+C2  & \multicolumn{4}{l}{ASSICURAZIONI } &    & 1'260.00 \\
+   & C2.1  & \multicolumn{3}{l}{volontari (malattie, infortuni e resp. civile terzi) - art. 4 L.266/91 } & 1'260.00  &   \\
+   & C2.2  & \multicolumn{3}{l}{altre: es. veicoli, immobili,…. } & 0.00  &   \\
+C3  & \multicolumn{4}{l}{PERSONALE OCCORRENTE  A QUALIFICARE E SPECIALIZZARE L’ATTIVITÀ (art. 3 L. 266/91 e art. 3 L.R. 40/1993) } &    & 30'260.00 \\
+   & C3.1  & \multicolumn{3}{l}{dipendenti  } & 25'800.00  &   \\
+   & C3.2  & \multicolumn{3}{l}{atipici e occasionali } & 4'460.00  &   \\
+   & C3.3  & \multicolumn{3}{l}{consulenti (es. fisioterapista) } & 0.00  &   \\
+C4  & \multicolumn{4}{l}{ACQUISTI DI SERVIZI  (es. manutenzione, trasporti, service, consulenza fiscale e del lavoro) } &    & 4'600.00 \\
+C5  & \multicolumn{4}{l}{UTENZE (telefono, luce, riscaldamento,…) } &    & 0.00 \\
+C6  & \multicolumn{4}{l}{MATERIALI DI CONSUMO (cancelleria, postali, materie prime, generi alimentari) } &    & 7'631.00 \\
+   & C6.1  & \multicolumn{3}{l}{per struttura odv } & 7'631.00  &   \\
+   & C6.2  & \multicolumn{3}{l}{per attività } & 0.00  &   \\
+   & C6.3  & \multicolumn{3}{l}{per soggetti svantaggiati } & 0.00  &   \\
+C7  & \multicolumn{4}{l}{GODIMENTO BENI DI TERZI (affitti, noleggio attrezzature, diritti Siae,....) } &    & 9'950.00 \\
+C8  & \multicolumn{4}{l}{ONERI FINANZIARI E PATRIMONIALI (es. interessi passivi su mutui, prestiti, c/c bancario ..) } &    & 0.00 \\
+C9  & \multicolumn{4}{l}{BENI DUREVOLI } &    & 0.00 \\
+C10  & \multicolumn{4}{l}{IMPOSTE E TASSE } &    & 0.00 \\
+C11  & \multicolumn{4}{l}{RACCOLTE FONDI (vedi allegati Nr. delle singole raccolte fondi di cui ai punti 5.1, 5.2 e 5.3 delle entrate) } &    & -2'910.00 \\
+C12  & \multicolumn{4}{l}{ALTRE USCITE/COSTI } &    & 1'000.00 \\
+   & C12.1  & \multicolumn{3}{l}{Contributi a soggetti svantaggiati } & 0.00  &   \\
+   & C12.2  & \multicolumn{3}{l}{Quote associative a odv collegate  (specificare) } & 0.00  &   \\
+   & C12.3  & \multicolumn{3}{l}{versate ad altre odv (specificare) } & 1'000.00  &   \\
+   & C12.4  & \multicolumn{3}{l}{Altro (specificare) } & 0.00  &   \\
+C13  & \multicolumn{4}{l}{PARTITE DI GIRO } &    & 0.00 \\
+C  & \multicolumn{4}{l}{TOTALE USCITE } &    & 59'891.00 \\
+UP  & \multicolumn{4}{l}{UTILE/PERDITA D'ESERCIZIO } &    & 22'109.00 \\
+\multicolumn{7}{l}{  }\\
+LF  & \multicolumn{4}{l}{LIQUIDITÀ FINALE (Liquidità iniziale + totale entrate - totale uscite) } &  & 85'939.00 \\
+\multicolumn{2}{l}{} & \multicolumn{3}{l}{di cui Valori in cassa } & 20'560.00  & \\
+\multicolumn{2}{l}{} & \multicolumn{3}{l}{di cui Valori presso depositi } & 43'270.00  & \\
+\end{longtable}
+Associazione CSV - STATO PATRIMONIALE \\
+\begin{longtable}[l]{ l  l  l }
+Id/Gr1  & Descrizione  & Importi totali \\
+\multicolumn{3}{l}{ATTIVO }\\
+A1  & BENI DUREVOLI  & 32'100.00 \\
+A2.1  & CASSA  & 20'560.00 \\
+A2.2  & BANCA  & 43'270.00 \\
+A2.3  & TITOLI  & 0.00 \\
+A3  & CREDITI  & 23'100.00 \\
+APG  & PERDITA DI GESTIONE  & 0.00 \\
+ATP  & TOTALE A PAREGGIO  & 119'030.00 \\
+\multicolumn{3}{l}{PASSIVO }\\
+P1  & DEBITI  & 40'721.00 \\
+P2.1  & FONDI DI AMMORTAMENTO BENI E ATTREZZATURE  & 25'000.00 \\
+P2.2  & FONDI DI ACCANTONAMENTO  & 6'000.00 \\
+P3  & NETTO  & 25'200.00 \\
+PAG  & AVANZO DI GESTIONE  & 22'109.00 \\
+PTP  & TOTALE A PAREGGIO  & 119'030.00 \\
+\end{longtable}
+Banana Accounting -  Pagina  \\
+\end{reportvalue}
+\keyvalue{Result}{Passed}
+\end{test}
+\end{testcase}
+\end{document}

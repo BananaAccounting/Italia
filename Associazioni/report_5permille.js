@@ -1,4 +1,4 @@
-// Copyright [2015] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2018] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.report5permille
 // @api = 1.0
-// @pubdate = 2015-08-18
+// @pubdate = 2018-06-22
 // @publisher = Banana.ch SA
 // @description = Associazioni - Report "5 per mille"
 // @task = app.command
@@ -41,14 +41,19 @@ var totalExpenses = "";
 var totalIncome = "";
 var accountsMap = {};
 var groups = [];
-groups.push({"group":"0", "gr1":"R2.7"});
-groups.push({"group":"1", "gr1":"C1;C3.1;C3.2;C3.3", "title":"Risorse umane", "text":"(dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato"});
-groups.push({"group":"2", "gr1":"C2.1;C2.2;C5;C6.1;C8;C10","title":"Costi di funzionamento", "text":"(dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc…)"});
-groups.push({"group":"3", "gr1":"C4;C6.2;C6.3;C7;C9;C11", "title":"Acquisto beni e servizi", "text":"(dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…)"});
-groups.push({"group":"4", "gr1":"C12.2;C12.3", "title":"Erogazioni ai sensi della propria finalità istituzionale", "text":"N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato"});
-groups.push({"group":"5", "gr1":"C12.1;C12.4;C13", "title":"Altre voci di spesa riconducibili al raggiungimento dello scopo sociale", "text":""});
-groups.push({"group":"6", "gr1":"P2.2", "title":"Accantonamento", "text":"(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo)"});
 
+
+//The purpose of this function is to create and load the structure that will contains all the data used to create the report
+function loadGroups() {
+	groups = [];
+	groups.push({"group":"0", "gr1":"R2.7"});
+	groups.push({"group":"1", "gr1":"C1;C3.1;C3.2;C3.3", "title":"Risorse umane", "text":"(dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato"});
+	groups.push({"group":"2", "gr1":"C2.1;C2.2;C5;C6.1;C8;C10","title":"Costi di funzionamento", "text":"(dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc…)"});
+	groups.push({"group":"3", "gr1":"C4;C6.2;C6.3;C7;C9;C11", "title":"Acquisto beni e servizi", "text":"(dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…)"});
+	groups.push({"group":"4", "gr1":"C12.2;C12.3", "title":"Erogazioni ai sensi della propria finalità istituzionale", "text":"N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato"});
+	groups.push({"group":"5", "gr1":"C12.1;C12.4;C13", "title":"Altre voci di spesa riconducibili al raggiungimento dello scopo sociale", "text":""});
+	groups.push({"group":"6", "gr1":"P2.2", "title":"Accantonamento", "text":"(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo)"});
+}
 
 
 //Main function
@@ -106,22 +111,26 @@ function exec(string) {
 	//If user has selected something and clicked "OK"
 	if (itemSelected) {
 
+		//Function call to load the gorups
+		loadGroups();
+
 		//Functin call to create all the account objects for the selected segment
-		//loadAccountsMap(file2, accounts1, accounts2, itemSelected, dateform.selectionStartDate, dateform.selectionEndDate);
-		loadAccountsMap(itemSelected, accounts1, accounts2, file2);
+		loadAccountsMap(Banana.document, itemSelected, accounts1, accounts2, file2);
 				
 		//Function call to print the report
-		//printReport(itemSelected, accounts1, accounts2, dateform.selectionStartDate, dateform.selectionEndDate);
-		printReport(itemSelected, accounts1, accounts2, file2);
+		var report = printReport(Banana.document, itemSelected, accounts1, accounts2, file2);
+		var stylesheet = createStyleSheet();
+		Banana.Report.preview(report, stylesheet);
 	}
 }
 
 
 //This function creates and print the report
-function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
+function printReport(banDoc, itemSelected, tabAccounts1, tabAccounts2, file2) {
 
 	var report = Banana.Report.newReport("5 per mille - Veneto");
-
+	totalExpenses = "";
+	totalIncome = "";
 
 	/*
 		PRINT LOGO
@@ -143,43 +152,43 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 	tableAnagrafica.getCaption().addText("ANAGRAFICA", "description bold");
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Denominazione sociale", "", 1);
-	tableRow.addCell(Banana.document.info("AccountingDataBase", "Company"), "", 1);
+	tableRow.addCell(banDoc.info("AccountingDataBase", "Company"), "", 1);
 	
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Scopi dell'attività sociale", "", 1);
-	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", ":5XM-SCOPO").value("Testo"), "", 1);
+	tableRow.addCell(banDoc.table("TestiReport").findRowByValue("RowId", ":5XM-SCOPO").value("Testo"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("C.F. del soggetto beneficiario", "", 1);
-	tableRow.addCell(Banana.document.info("AccountingDataBase", "FiscalNumber"), "", 1);
+	tableRow.addCell(banDoc.info("AccountingDataBase", "FiscalNumber"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Indirizzo", "", 1);
-	tableRow.addCell(Banana.document.info("AccountingDataBase", "Address1"), "", 1);
+	tableRow.addCell(banDoc.info("AccountingDataBase", "Address1"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Città", "", 1);
-	tableRow.addCell(Banana.document.info("AccountingDataBase", "City"), "", 1);
+	tableRow.addCell(banDoc.info("AccountingDataBase", "City"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("N. Telefono", "", 1);
-	tableRow.addCell(Banana.document.info("AccountingDataBase", "Phone"), "", 1);
+	tableRow.addCell(banDoc.info("AccountingDataBase", "Phone"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("N. Fax", "", 1);
-	tableRow.addCell(Banana.document.info("AccountingDataBase", "Fax"), "", 1);
+	tableRow.addCell(banDoc.info("AccountingDataBase", "Fax"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Indirizzo email", "", 1);
-	tableRow.addCell(Banana.document.info("AccountingDataBase", "Email"), "", 1);
+	tableRow.addCell(banDoc.info("AccountingDataBase", "Email"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Nome del rappresentante legale", "", 1);
-	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", ":5XM-RAPP").value("Testo"), "", 1);
+	tableRow.addCell(banDoc.table("TestiReport").findRowByValue("RowId", ":5XM-RAPP").value("Testo"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("C.F. del rappresentante legale", "", 1);
-	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", ":5XM-RAPP-CF").value("Testo"), "", 1);
+	tableRow.addCell(banDoc.table("TestiReport").findRowByValue("RowId", ":5XM-RAPP-CF").value("Testo"), "", 1);
 
 	report.addParagraph(" ");
 
@@ -189,16 +198,16 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 		PRINT TABLE "RENDICONTO DELLE SPESE SOSTENUTE" 
 	*/
 
-	var thisYear = Banana.Converter.toDate(Banana.document.info("AccountingDataBase","OpeningDate")).getFullYear();
+	var thisYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase","OpeningDate")).getFullYear();
 
 	if (tabAccounts2) {
 		var lastYear = Banana.Converter.toDate(file2.info("AccountingDataBase","OpeningDate")).getFullYear();
 	}
 
 	var table = report.addTable("table");
-	table.getCaption().addText("RENDICONTO DELLE SPESE SOSTENUTE (" + Banana.document.info("AccountingDataBase","BasicCurrency") +")", "description bold");
+	table.getCaption().addText("RENDICONTO DELLE SPESE SOSTENUTE (" + banDoc.info("AccountingDataBase","BasicCurrency") +")", "description bold");
 	tableRow = table.addRow();
-	tableRow.addCell(getDescription(itemSelected), "alignRight bold", 2);
+	tableRow.addCell(getDescription(banDoc, itemSelected), "alignRight bold", 2);
 	tableRow.addCell(itemSelected, "alignCenter bold", 1);
 	tableRow = table.addRow();
 	tableRow.addCell("Anno finanziario", "alignRight bold", 2);
@@ -211,19 +220,19 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 
 	tableRow = table.addRow();
 	tableRow.addCell("Data di percezione", "alignRight bold", 2);
-	tableRow.addCell(Banana.document.table("TestiReport").findRowByValue("RowId", ":5XM-DATA").value("Testo"), "alignCenter bold", 1);
+	tableRow.addCell(banDoc.table("TestiReport").findRowByValue("RowId", ":5XM-DATA").value("Testo"), "alignCenter bold", 1);
 	
 	//Creation and print of the INCOME groups with all the details
 	for (var i = 0; i < groups.length; i++) {
 		var groupObj = getObject(groups, groups[i]["group"]);
 		if (groupObj.gr1.substring(0,1) === "R" ) {
-			createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, file2);
+			createGroup(banDoc, itemSelected, tabAccounts1, tabAccounts2, groupObj, table, file2);
 		}
 	}
 
 	tableRow = table.addRow();
 	tableRow.addCell("IMPORTO PERCEPITO", "alignRight bold", 2);
-	if (!Banana.document.table("Categories")) {
+	if (!banDoc.table("Categories")) {
 		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totalIncome)), "alignRight bold", 1);
 	}
 	else {
@@ -237,14 +246,14 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 	for (var i = 0; i < groups.length; i++) {
 		var groupObj = getObject(groups, groups[i]["group"]);
 		if (groupObj.gr1.substring(0,1) !== "R" ) {
-			createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, file2);
+			createGroup(banDoc, itemSelected, tabAccounts1, tabAccounts2, groupObj, table, file2);
 		}
 	}
 	
 	//Add the final total
 	tableRow = table.addRow();
 	tableRow.addCell("TOTALE SPESE", "alignRight bold", 2);
-	if (!Banana.document.table("Categories")) {
+	if (!banDoc.table("Categories")) {
 		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold", 1);
 	}
 	else {
@@ -287,14 +296,12 @@ function printReport(itemSelected, tabAccounts1, tabAccounts2, file2) {
 	//Add a footer
 	addFooter(report);
 
-	//Print the report
-	var stylesheet = createStyleSheet();
-	Banana.Report.preview(report, stylesheet);
+	return report;
 }
 
 
 //This function creates and print a whole group 
-function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, file2) {
+function createGroup(banDoc, itemSelected, tabAccounts1, tabAccounts2, groupObj, table, file2) {
 	
 	//Take the data from the given group
 	var _group = groupObj.group;
@@ -338,7 +345,7 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 			for (var j = 0; j < tabAccounts1.rowCount; j++) {
 				var tRow = tabAccounts1.row(j);
 
-				if (!Banana.document.table("Categories")) {
+				if (!banDoc.table("Categories")) {
 					if (accountsMap[tRow.value("Account")] && accountsMap[tRow.value("Account")].gr1 === arrGr[i]) {
 						arrAcc.push(tRow.value("Account"));
 						arrDesc.push(accountsMap[tRow.value("Account")].description);
@@ -359,7 +366,7 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 				for (var j = 0; j < tabAccounts2.rowCount; j++) {
 					var tRow = tabAccounts2.row(j);
 
-					if (!Banana.document.table("Categories")) {
+					if (!banDoc.table("Categories")) {
 						if (accountsMap[tRow.value("Account")] && accountsMap[tRow.value("Account")].gr1 === arrGr[i]) {
 							arrAcc2.push(tRow.value("Account"));
 						}
@@ -382,7 +389,7 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 			tableRow.addCell(arrAcc[i], "alignCenter", 1);
 			tableRow.addCell(arrDesc[i], "", 1);
 
-			if (!Banana.document.table("Categories")) {
+			if (!banDoc.table("Categories")) {
 				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(arrTot[i]), "alignRight", 1);
 			}
 			else {
@@ -407,7 +414,7 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 		**/
 		//File1
 		if (str) {
-			var currentBal = Banana.document.currentBalance(str + itemSelected, "", "");
+			var currentBal = banDoc.currentBalance(str + itemSelected, "", "");
 			total1 = currentBal.total;
 		}
 
@@ -432,7 +439,7 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 			var totF1F2 = total1;
 		}
 
-		if (!Banana.document.table("Categories")) {
+		if (!banDoc.table("Categories")) {
 			if (_gr1.substring(0,1) === "R") { //For INCOME values we invert the sign
 				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(totF1F2)), "bold alignRight italic", 1);
 			} else {
@@ -455,7 +462,7 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 		tableRow.addCell("", "", 1);
 		tableRow.addCell("                                          Totale gruppo " + _group, "bold alignRight italic", 1);
 
-		if (!Banana.document.table("Categories")) {
+		if (!banDoc.table("Categories")) {
 			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(total1), "bold alignRight italic", 1);
 		}
 		else {
@@ -473,9 +480,9 @@ function createGroup(itemSelected, tabAccounts1, tabAccounts2, groupObj, table, 
 
 
 //This function, for the given segment and period, creates all the accounts objects
-function loadAccountsMap(segment, tabAccounts1, tabAccounts2, file2) {
-
-	if (!Banana.document.table("Categories")) {
+function loadAccountsMap(banDoc, segment, tabAccounts1, tabAccounts2, file2) {
+	accountsMap = {};
+	if (!banDoc.table("Categories")) {
 		for (var i = 0; i < tabAccounts1.rowCount; i++) {
 			var tRow = tabAccounts1.row(i);
 			if (tRow.value("Account") &&
@@ -484,7 +491,7 @@ function loadAccountsMap(segment, tabAccounts1, tabAccounts2, file2) {
 				tRow.value("Account").indexOf(",") < 0 && 
 				tRow.value("Account").indexOf(";") < 0) {
 
-				var currentBal = Banana.document.currentBalance(tRow.value("Account") + segment, "", "");
+				var currentBal = banDoc.currentBalance(tRow.value("Account") + segment, "", "");
 				var total1 = currentBal.total;
 				var amount1 = currentBal.amount;
 			
@@ -529,7 +536,7 @@ function loadAccountsMap(segment, tabAccounts1, tabAccounts2, file2) {
 				tRow.value("Category").indexOf(",") < 0 && 
 				tRow.value("Category").indexOf(";") < 0) {
 
-				var currentBal = Banana.document.currentBalance(tRow.value("Category") + segment, "", "");
+				var currentBal = banDoc.currentBalance(tRow.value("Category") + segment, "", "");
 				var total1 = currentBal.total;
 				var amount1 = currentBal.amount;
 			
@@ -603,18 +610,18 @@ function getSegmentList(tabAccounts) {
 
 
 //This function returns the description for a given segment
-function getDescription(segment) {
-	if (!Banana.document.table('Categories')) {
-		for (var i = 0; i < Banana.document.table('Accounts').rowCount; i++) {
-			var tRow = Banana.document.table('Accounts').row(i);
+function getDescription(banDoc, segment) {
+	if (!banDoc.table('Categories')) {
+		for (var i = 0; i < banDoc.table('Accounts').rowCount; i++) {
+			var tRow = banDoc.table('Accounts').row(i);
 			if (tRow.value("Account") === segment) {
 				return tRow.value("Description");
 			}
 		}
 	}
 	else {
-		for (var i = 0; i < Banana.document.table('Categories').rowCount; i++) {
-			var tRow = Banana.document.table('Categories').row(i);
+		for (var i = 0; i < banDoc.table('Categories').rowCount; i++) {
+			var tRow = banDoc.table('Categories').row(i);
 			if (tRow.value("Category") === segment) {
 				return tRow.value("Description");
 			}

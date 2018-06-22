@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.report_economico_veneto_modello1
 // @api = 1.0
-// @pubdate = 2018-03-26
+// @pubdate = 2018-06-20
 // @publisher = Banana.ch SA
 // @description = Associazioni - Bilancio finanziario (modello 1)
 // @task = app.command
@@ -31,30 +31,33 @@ var param = {};
 var	form = [];
 
 //Create the param object with some parameters
-function loadParam() {
-	var openingDate = Banana.Converter.toDate(Banana.document.info("AccountingDataBase","OpeningDate"))
+function loadParam(banDoc) {
+	param = {};
+	var openingDate = Banana.Converter.toDate(banDoc.info("AccountingDataBase","OpeningDate"))
 	var year = "";
 	if (openingDate) {
 		openingDate.getFullYear();
 	}
 	param = {
-		"reportName":"Report economico - Veneto",										// Save the report's name
-		"headerLeft" : Banana.document.info("Base","HeaderLeft"),						// Get the info from File->File properties->Header left
-		"headerRight" : Banana.document.info("Base","HeaderRight"),						// Get the info from File->File properties->Header right
-		"startDate" : Banana.document.info("AccountingDataBase","OpeningDate"),			// Get the start date of the accounting period
-		"endDate" : Banana.document.info("AccountingDataBase","ClosureDate"),			// Get the end date of the accounting period
-		"year" : year,																	// Get the year from the accounting period
-		"basicCurrency" : Banana.document.info("AccountingDataBase","BasicCurrency"),	// Get the basic currency of the accounting
-		"grColumn" : "Gr1",																// Specify the column ("Gr1" or "Gr2")
-		"formatNumber" : true,															// Specify if convert all the values into the local format
-		"rounding" : 2																	// Specify the rounding of the sums
+		"reportName":"Report economico - Veneto",								// Save the report's name
+		"headerLeft" : banDoc.info("Base","HeaderLeft"),						// Get the info from File->File properties->Header left
+		"headerRight" : banDoc.info("Base","HeaderRight"),						// Get the info from File->File properties->Header right
+		"startDate" : banDoc.info("AccountingDataBase","OpeningDate"),			// Get the start date of the accounting period
+		"endDate" : banDoc.info("AccountingDataBase","ClosureDate"),			// Get the end date of the accounting period
+		"year" : year,															// Get the year from the accounting period
+		"basicCurrency" : banDoc.info("AccountingDataBase","BasicCurrency"),	// Get the basic currency of the accounting
+		"grColumn" : "Gr1",														// Specify the column ("Gr1" or "Gr2")
+		"formatNumber" : true,													// Specify if convert all the values into the local format
+		"rounding" : 2															// Specify the rounding of the sums
 	};
 }
 
 
 //The purpose of this function is to create and load the structure that will contains all the data used to create the report
-function loadForm() {
+function loadForm(banDoc) {
 
+	form = [];
+	
 	/** CONTO ECONOMICO **/
 	//INCOME
 	form.push({"id":"Rt", "description":"ENTRATE"});
@@ -74,7 +77,7 @@ function loadForm() {
 	form.push({"id":"R4", "gr":"R4", "bClass":"4", "description":"RIMBORSI DERIVANTI DA CONVENZIONI CON ENTI PUBBLICI - art. 5 L.266/91"});
 	
 	//We don't include "R5a" group if we are on the APS file
-	if (Banana.document.table("TestiReport").findRowByValue("RowId", "RVENETO").value("Testo") !== "APS") {
+	if (banDoc.table("TestiReport").findRowByValue("RowId", "RVENETO").value("Testo") !== "APS") {
 		form.push({"id":"R5a", "description":"ENTRATE DA ATTIVITÀ COMMERCIALI PRODUTTIVE MARGINALI   (Raccolta fondi)", "sum":"R5.1;R5.2;R5.3"});
 		form.push({"id":"R5.1", "gr":"R5.1", "bClass":"4", "description":"da attività di vendite occasionali o iniziative occasionali di solidarietà (D.M. 1995 lett.a) es.eventi, cassettina offerte, tombole, spettacoli"});
 		form.push({"id":"R5.2", "gr":"R5.2", "bClass":"4", "description":"da attività di vendita di beni acquisiti da terzi a titolo gratuito a fini di sovvenzione  (D.M. 1995 lett.b)"});
@@ -92,7 +95,7 @@ function loadForm() {
 	form.push({"id":"R8", "gr":"R8", "bClass":"4", "description":"PARTITE DI GIRO"});
 
 	//We don't include "R5a" in the total group if we are on the APS file
-	if (Banana.document.table("TestiReport").findRowByValue("RowId", "RVENETO").value("Testo") !== "APS") {
+	if (banDoc.table("TestiReport").findRowByValue("RowId", "RVENETO").value("Testo") !== "APS") {
 		form.push({"id":"R", "description":"TOTALE ENTRATE", "sum":"R1;R2;R3;R4;R5a;R5b;R6;R7;R8"});
 	} else {
 		form.push({"id":"R", "description":"TOTALE ENTRATE", "sum":"R1;R2;R3;R4;R5b;R6;R7;R8"});
@@ -172,12 +175,12 @@ function exec(string) {
 	}
 
 	// 1. Create and load the parameters and the form
-	loadParam();
-	loadForm();
+	loadParam(Banana.document);
+	loadForm(Banana.document);
 
 	// 2. Extract the data, calculate and load the balances
-	loadBalances();
-	preProcess();
+	loadBalances(Banana.document);
+	preProcess(Banana.document);
 
 	// 3. Calculate the totals
 	calcTotals(["amount"]);
@@ -189,21 +192,23 @@ function exec(string) {
 	formatValues(["amount"]);
 
 	// 6. Create and print the report
-	printReport();
+	var report = printReport(Banana.document);
+	var stylesheet = createStyleSheet();
+	Banana.Report.preview(report, stylesheet);
 
 }
 
 
 
 //The purpose of this function is to do some operations before the calculation of the totals
-function preProcess() {
+function preProcess(banDoc) {
 
-	//var balanceUP =  Banana.document.currentBalance("Gr=UP-BIL", param.startDate, param.endDate).balance;
+	//var balanceUP =  banDoc.currentBalance("Gr=UP-BIL", param.startDate, param.endDate).balance;
 	var balanceUP = "";
 
 	//Table Categories
-	if (Banana.document.table('Categories')) {
-		var table = Banana.document.table("Categories");
+	if (banDoc.table('Categories')) {
+		var table = banDoc.table("Categories");
 		for (var i = 0; i < table.rowCount; i++) {
 			var tRow = table.row(i);
 			if (tRow.value("Group") === "RIS") {
@@ -227,11 +232,11 @@ function preProcess() {
 				}
 			}
 		}
-		getObject(form,"P3").amount = Banana.document.table('Accounts').findRowByValue('Group','PN').value('Opening');
+		getObject(form,"P3").amount = banDoc.table('Accounts').findRowByValue('Group','PN').value('Opening');
 	} 
 	//Table Accounts
 	else {
-		var table = Banana.document.table("Totals");
+		var table = banDoc.table("Totals");
 		for (var i = 0; i < table.rowCount; i++) {
 			var tRow = table.row(i);
 			if (tRow.value("Group") === "02") {
@@ -267,10 +272,10 @@ function postProcess() {
 
 
 //The purpose of this function is to create and print the report
-function printReport() {
+function printReport(banDoc) {
 
 	var report = Banana.Report.newReport(param.reportName);
-	var thisYear = Banana.Converter.toDate(Banana.document.info("AccountingDataBase","OpeningDate")).getFullYear();
+	var thisYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase","OpeningDate")).getFullYear();
 	
 	/** TABLE CONTO ECONOMICO **/
 	report.addParagraph(param.headerLeft + " - " + "BILANCIO FINANZIARIO (Modello 1) ANNO " + thisYear, "heading2");
@@ -464,28 +469,26 @@ function printReport() {
 	addHeader(report);
 	addFooter(report);
 
-	//Print the report
-	var stylesheet = createStyleSheet();
-	Banana.Report.preview(report, stylesheet);
+	return report;
 }
 
 
 //The purpose of this function is to load all the balances and save the values into the form
-function loadBalances() {
+function loadBalances(banDoc) {
 
 	for (var i in form) {
 
 		//Check if there are "vatClass" properties, then load VAT balances
 		if (form[i]["vatClass"]) {
 			if (form[i]["gr"]) {
-				form[i]["amount"] = calculateVatGr1Balance(form[i]["gr"], form[i]["vatClass"], param["grColumn"], param["startDate"], param["endDate"]);
+				form[i]["amount"] = calculateVatGr1Balance(banDoc, form[i]["gr"], form[i]["vatClass"], param["grColumn"], param["startDate"], param["endDate"]);
 			}
 		}
 
 		//Check if there are "bClass" properties, then load balances
 		if (form[i]["bClass"]) {
 			if (form[i]["gr"]) {
-				form[i]["amount"] = calculateAccountGr1Balance(form[i]["gr"], form[i]["bClass"], param["grColumn"], param["startDate"], param["endDate"]);
+				form[i]["amount"] = calculateAccountGr1Balance(banDoc, form[i]["gr"], form[i]["bClass"], param["grColumn"], param["startDate"], param["endDate"]);
 			}
 		}
 	}
@@ -493,14 +496,25 @@ function loadBalances() {
 
 
 //The purpose of this function is to calculate all the balances of the accounts belonging to the same group (grText)
-function calculateAccountGr1Balance(grText, bClass, grColumn, startDate, endDate) {
+function calculateAccountGr1Balance(banDoc, grText, bClass, grColumn, startDate, endDate) {
 	
-	var accounts = getColumnListForGr(Banana.document.table("Accounts"), grText, "Account", grColumn);
-	accounts.push( getColumnListForGr(Banana.document.table("Categories"), grText, "Category", grColumn));
-	accounts = accounts.join("|");
+	var accounts = [];
+	
+	if (banDoc.table("Categories") && (bClass === "3" || bClass === "4")) {
+		var categoryNumbers = getColumnListForGr(banDoc.table("Categories"), grText, "Category", grColumn);
+		categoryNumbers = categoryNumbers.join("|");
+		accounts.push(categoryNumbers);
+	}
+	else {
+		var accountNumbers = getColumnListForGr(banDoc.table("Accounts"), grText, "Account", grColumn);
+		accountNumbers = accountNumbers.join("|");
+		accounts.push(accountNumbers);
+	}
+
+	//Banana.console.debug(accounts);
 	
 	//Sum the amounts of opening, debit, credit, total and balance for all transactions for this accounts
-	var currentBal = Banana.document.currentBalance(accounts, startDate, endDate);
+	var currentBal = banDoc.currentBalance(accounts, startDate, endDate);
 	
 	//The "bClass" decides which value to use
 	if (bClass === "0") {
@@ -513,7 +527,7 @@ function calculateAccountGr1Balance(grText, bClass, grColumn, startDate, endDate
 		return Banana.SDecimal.invert(currentBal.balance);
 	}
 	else if (bClass === "3") {
-		if (!Banana.document.table("Categories")) {
+		if (!banDoc.table("Categories")) {
 			return currentBal.total;
 		}
 		else {
@@ -521,7 +535,7 @@ function calculateAccountGr1Balance(grText, bClass, grColumn, startDate, endDate
 		}
 	}
 	else if (bClass === "4") {
-		if (!Banana.document.table("Categories")) {
+		if (!banDoc.table("Categories")) {
 			return Banana.SDecimal.invert(currentBal.total);
 		}
 		else {

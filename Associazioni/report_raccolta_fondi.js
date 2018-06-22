@@ -1,4 +1,4 @@
-// Copyright [2015] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2018] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.raccoltafondi
 // @api = 1.0
-// @pubdate = 2015-08-18
+// @pubdate = 2018-06-22
 // @publisher = Banana.ch SA
 // @description = Associazioni - Report raccolta fondi
 // @task = app.command
@@ -42,33 +42,35 @@ function exec(string) {
 		return;
 	}
 
-	printReport();
+	var report = printReport(Banana.document);
+	var stylesheet = createStyleSheet();
+	Banana.Report.preview(report, stylesheet);
 
 }
 
 
 
 //The purpose of this function is to create and print the report
-function printReport() {
+function printReport(banDoc) {
 
 	var report = Banana.Report.newReport("Raccolta fondi Veneto");
 	
 	//Function call to create a list of "Raccolta fondi" accounts
-	var accountsList = getAccountsList();
+	var accountsList = getAccountsList(banDoc);
 
 	//For each accounts we create a detailed card
 	for (var j = 0; j < accountsList.length; j++) {
 
 		//Take vale from table "Testi Report"
 		var strAccount = accountsList[j];
-		var startDate = Banana.document.table("TestiReport").findRowByValue("RowId", strAccount+"-DAL").value("Testo");
-		var endDate = Banana.document.table("TestiReport").findRowByValue("RowId", strAccount+"-AL").value("Testo");
-		var racFondi = Banana.document.table("TestiReport").findRowByValue("RowId", strAccount).value("Testo");
-		var responsabile = Banana.document.table("TestiReport").findRowByValue("RowId",strAccount+"-RES").value("Testo");
+		var startDate = banDoc.table("TestiReport").findRowByValue("RowId", strAccount+"-DAL").value("Testo");
+		var endDate = banDoc.table("TestiReport").findRowByValue("RowId", strAccount+"-AL").value("Testo");
+		var racFondi = banDoc.table("TestiReport").findRowByValue("RowId", strAccount).value("Testo");
+		var responsabile = banDoc.table("TestiReport").findRowByValue("RowId",strAccount+"-RES").value("Testo");
 		
 		//Take info from Banana file and account properties
-		var headerLeft = Banana.document.info("Base","HeaderLeft");
-		var headerRight = Banana.document.info("Base","HeaderRight");
+		var headerLeft = banDoc.info("Base","HeaderLeft");
+		var headerRight = banDoc.info("Base","HeaderRight");
 
 		var totExpenses = "";
 		var totIncome = "";
@@ -88,7 +90,7 @@ function printReport() {
 		report.addParagraph(" ");
 		
 		//Create a table object with all transactions for the given account and period
-		var transTab = Banana.document.currentCard(accountsList[j], startDate, endDate);
+		var transTab = banDoc.currentCard(accountsList[j], startDate, endDate);
 
 		//Create the table that will be printed on the report
 		var table = report.addTable("table");
@@ -172,7 +174,7 @@ function printReport() {
 		report.addParagraph(" ");
 		report.addParagraph("RELAZIONE ILLUSTRATIVA DELLA RACCOLTA FONDI:", "heading3");
 		report.addParagraph(" ");
-		var rel = loadRelazioni(strAccount);
+		var rel = loadRelazioni(banDoc, strAccount);
 		for (var k = 0; k < rel.length; k++) {
 			report.addParagraph(rel[k], "heading3");
 		}
@@ -203,17 +205,15 @@ function printReport() {
 	//Add a footer to the report
 	addFooter(report);
 
-	//Print the report
-	var stylesheet = createStyleSheet();
-	Banana.Report.preview(report, stylesheet);
+	return report;
 }
 
 
 
 //The purpose of this function is to get all the texts of the descriptions from the table "Testi Report"
-function loadRelazioni(account) {
+function loadRelazioni(banDoc, account) {
 	var arrRelazione = [];
-	var table = Banana.document.table("TestiReport");
+	var table = banDoc.table("TestiReport");
 	for (var i = 0; i < table.rowCount; i++) {
 		var tRow = table.row(i);
 	
@@ -235,12 +235,12 @@ function loadRelazioni(account) {
 
 
 //This function take from Banana table 'Accounts' all the account numbers of the segment 2 (Raccolta fondi)
-function getAccountsList() {
+function getAccountsList(banDoc) {
 	var arrList = [];
 
-	if (!Banana.document.table("Categories")) {
-		for (var i = 0; i < Banana.document.table('Accounts').rowCount; i++) {
-			var tRow = Banana.document.table('Accounts').row(i);
+	if (!banDoc.table("Categories")) {
+		for (var i = 0; i < banDoc.table('Accounts').rowCount; i++) {
+			var tRow = banDoc.table('Accounts').row(i);
 
 			//We take only the account with segment 2 (accounts numbers that begin with "::")
 			if (tRow.value("Account") && tRow.value("Account").indexOf("::") > -1 && tRow.value("Account").substring(2,3)) {
@@ -249,8 +249,8 @@ function getAccountsList() {
 		}
 	}
 	else {
-		for (var i = 0; i < Banana.document.table('Categories').rowCount; i++) {
-			var tRow = Banana.document.table('Categories').row(i);
+		for (var i = 0; i < banDoc.table('Categories').rowCount; i++) {
+			var tRow = banDoc.table('Categories').row(i);
 
 			//We take only the account with segment 2 (accounts numbers that begin with "::")
 			if (tRow.value("Category") && tRow.value("Category").indexOf("::") > -1 && tRow.value("Category").substring(2,3)) {

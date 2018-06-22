@@ -1,0 +1,168 @@
+%%info_test_name{report_5permille.test}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+%%SCRIPT{/Users/ivan/Documents/GitHub/Italia/Associazioni/test/report_5permille.test.js}
+%
+\begin{testcase}{Report5permilleTest}
+\begin{test}{testBananaAppSemplice}
+\begin{reportvalue}{Test report 5 per mille (contabilità semplice)}
+Ministero del Lavoro e delle Politiche Sociali \\
+Direzione Generale per il Terzo Settore e le Formazioni Sociali \\
+  \\
+  \\
+MODELLO PER IL RENDICONTO DELLE SOMME PERCEPITE IN VIRTÙ DEL BENEFICIO DEL 5 PER MILLE DELL'IRPEF DAGLI AVENTI DIRITTO \\
+  \\
+\begin{longtable}[l]{ l  l }
+ANAGRAFICA Denominazione sociale  & CSV provinciale di Padova \\
+Scopi dell'attività sociale  & Sostenere e qualificare l'attività di volontariato \\
+C.F. del soggetto beneficiario  & 1234567890 \\
+Indirizzo  & Gradenigo 10 \\
+Città  & Padova \\
+N. Telefono  & 0498686849 \\
+N. Fax  & 0498689273 \\
+Indirizzo email  & info@csvpadova.org \\
+Nome del rappresentante legale  & Sig. Mario Rossi \\
+C.F. del rappresentante legale  & 9876543210 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l }
+RENDICONTO DELLE SPESE SOSTENUTE (EUR) \multicolumn{2}{l}{Finanaziamento cinque per mille 2015 } & :5X16 \\
+\multicolumn{2}{l}{Anno finanziario } & 2018 \\
+\multicolumn{2}{l}{Data di percezione } & 31.12.2018 \\
+\multicolumn{3}{l}{0. Entrate }\\
+\multicolumn{2}{l}{Totale gruppo 0 } & 0.00 \\
+\multicolumn{2}{l}{IMPORTO PERCEPITO } & 0.00 \\
+\multicolumn{3}{l}{  }\\
+\multicolumn{2}{l}{1. Risorse umane \newline (dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50\% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato \newline } & \\
+3202  & (PERS. ATIPICI E OCCASIONALI) Collaborazioni a progetto e occasionali  & -4'500.00 \\
+\multicolumn{2}{l}{Totale gruppo 1 } & 4'500.00 \\
+\multicolumn{2}{l}{2. Costi di funzionamento \newline (dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc…) \newline } & \\
+3502  & (MAT. CONS. STRUTTURA) Valori postali e bollati  & -250.00 \\
+\multicolumn{2}{l}{Totale gruppo 2 } & 250.00 \\
+\multicolumn{2}{l}{3. Acquisto beni e servizi \newline (dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…) \newline } & \\
+3302  & (ACQ. SERVIZI) Pulizie locali  & -3'500.00 \\
+3601  & (GODIM. BDT) noleggio attrezzature  & -4'500.00 \\
+\multicolumn{2}{l}{Totale gruppo 3 } & 8'000.00 \\
+\multicolumn{2}{l}{4. Erogazioni ai sensi della propria finalità istituzionale \newline N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato \newline } & \\
+4002  & (ALTRE USCITE) Versate ad altre odv   & -1'000.00 \\
+\multicolumn{2}{l}{Totale gruppo 4 } & 1'000.00 \\
+\multicolumn{2}{l}{5. Altre voci di spesa riconducibili al raggiungimento dello scopo sociale \newline \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 5 } & 0.00 \\
+\multicolumn{2}{l}{6. Accantonamento \newline (è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo) \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 6 } & 0.00 \\
+\multicolumn{2}{l}{TOTALE SPESE } & 13'750.00 \\
+\end{longtable}
+  \\
+Data: 22.06.2018 \\
+  \\
+  \\
+Firma del rappresentante legale \\
+  \\
+  \\
+  \\
+  \\
+Il rappresentante legale, sottoscrittore del rendiconto, certifica che le informazioni contenute nel presente documento sono autentiche e veritiere, nella consapevolezza che, ai sensi degli artt. 47 e 76 del DPR 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi o ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. Il rendiconto, inoltre, ai sensi dell’art. 46 del DPR 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del sottoscrittore. \\
+  \\
+  \\
+Firma del rappresentante legale \\
+  \\
+  \\
+  \\
+  \\
+Si precisa che il trattamento di dati personali è eseguito senza il consenso dell’interessato  in quanto trattasi di consenso obbligatorio previsto da norma di legge. \\
+  \\
+  \\
+N.B. Si fa presente che è obbligatoria, per gli enti beneficiari del contributo, la redazione di una relazione in cui venga descritto in maniera analitica ed esaustiva l’utilizzo dei contributi percepiti. In particolar modo per le spese di personale eventualmente imputate, è necessario specificare per ciascun soggetto: il numero di ore imputate ed il costo orario di riferimento come indicato dalle relative tabelle ministeriali. \\
+Banana Accounting 8 -  Pagina  \\
+\end{reportvalue}
+\keyvalue{Result}{Passed}
+\end{test}
+\begin{test}{testBananaAppDoppia}
+\begin{reportvalue}{Test report 5 per mille (contabilità doppia)}
+Ministero del Lavoro e delle Politiche Sociali \\
+Direzione Generale per il Terzo Settore e le Formazioni Sociali \\
+  \\
+  \\
+MODELLO PER IL RENDICONTO DELLE SOMME PERCEPITE IN VIRTÙ DEL BENEFICIO DEL 5 PER MILLE DELL'IRPEF DAGLI AVENTI DIRITTO \\
+  \\
+\begin{longtable}[l]{ l  l }
+ANAGRAFICA Denominazione sociale  & CSV provinciale di Padova \\
+Scopi dell'attività sociale  & Sostenere e qualificare l'attività di volontariato \\
+C.F. del soggetto beneficiario  & 1234567890 \\
+Indirizzo  & Gradenigo 10 \\
+Città  & Padova \\
+N. Telefono  & 0498686849 \\
+N. Fax  & 0498689273 \\
+Indirizzo email  & info@csvpadova.org \\
+Nome del rappresentante legale  & Sig. Mario Rossi \\
+C.F. del rappresentante legale  & 9876543210 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l }
+RENDICONTO DELLE SPESE SOSTENUTE (EUR) \multicolumn{2}{l}{Finanziamento cinque per mille 2016 } & :5X16 \\
+\multicolumn{2}{l}{Anno finanziario } & 2018 \\
+\multicolumn{2}{l}{Data di percezione } & 31.12.2017 \\
+\multicolumn{3}{l}{0. Entrate }\\
+\multicolumn{2}{l}{Totale gruppo 0 } & 0.00 \\
+\multicolumn{2}{l}{IMPORTO PERCEPITO } & 0.00 \\
+\multicolumn{3}{l}{  }\\
+\multicolumn{2}{l}{1. Risorse umane \newline (dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50\% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato \newline } & \\
+3000  & RIMBORSO SPESE AI VOLONTARI (documentate ed effettivamente sostenute)  & 2'500.00 \\
+\multicolumn{2}{l}{Totale gruppo 1 } & 2'500.00 \\
+\multicolumn{2}{l}{2. Costi di funzionamento \newline (dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc…) \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 2 } & 0.00 \\
+\multicolumn{2}{l}{3. Acquisto beni e servizi \newline (dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…) \newline } & \\
+3600  & (GODIM. BDT) Canoni di locazione  & 7'000.00 \\
+\multicolumn{2}{l}{Totale gruppo 3 } & 7'000.00 \\
+\multicolumn{2}{l}{4. Erogazioni ai sensi della propria finalità istituzionale \newline N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 4 } & 0.00 \\
+\multicolumn{2}{l}{5. Altre voci di spesa riconducibili al raggiungimento dello scopo sociale \newline \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 5 } & 0.00 \\
+\multicolumn{2}{l}{6. Accantonamento \newline (è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo) \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 6 } & 0.00 \\
+\multicolumn{2}{l}{TOTALE SPESE } & 9'500.00 \\
+\end{longtable}
+  \\
+Data: 22.06.2018 \\
+  \\
+  \\
+Firma del rappresentante legale \\
+  \\
+  \\
+  \\
+  \\
+Il rappresentante legale, sottoscrittore del rendiconto, certifica che le informazioni contenute nel presente documento sono autentiche e veritiere, nella consapevolezza che, ai sensi degli artt. 47 e 76 del DPR 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi o ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. Il rendiconto, inoltre, ai sensi dell’art. 46 del DPR 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del sottoscrittore. \\
+  \\
+  \\
+Firma del rappresentante legale \\
+  \\
+  \\
+  \\
+  \\
+Si precisa che il trattamento di dati personali è eseguito senza il consenso dell’interessato  in quanto trattasi di consenso obbligatorio previsto da norma di legge. \\
+  \\
+  \\
+N.B. Si fa presente che è obbligatoria, per gli enti beneficiari del contributo, la redazione di una relazione in cui venga descritto in maniera analitica ed esaustiva l’utilizzo dei contributi percepiti. In particolar modo per le spese di personale eventualmente imputate, è necessario specificare per ciascun soggetto: il numero di ore imputate ed il costo orario di riferimento come indicato dalle relative tabelle ministeriali. \\
+Banana Accounting 8 -  Pagina  \\
+\end{reportvalue}
+\keyvalue{Result}{Passed}
+\end{test}
+\end{testcase}
+\end{document}
