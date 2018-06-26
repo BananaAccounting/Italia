@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.report5permille
 // @api = 1.0
-// @pubdate = 2018-06-22
+// @pubdate = 2018-06-26
 // @publisher = Banana.ch SA
 // @description = Associazioni - Report "5 per mille"
 // @task = app.command
@@ -263,7 +263,8 @@ function printReport(banDoc, itemSelected, tabAccounts1, tabAccounts2, file2) {
 	//Add the current date (DD-MM-YYYY)
 	var date = new Date();
 	report.addParagraph(" ");
-	report.addParagraph("Data: " + Banana.Converter.toLocaleDateFormat(date));
+   var dataPara = report.addParagraph("Data: " + Banana.Converter.toLocaleDateFormat(date));
+   dataPara.excludeFromTest();
 
 	//Add signature
 	report.addParagraph(" ");
