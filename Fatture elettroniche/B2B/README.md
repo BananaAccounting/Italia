@@ -6,3 +6,4 @@
 * [Documentazione fatturaPA](http://www.fatturapa.gov.it/export/fatturazione/it/normativa/f-2.htm)
 * [Tracciato fatturaPA versione 1.2.1](http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2.1/Rappresentazione_tabellare_del_tracciato_FatturaPA_versione_1.2.1.xls)
 * [Suggerimenti compilazione della fatturaPA versione 1.5](http://www.fatturapa.gov.it/export/fatturazione/sdi/Suggerimenti_Compilazione_FatturaPA_1.5.pdf)
+* [Esempio fattura singola verso soggetto privato con più linee di dettaglio] (IT01234567890_FPR02.xml)
