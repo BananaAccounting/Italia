@@ -194,6 +194,7 @@ function verifyParam(param) {
 }
 
 function printDocument(jsonInvoice, repDocObj, repStyleObj) {
+
    var param = initParam();
    var savedParam = Banana.document.getScriptSettings();
    if (savedParam.length > 0) {
@@ -204,6 +205,39 @@ function printDocument(jsonInvoice, repDocObj, repStyleObj) {
    setInvoiceStyle(repDocObj, repStyleObj, param);
   
    var fatturaElettronica = new FatturaElettronica(Banana.document);
+   // Check version
+   if (typeof (Banana.IO) === 'undefined') {
+      var msg = fatturaElettronica.getErrorMessage(fatturaElettronica.ID_ERR_VERSION);
+      msg = msg.replace("%1", "Banana.IO" );
+      Banana.document.addMessage( msg, fatturaElettronica.ID_ERR_VERSION);
+      return "@Cancel";
+   }
+   if (typeof (Banana.Xml.newDocument) === 'undefined') {
+      var msg = fatturaElettronica.getErrorMessage(fatturaElettronica.ID_ERR_VERSION);
+      msg = msg.replace("%1", "Banana.Xml.newDocument" );
+      Banana.document.addMessage( msg, fatturaElettronica.ID_ERR_VERSION);
+      return "@Cancel";
+   }
+   if (Banana.document.table('Accounts')) {
+      var tColumnNames = Banana.document.table('Accounts').columnNames.join(";");
+      if (tColumnNames.indexOf('Town')>0 || tColumnNames.indexOf('Company')>0) {
+         //The address columns are not updated
+         var msg = fatturaElettronica.getErrorMessage(fatturaElettronica.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
+         Banana.document.addMessage( msg, fatturaElettronica.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
+         return "@Cancel";
+      }
+      else if (tColumnNames.indexOf('OrganisationName')<=0) {
+         var msg = fatturaElettronica.getErrorMessage(fatturaElettronica.ID_ERR_TABLE_ADDRESS_MISSING);
+         Banana.document.addMessage( msg, fatturaElettronica.ID_ERR_TABLE_ADDRESS_MISSING);
+         return "@Cancel";
+      }
+   }
+   else {
+      var msg = fatturaElettronica.getErrorMessage(fatturaElettronica.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
+      Banana.document.addMessage( msg, fatturaElettronica.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
+      return "@Cancel";
+   }
+   
    fatturaElettronica.setParam(param);
    var xmlDocument = Banana.Xml.newDocument("root");
    fatturaElettronica.createInstance(xmlDocument, jsonInvoice);
@@ -1049,6 +1083,55 @@ FatturaElettronica.prototype.createInstance = function(xmlDocument, jsonInvoice)
 
 }
 
+FatturaElettronica.prototype.getErrorMessage = function(errorId) {
+   //Document language
+   var lang = this.banDocument.locale;
+   if (lang.length > 2)
+      lang = lang.substr(0, 2);
+   var rtnMsg = '';
+   if (errorId == this.ID_ERR_ACCOUNTING_TYPE_NOTVALID) {
+      if (lang == 'de')
+         rtnMsg = "The file is not valid. The table Accounts is missing";
+      else if (lang == 'fr')
+         rtnMsg = "The file is not valid. The table Accounts is missing";
+      else if (lang == 'it')
+         rtnMsg = "Il tipo di contabilità non è valido. Manca la tabella Conti";
+      else
+         rtnMsg = "The file is not valid. The table Accounts is missing";
+   }
+   if (errorId == this.ID_ERR_TABLE_ADDRESS_MISSING) {
+      if (lang == 'de')
+         rtnMsg = "Address columns of table Accounts are missing. Please update table Accounts with the command Toos - Add new functionalities";
+      else if (lang == 'fr')
+         rtnMsg = "Address columns of table Accounts are missing. Please update table Accounts with the command Toos - Add new functionalities";
+      else if (lang == 'it')
+         rtnMsg = "Le colonne indirizzi nella tabella Conti sono mancanti. Aggiornare con il comando Strumenti - Aggiungi nuove funzionalità";
+      else
+         rtnMsg = "Address columns of table Accounts are missing. Please update table Accounts with the command Toos - Add new functionalities";
+   }
+   if (errorId == this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED) {
+      if (lang == 'de')
+         rtnMsg = "Address columns are outdated. Please update them with the command Tools - Convert to new file";
+      else if (lang == 'fr')
+         rtnMsg = "Address columns are outdated. Please update them with the command Tools - Convert to new file";
+      else if (lang == 'it')
+         rtnMsg = "Le colonne indirizzi nella tabella Conti sono di una versione non compatibile. Aggiornare con il comando Strumenti - Converti in nuovo file";
+      else
+         rtnMsg = "Address columns are outdated. Please update them with the command Tools - Convert to new file";
+   }
+   if (errorId == this.ID_ERR_VERSION) {
+      if (lang == 'de')
+         rtnMsg = "The function %1 is not supported. Please install the latest version of Banana Accounting";
+      else if (lang == 'fr')
+         rtnMsg = "The function %1 is not supported. Please install the latest version of Banana Accounting";
+      else if (lang == 'it')
+         rtnMsg = "Metodo %1 non supportato. Aggiornare Banana alla versione più recente";
+      else
+         rtnMsg = "The function %1 is not supported. Please install the latest version of Banana Accounting";
+   }
+   return rtnMsg + " [" + errorId + "] ";
+}
+
 FatturaElettronica.prototype.initParam = function() {
    this.banDocument = Banana.document;
    this.debug = false;
@@ -1056,6 +1139,13 @@ FatturaElettronica.prototype.initParam = function() {
    this.name = "Banana Accounting FatturaElettronica";
    this.param = {};
    this.version = "V1.0";
+   
+   /* errors id*/
+	this.ID_ERR_ACCOUNTING_TYPE_NOTVALID = "ID_ERR_ACCOUNTING_TYPE_NOTVALID";
+	this.ID_ERR_TABLE_ADDRESS_MISSING = "ID_ERR_TABLE_ADDRESS_MISSING";
+	this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED = "ID_ERR_TABLE_ADDRESS_NOT_UPDATED";
+	this.ID_ERR_VERSION = "ID_ERR_VERSION";
+
 }
 
 FatturaElettronica.prototype.initNamespaces = function() {
