@@ -132,10 +132,10 @@ Journal.prototype.load = function() {
   
   //Variabili per numerazione registro
   var progRegistri = {};
-  var previousIndexGroup = -1;
-  var previousNoDoc = -1;
-  var previousDataReg = -1;
-  
+  var previousDataReg = {};
+  var previousIndexGroup = {};
+  var previousNoDoc = {};
+
   //Salva i nomi delle colonne del giornale
   //this.setColumns(journal.columnNames);
   this.setColumns();
@@ -382,14 +382,20 @@ Journal.prototype.load = function() {
     var indexGroup = filteredRows[i].value("JContraAccountGroup") ;
     //console.log(noDoc + " " + dataReg + " " + " " +previousNoDoc + " " +previousDataReg);
     //Mantiene lo stesso numero di registro se la data di registrazione e il no fattura è lo stesso
-    if (noDoc == previousNoDoc && noDoc.length>0 && dataReg == previousDataReg && dataReg.length>0) {
+    var prevNoDoc ='';
+    var prevDataReg = '';
+    if (previousNoDoc[registro])
+      prevNoDoc  = previousNoDoc[registro];
+    if (previousDataReg[registro])
+      prevDataReg  = previousDataReg[registro];
+    if (noDoc == prevNoDoc && noDoc.length>0 && dataReg == prevDataReg && dataReg.length>0) {
     }
-    else if (indexGroup != previousIndexGroup) {
+    else if (indexGroup != previousIndexGroup[registro]) {
       noProgressivo += 1;
     }
-    previousIndexGroup = indexGroup;
-    previousNoDoc = noDoc;
-    previousDataReg = dataReg;
+    previousIndexGroup[registro] = indexGroup;
+    previousNoDoc[registro] = noDoc;
+    previousDataReg[registro] = dataReg;
     progRegistri[registro] = noProgressivo;
     jsonLine["IT_ProgRegistro"] = noProgressivo.toString();
 
@@ -566,41 +572,6 @@ Journal.prototype.load = function() {
       }
     }
 
-    //Controllo IT_Natura e aliquota
-    var aliquota = jsonLine["IT_Aliquota"];
-    var imposta = jsonLine["IT_IvaContabilizzata"];
-    var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
-
-    //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
-    //Eccezione: fatture ricevute con natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
-    //I codici IVA esclusi non vengono controllati 
-    if (jsonLine["IT_Natura"] !== "ESCL") {
-      if (jsonLine["IT_Natura"].length>0) {
-        if (isSupplier && jsonLine["IT_Natura"] == "N6") {
-          if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
-            msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
-            this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
-          }
-        }
-        else {
-          if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
-            msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE) + jsonLine["IT_Natura"];
-            this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
-          }
-        }
-      }
-      else {
-        //Se il campo Natura non è valorizzato, lo devono essere i campi Imposta e Aliquota
-        //Controlla solamente registro vendite/acquisti
-        if (jsonLine["IT_Registro"]== "Acquisti" || jsonLine["IT_Registro"] == "Vendite") {
-          if (Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota) ) {
-            msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
-            this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
-          }
-        }
-      }
-    }
-
     //IT_Imponibile
     //È possibile il segno negativo per tipi di documento TD01
     jsonLine["IT_Imponibile"] = '';
@@ -717,6 +688,41 @@ EsibilitaIva
     else {
       var taxable = filteredRows[i].value("VatTaxable");
       jsonLine["IT_ImponibileDetraibile"] = taxable;
+    }
+
+    //Controllo IT_Natura e aliquota
+    var aliquota = jsonLine["IT_Aliquota"];
+    var imposta = jsonLine["IT_IvaContabilizzata"];
+    var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
+
+    //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
+    //Eccezione: fatture ricevute con natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
+    //I codici IVA esclusi non vengono controllati 
+    if (jsonLine["IT_Natura"] !== "ESCL") {
+      if (jsonLine["IT_Natura"].length>0) {
+        if (isSupplier && jsonLine["IT_Natura"] == "N6") {
+          if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
+            msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
+            this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
+          }
+        }
+        else {
+          if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
+            msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE) + jsonLine["IT_Natura"];
+            this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
+          }
+        }
+      }
+      else {
+        //Se il campo Natura non è valorizzato, lo devono essere i campi Imposta e Aliquota
+        //Controlla solamente registro vendite/acquisti
+        if (jsonLine["IT_Registro"]== "Acquisti" || jsonLine["IT_Registro"] == "Vendite") {
+          if (Banana.SDecimal.isZero(imposta) && Banana.SDecimal.isZero(aliquota) ) {
+            msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+            this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_NONPRESENTE);
+          }
+        }
+      }
     }
 
     //Corrispettivi
