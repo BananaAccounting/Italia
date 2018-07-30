@@ -66,6 +66,7 @@ Journal.prototype.getPeriod = function(startDate, endDate) {
   data.customers = {};
   data.suppliers = {};
   data.transactions = [];
+  data.totalInvoices = {};
   data.columns = this.columns;
 
   for (var i=0; i < this.transactions.length;i++) {
@@ -90,6 +91,10 @@ Journal.prototype.getPeriod = function(startDate, endDate) {
         if (!data.suppliers[accountId].transactions)
           data.suppliers[accountId].transactions = [];
         data.suppliers[accountId].transactions.push(jsonLine);
+      }
+      if (jsonLine["IT_NoDoc"].length) {
+	     var key = jsonLine["IT_Registro"] + '_' + accountId + '_' + jsonLine["IT_NoDoc"];
+        data.totalInvoices[key] = Banana.SDecimal.add(data.totalInvoices[key], jsonLine["IT_Lordo"]);
       }
     }
   }

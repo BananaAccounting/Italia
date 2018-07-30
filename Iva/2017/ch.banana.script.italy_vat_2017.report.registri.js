@@ -23,7 +23,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-05-29
+// @pubdate = 2018-07-30
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -1226,6 +1226,8 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
   
   //Righe
   var totCol1=0;
+  var totCol1Check=0;
+  var totCol1Added = [];
   var totCol2=0;
   var totCol3=0;
   var totCol4=0;
@@ -1237,6 +1239,18 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
     var vatNonDed = transactions[index].VatNonDeductible;
     var vatTaxable = transactions[index].IT_Imponibile;
     var vatGross = transactions[index].IT_Lordo;
+	var vatGrossDocument = vatGross;
+	var key = transactions[index].IT_Registro + '_' + transactions[index].IT_ClienteConto + '_' + transactions[index].IT_NoDoc;
+	if (period.totalInvoices[key]) {
+	   vatGrossDocument = period.totalInvoices[key];
+	   if (totCol1Added.indexOf(key)<0) {
+	     totCol1Check = Banana.SDecimal.add(vatGrossDocument, totCol1Check);
+	     totCol1Added.push(key);
+	   }
+	}
+	else {
+      totCol1Check = Banana.SDecimal.add(vatGrossDocument, totCol1Check);
+	}
 
     var row = table.addRow();
     row.addCell("", "separator", totColonne);
@@ -1251,7 +1265,7 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
     if (transactions[index].Description.length>0)
       cell.addParagraph(transactions[index].Description);
     row.addCell(transactions[index].IT_NoDoc, "right");
-    row.addCell(Banana.Converter.toLocaleNumberFormat(vatGross), "right");
+    row.addCell(Banana.Converter.toLocaleNumberFormat(vatGrossDocument), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatTaxable), "right");
     row.addCell(vatCode, "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatRate), "right");
@@ -1289,6 +1303,11 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
   }
   row = table.addRow();
   row.addCell(" ", "separator", totColonne);
+  
+  //Controllo totale documenti 
+  var test = Banana.SDecimal.subtract(totCol1Check, totCol1);
+  if (!Banana.SDecimal.isZero(test))
+    Banana.document.addMessage( "TOTALE COLONNA TOT.DOC NON CORRETTO. VERIFICARE I TOTALI DOCUMENTI DI OGNI SINGOLA FATTURA. DIFFERENZA " + Banana.Converter.toLocaleNumberFormat(test), "TEST");
 
   //Riepilogo IVA PER ALIQUOTA DETRAIBILE
   row = table.addRow();
