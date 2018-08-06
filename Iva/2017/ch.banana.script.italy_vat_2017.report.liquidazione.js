@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-05-30
+// @pubdate = 2018-08-06
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -1138,7 +1138,8 @@ LiquidazionePeriodica.prototype.saveData = function(output) {
       Banana.Ui.showInformation("Write error", file.errorString);
     }
     else {
-      Banana.IO.openUrl(fileName);
+      //Commentato l'apertura perché molti utenti non hanno associato il file xml ad un'applicazione
+      //Banana.IO.openUrl(fileName);
     }
   }
 }
