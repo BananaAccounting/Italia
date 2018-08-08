@@ -38,7 +38,12 @@ function exec() {
 function settingsDialog() {
 
   var datiContribuente = new DatiContribuente(Banana.document);
+  // Banana.console.debug("After outside new");
+  // Banana.console.debug(JSON.stringify(datiContribuente.param));
+
   datiContribuente.readParam();
+  // Banana.console.debug("After readParam");
+  // Banana.console.debug(JSON.stringify(datiContribuente.param));
 
   var dialog = Banana.Ui.createUi("ch.banana.script.italy_vat.daticontribuente.dialog.ui");
   //Dati anagrafici
@@ -89,7 +94,11 @@ function settingsDialog() {
   var emailLineEdit = dialog.tabWidget.findChild('emailLineEdit');
   if (emailLineEdit)
     emailLineEdit.text = datiContribuente.param.email;
-  //Dati IVA
+  var tipoRegimeFiscaleComboBox = dialog.tabWidget.findChild('tipoRegimeFiscaleComboBox');
+  if (typeof tipoRegimeFiscaleComboBox !== 'undefined')
+    tipoRegimeFiscaleComboBox.currentIndex = datiContribuente.param.tipoRegimeFiscale;
+
+    //Dati IVA
   var tipoversamentoComboBox = dialog.tabWidget.findChild('tipoversamentoComboBox');
   if (tipoversamentoComboBox)
     tipoversamentoComboBox.currentIndex = datiContribuente.param.liqTipoVersamento;
@@ -198,6 +207,8 @@ function settingsDialog() {
     datiContribuente.param.fax = faxLineEdit.text;
   if (emailLineEdit)
     datiContribuente.param.email = emailLineEdit.text;
+  if (tipoRegimeFiscaleComboBox)
+    datiContribuente.param.tipoRegimeFiscale = parseInt(tipoRegimeFiscaleComboBox.currentIndex.toString());
   //Dati IVA
   if (tipoversamentoComboBox)
     datiContribuente.param.liqTipoVersamento = parseInt(tipoversamentoComboBox.currentIndex.toString());
@@ -221,6 +232,7 @@ function settingsDialog() {
   if (ricevutefiscaliLineEdit)
     datiContribuente.param.contoRicevuteFiscali = ricevutefiscaliLineEdit.text;
 
+  // Banana.console.debug(JSON.stringify(datiContribuente));
   datiContribuente.writeParam();
   return true;
 }
@@ -230,6 +242,8 @@ function DatiContribuente(banDocument) {
   if (this.banDocument === undefined)
     this.banDocument = Banana.document;
   this.initParam();
+  // Banana.console.debug("AFTER INIT")
+  // Banana.console.debug(JSON.stringify(this.param));
 }
 
 DatiContribuente.prototype.getParam = function() {
@@ -256,6 +270,7 @@ DatiContribuente.prototype.initParam = function() {
   this.param.telefono = '';
   this.param.fax = '';
   this.param.email = '';
+  this.param.tipoRegimeFiscale = 0;
   //Tipo versamento liqTipoVersamento == 0 mensile ==1 trimestrale
   this.param.liqTipoVersamento = '';
   this.param.liqPercInteressi = '';
@@ -276,6 +291,7 @@ DatiContribuente.prototype.readParam = function() {
   var savedParam = this.banDocument.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
   if (savedParam.length > 0)
     this.param = JSON.parse(savedParam);
+
   this.verifyParam();
   return this.param;
 }
@@ -318,6 +334,10 @@ DatiContribuente.prototype.verifyParam = function() {
     this.param.fax = '';
   if (!this.param.email)
     this.param.email = '';
+  if (!this.param.tipoRegimeFiscale )
+    this.param.tipoRegimeFiscale = 0;
+  
+
   if (!this.param.liqTipoVersamento)
     this.param.liqTipoVersamento = '';
   if (!this.param.liqPercInteressi)
@@ -347,14 +367,15 @@ DatiContribuente.prototype.verifyParamAggiungiCorrispettivi = function() {
   //Vengono proposti i conti corrispettivi ripresi dalla tabella conti
   //Solamente una prima volta quando i parametri sono ancora vuoti
   if (this.param.codiceFiscale.length<=0 && 
-    this.param.partitaIva.length<=0 &&
-    this.param.contoFattureNormali.length<=0 &&
-    this.param.contoFattureFiscali.length<=0 &&
-    this.param.contoFattureScontrini.length<=0 &&
-    this.param.contoFattureDifferite.length<=0 &&
-    this.param.contoCorrispettiviNormali.length<=0 &&
-    this.param.contoCorrispettiviScontrini.length<=0 &&
-    this.param.contoRicevuteFiscali.length<=0) {
+      this.param.partitaIva.length<=0 &&
+      this.param.contoFattureNormali.length<=0 &&
+      this.param.contoFattureFiscali.length<=0 &&
+      this.param.contoFattureScontrini.length<=0 &&
+      this.param.contoFattureDifferite.length<=0 &&
+      this.param.contoCorrispettiviNormali.length<=0 &&
+      this.param.contoCorrispettiviScontrini.length<=0 &&
+      this.param.contoRicevuteFiscali.length<=0) 
+    {
     var table = this.banDocument.table('Accounts');
     if (table) {
       var progressBar = Banana.application.progressBar;
@@ -402,5 +423,8 @@ DatiContribuente.prototype.verifyParamAggiungiCorrispettivi = function() {
 
 DatiContribuente.prototype.writeParam = function() {
   var paramToString = JSON.stringify(this.param);
+  Banana.console.debug(this.param.tipoContribuente);
+  Banana.console.debug(this.param.tipoRegimeFiscale);
+
   this.banDocument.setScriptSettings("ch.banana.script.italy_vat.daticontribuente.js", paramToString);
 }
