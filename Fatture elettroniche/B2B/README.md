@@ -1,6 +1,8 @@
 # Fatture elettroniche Italia
 ## B2B v1.2.1
 
+Lo script è stato modificato da report.customer.invoice ad app.command e spostato nella cartella Italia/Iva/2017/ch.banana.script.invoice.b2b.js
+
 ## Riferimenti
 * [Portale Agenzia delle entrate](https://assistenza.agenziaentrate.gov.it/ServiziIva/KanaFattElettr.asp?New,Kb=FattElettr,t=startup.tem,Company={01B847AC-1BB9-4912-B3C2-81EC51E6FD8F})
 * [Documentazione fatturaPA](http://www.fatturapa.gov.it/export/fatturazione/it/normativa/f-2.htm)
