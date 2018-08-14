@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// @id = ch.banana.script.invoice.b2b.xml.js
+// @id = ch.banana.script.invoice.b2b.js
 // @api = 1.0
 // @pubdate = 2018-08-14
 // @publisher = Banana.ch SA
@@ -44,7 +44,7 @@ function settingsDialog() {
   }
   param = verifyParam(param);
 
-  var dialog = Banana.Ui.createUi("ch.banana.script.invoice.b2b.xml.dialog.ui");
+  var dialog = Banana.Ui.createUi("ch.banana.script.invoice.b2b.dialog.ui");
 
 
 
