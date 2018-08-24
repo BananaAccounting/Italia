@@ -705,7 +705,8 @@ EsibilitaIva
     //I codici IVA esclusi non vengono controllati 
     if (jsonLine["IT_Natura"] !== "ESCL") {
       if (jsonLine["IT_Natura"].length>0) {
-        if (isSupplier && jsonLine["IT_Natura"] == "N6") {
+        //N6 può essere impostato anche per autofattura (partitario clienti, fattura per acquisto extracomunitario) quindi non viene più controllato se fa parte del partitario fornitori
+        if (jsonLine["IT_Natura"] == "N6") {
           if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
             msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
             this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
