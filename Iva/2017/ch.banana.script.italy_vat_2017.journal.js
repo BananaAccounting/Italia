@@ -523,6 +523,7 @@ Journal.prototype.load = function() {
     //N7 IVA assolta in altro stato UE, vendite a distanza o prestazioni di servizi di telecomunicazioni
     //Il codice natura può essere sovrascritto dalla colonna VatExtraInfo oppure dalla colonna Gr1 della tabella codici iva
     //Se presente ESCL, la registrazione viene esclusa
+    //Se presente NONE, il codice natura resta vuoto
     jsonLine["IT_Natura"] = '';
     var vatExtraInfo = filteredRows[i].value("VatExtraInfo");
     if (vatExtraInfo.startsWith("N") && vatExtraInfo.length==2) {
@@ -546,6 +547,9 @@ Journal.prototype.load = function() {
         }
         else if (vatGr1 == "ESCL") {
           jsonLine["IT_Natura"] = vatGr1;
+        }
+        else if (vatGr1 == "NONE") {
+          jsonLine["IT_Natura"] = '';
         }
         else if (rowVatDescription.indexOf("art.15")>0) {
           jsonLine["IT_Natura"] = 'N1';
@@ -700,24 +704,19 @@ EsibilitaIva
     var imposta = jsonLine["IT_IvaContabilizzata"];
     var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
 
-    //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
-    //Eccezione: fatture ricevute con natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
-    //I codici IVA esclusi non vengono controllati 
-    if (jsonLine["IT_Natura"] !== "ESCL") {
+    /*Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
+      Eccezione: fatture ricevute con natura “N6” dove l'imposta e l'aliquota possono essere valorizzati
+      I codici IVA esclusi non vengono controllati, anche i codici N6 non vengono controllati perché 
+      secondo gli ultimi chiarimenti dell'Agenzia Entrate, per tutte le fatture, 
+      sia EMESSE che RICEVUTE in reverse Charge, si deve indicare il codice N6. 
+      l'unica differenza è che solo per quelle ricevute si deve valorizzare il campo Aliquota ed Imposta.
+     */
+     if (jsonLine["IT_Natura"] !== "ESCL" && jsonLine["IT_Natura"] !== "N6") {
       if (jsonLine["IT_Natura"].length>0) {
-        //N6 può essere impostato anche per autofattura (partitario clienti, fattura per acquisto extracomunitario) quindi non viene più controllato se fa parte del partitario fornitori
-        if (jsonLine["IT_Natura"] == "N6") {
-          if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
-            msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
-            this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
-          }
-        }
-        else {
-          if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
+         if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
             msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE) + jsonLine["IT_Natura"];
             this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
-          }
-        }
+         }
       }
       else {
         //Se il campo Natura non è valorizzato, lo devono essere i campi Imposta e Aliquota
