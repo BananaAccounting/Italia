@@ -54,7 +54,7 @@ function exec(inData, options)
             return "@Cancel";
         param = JSON.parse(Banana.document.getScriptSettings());
     }
-    
+
     var jsonInvoice = {};
     if (param.selezione == 0 && param.selezioneNoFattura.length > 0)
         jsonInvoice = getInvoiceJson(param.selezioneNoFattura);
@@ -191,12 +191,12 @@ function settingsDialog()
     else
         param.output = 0;
 
-    param.print_header = printHeaderCheckBox.checked ;
+    param.print_header = printHeaderCheckBox.checked;
     param.print_logo = printLogoCheckBox.checked;
     param.font_family = fontTypeLineEdit.text;
-    param.color_1 = bgColorLineEdit.text ;
+    param.color_1 = bgColorLineEdit.text;
     param.color_2 = textColorLineEdit.text;
-    
+
     param.progressive = parseInt(numeroProgressivoLineEdit.text);
     var paramToString = JSON.stringify(param);
     Banana.document.setScriptSettings(paramToString);
@@ -265,7 +265,9 @@ printXML = function (jsonInvoice)
     var output = Banana.Xml.save(xmlDocument);
     if (output != "@Cancel")
     {
-        eFattura.saveData(output);
+        var xslt = "<?xml-stylesheet type='text/xsl' href='fatturaordinaria_v1.2.1.xslt'?>"
+        var outputStyled = output.slice(0, 39) + xslt + output.slice(39)
+        eFattura.saveData(outputStyled);
     }
 }
 

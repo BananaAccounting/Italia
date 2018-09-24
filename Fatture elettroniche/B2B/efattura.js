@@ -75,7 +75,7 @@ EFattura.prototype.createInstance = function (xmlDocument, jsonInvoice)
       //<Document>
 
       var trasmissionFormat = "FPA12";
-      var nodeRoot = xmlDocument.addElement("p:EFattura");
+      var nodeRoot = xmlDocument.addElement("p:FatturaElettronica");
       nodeRoot.setAttribute("versione", trasmissionFormat);
 
 
