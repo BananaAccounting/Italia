@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file alias="manifest.json">ch.banana.it.invoice.b2b.exportPdfXml.manifest.json</file>
+		<file>ch.banana.it.invoice.b2b.xml.dialog.ui</file>
+		<file>ch.banana.it.invoice.b2b.xml.js</file>
+		<file>ch.banana.it.invoice.it05.js</file>
+        <file>efattura.js</file>
+	</qresource>
+</RCC>
