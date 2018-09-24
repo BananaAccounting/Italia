@@ -64,9 +64,18 @@ function exec(inData, options)
         var repDocObj = Banana.Report.newReport('');
         var repStyleObj = Banana.Report.newStyleSheet();
         repStyleObj.addStyle("@page").setAttribute("margin", "0");
-        repDocObj = printInvoice(jsonInvoice, repDocObj, param, repStyleObj)
-        setInvoiceStyle(repDocObj, repStyleObj, param)
-        Banana.Report.preview(repDocObj, repStyleObj);
+        Banana.console.debug(JSON.stringify(jsonInvoice))
+        if (jsonInvoice.billing_info)
+        {
+            repDocObj = printInvoice(jsonInvoice, repDocObj, param, repStyleObj)
+            setInvoiceStyle(repDocObj, repStyleObj, param)
+            Banana.Report.preview(repDocObj, repStyleObj);
+        }
+        else
+        {
+            Banana.document.addMessage("Fattura non creata. Si prega di controllare se i conti appartengono al gruppo clienti")
+        }
+
     }
     else
     {
