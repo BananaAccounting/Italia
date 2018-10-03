@@ -566,10 +566,6 @@ function printInvoiceDetails(invoiceObj, repDocObj, param, texts, rowNumber) {
    cell2.addParagraph("", "").addFieldPageNr();
 }
 
-      if (invoiceAddress.last_name) {
-         address = address + invoiceAddress.last_name;
-      }
-      address = address + "\n";
 //====================================================================//
 // STYLES
 //====================================================================//
