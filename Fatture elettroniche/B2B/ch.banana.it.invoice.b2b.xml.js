@@ -19,11 +19,10 @@
 // @description = [BETA] Fattura elettronica...
 // @description.it = [BETA] Fattura elettronica...
 // @doctype = *
-// @includejs = efattura.js
-// @includejs = ch.banana.it.invoice.it05.js
 // @task = app.command
 // @inputdatasource = none
 // @timeout = -1
+// @includejs = ch.banana.it.efattura.js
 
 
 function exec(inData, options) {
@@ -48,16 +47,16 @@ function exec(inData, options) {
       param = JSON.parse(Banana.document.getScriptSettings());
    }
 
-   param = verifyParamInvoiceB2B(param);
+   verifyParam(param);
    
    var jsonInvoiceList = [];
    if (param.selection == 0 && param.selection_invoice.length > 0)
-      jsonInvoiceList = getInvoiceJson(param.selection_invoice, "");
+      jsonInvoiceList = eFattura.loadData(param.selection_invoice, "");
    else if (param.selection == 1 && param.selection_customer.length > 0)
-      jsonInvoiceList = getInvoiceJson("", param.selection_customer);
+      jsonInvoiceList = eFattura.loadData("", param.selection_customer);
 
    if (param.output == 0) {
-      printPreview(jsonInvoiceList, param);
+      printPdf(jsonInvoiceList, param);
    }
    else {
       printXml(jsonInvoiceList, param);
@@ -66,12 +65,12 @@ function exec(inData, options) {
 
 /*Update script's parameters*/
 function settingsDialog() {
-   var param = initParamInvoiceB2B();
+   var param = initParam();
    var savedParam = Banana.document.getScriptSettings();
    if (savedParam.length > 0) {
       param = JSON.parse(savedParam);
    }
-   verifyParamInvoiceB2B(param);
+   verifyParam(param);
 
    var dialog = Banana.Ui.createUi("ch.banana.it.invoice.b2b.xml.dialog.ui");
    var numeroFatturaRadioButton = dialog.tabWidget.findChild('numeroFatturaRadioButton');
@@ -200,45 +199,35 @@ getCustomers = function () {
    return customersList;
 }
 
-getInvoiceJson = function (invoiceNumber, customerNumber) {
-   if (invoiceNumber.length <= 0 && customerNumber.length <= 0)
-      return {};
-
-   var journal = Banana.document.invoicesCustomers();
-   var jsonInvoiceList = [];
-
-   for (var i = 0; i < journal.rowCount; i++) {
-      var tRow = journal.row(i);
-      if (tRow.value('ObjectJSonData') && tRow.value('ObjectType') === 'InvoiceDocument') {
-         var jsonData = {};
-         jsonData = JSON.parse(tRow.value('ObjectJSonData'));
-         if (invoiceNumber.length > 0 && jsonData.InvoiceDocument.document_info.number === invoiceNumber) {
-            jsonInvoiceList.push(jsonData.InvoiceDocument);
-         }
-         else if (customerNumber.length > 0 && jsonData.InvoiceDocument.customer_info.number === customerNumber) {
-            jsonInvoiceList.push(jsonData.InvoiceDocument);
-         }
-      }
-   }
-
-   return jsonInvoiceList;
-}
-
-function initParamInvoiceB2B() {
-   var param = initParam();
+function initParam() {
+   var param = {};
    /*output 0=pdf, 1=xml*/
    param.output = 0;
-   param.open_xml = false;
-   /*numero progressivo invio xml*/
-   param.progressive = 0;
-   /*selection 0=fattura, 1=cliente*/
+   /*selection 0=fattura singola, 1=fatture cliente*/
    param.selection = 0;
+   /*invoice number*/
    param.selection_invoice = '';
+   /*customer number*/
    param.selection_customer = '';
+   
+   param.xml = {};
+   param.xml.progressive = '999';
+   param.xml.open_file = false;
+
+   param.pdf = {};
+   param.pdf.print_header = true;
+   param.pdf.print_logo = true;
+   param.pdf.font_family = '';
+   param.pdf.color_1 = '#337ab7';
+   param.pdf.color_2 = '#ffffff';
    return param;
 }
 
-printPreview = function (jsonInvoiceList, param) {
+printPdf = function (jsonInvoiceList, param) {
+   var eFattura = new EFattura(Banana.document);
+   eFattura.initDatiContribuente();
+   if (!eFattura.datiContribuente)
+      return;
    var docs = [];
    var styles = [];
    for (var i = 0; i < jsonInvoiceList.length; i++) {
@@ -248,8 +237,7 @@ printPreview = function (jsonInvoiceList, param) {
          var repDocObj = Banana.Report.newReport('');
          var repStyleObj = Banana.Report.newStyleSheet();
          repStyleObj.addStyle("@page").setAttribute("margin", "0");
-         setInvoiceStyle(repDocObj, repStyleObj, param);
-         printInvoice(jsonInvoice, repDocObj, param, repStyleObj);
+         eFattura.createReport(repDocObj, repStyleObj, jsonInvoice, param.pdf);
          docs.push(repDocObj);
          styles.push(repStyleObj);
       }
@@ -271,31 +259,49 @@ printXml = function (jsonInvoiceList, param) {
    var xmlDocument = Banana.Xml.newDocument("root");
    
    for (var i = 0; i < jsonInvoiceList.length; i++) {
-      eFattura.createInstance(xmlDocument, jsonInvoiceList[i]);
+      eFattura.createXmlInstance(xmlDocument, jsonInvoiceList[i], param.xml);
    }
    var output = Banana.Xml.save(xmlDocument);
    if (output != "@Cancel") {
       var xslt = "<?xml-stylesheet type='text/xsl' href='fatturaordinaria_v1.2.1.xslt'?>"
       var outputStyled = output.slice(0, 39) + xslt + output.slice(39)
-      eFattura.saveData(outputStyled);
+      eFattura.saveFile(outputStyled);
    }
 }
 
 
-function verifyParamInvoiceB2B(param) {
-   param = verifyParam(param);
-   if (!param.open_xml)
-      param.open_xml = false;
-   if (!param.output)
+function verifyParam(param) {
+   if (!param)
+      return param;
+      
+   if (!param.output)   
       param.output = 0;
-   if (!param.progressive)
-      param.progressive = 0;
-   if (!param.selection)
+   if (!param.selection)   
       param.selection = 0;
-   if (!param.selection_invoice)
+   if (!param.selection_invoice)   
       param.selection_invoice = '';
-   if (!param.selection_customer)
+   if (!param.selection_customer)   
       param.selection_customer = '';
+   
+   if (!param.xml)   
+      param.xml = {};
+   if (!param.xml.progressive)   
+      param.xml.progressive = '1';
+   if (!param.xml.open_file)   
+      param.xml.open_file = false;
+
+   if (!param.pdf)   
+      param.pdf = {};
+   if (!param.pdf.print_header)   
+      param.pdf.print_header = true;
+   if (!param.pdf.print_logo)   
+      param.pdf.print_logo = true;
+   if (!param.pdf.font_family)   
+      param.pdf.font_family = '';
+   if (!param.pdf.color_1)   
+      param.pdf.color_1 = '#337ab7';
+   if (!param.pdf.color_2)   
+      param.pdf.color_2 = '#ffffff';
       
    return param;
 }

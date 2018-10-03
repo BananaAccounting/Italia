@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// @includejs = ch.banana.it.invoice.it05.js
+
 function EFattura(banDocument) {
    this.banDocument = banDocument;
    if (this.banDocument === undefined)
@@ -30,10 +32,15 @@ function EFattura(banDocument) {
 
 }
 
+EFattura.prototype.createReport = function (report, stylesheet, jsonInvoice, param) {
+   setInvoiceStyle(report, stylesheet, param);
+   printInvoice(jsonInvoice, report, param, stylesheet);
+}
+
 /*
 * xml instance file
 */
-EFattura.prototype.createInstance = function (xmlDocument, jsonInvoice) {
+EFattura.prototype.createXmlInstance = function (xmlDocument, jsonInvoice) {
 
    if (this.banDocument.table('Accounts')) {
       var tColumnNames = this.banDocument.table('Accounts').columnNames.join(";");
@@ -492,10 +499,6 @@ EFattura.prototype.getErrorMessage = function (errorId) {
    return rtnMsg + " [" + errorId + "] ";
 }
 
-EFattura.prototype.initParam = function () {
-   this.param = {};
-}
-
 EFattura.prototype.initDatiContribuente = function () {
    this.datiContribuente = {};
    var savedParam = this.banDocument.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
@@ -527,6 +530,10 @@ EFattura.prototype.initNamespaces = function () {
    ];
 }
 
+EFattura.prototype.initParam = function () {
+   this.param = {};
+}
+
 EFattura.prototype.initSchemarefs = function () {
    this.param.schemaRefs = [
       'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd'
@@ -541,7 +548,33 @@ EFattura.prototype.isEmpty = function (obj) {
    return true;
 }
 
-EFattura.prototype.saveData = function (output) {
+EFattura.prototype.loadData = function (invoiceNumber, customerNumber) {
+   if (invoiceNumber.length <= 0 && customerNumber.length <= 0)
+      return {};
+
+   var jsonInvoiceList = [];
+   var journal = this.banDocument.invoicesCustomers();
+   if (!journal)
+      return jsonInvoiceList;
+
+   for (var i = 0; i < journal.rowCount; i++) {
+      var tRow = journal.row(i);
+      if (tRow.value('ObjectJSonData') && tRow.value('ObjectType') === 'InvoiceDocument') {
+         var jsonData = {};
+         jsonData = JSON.parse(tRow.value('ObjectJSonData'));
+         if (invoiceNumber.length > 0 && jsonData.InvoiceDocument.document_info.number === invoiceNumber) {
+            jsonInvoiceList.push(jsonData.InvoiceDocument);
+         }
+         else if (customerNumber.length > 0 && jsonData.InvoiceDocument.customer_info.number === customerNumber) {
+            jsonInvoiceList.push(jsonData.InvoiceDocument);
+         }
+      }
+   }
+
+   return jsonInvoiceList;
+}
+
+EFattura.prototype.saveFile = function (output) {
    var fileName = '';
    var nazione = '';
    var codiceFiscale = '';
@@ -588,7 +621,7 @@ EFattura.prototype.saveData = function (output) {
 
 }
 
-EFattura.prototype.saveDataWithName = function (output, fileName) {
+EFattura.prototype.saveFileWithName = function (output, fileName) {
    fileName = Banana.IO.getSaveFileName("Save as", fileName, "XML file (*.xml);;All files (*)")
    if (fileName.length) {
       var file = Banana.IO.getLocalFile(fileName)
@@ -624,10 +657,6 @@ EFattura.prototype.verifyBananaVersion = function () {
 }
 
 EFattura.prototype.verifyParam = function () {
-   if (!this.name)
-      this.name = '';
    if (!this.param)
       this.param = {};
-   if (!this.version)
-      this.version = '';
 }
