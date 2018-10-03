@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.invoice.b2b.xml
 // @api = 1.0
-// @pubdate = 2018-10-02
+// @pubdate = 2018-10-03
 // @publisher = Banana.ch SA
 // @description = [BETA] Fattura elettronica...
 // @description.it = [BETA] Fattura elettronica...
@@ -27,16 +27,19 @@
 
 
 function exec(inData, options) {
-   if (!Banana.document || !verifyBananaVersion()) {
+   if (!Banana.document) {
       return "@Cancel";
    }
+
+   var eFattura = new EFattura(Banana.document);
+   if (!eFattura.verifyBananaVersion())
+      return "@Cancel";
 
    var param = {};
    if (inData.length > 0) {
       param = JSON.parse(inData);
    }
    else if (options && options.useLastSettings) {
-
       param = JSON.parse(Banana.document.getScriptSettings());
    }
    else {
@@ -45,6 +48,8 @@ function exec(inData, options) {
       param = JSON.parse(Banana.document.getScriptSettings());
    }
 
+   param = verifyParamInvoiceB2B(param);
+   
    var jsonInvoiceList = [];
    if (param.selection == 0 && param.selection_invoice.length > 0)
       jsonInvoiceList = getInvoiceJson(param.selection_invoice, "");
@@ -55,22 +60,18 @@ function exec(inData, options) {
       printPreview(jsonInvoiceList, param);
    }
    else {
-      printXML(jsonInvoiceList, param);
+      printXml(jsonInvoiceList, param);
    }
 }
 
 /*Update script's parameters*/
 function settingsDialog() {
+   var param = initParamInvoiceB2B();
    var savedParam = Banana.document.getScriptSettings();
-   var param;
    if (savedParam.length > 0) {
-      param = JSON.parse(savedParam)
+      param = JSON.parse(savedParam);
    }
-   else {
-      param = initParam();
-   }
-
-   verifyParam(param);
+   verifyParamInvoiceB2B(param);
 
    var dialog = Banana.Ui.createUi("ch.banana.it.invoice.b2b.xml.dialog.ui");
    var numeroFatturaRadioButton = dialog.tabWidget.findChild('numeroFatturaRadioButton');
@@ -86,7 +87,6 @@ function settingsDialog() {
    var fontTypeLineEdit = dialog.tabWidget.findChild('fontTypeLineEdit');
    var bgColorLineEdit = dialog.tabWidget.findChild('bgColorLineEdit');
    var textColorLineEdit = dialog.tabWidget.findChild('textColorLineEdit');
-
 
    var numeroProgressivoLineEdit = dialog.tabWidget.findChild('numeroProgressivoLineEdit');
 
@@ -154,7 +154,6 @@ function settingsDialog() {
       return false;
 
    //Salvataggio dati
-
    param.selection_invoice = numeroFatturaLineEdit.text;
    param.selection_customer = clienteComboBox.currentText;
    if (clienteRadioButton.checked)
@@ -225,6 +224,20 @@ getInvoiceJson = function (invoiceNumber, customerNumber) {
    return jsonInvoiceList;
 }
 
+function initParamInvoiceB2B() {
+   var param = initParam();
+   /*output 0=pdf, 1=xml*/
+   param.output = 0;
+   param.open_xml = false;
+   /*numero progressivo invio xml*/
+   param.progressive = 0;
+   /*selection 0=fattura, 1=cliente*/
+   param.selection = 0;
+   param.selection_invoice = '';
+   param.selection_customer = '';
+   return param;
+}
+
 printPreview = function (jsonInvoiceList, param) {
    var docs = [];
    var styles = [];
@@ -249,9 +262,9 @@ printPreview = function (jsonInvoiceList, param) {
    }
 }
 
-printXML = function (jsonInvoiceList, param) {
+printXml = function (jsonInvoiceList, param) {
 
-   var eFattura = new EFattura(this.banDocument);
+   var eFattura = new EFattura(Banana.document);
    eFattura.initDatiContribuente();
    if (!eFattura.datiContribuente)
       return;
@@ -268,15 +281,23 @@ printXML = function (jsonInvoiceList, param) {
    }
 }
 
-verifyBananaVersion = function () {
-   //From Experimental 06/09/2018
-   var eFattura = new EFattura(this.banDocument);
-   var requiredVersion = "9.0.3.180906";
-   if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
-      var msg = eFattura.getErrorMessage(eFattura.ID_ERR_VERSION_NOTSUPPORTED, 'it');
-      eFattura.banDocument.addMessage(msg, eFattura.ID_ERR_VERSION_NOTSUPPORTED);
-      return false;
-   }
-   return true;
+
+function verifyParamInvoiceB2B(param) {
+   param = verifyParam(param);
+   if (!param.open_xml)
+      param.open_xml = false;
+   if (!param.output)
+      param.output = 0;
+   if (!param.progressive)
+      param.progressive = 0;
+   if (!param.selection)
+      param.selection = 0;
+   if (!param.selection_invoice)
+      param.selection_invoice = '';
+   if (!param.selection_customer)
+      param.selection_customer = '';
+      
+   return param;
 }
+
 

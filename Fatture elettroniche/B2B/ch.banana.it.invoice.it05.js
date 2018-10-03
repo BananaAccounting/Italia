@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.invoice.it05.js
 // @api = 1.0
-// @pubdate = 2018-10-02
+// @pubdate = 2018-10-03
 // @publisher = Banana.ch SA
 // @description = Style 5 IT: Invoice with net amounts, quantity column, logo, 2 colours
 // @description.it = Stile 5 IT: Fattura con importi netti, colonna quantità, logo, 2 colori
@@ -109,17 +109,128 @@ function convertParam(param) {
    }
    convertedParam.data.push(currentParam);
 
-   currentParam = {};
-   currentParam.name = 'open_xml';
-   currentParam.title = texts.param_open_xml;
-   currentParam.type = 'bool';
-   currentParam.value = param.open_xml ? true : false;
-   currentParam.readValue = function () {
-      param.open_xml = this.value;
-   }
-   convertedParam.data.push(currentParam);
-
    return convertedParam;
+}
+
+function getInvoiceAddress(invoiceAddress) {
+
+   var address = "";
+
+   if (invoiceAddress.courtesy) {
+      address = invoiceAddress.courtesy + "\n";
+   }
+
+   if (invoiceAddress.first_name || invoiceAddress.last_name) {
+      if (invoiceAddress.first_name) {
+         address = address + invoiceAddress.first_name + " ";
+      }
+      if (invoiceAddress.last_name) {
+         address = address + invoiceAddress.last_name;
+      }
+      address = address + "\n";
+   }
+
+   if (invoiceAddress.business_name) {
+      address = address + invoiceAddress.business_name + "\n";
+   }
+
+   if (invoiceAddress.address1) {
+      address = address + invoiceAddress.address1 + "\n";
+   }
+
+   if (invoiceAddress.address2) {
+      address = address + invoiceAddress.address2 + "\n";
+   }
+
+   if (invoiceAddress.address3) {
+      address = address + invoiceAddress.address3 + "\n";
+   }
+
+   if (invoiceAddress.postal_code) {
+      address = address + invoiceAddress.postal_code + " ";
+   }
+
+   if (invoiceAddress.city) {
+      address = address + invoiceAddress.city + "\n";
+   }
+
+   if (invoiceAddress.country) {
+      address = address + invoiceAddress.country;
+   }
+
+   return address;
+}
+
+function getInvoiceSupplierName(invoiceSupplier) {
+
+   var supplierName = "";
+
+   if (invoiceSupplier.business_name) {
+      supplierName = invoiceSupplier.business_name + "\n";
+   }
+
+   if (supplierName.length <= 0) {
+      if (invoiceSupplier.first_name) {
+         supplierName = invoiceSupplier.first_name + " ";
+      }
+
+      if (invoiceSupplier.last_name) {
+         supplierName = supplierName + invoiceSupplier.last_name + "\n";
+      }
+   }
+   return supplierName;
+}
+
+function getInvoiceSupplier(invoiceSupplier) {
+
+   var supplierAddress = "";
+
+   if (invoiceSupplier.address1) {
+      supplierAddress = supplierAddress + invoiceSupplier.address1 + "\n";
+   }
+
+   if (invoiceSupplier.address2) {
+      supplierAddress = supplierAddress + invoiceSupplier.address2 + "\n";
+   }
+
+   if (invoiceSupplier.postal_code) {
+      supplierAddress = supplierAddress + invoiceSupplier.postal_code + " ";
+   }
+
+   if (invoiceSupplier.city) {
+      supplierAddress = supplierAddress + invoiceSupplier.city + "\n";
+   }
+
+   if (invoiceSupplier.phone) {
+      supplierAddress = supplierAddress + "Tel: " + invoiceSupplier.phone + "\n";
+   }
+
+   if (invoiceSupplier.fax) {
+      supplierAddress = supplierAddress + "Fax: " + invoiceSupplier.fax + "\n";
+   }
+
+   if (invoiceSupplier.email) {
+      supplierAddress = supplierAddress + invoiceSupplier.email + "\n";
+   }
+
+   if (invoiceSupplier.web) {
+      supplierAddress = supplierAddress + invoiceSupplier.web + "\n";
+   }
+
+   if (invoiceSupplier.vat_number) {
+      supplierAddress = supplierAddress + "P.IVA " + invoiceSupplier.vat_number;
+   }
+
+   return supplierAddress;
+}
+
+
+function getTitle(invoiceObj, texts) {
+   var documentTitle = texts.invoice;
+   if (invoiceObj.document_info.title) {
+      documentTitle = invoiceObj.document_info.title;
+   }
+   return documentTitle;
 }
 
 function initParam() {
@@ -129,42 +240,6 @@ function initParam() {
    param.font_family = '';
    param.color_1 = '#337ab7';
    param.color_2 = '#ffffff';
-   param.open_xml = false;
-   /*output 0=pdf, 1=xml*/
-   param.output = 0;
-   /*numero progressivo invio xml*/
-   param.progressive = 0;
-   /*selection 0=fattura, 1=cliente*/
-   param.selection = 0;
-   param.selection_invoice = '';
-   param.selection_customer = '';
-   return param;
-}
-
-function verifyParam(param) {
-   if (!param.print_header)
-      param.print_header = false;
-   if (!param.print_logo)
-      param.print_logo = false;
-   if (!param.font_family)
-      param.font_family = '';
-   if (!param.color_1)
-      param.color_1 = '#337ab7';
-   if (!param.color_2)
-      param.color_2 = '#ffffff';
-   if (!param.open_xml)
-      param.open_xml = false;
-   if (!param.output)
-      param.output = 0;
-   if (!param.progressive)
-      param.progressive = 0;
-   if (!param.selection)
-      param.selection = 0;
-   if (!param.selection_invoice)
-      param.selection_invoice = '';
-   if (!param.selection_customer)
-      param.selection_customer = '';
-
    return param;
 }
 
@@ -491,158 +566,10 @@ function printInvoiceDetails(invoiceObj, repDocObj, param, texts, rowNumber) {
    cell2.addParagraph("", "").addFieldPageNr();
 }
 
-function toInvoiceAmountFormat(invoice, value) {
-
-   return Banana.Converter.toLocaleNumberFormat(value, invoice.document_info.decimals_amounts, true);
-}
-
-function getInvoiceAddress(invoiceAddress) {
-
-   var address = "";
-
-   if (invoiceAddress.courtesy) {
-      address = invoiceAddress.courtesy + "\n";
-   }
-
-   if (invoiceAddress.first_name || invoiceAddress.last_name) {
-      if (invoiceAddress.first_name) {
-         address = address + invoiceAddress.first_name + " ";
-      }
       if (invoiceAddress.last_name) {
          address = address + invoiceAddress.last_name;
       }
       address = address + "\n";
-   }
-
-   if (invoiceAddress.business_name) {
-      address = address + invoiceAddress.business_name + "\n";
-   }
-
-   if (invoiceAddress.address1) {
-      address = address + invoiceAddress.address1 + "\n";
-   }
-
-   if (invoiceAddress.address2) {
-      address = address + invoiceAddress.address2 + "\n";
-   }
-
-   if (invoiceAddress.address3) {
-      address = address + invoiceAddress.address3 + "\n";
-   }
-
-   if (invoiceAddress.postal_code) {
-      address = address + invoiceAddress.postal_code + " ";
-   }
-
-   if (invoiceAddress.city) {
-      address = address + invoiceAddress.city + "\n";
-   }
-
-   if (invoiceAddress.country) {
-      address = address + invoiceAddress.country;
-   }
-
-   return address;
-}
-
-function getInvoiceSupplierName(invoiceSupplier) {
-
-   var supplierName = "";
-
-   if (invoiceSupplier.business_name) {
-      supplierName = invoiceSupplier.business_name + "\n";
-   }
-
-   if (supplierName.length <= 0) {
-      if (invoiceSupplier.first_name) {
-         supplierName = invoiceSupplier.first_name + " ";
-      }
-
-      if (invoiceSupplier.last_name) {
-         supplierName = supplierName + invoiceSupplier.last_name + "\n";
-      }
-   }
-   return supplierName;
-}
-
-function getInvoiceSupplier(invoiceSupplier) {
-
-   var supplierAddress = "";
-
-   if (invoiceSupplier.address1) {
-      supplierAddress = supplierAddress + invoiceSupplier.address1 + "\n";
-   }
-
-   if (invoiceSupplier.address2) {
-      supplierAddress = supplierAddress + invoiceSupplier.address2 + "\n";
-   }
-
-   if (invoiceSupplier.postal_code) {
-      supplierAddress = supplierAddress + invoiceSupplier.postal_code + " ";
-   }
-
-   if (invoiceSupplier.city) {
-      supplierAddress = supplierAddress + invoiceSupplier.city + "\n";
-   }
-
-   if (invoiceSupplier.phone) {
-      supplierAddress = supplierAddress + "Tel: " + invoiceSupplier.phone + "\n";
-   }
-
-   if (invoiceSupplier.fax) {
-      supplierAddress = supplierAddress + "Fax: " + invoiceSupplier.fax + "\n";
-   }
-
-   if (invoiceSupplier.email) {
-      supplierAddress = supplierAddress + invoiceSupplier.email + "\n";
-   }
-
-   if (invoiceSupplier.web) {
-      supplierAddress = supplierAddress + invoiceSupplier.web + "\n";
-   }
-
-   if (invoiceSupplier.vat_number) {
-      supplierAddress = supplierAddress + "P.IVA " + invoiceSupplier.vat_number;
-   }
-
-   return supplierAddress;
-}
-
-
-//The purpose of this function is return a complete address
-function getAddressLines(jsonAddress, fullAddress) {
-
-   var address = [];
-   address.push(jsonAddress["business_name"]);
-
-   var addressName = [jsonAddress["first_name"], jsonAddress["last_name"]];
-   addressName = addressName.filter(function (n) { return n }); // remove empty items
-   address.push(addressName.join(" "));
-
-   address.push(jsonAddress["address1"]);
-   if (fullAddress) {
-      address.push(jsonAddress["address2"]);
-      address.push(jsonAddress["address3"]);
-   }
-
-   var addressCity = [jsonAddress["postal_code"], jsonAddress["city"]].join(" ");
-   if (jsonAddress["country_code"] && jsonAddress["country_code"] !== "CH")
-      addressCity = [jsonAddress["country_code"], addressCity].join(" - ");
-   address.push(addressCity);
-
-   address = address.filter(function (n) { return n }); // remove empty items
-
-   return address;
-}
-
-function getTitle(invoiceObj, texts) {
-   var documentTitle = texts.invoice;
-   if (invoiceObj.document_info.title) {
-      documentTitle = invoiceObj.document_info.title;
-   }
-   return documentTitle;
-}
-
 //====================================================================//
 // STYLES
 //====================================================================//
@@ -774,11 +701,8 @@ function setInvoiceTexts(language) {
       texts.param_color_1 = 'Colore sfondo';
       texts.param_color_2 = 'Colore testo';
       texts.param_font_family = 'Tipo carattere';
-      texts.param_open_xml = 'Visualizza file immediatamente';
-      texts.param_print_header = 'Includi intestazione pagina (1=si, 0=no)';
-      texts.param_print_logo = 'Stampa logo (1=si, 0=no)';
-      texts.param_personal_text_1 = 'Testo libero (riga 1)';
-      texts.param_personal_text_2 = 'Testo libero (riga 2)';
+      texts.param_print_header = 'Includi intestazione pagina';
+      texts.param_print_logo = 'Stampa logo';
       texts.payment_due_date_label = 'Scadenza';
       texts.payment_terms_label = 'Pagamento';
    }
@@ -804,11 +728,8 @@ function setInvoiceTexts(language) {
       texts.param_color_1 = 'Hintergrundfarbe';
       texts.param_color_2 = 'Textfarbe';
       texts.param_font_family = 'Schriftart';
-      texts.param_open_xml = 'Datei sofort anzeigen';
-      texts.param_print_header = 'Seitenüberschrift einschliessen (1=ja, 0=nein)';
-      texts.param_print_logo = 'Logo ausdrucken (1=ja, 0=nein)';
-      texts.param_personal_text_1 = 'Freier Text (Zeile 1)';
-      texts.param_personal_text_2 = 'Freier Text (Zeile 2)';
+      texts.param_print_header = 'Seitenüberschrift einschliessen';
+      texts.param_print_logo = 'Logo ausdrucken';
       texts.payment_due_date_label = 'Fälligkeitsdatum';
       texts.payment_terms_label = 'Zahlungsbedingungen';
    }
@@ -834,11 +755,8 @@ function setInvoiceTexts(language) {
       texts.param_color_1 = 'Couleur de fond';
       texts.param_color_2 = 'Couleur du texte';
       texts.param_font_family = 'Police de caractère';
-      texts.param_open_xml = 'Afficher fichier immédiatement';
-      texts.param_print_header = 'Inclure en-tête de page (1=oui, 0=non)';
-      texts.param_print_logo = 'Imprimer logo (1=oui, 0=non)';
-      texts.param_personal_text_1 = 'Texte libre (ligne 1)';
-      texts.param_personal_text_2 = 'Texte libre (ligne 2)';
+      texts.param_print_header = 'Inclure en-tête de page';
+      texts.param_print_logo = 'Imprimer logo';
       texts.payment_due_date_label = 'Echéance';
       texts.payment_terms_label = 'Paiement';
    }
@@ -864,13 +782,31 @@ function setInvoiceTexts(language) {
       texts.param_color_1 = 'Background Color';
       texts.param_color_2 = 'Text Color';
       texts.param_font_family = 'Font type';
-      texts.param_open_xml = 'Display file immediately';
-      texts.param_print_header = 'Include page header (1=yes, 0=no)';
-      texts.param_print_logo = 'Print logo (1=yes, 0=no)';
-      texts.param_personal_text_1 = 'Personal text (row 1)';
-      texts.param_personal_text_2 = 'Personal text (row 2)';
+      texts.param_print_header = 'Include page header';
+      texts.param_print_logo = 'Print logo';
       texts.payment_due_date_label = 'Due date';
       texts.payment_terms_label = 'Payment';
    }
    return texts;
 }
+
+function toInvoiceAmountFormat(invoice, value) {
+
+   return Banana.Converter.toLocaleNumberFormat(value, invoice.document_info.decimals_amounts, true);
+}
+
+function verifyParam(param) {
+   if (!param.print_header)
+      param.print_header = false;
+   if (!param.print_logo)
+      param.print_logo = false;
+   if (!param.font_family)
+      param.font_family = '';
+   if (!param.color_1)
+      param.color_1 = '#337ab7';
+   if (!param.color_2)
+      param.color_2 = '#ffffff';
+
+   return param;
+}
+

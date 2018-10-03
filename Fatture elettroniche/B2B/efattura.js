@@ -17,7 +17,6 @@ function EFattura(banDocument) {
    if (this.banDocument === undefined)
       this.banDocument = Banana.document;
    this.initParam();
-   this.invoiceObj = null;
    this.name = "Banana Accounting EFattura";
    this.version = "V1.0";
 
@@ -56,13 +55,14 @@ EFattura.prototype.createInstance = function (xmlDocument, jsonInvoice) {
       return;
    }
 
-   this.invoiceObj = null;
+   var invoiceObj = null;
    if (typeof (jsonInvoice) === 'object') {
-      this.invoiceObj = jsonInvoice;
+      invoiceObj = jsonInvoice;
    } else if (typeof (jsonInvoice) === 'string') {
-      this.invoiceObj = JSON.parse(jsonInvoice)
+      invoiceObj = JSON.parse(jsonInvoice)
    }
-   if (!xmlDocument || this.isEmpty(this.datiContribuente))
+   
+   if (!xmlDocument || !invoiceObj || this.isEmpty(this.datiContribuente))
       return;
 
    //<Document>
@@ -108,7 +108,7 @@ EFattura.prototype.createInstance = function (xmlDocument, jsonInvoice) {
    var nodeCodiceDestinatario = nodeDatiTrasmissione.addElement("CodiceDestinatario");
    //var x = new Registr
    //var utils = new Utils(this.banDocument);
-   //nodeCodiceDestinatario.addTextNode(JSON.stringify(this.invoiceObj));
+   //nodeCodiceDestinatario.addTextNode(JSON.stringify(invoiceObj));
 
    //nodeCodiceDestinatario.addTextNode('9999999');
 
@@ -118,7 +118,7 @@ EFattura.prototype.createInstance = function (xmlDocument, jsonInvoice) {
    //   var nodeTelefono = nodeContattiTrasmittente.addElement("Telefono");
    //   var nodeEmail = nodeContattiTrasmittente.addElement("Email");
    var nodePECDestinatario = nodeDatiTrasmissione.addElement("PECDestinatario");
-   nodePECDestinatario.addTextNode(this.invoiceObj.customer_info.email);
+   nodePECDestinatario.addTextNode(invoiceObj.customer_info.email);
 
 
    var nodeCedentePrestatore = nodeFatturaElettronicaHeader.addElement("CedentePrestatore");
@@ -204,17 +204,17 @@ EFattura.prototype.createInstance = function (xmlDocument, jsonInvoice) {
    //   var nodeIdCodice = nodeIdFiscaleIVA.addElement("IdCodice");
    // var nodeCodiceFiscale = nodeDatiAnagrafici.addElement("CodiceFiscale");
    var nodeAnagrafica = nodeDatiAnagrafici.addElement("Anagrafica");
-   // nodeAnagrafica.addTextNode(JSON.stringify(this.invoiceObj));
-   if (this.invoiceObj.customer_info.business_name) {
+   // nodeAnagrafica.addTextNode(JSON.stringify(invoiceObj));
+   if (invoiceObj.customer_info.business_name) {
       var nodeDenominazione = nodeAnagrafica.addElement("Denominazione");
-      nodeDenominazione.addTextNode(this.invoiceObj.customer_info.business_name)
+      nodeDenominazione.addTextNode(invoiceObj.customer_info.business_name)
    }
-   else if (this.invoiceObj.customer_info.first_name && this.invoiceObj.customer_info.last_name) {
+   else if (invoiceObj.customer_info.first_name && invoiceObj.customer_info.last_name) {
       var nodeNome = nodeAnagrafica.addElement("Nome");
       var nodeCognome = nodeAnagrafica.addElement("Cognome");
 
-      nodeNome.addTextNode(this.invoiceObj.customer_info.first_name)
-      nodeCognome.addTextNode(this.invoiceObj.customer_info.last_name)
+      nodeNome.addTextNode(invoiceObj.customer_info.first_name)
+      nodeCognome.addTextNode(invoiceObj.customer_info.last_name)
    }
    // var nodeTitolo = nodeAnagrafica.addElement("Titolo");
    // var nodCodEORI = nodeAnagrafica.addElement("CodEORI");
@@ -223,19 +223,19 @@ EFattura.prototype.createInstance = function (xmlDocument, jsonInvoice) {
 
    var nodeSede = nodeCessionarioCommittente.addElement("Sede");
    var nodeIndirizzo = nodeSede.addElement("Indirizzo");
-   nodeIndirizzo.addTextNode(this.invoiceObj.customer_info.address1);
+   nodeIndirizzo.addTextNode(invoiceObj.customer_info.address1);
    //   var nodeNumeroCivico = nodeSede.addElement("NumeroCivico");
 
    var nodeCAP = nodeSede.addElement("CAP");
-   nodeCAP.addTextNode(this.invoiceObj.customer_info.postal_code);
+   nodeCAP.addTextNode(invoiceObj.customer_info.postal_code);
    var nodeComune = nodeSede.addElement("Comune");
-   nodeComune.addTextNode(this.invoiceObj.customer_info.city);
-   if (this.invoiceObj.customer_info.country === 'IT') {
+   nodeComune.addTextNode(invoiceObj.customer_info.city);
+   if (invoiceObj.customer_info.country === 'IT') {
       var nodeProvincia = nodeSede.addElement("Provincia");
-      nodeProvincia.addTextNode(nodeComune.addTextNode(this.invoiceObj.customer_info.state));
+      nodeProvincia.addTextNode(nodeComune.addTextNode(invoiceObj.customer_info.state));
    }
    var nodeNazione = nodeSede.addElement("Nazione");
-   nodeNazione.addTextNode(this.invoiceObj.customer_info.country);
+   nodeNazione.addTextNode(invoiceObj.customer_info.country);
 
 
 
@@ -272,17 +272,17 @@ EFattura.prototype.createInstance = function (xmlDocument, jsonInvoice) {
    var nodeDatiGeneraliDocumento = nodeDatiGenerali.addElement("DatiGeneraliDocumento");
    var nodeTipoDocumento = nodeDatiGeneraliDocumento.addElement("TipoDocumento");
    docType = '';
-   if (!this.invoiceObj.document_info.doc_type || this.invoiceObj.document_info.doc_type == '10')
+   if (!invoiceObj.document_info.doc_type || invoiceObj.document_info.doc_type == '10')
       docType = 'TD01';
-   if (this.invoiceObj.document_info.doc_type == '12')
+   if (invoiceObj.document_info.doc_type == '12')
       docType = 'TD04'
    nodeTipoDocumento.addTextNode(docType);
    var nodeDivisa = nodeDatiGeneraliDocumento.addElement("Divisa");
-   nodeDivisa.addTextNode(this.invoiceObj.document_info.currency);
+   nodeDivisa.addTextNode(invoiceObj.document_info.currency);
    var nodeData = nodeDatiGeneraliDocumento.addElement("Data");
-   nodeData.addTextNode(this.invoiceObj.document_info.date);
+   nodeData.addTextNode(invoiceObj.document_info.date);
    var nodeNumero = nodeDatiGeneraliDocumento.addElement("Numero");
-   nodeNumero.addTextNode(this.invoiceObj.document_info.number);
+   nodeNumero.addTextNode(invoiceObj.document_info.number);
    // var nodeDatiRitenuta = nodeDatiGeneraliDocumento.addElement("DatiRitenuta");
    //   var nodeTipoRitenuta = nodeDatiRitenuta.addElement("TipoRitenuta");
    //   var nodeImportoRitenuta = nodeDatiRitenuta.addElement("ImportoRitenuta");
@@ -361,7 +361,7 @@ EFattura.prototype.createInstance = function (xmlDocument, jsonInvoice) {
    //   var nodeNumeroFatturaPrincipale = nodeFatturaPrincipale.addElement("NumeroFatturaPrincipale");
    //   var nodeDataFatturaPrincipale = nodeFatturaPrincipale.addElement("DataFatturaPrincipale");
    var nodeDatiBeniServizi = nodeFatturaElettronicaBody.addElement("DatiBeniServizi");
-   for (var i = 0; i < this.invoiceObj.items.length; i++) {
+   for (var i = 0; i < invoiceObj.items.length; i++) {
       var nodeDettaglioLinee = nodeDatiBeniServizi.addElement("DettaglioLinee");
       var nodeNumeroLinea = nodeDettaglioLinee.addElement("NumeroLinea");
       nodeNumeroLinea.addTextNode(i + 1);
@@ -370,22 +370,22 @@ EFattura.prototype.createInstance = function (xmlDocument, jsonInvoice) {
       // var nodeCodiceTipo = nodeCodiceArticolo.addElement("CodiceTipo");
       // var nodeCodiceValore = nodeCodiceArticolo.addElement("CodiceValore");
       var nodeDescrizione = nodeDettaglioLinee.addElement("Descrizione");
-      nodeDescrizione.addTextNode(this.invoiceObj.items[i].description);
+      nodeDescrizione.addTextNode(invoiceObj.items[i].description);
       var nodeQuantita = nodeDettaglioLinee.addElement("Quantita");
-      nodeQuantita.addTextNode(this.invoiceObj.items[i].quantity);
+      nodeQuantita.addTextNode(invoiceObj.items[i].quantity);
       // var nodeUnitaMisura = nodeDettaglioLinee.addElement("UnitaMisura");
       // var nodeDataInizioPeriodo = nodeDettaglioLinee.addElement("DataInizioPeriodo");
       // var nodeDataFinePeriodo = nodeDettaglioLinee.addElement("DataFinePeriodo");
       var nodePrezzoUnitario = nodeDettaglioLinee.addElement("PrezzoUnitario");
-      nodePrezzoUnitario.addTextNode(this.invoiceObj.items[i].unit_price.amount_vat_inclusive)
+      nodePrezzoUnitario.addTextNode(invoiceObj.items[i].unit_price.amount_vat_inclusive)
       // var nodeScontoMaggiorazione = nodeDettaglioLinee.addElement("ScontoMaggiorazione");
       //   var nodeTipo = nodeScontoMaggiorazione.addElement("Tipo")
       //   var nodePercentuale = nodeScontoMaggiorazione.addElement("Percentuale")
       //   var nodeImporto = nodeScontoMaggiorazione.addElement("Importo")
       var nodePrezzoTotale = nodeDettaglioLinee.addElement("PrezzoTotale");
-      nodePrezzoTotale.addTextNode(this.invoiceObj.items[i].total_amount_vat_inclusive);
+      nodePrezzoTotale.addTextNode(invoiceObj.items[i].total_amount_vat_inclusive);
       var nodeAliquotaIVA = nodeDettaglioLinee.addElement("AliquotaIVA");
-      nodeAliquotaIVA.addTextNode(this.invoiceObj.items[i].unit_price.vat_rate);
+      nodeAliquotaIVA.addTextNode(invoiceObj.items[i].unit_price.vat_rate);
       // var nodeRitenuta = nodeDettaglioLinee.addElement("Ritenuta");
       // var nodeNatura = nodeDettaglioLinee.addElement("Natura");
       // var nodeRiferimentoAmministrazione = nodeDettaglioLinee.addElement("RiferimentoAmministrazione");
@@ -397,19 +397,19 @@ EFattura.prototype.createInstance = function (xmlDocument, jsonInvoice) {
    }
    var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
    var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
-   // nodeAliquotaIVA.addTextNode(this.invoiceObj.billing_info.total_vat_rates.vat_rate);
+   // nodeAliquotaIVA.addTextNode(invoiceObj.billing_info.total_vat_rates.vat_rate);
 
-   nodeAliquotaIVA.addTextNode(this.invoiceObj.billing_info.total_vat_rates[0].vat_rate);
+   nodeAliquotaIVA.addTextNode(invoiceObj.billing_info.total_vat_rates[0].vat_rate);
 
    //nodeAliquotaIVA.addTextNode('22');
    // var nodeNatura = nodeDatiRiepilogo.addElement("Natura");
    // var nodeSpeseAccessorie = nodeDatiRiepilogo.addElement("SpeseAccessorie");
    // var nodeArrotondamento = nodeDatiRiepilogo.addElement("Arrotondamento");
    var nodeImponibileImporto = nodeDatiRiepilogo.addElement("ImponibileImporto");
-   nodeImponibileImporto.addTextNode(this.invoiceObj.billing_info.total_vat_rates[0].total_amount_vat_inclusive);
+   nodeImponibileImporto.addTextNode(invoiceObj.billing_info.total_vat_rates[0].total_amount_vat_inclusive);
 
    var nodeImposta = nodeDatiRiepilogo.addElement("Imposta");
-   nodeImposta.addTextNode(this.invoiceObj.billing_info.total_vat_rates[0].total_vat_amount);
+   nodeImposta.addTextNode(invoiceObj.billing_info.total_vat_rates[0].total_vat_amount);
    // var nodeEsigibilitaIVA = nodeDatiRiepilogo.addElement("EsigibilitaIVA");
    // var nodeRiferimentoNormativo = nodeDatiRiepilogo.addElement("RiferimentoNormativo");
    // var nodeDatiVeicoli = nodeFatturaElettronicaBody.addElement("DatiVeicoli");
@@ -610,6 +610,17 @@ EFattura.prototype.setDatiContribuente = function (newDatiContribuenti) {
 EFattura.prototype.setParam = function (param) {
    this.param = param;
    this.verifyParam();
+}
+
+EFattura.prototype.verifyBananaVersion = function () {
+   //From Experimental 06/09/2018
+   var requiredVersion = "9.0.3.180906";
+   if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
+      var msg = this.getErrorMessage(this.ID_ERR_VERSION_NOTSUPPORTED, 'it');
+      this.banDocument.addMessage(msg, this.ID_ERR_VERSION_NOTSUPPORTED);
+      return false;
+   }
+   return true;
 }
 
 EFattura.prototype.verifyParam = function () {
