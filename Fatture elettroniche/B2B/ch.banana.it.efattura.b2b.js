@@ -1163,11 +1163,11 @@ EFattura.prototype.setParam = function (param) {
 EFattura.prototype.verifyBananaVersion = function () {
    //From Experimental 06/09/2018
    var requiredVersion = "9.0.3.180906";
-   /*if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
+   if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
       var msg = this.getErrorMessage(this.ID_ERR_VERSION_NOTSUPPORTED, 'it');
       this.banDocument.addMessage(msg, this.ID_ERR_VERSION_NOTSUPPORTED);
       return false;
-   }*/
+   }
    return true;
 }
 
