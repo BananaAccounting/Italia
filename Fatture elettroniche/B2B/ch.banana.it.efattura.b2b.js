@@ -24,8 +24,6 @@
 // @timeout = -1
 // @includejs = ch.banana.it.invoice.it05.js
 
-//TODO: bisestile
-
 function exec(inData, options) {
    if (!Banana.document) {
       return "@Cancel";
@@ -267,8 +265,12 @@ function settingsDialog() {
          toDate = year + '-01-31';
       }
       else if (index == 2) {
+         //mese con 28 o 29 giorni
+         var day = 28;
+         if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
+           day = 29;
          fromDate = year + '-02-01';
-         toDate = year + '-02-28';
+         toDate = year + '-02-' + day.toString();
       }
       else if (index == 3) {
          fromDate = year + '-03-01';
