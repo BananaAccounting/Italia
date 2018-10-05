@@ -14,18 +14,18 @@
 //
 
 
-// @id = ch.banana.it.efattura.test
+// @id = ch.banana.it.efattura.b2b.test
 // @api = 1.0
-// @pubdate = 2018-10-03
+// @pubdate = 2018-10-04
 // @publisher = Banana.ch SA
-// @description = <TEST ch.banana.it.efattura.test>
+// @description = <TEST ch.banana.it.efattura.b2b.test>
 // @task = app.command
 // @doctype = *.*
 // @docproperties = 
 // @outputformat = none
 // @inputdataform = none
 // @timeout = -1
-// @includejs = ch.banana.it.efattura.js
+// @includejs = ch.banana.it.efattura.b2b.js
 
 
 /*
@@ -56,15 +56,15 @@
 **/
 
 // Register test case to be executed
-Test.registerTestCase(new EFattura());
+Test.registerTestCase(new EFatturaTest());
 
 // Here we define the class, the name of the class is not important
-function EFattura() {
+function EFatturaTest() {
 
 }
 
 // This method will be called at the beginning of the test case
-EFattura.prototype.initTestCase = function() {
+EFatturaTest.prototype.initTestCase = function() {
    this.testLogger = Test.logger;
    this.progressBar = Banana.application.progressBar;
 
@@ -79,52 +79,48 @@ EFattura.prototype.cleanupTestCase = function() {
 }
 
 // This method will be called before every test method is executed
-EFattura.prototype.init = function() {
+EFatturaTest.prototype.init = function() {
 
 }
 
 // This method will be called after every test method is executed
-EFattura.prototype.cleanup = function() {
+EFatturaTest.prototype.cleanup = function() {
 
 }
 
-EFattura.prototype.test1 = function() {
+EFatturaTest.prototype.test1 = function() {
    this.testLogger = Test.logger.newGroupLogger("test1");
-   this.testLogger.addKeyValue("EFattura", "test1");
+   this.testLogger.addKeyValue("EFatturaTest", "test1");
    this.testLogger.addComment("Test ch.banana.it.efattura PARAM1");
    this.printReports(1);
    this.testLogger.close();
    this.testLogger = Test.logger;
 }
 
-EFattura.prototype.getParam1 = function() {
+EFatturaTest.prototype.getParam1 = function() {
    //Param1
    //Set params (normally are taken from settings)
    var param = {};
-   /*output 0=pdf, 1=xml*/
-   param.output = 0;
-   /*selection 0=fattura singola, 1=fatture cliente*/
-   param.selection = 0;
-   /*invoice number*/
-   param.selection_invoice = '';
-   /*customer number*/
-   param.selection_customer = '';
+   param.output = 0; //0=report, 1=xml
+   param.selection = 0; //0=singola fattura,1=fatture cliente
+   param.selection_invoice = ''; //no fattura
+   param.selection_customer = ''; //no cliente
    
    param.xml = {};
-   param.xml.progressive = '999';
+   param.xml.progressive = '1';
    param.xml.open_file = false;
 
-   param.pdf = {};
-   param.pdf.print_header = true;
-   param.pdf.print_logo = true;
-   param.pdf.font_family = '';
-   param.pdf.color_1 = '#337ab7';
-   param.pdf.color_2 = '#ffffff';
-  
+   param.report = {};
+   param.report.print_header = true;
+   param.report.print_logo = true;
+   param.report.font_family = '';
+   param.report.color_1 = '#337ab7';
+   param.report.color_2 = '#ffffff';
+
    return param;
 }
 
-EFattura.prototype.printReports = function(idParam) {
+EFatturaTest.prototype.printReports = function(idParam) {
    var parentLogger = this.testLogger;
    this.progressBar.start(this.fileNameList.length);
    for (var i = 0; i < this.fileNameList.length; i++) {
@@ -136,13 +132,11 @@ EFattura.prototype.printReports = function(idParam) {
          if (parseInt(idParam) === 1)
             param = this.getParam1();
          //imposta anno nei parametri
-         var nAnno = banDocument.info("AccountingDataBase", "ClosureDate");
-         if (nAnno.length >= 10)
-            param.annoSelezionato = nAnno.substring(0, 4);
-         this.testLogger.addInfo("ANNO", param.annoSelezionato);
-         this.testLogger.addInfo("PARAM", param.title);
+         //var nAnno = banDocument.info("AccountingDataBase", "ClosureDate");
+         //if (nAnno.length >= 10)
+         //   param.annoSelezionato = nAnno.substring(0, 4);
+         //this.testLogger.addInfo("ANNO", param.annoSelezionato);
          this.testLogger.addInfo("FILENAME",  fileName.toUpperCase());
-         console.log(idParam + "PARAM: " + JSON.stringify(param));
          this.printReport(fileName, banDocument, param);
       } else {
          this.testLogger.addFatalError("File not found: " + fileName);
@@ -157,28 +151,35 @@ EFattura.prototype.printReports = function(idParam) {
 }
 
 //Function that creates the report for the test
-EFattura.prototype.printReport = function(fileName, banDocument, param) {
+EFatturaTest.prototype.printReport = function(fileName, banDocument, param) {
 
    //stampa anteprima di controllo
-   var efattura = new EFattura(banDocument);
-   //efattura.setParam(param);
-   //efattura.loadData();
-   var paramString = JSON.stringify(param);
+   var eFattura = new EFattura(banDocument);
+   var customersList = eFattura.getCustomersList();
+   for (var key in customersList.keys()) {
+      param.selection = 1;
+      param.selection_customer = parseInt(key);
+      eFattura.setParam(param);
 
-   //param
-   this.testLogger.addComment('************************************************************************');
-   this.testLogger.addJson("Param", paramString)
+      this.testLogger.addComment('************************************************************************');
+      this.testLogger.addJson("Param", JSON.stringify(param))
 
-   //report
-   var report = Banana.Report.newReport();
-   var stylesheet = Banana.Report.newStyleSheet();
-   efattura.createReport(report, stylesheet, jsonInvoice, param);
-   this.testLogger.addComment('************************************************************************');
-   this.testLogger.addReport("Report", report);
-
-   //stampa file xml
-   var output = efattura.createXmlInstance();
-   this.testLogger.addComment('************************************************************************');
-   this.testLogger.addXml("Xml output", output);
-
+      var jsonInvoiceList = eFattura.loadData();
+      for (var i = 0; i < jsonInvoiceList.length; i++) {
+         var jsonInvoice = jsonInvoiceList[i];
+         if (jsonInvoice.customer_info) {
+            //report
+            var report = Banana.Report.newReport('');
+            var stylesheet = Banana.Report.newStyleSheet();
+            eFattura.createReport(jsonInvoice, report, stylesheet);
+            this.testLogger.addComment('************************************************************************');
+            this.testLogger.addReport("Report", report);
+		    //xml
+            var xmlDocument = Banana.Xml.newDocument("root");
+            var output = eFattura.createXmlInstance(jsonInvoice, xmlDocument);
+            this.testLogger.addComment('************************************************************************');
+            this.testLogger.addXml("Xml output", output);
+         }
+      }
+   }
 }

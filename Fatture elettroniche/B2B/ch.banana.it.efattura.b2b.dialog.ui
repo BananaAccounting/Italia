@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>313</width>
-    <height>367</height>
+    <width>384</width>
+    <height>332</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -87,60 +87,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="periodGroupBox">
-         <property name="title">
-          <string>Periodo</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QLabel" name="fromLabel">
-              <property name="text">
-               <string>Dal</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDateEdit" name="fromDateEdit">
-              <property name="calendarPopup">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="toLabel">
-              <property name="text">
-               <string>Al</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDateEdit" name="toDateEdit">
-              <property name="calendarPopup">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_5">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
         <widget class="QGroupBox" name="stampaGroupBox">
          <property name="title">
           <string>Formato</string>
@@ -202,6 +148,190 @@
           <size>
            <width>20</width>
            <height>44</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabPeriodo">
+      <attribute name="title">
+       <string>Periodo</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <widget class="QGroupBox" name="periodGroupBox">
+         <property name="title">
+          <string notr="true">Period</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QRadioButton" name="periodAllRadioButton">
+              <property name="text">
+               <string notr="true">&amp;Tutto</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="periodAllLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string notr="true">completePeriod</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="periodSelectedRadioButton">
+            <property name="text">
+             <string notr="true">&amp;Periodo specificato</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>15</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="startDateLabel">
+              <property name="text">
+               <string>Data inizio (compresa)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QDateEdit" name="startDateEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="frame">
+               <bool>true</bool>
+              </property>
+              <property name="displayFormat">
+               <string>dd/MM/yyyy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>15</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="toDateLabel">
+              <property name="text">
+               <string>Data fine (compresa)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QDateEdit" name="toDateEdit">
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="displayFormat">
+               <string>dd/MM/yyyy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="2">
+             <spacer name="horizontalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>108</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QComboBox" name="periodComboBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>110</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="yearComboBox"/>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>75</height>
           </size>
          </property>
         </spacer>
@@ -415,11 +545,15 @@
   <tabstop>numeroFatturaLineEdit</tabstop>
   <tabstop>clienteRadioButton</tabstop>
   <tabstop>clienteComboBox</tabstop>
-  <tabstop>fromDateEdit</tabstop>
-  <tabstop>toDateEdit</tabstop>
   <tabstop>stampaPDFRadioButton</tabstop>
   <tabstop>stampaXmlRadioButton</tabstop>
   <tabstop>apriXmlCheckBox</tabstop>
+  <tabstop>periodAllRadioButton</tabstop>
+  <tabstop>periodSelectedRadioButton</tabstop>
+  <tabstop>startDateEdit</tabstop>
+  <tabstop>toDateEdit</tabstop>
+  <tabstop>periodComboBox</tabstop>
+  <tabstop>yearComboBox</tabstop>
   <tabstop>printHeaderCheckBox</tabstop>
   <tabstop>printLogoCheckBox</tabstop>
   <tabstop>fontTypeLineEdit</tabstop>
@@ -436,8 +570,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>245</x>
-     <y>303</y>
+     <x>254</x>
+     <y>322</y>
     </hint>
     <hint type="destinationlabel">
      <x>204</x>

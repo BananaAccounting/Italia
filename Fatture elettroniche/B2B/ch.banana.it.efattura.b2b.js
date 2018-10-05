@@ -1,24 +1,425 @@
 // Copyright [2018] [Banana.ch SA - Lugano Switzerland]
-//
+// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-//
+// 
 //     http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+//
+// @id = ch.banana.it.efattura.b2b
+// @api = 1.0
+// @pubdate = 2018-10-05
+// @publisher = Banana.ch SA
+// @description = [BETA] Fattura elettronica...
+// @description.it = [BETA] Fattura elettronica...
+// @doctype = *
+// @task = app.command
+// @inputdatasource = none
+// @timeout = -1
 // @includejs = ch.banana.it.invoice.it05.js
+
+//TODO: bisestile
+
+function exec(inData, options) {
+   if (!Banana.document) {
+      return "@Cancel";
+   }
+
+   var eFattura = new EFattura(Banana.document);
+   if (!eFattura.verifyBananaVersion())
+      return "@Cancel";
+
+   var param = {};
+   if (inData.length > 0) {
+      param = JSON.parse(inData);
+   }
+   else if (options && options.useLastSettings) {
+      param = JSON.parse(Banana.document.getScriptSettings());
+   }
+   else {
+      if (!settingsDialog())
+         return "@Cancel";
+      param = JSON.parse(Banana.document.getScriptSettings());
+   }
+   
+   eFattura.setParam(param);
+   var jsonInvoiceList = eFattura.loadData();
+   
+   if (eFattura.param.output == 0) {
+      var docs = [];
+      var styles = [];
+      for (var i = 0; i < jsonInvoiceList.length; i++) {
+         var jsonInvoice = jsonInvoiceList[i];
+         //Banana.console.debug(JSON.stringify(jsonInvoice))
+         if (jsonInvoice.customer_info) {
+            var repDocObj = Banana.Report.newReport('');
+            var repStyleObj = Banana.Report.newStyleSheet();
+            repStyleObj.addStyle("@page").setAttribute("margin", "0");
+            eFattura.createReport(jsonInvoice, repDocObj, repStyleObj);
+            docs.push(repDocObj);
+            styles.push(repStyleObj);
+         }
+      }
+      if (docs.length) {
+         Banana.Report.preview("", docs, styles);
+      }
+      else {
+         Banana.document.addMessage("Fattura non creata. Si prega di controllare se i conti appartengono al gruppo clienti")
+      }
+   }
+   else {
+      var xmlDocument = Banana.Xml.newDocument("root");
+      for (var i = 0; i < jsonInvoiceList.length; i++) {
+         eFattura.createXmlInstance(jsonInvoiceList[i], xmlDocument);
+         var output = Banana.Xml.save(xmlDocument);
+         if (output != "@Cancel") {
+            var xslt = "<?xml-stylesheet type='text/xsl' href='fatturaordinaria_v1.2.1.xslt'?>"
+            var outputStyled = output.slice(0, 39) + xslt + output.slice(39)
+            eFattura.saveFile(outputStyled);
+         }
+      }
+   }
+}
+
+/*Update script's parameters*/
+var blockSignal=false;
+function settingsDialog() {
+   var eFattura = new EFattura(Banana.document);
+   var savedParam = Banana.document.getScriptSettings();
+   if (savedParam.length > 0) {
+      eFattura.setParam(JSON.parse(savedParam));
+   }
+
+   var dialog = Banana.Ui.createUi("ch.banana.it.eFattura.b2b.dialog.ui");
+   var numeroFatturaRadioButton = dialog.tabWidget.findChild('numeroFatturaRadioButton');
+   var clienteRadioButton = dialog.tabWidget.findChild('clienteRadioButton');
+   var numeroFatturaLineEdit = dialog.tabWidget.findChild('numeroFatturaLineEdit');
+   var clienteComboBox = dialog.tabWidget.findChild('clienteComboBox');
+   var stampaPDFRadioButton = dialog.tabWidget.findChild('stampaPDFRadioButton');
+   var stampaXmlRadioButton = dialog.tabWidget.findChild('stampaXmlRadioButton');
+   var apriXmlCheckBox = dialog.tabWidget.findChild('apriXmlCheckBox');
+
+   var printHeaderCheckBox = dialog.tabWidget.findChild('printHeaderCheckBox');
+   var printLogoCheckBox = dialog.tabWidget.findChild('printLogoCheckBox');
+   var fontTypeLineEdit = dialog.tabWidget.findChild('fontTypeLineEdit');
+   var bgColorLineEdit = dialog.tabWidget.findChild('bgColorLineEdit');
+   var textColorLineEdit = dialog.tabWidget.findChild('textColorLineEdit');
+
+   var numeroProgressivoLineEdit = dialog.tabWidget.findChild('numeroProgressivoLineEdit');
+   
+   //periodo
+   var periodAllRadioButton = dialog.findChild('periodAllRadioButton');
+   var periodAllLabel = dialog.findChild('periodAllLabel');
+   var periodSelectedRadioButton = dialog.findChild('periodSelectedRadioButton');
+   var startDateLabel = dialog.findChild('startDateLabel');
+   var startDateEdit = dialog.findChild('startDateEdit');
+   var toDateLabel = dialog.findChild('toDateLabel');
+   var toDateEdit = dialog.findChild('toDateEdit');
+   var periodComboBox = dialog.findChild('periodComboBox');
+   var yearComboBox = dialog.findChild('yearComboBox');
+   
+
+
+   //Lettura dati
+   var elencoClienti = eFattura.getCustomersList();
+   clienteComboBox.addItems(elencoClienti);
+   clienteComboBox.currentText = eFattura.param.selection_customer;
+
+   if (eFattura.param.selection == 1)
+      clienteRadioButton.checked = true;
+   else
+      numeroFatturaRadioButton.checked = true;
+
+   var selectedRow = parseInt(Banana.document.cursor.rowNr);
+   var noFattura = '';
+   if (Banana.document.table('Transactions') && Banana.document.table('Transactions').rowCount > selectedRow) {
+      noFattura = Banana.document.table('Transactions').value(selectedRow, "DocInvoice");
+   }
+   if (!noFattura)
+      noFattura = '';
+   numeroFatturaLineEdit.text = noFattura;
+   if (noFattura.length <= 0)
+      numeroFatturaLineEdit.text = eFattura.param.selection_invoice;
+
+   numeroProgressivoLineEdit.text = eFattura.param.xml.progressive || '0';
+
+   if (eFattura.param.output == 1)
+      stampaXmlRadioButton.checked = true;
+   else
+      stampaPDFRadioButton.checked = true;
+
+   apriXmlCheckBox.checked = eFattura.param.xml.open_file;
+   printHeaderCheckBox.checked = eFattura.param.report.print_header;
+   printLogoCheckBox.checked = eFattura.param.report.print_logo;
+   fontTypeLineEdit.text = eFattura.param.report.font_family;
+   bgColorLineEdit.text = eFattura.param.report.color_1;
+   textColorLineEdit.text = eFattura.param.report.color_2;
+
+   //Groupbox periodo
+   if (eFattura.param.periodAll)
+      periodAllRadioButton.checked = true;
+   else
+      periodSelectedRadioButton.checked = true;
+   var accountingData = {};
+   eFattura.readAccountingData(accountingData);
+   periodAllLabel.text = accountingData.openingYear;
+   var years = [];
+   years.push(accountingData.openingYear);
+   if (accountingData.closureYear != accountingData.openingYear) {
+      periodAllLabel.text += '/' + accountingData.closureYear;
+      years.push(accountingData.closureYear);
+   }
+   var fromDate = eFattura.param.periodStartDate;
+   var toDate = eFattura.param.periodEndDate;
+   if (!fromDate || !toDate) {
+      fromDate = Banana.Converter.stringToDate(accountingData.accountingOpeningDate, "YYYY-MM-DD");
+      toDate = Banana.Converter.stringToDate(accountingData.accountingClosureDate, "YYYY-MM-DD");
+   }
+   startDateEdit.setDate(fromDate);
+   toDateEdit.setDate(toDate);
+   periodComboBox.currentIndex = parseInt(eFattura.param.periodSelected);
+   yearComboBox.addItems(years);
+   
+   var periods = [];
+   periods.push("");
+   periods.push("gennaio");
+   periods.push("febbraio");
+   periods.push("marzo");
+   periods.push("aprile");
+   periods.push("maggio");
+   periods.push("giugno");
+   periods.push("luglio");
+   periods.push("agosto");
+   periods.push("settembre");
+   periods.push("ottobre");
+   periods.push("novembre");
+   periods.push("dicembre");
+   periods.push("------");
+   periods.push("1. trimestre");
+   periods.push("2. trimestre");
+   periods.push("3. trimestre");
+   periods.push("4. trimestre");
+   periods.push("------");
+   periods.push("1. semestre");
+   periods.push("2. semestre");
+   periods.push("------");
+   periods.push("Anno");
+   periodComboBox.addItems(periods);
+
+   
+   //funzioni dialogo
+   dialog.checkdata = function () {
+      dialog.accept();
+   }
+   dialog.enableButtons = function () {
+      if (periodAllRadioButton.checked) {
+         startDateEdit.enabled = false;
+         startDateEdit.update();
+         toDateEdit.enabled = false;
+         toDateEdit.update();
+         periodComboBox.enabled = false;
+         periodComboBox.update();
+         yearComboBox.enabled = false;
+         yearComboBox.update();
+      }
+      else {
+         startDateEdit.enabled = true;
+         startDateEdit.update();
+         toDateEdit.enabled = true;
+         toDateEdit.update();
+         periodComboBox.enabled = true;
+         periodComboBox.update();
+         yearComboBox.enabled = true;
+         yearComboBox.update();
+      }
+      if (numeroFatturaRadioButton.checked) {
+         numeroFatturaLineEdit.enabled = true;
+         clienteComboBox.enabled = false;
+      }
+      else {
+         numeroFatturaLineEdit.enabled = false;
+         clienteComboBox.enabled = true;
+      }
+   }
+   dialog.updateDates = function () {
+      blockSignal=true;
+      var index = parseInt(periodComboBox.currentIndex.toString());
+      if (index == 0) {
+         return;
+      }
+      else if (index == 13 || index == 18 || index == 21) {
+         periodComboBox.currentIndex = index+1;
+         return;
+      }
+      var year = yearComboBox.currentIndex.toString();
+      if (year.length < 4)
+         year = accountingData.closureYear;
+      var fromDate = year + '-01-01';
+      var toDate = year + '-12-31';
+      if (index == 1) {
+         fromDate = year + '-01-01';
+         toDate = year + '-01-31';
+      }
+      else if (index == 2) {
+         fromDate = year + '-02-01';
+         toDate = year + '-02-28';
+      }
+      else if (index == 3) {
+         fromDate = year + '-03-01';
+         toDate = year + '-03-31';
+      }
+      else if (index == 4) {
+         fromDate = year + '-04-01';
+         toDate = year + '-04-30';
+      }
+      else if (index == 5) {
+         fromDate = year + '-05-01';
+         toDate = year + '-05-31';
+      }
+      else if (index == 6) {
+         fromDate = year + '-06-01';
+         toDate = year + '-06-30';
+      }
+      else if (index == 7) {
+         fromDate = year + '-07-01';
+         toDate = year + '-07-31';
+      }
+      else if (index == 8) {
+         fromDate = year + '-08-01';
+         toDate = year + '-08-31';
+      }
+      else if (index == 9) {
+         fromDate = year + '-09-01';
+         toDate = year + '-09-30';
+      }
+      else if (index == 10) {
+         fromDate = year + '-10-01';
+         toDate = year + '-10-31';
+      }
+      else if (index == 11) {
+         fromDate = year + '-11-01';
+         toDate = year + '-11-30';
+      }
+      else if (index == 12) {
+         fromDate = year + '-12-01';
+         toDate = year + '-12-31';
+      }
+      else if (index == 14) {
+         fromDate = year + '-01-01';
+         toDate = year + '-03-31';
+      }
+      else if (index == 15) {
+         fromDate = year + '-04-01';
+         toDate = year + '-06-30';
+      }
+      else if (index == 16) {
+         fromDate = year + '-07-01';
+         toDate = year + '-09-30';
+      }
+      else if (index == 17) {
+         fromDate = year + '-10-01';
+         toDate = year + '-12-31';
+      }
+      else if (index == 19) {
+         fromDate = year + '-01-01';
+         toDate = year + '-06-30';
+      }
+      else if (index == 20) {
+         fromDate = year + '-06-30';
+         toDate = year + '-12-31';
+      }
+      else if (index == 22) {
+         fromDate = year + '-01-01';
+         toDate = year + '-12-31';
+      }
+      fromDate = Banana.Converter.toInternalDateFormat(fromDate, "yyyy-mm-dd");
+      toDate = Banana.Converter.toInternalDateFormat(toDate, "yyyy-mm-dd");
+      startDateEdit.setDate(fromDate);
+      toDateEdit.setDate(toDate);
+      blockSignal=false;
+  }
+   dialog.updatePeriods = function () {
+      if (blockSignal)
+         return;
+      periodComboBox.currentIndex = 0;         
+   }
+   dialog.showHelp = function () {
+      Banana.Ui.showHelp("ch.banana.it.invoice.b2b.xml.dialog.ui");
+   }
+   dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
+   dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
+   numeroFatturaRadioButton.clicked.connect(dialog.enableButtons);
+   clienteRadioButton.clicked.connect(dialog.enableButtons);
+   periodAllRadioButton.clicked.connect(dialog, dialog.enableButtons);
+   periodSelectedRadioButton.clicked.connect(dialog, dialog.enableButtons);
+   periodComboBox.currentIndexChanged.connect(dialog, dialog.updateDates);
+   startDateEdit.dateChanged.connect(dialog, dialog.updatePeriods);
+   toDateEdit.dateChanged.connect(dialog, dialog.updatePeriods);
+
+   //Visualizzazione dialogo
+   Banana.application.progressBar.pause();
+   dialog.enableButtons();
+   var dlgResult = dialog.exec();
+   Banana.application.progressBar.resume();
+   if (dlgResult !== 1)
+      return false;
+
+   //Salvataggio dati
+   eFattura.param.selection_invoice = numeroFatturaLineEdit.text;
+   eFattura.param.selection_customer = clienteComboBox.currentText;
+   if (clienteRadioButton.checked)
+      eFattura.param.selection = 1;
+   else
+      eFattura.param.selection = 0;
+   if (stampaXmlRadioButton.checked)
+      eFattura.param.output = 1;
+   else
+      eFattura.param.output = 0;
+
+   eFattura.param.xml.open_file = apriXmlCheckBox.checked;
+   eFattura.param.report.print_header = printHeaderCheckBox.checked;
+   eFattura.param.report.print_logo = printLogoCheckBox.checked;
+   eFattura.param.report.font_family = fontTypeLineEdit.text;
+   eFattura.param.report.color_1 = bgColorLineEdit.text;
+   eFattura.param.report.color_2 = textColorLineEdit.text;
+
+   eFattura.param.xml.progressive = parseInt(numeroProgressivoLineEdit.text);
+   
+   
+   //Groupbox periodo
+   if (periodAllRadioButton.checked) {
+      eFattura.param.periodAll = true;
+      eFattura.param.periodStartDate = accountingData.accountingOpeningDate;
+      eFattura.param.periodEndDate = accountingData.accountingClosureDate;
+   }
+   else {
+      eFattura.param.periodAll = false;
+      eFattura.param.periodStartDate = startDateEdit.text < 10 ? "0" + startDateEdit.text : startDateEdit.text;
+      eFattura.param.periodStartDate = Banana.Converter.toInternalDateFormat(eFattura.param.periodStartDate, "dd/mm/yyyy");
+      eFattura.param.periodEndDate = toDateEdit.text < 10 ? "0" + toDateEdit.text : toDateEdit.text;
+      eFattura.param.periodEndDate = Banana.Converter.toInternalDateFormat(eFattura.param.periodEndDate, "dd/mm/yyyy");
+      eFattura.param.periodSelected = periodComboBox.currentIndex.toString();
+   }
+   
+   var paramToString = JSON.stringify(eFattura.param);
+   Banana.document.setScriptSettings(paramToString);
+   return true;
+}
 
 function EFattura(banDocument) {
    this.banDocument = banDocument;
    if (this.banDocument === undefined)
       this.banDocument = Banana.document;
    this.initParam();
+   this.initDatiContribuente();
+   this.initNamespaces();
+   this.initSchemarefs();
    this.name = "Banana Accounting EFattura";
    this.version = "V1.0";
 
@@ -32,15 +433,15 @@ function EFattura(banDocument) {
 
 }
 
-EFattura.prototype.createReport = function (report, stylesheet, jsonInvoice, param) {
-   setInvoiceStyle(report, stylesheet, param);
-   printInvoice(jsonInvoice, report, param, stylesheet);
+EFattura.prototype.createReport = function (jsonInvoice, report, stylesheet) {
+   printInvoice(jsonInvoice, report, stylesheet, this.param.report);
+   setInvoiceStyle(report, stylesheet, this.param.report);
 }
 
 /*
 * xml instance file
 */
-EFattura.prototype.createXmlInstance = function (xmlDocument, jsonInvoice) {
+EFattura.prototype.createXmlInstance = function (jsonInvoice, xmlDocument) {
 
    if (this.banDocument.table('Accounts')) {
       var tColumnNames = this.banDocument.table('Accounts').columnNames.join(";");
@@ -81,14 +482,14 @@ EFattura.prototype.createXmlInstance = function (xmlDocument, jsonInvoice) {
 
    this.initSchemarefs();
    this.initNamespaces();
-   for (var j in this.param.namespaces) {
-      var prefix = this.param.namespaces[j]['prefix'];
-      var namespace = this.param.namespaces[j]['namespace'];
+   for (var j in this.namespaces) {
+      var prefix = this.namespaces[j]['prefix'];
+      var namespace = this.namespaces[j]['namespace'];
       nodeRoot.setAttribute(prefix, namespace);
    }
    var attrsSchemaLocation = ''
-   for (var j in this.param.schemaRefs) {
-      var schema = this.param.schemaRefs[j];
+   for (var j in this.schemaRefs) {
+      var schema = this.schemaRefs[j];
       if (schema.length > 0) {
          attrsSchemaLocation += " " + schema;
       }
@@ -107,9 +508,7 @@ EFattura.prototype.createXmlInstance = function (xmlDocument, jsonInvoice) {
    var nodeIdCodice = nodeIdTrasmittente.addElement("IdCodice");
    nodeIdCodice.addTextNode((this.datiContribuente.nazione == 'IT' ? this.datiContribuente.codiceFiscale.substring(2) : this.datiContribuente.codiceFiscale));
    var nodeProgressivoInvio = nodeDatiTrasmissione.addElement("ProgressivoInvio");
-   nodeProgressivoInvio.addTextNode(JSON.parse(this.banDocument.getScriptSettings()).progressive);
-
-   nodeProgressivoInvio.addTextNode(this.param.incremental);
+   nodeProgressivoInvio.addTextNode(this.param.xml.progressive);
    var nodeFormatoTrasmissione = nodeDatiTrasmissione.addElement("FormatoTrasmissione");
    nodeFormatoTrasmissione.addTextNode(trasmissionFormat);
    var nodeCodiceDestinatario = nodeDatiTrasmissione.addElement("CodiceDestinatario");
@@ -454,6 +853,28 @@ EFattura.prototype.createXmlInstance = function (xmlDocument, jsonInvoice) {
    //   var nodeAttachment = nodeAllegati.addElement("Attachment");   
 }
 
+EFattura.prototype.getCustomersList = function () {
+   var customersList = [];
+   var journal = this.banDocument.invoicesCustomers();
+   for (var i = 0; i < journal.rowCount; i++) {
+      var tRow = journal.row(i);
+      if (tRow.value('ObjectType') === 'InvoiceDocument') {
+         var customerId = JSON.parse(tRow.value('CounterpartyId'));
+         if (customersList.indexOf(customerId) < 0)
+            customersList.push(customerId);
+      }
+   }
+   var tableAccounts = this.banDocument.table('Accounts');
+   if (tableAccounts) {
+      for (var i = 0; i < customersList.count; i++) {
+         var row = tableAccounts.findRowByValue('Account', customersList[i]);
+         if (row >= 0)
+            customersList[i] = customersList[i] + ' ' + tableAccounts.value(row, "Description");
+      }
+   }
+   return customersList;
+}
+
 EFattura.prototype.getErrorMessage = function (errorId) {
    //Document language
    var lang = this.banDocument.locale;
@@ -514,7 +935,7 @@ EFattura.prototype.initDatiContribuente = function () {
 }
 
 EFattura.prototype.initNamespaces = function () {
-   this.param.namespaces = [
+   this.namespaces = [
       {
          'namespace': 'http://www.w3.org/2001/XMLSchema-instance',
          'prefix': 'xmlns:xsi'
@@ -532,10 +953,35 @@ EFattura.prototype.initNamespaces = function () {
 
 EFattura.prototype.initParam = function () {
    this.param = {};
+   /*output 0=pdf, 1=xml*/
+   this.param.output = 0;
+   /*selection 0=fattura singola, 1=fatture cliente*/
+   this.param.selection = 0;
+   /*invoice number*/
+   this.param.selection_invoice = '';
+   /*customer number*/
+   this.param.selection_customer = '';
+   
+   /* periodSelected 0=none, 1=1.Q, 2=2.Q, 3=3Q, 4=4Q, 10=1.S, 12=2.S, 30=Year */
+   this.param.periodAll = true;
+   this.param.periodSelected = 1;
+   this.param.periodStartDate = '';
+   this.param.periodEndDate = '';
+   
+   this.param.xml = {};
+   this.param.xml.progressive = '1';
+   this.param.xml.open_file = false;
+
+   this.param.report = {};
+   this.param.report.print_header = true;
+   this.param.report.print_logo = true;
+   this.param.report.font_family = '';
+   this.param.report.color_1 = '#337ab7';
+   this.param.report.color_2 = '#ffffff';
 }
 
 EFattura.prototype.initSchemarefs = function () {
-   this.param.schemaRefs = [
+   this.schemaRefs = [
       'http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd'
    ];
 };
@@ -548,11 +994,14 @@ EFattura.prototype.isEmpty = function (obj) {
    return true;
 }
 
-EFattura.prototype.loadData = function (invoiceNumber, customerNumber) {
-   if (invoiceNumber.length <= 0 && customerNumber.length <= 0)
+EFattura.prototype.loadData = function () {
+   if (this.param.selection_invoice.length <= 0 && this.param.selection_customer.length <= 0)
       return {};
 
    var jsonInvoiceList = [];
+
+   var startDate = this.param.periodStartDate;
+   var endDate = this.param.periodEndDate;
    var journal = this.banDocument.invoicesCustomers();
    if (!journal)
       return jsonInvoiceList;
@@ -562,16 +1011,97 @@ EFattura.prototype.loadData = function (invoiceNumber, customerNumber) {
       if (tRow.value('ObjectJSonData') && tRow.value('ObjectType') === 'InvoiceDocument') {
          var jsonData = {};
          jsonData = JSON.parse(tRow.value('ObjectJSonData'));
-         if (invoiceNumber.length > 0 && jsonData.InvoiceDocument.document_info.number === invoiceNumber) {
-            jsonInvoiceList.push(jsonData.InvoiceDocument);
+         var addInvoice = false;
+         if (this.param.selection == 0 && this.param.selection_invoice.length > 0 
+		    && jsonData.InvoiceDocument.document_info.number === this.param.selection_invoice) {
+            addInvoice = true;
          }
-         else if (customerNumber.length > 0 && jsonData.InvoiceDocument.customer_info.number === customerNumber) {
-            jsonInvoiceList.push(jsonData.InvoiceDocument);
+         else if (this.param.selection == 1 && this.param.selection_customer.length > 0 
+		    && jsonData.InvoiceDocument.customer_info.number === this.param.selection_customer) {
+            addInvoice = true;
          }
+         if (jsonData.InvoiceDocument.document_info.date < startDate || jsonData.InvoiceDocument.document_info.date > endDate) {
+            addInvoice = false;
+         }
+         if (addInvoice)
+            jsonInvoiceList.push(jsonData.InvoiceDocument);
       }
    }
 
    return jsonInvoiceList;
+}
+
+EFattura.prototype.readAccountingData = function (param) {
+   if (!param || !this.banDocument)
+      return;
+   //Table FileInfo
+   param.fileInfo = {};
+   param.fileInfo["BasicCurrency"] = "";
+   param.fileInfo["OpeningDate"] = "";
+   param.fileInfo["ClosureDate"] = "";
+   param.fileInfo["CustomersGroup"] = "";
+   param.fileInfo["SuppliersGroup"] = "";
+   param.fileInfo["Address"] = {};
+   param.fileInfo["Address"]["Company"] = "";
+   param.fileInfo["Address"]["Courtesy"] = "";
+   param.fileInfo["Address"]["Name"] = "";
+   param.fileInfo["Address"]["FamilyName"] = "";
+   param.fileInfo["Address"]["Address1"] = "";
+   param.fileInfo["Address"]["Address2"] = "";
+   param.fileInfo["Address"]["Zip"] = "";
+   param.fileInfo["Address"]["City"] = "";
+   param.fileInfo["Address"]["State"] = "";
+   param.fileInfo["Address"]["Country"] = "";
+   param.fileInfo["Address"]["Web"] = "";
+   param.fileInfo["Address"]["Email"] = "";
+   param.fileInfo["Address"]["Phone"] = "";
+   param.fileInfo["Address"]["Mobile"] = "";
+   param.fileInfo["Address"]["Fax"] = "";
+   param.fileInfo["Address"]["FiscalNumber"] = "";
+   param.fileInfo["Address"]["VatNumber"] = "";
+
+   if (this.banDocument.info) {
+      param.fileInfo["BasicCurrency"] = this.banDocument.info("AccountingDataBase", "BasicCurrency");
+      param.fileInfo["OpeningDate"] = this.banDocument.info("AccountingDataBase", "OpeningDate");
+      param.fileInfo["ClosureDate"] = this.banDocument.info("AccountingDataBase", "ClosureDate");
+      if (this.banDocument.info("AccountingDataBase", "CustomersGroup"))
+         param.fileInfo["CustomersGroup"] = this.banDocument.info("AccountingDataBase", "CustomersGroup");
+      if (this.banDocument.info("AccountingDataBase", "SuppliersGroup"))
+         param.fileInfo["SuppliersGroup"] = this.banDocument.info("AccountingDataBase", "SuppliersGroup");
+      param.fileInfo["Address"]["Company"] = this.banDocument.info("AccountingDataBase", "Company");
+      param.fileInfo["Address"]["Courtesy"] = this.banDocument.info("AccountingDataBase", "Courtesy");
+      param.fileInfo["Address"]["Name"] = this.banDocument.info("AccountingDataBase", "Name");
+      param.fileInfo["Address"]["FamilyName"] = this.banDocument.info("AccountingDataBase", "FamilyName");
+      param.fileInfo["Address"]["Address1"] = this.banDocument.info("AccountingDataBase", "Address1");
+      param.fileInfo["Address"]["Address2"] = this.banDocument.info("AccountingDataBase", "Address2");
+      param.fileInfo["Address"]["Zip"] = this.banDocument.info("AccountingDataBase", "Zip");
+      param.fileInfo["Address"]["City"] = this.banDocument.info("AccountingDataBase", "City");
+      param.fileInfo["Address"]["State"] = this.banDocument.info("AccountingDataBase", "State");
+      param.fileInfo["Address"]["Country"] = this.banDocument.info("AccountingDataBase", "Country");
+      param.fileInfo["Address"]["Web"] = this.banDocument.info("AccountingDataBase", "Web");
+      param.fileInfo["Address"]["Email"] = this.banDocument.info("AccountingDataBase", "Email");
+      param.fileInfo["Address"]["Phone"] = this.banDocument.info("AccountingDataBase", "Phone");
+      param.fileInfo["Address"]["Mobile"] = this.banDocument.info("AccountingDataBase", "Mobile");
+      param.fileInfo["Address"]["Fax"] = this.banDocument.info("AccountingDataBase", "Fax");
+      param.fileInfo["Address"]["FiscalNumber"] = this.banDocument.info("AccountingDataBase", "FiscalNumber");
+      param.fileInfo["Address"]["VatNumber"] = this.banDocument.info("AccountingDataBase", "VatNumber");
+   }
+
+   param.accountingOpeningDate = '';
+   param.accountingClosureDate = '';
+   if (param.fileInfo["OpeningDate"])
+      param.accountingOpeningDate = param.fileInfo["OpeningDate"];
+   if (param.fileInfo["ClosureDate"])
+      param.accountingClosureDate = param.fileInfo["ClosureDate"];
+
+   param.openingYear = '';
+   param.closureYear = '';
+   if (param.accountingOpeningDate.length >= 10)
+      param.openingYear = param.accountingOpeningDate.substring(0, 4);
+   if (param.accountingClosureDate.length >= 10)
+      param.closureYear = param.accountingClosureDate.substring(0, 4);
+
+   return param;
 }
 
 EFattura.prototype.saveFile = function (output) {
@@ -592,9 +1122,7 @@ EFattura.prototype.saveFile = function (output) {
    fileName += '_'
 
 
-   var param = JSON.parse(this.banDocument.getScriptSettings());
-
-   var numeroInvio = parseInt(param.progressive).toString(36).toUpperCase();
+   var numeroInvio = parseInt(this.param.xml.progressive).toString(36).toUpperCase();
 
    for (var i = 5; i > numeroInvio.length; i--)
       fileName += '0'
@@ -611,29 +1139,14 @@ EFattura.prototype.saveFile = function (output) {
       if (file.errorString)
          Banana.Ui.showInformation("Write error", file.errorString);
       else {
-         if (param.open_xml)
+         if (this.param.xml.open_file)
             Banana.IO.openUrl(fileName);
-         param.progressive++;
-         this.banDocument.setScriptSettings(JSON.stringify(param))
+         this.param.xml.progressive++;
+         this.banDocument.setScriptSettings(JSON.stringify(this.param))
       }
    }
 
 
-}
-
-EFattura.prototype.saveFileWithName = function (output, fileName) {
-   fileName = Banana.IO.getSaveFileName("Save as", fileName, "XML file (*.xml);;All files (*)")
-   if (fileName.length) {
-      var file = Banana.IO.getLocalFile(fileName)
-      file.codecName = "UTF-8";
-      file.write(output);
-      if (file.errorString) {
-         Banana.Ui.showInformation("Write error", file.errorString);
-      }
-      else {
-         Banana.IO.openUrl(fileName);
-      }
-   }
 }
 
 EFattura.prototype.setDatiContribuente = function (newDatiContribuenti) {
@@ -648,15 +1161,53 @@ EFattura.prototype.setParam = function (param) {
 EFattura.prototype.verifyBananaVersion = function () {
    //From Experimental 06/09/2018
    var requiredVersion = "9.0.3.180906";
-   if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
+   /*if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
       var msg = this.getErrorMessage(this.ID_ERR_VERSION_NOTSUPPORTED, 'it');
       this.banDocument.addMessage(msg, this.ID_ERR_VERSION_NOTSUPPORTED);
       return false;
-   }
+   }*/
    return true;
 }
 
 EFattura.prototype.verifyParam = function () {
    if (!this.param)
       this.param = {};
+      
+   if (!this.param.output)   
+      this.param.output = 0;
+   if (!this.param.selection)   
+      this.param.selection = 0;
+   if (!this.param.selection_invoice)   
+      this.param.selection_invoice = '';
+   if (!this.param.selection_customer)   
+      this.param.selection_customer = '';
+
+   if (!this.param.periodAll)
+      this.param.periodAll = false;
+   if (!this.param.periodSelected)
+      this.param.periodSelected = 1;
+   if (!this.param.periodStartDate)
+      this.param.periodStartDate = '';
+   if (!this.param.periodEndDate)
+      this.param.periodEndDate = '';
+      
+   if (!this.param.xml)   
+      this.param.xml = {};
+   if (!this.param.xml.progressive)   
+      this.param.xml.progressive = '1';
+   if (!this.param.xml.open_file)   
+      this.param.xml.open_file = false;
+
+   if (!this.param.report)   
+      this.param.report = {};
+   if (!this.param.report.print_header)   
+      this.param.report.print_header = true;
+   if (!this.param.report.print_logo)   
+      this.param.report.print_logo = true;
+   if (!this.param.report.font_family)   
+      this.param.report.font_family = '';
+   if (!this.param.report.color_1)   
+      this.param.report.color_1 = '#337ab7';
+   if (!this.param.report.color_2)   
+      this.param.report.color_2 = '#ffffff';
 }

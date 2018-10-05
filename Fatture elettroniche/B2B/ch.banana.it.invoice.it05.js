@@ -250,11 +250,11 @@ function printDocument(jsonInvoice, repDocObj, repStyleObj) {
       param = JSON.parse(savedParam);
       param = verifyParam(param);
    }
-   repDocObj = printInvoice(jsonInvoice, repDocObj, param, repStyleObj);
+   repDocObj = printInvoice(jsonInvoice, repDocObj, repStyleObj, param);
    setInvoiceStyle(repDocObj, repStyleObj, param);
 }
 
-function printInvoice(jsonInvoice, repDocObj, param, repStyleObj) {
+function printInvoice(jsonInvoice, repDocObj, repStyleObj, param) {
    // jsonInvoice can be a json string or a js object
    var invoiceObj = null;
    if (typeof (jsonInvoice) === 'object') {
