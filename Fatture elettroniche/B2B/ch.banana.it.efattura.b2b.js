@@ -128,7 +128,7 @@ function settingsDialog() {
 
 
    //Lettura dati
-   var elencoClienti = eFattura.getCustomersList();
+   var elencoClienti = eFattura.getCustomerList();
    clienteComboBox.addItems(elencoClienti);
    clienteComboBox.currentText = eFattura.param.selection_customer;
 
@@ -853,7 +853,21 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    return nodeRoot;
 }
 
-EFattura.prototype.getCustomersList = function () {
+EFattura.prototype.getInvoiceList = function () {
+   var invoiceList = [];
+   var journal = this.banDocument.invoicesCustomers();
+   for (var i = 0; i < journal.rowCount; i++) {
+      var tRow = journal.row(i);
+      if (tRow.value('ObjectType') === 'InvoiceDocument') {
+         var invoiceId = JSON.parse(tRow.value('Invoice'));
+         if (invoiceList.indexOf(invoiceId) < 0)
+            invoiceList.push(invoiceId);
+      }
+   }
+   return invoiceList;
+}
+
+EFattura.prototype.getCustomerList = function () {
    var customersList = [];
    var journal = this.banDocument.invoicesCustomers();
    for (var i = 0; i < journal.rowCount; i++) {
