@@ -101,6 +101,7 @@ EFatturaTest.prototype.getParam1 = function() {
    //Param1
    //Set params (normally are taken from settings)
    var param = {};
+   param.periodAll = true;
    param.output = 0; //0=report, 1=xml
    param.selection = 0; //0=singola fattura,1=fatture cliente
    param.selection_customer = ''; //no cliente
@@ -156,10 +157,10 @@ EFatturaTest.prototype.printReports = function(idParam) {
 EFatturaTest.prototype.printInvoices = function(fileName, banDocument, param) {
 
    var eFattura = new EFattura(banDocument);
-   var customersList = eFattura.getCustomerList();
-   for (var key in customersList.keys()) {
+   var customerNumberList = eFattura.getCustomerList();
+   for (var i=0; i<customerNumberList.length;i++) {
       param.selection = 1;
-      param.selection_customer = parseInt(key);
+      param.selection_customer = customerNumberList[i];
       eFattura.setParam(param);
 
       this.testLogger.addComment('************************************************************************');
@@ -168,8 +169,8 @@ EFatturaTest.prototype.printInvoices = function(fileName, banDocument, param) {
       var jsonInvoiceList = eFattura.loadData();
 
       //report
-      for (var i = 0; i < jsonInvoiceList.length; i++) {
-         var jsonInvoice = jsonInvoiceList[i];
+      for (var j = 0; j < jsonInvoiceList.length; j++) {
+         var jsonInvoice = jsonInvoiceList[j];
          var report = Banana.Report.newReport('');
          var stylesheet = Banana.Report.newStyleSheet();
          eFattura.createReport(jsonInvoice, report, stylesheet);
@@ -182,20 +183,20 @@ EFatturaTest.prototype.printInvoices = function(fileName, banDocument, param) {
       var nodeRoot = null;
       if (jsonInvoiceList.length>0)
          nodeRoot = eFattura.createXmlHeader(jsonInvoiceList[0], xmlDocument);
-      for (var i = 0; i < jsonInvoiceList.length; i++) {
-         eFattura.createXmlBody(jsonInvoiceList[i], nodeRoot);
+      for (var j = 0; j < jsonInvoiceList.length; j++) {
+         eFattura.createXmlBody(jsonInvoiceList[j], nodeRoot);
       }
       this.testLogger.addComment('************************************************************************');
-      this.testLogger.addXml("Xml document", xmlDocument);
+      this.testLogger.addXml("Xml document", Banana.Xml.save(xmlDocument, true));
    }
 }
 
 EFatturaTest.prototype.printSingleInvoice = function(fileName, banDocument, param) {
    var eFattura = new EFattura(banDocument);
-   var invoiceList = eFattura.getInvoiceList();
-   for (var key in invoiceList.keys()) {
+   var invoiceNumberList = eFattura.getInvoiceList();
+   for (var i=0; i<invoiceNumberList.length;i++) {
       param.selection = 0;
-      param.selection_invoice = key;
+      param.selection_invoice = invoiceNumberList[i];
       eFattura.setParam(param);
 
       this.testLogger.addComment('************************************************************************');
@@ -204,8 +205,8 @@ EFatturaTest.prototype.printSingleInvoice = function(fileName, banDocument, para
       var jsonInvoiceList = eFattura.loadData();
 
       //report
-      for (var i = 0; i < jsonInvoiceList.length; i++) {
-         var jsonInvoice = jsonInvoiceList[i];
+      for (var j = 0; j < jsonInvoiceList.length; j++) {
+         var jsonInvoice = jsonInvoiceList[j];
          var report = Banana.Report.newReport('');
          var stylesheet = Banana.Report.newStyleSheet();
          eFattura.createReport(jsonInvoice, report, stylesheet);
@@ -218,11 +219,11 @@ EFatturaTest.prototype.printSingleInvoice = function(fileName, banDocument, para
       var nodeRoot = null;
       if (jsonInvoiceList.length>0)
          nodeRoot = eFattura.createXmlHeader(jsonInvoiceList[0], xmlDocument);
-      for (var i = 0; i < jsonInvoiceList.length; i++) {
-         eFattura.createXmlBody(jsonInvoiceList[i], nodeRoot);
+      for (var j = 0; j < jsonInvoiceList.length; j++) {
+         eFattura.createXmlBody(jsonInvoiceList[j], nodeRoot);
       }
       this.testLogger.addComment('************************************************************************');
-      this.testLogger.addXml("Xml document", xmlDocument);
+      this.testLogger.addXml("Xml document", Banana.Xml.save(xmlDocument, true));
       
    }
 }
