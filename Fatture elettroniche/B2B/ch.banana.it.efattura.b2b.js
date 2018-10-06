@@ -32,29 +32,7 @@ function exec(inData, options) {
    var eFattura = new EFattura(Banana.document);
    if (!eFattura.verifyBananaVersion())
       return "@Cancel";
-/*
-aggiungere controllo indirizzi
-   if (this.banDocument.table('Accounts')) {
-      var tColumnNames = this.banDocument.table('Accounts').columnNames.join(";");
-      if (tColumnNames.indexOf('Town') > 0 || tColumnNames.indexOf('Company') > 0) {
-         //The address columns are not updated
-         var msg = this.getErrorMessage(this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
-         this.banDocument.addMessage(msg, this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
-         return;
-      }
-      else if (tColumnNames.indexOf('OrganisationName') <= 0) {
-         var msg = this.getErrorMessage(this.ID_ERR_TABLE_ADDRESS_MISSING);
-         this.banDocument.addMessage(msg, this.ID_ERR_TABLE_ADDRESS_MISSING);
-         return;
-      }
-   }
-   else {
-      var msg = this.getErrorMessage(this.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
-      this.banDocument.addMessage(msg, this.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
-      return;
-   }
 
-*/
    var param = {};
    if (inData.length > 0) {
       param = JSON.parse(inData);
@@ -443,10 +421,6 @@ function EFattura(banDocument) {
    this.banDocument = banDocument;
    if (this.banDocument === undefined)
       this.banDocument = Banana.document;
-   this.initParam();
-   this.initDatiContribuente();
-   this.initNamespaces();
-   this.initSchemarefs();
    this.name = "Banana Accounting EFattura";
    this.version = "V1.0";
 
@@ -458,6 +432,10 @@ function EFattura(banDocument) {
    this.ID_ERR_VERSION = "ID_ERR_VERSION";
    this.ID_ERR_VERSION_NOTSUPPORTED = "ID_ERR_VERSION_NOTSUPPORTED";
 
+   this.initParam();
+   this.initDatiContribuente();
+   this.initNamespaces();
+   this.initSchemarefs();
 }
 
 EFattura.prototype.createReport = function (jsonInvoice, report, stylesheet) {
@@ -908,31 +886,31 @@ EFattura.prototype.getErrorMessage = function (errorId) {
       else
          rtnMsg = "The file is not valid. The table Accounts is missing";
    }
-   if (errorId == this.ID_ERR_DATICONTRIBUENTE_NOTFOUND) {
+   else if (errorId == this.ID_ERR_DATICONTRIBUENTE_NOTFOUND) {
       if (lang == 'it')
          rtnMsg = "Dati contribuente non trovati. Installare l'app Iva Italia";
       else
          rtnMsg = "Dati contribuente not found. Please install the app Iva Italia";
    }
-   if (errorId == this.ID_ERR_TABLE_ADDRESS_MISSING) {
+   else if (errorId == this.ID_ERR_TABLE_ADDRESS_MISSING) {
       if (lang == 'it')
          rtnMsg = "Le colonne indirizzi nella tabella Conti sono mancanti. Aggiornare con il comando Strumenti - Aggiungi nuove funzionalità";
       else
          rtnMsg = "Address columns of table Accounts are missing. Please update table Accounts with the command Toos - Add new functionalities";
    }
-   if (errorId == this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED) {
+   else if (errorId == this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED) {
       if (lang == 'it')
          rtnMsg = "Le colonne indirizzi nella tabella Conti sono di una versione non compatibile. Aggiornare con il comando Strumenti - Converti in nuovo file";
       else
          rtnMsg = "Address columns are outdated. Please update them with the command Tools - Convert to new file";
    }
-   if (errorId == this.ID_ERR_VERSION) {
+   else if (errorId == this.ID_ERR_VERSION) {
       if (lang == 'it')
          rtnMsg = "Metodo %1 non supportato. Aggiornare Banana alla versione più recente";
       else
          rtnMsg = "The function %1 is not supported. Please install the latest version of Banana Accounting";
    }
-   if (errorId == this.ID_ERR_VERSION_NOTSUPPORTED) {
+   else if (errorId == this.ID_ERR_VERSION_NOTSUPPORTED) {
       if (lang == 'it')
          rtnMsg = "Lo script non funziona con questa versione di Banana Contabilità. Aggiornare a Banana Experimental";
       else
@@ -1167,7 +1145,6 @@ EFattura.prototype.saveFile = function (output) {
       }
    }
 
-
 }
 
 EFattura.prototype.setDatiContribuente = function (newDatiContribuenti) {
@@ -1183,10 +1160,31 @@ EFattura.prototype.verifyBananaVersion = function () {
    //From Experimental 06/09/2018
    var requiredVersion = "9.0.3.180906";
    if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
-      var msg = this.getErrorMessage(this.ID_ERR_VERSION_NOTSUPPORTED, 'it');
+      var msg = this.getErrorMessage(this.ID_ERR_VERSION_NOTSUPPORTED);
       this.banDocument.addMessage(msg, this.ID_ERR_VERSION_NOTSUPPORTED);
       return false;
    }
+   //controlla se gli indirizzi sono stati impostati
+   if (this.banDocument.table('Accounts')) {
+      var tColumnNames = this.banDocument.table('Accounts').columnNames.join(";");
+      if (tColumnNames.indexOf('Town') > 0 || tColumnNames.indexOf('Company') > 0) {
+         //The address columns are not updated
+         var msg = this.getErrorMessage(this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
+         this.banDocument.addMessage(msg, this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
+         return false;
+      }
+      else if (tColumnNames.indexOf('OrganisationName') <= 0) {
+         var msg = this.getErrorMessage(this.ID_ERR_TABLE_ADDRESS_MISSING);
+         this.banDocument.addMessage(msg, this.ID_ERR_TABLE_ADDRESS_MISSING);
+         return false;
+      }
+   }
+   else {
+      var msg = this.getErrorMessage(this.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
+      this.banDocument.addMessage(msg, this.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
+      return false;
+   }
+
    return true;
 }
 
