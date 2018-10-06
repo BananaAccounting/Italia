@@ -32,7 +32,29 @@ function exec(inData, options) {
    var eFattura = new EFattura(Banana.document);
    if (!eFattura.verifyBananaVersion())
       return "@Cancel";
+/*
+aggiungere controllo indirizzi
+   if (this.banDocument.table('Accounts')) {
+      var tColumnNames = this.banDocument.table('Accounts').columnNames.join(";");
+      if (tColumnNames.indexOf('Town') > 0 || tColumnNames.indexOf('Company') > 0) {
+         //The address columns are not updated
+         var msg = this.getErrorMessage(this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
+         this.banDocument.addMessage(msg, this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
+         return;
+      }
+      else if (tColumnNames.indexOf('OrganisationName') <= 0) {
+         var msg = this.getErrorMessage(this.ID_ERR_TABLE_ADDRESS_MISSING);
+         this.banDocument.addMessage(msg, this.ID_ERR_TABLE_ADDRESS_MISSING);
+         return;
+      }
+   }
+   else {
+      var msg = this.getErrorMessage(this.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
+      this.banDocument.addMessage(msg, this.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
+      return;
+   }
 
+*/
    var param = {};
    if (inData.length > 0) {
       param = JSON.parse(inData);
@@ -73,14 +95,17 @@ function exec(inData, options) {
    }
    else {
       var xmlDocument = Banana.Xml.newDocument("root");
+      var nodeRoot = null;
+      if (jsonInvoiceList.length>0)
+         nodeRoot = eFattura.createXmlHeader(jsonInvoiceList[0], xmlDocument);
       for (var i = 0; i < jsonInvoiceList.length; i++) {
-         eFattura.createXmlInstance(jsonInvoiceList[i], xmlDocument);
-         var output = Banana.Xml.save(xmlDocument);
-         if (output != "@Cancel") {
-            var xslt = "<?xml-stylesheet type='text/xsl' href='fatturaordinaria_v1.2.1.xslt'?>"
-            var outputStyled = output.slice(0, 39) + xslt + output.slice(39)
-            eFattura.saveFile(outputStyled);
-         }
+         eFattura.createXmlBody(jsonInvoiceList[i], nodeRoot);
+      }
+      var output = Banana.Xml.save(xmlDocument);
+      if (output != "@Cancel") {
+         var xslt = "<?xml-stylesheet type='text/xsl' href='fatturaordinaria_v1.2.1.xslt'?>"
+         var outputStyled = output.slice(0, 39) + xslt + output.slice(39)
+         eFattura.saveFile(outputStyled);
       }
    }
 }
@@ -441,29 +466,9 @@ EFattura.prototype.createReport = function (jsonInvoice, report, stylesheet) {
 }
 
 /*
-* xml instance file
+* xml instance file <FatturaElettronicaBody>
 */
-EFattura.prototype.createXmlInstance = function (jsonInvoice, xmlDocument) {
-
-   if (this.banDocument.table('Accounts')) {
-      var tColumnNames = this.banDocument.table('Accounts').columnNames.join(";");
-      if (tColumnNames.indexOf('Town') > 0 || tColumnNames.indexOf('Company') > 0) {
-         //The address columns are not updated
-         var msg = this.getErrorMessage(this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
-         this.banDocument.addMessage(msg, this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
-         return;
-      }
-      else if (tColumnNames.indexOf('OrganisationName') <= 0) {
-         var msg = this.getErrorMessage(this.ID_ERR_TABLE_ADDRESS_MISSING);
-         this.banDocument.addMessage(msg, this.ID_ERR_TABLE_ADDRESS_MISSING);
-         return;
-      }
-   }
-   else {
-      var msg = this.getErrorMessage(this.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
-      this.banDocument.addMessage(msg, this.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
-      return;
-   }
+EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
 
    var invoiceObj = null;
    if (typeof (jsonInvoice) === 'object') {
@@ -471,9 +476,205 @@ EFattura.prototype.createXmlInstance = function (jsonInvoice, xmlDocument) {
    } else if (typeof (jsonInvoice) === 'string') {
       invoiceObj = JSON.parse(jsonInvoice)
    }
-   
-   if (!xmlDocument || !invoiceObj || this.isEmpty(this.datiContribuente))
+
+   if (!nodeRoot || !invoiceObj || this.isEmpty(this.datiContribuente))
       return;
+
+
+   // Body
+   var nodeFatturaElettronicaBody = nodeRoot.addElement("FatturaElettronicaBody");
+   var nodeDatiGenerali = nodeFatturaElettronicaBody.addElement("DatiGenerali");
+   var nodeDatiGeneraliDocumento = nodeDatiGenerali.addElement("DatiGeneraliDocumento");
+   var nodeTipoDocumento = nodeDatiGeneraliDocumento.addElement("TipoDocumento");
+   docType = '';
+   if (!invoiceObj.document_info.doc_type || invoiceObj.document_info.doc_type == '10')
+      docType = 'TD01';
+   if (invoiceObj.document_info.doc_type == '12')
+      docType = 'TD04'
+   nodeTipoDocumento.addTextNode(docType);
+   var nodeDivisa = nodeDatiGeneraliDocumento.addElement("Divisa");
+   nodeDivisa.addTextNode(invoiceObj.document_info.currency);
+   var nodeData = nodeDatiGeneraliDocumento.addElement("Data");
+   nodeData.addTextNode(invoiceObj.document_info.date);
+   var nodeNumero = nodeDatiGeneraliDocumento.addElement("Numero");
+   nodeNumero.addTextNode(invoiceObj.document_info.number);
+   // var nodeDatiRitenuta = nodeDatiGeneraliDocumento.addElement("DatiRitenuta");
+   //   var nodeTipoRitenuta = nodeDatiRitenuta.addElement("TipoRitenuta");
+   //   var nodeImportoRitenuta = nodeDatiRitenuta.addElement("ImportoRitenuta");
+   //   var nodeAliquotaRitenuta = nodeDatiRitenuta.addElement("AliquotaRitenuta");
+   //   var nodeCausalePagamento = nodeDatiRitenuta.addElement("CausalePagamento");
+   // var nodeDatiBollo = nodeDatiGeneraliDocumento.addElement("DatiBollo");
+   //   var nodeBolloVirtuale = nodeDatiBollo.addElement("BolloVirtuale");
+   //   var nodeImportoBollo = nodeDatiBollo.addElement("ImportoBollo");
+   // var nodeDatiCassaPrevidenziale = nodeDatiGeneraliDocumento.addElement("DatiCassaPrevidenziale");
+   //   var nodeTipoCassa = nodeDatiCassaPrevidenziale.addElement("TipoCassa");
+   //   var nodeAlCassa = nodeDatiCassaPrevidenziale.addElement("AlCassa");
+   //   var nodeImportoContributoCassa = nodeDatiCassaPrevidenziale.addElement("ImportoContributoCassa");
+   //   var nodeImponibileCassa = nodeDatiCassaPrevidenziale.addElement("ImponibileCassa");
+   //   var nodeAliquotaIVA = nodeDatiCassaPrevidenziale.addElement("AliquotaIVA");
+   //   var nodeRitenuta = nodeDatiCassaPrevidenziale.addElement("Ritenuta");
+   //   var nodeNatura = nodeDatiCassaPrevidenziale.addElement("Natura");
+   //   var nodeRiferimentoAmministrazione = nodeDatiCassaPrevidenziale.addElement("RiferimentoAmministrazione");
+   // var nodeScontoMaggiorazione = nodeDatiGeneraliDocumento.addElement("ScontoMaggiorazione")
+   //   var nodeTipo = nodeScontoMaggiorazione.addElement("Tipo");
+   //   var nodePercentuale = nodeScontoMaggiorazione.addElement("Percentuale");
+   //   var nodeImporto = nodeScontoMaggiorazione.addElement("Importo");
+   // var nodeImportoTotaleDocumento = nodeDatiGeneraliDocumento.addElement("ImportoTotaleDocumento");
+   // var nodeArrotondamento = nodeDatiGeneraliDocumento.addElement("Arrotondamento");
+   //   var nodeCausale = nodeDatiGeneraliDocumento.addElement("Causale");
+   //   var nodeArt73 = nodeDatiGeneraliDocumento.addElement("Art73");
+   // var nodeDatiOrdineAcquisto = nodeDatiGenerali.addElement("DatiOrdineAcquisto");
+   //   var nodeRiferimentoNumeroLinea = nodeDatiOrdineAcquisto.addElement("RiferimentoNumeroLinea");
+   //   var nodeIdDocumento = nodeDatiOrdineAcquisto.addElement("IdDocumento");
+   //   var nodeData = nodeDatiOrdineAcquisto.addElement("Data");
+   //   var nodeNumItem = nodeDatiOrdineAcquisto.addElement("NumItem");
+   //   var nodeCodiceCommessaConvenzione = nodeDatiOrdineAcquisto.addElement("CodiceCommessaConvenzione");
+   //   var nodeCodiceCUP = nodeDatiOrdineAcquisto.addElement("CodiceCUP");
+   //   var nodeCodiceCIG = nodeDatiOrdineAcquisto.addElement("CodiceCIG");
+   // var nodeDatiContratto = nodeDatiGenerali.addElement("DatiContratto");
+   // var nodeDatiConvenzione = nodeDatiGenerali.addElement("DatiConvenzione");
+   // var nodeDatiRicezione = nodeDatiGenerali.addElement("DatiRicezione");
+   // var nodeDatiFattureCollegate = nodeDatiGenerali.addElement("DatiFattureCollegate");
+   // var nodeDatiSAL = nodeDatiGenerali.addElement("DatiSAL");
+   //   var nodeRiferimentoFase = nodeDatiSAL.addElement("RiferimentoFase");
+   // var nodeDatiDDT = nodeDatiGenerali.addElement("DatiDDT");
+   //   var nodeNumeroDDT = nodeDatiDDT.addElement("NumeroDDT");
+   //   var nodeDataDDT = nodeDatiDDT.addElement("DataDDT");
+   //   var nodeRiferimentoNumeroLinea = nodeDatiDDT.addElement("RiferimentoNumeroLinea");
+   // var nodeDatiTrasporto = nodeDatiGenerali.addElement("DatiTrasporto");
+   //   var nodeDatiAnagraficiVettore = nodeDatiTrasporto.addElement("DatiAnagraficiVettore");
+   //     var nodeIdFiscaleIVA = nodeDatiAnagraficiVettore.addElement("IdFiscaleIVA");
+   //       var nodeIdPaese = nodeIdFiscaleIVA.addElement("IdPaese");
+   //       var nodeIdCodice = nodeIdFiscaleIVA.addElement("IdCodice");
+   //     var nodeCodiceFiscale = nodeDatiAnagraficiVettore.addElement("CodiceFiscale");
+   //     var nodeAnagrafica = nodeDatiAnagraficiVettore.addElement("Anagrafica");
+   //       var nodeDenominazione = nodeAnagrafica.addElement("Denominazione");
+   //       var nodeDenominazione = nodeAnagrafica.addElement("Nome");
+   //       var nodeCognome = nodeAnagrafica.addElement("Cognome");
+   //       var nodeTitolo = nodeAnagrafica.addElement("Titolo");
+   //       var nodCodEORI = nodeAnagrafica.addElement("CodEORI");
+   //     var nodeNumeroLicenzaGuida = nodeDatiAnagraficiVettore.addElement("NumeroLicenzaGuida");
+   //   var nodeMezzoTrasporto = nodeDatiTrasporto.addElement("MezzoTrasporto");
+   //   var nodeCausaleTrasporto = nodeDatiTrasporto.addElement("CausaleTrasporto");
+   //   var nodeNumeroColli = nodeDatiTrasporto.addElement("NumeroColli");
+   // var nodeDescrizione = nodeDatiTrasporto.addElement("Descrizione");
+   // var nodeUnitaMisuraPeso = nodeDatiTrasporto.addElement("UnitaMisuraPeso");
+   // var nodePesoLordo = nodeDatiTrasporto.addElement("PesoLordo");
+   // var nodePesoNetto = nodeDatiTrasporto.addElement("PesoNetto");
+   // var nodeDataOraRitiro = nodeDatiTrasporto.addElement("DataOraRitiro");
+   // var nodeDataInizioTrasporto = nodeDatiTrasporto.addElement("DataInizioTrasporto");
+   // var nodeTipoResa = nodeDatiTrasporto.addElement("TipoResa");
+   // var nodeIndirizzoResa = nodeDatiTrasporto.addElement("IndirizzoResa");
+   //   var nodeIndirizzo = nodeIndirizzoResa.addElement("Indirizzo");
+   //   var nodeNumeroCivico = nodeIndirizzoResa.addElement("NumeroCivico");
+   //   var nodeCAP = nodeIndirizzoResa.addElement("CAP");
+   //   var nodeComune = nodeIndirizzoResa.addElement("Comune");
+   //   var nodeProvincia = nodeIndirizzoResa.addElement("Provincia");
+   //   var nodeNazione = nodeIndirizzoResa.addElement("Nazione");
+   // var nodeDataOraConsegna = nodeDatiTrasporto.addElement("DataOraConsegna");
+   // var nodeFatturaPrincipale = nodeDatiGenerali.addElement("FatturaPrincipale");
+   //   var nodeNumeroFatturaPrincipale = nodeFatturaPrincipale.addElement("NumeroFatturaPrincipale");
+   //   var nodeDataFatturaPrincipale = nodeFatturaPrincipale.addElement("DataFatturaPrincipale");
+   var nodeDatiBeniServizi = nodeFatturaElettronicaBody.addElement("DatiBeniServizi");
+   for (var i = 0; i < invoiceObj.items.length; i++) {
+      var nodeDettaglioLinee = nodeDatiBeniServizi.addElement("DettaglioLinee");
+      var nodeNumeroLinea = nodeDettaglioLinee.addElement("NumeroLinea");
+      nodeNumeroLinea.addTextNode(i + 1);
+      // var nodeTipoCessionePrestazione = nodeDettaglioLinee.addElement("TipoCessionePrestazione");
+      // var nodeCodiceArticolo = nodeDettaglioLinee.addElement("CodiceArticolo");
+      // var nodeCodiceTipo = nodeCodiceArticolo.addElement("CodiceTipo");
+      // var nodeCodiceValore = nodeCodiceArticolo.addElement("CodiceValore");
+      var nodeDescrizione = nodeDettaglioLinee.addElement("Descrizione");
+      nodeDescrizione.addTextNode(invoiceObj.items[i].description);
+      var nodeQuantita = nodeDettaglioLinee.addElement("Quantita");
+      nodeQuantita.addTextNode(invoiceObj.items[i].quantity);
+      // var nodeUnitaMisura = nodeDettaglioLinee.addElement("UnitaMisura");
+      // var nodeDataInizioPeriodo = nodeDettaglioLinee.addElement("DataInizioPeriodo");
+      // var nodeDataFinePeriodo = nodeDettaglioLinee.addElement("DataFinePeriodo");
+      var nodePrezzoUnitario = nodeDettaglioLinee.addElement("PrezzoUnitario");
+      nodePrezzoUnitario.addTextNode(invoiceObj.items[i].unit_price.amount_vat_inclusive)
+      // var nodeScontoMaggiorazione = nodeDettaglioLinee.addElement("ScontoMaggiorazione");
+      //   var nodeTipo = nodeScontoMaggiorazione.addElement("Tipo")
+      //   var nodePercentuale = nodeScontoMaggiorazione.addElement("Percentuale")
+      //   var nodeImporto = nodeScontoMaggiorazione.addElement("Importo")
+      var nodePrezzoTotale = nodeDettaglioLinee.addElement("PrezzoTotale");
+      nodePrezzoTotale.addTextNode(invoiceObj.items[i].total_amount_vat_inclusive);
+      var nodeAliquotaIVA = nodeDettaglioLinee.addElement("AliquotaIVA");
+      nodeAliquotaIVA.addTextNode(invoiceObj.items[i].unit_price.vat_rate);
+      // var nodeRitenuta = nodeDettaglioLinee.addElement("Ritenuta");
+      // var nodeNatura = nodeDettaglioLinee.addElement("Natura");
+      // var nodeRiferimentoAmministrazione = nodeDettaglioLinee.addElement("RiferimentoAmministrazione");
+      // var nodeAltriDatiGestionali = nodeDettaglioLinee.addElement("AltriDatiGestionali");
+      //   var nodeTipoDato = nodeAltriDatiGestionali.addElement("TipoDato");
+      //   var nodeRiferimentoTesto = nodeAltriDatiGestionali.addElement("RiferimentoTesto");
+      //   var nodeRiferimentoNumero = nodeAltriDatiGestionali.addElement("RiferimentoNumero");
+      //   var nodeRiferimentoData = nodeAltriDatiGestionali.addElement("RiferimentoData");
+   }
+   for (var i = 0; i < invoiceObj.billing_info.total_vat_rates.length; i++) {
+      var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
+      var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
+      nodeAliquotaIVA.addTextNode(invoiceObj.billing_info.total_vat_rates[i].vat_rate);
+
+      //nodeAliquotaIVA.addTextNode('22');
+      // var nodeNatura = nodeDatiRiepilogo.addElement("Natura");
+      // var nodeSpeseAccessorie = nodeDatiRiepilogo.addElement("SpeseAccessorie");
+      // var nodeArrotondamento = nodeDatiRiepilogo.addElement("Arrotondamento");
+      var nodeImponibileImporto = nodeDatiRiepilogo.addElement("ImponibileImporto");
+      nodeImponibileImporto.addTextNode(invoiceObj.billing_info.total_vat_rates[i].total_amount_vat_inclusive);
+
+      var nodeImposta = nodeDatiRiepilogo.addElement("Imposta");
+      nodeImposta.addTextNode(invoiceObj.billing_info.total_vat_rates[i].total_vat_amount);
+      // var nodeEsigibilitaIVA = nodeDatiRiepilogo.addElement("EsigibilitaIVA");
+      // var nodeRiferimentoNormativo = nodeDatiRiepilogo.addElement("RiferimentoNormativo");
+      // var nodeDatiVeicoli = nodeFatturaElettronicaBody.addElement("DatiVeicoli");
+      //   var nodeData = nodeDatiVeicoli.addElement("Data");
+      //   var nodeTotalePercorso = nodeDatiVeicoli.addElement("TotalePercorso");
+      // var nodeDatiPagamento = nodeFatturaElettronicaBody.addElement("DatiPagamento");
+      //   var nodeCondizioniPagamento = nodeDatiPagamento.addElement("CondizioniPagamento");
+      //   var nodeDettaglioPagamento = nodeDatiPagamento.addElement("DettaglioPagamento");
+      //     var nodeBeneficiario = nodeDettaglioPagamento.addElement("Beneficiario");
+      //     var nodeModalitaPagamento = nodeDettaglioPagamento.addElement("ModalitaPagamento");
+      //     var nodeDataRiferimentoTerminiPagamento = nodeDettaglioPagamento.addElement("DataRiferimentoTerminiPagamento");
+      //     var nodeGiorniTerminiPagamento = nodeDettaglioPagamento.addElement("GiorniTerminiPagamento");
+      //     var nodeDataScadenzaPagamento = nodeDettaglioPagamento.addElement("DataScadenzaPagamento");
+      //     var nodeImportoPagamento = nodeDettaglioPagamento.addElement("ImportoPagamento");
+      //     var nodeCodUfficioPostale = nodeDettaglioPagamento.addElement("CodUfficioPostale");
+      //     var nodeCognomeQuietanzante = nodeDettaglioPagamento.addElement("CognomeQuietanzante");
+      //     var nodeNomeQuitanzante = nodeDettaglioPagamento.addElement("NomeQuitanzante");
+      //     var nodeCFQuietanzante = nodeDettaglioPagamento.addElement("CFQuietanzante");
+      // var nodeTitoloQuietanzante = nodeDettaglioPagamento.addElement("TitoloQuietanzante");
+      // var nodeIstitutoFinanziario = nodeDettaglioPagamento.addElement("IstitutoFinanziario");
+      // var nodeIBAN = nodeDettaglioPagamento.addElement("IBAN");
+      // var nodeABI = nodeDettaglioPagamento.addElement("ABI");
+      // var nodeCAB = nodeDettaglioPagamento.addElement("CAB");
+      // var nodeBIC = nodeDettaglioPagamento.addElement("BIC");
+      // var nodeScontoPagamentoAnticipato = nodeDettaglioPagamento.addElement("ScontoPagamentoAnticipato");
+      // var nodeDataLimitePagamentoAnticipato = nodeDettaglioPagamento.addElement("DataLimitePagamentoAnticipato");
+      // var nodePenalitaPagamentiRitardati = nodeDettaglioPagamento.addElement("PenalitaPagamentiRitardati");
+      // var nodeDataDecorrenzaPenale = nodeDettaglioPagamento.addElement("DataDecorrenzaPenale");
+      // var nodeCodicePagamento = nodeDettaglioPagamento.addElement("CodicePagamento");
+      // var nodeAllegati = nodeFatturaElettronicaBody.addElement("Allegati");
+      //   var nodeNomeAttachment = nodeAllegati.addElement("NomeAttachment");
+      //   var nodeAlgoritmoCompressione = nodeAllegati.addElement("AlgoritmoCompressione");
+      //   var nodeFormatoAttachment = nodeAllegati.addElement("FormatoAttachment");
+      //   var nodeDescrizioneAttachment = nodeAllegati.addElement("DescrizioneAttachment");
+      //   var nodeAttachment = nodeAllegati.addElement("Attachment");   
+   }
+}
+
+/*
+* xml instance file <FatturaElettronicaHeader>
+*/
+EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
+   var invoiceObj = null;
+   if (typeof (jsonInvoice) === 'object') {
+      invoiceObj = jsonInvoice;
+   } else if (typeof (jsonInvoice) === 'string') {
+      invoiceObj = JSON.parse(jsonInvoice)
+   }
+
+   if (!xmlDocument || !invoiceObj || this.isEmpty(this.datiContribuente))
+      return null;
 
    //<Document>
 
@@ -482,8 +683,6 @@ EFattura.prototype.createXmlInstance = function (jsonInvoice, xmlDocument) {
    nodeRoot.setAttribute("versione", trasmissionFormat);
 
 
-   this.initSchemarefs();
-   this.initNamespaces();
    for (var j in this.namespaces) {
       var prefix = this.namespaces[j]['prefix'];
       var namespace = this.namespaces[j]['namespace'];
@@ -645,8 +844,6 @@ EFattura.prototype.createXmlInstance = function (jsonInvoice, xmlDocument) {
    var nodeNazione = nodeSede.addElement("Nazione");
    nodeNazione.addTextNode(invoiceObj.customer_info.country);
 
-
-
    // var nodeStabileOrganizzazione = nodeCessionarioCommittente.addElement("StabileOrganizzazione");
    //   var nodeNumeroCivico = nodeStabileOrganizzazione.addElement("NumeroCivico");
    //   var nodeCAP = nodeStabileOrganizzazione.addElement("CAP");
@@ -673,186 +870,8 @@ EFattura.prototype.createXmlInstance = function (jsonInvoice, xmlDocument) {
    //       var nodeTitolo = nodeAnagrafica.addElement("Titolo");
    //       var nodCodEORI = nodeAnagrafica.addElement("CodEORI");
    // var nodeSoggettoEmittente = nodeFatturaElettronicaHeader.addElement("SoggettoEmittente");
-
-   // Body
-   var nodeFatturaElettronicaBody = nodeRoot.addElement("FatturaElettronicaBody");
-   var nodeDatiGenerali = nodeFatturaElettronicaBody.addElement("DatiGenerali");
-   var nodeDatiGeneraliDocumento = nodeDatiGenerali.addElement("DatiGeneraliDocumento");
-   var nodeTipoDocumento = nodeDatiGeneraliDocumento.addElement("TipoDocumento");
-   docType = '';
-   if (!invoiceObj.document_info.doc_type || invoiceObj.document_info.doc_type == '10')
-      docType = 'TD01';
-   if (invoiceObj.document_info.doc_type == '12')
-      docType = 'TD04'
-   nodeTipoDocumento.addTextNode(docType);
-   var nodeDivisa = nodeDatiGeneraliDocumento.addElement("Divisa");
-   nodeDivisa.addTextNode(invoiceObj.document_info.currency);
-   var nodeData = nodeDatiGeneraliDocumento.addElement("Data");
-   nodeData.addTextNode(invoiceObj.document_info.date);
-   var nodeNumero = nodeDatiGeneraliDocumento.addElement("Numero");
-   nodeNumero.addTextNode(invoiceObj.document_info.number);
-   // var nodeDatiRitenuta = nodeDatiGeneraliDocumento.addElement("DatiRitenuta");
-   //   var nodeTipoRitenuta = nodeDatiRitenuta.addElement("TipoRitenuta");
-   //   var nodeImportoRitenuta = nodeDatiRitenuta.addElement("ImportoRitenuta");
-   //   var nodeAliquotaRitenuta = nodeDatiRitenuta.addElement("AliquotaRitenuta");
-   //   var nodeCausalePagamento = nodeDatiRitenuta.addElement("CausalePagamento");
-   // var nodeDatiBollo = nodeDatiGeneraliDocumento.addElement("DatiBollo");
-   //   var nodeBolloVirtuale = nodeDatiBollo.addElement("BolloVirtuale");
-   //   var nodeImportoBollo = nodeDatiBollo.addElement("ImportoBollo");
-   // var nodeDatiCassaPrevidenziale = nodeDatiGeneraliDocumento.addElement("DatiCassaPrevidenziale");
-   //   var nodeTipoCassa = nodeDatiCassaPrevidenziale.addElement("TipoCassa");
-   //   var nodeAlCassa = nodeDatiCassaPrevidenziale.addElement("AlCassa");
-   //   var nodeImportoContributoCassa = nodeDatiCassaPrevidenziale.addElement("ImportoContributoCassa");
-   //   var nodeImponibileCassa = nodeDatiCassaPrevidenziale.addElement("ImponibileCassa");
-   //   var nodeAliquotaIVA = nodeDatiCassaPrevidenziale.addElement("AliquotaIVA");
-   //   var nodeRitenuta = nodeDatiCassaPrevidenziale.addElement("Ritenuta");
-   //   var nodeNatura = nodeDatiCassaPrevidenziale.addElement("Natura");
-   //   var nodeRiferimentoAmministrazione = nodeDatiCassaPrevidenziale.addElement("RiferimentoAmministrazione");
-   // var nodeScontoMaggiorazione = nodeDatiGeneraliDocumento.addElement("ScontoMaggiorazione")
-   //   var nodeTipo = nodeScontoMaggiorazione.addElement("Tipo");
-   //   var nodePercentuale = nodeScontoMaggiorazione.addElement("Percentuale");
-   //   var nodeImporto = nodeScontoMaggiorazione.addElement("Importo");
-   // var nodeImportoTotaleDocumento = nodeDatiGeneraliDocumento.addElement("ImportoTotaleDocumento");
-   // var nodeArrotondamento = nodeDatiGeneraliDocumento.addElement("Arrotondamento");
-   //   var nodeCausale = nodeDatiGeneraliDocumento.addElement("Causale");
-   //   var nodeArt73 = nodeDatiGeneraliDocumento.addElement("Art73");
-   // var nodeDatiOrdineAcquisto = nodeDatiGenerali.addElement("DatiOrdineAcquisto");
-   //   var nodeRiferimentoNumeroLinea = nodeDatiOrdineAcquisto.addElement("RiferimentoNumeroLinea");
-   //   var nodeIdDocumento = nodeDatiOrdineAcquisto.addElement("IdDocumento");
-   //   var nodeData = nodeDatiOrdineAcquisto.addElement("Data");
-   //   var nodeNumItem = nodeDatiOrdineAcquisto.addElement("NumItem");
-   //   var nodeCodiceCommessaConvenzione = nodeDatiOrdineAcquisto.addElement("CodiceCommessaConvenzione");
-   //   var nodeCodiceCUP = nodeDatiOrdineAcquisto.addElement("CodiceCUP");
-   //   var nodeCodiceCIG = nodeDatiOrdineAcquisto.addElement("CodiceCIG");
-   // var nodeDatiContratto = nodeDatiGenerali.addElement("DatiContratto");
-   // var nodeDatiConvenzione = nodeDatiGenerali.addElement("DatiConvenzione");
-   // var nodeDatiRicezione = nodeDatiGenerali.addElement("DatiRicezione");
-   // var nodeDatiFattureCollegate = nodeDatiGenerali.addElement("DatiFattureCollegate");
-   // var nodeDatiSAL = nodeDatiGenerali.addElement("DatiSAL");
-   //   var nodeRiferimentoFase = nodeDatiSAL.addElement("RiferimentoFase");
-   // var nodeDatiDDT = nodeDatiGenerali.addElement("DatiDDT");
-   //   var nodeNumeroDDT = nodeDatiDDT.addElement("NumeroDDT");
-   //   var nodeDataDDT = nodeDatiDDT.addElement("DataDDT");
-   //   var nodeRiferimentoNumeroLinea = nodeDatiDDT.addElement("RiferimentoNumeroLinea");
-   // var nodeDatiTrasporto = nodeDatiGenerali.addElement("DatiTrasporto");
-   //   var nodeDatiAnagraficiVettore = nodeDatiTrasporto.addElement("DatiAnagraficiVettore");
-   //     var nodeIdFiscaleIVA = nodeDatiAnagraficiVettore.addElement("IdFiscaleIVA");
-   //       var nodeIdPaese = nodeIdFiscaleIVA.addElement("IdPaese");
-   //       var nodeIdCodice = nodeIdFiscaleIVA.addElement("IdCodice");
-   //     var nodeCodiceFiscale = nodeDatiAnagraficiVettore.addElement("CodiceFiscale");
-   //     var nodeAnagrafica = nodeDatiAnagraficiVettore.addElement("Anagrafica");
-   //       var nodeDenominazione = nodeAnagrafica.addElement("Denominazione");
-   //       var nodeDenominazione = nodeAnagrafica.addElement("Nome");
-   //       var nodeCognome = nodeAnagrafica.addElement("Cognome");
-   //       var nodeTitolo = nodeAnagrafica.addElement("Titolo");
-   //       var nodCodEORI = nodeAnagrafica.addElement("CodEORI");
-   //     var nodeNumeroLicenzaGuida = nodeDatiAnagraficiVettore.addElement("NumeroLicenzaGuida");
-   //   var nodeMezzoTrasporto = nodeDatiTrasporto.addElement("MezzoTrasporto");
-   //   var nodeCausaleTrasporto = nodeDatiTrasporto.addElement("CausaleTrasporto");
-   //   var nodeNumeroColli = nodeDatiTrasporto.addElement("NumeroColli");
-   // var nodeDescrizione = nodeDatiTrasporto.addElement("Descrizione");
-   // var nodeUnitaMisuraPeso = nodeDatiTrasporto.addElement("UnitaMisuraPeso");
-   // var nodePesoLordo = nodeDatiTrasporto.addElement("PesoLordo");
-   // var nodePesoNetto = nodeDatiTrasporto.addElement("PesoNetto");
-   // var nodeDataOraRitiro = nodeDatiTrasporto.addElement("DataOraRitiro");
-   // var nodeDataInizioTrasporto = nodeDatiTrasporto.addElement("DataInizioTrasporto");
-   // var nodeTipoResa = nodeDatiTrasporto.addElement("TipoResa");
-   // var nodeIndirizzoResa = nodeDatiTrasporto.addElement("IndirizzoResa");
-   //   var nodeIndirizzo = nodeIndirizzoResa.addElement("Indirizzo");
-   //   var nodeNumeroCivico = nodeIndirizzoResa.addElement("NumeroCivico");
-   //   var nodeCAP = nodeIndirizzoResa.addElement("CAP");
-   //   var nodeComune = nodeIndirizzoResa.addElement("Comune");
-   //   var nodeProvincia = nodeIndirizzoResa.addElement("Provincia");
-   //   var nodeNazione = nodeIndirizzoResa.addElement("Nazione");
-   // var nodeDataOraConsegna = nodeDatiTrasporto.addElement("DataOraConsegna");
-   // var nodeFatturaPrincipale = nodeDatiGenerali.addElement("FatturaPrincipale");
-   //   var nodeNumeroFatturaPrincipale = nodeFatturaPrincipale.addElement("NumeroFatturaPrincipale");
-   //   var nodeDataFatturaPrincipale = nodeFatturaPrincipale.addElement("DataFatturaPrincipale");
-   var nodeDatiBeniServizi = nodeFatturaElettronicaBody.addElement("DatiBeniServizi");
-   for (var i = 0; i < invoiceObj.items.length; i++) {
-      var nodeDettaglioLinee = nodeDatiBeniServizi.addElement("DettaglioLinee");
-      var nodeNumeroLinea = nodeDettaglioLinee.addElement("NumeroLinea");
-      nodeNumeroLinea.addTextNode(i + 1);
-      // var nodeTipoCessionePrestazione = nodeDettaglioLinee.addElement("TipoCessionePrestazione");
-      // var nodeCodiceArticolo = nodeDettaglioLinee.addElement("CodiceArticolo");
-      // var nodeCodiceTipo = nodeCodiceArticolo.addElement("CodiceTipo");
-      // var nodeCodiceValore = nodeCodiceArticolo.addElement("CodiceValore");
-      var nodeDescrizione = nodeDettaglioLinee.addElement("Descrizione");
-      nodeDescrizione.addTextNode(invoiceObj.items[i].description);
-      var nodeQuantita = nodeDettaglioLinee.addElement("Quantita");
-      nodeQuantita.addTextNode(invoiceObj.items[i].quantity);
-      // var nodeUnitaMisura = nodeDettaglioLinee.addElement("UnitaMisura");
-      // var nodeDataInizioPeriodo = nodeDettaglioLinee.addElement("DataInizioPeriodo");
-      // var nodeDataFinePeriodo = nodeDettaglioLinee.addElement("DataFinePeriodo");
-      var nodePrezzoUnitario = nodeDettaglioLinee.addElement("PrezzoUnitario");
-      nodePrezzoUnitario.addTextNode(invoiceObj.items[i].unit_price.amount_vat_inclusive)
-      // var nodeScontoMaggiorazione = nodeDettaglioLinee.addElement("ScontoMaggiorazione");
-      //   var nodeTipo = nodeScontoMaggiorazione.addElement("Tipo")
-      //   var nodePercentuale = nodeScontoMaggiorazione.addElement("Percentuale")
-      //   var nodeImporto = nodeScontoMaggiorazione.addElement("Importo")
-      var nodePrezzoTotale = nodeDettaglioLinee.addElement("PrezzoTotale");
-      nodePrezzoTotale.addTextNode(invoiceObj.items[i].total_amount_vat_inclusive);
-      var nodeAliquotaIVA = nodeDettaglioLinee.addElement("AliquotaIVA");
-      nodeAliquotaIVA.addTextNode(invoiceObj.items[i].unit_price.vat_rate);
-      // var nodeRitenuta = nodeDettaglioLinee.addElement("Ritenuta");
-      // var nodeNatura = nodeDettaglioLinee.addElement("Natura");
-      // var nodeRiferimentoAmministrazione = nodeDettaglioLinee.addElement("RiferimentoAmministrazione");
-      // var nodeAltriDatiGestionali = nodeDettaglioLinee.addElement("AltriDatiGestionali");
-      //   var nodeTipoDato = nodeAltriDatiGestionali.addElement("TipoDato");
-      //   var nodeRiferimentoTesto = nodeAltriDatiGestionali.addElement("RiferimentoTesto");
-      //   var nodeRiferimentoNumero = nodeAltriDatiGestionali.addElement("RiferimentoNumero");
-      //   var nodeRiferimentoData = nodeAltriDatiGestionali.addElement("RiferimentoData");
-   }
-   var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
-   var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
-   // nodeAliquotaIVA.addTextNode(invoiceObj.billing_info.total_vat_rates.vat_rate);
-
-   nodeAliquotaIVA.addTextNode(invoiceObj.billing_info.total_vat_rates[0].vat_rate);
-
-   //nodeAliquotaIVA.addTextNode('22');
-   // var nodeNatura = nodeDatiRiepilogo.addElement("Natura");
-   // var nodeSpeseAccessorie = nodeDatiRiepilogo.addElement("SpeseAccessorie");
-   // var nodeArrotondamento = nodeDatiRiepilogo.addElement("Arrotondamento");
-   var nodeImponibileImporto = nodeDatiRiepilogo.addElement("ImponibileImporto");
-   nodeImponibileImporto.addTextNode(invoiceObj.billing_info.total_vat_rates[0].total_amount_vat_inclusive);
-
-   var nodeImposta = nodeDatiRiepilogo.addElement("Imposta");
-   nodeImposta.addTextNode(invoiceObj.billing_info.total_vat_rates[0].total_vat_amount);
-   // var nodeEsigibilitaIVA = nodeDatiRiepilogo.addElement("EsigibilitaIVA");
-   // var nodeRiferimentoNormativo = nodeDatiRiepilogo.addElement("RiferimentoNormativo");
-   // var nodeDatiVeicoli = nodeFatturaElettronicaBody.addElement("DatiVeicoli");
-   //   var nodeData = nodeDatiVeicoli.addElement("Data");
-   //   var nodeTotalePercorso = nodeDatiVeicoli.addElement("TotalePercorso");
-   // var nodeDatiPagamento = nodeFatturaElettronicaBody.addElement("DatiPagamento");
-   //   var nodeCondizioniPagamento = nodeDatiPagamento.addElement("CondizioniPagamento");
-   //   var nodeDettaglioPagamento = nodeDatiPagamento.addElement("DettaglioPagamento");
-   //     var nodeBeneficiario = nodeDettaglioPagamento.addElement("Beneficiario");
-   //     var nodeModalitaPagamento = nodeDettaglioPagamento.addElement("ModalitaPagamento");
-   //     var nodeDataRiferimentoTerminiPagamento = nodeDettaglioPagamento.addElement("DataRiferimentoTerminiPagamento");
-   //     var nodeGiorniTerminiPagamento = nodeDettaglioPagamento.addElement("GiorniTerminiPagamento");
-   //     var nodeDataScadenzaPagamento = nodeDettaglioPagamento.addElement("DataScadenzaPagamento");
-   //     var nodeImportoPagamento = nodeDettaglioPagamento.addElement("ImportoPagamento");
-   //     var nodeCodUfficioPostale = nodeDettaglioPagamento.addElement("CodUfficioPostale");
-   //     var nodeCognomeQuietanzante = nodeDettaglioPagamento.addElement("CognomeQuietanzante");
-   //     var nodeNomeQuitanzante = nodeDettaglioPagamento.addElement("NomeQuitanzante");
-   //     var nodeCFQuietanzante = nodeDettaglioPagamento.addElement("CFQuietanzante");
-   // var nodeTitoloQuietanzante = nodeDettaglioPagamento.addElement("TitoloQuietanzante");
-   // var nodeIstitutoFinanziario = nodeDettaglioPagamento.addElement("IstitutoFinanziario");
-   // var nodeIBAN = nodeDettaglioPagamento.addElement("IBAN");
-   // var nodeABI = nodeDettaglioPagamento.addElement("ABI");
-   // var nodeCAB = nodeDettaglioPagamento.addElement("CAB");
-   // var nodeBIC = nodeDettaglioPagamento.addElement("BIC");
-   // var nodeScontoPagamentoAnticipato = nodeDettaglioPagamento.addElement("ScontoPagamentoAnticipato");
-   // var nodeDataLimitePagamentoAnticipato = nodeDettaglioPagamento.addElement("DataLimitePagamentoAnticipato");
-   // var nodePenalitaPagamentiRitardati = nodeDettaglioPagamento.addElement("PenalitaPagamentiRitardati");
-   // var nodeDataDecorrenzaPenale = nodeDettaglioPagamento.addElement("DataDecorrenzaPenale");
-   // var nodeCodicePagamento = nodeDettaglioPagamento.addElement("CodicePagamento");
-   // var nodeAllegati = nodeFatturaElettronicaBody.addElement("Allegati");
-   //   var nodeNomeAttachment = nodeAllegati.addElement("NomeAttachment");
-   //   var nodeAlgoritmoCompressione = nodeAllegati.addElement("AlgoritmoCompressione");
-   //   var nodeFormatoAttachment = nodeAllegati.addElement("FormatoAttachment");
-   //   var nodeDescrizioneAttachment = nodeAllegati.addElement("DescrizioneAttachment");
-   //   var nodeAttachment = nodeAllegati.addElement("Attachment");   
+ 
+   return nodeRoot;
 }
 
 EFattura.prototype.getCustomersList = function () {
