@@ -49,6 +49,9 @@ function exec(inData, options) {
    eFattura.setParam(param);
    var jsonInvoiceList = eFattura.loadData();
    
+   if (jsonInvoiceList.length<=0)
+      return;
+      
    if (eFattura.param.output == 0) {
       var docs = [];
       var styles = [];
@@ -66,9 +69,6 @@ function exec(inData, options) {
       }
       if (docs.length) {
          Banana.Report.preview("", docs, styles);
-      }
-      else {
-         Banana.document.addMessage("Fattura non creata. Si prega di controllare se i conti appartengono al gruppo clienti")
       }
    }
    else {
@@ -427,6 +427,7 @@ function EFattura(banDocument) {
    /* errors id*/
    this.ID_ERR_ACCOUNTING_TYPE_NOTVALID = "ID_ERR_ACCOUNTING_TYPE_NOTVALID";
    this.ID_ERR_DATICONTRIBUENTE_NOTFOUND = "ID_ERR_DATICONTRIBUENTE_NOTFOUND";
+   this.ID_ERR_NOINVOICE = "ID_ERR_NOINVOICE";
    this.ID_ERR_TABLE_ADDRESS_MISSING = "ID_ERR_TABLE_ADDRESS_MISSING";
    this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED = "ID_ERR_TABLE_ADDRESS_NOT_UPDATED";
    this.ID_ERR_VERSION = "ID_ERR_VERSION";
@@ -892,6 +893,12 @@ EFattura.prototype.getErrorMessage = function (errorId) {
       else
          rtnMsg = "Dati contribuente not found. Please install the app Iva Italia";
    }
+   else if (errorId == this.ID_ERR_NOINVOICE) {
+      if (lang == 'it')
+         rtnMsg = "Nessuna fattura trovata. Controllare se i conti appartengono al gruppo clienti e il periodo impostato è corretto";
+      else
+         rtnMsg = "No invoice found. Please check if accounts belong to customer's group and if the period is correct";
+   }
    else if (errorId == this.ID_ERR_TABLE_ADDRESS_MISSING) {
       if (lang == 'it')
          rtnMsg = "Le colonne indirizzi nella tabella Conti sono mancanti. Aggiornare con il comando Strumenti - Aggiungi nuove funzionalità";
@@ -1025,6 +1032,11 @@ EFattura.prototype.loadData = function () {
          if (addInvoice)
             jsonInvoiceList.push(jsonData.InvoiceDocument);
       }
+   }
+
+   if (jsonInvoiceList.length<=0) {
+      var msg = this.getErrorMessage(this.ID_ERR_NOINVOICE);
+      this.banDocument.addMessage(msg, this.ID_ERR_NOINVOICE);
    }
 
    return jsonInvoiceList;
