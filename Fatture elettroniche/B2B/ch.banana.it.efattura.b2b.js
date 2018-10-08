@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.efattura.b2b
 // @api = 1.0
-// @pubdate = 2018-10-05
+// @pubdate = 2018-10-08
 // @publisher = Banana.ch SA
 // @description = [BETA] Fattura elettronica...
 // @description.it = [BETA] Fattura elettronica...
@@ -97,7 +97,7 @@ function settingsDialog() {
       eFattura.setParam(JSON.parse(savedParam));
    }
 
-   var dialog = Banana.Ui.createUi("ch.banana.it.eFattura.b2b.dialog.ui");
+   var dialog = Banana.Ui.createUi("ch.banana.it.efattura.b2b.dialog.ui");
    var numeroFatturaRadioButton = dialog.tabWidget.findChild('numeroFatturaRadioButton');
    var clienteRadioButton = dialog.tabWidget.findChild('clienteRadioButton');
    var numeroFatturaLineEdit = dialog.tabWidget.findChild('numeroFatturaLineEdit');
@@ -137,16 +137,13 @@ function settingsDialog() {
    else
       numeroFatturaRadioButton.checked = true;
 
+   numeroFatturaLineEdit.text = eFattura.param.selection_invoice;
    var selectedRow = parseInt(Banana.document.cursor.rowNr);
-   var noFattura = '';
-   if (Banana.document.table('Transactions') && Banana.document.table('Transactions').rowCount > selectedRow) {
-      noFattura = Banana.document.table('Transactions').value(selectedRow, "DocInvoice");
+   if (selectedRow && Banana.document.table('Transactions') && Banana.document.table('Transactions').rowCount > selectedRow) {
+      var noFattura = Banana.document.table('Transactions').value(selectedRow, "DocInvoice");
+      if (noFattura)
+         numeroFatturaLineEdit.text = noFattura;
    }
-   if (!noFattura)
-      noFattura = '';
-   numeroFatturaLineEdit.text = noFattura;
-   if (noFattura.length <= 0)
-      numeroFatturaLineEdit.text = eFattura.param.selection_invoice;
 
    numeroProgressivoLineEdit.text = eFattura.param.xml.progressive || '0';
 
@@ -355,7 +352,7 @@ function settingsDialog() {
       periodComboBox.currentIndex = 0;         
    }
    dialog.showHelp = function () {
-      Banana.Ui.showHelp("ch.banana.it.invoice.b2b.xml.dialog.ui");
+      Banana.Ui.showHelp("ch.banana.it.efattura.b2b.dialog.ui");
    }
    dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
    dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
@@ -423,6 +420,8 @@ function EFattura(banDocument) {
       this.banDocument = Banana.document;
    this.name = "Banana Accounting EFattura";
    this.version = "V1.0";
+   this.helpId = "ch.banana.it.efattura.b2b.js";
+
 
    /* errors id*/
    this.ID_ERR_ACCOUNTING_TYPE_NOTVALID = "ID_ERR_ACCOUNTING_TYPE_NOTVALID";
@@ -434,7 +433,6 @@ function EFattura(banDocument) {
    this.ID_ERR_VERSION_NOTSUPPORTED = "ID_ERR_VERSION_NOTSUPPORTED";
 
    this.initParam();
-   this.initDatiContribuente();
    this.initNamespaces();
    this.initSchemarefs();
 }
@@ -858,8 +856,8 @@ EFattura.prototype.getInvoiceList = function () {
    var journal = this.banDocument.invoicesCustomers();
    for (var i = 0; i < journal.rowCount; i++) {
       var tRow = journal.row(i);
-      if (tRow.value('ObjectType') === 'InvoiceDocument') {
-         var invoiceId = JSON.parse(tRow.value('Invoice'));
+      if (tRow.value('ObjectType') === 'InvoiceDocument' && tRow.value('Invoice').length > 0) {
+         var invoiceId = tRow.value('Invoice').toString();
          if (invoiceList.indexOf(invoiceId) < 0)
             invoiceList.push(invoiceId);
       }
@@ -872,8 +870,8 @@ EFattura.prototype.getCustomerList = function () {
    var journal = this.banDocument.invoicesCustomers();
    for (var i = 0; i < journal.rowCount; i++) {
       var tRow = journal.row(i);
-      if (tRow.value('ObjectType') === 'InvoiceDocument') {
-         var customerId = JSON.parse(tRow.value('CounterpartyId'));
+      if (tRow.value('ObjectType') === 'InvoiceDocument' && tRow.value('CounterpartyId').length > 0) {
+         var customerId = tRow.value('CounterpartyId').toString();
          if (customersList.indexOf(customerId) < 0)
             customersList.push(customerId);
       }
@@ -903,9 +901,9 @@ EFattura.prototype.getErrorMessage = function (errorId) {
    }
    else if (errorId == this.ID_ERR_DATICONTRIBUENTE_NOTFOUND) {
       if (lang == 'it')
-         rtnMsg = "Dati contribuente non trovati. Installare l'app Iva Italia";
+         rtnMsg = "Dati contribuente non definiti. Impostare con il comando dell'app 'Dati contribuente'";
       else
-         rtnMsg = "Dati contribuente not found. Please install the app Iva Italia";
+         rtnMsg = "Dati contribuente not found. Please use the app command 'Dati contribuente'";
    }
    else if (errorId == this.ID_ERR_NOINVOICE) {
       if (lang == 'it')
@@ -949,7 +947,7 @@ EFattura.prototype.initDatiContribuente = function () {
    }
    else {
       var msg = this.getErrorMessage(this.ID_ERR_DATICONTRIBUENTE_NOTFOUND);
-      this.banDocument.addMessage(msg, this.ID_ERR_DATICONTRIBUENTE_NOTFOUND);
+      this.banDocument.addMessage(msg, this.helpId + "::" + this.ID_ERR_DATICONTRIBUENTE_NOTFOUND);
    }
    return false;
 }
@@ -1020,6 +1018,8 @@ EFattura.prototype.loadData = function () {
       return jsonInvoiceList;
    else if (this.param.selection == 1 && this.param.selection_customer.length <= 0)
       return jsonInvoiceList;
+   if (!this.initDatiContribuente())
+      return jsonInvoiceList;
 
    var skipPeriod = this.param.periodAll;
    var startDate = this.param.periodStartDate;
@@ -1035,16 +1035,13 @@ EFattura.prototype.loadData = function () {
          jsonData = JSON.parse(tRow.value('ObjectJSonData'));
          var addInvoice = false;
          if (parseInt(this.param.selection) === 0 && jsonData.InvoiceDocument.document_info.number == this.param.selection_invoice) {
-            Banana.console.debug(this.param.selection + " " + this.param.selection_invoice);
             addInvoice = true;
          }
          if (parseInt(this.param.selection) === 1 && jsonData.InvoiceDocument.customer_info.number == this.param.selection_customer) {
-            Banana.console.debug(this.param.selection + " " + this.param.selection_customer + " " + jsonData.InvoiceDocument.document_info.number);
             addInvoice = true;
          }
          if (!skipPeriod) {
             if (jsonData.InvoiceDocument.document_info.date < startDate || jsonData.InvoiceDocument.document_info.date > endDate) {
-               Banana.console.debug("period out of range");
                addInvoice = false;
             }
          }
@@ -1056,7 +1053,7 @@ EFattura.prototype.loadData = function () {
 
    if (jsonInvoiceList.length<=0) {
       var msg = this.getErrorMessage(this.ID_ERR_NOINVOICE);
-      this.banDocument.addMessage(msg, this.ID_ERR_NOINVOICE);
+      this.banDocument.addMessage(msg, this.helpId + "::" + this.ID_ERR_NOINVOICE);
    }
 
    return jsonInvoiceList;
@@ -1193,7 +1190,7 @@ EFattura.prototype.verifyBananaVersion = function () {
    var requiredVersion = "9.0.3.180906";
    if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
       var msg = this.getErrorMessage(this.ID_ERR_VERSION_NOTSUPPORTED);
-      this.banDocument.addMessage(msg, this.ID_ERR_VERSION_NOTSUPPORTED);
+      this.banDocument.addMessage(msg, this.helpId + "::" + this.ID_ERR_VERSION_NOTSUPPORTED);
       return false;
    }
    //controlla se gli indirizzi sono stati impostati
@@ -1202,18 +1199,18 @@ EFattura.prototype.verifyBananaVersion = function () {
       if (tColumnNames.indexOf('Town') > 0 || tColumnNames.indexOf('Company') > 0) {
          //The address columns are not updated
          var msg = this.getErrorMessage(this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
-         this.banDocument.addMessage(msg, this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
+         this.banDocument.addMessage(msg, this.helpId + "::" + this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED);
          return false;
       }
       else if (tColumnNames.indexOf('OrganisationName') <= 0) {
          var msg = this.getErrorMessage(this.ID_ERR_TABLE_ADDRESS_MISSING);
-         this.banDocument.addMessage(msg, this.ID_ERR_TABLE_ADDRESS_MISSING);
+         this.banDocument.addMessage(msg, this.helpId + "::" + this.ID_ERR_TABLE_ADDRESS_MISSING);
          return false;
       }
    }
    else {
       var msg = this.getErrorMessage(this.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
-      this.banDocument.addMessage(msg, this.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
+      this.banDocument.addMessage(msg, this.helpId + "::" + this.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
       return false;
    }
 
