@@ -97,6 +97,15 @@ EFatturaTest.prototype.test1 = function() {
    this.testLogger = Test.logger;
 }
 
+EFatturaTest.prototype.test1 = function() {
+   this.testLogger = Test.logger.newGroupLogger("test2");
+   this.testLogger.addKeyValue("EFatturaTest", "test2");
+   this.testLogger.addComment("Test ch.banana.it.efattura PARAM2");
+   this.printReports(2);
+   this.testLogger.close();
+   this.testLogger = Test.logger;
+}
+
 EFatturaTest.prototype.getParam1 = function() {
    //Param1
    //Set params (normally are taken from settings)
@@ -118,6 +127,34 @@ EFatturaTest.prototype.getParam1 = function() {
    param.report.color_1 = '#337ab7';
    param.report.color_2 = '#ffffff';
 
+   param.title = "TEST1: STAMPA DI UNA SINGOLA FATTURA - PERIODO COMPLETO";
+
+   return param;
+}
+
+EFatturaTest.prototype.getParam2 = function() {
+   //Param1
+   //Set params (normally are taken from settings)
+   var param = {};
+   param.periodAll = true;
+   param.output = 0; //0=report, 1=xml
+   param.selection = 1; //0=singola fattura,1=fatture cliente
+   param.selection_customer = ''; //no cliente
+   param.selection_invoice = ''; //no fattura
+   
+   param.xml = {};
+   param.xml.progressive = '1';
+   param.xml.open_file = false;
+
+   param.report = {};
+   param.report.print_header = true;
+   param.report.print_logo = true;
+   param.report.font_family = '';
+   param.report.color_1 = '#337ab7';
+   param.report.color_2 = '#ffffff';
+   
+   param.title = "TEST2: STAMPA DI PIÙ FATTURE PER CLIENTE - PERIODO COMPLETO";
+
    return param;
 }
 
@@ -132,16 +169,19 @@ EFatturaTest.prototype.printReports = function(idParam) {
          var param = {};
          if (parseInt(idParam) === 1)
             param = this.getParam1();
+         else if (parseInt(idParam) === 2)
+            param = this.getParam2();
          //imposta anno nei parametri
          //var nAnno = banDocument.info("AccountingDataBase", "ClosureDate");
          //if (nAnno.length >= 10)
          //   param.annoSelezionato = nAnno.substring(0, 4);
          //this.testLogger.addInfo("ANNO", param.annoSelezionato);
-         this.testLogger.addInfo("FILENAME",  fileName.toUpperCase());
-         if (param.selection == 0)
-            this.printSingleInvoice(fileName, banDocument, param);
-         else if (param.selection == 1)
-            this.printInvoices(fileName, banDocument, param);
+         this.testLogger.addInfo("FILENAMEX",  fileName.toUpperCase());
+         this.testLogger.addInfo("TITLE", param.title);
+         if (parseInt(param.selection) === 0)
+            this.printInvoice(fileName, banDocument, param);
+         else if (parseInt(param.selection) === 1)
+            this.printCustomerInvoices(fileName, banDocument, param);
       } else {
          this.testLogger.addFatalError("File not found: " + fileName);
       }
@@ -154,7 +194,7 @@ EFatturaTest.prototype.printReports = function(idParam) {
    this.progressBar.finish();
 }
 
-EFatturaTest.prototype.printInvoices = function(fileName, banDocument, param) {
+EFatturaTest.prototype.printCustomerInvoices = function(fileName, banDocument, param) {
 
    var eFattura = new EFattura(banDocument);
    var customerNumberList = eFattura.getCustomerList();
@@ -168,6 +208,17 @@ EFatturaTest.prototype.printInvoices = function(fileName, banDocument, param) {
 
       var jsonInvoiceList = eFattura.loadData();
 
+      //xml
+      var xmlDocument = Banana.Xml.newDocument("root");
+      var nodeRoot = null;
+      if (jsonInvoiceList.length>0)
+         nodeRoot = eFattura.createXmlHeader(jsonInvoiceList[0], xmlDocument);
+      for (var j = 0; j < jsonInvoiceList.length; j++) {
+         eFattura.createXmlBody(jsonInvoiceList[j], nodeRoot);
+      }
+      this.testLogger.addComment('************************************************************************');
+      this.testLogger.addXml("Xml document", Banana.Xml.save(xmlDocument, false));
+
       //report
       for (var j = 0; j < jsonInvoiceList.length; j++) {
          var jsonInvoice = jsonInvoiceList[j];
@@ -178,20 +229,11 @@ EFatturaTest.prototype.printInvoices = function(fileName, banDocument, param) {
          this.testLogger.addReport("Report", report);
       }
 
-      //xml
-      var xmlDocument = Banana.Xml.newDocument("root");
-      var nodeRoot = null;
-      if (jsonInvoiceList.length>0)
-         nodeRoot = eFattura.createXmlHeader(jsonInvoiceList[0], xmlDocument);
-      for (var j = 0; j < jsonInvoiceList.length; j++) {
-         eFattura.createXmlBody(jsonInvoiceList[j], nodeRoot);
-      }
-      this.testLogger.addComment('************************************************************************');
-      this.testLogger.addXml("Xml document", Banana.Xml.save(xmlDocument, true));
    }
 }
 
-EFatturaTest.prototype.printSingleInvoice = function(fileName, banDocument, param) {
+EFatturaTest.prototype.printInvoice = function(fileName, banDocument, param) {
+
    var eFattura = new EFattura(banDocument);
    var invoiceNumberList = eFattura.getInvoiceList();
    for (var i=0; i<invoiceNumberList.length;i++) {
@@ -204,16 +246,6 @@ EFatturaTest.prototype.printSingleInvoice = function(fileName, banDocument, para
 
       var jsonInvoiceList = eFattura.loadData();
 
-      //report
-      for (var j = 0; j < jsonInvoiceList.length; j++) {
-         var jsonInvoice = jsonInvoiceList[j];
-         var report = Banana.Report.newReport('');
-         var stylesheet = Banana.Report.newStyleSheet();
-         eFattura.createReport(jsonInvoice, report, stylesheet);
-         this.testLogger.addComment('************************************************************************');
-         this.testLogger.addReport("Report", report);
-      }
-      
       //xml
       var xmlDocument = Banana.Xml.newDocument("root");
       var nodeRoot = null;
@@ -223,7 +255,17 @@ EFatturaTest.prototype.printSingleInvoice = function(fileName, banDocument, para
          eFattura.createXmlBody(jsonInvoiceList[j], nodeRoot);
       }
       this.testLogger.addComment('************************************************************************');
-      this.testLogger.addXml("Xml document", Banana.Xml.save(xmlDocument, true));
+      this.testLogger.addXml("Xml document", Banana.Xml.save(xmlDocument, false));
+
+      //report
+      for (var j = 0; j < jsonInvoiceList.length; j++) {
+         var jsonInvoice = jsonInvoiceList[j];
+         var report = Banana.Report.newReport('');
+         var stylesheet = Banana.Report.newStyleSheet();
+         eFattura.createReport(jsonInvoice, report, stylesheet);
+         this.testLogger.addComment('************************************************************************');
+         this.testLogger.addReport("Report", report);
+      }
       
    }
 }

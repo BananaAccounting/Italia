@@ -1015,36 +1015,42 @@ EFattura.prototype.isEmpty = function (obj) {
 }
 
 EFattura.prototype.loadData = function () {
-   if (this.param.selection_invoice.length <= 0 && this.param.selection_customer.length <= 0)
-      return {};
-
    var jsonInvoiceList = [];
+   if (this.param.selection == 0 && this.param.selection_invoice.length <= 0)
+      return jsonInvoiceList;
+   else if (this.param.selection == 1 && this.param.selection_customer.length <= 0)
+      return jsonInvoiceList;
 
+   var skipPeriod = this.param.periodAll;
    var startDate = this.param.periodStartDate;
    var endDate = this.param.periodEndDate;
    var journal = this.banDocument.invoicesCustomers();
    if (!journal)
       return jsonInvoiceList;
-
+  
    for (var i = 0; i < journal.rowCount; i++) {
       var tRow = journal.row(i);
       if (tRow.value('ObjectJSonData') && tRow.value('ObjectType') === 'InvoiceDocument') {
          var jsonData = {};
          jsonData = JSON.parse(tRow.value('ObjectJSonData'));
          var addInvoice = false;
-         if (this.param.selection == 0 && this.param.selection_invoice.length > 0 
-		    && jsonData.InvoiceDocument.document_info.number === this.param.selection_invoice) {
+         if (parseInt(this.param.selection) === 0 && jsonData.InvoiceDocument.document_info.number == this.param.selection_invoice) {
+            Banana.console.debug(this.param.selection + " " + this.param.selection_invoice);
             addInvoice = true;
          }
-         else if (this.param.selection == 1 && this.param.selection_customer.length > 0 
-		    && jsonData.InvoiceDocument.customer_info.number === this.param.selection_customer) {
+         if (parseInt(this.param.selection) === 1 && jsonData.InvoiceDocument.customer_info.number == this.param.selection_customer) {
+            Banana.console.debug(this.param.selection + " " + this.param.selection_customer + " " + jsonData.InvoiceDocument.document_info.number);
             addInvoice = true;
          }
-         if (jsonData.InvoiceDocument.document_info.date < startDate || jsonData.InvoiceDocument.document_info.date > endDate) {
-            addInvoice = false;
+         if (!skipPeriod) {
+            if (jsonData.InvoiceDocument.document_info.date < startDate || jsonData.InvoiceDocument.document_info.date > endDate) {
+               Banana.console.debug("period out of range");
+               addInvoice = false;
+            }
          }
-         if (addInvoice)
+         if (addInvoice) {
             jsonInvoiceList.push(jsonData.InvoiceDocument);
+         }
       }
    }
 
