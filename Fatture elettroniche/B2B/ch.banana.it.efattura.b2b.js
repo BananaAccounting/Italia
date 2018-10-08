@@ -73,13 +73,7 @@ function exec(inData, options) {
    }
    else {
       var xmlDocument = Banana.Xml.newDocument("root");
-      var nodeRoot = null;
-      if (jsonInvoiceList.length>0)
-         nodeRoot = eFattura.createXmlHeader(jsonInvoiceList[0], xmlDocument);
-      for (var i = 0; i < jsonInvoiceList.length; i++) {
-         eFattura.createXmlBody(jsonInvoiceList[i], nodeRoot);
-      }
-      var output = Banana.Xml.save(xmlDocument);
+      var output = eFattura.createXml(jsonInvoiceList, xmlDocument, true);
       if (output != "@Cancel") {
          var xslt = "<?xml-stylesheet type='text/xsl' href='fatturaordinaria_v1.2.1.xslt'?>"
          var outputStyled = output.slice(0, 39) + xslt + output.slice(39)
@@ -442,6 +436,16 @@ EFattura.prototype.createReport = function (jsonInvoice, report, stylesheet) {
    setInvoiceStyle(report, stylesheet, this.param.report);
 }
 
+EFattura.prototype.createXml = function (jsonInvoiceList, xmlDocument, indent) {
+
+   if (!xmlDocument || jsonInvoiceList.length<=0)
+      return "@Cancel";
+   var nodeRoot = this.createXmlHeader(jsonInvoiceList[0], xmlDocument);
+   for (var i = 0; i < jsonInvoiceList.length; i++) {
+      this.createXmlBody(jsonInvoiceList[i], nodeRoot);
+   }
+   return Banana.Xml.save(xmlDocument, indent);
+}
 /*
 * xml instance file <FatturaElettronicaBody>
 */
