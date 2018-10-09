@@ -640,7 +640,8 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       var nodePrezzoTotale = nodeDettaglioLinee.addElement("PrezzoTotale");
       this.addTextNode(nodePrezzoTotale, invoiceObj.items[i].total_amount_vat_exclusive, '4...21', '<DettaglioLinee><PrezzoTotale>');
       var nodeAliquotaIVA = nodeDettaglioLinee.addElement("AliquotaIVA");
-      this.addTextNode(nodeAliquotaIVA, invoiceObj.items[i].unit_price.vat_rate, '4...6', '<DettaglioLinee><AliquotaIVA>');
+      var aliquotaIva = Banana.Converter.toLocaleNumberFormat(invoiceObj.items[i].unit_price.vat_rate,2,true);
+      this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', '<DettaglioLinee><AliquotaIVA>');
       // var nodeRitenuta = nodeDettaglioLinee.addElement("Ritenuta");
       // var nodeNatura = nodeDettaglioLinee.addElement("Natura");
       // var nodeRiferimentoAmministrazione = nodeDettaglioLinee.addElement("RiferimentoAmministrazione");
@@ -653,7 +654,8 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    for (var i = 0; i < invoiceObj.billing_info.total_vat_rates.length; i++) {
       var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
       var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
-      this.addTextNode(nodeAliquotaIVA, invoiceObj.billing_info.total_vat_rates[i].vat_rate, '4...6', '<DatiRiepilogo><AliquotaIVA>');
+      var aliquotaIva = Banana.Converter.toLocaleNumberFormat(invoiceObj.billing_info.total_vat_rates[i].vat_rate,2,true);
+      this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', '<DatiRiepilogo><AliquotaIVA>');
 
       //nodeAliquotaIVA.addTextNode('22');
       // var nodeNatura = nodeDatiRiepilogo.addElement("Natura");
