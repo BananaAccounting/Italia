@@ -844,7 +844,11 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    if (invoiceObj.customer_info.vat_number) {
       var nodeIdFiscaleIVA = nodeDatiAnagrafici.addElement("IdFiscaleIVA");
       var nodeIdPaese = nodeIdFiscaleIVA.addElement("IdPaese");
-      this.addTextNode(nodeIdPaese, invoiceObj.customer_info.country_code, '2', '<CessionarioCommittente><DatiAnagrafici><IdFiscaleIVA><IdPaese>');
+      var countryCode = invoiceObj.customer_info.country_code;
+      if (!countryCode || countryCode.length<=0) {
+         countryCode = this.getCountryCode(invoiceObj.customer_info.country);
+      }
+      this.addTextNode(nodeIdPaese, countryCode, '2', '<CessionarioCommittente><DatiAnagrafici><IdFiscaleIVA><IdPaese>');
       var nodeIdCodice = nodeIdFiscaleIVA.addElement("IdCodice");
       this.addTextNode(nodeIdCodice, invoiceObj.customer_info.vat_number, '1...28', '<CessionarioCommittente><DatiAnagrafici><IdFiscaleIVA><IdCodice>');
    }
@@ -877,12 +881,16 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    this.addTextNode(nodeCAP, invoiceObj.customer_info.postal_code, '5', '<CessionarioCommittente><Sede><CAP>');
    var nodeComune = nodeSede.addElement("Comune");
    this.addTextNode(nodeComune, invoiceObj.customer_info.city, '1...60', '<CessionarioCommittente><Sede><Comune>');
-   if (invoiceObj.customer_info.country_code === 'IT') {
+   var countryCode = invoiceObj.customer_info.country_code;
+   if (!countryCode || countryCode.length<=0) {
+      countryCode = this.getCountryCode(invoiceObj.customer_info.country);
+   }
+   if (countryCode === 'IT') {
       var nodeProvincia = nodeSede.addElement("Provincia");
       this.addTextNode(nodeProvincia, invoiceObj.customer_info.state, '2', '<CessionarioCommittente><Sede><Provincia>');
    }
    var nodeNazione = nodeSede.addElement("Nazione");
-   this.addTextNode(nodeNazione, invoiceObj.customer_info.country_code, '2', '<CessionarioCommittente><Sede><Nazione>');
+   this.addTextNode(nodeNazione, countryCode, '2', '<CessionarioCommittente><Sede><Nazione>');
 
    // var nodeStabileOrganizzazione = nodeCessionarioCommittente.addElement("StabileOrganizzazione");
    //   var nodeNumeroCivico = nodeStabileOrganizzazione.addElement("NumeroCivico");
@@ -926,6 +934,29 @@ EFattura.prototype.getInvoiceList = function () {
       }
    }
    return invoiceList;
+}
+
+EFattura.prototype.getCountryCode = function(countryName) {
+  var countryCode = 'it';
+  if (!countryName || countryName.length<=0)
+    return countryCode.toUpperCase();
+  countryCode = countryName.toLowerCase();
+  if (countryCode == 'italy' || countryCode == 'italia') {
+    countryCode = 'it';
+  }
+  if (countryCode == 'germany' || countryCode == 'germania' || countryCode == 'deutschland') {
+    countryCode = 'de';
+  }
+  if (countryCode == 'france' || countryCode == 'francia') {
+    countryCode = 'fr';
+  }
+  if (countryCode == 'switzerland' || countryCode == 'schweiz'|| countryCode == 'suisse'|| countryCode == 'svizzera') {
+    countryCode = 'ch';
+  }
+  if (countryCode == 'japan' || countryCode == 'jpn') {
+    countryCode = 'jp';
+  }
+  return countryCode.toUpperCase();
 }
 
 EFattura.prototype.getCustomerList = function () {
