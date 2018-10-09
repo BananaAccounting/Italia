@@ -579,13 +579,13 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       // var nodeDataInizioPeriodo = nodeDettaglioLinee.addElement("DataInizioPeriodo");
       // var nodeDataFinePeriodo = nodeDettaglioLinee.addElement("DataFinePeriodo");
       var nodePrezzoUnitario = nodeDettaglioLinee.addElement("PrezzoUnitario");
-      this.addTextNode(nodePrezzoUnitario, invoiceObj.items[i].unit_price.calculated_amount_vat_inclusive);
+      this.addTextNode(nodePrezzoUnitario, invoiceObj.items[i].unit_price.calculated_amount_vat_exclusive);
       // var nodeScontoMaggiorazione = nodeDettaglioLinee.addElement("ScontoMaggiorazione");
       //   var nodeTipo = nodeScontoMaggiorazione.addElement("Tipo")
       //   var nodePercentuale = nodeScontoMaggiorazione.addElement("Percentuale")
       //   var nodeImporto = nodeScontoMaggiorazione.addElement("Importo")
       var nodePrezzoTotale = nodeDettaglioLinee.addElement("PrezzoTotale");
-      this.addTextNode(nodePrezzoTotale, invoiceObj.items[i].total_amount_vat_inclusive);
+      this.addTextNode(nodePrezzoTotale, invoiceObj.items[i].total_amount_vat_exclusive);
       var nodeAliquotaIVA = nodeDettaglioLinee.addElement("AliquotaIVA");
       this.addTextNode(nodeAliquotaIVA, invoiceObj.items[i].unit_price.vat_rate);
       // var nodeRitenuta = nodeDettaglioLinee.addElement("Ritenuta");
@@ -607,7 +607,7 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       // var nodeSpeseAccessorie = nodeDatiRiepilogo.addElement("SpeseAccessorie");
       // var nodeArrotondamento = nodeDatiRiepilogo.addElement("Arrotondamento");
       var nodeImponibileImporto = nodeDatiRiepilogo.addElement("ImponibileImporto");
-      this.addTextNode(nodeImponibileImporto, invoiceObj.billing_info.total_vat_rates[i].total_amount_vat_inclusive);
+      this.addTextNode(nodeImponibileImporto, invoiceObj.billing_info.total_vat_rates[i].total_amount_vat_exclusive);
 
       var nodeImposta = nodeDatiRiepilogo.addElement("Imposta");
       this.addTextNode(nodeImposta, invoiceObj.billing_info.total_vat_rates[i].total_vat_amount);
