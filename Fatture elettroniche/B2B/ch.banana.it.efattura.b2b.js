@@ -929,8 +929,10 @@ EFattura.prototype.formatAmount = function (amount) {
   if (!amountFormatted)
      amountFormatted = "";
   
-  amountFormatted = Banana.Converter.toLocaleNumberFormat(amountFormatted, 2, true);
-  amountFormatted = Banana.Converter.toInternalNumberFormat(amountFormatted);
+  /*amountFormatted = Banana.Converter.toLocaleNumberFormat(amountFormatted, 2, true);
+  amountFormatted = Banana.Converter.toInternalNumberFormat(amountFormatted);*/
+  
+  amountFormatted = Banana.SDecimal.round(amountFormatted, {'decimals':2});
  
   return amountFormatted;
 }
