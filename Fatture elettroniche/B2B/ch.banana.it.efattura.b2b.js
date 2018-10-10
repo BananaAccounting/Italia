@@ -1409,9 +1409,9 @@ EFattura.prototype.verifyParam = function () {
    if (!this.param.report)   
       this.param.report = {};
    if (!this.param.report.print_header)   
-      this.param.report.print_header = true;
+      this.param.report.print_header = false;
    if (!this.param.report.print_logo)   
-      this.param.report.print_logo = true;
+      this.param.report.print_logo = false;
    if (!this.param.report.font_family)   
       this.param.report.font_family = '';
    if (!this.param.report.color_1)   

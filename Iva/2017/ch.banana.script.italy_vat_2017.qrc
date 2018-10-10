@@ -14,5 +14,8 @@
     <file>ch.banana.script.italy_vat_2017.report.registri.dialog.ui</file>
     <file>ch.banana.script.italy_vat_2017.report.registri.js</file>
     <file>ch.banana.script.italy_vat_2017.xml.js</file>
+    <file alias="ch.banana.it.invoice.it05.js">../../Fatture elettroniche/B2B/ch.banana.it.invoice.it05.js</file>
+    <file alias="ch.banana.it.efattura.b2b.js">../../Fatture elettroniche/B2B/ch.banana.it.efattura.b2b.js</file>
+    <file alias="ch.banana.it.efattura.b2b.dialog.ui">../../Fatture elettroniche/B2B/ch.banana.it.efattura.b2b.dialog.ui</file>
  </qresource>
 </RCC>
