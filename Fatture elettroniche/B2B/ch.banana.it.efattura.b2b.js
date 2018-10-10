@@ -59,7 +59,6 @@ function exec(inData, options) {
       var styles = [];
       for (var i = 0; i < jsonInvoiceList.length; i++) {
          var jsonInvoice = jsonInvoiceList[i];
-         //Banana.console.debug(JSON.stringify(jsonInvoice))
          if (jsonInvoice.customer_info) {
             var repDocObj = Banana.Report.newReport('');
             var repStyleObj = Banana.Report.newStyleSheet();
@@ -502,6 +501,7 @@ EFattura.prototype.createXml = function (jsonInvoiceList, xmlDocument, indent) {
       
    var nodeRoot = this.createXmlHeader(jsonInvoiceList[0], xmlDocument);
    for (var i = 0; i < jsonInvoiceList.length; i++) {
+      //Banana.console.debug(JSON.stringify(jsonInvoiceList[i]))
       this.createXmlBody(jsonInvoiceList[i], nodeRoot);
    }
    return Banana.Xml.save(xmlDocument, indent);
@@ -521,20 +521,22 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    if (!nodeRoot || !invoiceObj || this.isEmpty(this.datiContribuente))
       return;
 
-
+   //Numero fattura da visualizzare in eventuali messaggi d'errore per facilitare l'individuazione dell'errore
+   var msgHelpNoFattura = "(No fattura " + invoiceObj.document_info.number + ")";
+   
    // Body
    var nodeFatturaElettronicaBody = nodeRoot.addElement("FatturaElettronicaBody");
    var nodeDatiGenerali = nodeFatturaElettronicaBody.addElement("DatiGenerali");
    var nodeDatiGeneraliDocumento = nodeDatiGenerali.addElement("DatiGeneraliDocumento");
    var nodeTipoDocumento = nodeDatiGeneraliDocumento.addElement("TipoDocumento");
    var docType = this.getTipoDocumento(invoiceObj.document_info.doc_type);
-   this.addTextNode(nodeTipoDocumento, docType, '4', '<DatiGeneraliDocumento><TipoDocumento>');
+   this.addTextNode(nodeTipoDocumento, docType, '4', 'DatiGeneraliDocumento/TipoDocumento '+ msgHelpNoFattura);
    var nodeDivisa = nodeDatiGeneraliDocumento.addElement("Divisa");
-   this.addTextNode(nodeDivisa, invoiceObj.document_info.currency, '3', '<DatiGeneraliDocumento><Divisa>');
+   this.addTextNode(nodeDivisa, invoiceObj.document_info.currency, '3', 'DatiGeneraliDocumento/Divisa '+ msgHelpNoFattura);
    var nodeData = nodeDatiGeneraliDocumento.addElement("Data");
-   this.addTextNode(nodeData, invoiceObj.document_info.date, '10', '<DatiGeneraliDocumento><Data>');
+   this.addTextNode(nodeData, invoiceObj.document_info.date, '10', 'DatiGeneraliDocumento/Data '+ msgHelpNoFattura);
    var nodeNumero = nodeDatiGeneraliDocumento.addElement("Numero");
-   this.addTextNode(nodeNumero, invoiceObj.document_info.number, '1...20', '<DatiGeneraliDocumento><Numero>');
+   this.addTextNode(nodeNumero, invoiceObj.document_info.number, '1...20', 'DatiGeneraliDocumento/Numero '+ msgHelpNoFattura);
    // var nodeDatiRitenuta = nodeDatiGeneraliDocumento.addElement("DatiRitenuta");
    //   var nodeTipoRitenuta = nodeDatiRitenuta.addElement("TipoRitenuta");
    //   var nodeImportoRitenuta = nodeDatiRitenuta.addElement("ImportoRitenuta");
@@ -616,32 +618,32 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    for (var i = 0; i < invoiceObj.items.length; i++) {
       var nodeDettaglioLinee = nodeDatiBeniServizi.addElement("DettaglioLinee");
       var nodeNumeroLinea = nodeDettaglioLinee.addElement("NumeroLinea");
-      this.addTextNode(nodeNumeroLinea, parseInt(i + 1).toString(), '1...4', '<DettaglioLinee><NumeroLinea>');
+      this.addTextNode(nodeNumeroLinea, parseInt(i + 1).toString(), '1...4', 'DettaglioLinee/NumeroLinea '+ msgHelpNoFattura);
       // var nodeTipoCessionePrestazione = nodeDettaglioLinee.addElement("TipoCessionePrestazione");
       // var nodeCodiceArticolo = nodeDettaglioLinee.addElement("CodiceArticolo");
       // var nodeCodiceTipo = nodeCodiceArticolo.addElement("CodiceTipo");
       // var nodeCodiceValore = nodeCodiceArticolo.addElement("CodiceValore");
       var nodeDescrizione = nodeDettaglioLinee.addElement("Descrizione");
-      this.addTextNode(nodeDescrizione, invoiceObj.items[i].description, '1...1000', '<DettaglioLinee><Descrizione>');
+      this.addTextNode(nodeDescrizione, invoiceObj.items[i].description, '1...1000', 'DettaglioLinee/Descrizione '+ msgHelpNoFattura);
       if (!Banana.SDecimal.isZero(invoiceObj.items[i].quantity)) {
          var nodeQuantita = nodeDettaglioLinee.addElement("Quantita");
-         var quantita = Banana.Converter.toLocaleNumberFormat(invoiceObj.items[i].quantity,2,false);
-         this.addTextNode(nodeQuantita, quantita , '4...21', '<DettaglioLinee><Quantita>');
+         var quantita = this.formatAmount(invoiceObj.items[i].quantity);
+         this.addTextNode(nodeQuantita, quantita , '4...21', 'DettaglioLinee/Quantita '+ msgHelpNoFattura);
       }
       // var nodeUnitaMisura = nodeDettaglioLinee.addElement("UnitaMisura");
       // var nodeDataInizioPeriodo = nodeDettaglioLinee.addElement("DataInizioPeriodo");
       // var nodeDataFinePeriodo = nodeDettaglioLinee.addElement("DataFinePeriodo");
       var nodePrezzoUnitario = nodeDettaglioLinee.addElement("PrezzoUnitario");
-      this.addTextNode(nodePrezzoUnitario, invoiceObj.items[i].unit_price.calculated_amount_vat_exclusive, '4...21', '<DettaglioLinee><PrezzoUnitario>');
+      this.addTextNode(nodePrezzoUnitario, invoiceObj.items[i].unit_price.calculated_amount_vat_exclusive, '4...21', 'DettaglioLinee/PrezzoUnitario '+ msgHelpNoFattura);
       // var nodeScontoMaggiorazione = nodeDettaglioLinee.addElement("ScontoMaggiorazione");
       //   var nodeTipo = nodeScontoMaggiorazione.addElement("Tipo")
       //   var nodePercentuale = nodeScontoMaggiorazione.addElement("Percentuale")
       //   var nodeImporto = nodeScontoMaggiorazione.addElement("Importo")
       var nodePrezzoTotale = nodeDettaglioLinee.addElement("PrezzoTotale");
-      this.addTextNode(nodePrezzoTotale, invoiceObj.items[i].total_amount_vat_exclusive, '4...21', '<DettaglioLinee><PrezzoTotale>');
+      this.addTextNode(nodePrezzoTotale, invoiceObj.items[i].total_amount_vat_exclusive, '4...21', 'DettaglioLinee/PrezzoTotale '+ msgHelpNoFattura);
       var nodeAliquotaIVA = nodeDettaglioLinee.addElement("AliquotaIVA");
-      var aliquotaIva = Banana.Converter.toLocaleNumberFormat(invoiceObj.items[i].unit_price.vat_rate,2,true);
-      this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', '<DettaglioLinee><AliquotaIVA>');
+      var aliquotaIva = this.formatAmount(invoiceObj.items[i].unit_price.vat_rate);
+      this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DettaglioLinee/AliquotaIVA '+ msgHelpNoFattura);
       // var nodeRitenuta = nodeDettaglioLinee.addElement("Ritenuta");
       // var nodeNatura = nodeDettaglioLinee.addElement("Natura");
       // var nodeRiferimentoAmministrazione = nodeDettaglioLinee.addElement("RiferimentoAmministrazione");
@@ -654,18 +656,18 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    for (var i = 0; i < invoiceObj.billing_info.total_vat_rates.length; i++) {
       var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
       var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
-      var aliquotaIva = Banana.Converter.toLocaleNumberFormat(invoiceObj.billing_info.total_vat_rates[i].vat_rate,2,true);
-      this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', '<DatiRiepilogo><AliquotaIVA>');
+      var aliquotaIva = this.formatAmount(invoiceObj.billing_info.total_vat_rates[i].vat_rate);
+      this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DatiRiepilogo/AliquotaIVA '+ msgHelpNoFattura);
 
       //nodeAliquotaIVA.addTextNode('22');
       // var nodeNatura = nodeDatiRiepilogo.addElement("Natura");
       // var nodeSpeseAccessorie = nodeDatiRiepilogo.addElement("SpeseAccessorie");
       // var nodeArrotondamento = nodeDatiRiepilogo.addElement("Arrotondamento");
       var nodeImponibileImporto = nodeDatiRiepilogo.addElement("ImponibileImporto");
-      this.addTextNode(nodeImponibileImporto, invoiceObj.billing_info.total_vat_rates[i].total_amount_vat_exclusive, '4...15', '<DatiRiepilogo><ImponibileImporto>');
+      this.addTextNode(nodeImponibileImporto, invoiceObj.billing_info.total_vat_rates[i].total_amount_vat_exclusive, '4...15', 'DatiRiepilogo/ImponibileImporto '+ msgHelpNoFattura);
 
       var nodeImposta = nodeDatiRiepilogo.addElement("Imposta");
-      this.addTextNode(nodeImposta, invoiceObj.billing_info.total_vat_rates[i].total_vat_amount, '4...15', '<DatiRiepilogo><Imposta>');
+      this.addTextNode(nodeImposta, invoiceObj.billing_info.total_vat_rates[i].total_vat_amount, '4...15', 'DatiRiepilogo/Imposta '+ msgHelpNoFattura);
       // var nodeEsigibilitaIVA = nodeDatiRiepilogo.addElement("EsigibilitaIVA");
       // var nodeRiferimentoNormativo = nodeDatiRiepilogo.addElement("RiferimentoNormativo");
       // var nodeDatiVeicoli = nodeFatturaElettronicaBody.addElement("DatiVeicoli");
@@ -747,25 +749,25 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    var nodeDatiTrasmissione = nodeFatturaElettronicaHeader.addElement("DatiTrasmissione");
    var nodeIdTrasmittente = nodeDatiTrasmissione.addElement("IdTrasmittente");
    var nodeIdPaese = nodeIdTrasmittente.addElement("IdPaese");
-   this.addTextNode(nodeIdPaese, this.datiContribuente.nazione, '2', '<IdTrasmittente><IdPaese>');
+   this.addTextNode(nodeIdPaese, this.datiContribuente.nazione, '2', 'IdTrasmittente/IdPaese');
    var nodeIdCodice = nodeIdTrasmittente.addElement("IdCodice");
    var idCodice = this.datiContribuente.nazione == 'IT' ? this.datiContribuente.codiceFiscale.substring(2) : this.datiContribuente.codiceFiscale;
-   this.addTextNode(nodeIdCodice, idCodice, '1...28', '<IdTrasmittente><IdCodice>');
+   this.addTextNode(nodeIdCodice, idCodice, '1...28', 'IdTrasmittente/IdCodice');
    var nodeProgressivoInvio = nodeDatiTrasmissione.addElement("ProgressivoInvio");
-   this.addTextNode(nodeProgressivoInvio, this.param.xml.progressive, '1...10', '<DatiTrasmissione><ProgressivoInvio>');
+   this.addTextNode(nodeProgressivoInvio, this.param.xml.progressive, '1...10', 'DatiTrasmissione/ProgressivoInvio');
    var nodeFormatoTrasmissione = nodeDatiTrasmissione.addElement("FormatoTrasmissione");
-   this.addTextNode(nodeFormatoTrasmissione, trasmissionFormat, '5', '<DatiTrasmissione><FormatoTrasmissione>');
+   this.addTextNode(nodeFormatoTrasmissione, trasmissionFormat, '5', 'DatiTrasmissione/FormatoTrasmissione');
    var nodeCodiceDestinatario = nodeDatiTrasmissione.addElement("CodiceDestinatario");
-   this.addTextNode(nodeCodiceDestinatario, '999999', '6...7', '<DatiTrasmissione><CodiceDestinatario>');
+   this.addTextNode(nodeCodiceDestinatario, '999999', '6...7', 'DatiTrasmissione/CodiceDestinatario');
 
    var nodeCedentePrestatore = nodeFatturaElettronicaHeader.addElement("CedentePrestatore");
    var nodeDatiAnagrafici = nodeCedentePrestatore.addElement("DatiAnagrafici");
    var nodeIdFiscaleIVA = nodeDatiAnagrafici.addElement("IdFiscaleIVA");
    var nodeIdPaese = nodeIdFiscaleIVA.addElement("IdPaese");
-   this.addTextNode(nodeIdPaese, this.datiContribuente.nazione, '2', '<CedentePrestatore><DatiAnagrafici><IdFiscaleIVA><IdPaese>');
+   this.addTextNode(nodeIdPaese, this.datiContribuente.nazione, '2', 'CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese');
    var nodeIdCodice = nodeIdFiscaleIVA.addElement("IdCodice");
-   var idCodice = this.datiContribuente.nazione == 'IT' ? this.datiContribuente.codiceFiscale.substring(2) : this.datiContribuente.codiceFiscale
-   this.addTextNode(nodeIdCodice, idCodice, '1...28', '<CedentePrestatore><DatiAnagrafici><IdFiscaleIVA><IdCodice>');
+   var idCodice = this.datiContribuente.nazione == 'IT' ? this.datiContribuente.codiceFiscale.substring(2) : this.datiContribuente.codiceFiscale;
+   this.addTextNode(nodeIdCodice, idCodice, '1...28', 'CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice');
    // var nodeCodiceFiscale = nodeDatiAnagrafici.addElement("CodiceFiscale");
    var nodeAnagrafica = nodeDatiAnagrafici.addElement("Anagrafica");
    if (this.datiContribuente.tipoContribuente === 0) {
@@ -854,7 +856,7 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    }
    else {
       var nodeCodiceFiscale = nodeDatiAnagrafici.addElement("CodiceFiscale");
-      this.addTextNode(nodeIdCodice, invoiceObj.customer_info.fiscal_number, '11...16', '<CessionarioCommittente><DatiAnagrafici><CodiceFiscale>');
+      this.addTextNode(nodeCodiceFiscale, invoiceObj.customer_info.fiscal_number, '11...16', '<CessionarioCommittente><DatiAnagrafici><CodiceFiscale>');
    }
    var nodeAnagrafica = nodeDatiAnagrafici.addElement("Anagrafica");
    // nodeAnagrafica.addTextNode(JSON.stringify(invoiceObj));
@@ -920,6 +922,17 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    // var nodeSoggettoEmittente = nodeFatturaElettronicaHeader.addElement("SoggettoEmittente");
  
    return nodeRoot;
+}
+
+EFattura.prototype.formatAmount = function (amount) {
+  var amountFormatted = amount;
+  if (!amountFormatted)
+     amountFormatted = "";
+  
+  amountFormatted = Banana.Converter.toLocaleNumberFormat(amountFormatted, 2, true);
+  amountFormatted = Banana.Converter.toInternalNumberFormat(amountFormatted);
+ 
+  return amountFormatted;
 }
 
 EFattura.prototype.getInvoiceList = function () {
@@ -1031,21 +1044,21 @@ EFattura.prototype.getErrorMessage = function (errorId) {
    }
    else if (errorId == this.ID_ERR_XML_LUNGHEZZA_NONVALIDA) {
       if (lang == 'it')
-         rtnMsg = "Dimensione elemento non valida. Elemento: %1, valore inserito: %2, dimensione richiesta: %3";
+         rtnMsg = "Lunghezza campo non valida: %1, valore inserito: %2, lunghezza richiesta: %3";
       else
          rtnMsg = "Invalid element size. Node: %1, current value: %2, required size: 3%";
    }
    else if (errorId == this.ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA) {
       if (lang == 'it')
-         rtnMsg = "Dimensione elemento non valida. Elemento: %1, valore inserito: %2, dimensione minima: %3";
+         rtnMsg = "Lunghezza campo non valida: %1, valore inserito: %2, lunghezza minima: %3";
       else
-         rtnMsg = "Invalid element size. Node: %1, current value: %2, required size: 3%";
+         rtnMsg = "Invalid element size. Node: %1, current value: %2, minimum size: 3%";
    }
    else if (errorId == this.ID_ERR_XML_LUNGHEZZAMAX_NONVALIDA) {
       if (lang == 'it')
-         rtnMsg = "Dimensione elemento non valida. Elemento: %1, valore inserito: %2, dimensione massima: %3";
+         rtnMsg = "Lunghezza campo non valida: %1, valore inserito: %2, lunghezza massima: %3";
       else
-         rtnMsg = "Invalid element size. Node: %1, current value: %2, required size: 3%";
+         rtnMsg = "Invalid element size. Node: %1, current value: %2, maximum size: 3%";
    }
 
    return rtnMsg + " [" + errorId + "] ";
