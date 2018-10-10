@@ -522,7 +522,7 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       return;
 
    //Numero fattura da visualizzare in eventuali messaggi d'errore per facilitare l'individuazione dell'errore
-   var msgHelpNoFattura = "(No fattura " + invoiceObj.document_info.number + ")";
+   var msgHelpNoFattura = " (No fattura " + invoiceObj.document_info.number + ")";
    
    // Body
    var nodeFatturaElettronicaBody = nodeRoot.addElement("FatturaElettronicaBody");
@@ -742,6 +742,9 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    if (attrsSchemaLocation.length > 0)
       nodeRoot.setAttribute("xsi:schemaLocation", attrsSchemaLocation);
 
+   //Numero fattura da visualizzare in eventuali messaggi d'errore per facilitare l'individuazione dell'errore
+   var msgHelpNoFattura = " (No fattura " + invoiceObj.document_info.number + ")";
+
    //Header
 
    var nodeFatturaElettronicaHeader = nodeRoot.addElement("FatturaElettronicaHeader");
@@ -749,38 +752,38 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    var nodeDatiTrasmissione = nodeFatturaElettronicaHeader.addElement("DatiTrasmissione");
    var nodeIdTrasmittente = nodeDatiTrasmissione.addElement("IdTrasmittente");
    var nodeIdPaese = nodeIdTrasmittente.addElement("IdPaese");
-   this.addTextNode(nodeIdPaese, this.datiContribuente.nazione, '2', 'IdTrasmittente/IdPaese');
+   this.addTextNode(nodeIdPaese, this.datiContribuente.nazione, '2', 'IdTrasmittente/IdPaese' + msgHelpNoFattura);
    var nodeIdCodice = nodeIdTrasmittente.addElement("IdCodice");
    var idCodice = this.datiContribuente.nazione == 'IT' ? this.datiContribuente.codiceFiscale.substring(2) : this.datiContribuente.codiceFiscale;
-   this.addTextNode(nodeIdCodice, idCodice, '1...28', 'IdTrasmittente/IdCodice');
+   this.addTextNode(nodeIdCodice, idCodice, '1...28', 'IdTrasmittente/IdCodice' + msgHelpNoFattura);
    var nodeProgressivoInvio = nodeDatiTrasmissione.addElement("ProgressivoInvio");
-   this.addTextNode(nodeProgressivoInvio, this.param.xml.progressive, '1...10', 'DatiTrasmissione/ProgressivoInvio');
+   this.addTextNode(nodeProgressivoInvio, this.param.xml.progressive, '1...10', 'DatiTrasmissione/ProgressivoInvio' + msgHelpNoFattura);
    var nodeFormatoTrasmissione = nodeDatiTrasmissione.addElement("FormatoTrasmissione");
-   this.addTextNode(nodeFormatoTrasmissione, trasmissionFormat, '5', 'DatiTrasmissione/FormatoTrasmissione');
+   this.addTextNode(nodeFormatoTrasmissione, trasmissionFormat, '5', 'DatiTrasmissione/FormatoTrasmissione' + msgHelpNoFattura);
    var nodeCodiceDestinatario = nodeDatiTrasmissione.addElement("CodiceDestinatario");
-   this.addTextNode(nodeCodiceDestinatario, '999999', '6...7', 'DatiTrasmissione/CodiceDestinatario');
+   this.addTextNode(nodeCodiceDestinatario, '999999', '6...7', 'DatiTrasmissione/CodiceDestinatario' + msgHelpNoFattura);
 
    var nodeCedentePrestatore = nodeFatturaElettronicaHeader.addElement("CedentePrestatore");
    var nodeDatiAnagrafici = nodeCedentePrestatore.addElement("DatiAnagrafici");
    var nodeIdFiscaleIVA = nodeDatiAnagrafici.addElement("IdFiscaleIVA");
    var nodeIdPaese = nodeIdFiscaleIVA.addElement("IdPaese");
-   this.addTextNode(nodeIdPaese, this.datiContribuente.nazione, '2', 'CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese');
+   this.addTextNode(nodeIdPaese, this.datiContribuente.nazione, '2', 'CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese' + msgHelpNoFattura);
    var nodeIdCodice = nodeIdFiscaleIVA.addElement("IdCodice");
    var idCodice = this.datiContribuente.nazione == 'IT' ? this.datiContribuente.codiceFiscale.substring(2) : this.datiContribuente.codiceFiscale;
-   this.addTextNode(nodeIdCodice, idCodice, '1...28', 'CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice');
+   this.addTextNode(nodeIdCodice, idCodice, '1...28', 'CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice' + msgHelpNoFattura);
    // var nodeCodiceFiscale = nodeDatiAnagrafici.addElement("CodiceFiscale");
    var nodeAnagrafica = nodeDatiAnagrafici.addElement("Anagrafica");
    if (this.datiContribuente.tipoContribuente === 0) {
       var nodeNome = nodeAnagrafica.addElement("Nome");
       var nodeCognome = nodeAnagrafica.addElement("Cognome");
 
-      this.addTextNode(nodeNome, this.datiContribuente.nome, '1...60', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Nome>');
-      this.addTextNode(nodeCognome, this.datiContribuente.cognome, '1...60', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Cognome>');
+      this.addTextNode(nodeNome, this.datiContribuente.nome, '1...60', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Nome>' + msgHelpNoFattura);
+      this.addTextNode(nodeCognome, this.datiContribuente.cognome, '1...60', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Cognome>' + msgHelpNoFattura);
 
    }
    else if (this.datiContribuente.tipoContribuente === 1) {
       var nodeDenominazione = nodeAnagrafica.addElement("Denominazione");
-      this.addTextNode(nodeDenominazione, this.datiContribuente.societa, '1...80', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Denominazione>');
+      this.addTextNode(nodeDenominazione, this.datiContribuente.societa, '1...80', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Denominazione>' + msgHelpNoFattura);
    }
 
    //   var nodeTitolo = nodeAnagrafica.addElement("Titolo");
@@ -794,24 +797,24 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    if (this.datiContribuente.tipoRegimeFiscale + 1 < 10)
       regFis += '0';
    regFis += this.datiContribuente.tipoRegimeFiscale + 1;
-   this.addTextNode(nodeRegimeFiscale, regFis, '4', '<CedentePrestatore><DatiAnagrafici><RegimeFiscale>');
+   this.addTextNode(nodeRegimeFiscale, regFis, '4', '<CedentePrestatore><DatiAnagrafici><RegimeFiscale>' + msgHelpNoFattura);
    var nodeSede = nodeCedentePrestatore.addElement("Sede");
    var nodeIndirizzo = nodeSede.addElement("Indirizzo");
-   this.addTextNode(nodeIndirizzo, this.datiContribuente.indirizzo, '1...60', '<CedentePrestatore><Sede><Indirizzo>');
+   this.addTextNode(nodeIndirizzo, this.datiContribuente.indirizzo, '1...60', '<CedentePrestatore><Sede><Indirizzo>' + msgHelpNoFattura);
    if (this.datiContribuente.ncivico.length>0) {
       var nodeNumeroCivico = nodeSede.addElement("NumeroCivico");
-      this.addTextNode(nodeNumeroCivico, this.datiContribuente.ncivico, '1...8', '<CedentePrestatore><Sede><NumeroCivico>');
+      this.addTextNode(nodeNumeroCivico, this.datiContribuente.ncivico, '1...8', '<CedentePrestatore><Sede><NumeroCivico>' + msgHelpNoFattura);
    }
    var nodeCAP = nodeSede.addElement("CAP");
-   this.addTextNode(nodeCAP, this.datiContribuente.cap, '5', '<CedentePrestatore><Sede><CAP>');
+   this.addTextNode(nodeCAP, this.datiContribuente.cap, '5', '<CedentePrestatore><Sede><CAP>' + msgHelpNoFattura);
    var nodeComune = nodeSede.addElement("Comune");
-   this.addTextNode(nodeComune, this.datiContribuente.comune, '1...60', '<CedentePrestatore><Sede><Comune>');
+   this.addTextNode(nodeComune, this.datiContribuente.comune, '1...60', '<CedentePrestatore><Sede><Comune>' + msgHelpNoFattura);
    if (this.datiContribuente.nazione === 'IT') {
       var nodeProvincia = nodeSede.addElement("Provincia");
-      this.addTextNode(nodeProvincia, this.datiContribuente.provincia, '2', '<CedentePrestatore><Sede><Provincia>');
+      this.addTextNode(nodeProvincia, this.datiContribuente.provincia, '2', '<CedentePrestatore><Sede><Provincia>' + msgHelpNoFattura);
    }
    var nodeNazione = nodeSede.addElement("Nazione");
-   this.addTextNode(nodeNazione, this.datiContribuente.nazione, '2', '<CedentePrestatore><Sede><Nazione>');
+   this.addTextNode(nodeNazione, this.datiContribuente.nazione, '2', '<CedentePrestatore><Sede><Nazione>' + msgHelpNoFattura);
 
    // var nodeStabileOrganizzazione = nodeCedentePrestatore.addElement("StabileOrganizzazione");
    // var nodeNumeroCivico = nodeStabileOrganizzazione.addElement("NumeroCivico");
@@ -850,49 +853,49 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
       if (!countryCode || countryCode.length<=0) {
          countryCode = this.getCountryCode(invoiceObj.customer_info.country);
       }
-      this.addTextNode(nodeIdPaese, countryCode, '2', '<CessionarioCommittente><DatiAnagrafici><IdFiscaleIVA><IdPaese>');
+      this.addTextNode(nodeIdPaese, countryCode, '2', '<CessionarioCommittente><DatiAnagrafici><IdFiscaleIVA><IdPaese>' + msgHelpNoFattura);
       var nodeIdCodice = nodeIdFiscaleIVA.addElement("IdCodice");
-      this.addTextNode(nodeIdCodice, invoiceObj.customer_info.vat_number, '1...28', '<CessionarioCommittente><DatiAnagrafici><IdFiscaleIVA><IdCodice>');
+      this.addTextNode(nodeIdCodice, invoiceObj.customer_info.vat_number, '1...28', '<CessionarioCommittente><DatiAnagrafici><IdFiscaleIVA><IdCodice>' + msgHelpNoFattura);
    }
    else {
       var nodeCodiceFiscale = nodeDatiAnagrafici.addElement("CodiceFiscale");
-      this.addTextNode(nodeCodiceFiscale, invoiceObj.customer_info.fiscal_number, '11...16', '<CessionarioCommittente><DatiAnagrafici><CodiceFiscale>');
+      this.addTextNode(nodeCodiceFiscale, invoiceObj.customer_info.fiscal_number, '11...16', '<CessionarioCommittente><DatiAnagrafici><CodiceFiscale>' + msgHelpNoFattura);
    }
    var nodeAnagrafica = nodeDatiAnagrafici.addElement("Anagrafica");
    // nodeAnagrafica.addTextNode(JSON.stringify(invoiceObj));
    if (invoiceObj.customer_info.business_name) {
       var nodeDenominazione = nodeAnagrafica.addElement("Denominazione");
-      this.addTextNode(nodeDenominazione, invoiceObj.customer_info.business_name, '1...80', '<CessionarioCommittente><DatiAnagrafici><Anagrafica><Denominazione>');
+      this.addTextNode(nodeDenominazione, invoiceObj.customer_info.business_name, '1...80', '<CessionarioCommittente><DatiAnagrafici><Anagrafica><Denominazione>' + msgHelpNoFattura);
    }
    else {
       var nodeNome = nodeAnagrafica.addElement("Nome");
       var nodeCognome = nodeAnagrafica.addElement("Cognome");
 
-      this.addTextNode(nodeNome, invoiceObj.customer_info.first_name, '1...60', '<CessionarioCommittente><DatiAnagrafici><Anagrafica><Nome>');
-      this.addTextNode(nodeCognome, invoiceObj.customer_info.last_name, '1...60', '<CessionarioCommittente><DatiAnagrafici><Anagrafica><Cognome>');
+      this.addTextNode(nodeNome, invoiceObj.customer_info.first_name, '1...60', '<CessionarioCommittente><DatiAnagrafici><Anagrafica><Nome>' + msgHelpNoFattura);
+      this.addTextNode(nodeCognome, invoiceObj.customer_info.last_name, '1...60', '<CessionarioCommittente><DatiAnagrafici><Anagrafica><Cognome>' + msgHelpNoFattura);
    }
    // var nodeTitolo = nodeAnagrafica.addElement("Titolo");
    // var nodCodEORI = nodeAnagrafica.addElement("CodEORI");
 
    var nodeSede = nodeCessionarioCommittente.addElement("Sede");
    var nodeIndirizzo = nodeSede.addElement("Indirizzo");
-   this.addTextNode(nodeIndirizzo, invoiceObj.customer_info.address1, '1...60', '<CessionarioCommittente><Sede><Indirizzo>');
+   this.addTextNode(nodeIndirizzo, invoiceObj.customer_info.address1, '1...60', '<CessionarioCommittente><Sede><Indirizzo>' + msgHelpNoFattura);
    //   var nodeNumeroCivico = nodeSede.addElement("NumeroCivico");
 
    var nodeCAP = nodeSede.addElement("CAP");
-   this.addTextNode(nodeCAP, invoiceObj.customer_info.postal_code, '5', '<CessionarioCommittente><Sede><CAP>');
+   this.addTextNode(nodeCAP, invoiceObj.customer_info.postal_code, '5', '<CessionarioCommittente><Sede><CAP>' + msgHelpNoFattura);
    var nodeComune = nodeSede.addElement("Comune");
-   this.addTextNode(nodeComune, invoiceObj.customer_info.city, '1...60', '<CessionarioCommittente><Sede><Comune>');
+   this.addTextNode(nodeComune, invoiceObj.customer_info.city, '1...60', '<CessionarioCommittente><Sede><Comune>' + msgHelpNoFattura);
    var countryCode = invoiceObj.customer_info.country_code;
    if (!countryCode || countryCode.length<=0) {
       countryCode = this.getCountryCode(invoiceObj.customer_info.country);
    }
    if (countryCode === 'IT') {
       var nodeProvincia = nodeSede.addElement("Provincia");
-      this.addTextNode(nodeProvincia, invoiceObj.customer_info.state, '2', '<CessionarioCommittente><Sede><Provincia>');
+      this.addTextNode(nodeProvincia, invoiceObj.customer_info.state, '2', '<CessionarioCommittente><Sede><Provincia>' + msgHelpNoFattura);
    }
    var nodeNazione = nodeSede.addElement("Nazione");
-   this.addTextNode(nodeNazione, countryCode, '2', '<CessionarioCommittente><Sede><Nazione>');
+   this.addTextNode(nodeNazione, countryCode, '2', '<CessionarioCommittente><Sede><Nazione>' + msgHelpNoFattura);
 
    // var nodeStabileOrganizzazione = nodeCessionarioCommittente.addElement("StabileOrganizzazione");
    //   var nodeNumeroCivico = nodeStabileOrganizzazione.addElement("NumeroCivico");
