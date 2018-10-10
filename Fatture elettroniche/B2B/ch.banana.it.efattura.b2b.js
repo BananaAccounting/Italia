@@ -107,6 +107,8 @@ function settingsDialog() {
    var bgColorLineEdit = dialog.tabWidget.findChild('bgColorLineEdit');
    var textColorLineEdit = dialog.tabWidget.findChild('textColorLineEdit');
 
+   var formatoTrasmissioneComboBox = dialog.tabWidget.findChild('formatoTrasmissioneComboBox');
+   var codiceDestinatarioLineEdit = dialog.tabWidget.findChild('codiceDestinatarioLineEdit');
    var numeroProgressivoLineEdit = dialog.tabWidget.findChild('numeroProgressivoLineEdit');
    
    //periodo
@@ -140,6 +142,8 @@ function settingsDialog() {
          numeroFatturaLineEdit.text = noFattura;
    }
 
+   formatoTrasmissioneComboBox.currentIndex = eFattura.param.xml.formatoTrasmissione;
+   codiceDestinatarioLineEdit.text = eFattura.param.xml.codiceDestinatario;
    numeroProgressivoLineEdit.text = eFattura.param.xml.progressive || '0';
 
    if (eFattura.param.output == 1)
@@ -386,8 +390,9 @@ function settingsDialog() {
    eFattura.param.report.color_1 = bgColorLineEdit.text;
    eFattura.param.report.color_2 = textColorLineEdit.text;
 
+   eFattura.param.xml.formatoTrasmissione = parseInt(formatoTrasmissioneComboBox.currentIndex);
+   eFattura.param.xml.codiceDestinatario = codiceDestinatarioLineEdit.text;
    eFattura.param.xml.progressive = parseInt(numeroProgressivoLineEdit.text);
-   
    
    //Groupbox periodo
    if (periodAllRadioButton.checked) {
@@ -721,11 +726,12 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
       return null;
 
    //<Document>
+   var formatoTrasmissione = "FPA12";
+   if (parseInt(this.param.xml.formatoTrasmissione) === 1)
+      formatoTrasmissione = "FPR12";
 
-   var trasmissionFormat = "FPA12";
    var nodeRoot = xmlDocument.addElement("p:FatturaElettronica");
-   nodeRoot.setAttribute("versione", trasmissionFormat);
-
+   nodeRoot.setAttribute("versione", formatoTrasmissione);
 
    for (var j in this.namespaces) {
       var prefix = this.namespaces[j]['prefix'];
@@ -758,10 +764,14 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    this.addTextNode(nodeIdCodice, idCodice, '1...28', 'IdTrasmittente/IdCodice' + msgHelpNoFattura);
    var nodeProgressivoInvio = nodeDatiTrasmissione.addElement("ProgressivoInvio");
    this.addTextNode(nodeProgressivoInvio, this.param.xml.progressive, '1...10', 'DatiTrasmissione/ProgressivoInvio' + msgHelpNoFattura);
+   
    var nodeFormatoTrasmissione = nodeDatiTrasmissione.addElement("FormatoTrasmissione");
-   this.addTextNode(nodeFormatoTrasmissione, trasmissionFormat, '5', 'DatiTrasmissione/FormatoTrasmissione' + msgHelpNoFattura);
+   this.addTextNode(nodeFormatoTrasmissione, formatoTrasmissione, '5', 'DatiTrasmissione/FormatoTrasmissione' + msgHelpNoFattura);
    var nodeCodiceDestinatario = nodeDatiTrasmissione.addElement("CodiceDestinatario");
-   this.addTextNode(nodeCodiceDestinatario, '999999', '6...7', 'DatiTrasmissione/CodiceDestinatario' + msgHelpNoFattura);
+   if (formatoTrasmissione === "FPA12")
+      this.addTextNode(nodeCodiceDestinatario, this.param.xml.codiceDestinatario, '6', 'DatiTrasmissione/CodiceDestinatario' + msgHelpNoFattura);
+   else      
+      this.addTextNode(nodeCodiceDestinatario, this.param.xml.codiceDestinatario, '7', 'DatiTrasmissione/CodiceDestinatario' + msgHelpNoFattura);
 
    var nodeCedentePrestatore = nodeFatturaElettronicaHeader.addElement("CedentePrestatore");
    var nodeDatiAnagrafici = nodeCedentePrestatore.addElement("DatiAnagrafici");
@@ -1131,6 +1141,10 @@ EFattura.prototype.initParam = function () {
    this.param.xml = {};
    this.param.xml.progressive = '1';
    this.param.xml.open_file = false;
+   /*0=FPA12, 1=FPR12*/
+   this.param.xml.formatoTrasmissione = 0;
+   this.param.xml.codiceDestinatario = '';
+
 
    this.param.report = {};
    this.param.report.print_header = true;
@@ -1387,6 +1401,10 @@ EFattura.prototype.verifyParam = function () {
       this.param.xml.progressive = '1';
    if (!this.param.xml.open_file)   
       this.param.xml.open_file = false;
+   if (!this.param.xml.formatoTrasmissione)   
+      this.param.xml.formatoTrasmissione = 0;
+   if (!this.param.xml.codiceDestinatario)   
+   this.param.xml.codiceDestinatario = '';
 
    if (!this.param.report)   
       this.param.report = {};
