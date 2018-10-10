@@ -14,10 +14,10 @@
 //
 // @id = ch.banana.it.efattura.b2b
 // @api = 1.0
-// @pubdate = 2018-10-09
+// @pubdate = 2018-10-10
 // @publisher = Banana.ch SA
-// @description = [BETA] Esporta fattura (XML, PDF)...
-// @description.it = [BETA] Esporta fattura (XML, PDF)...
+// @description = [BETA] Fattura elettronica (XML, PDF)...
+// @description.it = [BETA] Fattura elettronica (XML, PDF)...
 // @doctype = *
 // @task = app.command
 // @inputdatasource = none
