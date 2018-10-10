@@ -351,7 +351,7 @@ function settingsDialog() {
       periodComboBox.currentIndex = 0;         
    }
    dialog.showHelp = function () {
-      Banana.Ui.showHelp("ch.banana.it.efattura.b2b.dialog.ui");
+      Banana.Ui.showHelp("ch.banana.it.efattura.b2b");
    }
    dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
    dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
