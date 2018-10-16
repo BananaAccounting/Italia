@@ -325,6 +325,20 @@ Journal.prototype.load = function() {
       jsonLine["IT_ClienteDescrizione"] = accountObj["Description"];
       jsonLine["IT_ClientePartitaIva"] = accountObj["VatNumber"];
       jsonLine["IT_ClienteCodiceFiscale"] = accountObj["FiscalNumber"];
+      //Temporaneamente i parametri per l'invio della fattura elettronica sono salvati nel campo Codice1
+      jsonLine["IT_XmlFormatoTrasmissione"] = "";
+      jsonLine["IT_XmlCodiceDestinatario"] = "";
+      jsonLine["IT_XmlPECDestinatario"] = "";
+      var xmlParam = accountObj["Code1"];
+      if (xmlParam && xmlParam.length>0) {
+         var xmlParams = xmlParam.split(":");
+         if (xmlParams.length>0)
+             jsonLine["IT_XmlFormatoTrasmissione"] = xmlParams[0];
+         if (xmlParams.length>1)
+             jsonLine["IT_XmlCodiceDestinatario"] = xmlParams[1];
+         if (xmlParams.length>2)
+             jsonLine["IT_XmlPECDestinatario"] = xmlParams[2];
+      }
       var intestazione = accountId + " - " + accountObj["Description"];
       if (accountObj["VatNumber"].length>0) {
         intestazione = "P.I. " + accountObj["VatNumber"] + " - " + accountObj["Description"];
@@ -385,7 +399,7 @@ Journal.prototype.load = function() {
     var noDoc = xml_escapeString(filteredRows[i].value("DocInvoice"));
     var dataReg = filteredRows[i].value("JDate");
     var indexGroup = filteredRows[i].value("JContraAccountGroup") ;
-    //console.log(noDoc + " " + dataReg + " " + " " +previousNoDoc + " " +previousDataReg);
+    //Banana.console.log(noDoc + " " + dataReg + " " + " " +previousNoDoc + " " +previousDataReg);
     //Mantiene lo stesso numero di registro se la data di registrazione e il no fattura è lo stesso
     var prevNoDoc ='';
     var prevDataReg = '';
@@ -786,11 +800,11 @@ Journal.prototype.printElapsedTime = function(functionName, t0) {
   var seconds = ((millis % 60000) / 1000).toFixed(0);
   if (minutes == 0 && seconds == 0) {
     var timeString = Banana.SDecimal.round(millis/1000, {'decimals':2});
-    console.log( functionName + " elapsed time " + timeString + " s");
+    //Banana.console.log( functionName + " elapsed time " + timeString + " s");
   }
   else {
     var timeString = (seconds == 60 ? (minutes+1) + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
-    console.log( functionName + " elapsed time " + timeString);
+    //Banana.console.log( functionName + " elapsed time " + timeString);
   }
 }
 
@@ -1129,6 +1143,24 @@ Journal.prototype.setColumns = function() {
   column.title = "IT_RegValida";
   column.index = 1032;
   this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_XmlFormatoTrasmissione";
+  column.title = "IT_XmlFormatoTrasmissione";
+  column.type = "description";
+  column.index = 1033;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_XmlCodiceDestinatario";
+  column.title = "IT_XmlCodiceDestinatario";
+  column.type = "description";
+  column.index = 1034;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_XmlPECDestinatario";
+  column.title = "IT_XmlPECDestinatario";
+  column.type = "description";
+  column.index = 1035;
+  this.columns[j++] = column;
   
 }
 
@@ -1234,7 +1266,7 @@ Journal.prototype._debugPrintCustomersSuppliers = function(report, stylesheet) {
   for (var i in this.customers) {
     for (var j in this.customers[i].transactions) {
       var rowJsonObj = this.customers[i].transactions[j];
-      //console.log(JSON.stringify(rowJsonObj));
+      //Banana.console.log(JSON.stringify(rowJsonObj));
       var row = table.addRow();
       for (var k in sortedColumns) {
         var index = sortedColumns[k];
