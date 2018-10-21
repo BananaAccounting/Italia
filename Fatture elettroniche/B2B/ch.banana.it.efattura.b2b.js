@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.efattura.b2b
 // @api = 1.0
-// @pubdate = 2018-10-16
+// @pubdate = 2018-10-21
 // @publisher = Banana.ch SA
 // @description = [BETA] Fattura elettronica (XML, PDF)...
 // @description.it = [BETA] Fattura elettronica (XML, PDF)...
@@ -67,6 +67,11 @@ function exec(inData, options) {
             var repStyleObj = Banana.Report.newStyleSheet();
             repStyleObj.addStyle("@page").setAttribute("margin", "0");
             eFattura.createReport(jsonInvoice, repDocObj, repStyleObj);
+            /*TEST*/
+            /*if (typeof (Banana.Report.save) !== 'undefined') {
+               Banana.Report.save("testxxx.pdf", repDocObj, repStyleObj);
+            }*/
+            /*END TEST*/
             docs.push(repDocObj);
             styles.push(repStyleObj);
          }
@@ -106,9 +111,16 @@ function settingsDialog() {
 
    var printHeaderCheckBox = dialog.tabWidget.findChild('printHeaderCheckBox');
    var printLogoCheckBox = dialog.tabWidget.findChild('printLogoCheckBox');
+   var printQuantityCheckBox = dialog.tabWidget.findChild('printQuantityCheckBox');
    var fontTypeLineEdit = dialog.tabWidget.findChild('fontTypeLineEdit');
    var bgColorLineEdit = dialog.tabWidget.findChild('bgColorLineEdit');
    var textColorLineEdit = dialog.tabWidget.findChild('textColorLineEdit');
+   var invoiceRow1LineEdit = dialog.tabWidget.findChild('invoiceRow1LineEdit');
+   var invoiceRow2LineEdit = dialog.tabWidget.findChild('invoiceRow2LineEdit');
+   var invoiceRow3LineEdit = dialog.tabWidget.findChild('invoiceRow3LineEdit');
+   var invoiceRow4LineEdit = dialog.tabWidget.findChild('invoiceRow4LineEdit');
+   var invoiceRow5LineEdit = dialog.tabWidget.findChild('invoiceRow5LineEdit');
+   var invoiceFooterTextEdit = dialog.tabWidget.findChild('invoiceFooterTextEdit');
 
    var numeroProgressivoLineEdit = dialog.tabWidget.findChild('numeroProgressivoLineEdit');
    
@@ -153,9 +165,18 @@ function settingsDialog() {
    apriXmlCheckBox.checked = eFattura.param.xml.open_file;
    printHeaderCheckBox.checked = eFattura.param.report.print_header;
    printLogoCheckBox.checked = eFattura.param.report.print_logo;
+   printQuantityCheckBox.checked = eFattura.param.report.print_quantity;
    fontTypeLineEdit.text = eFattura.param.report.font_family;
    bgColorLineEdit.text = eFattura.param.report.color_1;
    textColorLineEdit.text = eFattura.param.report.color_2;
+   invoiceRow1LineEdit.text = eFattura.param.report.header_row_1;
+   invoiceRow2LineEdit.text = eFattura.param.report.header_row_2;
+   invoiceRow3LineEdit.text = eFattura.param.report.header_row_3;
+   invoiceRow4LineEdit.text = eFattura.param.report.header_row_4;
+   invoiceRow5LineEdit.text = eFattura.param.report.header_row_5;
+   //invoiceFooterTextEdit.setHtml(eFattura.param.report.footer);
+   invoiceFooterTextEdit.setText(eFattura.param.report.footer);
+
 
    //Groupbox periodo
    if (eFattura.param.periodAll)
@@ -385,9 +406,18 @@ function settingsDialog() {
    eFattura.param.xml.open_file = apriXmlCheckBox.checked;
    eFattura.param.report.print_header = printHeaderCheckBox.checked;
    eFattura.param.report.print_logo = printLogoCheckBox.checked;
+   eFattura.param.report.print_quantity = printQuantityCheckBox.checked;
    eFattura.param.report.font_family = fontTypeLineEdit.text;
    eFattura.param.report.color_1 = bgColorLineEdit.text;
    eFattura.param.report.color_2 = textColorLineEdit.text;
+   eFattura.param.report.header_row_1 = invoiceRow1LineEdit.text;
+   eFattura.param.report.header_row_2 = invoiceRow2LineEdit.text;
+   eFattura.param.report.header_row_3 = invoiceRow3LineEdit.text;
+   eFattura.param.report.header_row_4 = invoiceRow4LineEdit.text;
+   eFattura.param.report.header_row_5 = invoiceRow5LineEdit.text;
+   //Banana.console.debug(JSON.stringify(invoiceFooterTextEdit));
+   //eFattura.param.report.footer = invoiceFooterTextEdit.html;
+   eFattura.param.report.footer = invoiceFooterTextEdit.plainText;
 
    eFattura.param.xml.progressive = parseInt(numeroProgressivoLineEdit.text);
    
@@ -1005,9 +1035,16 @@ EFattura.prototype.initParam = function () {
    this.param.report = {};
    this.param.report.print_header = true;
    this.param.report.print_logo = true;
+   this.param.report.print_quantity = false;
    this.param.report.font_family = '';
    this.param.report.color_1 = '#337ab7';
    this.param.report.color_2 = '#ffffff';
+   this.param.report.header_row_1 = '';
+   this.param.report.header_row_2 = '';
+   this.param.report.header_row_3 = '';
+   this.param.report.header_row_4 = '';
+   this.param.report.header_row_5 = '';
+   this.param.report.footer = '';
 }
 
 EFattura.prototype.initSchemarefs = function () {
@@ -1269,10 +1306,24 @@ EFattura.prototype.verifyParam = function () {
       this.param.report.print_header = false;
    if (!this.param.report.print_logo)   
       this.param.report.print_logo = false;
+   if (!this.param.report.print_quantity)   
+      this.param.report.print_quantity = false;
    if (!this.param.report.font_family)   
       this.param.report.font_family = '';
    if (!this.param.report.color_1)   
       this.param.report.color_1 = '#337ab7';
    if (!this.param.report.color_2)   
       this.param.report.color_2 = '#ffffff';
+   if (!this.param.report.header_row_1)   
+      this.param.report.header_row_1 = '';
+   if (!this.param.report.header_row_2)   
+      this.param.report.header_row_2 = '';
+   if (!this.param.report.header_row_3)   
+      this.param.report.header_row_3 = '';
+   if (!this.param.report.header_row_4)   
+      this.param.report.header_row_4 = '';
+   if (!this.param.report.header_row_5)   
+      this.param.report.header_row_5 = '';
+   if (!this.param.report.footer)   
+      this.param.report.footer = '';
 }
