@@ -415,7 +415,6 @@ function settingsDialog() {
    eFattura.param.report.header_row_3 = invoiceRow3LineEdit.text;
    eFattura.param.report.header_row_4 = invoiceRow4LineEdit.text;
    eFattura.param.report.header_row_5 = invoiceRow5LineEdit.text;
-   //Banana.console.debug(JSON.stringify(invoiceFooterTextEdit));
    //eFattura.param.report.footer = invoiceFooterTextEdit.html;
    eFattura.param.report.footer = invoiceFooterTextEdit.plainText;
 
@@ -586,6 +585,8 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    var imponibileAliquota0 = 0;
    var nodeDatiBeniServizi = nodeFatturaElettronicaBody.addElement("DatiBeniServizi");
    for (var i = 0; i < invoiceObj.items.length; i++) {
+      if (invoiceObj.items[i].item_type !== "item")
+         continue;
       var nodeDettaglioLinee = nodeDatiBeniServizi.addElement("DettaglioLinee");
       var nodeNumeroLinea = nodeDettaglioLinee.addElement("NumeroLinea");
       this.addTextNode(nodeNumeroLinea, parseInt(i + 1).toString(), '1...4', 'DettaglioLinee/NumeroLinea '+ msgHelpNoFattura);
@@ -701,7 +702,7 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    this.addTextNode(nodeIdCodice, this.datiContribuente.codiceFiscale, '1...28', 'IdTrasmittente/IdCodice' + msgHelpNoFattura);
    //[1.1.2] ProgressivoInvio 
    var nodeProgressivoInvio = nodeDatiTrasmissione.addElement("ProgressivoInvio");
-   this.addTextNode(nodeProgressivoInvio, this.param.xml.progressive, '1...10', 'DatiTrasmissione/ProgressivoInvio' + msgHelpNoFattura);
+   this.addTextNode(nodeProgressivoInvio, this.getProgressiveNumber(), '1...10', 'DatiTrasmissione/ProgressivoInvio' + msgHelpNoFattura);
    //[1.1.3] FormatoTrasmissione 
    var nodeFormatoTrasmissione = nodeDatiTrasmissione.addElement("FormatoTrasmissione");
    this.addTextNode(nodeFormatoTrasmissione, formatoTrasmissione, '5', 'DatiTrasmissione/FormatoTrasmissione' + msgHelpNoFattura);
@@ -963,6 +964,21 @@ EFattura.prototype.getErrorMessage = function (errorId) {
    return rtnMsg + " [" + errorId + "] ";
 }
 
+EFattura.prototype.getProgressiveNumber = function () {
+   var numeroInvio = 0;
+   if (this.param.xml && this.param.xml.progressive)
+      numeroInvio = parseInt(this.param.xml.progressive);
+
+   //base-36 [0-9a-z]
+   numeroInvio = numeroInvio.toString(36).toUpperCase();
+
+   var stringaNumeroInvio = '';
+   for (var i = 5; i > numeroInvio.length; i--)
+      stringaNumeroInvio += '0'
+   stringaNumeroInvio += numeroInvio;
+   return stringaNumeroInvio;
+}
+
 EFattura.prototype.getValueFromJournal = function (columnName, customerId, invoiceId) {
    if (!this.journal || !this.journal.customers)
       return "";
@@ -1203,13 +1219,7 @@ EFattura.prototype.saveFile = function (output) {
 
    fileName += '_'
 
-
-   var numeroInvio = parseInt(this.param.xml.progressive).toString(36).toUpperCase();
-
-   for (var i = 5; i > numeroInvio.length; i--)
-      fileName += '0'
-
-   fileName += numeroInvio;
+   fileName += this.getProgressiveNumber();
    // Names the file to 'test.xml', easier to reload each time on browser, for testing purposes
    //fileName = 'test';
 
