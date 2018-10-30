@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>427</width>
-    <height>466</height>
+    <height>444</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <attribute name="title">
        <string>Fattura</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_10">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <widget class="QGroupBox" name="filterGroupBox">
          <property name="title">
@@ -31,7 +31,17 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <layout class="QGridLayout" name="gridLayout_2">
+           <widget class="QRadioButton" name="allRadioButton">
+            <property name="text">
+             <string>T&amp;utto</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_3">
             <item row="0" column="0">
              <widget class="QRadioButton" name="numeroFatturaRadioButton">
               <property name="text">
@@ -65,21 +75,8 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="1" column="1" colspan="2">
              <widget class="QComboBox" name="clienteComboBox"/>
-            </item>
-            <item row="1" column="2">
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </item>
@@ -273,33 +270,6 @@
             </property>
            </widget>
           </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <spacer name="horizontalSpacer_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>15</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="apriXmlCheckBox">
-              <property name="text">
-               <string>&amp;Visualizza file immediatamente</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
          </layout>
         </widget>
        </item>
@@ -318,76 +288,96 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabOpzioniPDF">
+     <widget class="QWidget" name="tabOpzioniPdf">
       <attribute name="title">
        <string>Opzioni stampa</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_10">
        <item>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="fontTypeLabel">
-           <property name="text">
-            <string notr="true">Tipo &amp;carattere (font)</string>
-           </property>
-           <property name="buddy">
-            <cstring>fontTypeLineEdit</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="fontTypeLineEdit"/>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="bgColorLabel">
-           <property name="text">
-            <string notr="true">Colore &amp;sfondo (HEX)</string>
-           </property>
-           <property name="buddy">
-            <cstring>bgColorLineEdit</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="bgColorLineEdit"/>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="textColorLabel">
-           <property name="text">
-            <string notr="true">Colore &amp;testo (HEX)</string>
-           </property>
-           <property name="buddy">
-            <cstring>textColorLineEdit</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="textColorLineEdit"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QCheckBox" name="printHeaderCheckBox">
-           <property name="text">
-            <string>Visualizza intestazione</string>
-           </property>
-          </widget>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="fontTypeLabel">
+             <property name="text">
+              <string notr="true">Tipo &amp;carattere (font)</string>
+             </property>
+             <property name="buddy">
+              <cstring>fontTypeLineEdit</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="fontTypeLineEdit"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="bgColorLabel">
+             <property name="text">
+              <string notr="true">Colore &amp;sfondo (HEX)</string>
+             </property>
+             <property name="buddy">
+              <cstring>bgColorLineEdit</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="bgColorLineEdit"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="textColorLabel">
+             <property name="text">
+              <string notr="true">Colore &amp;testo (HEX)</string>
+             </property>
+             <property name="buddy">
+              <cstring>textColorLineEdit</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="textColorLineEdit"/>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QCheckBox" name="printLogoCheckBox">
-           <property name="text">
-            <string>Visualizza logo</string>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-          </widget>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>13</width>
+             <height>58</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="printQuantityCheckBox">
-           <property name="text">
-            <string>Visualizza colonna quantità</string>
-           </property>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QCheckBox" name="printHeaderCheckBox">
+             <property name="text">
+              <string>Visualizza &amp;intestazione</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="printLogoCheckBox">
+             <property name="text">
+              <string>Visualizza &amp;logo</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="printQuantityCheckBox">
+             <property name="text">
+              <string>Visualizza colonna &amp;quantità</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
@@ -402,7 +392,10 @@
             <item row="0" column="0">
              <widget class="QLabel" name="invoiceRow1Label">
               <property name="text">
-               <string>Riga 1</string>
+               <string>Riga &amp;1</string>
+              </property>
+              <property name="buddy">
+               <cstring>invoiceRow1LineEdit</cstring>
               </property>
              </widget>
             </item>
@@ -412,7 +405,10 @@
             <item row="1" column="0">
              <widget class="QLabel" name="invoiceRow2Label">
               <property name="text">
-               <string>Riga 2</string>
+               <string>Riga &amp;2</string>
+              </property>
+              <property name="buddy">
+               <cstring>invoiceRow2LineEdit</cstring>
               </property>
              </widget>
             </item>
@@ -422,7 +418,10 @@
             <item row="2" column="0">
              <widget class="QLabel" name="invoiceRow3Label">
               <property name="text">
-               <string>Riga 3</string>
+               <string>Riga &amp;3</string>
+              </property>
+              <property name="buddy">
+               <cstring>invoiceRow3LineEdit</cstring>
               </property>
              </widget>
             </item>
@@ -432,7 +431,10 @@
             <item row="3" column="0">
              <widget class="QLabel" name="invoiceRow4Label">
               <property name="text">
-               <string>Riga 4</string>
+               <string>Riga &amp;4</string>
+              </property>
+              <property name="buddy">
+               <cstring>invoiceRow4LineEdit</cstring>
               </property>
              </widget>
             </item>
@@ -442,7 +444,10 @@
             <item row="4" column="0">
              <widget class="QLabel" name="invoiceRow5Label">
               <property name="text">
-               <string>Riga 5</string>
+               <string>Riga &amp;5</string>
+              </property>
+              <property name="buddy">
+               <cstring>invoiceRow5LineEdit</cstring>
               </property>
              </widget>
             </item>
@@ -472,24 +477,24 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabOpzioniXML">
+     <widget class="QWidget" name="tabOpzioniXml">
       <attribute name="title">
        <string>Opzioni XML</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <layout class="QVBoxLayout" name="verticalLayout_9">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="0" column="0">
           <widget class="QLabel" name="numeroProgressivoLabel">
            <property name="text">
-            <string notr="true">&amp;Progressivo invio</string>
+            <string notr="true">Progressivo &amp;invio</string>
            </property>
            <property name="buddy">
             <cstring>numeroProgressivoLineEdit</cstring>
            </property>
           </widget>
          </item>
-         <item>
+         <item row="0" column="1">
           <widget class="QLineEdit" name="numeroProgressivoLineEdit">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -535,8 +540,8 @@
            </property>
           </widget>
          </item>
-         <item>
-          <spacer name="horizontalSpacer_9">
+         <item row="0" column="2">
+          <spacer name="horizontalSpacer_13">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -548,17 +553,37 @@
            </property>
           </spacer>
          </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="destFolderLabel">
+           <property name="text">
+            <string>Ca&amp;rtella di destinazione</string>
+           </property>
+           <property name="buddy">
+            <cstring>destFolderLineEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <widget class="QLineEdit" name="destFolderLineEdit"/>
+         </item>
+         <item row="2" column="0" colspan="3">
+          <widget class="QCheckBox" name="apriXmlCheckBox">
+           <property name="text">
+            <string>&amp;Visualizza immediatamente</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
-        <spacer name="verticalSpacer_2">
+        <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>204</height>
+           <height>273</height>
           </size>
          </property>
         </spacer>
@@ -578,6 +603,7 @@
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
+  <tabstop>allRadioButton</tabstop>
   <tabstop>numeroFatturaRadioButton</tabstop>
   <tabstop>numeroFatturaLineEdit</tabstop>
   <tabstop>clienteRadioButton</tabstop>
@@ -590,7 +616,6 @@
   <tabstop>yearComboBox</tabstop>
   <tabstop>stampaPDFRadioButton</tabstop>
   <tabstop>stampaXmlRadioButton</tabstop>
-  <tabstop>apriXmlCheckBox</tabstop>
   <tabstop>fontTypeLineEdit</tabstop>
   <tabstop>bgColorLineEdit</tabstop>
   <tabstop>textColorLineEdit</tabstop>
@@ -604,6 +629,8 @@
   <tabstop>invoiceRow5LineEdit</tabstop>
   <tabstop>invoiceFooterTextEdit</tabstop>
   <tabstop>numeroProgressivoLineEdit</tabstop>
+  <tabstop>destFolderLineEdit</tabstop>
+  <tabstop>apriXmlCheckBox</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -614,8 +641,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>263</x>
-     <y>473</y>
+     <x>281</x>
+     <y>434</y>
     </hint>
     <hint type="destinationlabel">
      <x>204</x>
