@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.invoice.it05.js
 // @api = 1.0
-// @pubdate = 2018-10-21
+// @pubdate = 2018-12-13
 // @publisher = Banana.ch SA
 // @description = Style 5 IT: Invoice with net amounts, quantity column, logo, 2 colours
 // @description.it = Stile 5 IT: Fattura con importi netti, colonna quantità, logo, 2 colori
@@ -361,9 +361,9 @@ function printInvoice(jsonInvoice, repDocObj, repStyleObj, param) {
    tableRow.addCell(" ", "", 3);
 
    tableRow = infoTable.addRow();
-   var cell1 = tableRow.addCell("", "", 1);
-   var cell2 = tableRow.addCell("", "bold", 1);
-   var cell3 = tableRow.addCell("", "", 1);
+   var cell1 = tableRow.addCell("", "infoCell1", 1);
+   var cell2 = tableRow.addCell("", "infoCell2 bold", 1);
+   var cell3 = tableRow.addCell("", "infoCell3", 1);
 
    var invoiceDate = Banana.Converter.toLocaleDateFormat(invoiceObj.document_info.date);
    cell1.addParagraph(getTitle(invoiceObj, texts) + ":", "");
@@ -680,9 +680,11 @@ function setInvoiceStyle(reportObj, repStyleObj, param) {
    repStyleObj.addStyle(".headerRow3", "font-weight:bold; font-size:12pt;");
    repStyleObj.addStyle(".headerRow4", "font-weight:bold; font-size:12pt;");
    repStyleObj.addStyle(".headerRow5", "font-weight:bold; font-size:12pt;");
-   repStyleObj.addStyle(".infoCol1", "width:15%");
-   repStyleObj.addStyle(".infoCol2", "width:30%");
-   repStyleObj.addStyle(".infoCol3", "width:54%");
+   repStyleObj.addStyle(".infoCol1", "width:15%;");
+   repStyleObj.addStyle(".infoCol2", "width:30%;");
+   repStyleObj.addStyle(".infoCol3", "width:54%;");
+   repStyleObj.addStyle(".infoCell1", "font-size:10pt;");
+   repStyleObj.addStyle(".infoCell2", "font-size:10pt;");
    repStyleObj.addStyle(".border-bottom", "border-bottom:2px solid " + param.color_1);
    repStyleObj.addStyle(".padding-right", "padding-right:5px");
    repStyleObj.addStyle(".padding-left", "padding-left:5px");
