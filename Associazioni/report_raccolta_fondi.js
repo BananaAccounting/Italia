@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.raccoltafondi
 // @api = 1.0
-// @pubdate = 2018-06-22
+// @pubdate = 2018-12-17
 // @publisher = Banana.ch SA
 // @description = Associazioni - Report raccolta fondi
 // @task = app.command
@@ -63,11 +63,35 @@ function printReport(banDoc) {
 
 		//Take vale from table "Testi Report"
 		var strAccount = accountsList[j];
-		var startDate = banDoc.table("TestiReport").findRowByValue("RowId", strAccount+"-DAL").value("Testo");
-		var endDate = banDoc.table("TestiReport").findRowByValue("RowId", strAccount+"-AL").value("Testo");
-		var racFondi = banDoc.table("TestiReport").findRowByValue("RowId", strAccount).value("Testo");
-		var responsabile = banDoc.table("TestiReport").findRowByValue("RowId",strAccount+"-RES").value("Testo");
-		
+		var startDate = "";
+		var endDate = "";
+		var racFondi = "";
+		var responsabile = "";
+
+		try {
+			startDate = banDoc.table("TestiReport").findRowByValue("RowId", strAccount+"-DAL").value("Testo");
+		} catch(e) {
+			banDoc.addMessage('Tabella TestiReport "Data inizio" (Id "' + strAccount+'-DAL") inesistente oppure nome non corretto.');
+		}
+
+		try {
+			endDate = banDoc.table("TestiReport").findRowByValue("RowId", strAccount+"-AL").value("Testo");
+		} catch(e) {
+			banDoc.addMessage('Tabella TestiReport "Data fine" (Id "' + strAccount+'-AL") inesistente oppure nome non corretto.');
+		}
+
+		try {
+			racFondi = banDoc.table("TestiReport").findRowByValue("RowId", strAccount).value("Testo");
+		} catch(e) {
+			banDoc.addMessage('Tabella TestiReport "Raccolta fondi" (Id "' + strAccount+'") inesistente oppure nome non corretto.');
+		}
+
+		try {
+			responsabile = banDoc.table("TestiReport").findRowByValue("RowId",strAccount+"-RES").value("Testo");
+		} catch(e) {
+			banDoc.addMessage('Tabella TestiReport "Responsabile" (Id "' + strAccount+'-RES") inesistente oppure nome non corretto.');
+		}
+
 		//Take info from Banana file and account properties
 		var headerLeft = banDoc.info("Base","HeaderLeft");
 		var headerRight = banDoc.info("Base","HeaderRight");
