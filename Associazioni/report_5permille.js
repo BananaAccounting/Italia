@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.report5permille
 // @api = 1.0
-// @pubdate = 2018-06-26
+// @pubdate = 2018-12-17
 // @publisher = Banana.ch SA
 // @description = Associazioni - Report "5 per mille"
 // @task = app.command
@@ -156,7 +156,13 @@ function printReport(banDoc, itemSelected, tabAccounts1, tabAccounts2, file2) {
 	
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Scopi dell'attività sociale", "", 1);
-	tableRow.addCell(banDoc.table("TestiReport").findRowByValue("RowId", ":5XM-SCOPO").value("Testo"), "", 1);
+	var scopoAttivita = "";
+	try {
+		scopoAttivita = banDoc.table("TestiReport").findRowByValue("RowId", ":5XM-SCOPO").value("Testo");
+	} catch(e) {
+		banDoc.addMessage('Tabella TestiReport "Scopo attività sociale" (Id ":5XM-SCOPO") inesistente oppure nome non corretto.');
+	}
+	tableRow.addCell(scopoAttivita, "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("C.F. del soggetto beneficiario", "", 1);
@@ -184,11 +190,23 @@ function printReport(banDoc, itemSelected, tabAccounts1, tabAccounts2, file2) {
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Nome del rappresentante legale", "", 1);
-	tableRow.addCell(banDoc.table("TestiReport").findRowByValue("RowId", ":5XM-RAPP").value("Testo"), "", 1);
+	var rappresentanteLegale = "";
+	try {
+		rappresentanteLegale = banDoc.table("TestiReport").findRowByValue("RowId", ":5XM-RAPP").value("Testo");
+	} catch(e) {
+		banDoc.addMessage('Tabella TestiReport "Nome rappresentante legale" (Id ":5XM-RAPP") inesistente oppure nome non corretto.');
+	}
+	tableRow.addCell(rappresentanteLegale, "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("C.F. del rappresentante legale", "", 1);
-	tableRow.addCell(banDoc.table("TestiReport").findRowByValue("RowId", ":5XM-RAPP-CF").value("Testo"), "", 1);
+	var cfRappresentanteLegale = "";
+	try {
+		cfRappresentanteLegale = banDoc.table("TestiReport").findRowByValue("RowId", ":5XM-RAPP-CF").value("Testo");
+	} catch(e) {
+		banDoc.addMessage('Tabella TestiReport "C.F. del rappresentante legale" (Id ":5XM-RAPP-CF") inesistente oppure nome non corretto.');
+	}
+	tableRow.addCell(cfRappresentanteLegale, "", 1);
 
 	report.addParagraph(" ");
 
@@ -220,7 +238,16 @@ function printReport(banDoc, itemSelected, tabAccounts1, tabAccounts2, file2) {
 
 	tableRow = table.addRow();
 	tableRow.addCell("Data di percezione", "alignRight bold", 2);
-	tableRow.addCell(banDoc.table("TestiReport").findRowByValue("RowId", ":5XM-DATA").value("Testo"), "alignCenter bold", 1);
+	var dataPercezione = "";
+	try {
+		dataPercezione = banDoc.table("TestiReport").findRowByValue("RowId", ":5XM-DATA").value("Testo");
+	} catch(e) {
+		banDoc.addMessage('Tabella TestiReport "Data di percezione" (Id ":5XM-DATA") inesistente oppure nome non corretto.');
+	}
+	tableRow.addCell(dataPercezione, "alignCenter bold", 1);
+
+
+	
 	
 	//Creation and print of the INCOME groups with all the details
 	for (var i = 0; i < groups.length; i++) {
