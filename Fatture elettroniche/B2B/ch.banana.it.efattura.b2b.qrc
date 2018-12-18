@@ -6,6 +6,7 @@
 		<file>ch.banana.it.invoice.it05.js</file>
       <file alias="ch.banana.script.italy_vat.daticontribuente.js">../../Iva/2017/ch.banana.script.italy_vat.daticontribuente.js</file>
       <file alias="ch.banana.script.italy_vat.daticontribuente.dialog.ui">../../Iva/2017/ch.banana.script.italy_vat.daticontribuente.dialog.ui</file>
+      <file alias="ch.banana.script.italy_vat_2017.errors.js">../../Iva/2017/ch.banana.script.italy_vat_2017.errors.js</file>
       <file alias="ch.banana.script.italy_vat_2017.journal.js">../../Iva/2017/ch.banana.script.italy_vat_2017.journal.js</file>
       <file alias="ch.banana.script.italy_vat_2017.xml.js">../../Iva/2017/ch.banana.script.italy_vat_2017.xml.js</file>
 	</qresource>

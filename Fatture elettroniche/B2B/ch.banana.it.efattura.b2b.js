@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.efattura.b2b
 // @api = 1.0
-// @pubdate = 2018-10-28
+// @pubdate = 2018-12-18
 // @publisher = Banana.ch SA
 // @description = [BETA] Fattura elettronica (XML, PDF)...
 // @description.it = [BETA] Fattura elettronica (XML, PDF)...
@@ -23,6 +23,7 @@
 // @inputdatasource = none
 // @timeout = -1
 // @includejs = ch.banana.it.invoice.it05.js
+// @includejs = ch.banana.script.italy_vat_2017.errors.js
 // @includejs = ch.banana.script.italy_vat_2017.journal.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
@@ -575,6 +576,8 @@ EFattura.prototype.createXml = function (jsonInvoiceList, xmlDocument, indent) {
       return "@Cancel";
       
    var nodeRoot = this.createXmlHeader(jsonInvoiceList[0], xmlDocument);
+   if (!nodeRoot || this.isEmpty(nodeRoot))
+      return "@Cancel";
    for (var i = 0; i < jsonInvoiceList.length; i++) {
       this.createXmlBody(jsonInvoiceList[i], nodeRoot);
    }
@@ -694,6 +697,7 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    if (formatoTrasmissione !== "FPA12" && formatoTrasmissione !== "FPR12") {
       var msg = this.getErrorMessage(this.ID_ERR_XML_FORMATO_NONVALIDO);
       this.addMessage(msg, this.ID_ERR_XML_FORMATO_NONVALIDO);
+      return null;
    }
 
    var nodeRoot = xmlDocument.addElement("p:FatturaElettronica");
@@ -746,10 +750,7 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
       this.addTextNode(nodePECDestinatario, pecDestinatario, '7...256', 'DatiTrasmissione/PECDestinatario' + msgHelpNoFattura);
    }
    else{
-      if (formatoTrasmissione === "FPA12")
-         this.addTextNode(nodeCodiceDestinatario, codiceDestinatario, '6', 'DatiTrasmissione/CodiceDestinatario' + msgHelpNoFattura);
-      else
-         this.addTextNode(nodeCodiceDestinatario, codiceDestinatario, '7', 'DatiTrasmissione/CodiceDestinatario' + msgHelpNoFattura);
+      this.addTextNode(nodeCodiceDestinatario, codiceDestinatario, '6...7', 'DatiTrasmissione/CodiceDestinatario' + msgHelpNoFattura);
    }
    //[1.2] CedentePrestatore 
    var nodeCedentePrestatore = nodeFatturaElettronicaHeader.addElement("CedentePrestatore");
