@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.invoice.it05.js
 // @api = 1.0
-// @pubdate = 2018-12-13
+// @pubdate = 2018-12-24
 // @publisher = Banana.ch SA
 // @description = Style 5 IT: Invoice with net amounts, quantity column, logo, 2 colours
 // @description.it = Stile 5 IT: Fattura con importi netti, colonna quantità, logo, 2 colori
@@ -265,6 +265,31 @@ function printDocument(jsonInvoice, repDocObj, repStyleObj) {
    setInvoiceStyle(repDocObj, repStyleObj, param);
 }
 
+function printHeader(reportObj, invoiceObj, param) {
+   if (param.header_row_1) {
+      if (param.header_row_1.length>0)
+         reportObj.addParagraph(param.header_row_1, "headerRow1");
+      if (param.header_row_2.length>0)
+         reportObj.addParagraph(param.header_row_2, "headerRow2");
+      if (param.header_row_3.length>0)
+         reportObj.addParagraph(param.header_row_3, "headerRow3");
+      if (param.header_row_4.length>0)
+         reportObj.addParagraph(param.header_row_4, "headerRow4");
+      if (param.header_row_5.length>0)
+         reportObj.addParagraph(param.header_row_5, "headerRow5");
+   }
+   else {
+      var supplierNameLines = getInvoiceSupplierName(invoiceObj.supplier_info).split('\n');
+      for (var i = 0; i < supplierNameLines.length; i++) {
+         reportObj.addParagraph(supplierNameLines[i], "headerRow1");
+      }
+      var supplierLines = getInvoiceSupplier(invoiceObj.supplier_info).split('\n');
+      for (var i = 0; i < supplierLines.length; i++) {
+         reportObj.addParagraph(supplierLines[i], "headerRows");
+      }
+   }
+}
+
 function printInvoice(jsonInvoice, repDocObj, repStyleObj, param) {
    // jsonInvoice can be a json string or a js object
    var invoiceObj = null;
@@ -297,58 +322,27 @@ function printInvoice(jsonInvoice, repDocObj, repStyleObj, param) {
    /***********
      1. HEADER
    ***********/
-   var tab = repDocObj.getHeader().addTable("header_table");
-   var col1 = tab.addColumn("col1");
-   var col2 = tab.addColumn("col2");
-   var headerLogoSection = repDocObj.addSection("");
-
    if (param.print_logo) {
+      var headerLogoSection = repDocObj.addSection("");
       var logoFormat = Banana.Report.logoFormat("Logo");
       if (logoFormat) {
          var logoElement = logoFormat.createDocNode(headerLogoSection, repStyleObj, "logo");
          repDocObj.getHeader().addChild(logoElement);
       }
-   }
-
-   if (param.print_header) {
-      tableRow = tab.addRow();
-      var cell1 = tableRow.addCell("", "");
-      var cell2 = tableRow.addCell("", "amount");
-      if (param.header_row_1) {
-         if (param.header_row_1.length>0)
-            cell1.addParagraph(param.header_row_1, "headerRow1");
-         if (param.header_row_2.length>0)
-            cell1.addParagraph(param.header_row_2, "headerRow2");
-         if (param.header_row_3.length>0)
-            cell1.addParagraph(param.header_row_3, "headerRow3");
-         if (param.header_row_4.length>0)
-            cell1.addParagraph(param.header_row_4, "headerRow4");
-         if (param.header_row_5.length>0)
-            cell1.addParagraph(param.header_row_5, "headerRow5");
-      }
-      else {
-         var supplierNameLines = getInvoiceSupplierName(invoiceObj.supplier_info).split('\n');
-         for (var i = 0; i < supplierNameLines.length; i++) {
-            cell1.addParagraph(supplierNameLines[i], "bold");
-         }
-         var supplierLines = getInvoiceSupplier(invoiceObj.supplier_info).split('\n');
-         for (var i = 0; i < supplierLines.length; i++) {
-            cell1.addParagraph(supplierLines[i], "");
-         }
-      }
+      //scrive il testo nella sezione del logo così viene impaginato tramite il comando 'File-Imposta logo...'
+      if (param.print_header)
+         printHeader(headerLogoSection, invoiceObj, param);
    }
    else {
-      tableRow = tab.addRow();
+      var tab = repDocObj.getHeader().addTable("header_table");
+      var col1 = tab.addColumn("col1");
+
+      var tableRow = tab.addRow();
       var cell1 = tableRow.addCell("", "");
-      var cell2 = tableRow.addCell("", "");
-      cell2.addParagraph(" ");
-      cell2.addParagraph(" ");
-      cell2.addParagraph(" ");
-      cell2.addParagraph(" ");
+      if (param.print_header)
+         printHeader(cell1, invoiceObj, param);
    }
-
-
-
+      
    /**********************
      2. INVOICE TEXTS INFO
    **********************/
@@ -576,7 +570,7 @@ function printInvoice(jsonInvoice, repDocObj, repStyleObj, param) {
    ***********/
    if (param.footer && param.footer.length>0) {
       var tabFooter = repDocObj.getFooter().addTable("footer_table");
-      var col1 = tabFooter.addColumn("col");
+      var col = tabFooter.addColumn("col");
       var lines = param.footer.split("\n");
       for (var i = 0; i<lines.length; i++) {
          var tableRow = tabFooter.addRow();
@@ -600,9 +594,9 @@ function printInvoiceDetails(invoiceObj, repDocObj, param, texts, rowNumber) {
    tableRow.addCell(" ", "", 3);
 
    tableRow = infoTable.addRow();
-   var cell1 = tableRow.addCell("", "", 1);
-   var cell2 = tableRow.addCell("", "bold", 1);
-   var cell3 = tableRow.addCell("", "", 1);
+   var cell1 = tableRow.addCell("", "infoCell1", 1);
+   var cell2 = tableRow.addCell("", "infoCell2 bold", 1);
+   var cell3 = tableRow.addCell("", "infoCell3", 1);
 
    var invoiceDate = Banana.Converter.toLocaleDateFormat(invoiceObj.document_info.date);
    cell1.addParagraph(getTitle(invoiceObj, texts) + ":", "");
@@ -675,11 +669,11 @@ function setInvoiceStyle(reportObj, repStyleObj, param) {
 
    //repStyleObj.addStyle(".col1", "width:50%");
    //repStyleObj.addStyle(".col2", "width:49%");
-   repStyleObj.addStyle(".headerRow1", "font-weight:bold; font-size:20pt; color:" + param.color_1);
-   repStyleObj.addStyle(".headerRow2", "font-weight:bold; font-size:16pt;padding-bottom:5px;");
-   repStyleObj.addStyle(".headerRow3", "font-weight:bold; font-size:12pt;");
-   repStyleObj.addStyle(".headerRow4", "font-weight:bold; font-size:12pt;");
-   repStyleObj.addStyle(".headerRow5", "font-weight:bold; font-size:12pt;");
+   repStyleObj.addStyle(".headerRow1", "font-weight:bold; color:" + param.color_1);
+   repStyleObj.addStyle(".headerRow2", "font-weight:bold; padding-bottom:5px;");
+   repStyleObj.addStyle(".headerRow3", "font-weight:bold;");
+   repStyleObj.addStyle(".headerRow4", "font-weight:bold;");
+   repStyleObj.addStyle(".headerRow5", "font-weight:bold;");
    repStyleObj.addStyle(".infoCol1", "width:15%;");
    repStyleObj.addStyle(".infoCol2", "width:30%;");
    repStyleObj.addStyle(".infoCol3", "width:54%;");
