@@ -422,7 +422,7 @@ function settingsDialog() {
    //Salvataggio dati
    eFattura.param.selection_invoice = numeroFatturaLineEdit.text;
    eFattura.param.selection_customer = eFattura.getCustomerId(clienteComboBox.currentText);
-   Banana.console.debug("selection_customer" +  eFattura.param.selection_customer );
+   //Banana.console.debug("selection_customer" +  eFattura.param.selection_customer );
    if (allRadioButton.checked)
       eFattura.param.selection = 2;
    else if (clienteRadioButton.checked)
@@ -894,30 +894,29 @@ EFattura.prototype.getCustomerId = function (customerName) {
    if (posEnd<=posStart)
       return customerId;
    
-   customerId = customerName.substring(posStart, posEnd);
-   Banana.console.debug(customerId);
-   var tableAccounts = this.banDocument.table('Accounts');
+   customerId = customerName.substring(posStart, posEnd).trim();
+   //Banana.console.debug(customerId);
+   /*var tableAccounts = this.banDocument.table('Accounts');
    if (tableAccounts) {
       var tRowAccounts = tableAccounts.findRowByValue('Account', customerId);
       if (!tRowAccounts)
          customerId = '';
-   }
+   }*/
+   if (customerId.length > 0 && !this.journal.customers[customerId])
+      customerId = '';
    
    return customerId;
 }
 
 EFattura.prototype.getCustomerList = function () {
    var customersList = [];
-   var tableAccounts = this.banDocument.table('Accounts');
    if (this.journalInvoices) {
       for (var i = 0; i < this.journalInvoices.rowCount; i++) {
          var tRow = this.journalInvoices.row(i);
          if (tRow.value('ObjectType') === 'InvoiceDocument' && tRow.value('CounterpartyId').length > 0) {
             var customerId = tRow.value('CounterpartyId').toString();
-            if (tableAccounts) {
-               var tRowAccounts = tableAccounts.findRowByValue('Account', customerId);
-               if (tRowAccounts)
-                  customerId = customerId + "   " + tRowAccounts.value('Description').toString();
+            if (this.journal.customers[customerId]) {
+               customerId = customerId + "   " + this.journal.customers[customerId]["Description"];
             }
             if (customersList.indexOf(customerId) < 0) {
                customersList.push(customerId);

@@ -77,19 +77,19 @@ Journal.prototype.getPeriod = function(startDate, endDate) {
       data.transactions.push(jsonLine);
       var accountId = jsonLine["IT_ClienteConto"];
       var accountType = jsonLine["IT_ClienteTipologia"];
-      var accountObj = new Utils(this.banDocument).getAccount(accountId);
-      if (accountType == 'C') {
-        if (!data.customers[accountId])
-          data.customers[accountId] = accountObj;
-        if (!data.customers[accountId].transactions)
+      //var accountObj = new Utils(this.banDocument).getAccount(accountId);
+      if (accountType == 'C' && this.customers[accountId]) {
+        if (!data.customers[accountId]) {
+          data.customers[accountId] = this.customers[accountId];
           data.customers[accountId].transactions = [];
+        }
         data.customers[accountId].transactions.push(jsonLine);
       }
-      else if (accountType == 'F') {
-        if (!data.suppliers[accountId])
-          data.suppliers[accountId] = accountObj;
-        if (!data.suppliers[accountId].transactions)
+      else if (accountType == 'F' && this.suppliers[accountId]) {
+        if (!data.suppliers[accountId]) {
+          data.suppliers[accountId] = this.suppliers[accountId];
           data.suppliers[accountId].transactions = [];
+        }
         data.suppliers[accountId].transactions.push(jsonLine);
       }
       if (jsonLine["IT_NoDoc"].length) {
@@ -171,19 +171,24 @@ Journal.prototype.load = function() {
 
     var accountId = filteredRows[i].value("JAccount");
     if (accountId && accountId.length>0) {
-      var accountObj = new Utils(this.banDocument).getAccount(accountId);
-      if (accountObj) {
+      //var accountObj = new Utils(this.banDocument).getAccount(accountId);
+      //if (accountObj) {
         if (isCustomer) {
-          this.customers[accountId] = accountObj;
+          //this.customers[accountId] = accountObj;
+          this.customers[accountId] = {};
         }
         else {
-          this.suppliers[accountId] = accountObj;
+          //this.suppliers[accountId] = accountObj;
+          this.suppliers[accountId] = {};
         }
-      }
+      //}
     }
   }
   progressBar.finish();
   this.printElapsedTime("Elenco clienti/fornitori", t0);
+  
+  //Conti clienti/fornitori salvati in un map per velocizzare lo script
+  this.loadAccounts();
 
   //Riprende le registrazioni IVA in this.transactions
   t0 = new Date();
@@ -286,7 +291,7 @@ Journal.prototype.load = function() {
       isSupplier = true;
       accountId = accountCC3;
     }
-
+    
     //Crea un oggetto json dove vengono salvate tutte le informazioni della riga
     //e aggiunto in this.transactions
     var jsonLine = {};
@@ -791,6 +796,69 @@ EsibilitaIva
   }
   progressBar.finish();
   this.printElapsedTime("Registrazioni iva", t0);
+}
+
+/*
+ * Ritorna i conti clienti/fornitori con gli indirizzi
+*/
+Journal.prototype.loadAccounts = function() {
+  if (!this.banDocument)
+    return;
+
+  var tableAccounts = this.banDocument.table('Accounts');
+  if (!tableAccounts)
+    return;
+
+   for (var accountId in this.customers) {
+      var tRow = tableAccounts.findRowByValue('Account', accountId);
+      if (tRow) {
+         var jsonString = tRow.toJSON();
+         var jsonObj = JSON.parse(jsonString);
+         for (var key in jsonObj) {
+            if (jsonObj[key].length > 0)
+               jsonObj[key] = xml_escapeString(jsonObj[key]);
+         }
+         this.customers[accountId] = jsonObj;
+      }
+   }
+    
+   for (var accountId in this.suppliers) {
+      var tRow = tableAccounts.findRowByValue('Account', accountId);
+      if (tRow) {
+         var jsonString = tRow.toJSON();
+         var jsonObj = JSON.parse(jsonString);
+         for (var key in jsonObj) {
+            if (jsonObj[key].length > 0)
+               jsonObj[key] = xml_escapeString(jsonObj[key]);
+         }
+         this.suppliers[accountId] = jsonObj;
+      }
+   }
+
+   /*for (i=0; i<tableAccounts.rowCount; i++) {
+    var tRow = tableAccounts.row(i);
+    var accountId = tRow.value('Account');
+    
+    if (!accountId)
+      continue;
+    
+    if (!this.customers[accountId] && !this.suppliers[accountId])
+      continue;
+
+    var jsonString = tRow.toJSON();
+    var jsonObj = JSON.parse(jsonString);
+    for (var key in jsonObj) {
+      if (jsonObj[key].length > 0)
+        jsonObj[key] = xml_escapeString(jsonObj[key]);
+    }
+    
+    if (this.customers[accountId]) {
+      this.customers[accountId] = jsonObj;
+    }
+    else if (this.suppliers[accountId]) {
+      this.suppliers[accountId] = jsonObj;
+    }
+  }*/
 }
 
 Journal.prototype.printElapsedTime = function(functionName, t0) {

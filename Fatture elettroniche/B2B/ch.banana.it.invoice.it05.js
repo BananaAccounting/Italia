@@ -322,14 +322,11 @@ function printInvoice(jsonInvoice, repDocObj, repStyleObj, param) {
    /***********
      1. HEADER
    ***********/
-   if (param.print_logo) {
+   var logoFormat = Banana.Report.logoFormat("Logo");
+   if (logoFormat && param.print_logo) {
       var headerLogoSection = repDocObj.addSection("");
-      var logoFormat = Banana.Report.logoFormat("Logo");
-      if (logoFormat) {
-         var logoElement = logoFormat.createDocNode(headerLogoSection, repStyleObj, "logo");
-         repDocObj.getHeader().addChild(logoElement);
-      }
-      //scrive il testo nella sezione del logo così viene impaginato tramite il comando 'File-Imposta logo...'
+      var logoElement = logoFormat.createDocNode(headerLogoSection, repStyleObj, "logo");
+      repDocObj.getHeader().addChild(logoElement);
       if (param.print_header)
          printHeader(headerLogoSection, invoiceObj, param);
    }
