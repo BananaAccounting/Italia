@@ -124,10 +124,6 @@ Journal.prototype.load = function() {
   if (!journal || !filteredRows || !tableVatCodes)
     return;
 
-  var progressBar = Banana.application.progressBar;
-  var t0 = new Date();
-  progressBar.start(3);
-
   //Conti corrispettivi
   var mapCorrispettivi = new Utils(this.banDocument).getMapContiCorrispettivi();
   
@@ -147,10 +143,9 @@ Journal.prototype.load = function() {
 
   //Riprende l'elenco clienti/fornitori in this.customers e this.suppliers
   //Solamente righe con JInvoiceRowCustomerSupplier=1 (cliente) or JInvoiceRowCustomerSupplier=2 (fornitore)
-  progressBar.finish();
-  this.printElapsedTime("Corrispettivi", t0);
+  var progressBar = Banana.application.progressBar;
+  var t0 = new Date();
 
-  t0 = new Date();
   if (typeof(progressBar.setText) !== 'undefined')
     progressBar.setText("Elenco clienti/fornitori");
   progressBar.start(filteredRows.length + 1);
@@ -185,7 +180,7 @@ Journal.prototype.load = function() {
     }
   }
   progressBar.finish();
-  this.printElapsedTime("Elenco clienti/fornitori", t0);
+  //this.printElapsedTime("Elenco clienti/fornitori", t0);
   
   //Conti clienti/fornitori salvati in un map per velocizzare lo script
   this.loadAccounts();
@@ -795,7 +790,7 @@ EsibilitaIva
     this.transactions.push(jsonLine);
   }
   progressBar.finish();
-  this.printElapsedTime("Registrazioni iva", t0);
+  //this.printElapsedTime("Registrazioni iva", t0);
 }
 
 /*

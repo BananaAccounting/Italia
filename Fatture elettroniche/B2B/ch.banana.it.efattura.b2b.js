@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.efattura.b2b
 // @api = 1.0
-// @pubdate = 2018-12-18
+// @pubdate = 2019-01-08
 // @publisher = Banana.ch SA
 // @description = [BETA] Fattura elettronica (XML, PDF)...
 // @description.it = [BETA] Fattura elettronica (XML, PDF)...
@@ -498,7 +498,7 @@ function EFattura(banDocument) {
    this.initParam();
    this.initNamespaces();
    this.initSchemarefs();
-   this.loadJournal();
+   this.journalInvoices = this.banDocument.invoicesCustomers();
 }
 
 EFattura.prototype.addMessage = function (msg, idMsg) {
@@ -884,17 +884,17 @@ EFattura.prototype.getCountryCode = function(countryName) {
  return countryCode.toUpperCase();
 }
 
-EFattura.prototype.getCustomerId = function (customerName) {
-   var customerId = '';
-   if (customerName.length<=0)
+EFattura.prototype.getCustomerId = function (customerDescription) {
+   var customerId = customerDescription;
+   if (customerId.length<=0)
       return customerId;
       
    var posStart = 0;
-   var posEnd = customerName.indexOf("   ");
+   var posEnd = customerId.indexOf("   ");
    if (posEnd<=posStart)
       return customerId;
    
-   customerId = customerName.substring(posStart, posEnd).trim();
+   customerId = customerId.substring(posStart, posEnd).trim();
    //Banana.console.debug(customerId);
    /*var tableAccounts = this.banDocument.table('Accounts');
    if (tableAccounts) {
@@ -902,28 +902,46 @@ EFattura.prototype.getCustomerId = function (customerName) {
       if (!tRowAccounts)
          customerId = '';
    }*/
-   if (customerId.length > 0 && !this.journal.customers[customerId])
-      customerId = '';
    
    return customerId;
 }
 
 EFattura.prototype.getCustomerList = function () {
+
    var customersList = [];
-   if (this.journalInvoices) {
-      for (var i = 0; i < this.journalInvoices.rowCount; i++) {
-         var tRow = this.journalInvoices.row(i);
-         if (tRow.value('ObjectType') === 'InvoiceDocument' && tRow.value('CounterpartyId').length > 0) {
-            var customerId = tRow.value('CounterpartyId').toString();
-            if (this.journal.customers[customerId]) {
-               customerId = customerId + "   " + this.journal.customers[customerId]["Description"];
-            }
-            if (customersList.indexOf(customerId) < 0) {
-               customersList.push(customerId);
-            }
+   
+   if (!this.journalInvoices)
+      return customersList;
+
+   /*tiene solamente i clienti che hanno delle fatture*/
+   var customerIdList = [];
+   for (var i = 0; i < this.journalInvoices.rowCount; i++) {
+      var tRow = this.journalInvoices.row(i);
+      if (tRow.value('ObjectType') === 'InvoiceDocument' && tRow.value('CounterpartyId').length > 0) {
+         var customerId = tRow.value('CounterpartyId').toString();
+         if (customerIdList.indexOf(customerId) < 0) {
+            customerIdList.push(customerId);
          }
       }
    }
+   
+   for (var i = 0; i < this.journalInvoices.rowCount; i++) {
+      var tRow = this.journalInvoices.row(i);
+      if (tRow.value('ObjectType') === 'Counterparty' && tRow.value('CounterpartyId').length > 0) {
+         var customerId = tRow.value('CounterpartyId').toString();
+         if (customerIdList.indexOf(customerId) < 0)
+            continue;
+         var jsonData = JSON.parse(tRow.value('ObjectJSonData'));
+         if (jsonData && jsonData.Counterparty && jsonData.Counterparty.customer_info) {
+            if (jsonData.Counterparty.customer_info.business_name)
+               customerId += "   " + jsonData.Counterparty.customer_info.business_name;
+            else if (jsonData.Counterparty.customer_info.last_name)
+               customerId += "   " + jsonData.Counterparty.customer_info.last_name + " " + jsonData.Counterparty.customer_info.first_name;
+         }
+         customersList.push(customerId);
+      }
+   }
+   
    return customersList;
 }
 
@@ -1019,16 +1037,22 @@ EFattura.prototype.getProgressiveNumber = function () {
 }
 
 EFattura.prototype.getValueFromJournal = function (columnName, customerId, invoiceId) {
-   if (!this.journal || !this.journal.customers)
+
+   if (columnName.length<=0 ||customerId.length<=0 || invoiceId.length<=0)
       return "";
 
-   if (columnName.length<=0 ||customerId.length<=0 || invoiceId.length<=0 || !this.journal.customers[customerId])
+   if (!this.journal) {
+      this.journal = new Journal(this.banDocument);
+      this.journal.load();
+   }
+
+   if (!this.journal.customers || !this.journal.customers[customerId])
       return "";
+   
    for (var j in this.journal.customers[customerId].transactions) {
       var rowJsonObj = this.journal.customers[customerId].transactions[j];
-      if (rowJsonObj["IT_NoDoc"] === invoiceId) {
-         var content = rowJsonObj[columnName];
-         return content;
+      if (rowJsonObj["IT_NoDoc"] === invoiceId && rowJsonObj[columnName]) {
+         return rowJsonObj[columnName];
       }
    }
    return "";
@@ -1114,11 +1138,6 @@ EFattura.prototype.isEmpty = function (obj) {
    }
    return true;
 }
-EFattura.prototype.loadJournal = function () {
-   this.journal = new Journal(this.banDocument);
-   this.journal.load();
-   this.journalInvoices = this.banDocument.invoicesCustomers();
-}
 
 EFattura.prototype.loadData = function () {
    var jsonInvoiceList = [];
@@ -1129,11 +1148,12 @@ EFattura.prototype.loadData = function () {
    if (!this.initDatiContribuente())
       return jsonInvoiceList;
 
+   if (!this.journalInvoices)
+      return jsonInvoiceList;
+
    var periodAll = this.param.periodAll;
    var startDate = this.param.periodStartDate;
    var endDate = this.param.periodEndDate;
-   if (!this.journalInvoices)
-      return jsonInvoiceList;
   
    for (var i = 0; i < this.journalInvoices.rowCount; i++) {
       var tRow = this.journalInvoices.row(i);
@@ -1162,7 +1182,7 @@ EFattura.prototype.loadData = function () {
       var msg = this.getErrorMessage(this.ID_ERR_NOINVOICE);
       this.addMessage(msg, this.ID_ERR_NOINVOICE);
    }
-   
+
    //raggruppa per cliente perché il file xml può contenere un solo cliente
    //se ci sono più clienti verranno creati più files xml
    var jsonCustomerList = {};
