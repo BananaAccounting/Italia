@@ -559,7 +559,9 @@ EFattura.prototype.createReport = function (jsonInvoice, report, stylesheet) {
    if (jsonInvoice && jsonInvoice.customer_info) {
       printInvoice(jsonInvoice, report, stylesheet, this.param.report);
       var debug=false;
-      if (debug && this.journal) {
+      if (debug) {
+         this.journal = new Journal(this.banDocument);
+         this.journal.load();
          report.addPageBreak();
          this.journal._debugPrintJournal(report, stylesheet);
          report.addPageBreak();
@@ -648,7 +650,7 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
          this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DettaglioLinee/AliquotaIVA '+ msgHelpNoFattura);
          if (Banana.SDecimal.isZero(aliquotaIva)) {
             imponibileAliquota0 = Banana.SDecimal.add(invoiceObj.items[i].total_amount_vat_exclusive, imponibileAliquota0);
-            var natura = this.getValueFromJournal("IT_Natura", invoiceObj.customer_info.number, invoiceObj.document_info.number);
+            var natura = this.getValueFromJournal("IT_Natura", invoiceObj.customer_info.number, invoiceObj.document_info.number, invoiceObj.items[i].origin_row);
             var nodeNatura = nodeDettaglioLinee.addElement("Natura");
             this.addTextNode(nodeNatura, natura, '2', 'DettaglioLinee/Natura '+ msgHelpNoFattura);
          }
@@ -1036,7 +1038,7 @@ EFattura.prototype.getProgressiveNumber = function () {
    return stringaNumeroInvio;
 }
 
-EFattura.prototype.getValueFromJournal = function (columnName, customerId, invoiceId) {
+EFattura.prototype.getValueFromJournal = function (columnName, customerId, invoiceId, originRow) {
 
    if (columnName.length<=0 ||customerId.length<=0 || invoiceId.length<=0)
       return "";
@@ -1052,7 +1054,13 @@ EFattura.prototype.getValueFromJournal = function (columnName, customerId, invoi
    for (var j in this.journal.customers[customerId].transactions) {
       var rowJsonObj = this.journal.customers[customerId].transactions[j];
       if (rowJsonObj["IT_NoDoc"] === invoiceId && rowJsonObj[columnName]) {
-         return rowJsonObj[columnName];
+         if (originRow) {
+            if (rowJsonObj["JRowOrigin"] === originRow)
+               return rowJsonObj[columnName];
+         }
+         else {
+            return rowJsonObj[columnName];
+         }
       }
    }
    return "";
