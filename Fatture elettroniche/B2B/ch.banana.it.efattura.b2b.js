@@ -621,7 +621,7 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    var imponibileAliquota0 = 0;
    var nodeDatiBeniServizi = nodeFatturaElettronicaBody.addElement("DatiBeniServizi");
    for (var i = 0; i < invoiceObj.items.length; i++) {
-      if (invoiceObj.items[i].item_type !== "item")
+      if (invoiceObj.items[i].item_type !== "item" && invoiceObj.items[i].item_type !== "note")
          continue;
       var nodeDettaglioLinee = nodeDatiBeniServizi.addElement("DettaglioLinee");
       var nodeNumeroLinea = nodeDettaglioLinee.addElement("NumeroLinea");
@@ -641,12 +641,23 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
          this.addTextNode(nodeUnitaMisura, invoiceObj.items[i].mesure_unit , '1...10', 'DettaglioLinee/UnitaMisura '+ msgHelpNoFattura);
       }
       var nodePrezzoUnitario = nodeDettaglioLinee.addElement("PrezzoUnitario");
-      this.addTextNode(nodePrezzoUnitario, invoiceObj.items[i].unit_price.calculated_amount_vat_exclusive, '4...21', 'DettaglioLinee/PrezzoUnitario '+ msgHelpNoFattura);
+      var prezzoUnitario = invoiceObj.items[i].unit_price.calculated_amount_vat_exclusive;
+      if (!prezzoUnitario)
+         prezzoUnitario = "0.00";
+      this.addTextNode(nodePrezzoUnitario, prezzoUnitario, '4...21', 'DettaglioLinee/PrezzoUnitario '+ msgHelpNoFattura);
       var nodePrezzoTotale = nodeDettaglioLinee.addElement("PrezzoTotale");
-      this.addTextNode(nodePrezzoTotale, invoiceObj.items[i].total_amount_vat_exclusive, '4...21', 'DettaglioLinee/PrezzoTotale '+ msgHelpNoFattura);
+      var prezzoTotale = invoiceObj.items[i].total_amount_vat_exclusive;
+      if (!prezzoTotale)
+         prezzoTotale = "0.00";
+      this.addTextNode(nodePrezzoTotale, prezzoTotale, '4...21', 'DettaglioLinee/PrezzoTotale '+ msgHelpNoFattura);
       var nodeAliquotaIVA = nodeDettaglioLinee.addElement("AliquotaIVA");
       var aliquotaIva = Banana.SDecimal.round(invoiceObj.items[i].unit_price.vat_rate, {'decimals':2});
-      if (invoiceObj.items[i].unit_price.vat_code.length>0) {
+      //se la linea di dettaglio è una linea di descrizione con importo totale a 0, imposta il codice IVA al 22%, così non chiede il codice natura
+      if (invoiceObj.items[i].item_type === "note" && Banana.SDecimal.isZero(prezzoTotale)) {
+         aliquotaIva = Banana.SDecimal.round("22", {'decimals':2});
+      }
+      //Aliquota IVA: nel caso di non applicabilità, il campo deve essere valorizzato a zero
+      //if (invoiceObj.items[i].unit_price.vat_code.length>0) {
          this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DettaglioLinee/AliquotaIVA '+ msgHelpNoFattura);
          if (Banana.SDecimal.isZero(aliquotaIva)) {
             imponibileAliquota0 = Banana.SDecimal.add(invoiceObj.items[i].total_amount_vat_exclusive, imponibileAliquota0);
@@ -654,7 +665,7 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
             var nodeNatura = nodeDettaglioLinee.addElement("Natura");
             this.addTextNode(nodeNatura, natura, '2', 'DettaglioLinee/Natura '+ msgHelpNoFattura);
          }
-      }
+      //}
    }
    var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
    for (var i = 0; i < invoiceObj.billing_info.total_vat_rates.length; i++) {
