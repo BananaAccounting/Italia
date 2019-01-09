@@ -34,6 +34,8 @@ function Journal(banDocument) {
   this.customers = {};
   /*elenco fornitori*/
   this.suppliers = {};
+  /*flag per includere solamente cliente e fornitori, altri movimenti iva non vengono considerati*/
+  this.excludeVatTransactions = false;
 }
 /*
 *  Filtra i dati del giornale escludendo le registrazioni degli anni precedenti
@@ -287,6 +289,10 @@ Journal.prototype.load = function() {
       accountId = accountCC3;
     }
     
+    //continua solamente se è un cliente/fornitore oppure le registrazioni IVA sono da includere
+    if (this.excludeVatTransactions && !isCustomer && !isSupplier)
+      continue;
+      
     //Crea un oggetto json dove vengono salvate tutte le informazioni della riga
     //e aggiunto in this.transactions
     var jsonLine = {};

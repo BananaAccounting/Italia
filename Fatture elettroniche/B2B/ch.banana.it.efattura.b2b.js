@@ -170,11 +170,12 @@ function settingsDialog() {
    }
    //clienteComboBox.currentText = eFattura.param.selection_customer;
    clienteComboBox.currentIndex = index;
-
+   
+   //imposta il numero fattura dalla selezione della tabella registrazioni
    var selectedRow = parseInt(Banana.document.cursor.rowNr);
    if (selectedRow && Banana.document.table('Transactions') && Banana.document.table('Transactions').rowCount > selectedRow) {
       var noFattura = Banana.document.table('Transactions').value(selectedRow, "DocInvoice");
-      if (noFattura)
+      if (noFattura && noFattura.length>0)
          numeroFatturaLineEdit.text = noFattura;
    }
 
@@ -255,6 +256,11 @@ function settingsDialog() {
    
    //funzioni dialogo
    dialog.checkdata = function () {
+      if (numeroFatturaLineEdit.text.length<=0 && numeroFatturaRadioButton.checked) {
+         var msg = eFattura.getErrorMessage(eFattura.ID_ERR_INVOICENUMBER_MISSING);
+         eFattura.addMessage(msg, eFattura.ID_ERR_INVOICENUMBER_MISSING);
+         return;
+      }
       dialog.accept();
    }
    dialog.enableButtons = function () {
@@ -485,6 +491,7 @@ function EFattura(banDocument) {
    /* errors id*/
    this.ID_ERR_ACCOUNTING_TYPE_NOTVALID = "ID_ERR_ACCOUNTING_TYPE_NOTVALID";
    this.ID_ERR_DATICONTRIBUENTE_NOTFOUND = "ID_ERR_DATICONTRIBUENTE_NOTFOUND";
+   this.ID_ERR_INVOICENUMBER_MISSING = "ID_ERR_INVOICENUMBER_MISSING";
    this.ID_ERR_NOINVOICE = "ID_ERR_NOINVOICE";
    this.ID_ERR_TABLE_ADDRESS_MISSING = "ID_ERR_TABLE_ADDRESS_MISSING";
    this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED = "ID_ERR_TABLE_ADDRESS_NOT_UPDATED";
@@ -498,7 +505,6 @@ function EFattura(banDocument) {
    this.initParam();
    this.initNamespaces();
    this.initSchemarefs();
-   this.journalInvoices = this.banDocument.invoicesCustomers();
 }
 
 EFattura.prototype.addMessage = function (msg, idMsg) {
@@ -560,8 +566,11 @@ EFattura.prototype.createReport = function (jsonInvoice, report, stylesheet) {
       printInvoice(jsonInvoice, report, stylesheet, this.param.report);
       var debug=false;
       if (debug) {
-         this.journal = new Journal(this.banDocument);
-         this.journal.load();
+         if (!this.journal) {
+            this.journal = new Journal(this.banDocument);
+            this.journal.excludeVatTransactions = true;
+            this.journal.load();
+         }   
          report.addPageBreak();
          this.journal._debugPrintJournal(report, stylesheet);
          report.addPageBreak();
@@ -706,7 +715,26 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
       return null;
 
    //<Document>
-   var formatoTrasmissione = this.getValueFromJournal("IT_XmlFormatoTrasmissione", invoiceObj.customer_info.number, invoiceObj.document_info.number);
+   
+   //Versione
+   //non ripreso dal giornale perché se la fattura non ha codici IVA la registrazione non è presente nel giornale
+   //var formatoTrasmissione = this.getValueFromJournal("IT_XmlFormatoTrasmissione", invoiceObj.customer_info.number, invoiceObj.document_info.number);
+   var formatoTrasmissione = "";
+   var codiceDestinatario = "";
+   var pecDestinatario = "";
+   var accountObj = new Utils(this.banDocument).getAccount(invoiceObj.customer_info.number);
+   if (accountObj && accountObj["Code1"]) {
+      var value = accountObj["Code1"];
+      if (value && value.length>0) {
+         var values = value.split(":");
+         if (values.length>0)
+            formatoTrasmissione = values[0];
+         if (values.length>1)
+            codiceDestinatario = values[1];
+         if (values.length>2)
+            pecDestinatario = values[2];
+      }
+   }
    if (formatoTrasmissione !== "FPA12" && formatoTrasmissione !== "FPR12") {
       var msg = this.getErrorMessage(this.ID_ERR_XML_FORMATO_NONVALIDO);
       this.addMessage(msg, this.ID_ERR_XML_FORMATO_NONVALIDO);
@@ -755,11 +783,11 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    var nodeFormatoTrasmissione = nodeDatiTrasmissione.addElement("FormatoTrasmissione");
    this.addTextNode(nodeFormatoTrasmissione, formatoTrasmissione, '5', 'DatiTrasmissione/FormatoTrasmissione' + msgHelpNoFattura);
    var nodeCodiceDestinatario = nodeDatiTrasmissione.addElement("CodiceDestinatario");
-   var codiceDestinatario = this.getValueFromJournal("IT_XmlCodiceDestinatario", invoiceObj.customer_info.number, invoiceObj.document_info.number);
+   //var codiceDestinatario = this.getValueFromJournal("IT_XmlCodiceDestinatario", invoiceObj.customer_info.number, invoiceObj.document_info.number);
    if (codiceDestinatario === "0000000") {
       this.addTextNode(nodeCodiceDestinatario, codiceDestinatario, '7', 'DatiTrasmissione/CodiceDestinatario' + msgHelpNoFattura);
       var nodePECDestinatario = nodeDatiTrasmissione.addElement("PECDestinatario");
-      var pecDestinatario = this.getValueFromJournal("IT_XmlPECDestinatario", invoiceObj.customer_info.number, invoiceObj.document_info.number);
+      //var pecDestinatario = this.getValueFromJournal("IT_XmlPECDestinatario", invoiceObj.customer_info.number, invoiceObj.document_info.number);
       this.addTextNode(nodePECDestinatario, pecDestinatario, '7...256', 'DatiTrasmissione/PECDestinatario' + msgHelpNoFattura);
    }
    else{
@@ -897,6 +925,7 @@ EFattura.prototype.getCountryCode = function(countryName) {
  return countryCode.toUpperCase();
 }
 
+/*riprende il numero conto cliente dalla stringa utilizzata dal dialogo dello script*/
 EFattura.prototype.getCustomerId = function (customerDescription) {
    var customerId = customerDescription;
    if (customerId.length<=0)
@@ -908,23 +937,17 @@ EFattura.prototype.getCustomerId = function (customerDescription) {
       return customerId;
    
    customerId = customerId.substring(posStart, posEnd).trim();
-   //Banana.console.debug(customerId);
-   /*var tableAccounts = this.banDocument.table('Accounts');
-   if (tableAccounts) {
-      var tRowAccounts = tableAccounts.findRowByValue('Account', customerId);
-      if (!tRowAccounts)
-         customerId = '';
-   }*/
    
    return customerId;
 }
 
+/*ritorna l'elenco dei conti clienti*/
 EFattura.prototype.getCustomerList = function () {
-
    var customersList = [];
    
-   if (!this.journalInvoices)
-      return customersList;
+   if (!this.journalInvoices) {
+      this.journalInvoices = this.banDocument.invoicesCustomers();
+   }
 
    /*tiene solamente i clienti che hanno delle fatture*/
    var customerIdList = [];
@@ -975,6 +998,12 @@ EFattura.prototype.getErrorMessage = function (errorId) {
          rtnMsg = "Dati contribuente non definiti. Impostare con il comando dell'app 'Dati contribuente'";
       else
          rtnMsg = "Dati contribuente not found. Please use the app command 'Dati contribuente'";
+   }
+   else if (errorId == this.ID_ERR_INVOICENUMBER_MISSING) {
+      if (lang == 'it')
+         rtnMsg = "Indicare il numero fattura";
+      else
+         rtnMsg = "Please indicate the invoice number";
    }
    else if (errorId == this.ID_ERR_NOINVOICE) {
       if (lang == 'it')
@@ -1056,6 +1085,7 @@ EFattura.prototype.getValueFromJournal = function (columnName, customerId, invoi
 
    if (!this.journal) {
       this.journal = new Journal(this.banDocument);
+      this.journal.excludeVatTransactions = true;
       this.journal.load();
    }
 
@@ -1159,15 +1189,17 @@ EFattura.prototype.isEmpty = function (obj) {
 }
 
 EFattura.prototype.loadData = function () {
+
+   if (!this.journalInvoices) {
+      this.journalInvoices = this.banDocument.invoicesCustomers();
+   }
+
    var jsonInvoiceList = [];
    if (this.param.selection == 0 && this.param.selection_invoice.length <= 0)
       return jsonInvoiceList;
    if (this.param.selection == 1 && this.param.selection_customer.length <= 0)
       return jsonInvoiceList;
    if (!this.initDatiContribuente())
-      return jsonInvoiceList;
-
-   if (!this.journalInvoices)
       return jsonInvoiceList;
 
    var periodAll = this.param.periodAll;
