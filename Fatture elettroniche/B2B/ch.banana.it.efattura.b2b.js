@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.efattura.b2b
 // @api = 1.0
-// @pubdate = 2019-01-08
+// @pubdate = 2019-01-10
 // @publisher = Banana.ch SA
 // @description = [BETA] Fattura elettronica (XML, PDF)...
 // @description.it = [BETA] Fattura elettronica (XML, PDF)...
@@ -715,7 +715,7 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
       return null;
 
    //<Document>
-   
+
    //Versione
    //non ripreso dal giornale perché se la fattura non ha codici IVA la registrazione non è presente nel giornale
    //var formatoTrasmissione = this.getValueFromJournal("IT_XmlFormatoTrasmissione", invoiceObj.customer_info.number, invoiceObj.document_info.number);
@@ -782,13 +782,23 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    //[1.1.3] FormatoTrasmissione 
    var nodeFormatoTrasmissione = nodeDatiTrasmissione.addElement("FormatoTrasmissione");
    this.addTextNode(nodeFormatoTrasmissione, formatoTrasmissione, '5', 'DatiTrasmissione/FormatoTrasmissione' + msgHelpNoFattura);
+   
+   /*   
+Come precisato nel provvedimento Agenzia delle Entrate 30 aprile 2018 n. 89757, nella sezione relativa ai dati per la trasmissione della e-fattura il fornitore deve riportare, nel campo “CodiceDestinatario”:
+– il codice a 7 cifre eventualmente comunicato dal cliente, che indica il canale telematico da questi prescelto per la ricezione (web service o FTP);
+– il codice “0000000” e, nel campo “PECDestinatario”, l’indirizzo di posta elettronica certificata, se il cliente richiede che le e-fatture gli siano recapitate a una casella PEC;
+– il codice “0000000”, senza compilare il campo “PECDestinatario”, nell’ipotesi in cui non disponga dell’indirizzo telematico del proprio cliente.
+*/
+
    var nodeCodiceDestinatario = nodeDatiTrasmissione.addElement("CodiceDestinatario");
    //var codiceDestinatario = this.getValueFromJournal("IT_XmlCodiceDestinatario", invoiceObj.customer_info.number, invoiceObj.document_info.number);
    if (codiceDestinatario === "0000000") {
       this.addTextNode(nodeCodiceDestinatario, codiceDestinatario, '7', 'DatiTrasmissione/CodiceDestinatario' + msgHelpNoFattura);
-      var nodePECDestinatario = nodeDatiTrasmissione.addElement("PECDestinatario");
-      //var pecDestinatario = this.getValueFromJournal("IT_XmlPECDestinatario", invoiceObj.customer_info.number, invoiceObj.document_info.number);
-      this.addTextNode(nodePECDestinatario, pecDestinatario, '7...256', 'DatiTrasmissione/PECDestinatario' + msgHelpNoFattura);
+      if (pecDestinatario.length>0) {
+         var nodePECDestinatario = nodeDatiTrasmissione.addElement("PECDestinatario");
+         //var pecDestinatario = this.getValueFromJournal("IT_XmlPECDestinatario", invoiceObj.customer_info.number, invoiceObj.document_info.number);
+         this.addTextNode(nodePECDestinatario, pecDestinatario, '7...256', 'DatiTrasmissione/PECDestinatario' + msgHelpNoFattura);
+      }
    }
    else{
       this.addTextNode(nodeCodiceDestinatario, codiceDestinatario, '6...7', 'DatiTrasmissione/CodiceDestinatario' + msgHelpNoFattura);
