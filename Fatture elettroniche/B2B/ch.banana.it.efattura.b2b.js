@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.efattura.b2b
 // @api = 1.0
-// @pubdate = 2019-01-10
+// @pubdate = 2019-01-15
 // @publisher = Banana.ch SA
 // @description = [BETA] Fattura elettronica (XML, PDF)...
 // @description.it = [BETA] Fattura elettronica (XML, PDF)...
@@ -565,12 +565,7 @@ EFattura.prototype.createReport = function (jsonInvoice, report, stylesheet) {
    if (jsonInvoice && jsonInvoice.customer_info) {
       printInvoice(jsonInvoice, report, stylesheet, this.param.report);
       var debug=false;
-      if (debug) {
-         if (!this.journal) {
-            this.journal = new Journal(this.banDocument);
-            this.journal.excludeVatTransactions = true;
-            this.journal.load();
-         }   
+      if (debug && this.journal) {
          report.addPageBreak();
          this.journal._debugPrintJournal(report, stylesheet);
          report.addPageBreak();
@@ -625,6 +620,14 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    this.addTextNode(nodeData, invoiceObj.document_info.date, '10', 'DatiGeneraliDocumento/Data '+ msgHelpNoFattura);
    var nodeNumero = nodeDatiGeneraliDocumento.addElement("Numero");
    this.addTextNode(nodeNumero, invoiceObj.document_info.number, '1...20', 'DatiGeneraliDocumento/Numero '+ msgHelpNoFattura);
+   
+   //2.1.1.9 <ImportoTotaleDocumento> Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
+   //Elemento non obbligatorio, però se non specificato risultano fatture con totale 0 nel nostro sistema di interscambio
+   var nodeTotaleDocumento = nodeDatiGeneraliDocumento.addElement("ImportoTotaleDocumento");
+   var totaleDaPagare = Banana.SDecimal.round(invoiceObj.billing_info.total_to_pay, {'decimals':2});
+   if (totaleDaPagare.length<=0)
+      totaleDaPagare = "0.00";
+   this.addTextNode(nodeTotaleDocumento, totaleDaPagare, '4...15', 'DatiGeneraliDocumento/ImportoTotaleDocumento '+ msgHelpNoFattura);
 
    //In total_vat_rates[] non sono presenti imponibile/imposta per aliquota allo 0%, da correggere in Banana
    var imponibileAliquota0 = 0;
@@ -676,8 +679,9 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
          }
       //}
    }
-   var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
+   //Dati Riepilogo <1.N> blocco sempre obbligatorio contenente i dati di riepilogo per ogni aliquota IVA o natura
    for (var i = 0; i < invoiceObj.billing_info.total_vat_rates.length; i++) {
+      var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
       var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
       var aliquotaIva = Banana.SDecimal.round(invoiceObj.billing_info.total_vat_rates[i].vat_rate, {'decimals':2});
       if (aliquotaIva.length<=0)
@@ -693,8 +697,10 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    if (!Banana.SDecimal.isZero(imponibileAliquota0)) {
       var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
       this.addTextNode(nodeAliquotaIVA, "0.00", '4...6', 'DatiRiepilogo/AliquotaIVA '+ msgHelpNoFattura);
+      
       var nodeImponibileImporto = nodeDatiRiepilogo.addElement("ImponibileImporto");
       this.addTextNode(nodeImponibileImporto, imponibileAliquota0, '4...15', 'DatiRiepilogo/ImponibileImporto '+ msgHelpNoFattura);
+      
       var nodeImposta = nodeDatiRiepilogo.addElement("Imposta");
       this.addTextNode(nodeImposta, "0.00", '4...15', 'DatiRiepilogo/Imposta '+ msgHelpNoFattura);
    }
@@ -1093,13 +1099,7 @@ EFattura.prototype.getValueFromJournal = function (columnName, customerId, invoi
    if (columnName.length<=0 ||customerId.length<=0 || invoiceId.length<=0)
       return "";
 
-   if (!this.journal) {
-      this.journal = new Journal(this.banDocument);
-      this.journal.excludeVatTransactions = true;
-      this.journal.load();
-   }
-
-   if (!this.journal.customers || !this.journal.customers[customerId])
+   if (!this.journal || !this.journal.customers || !this.journal.customers[customerId])
       return "";
    
    for (var j in this.journal.customers[customerId].transactions) {
@@ -1199,6 +1199,12 @@ EFattura.prototype.isEmpty = function (obj) {
 }
 
 EFattura.prototype.loadData = function () {
+
+   if (!this.journal) {
+      this.journal = new Journal(this.banDocument);
+      this.journal.excludeVatTransactions = true;
+      this.journal.load();
+   }
 
    if (!this.journalInvoices) {
       this.journalInvoices = this.banDocument.invoicesCustomers();
@@ -1334,7 +1340,8 @@ EFattura.prototype.readAccountingData = function (param) {
 }
 
 EFattura.prototype.saveFile = function (output) {
-   var fileName = "";
+  //nomenclatura nome file
+  //Codice PaeseIdentificativo univoco del Trasmittente  _  Progressivo univoco del file
    var nazione = "";
    var codiceFiscale = "";
    if (!this.isEmpty(this.datiContribuente)) {
@@ -1342,14 +1349,7 @@ EFattura.prototype.saveFile = function (output) {
       codiceFiscale = this.datiContribuente.codiceFiscale;
    }
 
-   //???
-   if (nazione === "IT")
-      fileName += codiceFiscale;
-   else
-      fileName += codiceFiscale;
-
-   fileName += "_";
-
+   var fileName = nazione + codiceFiscale + "_";
    fileName += this.getProgressiveNumber();
    // Names the file to 'test.xml', easier to reload each time on browser, for testing purposes
    //fileName = 'test';
