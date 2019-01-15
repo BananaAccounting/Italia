@@ -695,6 +695,7 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       this.addTextNode(nodeImposta, invoiceObj.billing_info.total_vat_rates[i].total_vat_amount, '4...15', 'DatiRiepilogo/Imposta '+ msgHelpNoFattura);
    }
    if (!Banana.SDecimal.isZero(imponibileAliquota0)) {
+      var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
       var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
       this.addTextNode(nodeAliquotaIVA, "0.00", '4...6', 'DatiRiepilogo/AliquotaIVA '+ msgHelpNoFattura);
       
