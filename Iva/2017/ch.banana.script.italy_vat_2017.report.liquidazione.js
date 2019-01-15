@@ -1,4 +1,4 @@
-// Copyright [2018] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2019] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-08-06
+// @pubdate = 2019-01-15
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -105,13 +105,23 @@ function settingsDialog() {
   else if (liquidazione.param.periodoSelezionato == 'y')
     index = 22;
   dialog.periodoGroupBox.periodoComboBox.currentIndex = index;
-  //Groupbox anno per il momento impostati fissi perché non è possibile caricare gli anni sul combobox
-  var index = 0;
-  if (liquidazione.param.annoSelezionato == '2017')
-    index = 1;
-  else if (liquidazione.param.annoSelezionato == '2018')
-    index = 2;
+  //Groupbox anni
+  var elencoAnni = [];
+  elencoAnni.push(accountingData.openingYear);
+  if (accountingData.openingYear != accountingData.closureYear)
+    elencoAnni.push(accountingData.closureYear);
+  if (typeof (dialog.periodoGroupBox.annoComboBox.addItems) !== 'undefined') {
+    dialog.periodoGroupBox.annoComboBox.addItems(elencoAnni);
+  }
+  index = 0;
+  for (var i in elencoAnni) {
+    if (elencoAnni[i].indexOf(liquidazione.param.annoSelezionato)>=0) {
+      index = i;
+      break;
+    }
+  }
   dialog.periodoGroupBox.annoComboBox.currentIndex = index;
+  
   
   //Groupbox comunicazione
   dialog.intestazioneGroupBox.cfLabel_2.text = accountingData.datiContribuente.codiceFiscale;
@@ -195,12 +205,7 @@ function settingsDialog() {
   }
   //Groupbox anno
   var index = parseInt(dialog.periodoGroupBox.annoComboBox.currentIndex.toString());
-  if (index <=0)
-    liquidazione.param.annoSelezionato = '2016';
-  else if (index ==1)
-    liquidazione.param.annoSelezionato = '2017';
-  else if (index ==2)
-    liquidazione.param.annoSelezionato = '2018';
+  liquidazione.param.annoSelezionato = dialog.periodoGroupBox.annoComboBox.currentText;;
   
   //Groupbox comunicazione
   progressivo = dialog.intestazioneGroupBox.progressivoInvioLineEdit.text;
