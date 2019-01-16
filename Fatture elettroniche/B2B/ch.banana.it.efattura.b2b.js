@@ -560,6 +560,10 @@ EFattura.prototype.addTextNode = function (parentNode, text, len, context) {
    parentNode.addTextNode(text);
 }
 
+EFattura.prototype.clearErrorList = function () {
+   this.errorList = [];
+}
+
 EFattura.prototype.createReport = function (jsonInvoice, report, stylesheet) {
 
    if (jsonInvoice && jsonInvoice.customer_info) {
