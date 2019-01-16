@@ -634,7 +634,8 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    this.addTextNode(nodeTotaleDocumento, totaleDaPagare, '4...15', 'DatiGeneraliDocumento/ImportoTotaleDocumento '+ msgHelpNoFattura);
 
    //In total_vat_rates[] non sono presenti imponibile/imposta per aliquota allo 0%, da correggere in Banana
-   var imponibileAliquota0 = 0;
+   //imponibili con aliquota allo 0% vengono raggruppati per codice natura perché nel riepilogo la natura dev'essere specificata
+   var imponibileAliquota0List = [];
    var nodeDatiBeniServizi = nodeFatturaElettronicaBody.addElement("DatiBeniServizi");
    for (var i = 0; i < invoiceObj.items.length; i++) {
       if (invoiceObj.items[i].item_type !== "item" && invoiceObj.items[i].item_type !== "note")
@@ -674,13 +675,18 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       }
       //Aliquota IVA: nel caso di non applicabilità, il campo deve essere valorizzato a zero
       //if (invoiceObj.items[i].unit_price.vat_code.length>0) {
-         this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DettaglioLinee/AliquotaIVA '+ msgHelpNoFattura);
-         if (Banana.SDecimal.isZero(aliquotaIva)) {
-            imponibileAliquota0 = Banana.SDecimal.add(invoiceObj.items[i].total_amount_vat_exclusive, imponibileAliquota0);
-            var natura = this.getValueFromJournal("IT_Natura", invoiceObj.customer_info.number, invoiceObj.document_info.number, invoiceObj.items[i].origin_row);
-            var nodeNatura = nodeDettaglioLinee.addElement("Natura");
-            this.addTextNode(nodeNatura, natura, '2', 'DettaglioLinee/Natura '+ msgHelpNoFattura);
-         }
+      this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DettaglioLinee/AliquotaIVA '+ msgHelpNoFattura);
+      if (Banana.SDecimal.isZero(aliquotaIva)) {
+         var natura = this.getValueFromJournal("IT_Natura", invoiceObj.customer_info.number, invoiceObj.document_info.number, invoiceObj.items[i].origin_row);
+         var nodeNatura = nodeDettaglioLinee.addElement("Natura");
+         this.addTextNode(nodeNatura, natura, '2', 'DettaglioLinee/Natura '+ msgHelpNoFattura);
+         if (natura.length<=0)
+            natura = "void";
+         if (!imponibileAliquota0List[natura])
+            imponibileAliquota0List[natura] = 0;
+         var imponibileAliquota0 = invoiceObj.items[i].total_amount_vat_exclusive;
+         imponibileAliquota0List[natura] = Banana.SDecimal.add(imponibileAliquota0, imponibileAliquota0List[natura]);
+      }
       //}
    }
    //Dati Riepilogo <1.N> blocco sempre obbligatorio contenente i dati di riepilogo per ogni aliquota IVA o natura
@@ -698,7 +704,10 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       var nodeImposta = nodeDatiRiepilogo.addElement("Imposta");
       this.addTextNode(nodeImposta, invoiceObj.billing_info.total_vat_rates[i].total_vat_amount, '4...15', 'DatiRiepilogo/Imposta '+ msgHelpNoFattura);
    }
-   if (!Banana.SDecimal.isZero(imponibileAliquota0)) {
+   for (var codNatura in imponibileAliquota0List) {
+      var imponibileAliquota0 = imponibileAliquota0List[codNatura];
+      if (Banana.SDecimal.isZero(imponibileAliquota0))
+         continue;
       var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
       var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
       this.addTextNode(nodeAliquotaIVA, "0.00", '4...6', 'DatiRiepilogo/AliquotaIVA '+ msgHelpNoFattura);
@@ -708,6 +717,11 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       
       var nodeImposta = nodeDatiRiepilogo.addElement("Imposta");
       this.addTextNode(nodeImposta, "0.00", '4...15', 'DatiRiepilogo/Imposta '+ msgHelpNoFattura);
+      
+      if (codNatura !== "void") {
+         var nodeNatura = nodeDatiRiepilogo.addElement("Natura");
+         this.addTextNode(nodeNatura, codNatura, '2', 'DettaglioLinee/Natura '+ msgHelpNoFattura);
+      }
    }
 }
 
