@@ -691,11 +691,11 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    }
    //Dati Riepilogo <1.N> blocco sempre obbligatorio contenente i dati di riepilogo per ogni aliquota IVA o natura
    for (var i = 0; i < invoiceObj.billing_info.total_vat_rates.length; i++) {
+      var aliquotaIva = Banana.SDecimal.round(invoiceObj.billing_info.total_vat_rates[i].vat_rate, {'decimals':2});
+      if (Banana.SDecimal.isZero(aliquotaIva))
+         continue;
       var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
       var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
-      var aliquotaIva = Banana.SDecimal.round(invoiceObj.billing_info.total_vat_rates[i].vat_rate, {'decimals':2});
-      if (aliquotaIva.length<=0)
-         aliquotaIva = "0.00";
       this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DatiRiepilogo/AliquotaIVA '+ msgHelpNoFattura);
 
       var nodeImponibileImporto = nodeDatiRiepilogo.addElement("ImponibileImporto");
@@ -712,16 +712,17 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
       this.addTextNode(nodeAliquotaIVA, "0.00", '4...6', 'DatiRiepilogo/AliquotaIVA '+ msgHelpNoFattura);
       
+      if (codNatura !== "void") {
+         var nodeNatura = nodeDatiRiepilogo.addElement("Natura");
+         this.addTextNode(nodeNatura, codNatura, '2', 'DettaglioLinee/Natura '+ msgHelpNoFattura);
+      }
+      
       var nodeImponibileImporto = nodeDatiRiepilogo.addElement("ImponibileImporto");
       this.addTextNode(nodeImponibileImporto, imponibileAliquota0, '4...15', 'DatiRiepilogo/ImponibileImporto '+ msgHelpNoFattura);
       
       var nodeImposta = nodeDatiRiepilogo.addElement("Imposta");
       this.addTextNode(nodeImposta, "0.00", '4...15', 'DatiRiepilogo/Imposta '+ msgHelpNoFattura);
       
-      if (codNatura !== "void") {
-         var nodeNatura = nodeDatiRiepilogo.addElement("Natura");
-         this.addTextNode(nodeNatura, codNatura, '2', 'DettaglioLinee/Natura '+ msgHelpNoFattura);
-      }
    }
 }
 
