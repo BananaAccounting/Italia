@@ -1044,7 +1044,7 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
   //Acconto dovuto
   amount = vatAmounts["L-AC"].vatPosted;
   row = table.addRow();
-  row.addCell("Acconto dovuto", "description");
+  row.addCell("Acconto versato", "description");
   if (Banana.SDecimal.sign(amount)<=0) {
     row.addCell(this.formatAmount(amount), "amount");
     row.addCell("");
@@ -1056,8 +1056,11 @@ Registri.prototype.printLiquidazione = function(report, period, addPageBreak) {
 
   //Saldo finale di periodo
   amount = vatAmounts["Total"].vatPosted;
+  var isCredito = " (debito)";
+  if (Banana.SDecimal.sign(amount)>0)
+    isCredito = " (credito)";
   row = table.addRow();
-  row.addCell("Saldo finale di periodo", "description bold");
+  row.addCell("Saldo finale di periodo" + isCredito, "description bold");
   if (Banana.SDecimal.sign(amount)<=0) {
     row.addCell(this.formatAmount(amount), "amount bold");
     row.addCell("");

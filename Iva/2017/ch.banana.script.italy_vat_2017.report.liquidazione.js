@@ -152,6 +152,8 @@ function settingsDialog() {
   else if (ultimoMese == '99')
     ultimoMese = '13';
   dialog.intestazioneGroupBox.ultimoMeseComboBox.currentIndex = ultimoMese;
+  var metodoAcconto = liquidazione.param.metodoAcconto;
+  dialog.datiContabiliGroupBox.metodoAccontoComboBox.currentIndex = metodoAcconto;
   
   //Groupbox stampa
   if (liquidazione.param.outputScript==1)
@@ -226,6 +228,8 @@ function settingsDialog() {
     liquidazione.param.comunicazioneUltimoMese = '13';
   else if (liquidazione.param.comunicazioneUltimoMese == '13')
     liquidazione.param.comunicazioneUltimoMese = '99';
+  liquidazione.param.metodoAcconto = dialog.datiContabiliGroupBox.metodoAccontoComboBox.currentIndex.toString();
+
 
   //Groupbox stampa
   if (dialog.stampaGroupBox.stampaXmlRadioButton.checked)
@@ -573,7 +577,17 @@ LiquidazionePeriodica.prototype.createInstanceModulo = function(period, index) {
   var amountInteressi = this.createInstanceModuloGetVatAmount("L-INT", "vatPosted", period);
   var xbrlInteressiDovuti = xml_createElementWithValidation("iv:InteressiDovuti", amountInteressi,0,'4...16',msgContext);
 
-  var xbrlAcconto = xml_createElementWithValidation("iv:Acconto", this.createInstanceModuloGetVatAmount("L-AC", "vatPosted", period),0,'4...16',msgContext);
+  var xbrlMetodoAcconto = '';
+  var xbrlAcconto = '';
+  var acconto = this.createInstanceModuloGetVatAmount("L-AC", "vatPosted", period);
+  if (acconto.length>0) {
+    var metodoAcconto = this.param.metodoAcconto;
+    if (parseInt(metodoAcconto)<1 || parseInt(metodoAcconto>4)) {
+      metodoAcconto = '';
+    }
+    xbrlMetodoAcconto = xml_createElementWithValidation("iv:Metodo", metodoAcconto,1,'1',msgContext);
+    xbrlAcconto = xml_createElementWithValidation("iv:Acconto", acconto,0,'4...16',msgContext);
+  }
 
   var xbrlImportoDaVersare = '';
   var xbrlImportoACredito = '';
@@ -583,7 +597,7 @@ LiquidazionePeriodica.prototype.createInstanceModulo = function(period, index) {
     xbrlImportoACredito = xml_createElementWithValidation("iv:ImportoACredito", this.createInstanceModuloGetVatAmount("Total", "vatPosted", period),0,'4...16',msgContext);
 
   xbrlContent = xbrlNumeroModulo + xbrlMese + xbrlTrimestre + xbrlTotaleOperazioniAttive + xbrlTotaleOperazioniPassive + xbrlIvaEsigibile + xbrlIvaDetratta + xbrlIvaDovuta + xbrlIvaCredito;
-  xbrlContent += xbrlDebitoPeriodoPrecedente + xbrlCreditoPeriodoPrecedente + xbrlCreditoAnnoPrecedente + xbrlInteressiDovuti + xbrlAcconto + xbrlImportoDaVersare + xbrlImportoACredito;
+  xbrlContent += xbrlDebitoPeriodoPrecedente + xbrlCreditoPeriodoPrecedente + xbrlCreditoAnnoPrecedente + xbrlInteressiDovuti + xbrlMetodoAcconto + xbrlAcconto + xbrlImportoDaVersare + xbrlImportoACredito;
   var xbrlModulo = xml_createElement("iv:Modulo", xbrlContent);
   return xbrlModulo;
 }
@@ -703,6 +717,7 @@ LiquidazionePeriodica.prototype.initParam = function() {
   this.param.comunicazioneFirmaDichiarazione = true;
   this.param.comunicazioneFirmaIntermediario = true;
   this.param.comunicazioneUltimoMese = '';
+  this.param.metodoAcconto = '';
 
   this.param.annoSelezionato = '';
   this.param.periodoSelezionato = 'm';
@@ -1236,6 +1251,8 @@ LiquidazionePeriodica.prototype.verifyParam = function() {
     this.param.comunicazioneFirmaIntermediario = false;
   if (!this.param.comunicazioneUltimoMese)
     this.param.comunicazioneUltimoMese = '';
+  if (!this.param.metodoAcconto)
+    this.param.metodoAcconto = '';
 
   if (!this.param.annoSelezionato)
     this.param.annoSelezionato = '';
