@@ -566,7 +566,7 @@ LiquidazionePeriodica.prototype.createInstanceModulo = function(period, index) {
 
   var xbrlCreditoAnnoPrecedente = xml_createElementWithValidation("iv:CreditoAnnoPrecedente", this.createInstanceModuloGetVatAmount("L-CIA", "vatPosted", period),0,'4...16',msgContext);
 
-  //disabilita controllo interessi nel periodo iv trimestre iva speciali
+  //disabilita controllo interessi nel periodo iv trimestre (controllo abilitato per contribuenti art. 7 trimestre 5)
   if (this.getPeriod("q", period)!="4") {
     var msg = this.calculateInterestAmount(period);
     if (msg.id.length>0)
@@ -658,9 +658,9 @@ LiquidazionePeriodica.prototype.getPeriod = function(format, period) {
     var q2 = q[Math.floor(toDate.getMonth() / 3)];  
     if (q1 === q2 && fromDate.getMonth() != toDate.getMonth()) {
       if (q1 == 4) {
-       //La codifica export nel xml del IV trimestre è 5  
-       //La codifica export nel xml del IV trimestre IVA speciali è 4
-       //in periodoValoreTrimestre il primo trimestre è 0, il quarto è 3, il quarto speciale è 4
+       //La codifica export nel xml del IV trimestre (contribuente art. 7 DPR 542/99) è 5  
+       //La codifica export nel xml del IV trimestre è 4
+       //in periodoValoreTrimestre il primo trimestre è 0, il quarto art. 7 è 3, il quarto normale è 4
        //se è selezionato l'anno e il periodo corrisponde al 4. trimestre si ritorna 5
        if (this.param.periodoSelezionato == "q" && this.param.periodoValoreTrimestre == "3")
          return "5";
@@ -980,8 +980,8 @@ LiquidazionePeriodica.prototype.printDocument = function(report, stylesheet) {
 LiquidazionePeriodica.prototype.printVatReport1 = function(report, stylesheet, period) {
   //Period
   var periodText = "";
-  if (this.getPeriod("q", period)=="4")
-    periodText = " (IV trimestre IVA speciali)";
+  if (this.getPeriod("q", period)=="5")
+    periodText = " (IV trimestre contribuente art. 7 DPR 542/99)";
   report.addParagraph("Periodo: " + Banana.Converter.toLocaleDateFormat(period.startDate) + " - " + Banana.Converter.toLocaleDateFormat(period.endDate) + periodText, "period");
   
   //Print table
@@ -1022,8 +1022,8 @@ LiquidazionePeriodica.prototype.printVatReport1 = function(report, stylesheet, p
 LiquidazionePeriodica.prototype.printVatReport2 = function(report, stylesheet, period) {
   //Period
   var periodText = "";
-  if (this.getPeriod("q", period)=="4")
-    periodText = " (IV trimestre IVA speciali)";
+  if (this.getPeriod("q", period)=="5")
+    periodText = " (IV trimestre contribuente art. 7 DPR 542/99)";
   report.addParagraph("Periodo: " + Banana.Converter.toLocaleDateFormat(period.startDate) + " - " + Banana.Converter.toLocaleDateFormat(period.endDate) + periodText, "period");
 
   //Print table
@@ -1113,7 +1113,7 @@ LiquidazionePeriodica.prototype.printVatReport2 = function(report, stylesheet, p
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(period["L-INT"].vatPosted)), "amount");
   
   //propone interessi trimestrali se importo è diverso da quello visualizzato
-  //disabilita controllo interessi nel periodo iv trimestre iva speciali
+  //disabilita controllo interessi nel periodo iv trimestre normale (controllo abilitato per contribuenti art. 7 trimestre 5)
   if (this.getPeriod("q", period)!="4") {
     var msg = this.calculateInterestAmount(period);
     if (msg.id.length>0) {
