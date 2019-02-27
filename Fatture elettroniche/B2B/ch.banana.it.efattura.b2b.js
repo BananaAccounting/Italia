@@ -670,7 +670,7 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       var nodeAliquotaIVA = nodeDettaglioLinee.addElement("AliquotaIVA");
       var aliquotaIva = Banana.SDecimal.round(invoiceObj.items[i].unit_price.vat_rate, {'decimals':2});
       //se la linea di dettaglio è una linea di descrizione con importo totale a 0, imposta il codice IVA al 22%, così non chiede il codice natura
-      if (invoiceObj.items[i].item_type === "note" && Banana.SDecimal.isZero(prezzoTotale)) {
+      if (invoiceObj.items[i].item_type === "note" && Banana.SDecimal.isZero(prezzoTotale) && Banana.SDecimal.isZero(aliquotaIva)) {
          aliquotaIva = Banana.SDecimal.round("22", {'decimals':2});
       }
       //Aliquota IVA: nel caso di non applicabilità, il campo deve essere valorizzato a zero
