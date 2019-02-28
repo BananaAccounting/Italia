@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2019-01-15
+// @pubdate = 2019-02-27
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -335,7 +335,7 @@ LiquidazionePeriodica.prototype.calculateInterestAmount = function(period, creat
   message.id = "";
   var amountInterestsCalculated = 0;
   var amountInterests = Banana.SDecimal.abs(period["L-INT"].vatPosted);
-  var liqTipoVersamento = parseInt(period.datiContribuente.liqTipoVersamento);
+  var liqTipoVersamento = parseInt(this.param.datiContribuente.liqTipoVersamento);
   if (!liqTipoVersamento)
     liqTipoVersamento = 0;
 
@@ -343,10 +343,10 @@ LiquidazionePeriodica.prototype.calculateInterestAmount = function(period, creat
   if (liqTipoVersamento == 1) {
 
      var totalWithoutInterests = period["TotalWithoutInterests"].vatPosted;
-     var percInterest = Banana.SDecimal.round(period.datiContribuente.liqPercInteressi, {'decimals':2});
+     var percInterest = Banana.SDecimal.round(this.param.datiContribuente.liqPercInteressi, {'decimals':2});
 
     //se periodo annuale gli interessi vengono suddivisi in quattro trimestri e sommati
-    if (this.param.periodoSelezionato && this.param.periodoSelezionato == "y" && createPeriods) {
+    if (this.param.periodoSelezionato === "y" && createPeriods) {
       var utils = new Utils(this.banDocument);
       var periods = utils.createPeriods(this.param);
       for (var i=0; i<periods.length; i++) {
@@ -371,7 +371,7 @@ LiquidazionePeriodica.prototype.calculateInterestAmount = function(period, creat
     message.id = ID_ERR_LIQUIDAZIONE_INTERESSI_DIFFERENTI;
     message.text = getErrorMessage(message.id);
     message.text = message.text.replace("%1", amountInterestsCalculated );
-    message.text = message.text.replace("%2", Banana.SDecimal.round(period.datiContribuente.liqPercInteressi, {'decimals':2}) );
+    message.text = message.text.replace("%2", Banana.SDecimal.round(this.param.datiContribuente.liqPercInteressi, {'decimals':2}) );
     message.text = message.text.replace("%3", amountInterests );
   }
   else if (liqTipoVersamento == 0 && !Banana.SDecimal.isZero(amountInterests)) {
@@ -537,7 +537,10 @@ LiquidazionePeriodica.prototype.createInstanceModulo = function(period, index) {
   
   var xbrlMese = '';
   var xbrlTrimestre = '';
-  if (period.datiContribuente.liqTipoVersamento == 0)
+  var liqTipoVersamento = parseInt(this.param.datiContribuente.liqTipoVersamento);
+  if (!liqTipoVersamento)
+    liqTipoVersamento = 0;
+  if ( liqTipoVersamento === 0)
     xbrlMese = xml_createElementWithValidation("iv:Mese", this.getPeriod("m", period),0,'1...2',msgContext);
   else
     xbrlTrimestre = xml_createElementWithValidation("iv:Trimestre", this.getPeriod("q", period),0,'1',msgContext);
@@ -566,17 +569,19 @@ LiquidazionePeriodica.prototype.createInstanceModulo = function(period, index) {
 
   var xbrlCreditoAnnoPrecedente = xml_createElementWithValidation("iv:CreditoAnnoPrecedente", this.createInstanceModuloGetVatAmount("L-CIA", "vatPosted", period),0,'4...16',msgContext);
 
-  //disabilita controllo interessi nel periodo iv trimestre (controllo abilitato per contribuenti art. 7 trimestre 5)
-  if (this.getPeriod("q", period)!="4") {
+  //IV. trimestre non calcola gli interessi sia per la semplificata che per l'ordinaria
+  var xbrlInteressiDovuti = "";
+  var trimestreSelezionato = this.getPeriod("q", period);
+  if (this.param.periodoSelezionato === "q" && (trimestreSelezionato === "4" || trimestreSelezionato === "5") ) {
+  }
+  else {
+    var amountInteressi = this.createInstanceModuloGetVatAmount("L-INT", "vatPosted", period);
+    xbrlInteressiDovuti = xml_createElementWithValidation("iv:InteressiDovuti", amountInteressi,0,'4...16',msgContext);
     var msg = this.calculateInterestAmount(period);
     if (msg.id.length>0)
       this.banDocument.addMessage( msg.text, msg.id);
   }
   
-  //Riprende interessi con importo formattato
-  var amountInteressi = this.createInstanceModuloGetVatAmount("L-INT", "vatPosted", period);
-  var xbrlInteressiDovuti = xml_createElementWithValidation("iv:InteressiDovuti", amountInteressi,0,'4...16',msgContext);
-
   var xbrlMetodoAcconto = '';
   var xbrlAcconto = '';
   var acconto = this.createInstanceModuloGetVatAmount("L-AC", "vatPosted", period);
@@ -591,11 +596,22 @@ LiquidazionePeriodica.prototype.createInstanceModulo = function(period, index) {
 
   var xbrlImportoDaVersare = '';
   var xbrlImportoACredito = '';
-  if (Banana.SDecimal.sign(period["Total"].vatPosted)<0)
-    xbrlImportoDaVersare = xml_createElementWithValidation("iv:ImportoDaVersare", this.createInstanceModuloGetVatAmount("Total", "vatPosted", period),0,'4...16',msgContext);
-  else
-    xbrlImportoACredito = xml_createElementWithValidation("iv:ImportoACredito", this.createInstanceModuloGetVatAmount("Total", "vatPosted", period),0,'4...16',msgContext);
-
+  //disabilitato nel 4. trimestre per la contabilità semplificata
+  if (this.param.periodoSelezionato === "q" && trimestreSelezionato === "5" ) {
+  }
+  else if (this.param.periodoSelezionato === "q" && trimestreSelezionato === "4" ) {
+    if (Banana.SDecimal.sign(period["Total"].vatPosted)<0)
+      xbrlImportoDaVersare = xml_createElementWithValidation("iv:ImportoDaVersare", this.createInstanceModuloGetVatAmount("TotalWithoutInterests", "vatPosted", period),0,'4...16',msgContext);
+    else
+      xbrlImportoACredito = xml_createElementWithValidation("iv:ImportoACredito", this.createInstanceModuloGetVatAmount("TotalWithoutInterests", "vatPosted", period),0,'4...16',msgContext);
+  }
+  else {
+    if (Banana.SDecimal.sign(period["Total"].vatPosted)<0)
+      xbrlImportoDaVersare = xml_createElementWithValidation("iv:ImportoDaVersare", this.createInstanceModuloGetVatAmount("Total", "vatPosted", period),0,'4...16',msgContext);
+    else
+      xbrlImportoACredito = xml_createElementWithValidation("iv:ImportoACredito", this.createInstanceModuloGetVatAmount("Total", "vatPosted", period),0,'4...16',msgContext);
+  }
+  
   xbrlContent = xbrlNumeroModulo + xbrlMese + xbrlTrimestre + xbrlTotaleOperazioniAttive + xbrlTotaleOperazioniPassive + xbrlIvaEsigibile + xbrlIvaDetratta + xbrlIvaDovuta + xbrlIvaCredito;
   xbrlContent += xbrlDebitoPeriodoPrecedente + xbrlCreditoPeriodoPrecedente + xbrlCreditoAnnoPrecedente + xbrlInteressiDovuti + xbrlMetodoAcconto + xbrlAcconto + xbrlImportoDaVersare + xbrlImportoACredito;
   var xbrlModulo = xml_createElement("iv:Modulo", xbrlContent);
@@ -659,7 +675,7 @@ LiquidazionePeriodica.prototype.getPeriod = function(format, period) {
     if (q1 === q2 && fromDate.getMonth() != toDate.getMonth()) {
       if (q1 == 4) {
        //La codifica export nel xml del IV trimestre (contribuente art. 7 DPR 542/99) è 5  
-       //La codifica export nel xml del IV trimestre è 4
+       //La codifica export nel xml del IV trimestre (contabilità ordinaria) è 4
        //in periodoValoreTrimestre il primo trimestre è 0, il quarto art. 7 è 3, il quarto normale è 4
        //se è selezionato l'anno e il periodo corrisponde al 4. trimestre si ritorna 5
        if (this.param.periodoSelezionato == "q" && this.param.periodoValoreTrimestre == "3")
@@ -980,7 +996,9 @@ LiquidazionePeriodica.prototype.printDocument = function(report, stylesheet) {
 LiquidazionePeriodica.prototype.printVatReport1 = function(report, stylesheet, period) {
   //Period
   var periodText = "";
-  if (this.getPeriod("q", period)=="5")
+  if (this.param.periodoSelezionato === "y")
+    periodText = " (stampa annuale)";
+  else if (this.param.periodoSelezionato === "q" && this.getPeriod("q", period) === "5")
     periodText = " (IV trimestre contribuente art. 7 DPR 542/99)";
   report.addParagraph("Periodo: " + Banana.Converter.toLocaleDateFormat(period.startDate) + " - " + Banana.Converter.toLocaleDateFormat(period.endDate) + periodText, "period");
   
@@ -1006,8 +1024,8 @@ LiquidazionePeriodica.prototype.printVatReport1 = function(report, stylesheet, p
       continue;
     var row = table.addRow();
     var description = vatCode;
-    if (description == "A" && !Banana.SDecimal.isZero(period.datiContribuente.liqPercProrata))
-      description += " (Prorata: " + Banana.SDecimal.round(period.datiContribuente.liqPercProrata, {'decimals':2}).toString() + "%)";
+    if (description == "A" && !Banana.SDecimal.isZero(this.param.datiContribuente.liqPercProrata))
+      description += " (Prorata: " + Banana.SDecimal.round(this.param.datiContribuente.liqPercProrata, {'decimals':2}).toString() + "%)";
     row.addCell(description, "description " + period[vatCode].style);
     if (vatCode == "difference" || vatCode == "BananaTotal")
       row.addCell("","amount " + period[vatCode].style);
@@ -1022,7 +1040,9 @@ LiquidazionePeriodica.prototype.printVatReport1 = function(report, stylesheet, p
 LiquidazionePeriodica.prototype.printVatReport2 = function(report, stylesheet, period) {
   //Period
   var periodText = "";
-  if (this.getPeriod("q", period)=="5")
+  if (this.param.periodoSelezionato === "y")
+    periodText = " (stampa annuale)";
+  else if (this.param.periodoSelezionato === "q" && this.getPeriod("q", period) === "5")
     periodText = " (IV trimestre contribuente art. 7 DPR 542/99)";
   report.addParagraph("Periodo: " + Banana.Converter.toLocaleDateFormat(period.startDate) + " - " + Banana.Converter.toLocaleDateFormat(period.endDate) + periodText, "period");
 
@@ -1056,8 +1076,8 @@ LiquidazionePeriodica.prototype.printVatReport2 = function(report, stylesheet, p
   row = table.addRow();
   row.addCell("VP5");
   var description = "IVA detratta";
-  if (!Banana.SDecimal.isZero(period.datiContribuente.liqPercProrata))
-    description = "IVA detratta (Prorata: " + Banana.SDecimal.round(period.datiContribuente.liqPercProrata, {'decimals':2}).toString() + "%)";
+  if (!Banana.SDecimal.isZero(this.param.datiContribuente.liqPercProrata))
+    description = "IVA detratta (Prorata: " + Banana.SDecimal.round(this.param.datiContribuente.liqPercProrata, {'decimals':2}).toString() + "%)";
   row.addCell(description, "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(period["OPPASSIVE"].vatPosted)), "amount");
   row.addCell("");
@@ -1101,20 +1121,26 @@ LiquidazionePeriodica.prototype.printVatReport2 = function(report, stylesheet, p
   row.addCell("", "amount");
   row.addCell("");
 
+  //VP11 NON calcolato nel 4. trimestre per la contabilità semplificata (art. 7 542/99)
+  //al momento non ci sono codici che vengono sommati in VP11
+  var trimestreSelezionato = this.getPeriod("q", period);
   row = table.addRow();
   row.addCell("VP11");
   row.addCell("Crediti d'imposta", "description");
   row.addCell("", "amount");
   row.addCell("");
 
+  //VP12 NON calcolato  nel 4. trimestre sia per la contabilità semplificata (art. 7 542/99) che  per l'ordinaria
   row = table.addRow();
   row.addCell("VP12");
   row.addCell("Interessi dovuti per liquidazioni trimestrali", "description");
-  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(period["L-INT"].vatPosted)), "amount");
-  
-  //propone interessi trimestrali se importo è diverso da quello visualizzato
-  //disabilita controllo interessi nel periodo iv trimestre normale (controllo abilitato per contribuenti art. 7 trimestre 5)
-  if (this.getPeriod("q", period)!="4") {
+  if (this.param.periodoSelezionato ===  "q" && (trimestreSelezionato === "4" || trimestreSelezionato === "5") ) {
+     row.addCell("");
+     row.addCell("Non calcolato");
+  }
+  else {
+    row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(period["L-INT"].vatPosted)), "amount");
+    //propone interessi trimestrali se importo è diverso da quello visualizzato
     var msg = this.calculateInterestAmount(period);
     if (msg.id.length>0) {
       row.addCell(msg.text, "amount warning");
@@ -1123,25 +1149,41 @@ LiquidazionePeriodica.prototype.printVatReport2 = function(report, stylesheet, p
       row.addCell("");
     }
   }
-  else {
-    row.addCell("");
-  }
   
+  //VP13
   row = table.addRow();
   row.addCell("VP13");
   row.addCell("Acconto dovuto", "description");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(period["L-AC"].vatPosted)), "amount");
   row.addCell("");
 
+  //VP14 NON calcolato nel 4. trimestre per la contabilità semplificata (art. 7 542/99)
   row = table.addRow();
   row.addCell("VP14");
-  if (Banana.SDecimal.sign(period["Total"].vatPosted)<=0)
-    row.addCell("IVA da versare", "description");
-  else
-    row.addCell("IVA a credito", "description");
-  row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(period["Total"].vatPosted)), "amount");
-  row.addCell("");
-
+  if (this.param.periodoSelezionato === "q" && trimestreSelezionato === "5") {
+     //IV. trimestre speciale non annuale
+     row.addCell("IVA da versare/a credito", "description");
+     row.addCell("");
+     row.addCell("Non calcolato");
+  }
+  else if (this.param.periodoSelezionato === "q" && trimestreSelezionato === "4") {
+     //IV. trimestre normale
+     if (Banana.SDecimal.sign(period["TotalWithoutInterests"].vatPosted)<=0)
+        row.addCell("IVA da versare", "description");
+     else
+        row.addCell("IVA a credito", "description");
+     row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(period["TotalWithoutInterests"].vatPosted)), "amount");
+     row.addCell("");
+  }
+  else {
+     //stampa annuale + altri mesi
+     if (Banana.SDecimal.sign(period["Total"].vatPosted)<=0)
+        row.addCell("IVA da versare", "description");
+     else
+        row.addCell("IVA a credito", "description");
+     row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(period["Total"].vatPosted)), "amount");
+     row.addCell("");
+  }
 }
 
 LiquidazionePeriodica.prototype.saveData = function(output) {
