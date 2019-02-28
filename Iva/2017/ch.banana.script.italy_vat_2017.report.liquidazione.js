@@ -458,6 +458,21 @@ LiquidazionePeriodica.prototype.createInstanceComunicazione = function() {
       var giorno = this.param.comunicazioneImpegnoData.substr(8,2);
       var dataImpegno = giorno+mese+anno;
       xbrlDataImpegno = xml_createElementWithValidation("iv:DataImpegno", dataImpegno, 0, '8', msgContext);
+      
+      //controlla che sia maggiore o uguale alla data di preparazione
+      var dPreparazione = new Date();
+      var dImpegno = Banana.Converter.toInternalDateFormat(this.param.comunicazioneImpegnoData, "yyyymmdd");
+      dImpegno = Banana.Converter.stringToDate(dImpegno, "YYYY-MM-DD");
+      var diffGiorni = this.dateDiffInDays(dPreparazione, dImpegno);
+      if (parseInt(diffGiorni) < 0) {
+         //Banana.console.debug("Data impegno (" + dImpegno.toISOString() + ") < data preparazione (" + dPreparazione.toISOString());
+         var d1 = dImpegno.getDate().toString() + "/" + (dImpegno.getMonth()+1).toString() + "/" + dImpegno.getFullYear().toString() ;
+         var d2 = dPreparazione.getDate().toString() + "/" + (dPreparazione.getMonth()+1).toString() + "/" + dPreparazione.getFullYear().toString() ;
+         var msg = getErrorMessage(ID_WRN_DATAIMPEGNO_MINORE_DATAPREPARAZIONE);
+         msg = msg.replace("%1", d1 );
+         msg = msg.replace("%2", d2 );
+         Banana.document.addMessage( msg, ID_WRN_DATAIMPEGNO_MINORE_DATAPREPARAZIONE);
+      }
     }
   }
 
@@ -636,6 +651,13 @@ LiquidazionePeriodica.prototype.createInstanceModuloGetVatAmount = function(vatC
   //amount = Banana.SDecimal.roundNearest(amount, '1');
   amount = amount.replace(".",",");
   return amount;
+}
+
+LiquidazionePeriodica.prototype.dateDiffInDays = function(a, b) {
+  var _MS_PER_DAY = 1000 * 60 * 60 * 24;
+  var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+  var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+  return Math.floor((utc2 - utc1) / _MS_PER_DAY);
 }
 
 LiquidazionePeriodica.prototype.findVatCodes = function(table, column, code) {

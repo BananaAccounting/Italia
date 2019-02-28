@@ -33,6 +33,8 @@ var ID_ERR_DATIFATTURE_TIPODOCUMENTO_NONAMMESSO = "ID_ERR_DATIFATTURE_TIPODOCUME
 var ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA = "ID_ERR_REGISTRI_VENTILAZIONE_DIVERSA";
 var ID_ERR_GRUPPO_CLIENTI_MANCANTE = "ID_ERR_GRUPPO_CLIENTI_MANCANTE";
 var ID_ERR_GRUPPO_FORNITORI_MANCANTE = "ID_ERR_GRUPPO_FORNITORI_MANCANTE";
+var ID_WRN_DATAIMPEGNO_MINORE_DATAPREPARAZIONE = "ID_WRN_DATAIMPEGNO_MINORE_DATAPREPARAZIONE";
+
 /**
 * return the text error message according to error id
 */
@@ -81,6 +83,8 @@ function getErrorMessage(errorId) {
             return "Gruppo Clienti non definito. Impostare il gruppo con il comando Conta2 - Clienti - Impostazioni";
         case ID_ERR_GRUPPO_FORNITORI_MANCANTE:
             return "Gruppo Fornitori non definito. Impostare il gruppo con il comando Conta2 - Fornitori - Impostazioni";
+        case ID_WRN_DATAIMPEGNO_MINORE_DATAPREPARAZIONE:
+            return "La data impegno (%1) è minore della data di preparazione (%2)";
     }
     return "";
 }
