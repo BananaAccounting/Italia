@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.efattura.b2b
 // @api = 1.0
-// @pubdate = 2019-01-15
+// @pubdate = 2019-04-25
 // @publisher = Banana.ch SA
 // @description = [BETA] Fattura elettronica (XML, PDF)...
 // @description.it = [BETA] Fattura elettronica (XML, PDF)...
@@ -560,6 +560,18 @@ EFattura.prototype.addTextNode = function (parentNode, text, len, context) {
    parentNode.addTextNode(text);
 }
 
+EFattura.prototype.formatAmount = function(amount) {
+
+  var amountFormatted = amount;
+  /*if (amountFormatted)
+    amountFormatted = Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(amountFormatted))
+  else
+      amountFormatted = "";*/
+  if (Banana.SDecimal.isZero(amountFormatted))
+    return "0.00";
+  return amountFormatted;
+}
+
 EFattura.prototype.clearErrorList = function () {
    this.errorList = [];
 }
@@ -629,9 +641,7 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    //Elemento non obbligatorio, però se non specificato risultano fatture con totale 0 nel nostro sistema di interscambio
    var nodeTotaleDocumento = nodeDatiGeneraliDocumento.addElement("ImportoTotaleDocumento");
    var totaleDaPagare = Banana.SDecimal.round(invoiceObj.billing_info.total_to_pay, {'decimals':2});
-   if (totaleDaPagare.length<=0)
-      totaleDaPagare = "0.00";
-   this.addTextNode(nodeTotaleDocumento, totaleDaPagare, '4...15', 'DatiGeneraliDocumento/ImportoTotaleDocumento '+ msgHelpNoFattura);
+   this.addTextNode(nodeTotaleDocumento, this.formatAmount(totaleDaPagare), '4...15', 'DatiGeneraliDocumento/ImportoTotaleDocumento '+ msgHelpNoFattura);
 
    //In total_vat_rates[] non sono presenti imponibile/imposta per aliquota allo 0%, da correggere in Banana
    //imponibili con aliquota allo 0% vengono raggruppati per codice natura perché nel riepilogo la natura dev'essere specificata
@@ -659,14 +669,10 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       }
       var nodePrezzoUnitario = nodeDettaglioLinee.addElement("PrezzoUnitario");
       var prezzoUnitario = invoiceObj.items[i].unit_price.calculated_amount_vat_exclusive;
-      if (!prezzoUnitario)
-         prezzoUnitario = "0.00";
-      this.addTextNode(nodePrezzoUnitario, prezzoUnitario, '4...21', 'DettaglioLinee/PrezzoUnitario '+ msgHelpNoFattura);
+      this.addTextNode(nodePrezzoUnitario, this.formatAmount(prezzoUnitario), '4...21', 'DettaglioLinee/PrezzoUnitario '+ msgHelpNoFattura);
       var nodePrezzoTotale = nodeDettaglioLinee.addElement("PrezzoTotale");
       var prezzoTotale = invoiceObj.items[i].total_amount_vat_exclusive;
-      if (!prezzoTotale)
-         prezzoTotale = "0.00";
-      this.addTextNode(nodePrezzoTotale, prezzoTotale, '4...21', 'DettaglioLinee/PrezzoTotale '+ msgHelpNoFattura);
+      this.addTextNode(nodePrezzoTotale, this.formatAmount(prezzoTotale), '4...21', 'DettaglioLinee/PrezzoTotale '+ msgHelpNoFattura);
       var nodeAliquotaIVA = nodeDettaglioLinee.addElement("AliquotaIVA");
       var aliquotaIva = Banana.SDecimal.round(invoiceObj.items[i].unit_price.vat_rate, {'decimals':2});
       //se la linea di dettaglio è una linea di descrizione con importo totale a 0, imposta il codice IVA al 22%, così non chiede il codice natura
@@ -698,11 +704,13 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
       this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DatiRiepilogo/AliquotaIVA '+ msgHelpNoFattura);
 
+	  var imponibileImporto = invoiceObj.billing_info.total_vat_rates[i].total_amount_vat_exclusive;
       var nodeImponibileImporto = nodeDatiRiepilogo.addElement("ImponibileImporto");
-      this.addTextNode(nodeImponibileImporto, invoiceObj.billing_info.total_vat_rates[i].total_amount_vat_exclusive, '4...15', 'DatiRiepilogo/ImponibileImporto '+ msgHelpNoFattura);
+      this.addTextNode(nodeImponibileImporto, this.formatAmount(imponibileImporto), '4...15', 'DatiRiepilogo/ImponibileImporto '+ msgHelpNoFattura);
 
+	  var imposta = invoiceObj.billing_info.total_vat_rates[i].total_vat_amount;
       var nodeImposta = nodeDatiRiepilogo.addElement("Imposta");
-      this.addTextNode(nodeImposta, invoiceObj.billing_info.total_vat_rates[i].total_vat_amount, '4...15', 'DatiRiepilogo/Imposta '+ msgHelpNoFattura);
+      this.addTextNode(nodeImposta, this.formatAmount(imposta), '4...15', 'DatiRiepilogo/Imposta '+ msgHelpNoFattura);
    }
    for (var codNatura in imponibileAliquota0List) {
       var imponibileAliquota0 = imponibileAliquota0List[codNatura];
