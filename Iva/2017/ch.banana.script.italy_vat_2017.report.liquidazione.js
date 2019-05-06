@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2019-02-27
+// @pubdate = 2019-05-06
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -512,12 +512,11 @@ LiquidazionePeriodica.prototype.createInstanceComunicazione = function() {
 LiquidazionePeriodica.prototype.createInstanceIntestazione = function() {
   var msgContext = '<Intestazione>';
   
-  var annoFornitura = this.param.annoSelezionato;
-  if (!annoFornitura || annoFornitura.length < 4)
-    annoFornitura = "";
-  if (annoFornitura.length>2)
-    annoFornitura = annoFornitura.substring(2);
-  var xbrlCodiceFornitura = xml_createElement("iv:CodiceFornitura", "IVP" + annoFornitura);
+  var codiceFornitura = "IVP17";
+  //a partire dal 2018 compreso è cambiato il codice fornitura
+  if (this.param.annoSelezionato && parseInt(this.param.annoSelezionato)>=2018)
+    codiceFornitura = "IVP18";
+  var xbrlCodiceFornitura = xml_createElement("iv:CodiceFornitura", codiceFornitura);
 
   var xbrlCodiceFiscaleDichiarante = '';
   if (this.param.comunicazioneCFDichiarante.length>0)
