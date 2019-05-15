@@ -34,6 +34,8 @@ function Journal(banDocument) {
   this.customers = {};
   /*elenco fornitori*/
   this.suppliers = {};
+  /*flag per includere solamente cliente e fornitori, altri movimenti iva non vengono considerati*/
+  this.excludeVatTransactions = false;
 }
 /*
 *  Filtra i dati del giornale escludendo le registrazioni degli anni precedenti
@@ -77,19 +79,19 @@ Journal.prototype.getPeriod = function(startDate, endDate) {
       data.transactions.push(jsonLine);
       var accountId = jsonLine["IT_ClienteConto"];
       var accountType = jsonLine["IT_ClienteTipologia"];
-      var accountObj = new Utils(this.banDocument).getAccount(accountId);
-      if (accountType == 'C') {
-        if (!data.customers[accountId])
-          data.customers[accountId] = accountObj;
-        if (!data.customers[accountId].transactions)
+      //var accountObj = new Utils(this.banDocument).getAccount(accountId);
+      if (accountType == 'C' && this.customers[accountId]) {
+        if (!data.customers[accountId]) {
+          data.customers[accountId] = this.customers[accountId];
           data.customers[accountId].transactions = [];
+        }
         data.customers[accountId].transactions.push(jsonLine);
       }
-      else if (accountType == 'F') {
-        if (!data.suppliers[accountId])
-          data.suppliers[accountId] = accountObj;
-        if (!data.suppliers[accountId].transactions)
+      else if (accountType == 'F' && this.suppliers[accountId]) {
+        if (!data.suppliers[accountId]) {
+          data.suppliers[accountId] = this.suppliers[accountId];
           data.suppliers[accountId].transactions = [];
+        }
         data.suppliers[accountId].transactions.push(jsonLine);
       }
       if (jsonLine["IT_NoDoc"].length) {
@@ -124,10 +126,6 @@ Journal.prototype.load = function() {
   if (!journal || !filteredRows || !tableVatCodes)
     return;
 
-  var progressBar = Banana.application.progressBar;
-  var t0 = new Date();
-  progressBar.start(3);
-
   //Conti corrispettivi
   var mapCorrispettivi = new Utils(this.banDocument).getMapContiCorrispettivi();
   
@@ -147,10 +145,9 @@ Journal.prototype.load = function() {
 
   //Riprende l'elenco clienti/fornitori in this.customers e this.suppliers
   //Solamente righe con JInvoiceRowCustomerSupplier=1 (cliente) or JInvoiceRowCustomerSupplier=2 (fornitore)
-  progressBar.finish();
-  this.printElapsedTime("Corrispettivi", t0);
+  var progressBar = Banana.application.progressBar;
+  var t0 = new Date();
 
-  t0 = new Date();
   if (typeof(progressBar.setText) !== 'undefined')
     progressBar.setText("Elenco clienti/fornitori");
   progressBar.start(filteredRows.length + 1);
@@ -171,19 +168,24 @@ Journal.prototype.load = function() {
 
     var accountId = filteredRows[i].value("JAccount");
     if (accountId && accountId.length>0) {
-      var accountObj = new Utils(this.banDocument).getAccount(accountId);
-      if (accountObj) {
+      //var accountObj = new Utils(this.banDocument).getAccount(accountId);
+      //if (accountObj) {
         if (isCustomer) {
-          this.customers[accountId] = accountObj;
+          //this.customers[accountId] = accountObj;
+          this.customers[accountId] = {};
         }
         else {
-          this.suppliers[accountId] = accountObj;
+          //this.suppliers[accountId] = accountObj;
+          this.suppliers[accountId] = {};
         }
-      }
+      //}
     }
   }
   progressBar.finish();
-  this.printElapsedTime("Elenco clienti/fornitori", t0);
+  //this.printElapsedTime("Elenco clienti/fornitori", t0);
+  
+  //Conti clienti/fornitori salvati in un map per velocizzare lo script
+  this.loadAccounts();
 
   //Riprende le registrazioni IVA in this.transactions
   t0 = new Date();
@@ -286,7 +288,11 @@ Journal.prototype.load = function() {
       isSupplier = true;
       accountId = accountCC3;
     }
-
+    
+    //continua solamente se è un cliente/fornitore oppure le registrazioni IVA sono da includere
+    if (this.excludeVatTransactions && !isCustomer && !isSupplier)
+      continue;
+      
     //Crea un oggetto json dove vengono salvate tutte le informazioni della riga
     //e aggiunto in this.transactions
     var jsonLine = {};
@@ -325,6 +331,20 @@ Journal.prototype.load = function() {
       jsonLine["IT_ClienteDescrizione"] = accountObj["Description"];
       jsonLine["IT_ClientePartitaIva"] = accountObj["VatNumber"];
       jsonLine["IT_ClienteCodiceFiscale"] = accountObj["FiscalNumber"];
+      //Temporaneamente i parametri per l'invio della fattura elettronica sono salvati nel campo Codice1
+      jsonLine["IT_XmlFormatoTrasmissione"] = "";
+      jsonLine["IT_XmlCodiceDestinatario"] = "";
+      jsonLine["IT_XmlPECDestinatario"] = "";
+      var xmlParam = accountObj["Code1"];
+      if (xmlParam && xmlParam.length>0) {
+         var xmlParams = xmlParam.split(":");
+         if (xmlParams.length>0)
+             jsonLine["IT_XmlFormatoTrasmissione"] = xmlParams[0];
+         if (xmlParams.length>1)
+             jsonLine["IT_XmlCodiceDestinatario"] = xmlParams[1];
+         if (xmlParams.length>2)
+             jsonLine["IT_XmlPECDestinatario"] = xmlParams[2];
+      }
       var intestazione = accountId + " - " + accountObj["Description"];
       if (accountObj["VatNumber"].length>0) {
         intestazione = "P.I. " + accountObj["VatNumber"] + " - " + accountObj["Description"];
@@ -385,7 +405,7 @@ Journal.prototype.load = function() {
     var noDoc = xml_escapeString(filteredRows[i].value("DocInvoice"));
     var dataReg = filteredRows[i].value("JDate");
     var indexGroup = filteredRows[i].value("JContraAccountGroup") ;
-    //console.log(noDoc + " " + dataReg + " " + " " +previousNoDoc + " " +previousDataReg);
+    //Banana.console.log(noDoc + " " + dataReg + " " + " " +previousNoDoc + " " +previousDataReg);
     //Mantiene lo stesso numero di registro se la data di registrazione e il no fattura è lo stesso
     var prevNoDoc ='';
     var prevDataReg = '';
@@ -523,6 +543,7 @@ Journal.prototype.load = function() {
     //N7 IVA assolta in altro stato UE, vendite a distanza o prestazioni di servizi di telecomunicazioni
     //Il codice natura può essere sovrascritto dalla colonna VatExtraInfo oppure dalla colonna Gr1 della tabella codici iva
     //Se presente ESCL, la registrazione viene esclusa
+    //Se presente NONE, il codice natura resta vuoto
     jsonLine["IT_Natura"] = '';
     var vatExtraInfo = filteredRows[i].value("VatExtraInfo");
     if (vatExtraInfo.startsWith("N") && vatExtraInfo.length==2) {
@@ -546,6 +567,9 @@ Journal.prototype.load = function() {
         }
         else if (vatGr1 == "ESCL") {
           jsonLine["IT_Natura"] = vatGr1;
+        }
+        else if (vatGr1 == "NONE") {
+          jsonLine["IT_Natura"] = '';
         }
         else if (rowVatDescription.indexOf("art.15")>0) {
           jsonLine["IT_Natura"] = 'N1';
@@ -700,24 +724,19 @@ EsibilitaIva
     var imposta = jsonLine["IT_IvaContabilizzata"];
     var msg = '[' + jsonLine["JTableOrigin"] + ': Riga ' + (parseInt(jsonLine["JRowOrigin"])+1).toString() + '] ';
 
-    //Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
-    //Eccezione: fatture ricevute con natura “N6”: vanno anche obbligatoriamente valorizzati i campi Imposta e Aliquota
-    //I codici IVA esclusi non vengono controllati 
-    if (jsonLine["IT_Natura"] !== "ESCL") {
+    /*Se il campo Natura è valorizzato i campi Imposta e Aliquota devono essere vuoti
+      Eccezione: fatture ricevute con natura “N6” dove l'imposta e l'aliquota possono essere valorizzati
+      I codici IVA esclusi non vengono controllati, anche i codici N6 non vengono controllati perché 
+      secondo gli ultimi chiarimenti dell'Agenzia Entrate, per tutte le fatture, 
+      sia EMESSE che RICEVUTE in reverse Charge, si deve indicare il codice N6. 
+      l'unica differenza è che solo per quelle ricevute si deve valorizzare il campo Aliquota ed Imposta.
+     */
+     if (jsonLine["IT_Natura"] !== "ESCL" && jsonLine["IT_Natura"] !== "N6") {
       if (jsonLine["IT_Natura"].length>0) {
-        //N6 può essere impostato anche per autofattura (partitario clienti, fattura per acquisto extracomunitario) quindi non viene più controllato se fa parte del partitario fornitori
-        if (jsonLine["IT_Natura"] == "N6") {
-          if (Banana.SDecimal.isZero(aliquota) || Banana.SDecimal.isZero(imposta)) {
-            msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_N6);
-            this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_N6);
-          }
-        }
-        else {
-          if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
+         if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
             msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE) + jsonLine["IT_Natura"];
             this.banDocument.addMessage( msg, ID_ERR_XML_ELEMENTO_NATURA_PRESENTE);
-          }
-        }
+         }
       }
       else {
         //Se il campo Natura non è valorizzato, lo devono essere i campi Imposta e Aliquota
@@ -777,7 +796,70 @@ EsibilitaIva
     this.transactions.push(jsonLine);
   }
   progressBar.finish();
-  this.printElapsedTime("Registrazioni iva", t0);
+  //this.printElapsedTime("Registrazioni iva", t0);
+}
+
+/*
+ * Ritorna i conti clienti/fornitori con gli indirizzi
+*/
+Journal.prototype.loadAccounts = function() {
+  if (!this.banDocument)
+    return;
+
+  var tableAccounts = this.banDocument.table('Accounts');
+  if (!tableAccounts)
+    return;
+
+   for (var accountId in this.customers) {
+      var tRow = tableAccounts.findRowByValue('Account', accountId);
+      if (tRow) {
+         var jsonString = tRow.toJSON();
+         var jsonObj = JSON.parse(jsonString);
+         for (var key in jsonObj) {
+            if (jsonObj[key].length > 0)
+               jsonObj[key] = xml_escapeString(jsonObj[key]);
+         }
+         this.customers[accountId] = jsonObj;
+      }
+   }
+    
+   for (var accountId in this.suppliers) {
+      var tRow = tableAccounts.findRowByValue('Account', accountId);
+      if (tRow) {
+         var jsonString = tRow.toJSON();
+         var jsonObj = JSON.parse(jsonString);
+         for (var key in jsonObj) {
+            if (jsonObj[key].length > 0)
+               jsonObj[key] = xml_escapeString(jsonObj[key]);
+         }
+         this.suppliers[accountId] = jsonObj;
+      }
+   }
+
+   /*for (i=0; i<tableAccounts.rowCount; i++) {
+    var tRow = tableAccounts.row(i);
+    var accountId = tRow.value('Account');
+    
+    if (!accountId)
+      continue;
+    
+    if (!this.customers[accountId] && !this.suppliers[accountId])
+      continue;
+
+    var jsonString = tRow.toJSON();
+    var jsonObj = JSON.parse(jsonString);
+    for (var key in jsonObj) {
+      if (jsonObj[key].length > 0)
+        jsonObj[key] = xml_escapeString(jsonObj[key]);
+    }
+    
+    if (this.customers[accountId]) {
+      this.customers[accountId] = jsonObj;
+    }
+    else if (this.suppliers[accountId]) {
+      this.suppliers[accountId] = jsonObj;
+    }
+  }*/
 }
 
 Journal.prototype.printElapsedTime = function(functionName, t0) {
@@ -787,11 +869,11 @@ Journal.prototype.printElapsedTime = function(functionName, t0) {
   var seconds = ((millis % 60000) / 1000).toFixed(0);
   if (minutes == 0 && seconds == 0) {
     var timeString = Banana.SDecimal.round(millis/1000, {'decimals':2});
-    console.log( functionName + " elapsed time " + timeString + " s");
+    //Banana.console.log( functionName + " elapsed time " + timeString + " s");
   }
   else {
     var timeString = (seconds == 60 ? (minutes+1) + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
-    console.log( functionName + " elapsed time " + timeString);
+    //Banana.console.log( functionName + " elapsed time " + timeString);
   }
 }
 
@@ -1130,6 +1212,24 @@ Journal.prototype.setColumns = function() {
   column.title = "IT_RegValida";
   column.index = 1032;
   this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_XmlFormatoTrasmissione";
+  column.title = "IT_XmlFormatoTrasmissione";
+  column.type = "description";
+  column.index = 1033;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_XmlCodiceDestinatario";
+  column.title = "IT_XmlCodiceDestinatario";
+  column.type = "description";
+  column.index = 1034;
+  this.columns[j++] = column;
+  var column = {};
+  column.name = "IT_XmlPECDestinatario";
+  column.title = "IT_XmlPECDestinatario";
+  column.type = "description";
+  column.index = 1035;
+  this.columns[j++] = column;
   
 }
 
@@ -1235,7 +1335,7 @@ Journal.prototype._debugPrintCustomersSuppliers = function(report, stylesheet) {
   for (var i in this.customers) {
     for (var j in this.customers[i].transactions) {
       var rowJsonObj = this.customers[i].transactions[j];
-      //console.log(JSON.stringify(rowJsonObj));
+      //Banana.console.log(JSON.stringify(rowJsonObj));
       var row = table.addRow();
       for (var k in sortedColumns) {
         var index = sortedColumns[k];

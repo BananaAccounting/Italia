@@ -15,7 +15,7 @@
 // @api = 1.0
 // @id = ch.banana.script.italy_vat.report.librogiornale.js
 // @description = Libro giornale...
-// @doctype = 100.110;110.110;130.110;100.130
+// @doctype = *
 // @encoding = utf-8
 // @includejs = ch.banana.script.italy_vat_2017.errors.js
 // @includejs = ch.banana.script.italy_vat_2017.journal.js

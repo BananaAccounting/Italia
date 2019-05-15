@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.report_economico_veneto_modello1
 // @api = 1.0
-// @pubdate = 2018-06-20
+// @pubdate = 2018-12-17
 // @publisher = Banana.ch SA
 // @description = Associazioni - Bilancio finanziario (modello 1)
 // @task = app.command
@@ -57,6 +57,12 @@ function loadParam(banDoc) {
 function loadForm(banDoc) {
 
 	form = [];
+	var tipoAssociazione = "";
+	try {
+		tipoAssociazione = banDoc.table("TestiReport").findRowByValue("RowId", "RVENETO").value("Testo");
+	} catch(e) {
+		banDoc.addMessage('Tabella TestiReport "Tipo associazione" (Id "RVENETO") inesistente oppure nome non corretto.');
+	}
 	
 	/** CONTO ECONOMICO **/
 	//INCOME
@@ -77,7 +83,7 @@ function loadForm(banDoc) {
 	form.push({"id":"R4", "gr":"R4", "bClass":"4", "description":"RIMBORSI DERIVANTI DA CONVENZIONI CON ENTI PUBBLICI - art. 5 L.266/91"});
 	
 	//We don't include "R5a" group if we are on the APS file
-	if (banDoc.table("TestiReport").findRowByValue("RowId", "RVENETO").value("Testo") !== "APS") {
+	if (tipoAssociazione !== "APS" && tipoAssociazione === "ODV") {
 		form.push({"id":"R5a", "description":"ENTRATE DA ATTIVITÀ COMMERCIALI PRODUTTIVE MARGINALI   (Raccolta fondi)", "sum":"R5.1;R5.2;R5.3"});
 		form.push({"id":"R5.1", "gr":"R5.1", "bClass":"4", "description":"da attività di vendite occasionali o iniziative occasionali di solidarietà (D.M. 1995 lett.a) es.eventi, cassettina offerte, tombole, spettacoli"});
 		form.push({"id":"R5.2", "gr":"R5.2", "bClass":"4", "description":"da attività di vendita di beni acquisiti da terzi a titolo gratuito a fini di sovvenzione  (D.M. 1995 lett.b)"});
@@ -95,7 +101,7 @@ function loadForm(banDoc) {
 	form.push({"id":"R8", "gr":"R8", "bClass":"4", "description":"PARTITE DI GIRO"});
 
 	//We don't include "R5a" in the total group if we are on the APS file
-	if (banDoc.table("TestiReport").findRowByValue("RowId", "RVENETO").value("Testo") !== "APS") {
+	if (tipoAssociazione !== "APS" && tipoAssociazione === "ODV") {
 		form.push({"id":"R", "description":"TOTALE ENTRATE", "sum":"R1;R2;R3;R4;R5a;R5b;R6;R7;R8"});
 	} else {
 		form.push({"id":"R", "description":"TOTALE ENTRATE", "sum":"R1;R2;R3;R4;R5b;R6;R7;R8"});

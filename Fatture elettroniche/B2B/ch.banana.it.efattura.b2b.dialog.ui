@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EsportaFatturaDialog</class>
+ <widget class="QDialog" name="EsportaFatturaDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>427</width>
+    <height>444</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string notr="true">Fattura elettronica</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_8">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tabEsporta">
+      <attribute name="title">
+       <string>Fattura</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QGroupBox" name="filterGroupBox">
+         <property name="title">
+          <string>Seleziona</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QRadioButton" name="allRadioButton">
+            <property name="text">
+             <string>T&amp;utto</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="numeroFatturaRadioButton">
+              <property name="text">
+               <string>&amp;N. fattura</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="numeroFatturaLineEdit"/>
+            </item>
+            <item row="0" column="2">
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="clienteRadioButton">
+              <property name="text">
+               <string>&amp;Cliente</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" colspan="2">
+             <widget class="QComboBox" name="clienteComboBox"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="periodGroupBox">
+         <property name="title">
+          <string notr="true">Periodo</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QRadioButton" name="periodAllRadioButton">
+              <property name="text">
+               <string notr="true">&amp;Tutto</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="periodAllLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string notr="true">completePeriod</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="periodSelectedRadioButton">
+            <property name="text">
+             <string notr="true">&amp;Periodo specificato</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <spacer name="horizontalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>15</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="startDateLabel">
+              <property name="text">
+               <string>Data inizio (compresa)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QDateEdit" name="startDateEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="frame">
+               <bool>true</bool>
+              </property>
+              <property name="displayFormat">
+               <string>dd/MM/yyyy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <spacer name="horizontalSpacer_10">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>15</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="toDateLabel">
+              <property name="text">
+               <string>Data fine (compresa)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QDateEdit" name="toDateEdit">
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="displayFormat">
+               <string>dd/MM/yyyy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="2">
+             <spacer name="horizontalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>108</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="QComboBox" name="periodComboBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>110</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="yearComboBox"/>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="stampaGroupBox">
+         <property name="title">
+          <string>Formato</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QRadioButton" name="stampaPDFRadioButton">
+            <property name="text">
+             <string>&amp;Anteprima di stampa</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="stampaXmlRadioButton">
+            <property name="text">
+             <string>File &amp;XML per trasmissione</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>44</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabOpzioniPdf">
+      <attribute name="title">
+       <string>Opzioni stampa</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_10">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="fontTypeLabel">
+             <property name="text">
+              <string notr="true">Tipo &amp;carattere (font)</string>
+             </property>
+             <property name="buddy">
+              <cstring>fontTypeLineEdit</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="fontTypeLineEdit"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="bgColorLabel">
+             <property name="text">
+              <string notr="true">Colore &amp;sfondo (HEX)</string>
+             </property>
+             <property name="buddy">
+              <cstring>bgColorLineEdit</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="bgColorLineEdit"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="textColorLabel">
+             <property name="text">
+              <string notr="true">Colore &amp;testo (HEX)</string>
+             </property>
+             <property name="buddy">
+              <cstring>textColorLineEdit</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="textColorLineEdit"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>13</width>
+             <height>58</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QCheckBox" name="printHeaderCheckBox">
+             <property name="text">
+              <string>Visualizza &amp;intestazione</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="printLogoCheckBox">
+             <property name="text">
+              <string>Visualizza &amp;logo</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="printQuantityCheckBox">
+             <property name="text">
+              <string>Visualizza colonna &amp;quantità</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="invoiceHeaderGroupBox">
+         <property name="title">
+          <string>Intestazione</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <widget class="QLabel" name="invoiceRow1Label">
+              <property name="text">
+               <string>Riga &amp;1</string>
+              </property>
+              <property name="buddy">
+               <cstring>invoiceRow1LineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="invoiceRow1LineEdit"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="invoiceRow2Label">
+              <property name="text">
+               <string>Riga &amp;2</string>
+              </property>
+              <property name="buddy">
+               <cstring>invoiceRow2LineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="invoiceRow2LineEdit"/>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="invoiceRow3Label">
+              <property name="text">
+               <string>Riga &amp;3</string>
+              </property>
+              <property name="buddy">
+               <cstring>invoiceRow3LineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="invoiceRow3LineEdit"/>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="invoiceRow4Label">
+              <property name="text">
+               <string>Riga &amp;4</string>
+              </property>
+              <property name="buddy">
+               <cstring>invoiceRow4LineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="invoiceRow4LineEdit"/>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="invoiceRow5Label">
+              <property name="text">
+               <string>Riga &amp;5</string>
+              </property>
+              <property name="buddy">
+               <cstring>invoiceRow5LineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="invoiceRow5LineEdit"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="invoiceFooterGroupBox">
+         <property name="title">
+          <string>Testo chiusura</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QTextEdit" name="invoiceFooterTextEdit">
+            <property name="acceptRichText">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabOpzioniXml">
+      <attribute name="title">
+       <string>Opzioni XML</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_9">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="0" column="0">
+          <widget class="QLabel" name="numeroProgressivoLabel">
+           <property name="text">
+            <string notr="true">Progressivo &amp;invio</string>
+           </property>
+           <property name="buddy">
+            <cstring>numeroProgressivoLineEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="numeroProgressivoLineEdit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="mouseTracking">
+            <bool>false</bool>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::StrongFocus</enum>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string notr="true"/>
+           </property>
+           <property name="inputMethodHints">
+            <set>Qt::ImhNone</set>
+           </property>
+           <property name="inputMask">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string notr="true"/>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+           <property name="echoMode">
+            <enum>QLineEdit::Normal</enum>
+           </property>
+           <property name="cursorPosition">
+            <number>0</number>
+           </property>
+           <property name="placeholderText">
+            <string notr="true"/>
+           </property>
+           <property name="cursorMoveStyle">
+            <enum>Qt::LogicalMoveStyle</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <spacer name="horizontalSpacer_13">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="destFolderLabel">
+           <property name="text">
+            <string>Ca&amp;rtella di destinazione</string>
+           </property>
+           <property name="buddy">
+            <cstring>destFolderLineEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <widget class="QLineEdit" name="destFolderLineEdit"/>
+         </item>
+         <item row="2" column="0" colspan="3">
+          <widget class="QCheckBox" name="apriXmlCheckBox">
+           <property name="text">
+            <string>&amp;Visualizza immediatamente</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>273</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>allRadioButton</tabstop>
+  <tabstop>numeroFatturaRadioButton</tabstop>
+  <tabstop>numeroFatturaLineEdit</tabstop>
+  <tabstop>clienteRadioButton</tabstop>
+  <tabstop>clienteComboBox</tabstop>
+  <tabstop>periodAllRadioButton</tabstop>
+  <tabstop>periodSelectedRadioButton</tabstop>
+  <tabstop>startDateEdit</tabstop>
+  <tabstop>toDateEdit</tabstop>
+  <tabstop>periodComboBox</tabstop>
+  <tabstop>yearComboBox</tabstop>
+  <tabstop>stampaPDFRadioButton</tabstop>
+  <tabstop>stampaXmlRadioButton</tabstop>
+  <tabstop>fontTypeLineEdit</tabstop>
+  <tabstop>bgColorLineEdit</tabstop>
+  <tabstop>textColorLineEdit</tabstop>
+  <tabstop>printHeaderCheckBox</tabstop>
+  <tabstop>printLogoCheckBox</tabstop>
+  <tabstop>printQuantityCheckBox</tabstop>
+  <tabstop>invoiceRow1LineEdit</tabstop>
+  <tabstop>invoiceRow2LineEdit</tabstop>
+  <tabstop>invoiceRow3LineEdit</tabstop>
+  <tabstop>invoiceRow4LineEdit</tabstop>
+  <tabstop>invoiceRow5LineEdit</tabstop>
+  <tabstop>invoiceFooterTextEdit</tabstop>
+  <tabstop>numeroProgressivoLineEdit</tabstop>
+  <tabstop>destFolderLineEdit</tabstop>
+  <tabstop>apriXmlCheckBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>EsportaFatturaDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>281</x>
+     <y>434</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>204</x>
+     <y>308</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>checkdata()</slot>
+ </slots>
+</ui>

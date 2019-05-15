@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>404</width>
-    <height>519</height>
+    <height>578</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Comunicazione IVA</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
     <widget class="QGroupBox" name="periodoGroupBox">
      <property name="title">
@@ -118,12 +118,12 @@
           </item>
           <item>
            <property name="text">
-            <string notr="true">4. trimestre</string>
+            <string notr="true">4. trimestre (contribuente art. 7 DPR 542/99)</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>4. trimestre IVA speciali</string>
+            <string>4. trimestre</string>
            </property>
           </item>
           <item>
@@ -154,23 +154,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="annoComboBox">
-          <item>
-           <property name="text">
-            <string>2016</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>2017</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>2018</string>
-           </property>
-          </item>
-         </widget>
+         <widget class="QComboBox" name="annoComboBox"/>
         </item>
        </layout>
       </item>
@@ -653,6 +637,58 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="datiContabiliGroupBox">
+     <property name="title">
+      <string>Dati contabili</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="metodoAccontoLabel">
+          <property name="text">
+           <string notr="true">Metodo acconto</string>
+          </property>
+          <property name="buddy">
+           <cstring>ultimoMeseComboBox</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="metodoAccontoComboBox">
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>1 Metodo storico</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>2 Metodo previsionale</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>3 Metodo analitico effettivo</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>4 Altri soggetti operanti in specifici settori</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QGroupBox" name="stampaGroupBox">
      <property name="title">
       <string>Stampa</string>
@@ -726,6 +762,7 @@
   <tabstop>firmaDichiarazioneCheckBox</tabstop>
   <tabstop>firmaIntermediarioCheckBox</tabstop>
   <tabstop>ultimoMeseComboBox</tabstop>
+  <tabstop>metodoAccontoComboBox</tabstop>
   <tabstop>stampaReportRadioButton</tabstop>
   <tabstop>stampaXmlRadioButton</tabstop>
  </tabstops>

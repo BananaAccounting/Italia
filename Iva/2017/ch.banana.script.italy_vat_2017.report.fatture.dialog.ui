@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>379</width>
-    <height>440</height>
+    <height>443</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -149,23 +149,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="annoComboBox">
-          <item>
-           <property name="text">
-            <string>2016</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>2017</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>2018</string>
-           </property>
-          </item>
-         </widget>
+         <widget class="QComboBox" name="annoComboBox"/>
         </item>
        </layout>
       </item>
