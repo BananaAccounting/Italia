@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.raccoltafondi
 // @api = 1.0
-// @pubdate = 2018-12-17
+// @pubdate = 2020-02-05
 // @publisher = Banana.ch SA
 // @description = Associazioni - Report raccolta fondi
 // @task = app.command
@@ -125,8 +125,8 @@ function printReport(banDoc) {
 		tableRow.addCell("Data", "heading3 bold");
 		tableRow.addCell("Doc", "heading3 bold");
 		tableRow.addCell("Descrizione", "heading3 bold");
-		tableRow.addCell("Uscite", "heading3 bold");
 		tableRow.addCell("Entrate", "heading3 bold");
+		tableRow.addCell("Uscite", "heading3 bold");
 
 		//Add the values taken from each row of the table (except the last one) to the respective cells of the table
 		for (var i = 0; i < transTab.rowCount-1; i++) {	

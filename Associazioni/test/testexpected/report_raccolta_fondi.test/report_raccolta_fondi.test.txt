@@ -36,7 +36,7 @@ Responsabile: Signor Marco Rossi \\
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Uscite  & Entrate \\
+Data  & Doc  & Descrizione  & Entrate  & Uscite \\
 01.08.2018  & 20  & Entrate Raccolta fondi 1  & 500.00  & \\
 01.08.2018  & 20  & Entrate Raccolta fondi 2  & 2'400.00  & \\
 01.08.2018  & 21  & Uscite Raccolta fondi  &  & 450.00 \\
@@ -72,7 +72,7 @@ Responsabile: Signor Marco Rossi \\
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Uscite  & Entrate \\
+Data  & Doc  & Descrizione  & Entrate  & Uscite \\
 01.08.2018  & 20  & Entrate Raccolta fondi 3  & 10.00  & \\
  &  & Totali movimenti  & 10.00  & \\
  &  & DISAVANZO D'ESERCIZIO  & \multicolumn{2}{l}{10.00 }\\
@@ -105,7 +105,7 @@ Responsabile: Signor Marco Rossi \\
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Uscite  & Entrate \\
+Data  & Doc  & Descrizione  & Entrate  & Uscite \\
  &  & Totali movimenti  &  & \\
  &  & AVANZO/DISAVANZO D'ESERCIZIO  & \multicolumn{2}{l}{0.00 }\\
 \end{longtable}
@@ -137,7 +137,7 @@ Responsabile: Signor Marco Rossi \\
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Uscite  & Entrate \\
+Data  & Doc  & Descrizione  & Entrate  & Uscite \\
  &  & Totali movimenti  &  & \\
  &  & AVANZO/DISAVANZO D'ESERCIZIO  & \multicolumn{2}{l}{0.00 }\\
 \end{longtable}
@@ -156,8 +156,7 @@ Firma del presidente  & Firma del tesoriere \\
    &   \\
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_  & \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 \end{longtable}
-Banana Accounting - Pagina  \\
-\end{reportvalue}
+Banana Accounting - Pagina  \#page-nr \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}
 \begin{test}{testBananaAppDoppia}
@@ -175,7 +174,7 @@ Responsabile: Signor Marco Rossi \\
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Uscite  & Entrate \\
+Data  & Doc  & Descrizione  & Entrate  & Uscite \\
 01.08.2018  &  & Entrate Raccolta fondi 1  &  & 500.00 \\
 01.08.2018  &  & Entrate Raccolta fondi 2  &  & 2'400.00 \\
 01.08.2018  &  & Uscite Raccolta fondi  & 450.00  & \\
@@ -211,7 +210,7 @@ Responsabile: Signor Marco Rossi \\
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Uscite  & Entrate \\
+Data  & Doc  & Descrizione  & Entrate  & Uscite \\
 01.08.2018  &  & Entrate Raccolta fondi 3  &  & 10.00 \\
  &  & Totali movimenti  &  & 10.00 \\
  &  & AVANZO D'ESERCIZIO  & \multicolumn{2}{l}{10.00 }\\
@@ -244,7 +243,7 @@ Responsabile: Signor Marco Rossi \\
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Uscite  & Entrate \\
+Data  & Doc  & Descrizione  & Entrate  & Uscite \\
  &  & Totali movimenti  &  & \\
  &  & AVANZO/DISAVANZO D'ESERCIZIO  & \multicolumn{2}{l}{0.00 }\\
 \end{longtable}
@@ -276,7 +275,7 @@ Responsabile: Signor Marco Rossi \\
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Uscite  & Entrate \\
+Data  & Doc  & Descrizione  & Entrate  & Uscite \\
  &  & Totali movimenti  &  & \\
  &  & AVANZO/DISAVANZO D'ESERCIZIO  & \multicolumn{2}{l}{0.00 }\\
 \end{longtable}
@@ -295,8 +294,7 @@ Firma del presidente  & Firma del tesoriere \\
    &   \\
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_  & \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 \end{longtable}
-Banana Accounting - Pagina  \\
-\end{reportvalue}
+Banana Accounting - Pagina  \#page-nr \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}
 \end{testcase}
