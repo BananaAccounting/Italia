@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.report_economico_veneto_modello1
 // @api = 1.0
-// @pubdate = 2018-12-17
+// @pubdate = 2020-02-17
 // @publisher = Banana.ch SA
 // @description = Associazioni - Bilancio finanziario (modello 1)
 // @task = app.command
@@ -204,6 +204,42 @@ function exec(string) {
 
 }
 
+//Get the liquidity group for the gr1 A2.1, A2.2 and A2.3
+function getLiquidityGroup(banDoc) {
+	var table = banDoc.table("Accounts");
+	var textNotes = "";
+	var liquidityGroup = "";
+	for (var i = 0; i < table.rowCount; i++) {
+		var tRow = table.row(i);
+		var gr = tRow.value("Gr");
+		var gr1 = tRow.value("Gr1");
+		if (gr1 === "A2.1" || gr1 === "A2.2" || gr1 === "A2.3") {
+			liquidityGroup = gr;
+		}
+	}
+	return liquidityGroup;
+}
+
+//Calculate opening balance for the liquidity
+function calcOpeningLiquidity(banDoc, param) {
+	var gr = getLiquidityGroup(banDoc);
+	var bal = banDoc.currentBalance("Gr="+gr, param["startDate"], param["endDate"]);
+	var opening = bal.opening;
+	return opening;
+}
+
+//Calculate the ending balance for liquidity
+function calcFinalBalanceLiquidity(banDoc, param) {
+	var gr = getLiquidityGroup(banDoc);
+	var opening = banDoc.currentBalance("Gr="+gr, param["startDate"], param["endDate"]).opening;
+	var debit = banDoc.currentBalance("Gr="+gr, param["startDate"], param["endDate"]).debit;
+	var credit = banDoc.currentBalance("Gr="+gr, param["startDate"], param["endDate"]).credit;
+	var total = 0;
+	total = Banana.SDecimal.add(total,opening);
+	total = Banana.SDecimal.add(total,debit);
+	total = Banana.SDecimal.subtract(total,credit);
+	return total;
+}
 
 
 //The purpose of this function is to do some operations before the calculation of the totals
@@ -302,7 +338,8 @@ function printReport(banDoc) {
 	tableRow.addCell(liqIniziale["id"], "bold italic", 1);
 	tableRow.addCell(liqIniziale["description"], "bold italic", 4);
 	tableRow.addCell("","",1);
-	tableRow.addCell(getBalance(liqIniziale["id"]), "alignRight bold italic", 1);
+	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(calcOpeningLiquidity(banDoc, param)), "alignRight bold italic", 1);
+	//tableRow.addCell(getBalance(liqIniziale["id"]), "alignRight bold italic", 1);
 
 	tableRow = table.addRow();
 	tableRow.addCell(" ","",7);
@@ -355,7 +392,8 @@ function printReport(banDoc) {
 	tableRow.addCell(liqFinale["id"], "bold italic", 1);
 	tableRow.addCell(liqFinale["description"], "bold italic", 4);
 	tableRow.addCell("","",1);
-	tableRow.addCell(getBalance(liqFinale["id"]), "alignRight bold italic", 1);
+	//tableRow.addCell(getBalance(liqFinale["id"]), "alignRight bold italic", 1);
+	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(calcFinalBalanceLiquidity(banDoc, param)), "alignRight bold italic", 1);
 
 	var valCassa = getObject(form, "A2.1");
 	var valBanca = getObject(form, "A2.2");
