@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @inputdatasource = none
-// @pubdate = 2018-04-19
+// @pubdate = 2020-04-27
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -370,6 +370,65 @@ LibroGiornale.prototype.addPageHeader = function(report, stylesheet) {
   stylesheet.addStyle(".right", "text-align: right;");
 }
 
+LibroGiornale.prototype.getAccountingInfo = function() {
+  var accountingInfo = {};
+  accountingInfo.isDoubleEntry = false;
+  accountingInfo.isIncomeExpenses = false;
+  accountingInfo.isCashBook = false;
+  accountingInfo.multiCurrency = false;
+  accountingInfo.withVat = false;
+  accountingInfo.vatAccount = "";
+  accountingInfo.customersGroup = "";
+  accountingInfo.suppliersGroup = "";
+  accountingInfo.basicCurrency = "";
+  accountingInfo.company = "";
+  accountingInfo.name = "";
+  accountingInfo.familyName = "";
+
+  if (this.banDocument) {
+    var fileGroup = this.banDocument.info("Base", "FileTypeGroup");
+    var fileNumber = this.banDocument.info("Base", "FileTypeNumber");
+    var fileVersion = this.banDocument.info("Base", "FileTypeVersion");
+
+    if (fileGroup == "100")
+      accountingInfo.isDoubleEntry = true;
+    else if (fileGroup == "110")
+      accountingInfo.isIncomeExpenses = true;
+    else if (fileGroup == "130")
+      accountingInfo.isCashBook = true;
+
+    if (fileNumber == "110") {
+      accountingInfo.withVat = true;
+    }
+    if (fileNumber == "120") {
+      accountingInfo.multiCurrency = true;
+    }
+    if (fileNumber == "130") {
+      accountingInfo.multiCurrency = true;
+      accountingInfo.withVat = true;
+    }
+
+    if (this.banDocument.info("AccountingDataBase", "VatAccount"))
+    accountingInfo.vatAccount = this.banDocument.info("AccountingDataBase", "VatAccount");
+
+    if (this.banDocument.info("AccountingDataBase", "CustomersGroup"))
+      accountingInfo.customersGroup = this.banDocument.info("AccountingDataBase", "CustomersGroup");
+    if (this.banDocument.info("AccountingDataBase", "SuppliersGroup"))
+      accountingInfo.suppliersGroup = this.banDocument.info("AccountingDataBase", "SuppliersGroup");
+
+    if (this.banDocument.info("AccountingDataBase", "BasicCurrency"))
+      accountingInfo.basicCurrency = this.banDocument.info("AccountingDataBase", "BasicCurrency");
+
+    if (this.banDocument.info("AccountingDataBase", "Company"))
+      accountingInfo.company = this.banDocument.info("AccountingDataBase", "Company");
+    if (this.banDocument.info("AccountingDataBase", "Name"))
+      accountingInfo.name = this.banDocument.info("AccountingDataBase", "Name");
+    if (this.banDocument.info("AccountingDataBase", "FamilyName"))
+      accountingInfo.familyName = this.banDocument.info("AccountingDataBase", "FamilyName");
+  }
+  return accountingInfo;
+}
+
 LibroGiornale.prototype.getFields = function() {
   var fields = [
     {'name' : 'NoProgr', 'title' : 'N.riga', 'type' : 'number'},
@@ -392,6 +451,8 @@ LibroGiornale.prototype.getParam = function() {
 }
 
 LibroGiornale.prototype.init = function() {
+  this.accountingInfo = {};
+  this.categories = [];
   this.journal = {};
   this.transactions = [];
   this.period = {};
@@ -443,6 +504,20 @@ LibroGiornale.prototype.loadData = function() {
   }
   if (!this.period.startDate || !this.period.endDate || this.period.startDate.length<=0 || this.period.endDate.length<=0)
     return;
+	
+  //accounting info
+  this.accountingInfo = this.getAccountingInfo();
+  
+  //carica tutte le categorie perché deve invertire gli importi nel giornale
+  var table = this.banDocument.table('Categories');
+  if (table) {
+    for (var i = 0; i < table.rowCount; i++) {
+      var tRow = table.row(i);
+      var categoryId = tRow.value('Category');
+      if (categoryId && categoryId.length > 0)
+        this.categories.push(categoryId);
+    }
+  }
   
   //lettura del giornale e caricamento dei dati in transactions
   this.journal = this.banDocument.journal(
@@ -519,6 +594,17 @@ LibroGiornale.prototype.mapTransaction = function(element) {
   //se la descrizione è vuota riprende la descrizione del giornale
   if (mappedLine['Description'].value.length<=0)
     mappedLine['Description'].value = element.value("JDescription");
+	
+  //per la contabilità entrate/uscite inverte gli importi alle categorie
+  //altrimenti separando la registrazione su due righe l'importo non si azzera ma viene sommato in doppio
+  if (this.accountingInfo.isIncomeExpenses || this.accountingInfo.isCashBook) {
+    if (this.categories.indexOf(mappedLine['JAccount'].value)>=0) {
+	  var valueDebit = mappedLine['JDebitAmount'].value;
+	  var valueCredit = mappedLine['JCreditAmount'].value;
+	  mappedLine['JDebitAmount'].value = valueCredit;
+	  mappedLine['JCreditAmount'].value = valueDebit;
+	}
+  }
   
   return mappedLine;
 }
