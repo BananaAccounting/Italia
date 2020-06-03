@@ -123,6 +123,8 @@ function xml_createElementWithValidation(name,content,mandatory,len,context,attr
 }
 
 function xml_escapeString(_string) {
+  if (!_string)
+    return "";
   var string = _string.toString()
   var re = new RegExp(AMPERSAND,'g');
   string = string.replace(re, ESCAPED_QUOTE[AMPERSAND]);
@@ -139,6 +141,8 @@ function xml_escapeString(_string) {
 }
 
 function xml_unescapeString(_string) {
+  if (!_string)
+    return "";
   var string = _string.toString()
   var re = new RegExp(ESCAPED_QUOTE[AMPERSAND],'g');
   string = string.replace(re, AMPERSAND);

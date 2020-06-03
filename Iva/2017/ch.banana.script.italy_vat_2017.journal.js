@@ -2043,7 +2043,8 @@ Utils.prototype.readAccountingData = function(param) {
     param.fileInfo["Address"]["Email"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Email"));
     param.fileInfo["Address"]["Phone"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Phone"));
     param.fileInfo["Address"]["Mobile"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Mobile"));
-    param.fileInfo["Address"]["Fax"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "Fax"));
+	//fax rimosso dai dati base a partire dalla versione 9.1 (banana 10)
+    param.fileInfo["Address"]["Fax"] = "";
     param.fileInfo["Address"]["FiscalNumber"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "FiscalNumber"));
     param.fileInfo["Address"]["VatNumber"] = xml_escapeString(this.banDocument.info("AccountingDataBase", "VatNumber"));
   }
