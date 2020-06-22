@@ -5,14 +5,8 @@ td {
   vertical-align: top;
 }
 @page {
-  margin-top:20mm;
-  margin-bottom:20mm;
-  margin-left:20mm;
-  margin-right:20mm;
-}
-@page {
-  margin-top:5mm;
-  margin-bottom:5mm;
+  margin-top:7mm;
+  margin-bottom:7mm;
   margin-left:10mm;
   margin-right:10mm;
 }
@@ -20,7 +14,7 @@ body {
   font-family:Helvetica;
 }
 table {
-  font-size:10px;
+  font-size:8px;
   width:100%;
 }
 .column1 {
@@ -70,9 +64,9 @@ table.table td {
   font-weight:bold;
 }
 .footer {
-  font-family:Courier New;
+  font-family:Helvetica;
   font-size:8px;
-  text-align:right;
+  text-align:center;
 }
 
 /*
