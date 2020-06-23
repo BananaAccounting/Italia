@@ -1,0 +1,138 @@
+%%info_test_name{ch.banana.it.extension.statopatrimoniale.mod.a.test}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+%%SCRIPT{/Users/ivan/Documents/GitHub/Italia/ets/rendiconti/test/ch.banana.it.extension.statopatrimoniale.mod.a.test.js}
+%
+\begin{testcase}{ReportModATest}
+\begin{test}{testBananaExtension}
+\begin{reportvalue}{Test rendiconto 'Stato Patrimoniale (MOD. A)'}
+STATO PATRIMONIALE (MOD. A) ANNO 2022 \\
+\begin{longtable}[l]{ l  l  l }
+Attivo  & 01.01.2022  & 31.12.2021 \\
+A) quote associative o apporti ancora dovuti  & 1.00  & 2.00 \\
+B) immobilizzazioni  &  & \\
+I - immobilizzazioni immateriali  &  & \\
+1) costi di impianto e di ampliamento  & 3.00  & 4.00 \\
+2) costi di sviluppo  & 5.00  & 6.00 \\
+3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno  & 16.00  & 18.00 \\
+4) concessioni, licenze, marchi e diritti simili  & 11.00  & 12.00 \\
+5) avviamento  & 13.00  & 14.00 \\
+6) immobilizzazioni in corso e acconti  & 15.00  & 16.00 \\
+7) altre Immobilizzazioni immateriali  & 17.00  & 18.00 \\
+Totale immobilizzazioni immateriali  & 80.00  & 88.00 \\
+II - immobilizzazioni materiali  &  & \\
+1) terreni e fabbricati  & 19.00  & 20.00 \\
+2) impianti e macchinari  & 21.00  & 22.00 \\
+3) attrezzature  & 48.00  & 50.00 \\
+4) altri beni  & 27.00  & 28.00 \\
+5) immobilizzazioni in corso e acconti  & 29.00  & 30.00 \\
+Totale immobilizzazioni materiali  & 144.00  & 150.00 \\
+III - immobilizzazioni finanziarie, con separata indicazione aggiuntiva, per ciascuna voce dei crediti, degli importi esigibili entro l'esercizio successivo  &  & \\
+1) partecipazioni  &  & \\
+a) partecipazioni in imprese controllate  & 1.00  & 2.00 \\
+b) partecipazioni in imprese collegate  & 3.00  & 4.00 \\
+c) partecipazioni in altre imprese  & 5.00  & 6.00 \\
+2) crediti  &  & \\
+a) crediti verso imprese controllate  & 3.00  & 15.00 \\
+b) crediti verso imprese collegate  & 7.00  & 11.00 \\
+c) crediti verso altri enti del Terzo settore  & 11.00  & 7.00 \\
+d) crediti verso altri  & 15.00  & 3.00 \\
+3) altri titoli  & 1.00  & 2.00 \\
+Totale immobilizzazioni finanziarie  & 46.00  & 50.00 \\
+Totale immobilizzazioni  & 270.00  & 288.00 \\
+C) attivo circolante  &  & \\
+I - rimanenze  &  & \\
+1) rimanenze materie prime, sussidiarie e di consumo  & 1.00  & 2.00 \\
+2) rimanenze prodotti in corso di lavorazione e semilavorati  & 2.00  & 4.00 \\
+3) rimanenze lavori in corso su ordinazione  & 3.00  & 6.00 \\
+4) rimanenze prodotti finiti e merci  & 4.00  & 8.00 \\
+5) rimanenze acconti  & 5.00  & 10.00 \\
+Totale rimanenze  & 15.00  & 30.00 \\
+II - crediti, con separata indicazione aggiuntiva, per ciascuna voce, degli importi esigibili oltre l'esercizio successivo  &  & \\
+1) crediti verso utenti e clienti  & 2.00  & 10.00 \\
+2) crediti verso associati e fondatori  & 4.00  & 8.00 \\
+3) crediti verso enti pubblici  & 6.00  & 6.00 \\
+4) crediti verso soggetti privati per contributi  & 8.00  & 4.00 \\
+5) Crediti verso enti della stessa rete associativa  & 10.00  & 2.00 \\
+6) crediti verso altri enti del Terzo settore  & 2.00  & 10.00 \\
+7) crediti verso imprese controllate  & 4.00  & 8.00 \\
+8) crediti verso imprese collegate  & 6.00  & 6.00 \\
+9) crediti tributari  & 8.00  & 4.00 \\
+10) crediti da 5 per mille  & 10.00  & 2.00 \\
+11) crediti per imposte anticipate  & 2.00  & 10.00 \\
+12) crediti verso altri  & 4.00  & 8.00 \\
+Totale crediti  & 66.00  & 78.00 \\
+III - attività finanziarie che non costituiscono immobilizzazioni  &  & \\
+1) partecipazioni in imprese controllate  & 1.00  & 4.00 \\
+2) partecipazioni in imprese collegate  & 2.00  & 5.00 \\
+3) altri titoli  & 3.00  & 6.00 \\
+Totale attività finanziarie non immobilizzazioni  & 6.00  & 15.00 \\
+IV - disponibilità liquide  &  & \\
+1) depositi bancari e postali  & 4.00  & 7.00 \\
+2) assegni  & 5.00  & 8.00 \\
+3) danaro e valori in cassa  & 6.00  & 9.00 \\
+Totale disponibilità liquide  & 15.00  & 24.00 \\
+Totale attivo circolante  & 102.00  & 147.00 \\
+D) Ratei e risconti attivi  & 1.00  & 2.00 \\
+\end{longtable}
+STATO PATRIMONIALE (MOD. A) ANNO 2022 \\
+\begin{longtable}[l]{ l  l  l }
+Passivo  & 01.01.2022  & 31.12.2021 \\
+A) patrimonio netto  &  & \\
+I - fondo di dotazione dell'ente  & 1.00  & 2.00 \\
+II - patrimonio vincolato  &  & \\
+1) riserve statutarie  & 2.00  & 1.00 \\
+2) riserve vincolate per decisione degli organi istituzionali  & 3.00  & 2.00 \\
+3) riserve vincolate destinate da terzi  & 4.00  & 3.00 \\
+Totale patrimonio vincolato  & 9.00  & 6.00 \\
+III - patrimonio libero  &  & \\
+1) riserve di utili o avanzi di gestione  & 5.00  & 1.00 \\
+2) altre riserve  & 6.00  & 2.00 \\
+Totale patrimonio libero  & 11.00  & 3.00 \\
+IV - avanzo/disavanzo d'esercizio  & 374.00  & 0.00 \\
+Totale patrimonio netto  & 395.00  & 11.00 \\
+B) fondi per rischi e oneri  &  & \\
+1) fondi per trattamento di quiescenza e obblighi simili  & 1.00  & 4.00 \\
+2) fondi per imposte, anche differite  & 2.00  & 5.00 \\
+3) fondi altri  & 3.00  & 6.00 \\
+Totale fondi per rischi e oneri  & 6.00  & 15.00 \\
+C) Fondi trattamento di fine rapporto di lavoro subordinato  & 0.00  & 0.00 \\
+D) debiti, con separata indicazione aggiuntiva, per ciascuna voce, degli importi esigibili oltre l'esercizio successivo  &  & \\
+1) debiti verso banche  & 3.00  & 19.00 \\
+2) debiti verso altri finanziatori  & 7.00  & 15.00 \\
+3) debiti verso associati e fondatori per finanziamenti  & 11.00  & 11.00 \\
+4) debiti verso enti della stessa rete associativa  & 15.00  & 7.00 \\
+5) debiti per erogazioni liberali condizionate  & 3.00  & 3.00 \\
+6) acconti (Debiti)  & 4.00  & 19.00 \\
+7) debiti verso fornitori  & 5.00  & 15.00 \\
+8) debiti verso imprese controllate e collegate  & 9.00  & 11.00 \\
+9) debiti tributari  & 13.00  & 7.00 \\
+10) debiti verso istituti di previdenza e di sicurezza sociale  & 9.00  & 3.00 \\
+11) debiti verso dipendenti e collaboratori  & 5.00  & 19.00 \\
+12) altri debiti  & 3.00  & 15.00 \\
+Totale debiti  & 87.00  & 144.00 \\
+E) ratei e risconti passivi  & 1.00  & 2.00 \\
+\end{longtable}
+-  \#page-nr  - \\
+\end{reportvalue}
+\keyvalue{Result}{Passed}
+\end{test}
+\end{testcase}
+\end{document}

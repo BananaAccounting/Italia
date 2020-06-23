@@ -25,14 +25,26 @@
 // @timeout = -1
 
 
+/*
+   Stampa del rendiconto 'Stato patrimoniale (MOD. A)' secondo nuovi schemi di bilancio per il terzo settore.
+   
+   
+   I modelli devono essere considerati come schemi “fissi”.
+   È possibile suddividere le voci precedute da numeri arabi o da lettere minuscole dell'alfabeto,
+   senza eliminare la voce complessiva e l'importo corrispondente.
+   Gli enti che presentano voci precedute da numeri arabi o da lettere minuscole con importi nulli
+   per due esercizi consecutivi possono eliminare dette voci.
+   Possono aggiungere voci precedute da numeri arabi o da lettere minuscole dell'alfabeto.
+   Eventuali raggruppamenti o eliminazioni delle voci di bilancio devono risultare esplicitati
+   nella relazione di missione
 
-//Global variables
+*/
+
+
+
 var userParam = {};
-var param = {};
-var form = [];
-
-
-
+// var param = {};
+// var form = [];
 
 //Main function
 function exec(string) {
@@ -56,7 +68,7 @@ function exec(string) {
    }
 
    // 1. Create and load the parameters and the form
-   loadParam();
+   //loadParam();
    //loadForm(Banana.document);
 
    // 2. Extract the data, calculate and load the balances
@@ -120,7 +132,6 @@ function printRendicontoModA(banDoc, userParam) {
 
    /* AA */
    obj = banDoc.currentBalance("Gr=AA", startDate, endDate);
-   //Banana.console.log(JSON.stringify(obj, "", " "));
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "AA").value("Prior");
    tableRow = table.addRow();
@@ -206,7 +217,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABI").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale immobilizzazioni immateriali", "alignLeft bold", 1);
+   tableRow.addCell("Totale immobilizzazioni immateriali", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
@@ -265,7 +276,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABII").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale immobilizzazioni materiali", "alignLeft bold", 1);
+   tableRow.addCell("Totale immobilizzazioni materiali", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
@@ -363,7 +374,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale immobilizzazioni finanziarie", "alignLeft bold", 1);
+   tableRow.addCell("Totale immobilizzazioni finanziarie", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
@@ -372,7 +383,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "AB").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale immobilizzazioni", "alignLeft bold", 1);
+   tableRow.addCell("Totale immobilizzazioni", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
@@ -438,7 +449,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACI").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale rimanenze", "alignLeft bold", 1);
+   tableRow.addCell("Totale rimanenze", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
@@ -561,7 +572,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale crediti", "alignLeft bold", 1);
+   tableRow.addCell("Totale crediti", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
@@ -603,7 +614,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACIII").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale attività finanziarie non immobilizzazioni", "alignLeft bold", 1);
+   tableRow.addCell("Totale attività finanziarie non immobilizzazioni", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
@@ -645,7 +656,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACIV").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale disponibilità liquide", "alignLeft bold", 1);
+   tableRow.addCell("Totale disponibilità liquide", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
@@ -654,7 +665,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "AC").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale attivo circolante", "alignLeft bold", 1);
+   tableRow.addCell("Totale attivo circolante", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
@@ -736,7 +747,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PAII").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale patrimonio vincolato", "alignLeft bold", 1);
+   tableRow.addCell("Totale patrimonio vincolato", "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight bold", 1);
 
@@ -769,7 +780,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PAIII").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale patrimonio libero", "alignLeft bold", 1);
+   tableRow.addCell("Totale patrimonio libero", "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight bold", 1);
 
@@ -787,7 +798,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PA").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale patrimonio netto", "alignLeft bold", 1);
+   tableRow.addCell("Totale patrimonio netto", "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight bold", 1);
 
@@ -829,7 +840,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PB").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale fondi per rischi e oneri", "alignLeft bold", 1);
+   tableRow.addCell("Totale fondi per rischi e oneri", "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight bold", 1);
 
@@ -961,7 +972,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale debiti", "alignLeft bold", 1);
+   tableRow.addCell("Totale debiti", "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight bold", 1);
 
@@ -1062,12 +1073,24 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+    var currentParam = {};
+    currentParam.name = 'exclude_zero_amounts';
+    currentParam.title = 'Escludi voci con importi nulli per due esercizi consecutivi (numeri arabi e lettere minuscole)';
+    currentParam.type = 'bool';
+    currentParam.value = userParam.exclude_zero_amounts ? true : false;
+    currentParam.defaultvalue = false;
+    currentParam.readValue = function() {
+        userParam.exclude_zero_amounts = this.value;
+    }
+    convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
 function initUserParam() {
    var userParam = {};
    userParam.title = "";
+   userParam.exclude_zero_amounts = false;
    return userParam;
 }
 
