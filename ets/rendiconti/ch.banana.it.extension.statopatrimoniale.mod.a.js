@@ -1,4 +1,4 @@
-// Copyright [2018] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2020] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -124,9 +124,10 @@ function printRendicontoModA(banDoc, userParam) {
    var column1 = table.addColumn("column1");
    var column2 = table.addColumn("column2");
    var column3 = table.addColumn("column3");
+   var column4 = table.addColumn("column4");
 
    tableRow = table.addRow();
-   tableRow.addCell("Attivo", "styleTableHeader alignLeft", 1);
+   tableRow.addCell("Attivo", "styleTableHeader alignCenter", 2);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(startDate), "styleTableHeader alignCenter", 1);
    tableRow.addCell("31.12." + previousYear, "styleTableHeader alignCenter", 1);
 
@@ -135,17 +136,20 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "AA").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("A) quote associative o apporti ancora dovuti", "alignLeft bold", 1);
+   tableRow.addCell("A)", "alignLeft bold", 1);
+   tableRow.addCell("Quote associative o apporti ancora dovuti", "alignLeft bold", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
    tableRow = table.addRow();
-   tableRow.addCell("B) immobilizzazioni", "alignLeft bold", 1);
+   tableRow.addCell("B)", "alignLeft bold", 1);
+   tableRow.addCell("Immobilizzazioni", "alignLeft bold", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
    tableRow = table.addRow();
-   tableRow.addCell("I - immobilizzazioni immateriali", "alignLeft bold", 1);
+   tableRow.addCell("I", "alignCenter", 1);
+   tableRow.addCell("Immobilizzazioni immateriali", "alignLeft", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -154,6 +158,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABI1").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("1) costi di impianto e di ampliamento", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -163,6 +168,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABI2").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("2) costi di sviluppo", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -172,6 +178,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABI3").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -181,6 +188,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABI4").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("4) concessioni, licenze, marchi e diritti simili", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -190,6 +198,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABI5").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("5) avviamento", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -199,6 +208,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABI6").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("6) immobilizzazioni in corso e acconti", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -208,6 +218,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABI7").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("7) altre Immobilizzazioni immateriali", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -217,12 +228,14 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABI").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("Totale immobilizzazioni immateriali", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
    tableRow = table.addRow();
-   tableRow.addCell("II - immobilizzazioni materiali", "alignLeft bold", 1);
+   tableRow.addCell("II", "alignCenter", 1);
+   tableRow.addCell("Immobilizzazioni materiali", "alignLeft", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -231,6 +244,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABII1").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("1) terreni e fabbricati", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -240,6 +254,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABII2").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("2) impianti e macchinari", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -249,6 +264,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABII3").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("3) attrezzature", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -258,6 +274,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABII4").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("4) altri beni", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -267,6 +284,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABII5").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("5) immobilizzazioni in corso e acconti", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -276,18 +294,21 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABII").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("Totale immobilizzazioni materiali", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
    tableRow = table.addRow();
-   tableRow.addCell("III - immobilizzazioni finanziarie, con separata indicazione aggiuntiva, per ciascuna voce dei crediti, degli importi esigibili entro l'esercizio successivo", "alignLeft bold", 1);
+   tableRow.addCell("III", "alignCenter", 1);
+   tableRow.addCell("Immobilizzazioni finanziarie, con separata indicazione aggiuntiva, per ciascuna voce dei crediti, degli importi esigibili entro l'esercizio successivo", "alignLeft", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
    /* ABIII1 */
    tableRow = table.addRow();
-   tableRow.addCell("1) partecipazioni", "alignLeft bold", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("1) Partecipazioni", "alignLeft", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -296,7 +317,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII1a").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("a) partecipazioni in imprese controllate", "alignLeft", 1);
+   tableRow.addCell("","",1);
+   tableRow.addCell("   a) partecipazioni in imprese controllate", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -305,7 +327,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII1b").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("b) partecipazioni in imprese collegate", "alignLeft", 1);
+   tableRow.addCell("","",1);
+   tableRow.addCell("   b) partecipazioni in imprese collegate", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -314,13 +337,15 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII1c").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("c) partecipazioni in altre imprese", "alignLeft", 1);
+   tableRow.addCell("","",1);
+   tableRow.addCell("   c) partecipazioni in altre imprese", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
    /* ABIII2 */
    tableRow = table.addRow();
-   tableRow.addCell("2) crediti", "alignLeft bold", 1);
+   tableRow.addCell("","",1);
+   tableRow.addCell("2) Crediti", "alignLeft", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -329,7 +354,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII2a").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("a) crediti verso imprese controllate", "alignLeft", 1);
+   tableRow.addCell("","",1);
+   tableRow.addCell("   a) crediti verso imprese controllate", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -338,7 +364,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII2b").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("b) crediti verso imprese collegate", "alignLeft", 1);
+   tableRow.addCell("","",1);
+   tableRow.addCell("   b) crediti verso imprese collegate", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -347,7 +374,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII2c").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("c) crediti verso altri enti del Terzo settore", "alignLeft", 1);
+   tableRow.addCell("","",1);
+   tableRow.addCell("   c) crediti verso altri enti del Terzo settore", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -356,7 +384,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII2d").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("d) crediti verso altri", "alignLeft", 1);
+   tableRow.addCell("","",1);
+   tableRow.addCell("   d) crediti verso altri", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -365,7 +394,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) altri titoli", "alignLeft", 1);
+   tableRow.addCell("","",1);
+   tableRow.addCell("3) Altri titoli", "alignLeft", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -374,6 +404,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","",1);
    tableRow.addCell("Totale immobilizzazioni finanziarie", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
@@ -383,19 +414,22 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "AB").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale immobilizzazioni", "alignRight bold", 1);
+   tableRow.addCell("","",1);
+   tableRow.addCell("Totale immobilizzazioni B)", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
    /* AC */
    tableRow = table.addRow();
-   tableRow.addCell("C) attivo circolante", "alignLeft bold", 1);
+   tableRow.addCell("C)","alignLeft bold", 1);
+   tableRow.addCell("Attivo circolante", "alignLeft bold", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
    /* ACI */
    tableRow = table.addRow();
-   tableRow.addCell("I - rimanenze", "alignLeft bold", 1);
+   tableRow.addCell("I","alignCenter", 1);
+   tableRow.addCell("Rimanenze", "alignLeft", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -404,7 +438,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACI1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) rimanenze materie prime, sussidiarie e di consumo", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("1) Rimanenze materie prime, sussidiarie e di consumo", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -413,7 +448,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACI2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) rimanenze prodotti in corso di lavorazione e semilavorati", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("2) Rimanenze prodotti in corso di lavorazione e semilavorati", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -422,7 +458,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACI3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) rimanenze lavori in corso su ordinazione", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("3) Rimanenze lavori in corso su ordinazione", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -431,7 +468,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACI4").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("4) rimanenze prodotti finiti e merci", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("4) Rimanenze prodotti finiti e merci", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -440,7 +478,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACI5").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("5) rimanenze acconti", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("5) Rimanenze acconti", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -449,13 +488,15 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACI").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","", 1);
    tableRow.addCell("Totale rimanenze", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
    /* ACII */
    tableRow = table.addRow();
-   tableRow.addCell("II - crediti, con separata indicazione aggiuntiva, per ciascuna voce, degli importi esigibili oltre l'esercizio successivo", "alignLeft bold", 1);
+   tableRow.addCell("II","alignCenter", 1);
+   tableRow.addCell("Crediti, con separata indicazione aggiuntiva, per ciascuna voce, degli importi esigibili oltre l'esercizio successivo", "alignLeft", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -464,7 +505,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) crediti verso utenti e clienti", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("1) Crediti verso utenti e clienti", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -473,7 +515,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) crediti verso associati e fondatori", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("2) Crediti verso associati e fondatori", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -482,7 +525,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) crediti verso enti pubblici", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("3) Crediti verso enti pubblici", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -491,7 +535,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII4").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("4) crediti verso soggetti privati per contributi", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("4) Crediti verso soggetti privati per contributi", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -500,6 +545,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII5").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","", 1);
    tableRow.addCell("5) Crediti verso enti della stessa rete associativa", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
@@ -509,7 +555,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII6").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("6) crediti verso altri enti del Terzo settore", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("6) Crediti verso altri enti del Terzo settore", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -518,7 +565,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII7").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("7) crediti verso imprese controllate", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("7) Crediti verso imprese controllate", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -527,7 +575,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII8").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("8) crediti verso imprese collegate", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("8) Crediti verso imprese collegate", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -536,7 +585,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII9").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("9) crediti tributari", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("9) Crediti tributari", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -545,7 +595,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII10").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("10) crediti da 5 per mille", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("10) Crediti da 5 per mille", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -554,7 +605,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII11").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("11) crediti per imposte anticipate", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("11) Crediti per imposte anticipate", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -563,7 +615,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII12").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("12) crediti verso altri", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("12) Crediti verso altri", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -572,13 +625,15 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACII").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","", 1);
    tableRow.addCell("Totale crediti", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
    /* ACIII */
    tableRow = table.addRow();
-   tableRow.addCell("III - attività finanziarie che non costituiscono immobilizzazioni", "alignLeft bold", 1);
+   tableRow.addCell("III","alignCenter", 1);
+   tableRow.addCell("Attività finanziarie che non costituiscono immobilizzazioni", "alignLeft", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -587,7 +642,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACIII1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) partecipazioni in imprese controllate", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("1) Partecipazioni in imprese controllate", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -596,7 +652,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACIII2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) partecipazioni in imprese collegate", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("2) Partecipazioni in imprese collegate", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -605,7 +662,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACIII3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) altri titoli", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("3) Altri titoli", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -614,13 +672,15 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACIII").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale attività finanziarie non immobilizzazioni", "alignRight bold", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("Totale attività finanziarie che non costituiscono immobilizzazioni", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
    /* ACIV */
    tableRow = table.addRow();
-   tableRow.addCell("IV - disponibilità liquide", "alignLeft bold", 1);
+   tableRow.addCell("IV","alignCenter", 1);
+   tableRow.addCell("Disponibilità liquide", "alignLeft", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -629,7 +689,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACIV1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) depositi bancari e postali", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("1) Depositi bancari e postali", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -638,7 +699,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACIV2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) assegni", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("2) Assegni", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -647,7 +709,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACIV3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) danaro e valori in cassa", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("3) Danaro e valori in cassa", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -656,6 +719,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "ACIV").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("","", 1);
    tableRow.addCell("Totale disponibilità liquide", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
@@ -665,7 +729,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "AC").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale attivo circolante", "alignRight bold", 1);
+   tableRow.addCell("","", 1);
+   tableRow.addCell("Totale attivo circolante C)", "alignRight bold", 1);
    tableRow.addCell(formatValue(current), "alignRight bold", 1);
    tableRow.addCell(formatValue(previous), "alignRight bold", 1);
 
@@ -674,7 +739,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "AD").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("D) Ratei e risconti attivi", "bold", 1);
+   tableRow.addCell("D)","alignLeft bold", 1);
+   tableRow.addCell("Ratei e risconti attivi", "bold", 1);
    tableRow.addCell(formatValue(current), "alignRight", 1);
    tableRow.addCell(formatValue(previous), "alignRight", 1);
 
@@ -689,14 +755,16 @@ function printRendicontoModA(banDoc, userParam) {
    var column1 = table.addColumn("column1");
    var column2 = table.addColumn("column2");
    var column3 = table.addColumn("column3");
+   var column4 = table.addColumn("column4");
 
    tableRow = table.addRow();
-   tableRow.addCell("Passivo", "styleTableHeader alignLeft", 1);
+   tableRow.addCell("Passivo", "styleTableHeader alignCenter", 2);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(startDate), "styleTableHeader alignCenter", 1);
    tableRow.addCell("31.12." + previousYear, "styleTableHeader alignCenter", 1);
 
    tableRow = table.addRow();
-   tableRow.addCell("A) patrimonio netto", "alignLeft bold", 1);
+   tableRow.addCell("A)", "alignLeft bold", 1);
+   tableRow.addCell("Patrimonio netto", "alignLeft bold", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -705,13 +773,15 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PAI").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("I - fondo di dotazione dell'ente", "bold", 1);
+   tableRow.addCell("I", "alignCenter", 1);
+   tableRow.addCell("Fondo di dotazione dell'ente", "alignLeft", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
    /* PAII */
    tableRow = table.addRow();
-   tableRow.addCell("II - patrimonio vincolato", "alignLeft bold", 1);
+   tableRow.addCell("II", "alignCenter", 1);
+   tableRow.addCell("Patrimonio vincolato", "alignLeft", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -720,7 +790,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PAII1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) riserve statutarie", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("1) Riserve statutarie", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -729,7 +800,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PAII2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) riserve vincolate per decisione degli organi istituzionali", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("2) Riserve vincolate per decisione degli organi istituzionali", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -738,7 +810,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PAII3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) riserve vincolate destinate da terzi", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("3) Riserve vincolate destinate da terzi", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -747,13 +820,15 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PAII").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("", "", 1);
    tableRow.addCell("Totale patrimonio vincolato", "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight bold", 1);
 
    /* PAIII */
    tableRow = table.addRow();
-   tableRow.addCell("III - patrimonio libero", "alignLeft bold", 1);
+   tableRow.addCell("III", "alignCenter", 1);
+   tableRow.addCell("Patrimonio libero", "alignLeft", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -762,7 +837,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PAIII1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) riserve di utili o avanzi di gestione", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("1) Riserve di utili o avanzi di gestione", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -771,7 +847,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PAIII2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) altre riserve", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("2) Altre riserve", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -780,6 +857,7 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PAIII").value("Prior");
    tableRow = table.addRow();
+   tableRow.addCell("", "", 1);
    tableRow.addCell("Totale patrimonio libero", "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight bold", 1);
@@ -789,7 +867,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PAIV").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("IV - avanzo/disavanzo d'esercizio", "bold", 1);
+   tableRow.addCell("IV", "alignCenter", 1);
+   tableRow.addCell("Avanzo/disavanzo d'esercizio", "alignLeft", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -798,13 +877,15 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PA").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale patrimonio netto", "alignRight bold", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("Totale patrimonio netto A)", "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight bold", 1);
 
    /* PB */
    tableRow = table.addRow();
-   tableRow.addCell("B) fondi per rischi e oneri", "alignLeft bold", 1);
+   tableRow.addCell("B)", "alignLeft bold", 1);
+   tableRow.addCell("Fondi per rischi e oneri", "alignLeft bold", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -813,7 +894,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PB1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) fondi per trattamento di quiescenza e obblighi simili", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("1) Fondi per trattamento di quiescenza e obblighi simili", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -822,7 +904,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PB2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) fondi per imposte, anche differite", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("2) Fondi per imposte, anche differite", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -831,7 +914,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PB3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) fondi altri", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("3) Fondi altri", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -840,7 +924,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PB").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale fondi per rischi e oneri", "alignRight bold", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("Totale fondi per rischi e oneri B)", "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight bold", 1);
 
@@ -849,13 +934,15 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PC").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("C) Fondi trattamento di fine rapporto di lavoro subordinato", "bold", 1);
+   tableRow.addCell("C)", "alignLeft bold", 1);
+   tableRow.addCell("Fondi trattamento di fine rapporto di lavoro subordinato", "alignLeft bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
    /* PD */
    tableRow = table.addRow();
-   tableRow.addCell("D) debiti, con separata indicazione aggiuntiva, per ciascuna voce, degli importi esigibili oltre l'esercizio successivo", "alignLeft bold", 1);
+   tableRow.addCell("D)", "alignLeft bold", 1);
+   tableRow.addCell("Debiti, con separata indicazione aggiuntiva, per ciascuna voce, degli importi esigibili oltre l'esercizio successivo", "alignLeft bold", 1);
    tableRow.addCell("", "alignRight", 1);
    tableRow.addCell("", "alignRight", 1);
 
@@ -864,7 +951,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) debiti verso banche", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("1) Debiti verso banche", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -873,7 +961,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) debiti verso altri finanziatori", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("2) Debiti verso altri finanziatori", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -882,7 +971,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) debiti verso associati e fondatori per finanziamenti", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("3) Debiti verso associati e fondatori per finanziamenti", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -891,7 +981,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD4").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("4) debiti verso enti della stessa rete associativa", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("4) Debiti verso enti della stessa rete associativa", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -900,7 +991,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD5").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("5) debiti per erogazioni liberali condizionate", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("5) Debiti per erogazioni liberali condizionate", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -909,7 +1001,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD6").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("6) acconti (Debiti)", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("6) Acconti (Debiti)", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -918,7 +1011,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD7").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("7) debiti verso fornitori", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("7) Debiti verso fornitori", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -927,7 +1021,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD8").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("8) debiti verso imprese controllate e collegate", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("8) Debiti verso imprese controllate e collegate", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -936,7 +1031,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD9").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("9) debiti tributari", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("9) Debiti tributari", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -945,7 +1041,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD10").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("10) debiti verso istituti di previdenza e di sicurezza sociale", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("10) Debiti verso istituti di previdenza e di sicurezza sociale", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -954,7 +1051,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD11").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("11) debiti verso dipendenti e collaboratori", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("11) Debiti verso dipendenti e collaboratori", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -963,7 +1061,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD12").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("12) altri debiti", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("12) Altri debiti", "", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
@@ -972,7 +1071,8 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PD").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale debiti", "alignRight bold", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("Totale debiti C)", "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight bold", 1);
 
@@ -981,12 +1081,14 @@ function printRendicontoModA(banDoc, userParam) {
    current = obj.balance;
    previous = banDoc.table("Accounts").findRowByValue("Group", "PE").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("E) ratei e risconti passivi", "bold", 1);
+   tableRow.addCell("E)", "alignLeft bold", 1);
+   tableRow.addCell("Ratei e risconti passivi", "alignLeft bold", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
    tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
 
 
    //checkResults(banDoc, startDate, endDate);
+
 
    addFooter(report);
    return report;
