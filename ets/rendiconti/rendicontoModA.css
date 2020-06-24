@@ -21,37 +21,7 @@ table {
   width: 100%;
 }
 
-.column1 {
-  width: 4%;
-}
-
-.column2 {
-  width: 70%;
-}
-
-.column3 {
-  width: 13%;
-}
-
-.column4 {
-  width: 13%;
-}
-
-.heading2 {
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.styleTableHeader {
-  color: #ffffff;
-  background-color: #337ab7;
-  border-bottom-style: double;
-  border-bottom-color: black;
-  border-bottom-width: 1px;
-  font-weight: bold;
-}
-
-table.table td {
+/*table.table td {
   border-top-style: solid;
   border-top-color: black;
   border-top-width: thin;
@@ -64,6 +34,76 @@ table.table td {
   border-right-style: solid;
   border-right-color: black;
   border-right-width: thin;
+}*/
+
+.column1 {
+  width: 73%;
+}
+
+.column2 {
+  width: 13%;
+}
+
+.column3 {
+  width: 13%;
+}
+
+.heading2 {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.table-header {
+  color: #ffffff;
+  background-color: #337ab7;
+  font-weight: bold;
+  text-align: center;
+}
+
+.description-groups-titles {
+  text-align: left;
+  font-weight: bold;
+}
+
+.amount-groups-titles {
+  text-align: right;
+  font-weight: bold;
+}
+
+.description-groups {
+  text-align: left;
+}
+
+.amount-groups {
+  text-align: right;
+}
+
+.description-groups-totals {
+  text-align: left;
+  font-weight: bold;
+}
+
+.amount-groups-totals {
+  text-align: right;
+  font-weight: bold;
+  border-top-style: solid;
+  border-top-color: black;
+  border-top-width: thin;
+}
+
+.description-totals {
+  background-color: #F0F8FF;
+  text-align: left;
+  font-weight: bold;
+}
+
+.amount-totals {
+  background-color: #F0F8FF;
+  text-align: right;
+  font-weight: bold;
+  border-bottom-style: double;
+  border-bottom-color: black;
+  border-bottom-width: 1px;
 }
 
 .alignRight {
@@ -87,80 +127,3 @@ table.table td {
   font-size: 8px;
   text-align: center;
 }
-
-
-/*
-.watermark {
-  font-size:16;
-  font-weight:bold;
-  text-align:center;
-  color:#DDDDDD;
-  display:inline;
-}
-.description {
-  font-size:8px;
-  padding-top:5px;
-  padding-bottom:5px;
-}
-
-.heading1 {
-  font-size:16px;
-  font-weight:bold;
-}
-
-.heading3 {
-  font-size:10px;
-  font-weight:bold;
-}
-.heading4 {
-  font-size:9px;
-  font-weight:bold;
-}
-.header1 {
-  font-family:Times New Roman;
-  font-size:10px;
-}
-.header2 {
-  font-family:Times New Roman;
-  font-size:7px;
-}
-.horizontalLine {
-  border-bottom-style:solid;
-  border-bottom-color:black;
-  border-bottom-width:thin;
-}
-.valueTotal {
-  font-weight:bold;
-  background-color:#eeeeee;
-}
-.valueTotal1 {
-  background-color:#eeeeee;
-}
-
-.background {
-  padding-top:5px;
-  padding-bottom:5px;
-  background-color:#eeeeee;
-}
-.borderLeft {
-  border-left-style:solid;
-  border-left-color:black;
-  border-left-width:thin;
-}
-.borderBottom {
-  border-bottom-style:solid;
-  border-bottom-color:black;
-  border-bottom-width:thin;
-}
-.bold {
-  font-weight:bold;
-}
-.italic {
-  font-style:italic;
-}
-.alignRight {
-  text-align:right;
-}
-
-*/
-
