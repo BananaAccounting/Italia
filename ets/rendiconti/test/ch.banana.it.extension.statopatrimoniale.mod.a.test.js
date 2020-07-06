@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a.test
 // @api = 1.0
-// @pubdate = 2020-06-23
+// @pubdate = 2020-07-06
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.statopatrimoniale.mod.a.js>
 // @task = app.command

@@ -25,7 +25,8 @@
 \begin{reportvalue}{Test rendiconto 'Stato Patrimoniale (MOD. A)'}
 STATO PATRIMONIALE (MOD. A) ANNO 2022 \\
 \begin{longtable}[l]{ l  l  l }
-Attivo  & 01.01.2022  & 31.12.2021 \\
+ & 01.01.2022  & 31.12.2021 \\
+\multicolumn{3}{l}{ATTIVO }\\
 A) Quote associative o apporti ancora dovuti  & 1.00  & 2.00 \\
 B) Immobilizzazioni  &  & \\
     I - Immobilizzazioni immateriali  &  & \\
@@ -94,7 +95,8 @@ D) Ratei e risconti attivi  & 1.00  & 2.00 \\
 \end{longtable}
 STATO PATRIMONIALE (MOD. A) ANNO 2022 \\
 \begin{longtable}[l]{ l  l  l  l }
-Passivo  & 01.01.2022  & 31.12.2021 \\
+ & 01.01.2022  & 31.12.2021 \\
+\multicolumn{3}{l}{PASSIVO }\\
 A) Patrimonio netto  &  & \\
     I - Fondo di dotazione dell'ente  & 1.00  & 2.00 \\
     II - Patrimonio vincolato  &  & \\
@@ -106,8 +108,8 @@ A) Patrimonio netto  &  & \\
         1) Riserve di utili o avanzi di gestione  & 5.00  & 1.00 \\
         2) Altre riserve  & 6.00  & 2.00 \\
     Totale patrimonio libero  & 11.00  & 3.00 \\
-    IV - Avanzo/disavanzo d'esercizio  & 374.00  & 0.00 \\
-Totale patrimonio netto A)  & 395.00  & 11.00 \\
+    IV - Avanzo/disavanzo d'esercizio  & 183.00  & -97.00 \\
+Totale patrimonio netto A)  & 204.00  & -86.00 \\
 B) Fondi per rischi e oneri  &  & \\
     1) Fondi per trattamento di quiescenza e obblighi simili  & 1.00  & 4.00 \\
     2) Fondi per imposte, anche differite  & 2.00  & 5.00 \\

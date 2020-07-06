@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2020-06-24
+// @pubdate = 2020-07-06
 // @publisher = Banana.ch SA
 // @description = Stato patrimoniale (MOD. A)
 // @task = app.command
@@ -126,9 +126,12 @@ function printRendicontoModA(banDoc, userParam) {
    var column3 = table.addColumn("column3");
 
    tableRow = table.addRow();
-   tableRow.addCell("Attivo", "table-header", 1);
+   tableRow.addCell("", "", 1);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(startDate), "table-header", 1);
    tableRow.addCell("31.12." + previousYear, "table-header", 1);
+
+   tableRow = table.addRow();
+   tableRow.addCell("ATTIVO", "assetsTitle", 3);
 
    /* AA */
    obj = banDoc.currentBalance("Gr=AA", startDate, endDate);
@@ -692,9 +695,12 @@ function printRendicontoModA(banDoc, userParam) {
    var column4 = table.addColumn("column4");
 
    tableRow = table.addRow();
-   tableRow.addCell("Passivo", "table-header", 1);
+   tableRow.addCell("", "", 1);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(startDate), "table-header", 1);
    tableRow.addCell("31.12." + previousYear, "table-header", 1);
+
+   tableRow = table.addRow();
+   tableRow.addCell("PASSIVO", "liabiltiesTitle", 3);
 
    tableRow = table.addRow();
    tableRow.addCell("A) Patrimonio netto", "description-groups-titles", 1);

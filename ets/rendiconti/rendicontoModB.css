@@ -1,5 +1,5 @@
 
-/* CSS update: 2020-06-23  */
+/* CSS update: 2020-07-06  */
 
 td {
   vertical-align: top;
@@ -57,9 +57,9 @@ table {
 .styleTableHeader {
   color: #ffffff;
   background-color: #337ab7;
-  border-bottom-style: double;
+  border-bottom-style: solid;
   border-bottom-color: black;
-  border-bottom-width: 1px;
+  border-bottom-width: thin;
   font-weight: bold;
 }
 
@@ -78,9 +78,7 @@ table.table td {
   border-right-width: thin;
 }
 
-.alignRight {
-  text-align: right;
-}
+
 
 .alignLeft {
   text-align: left;
@@ -88,6 +86,10 @@ table.table td {
 
 .alignCenter {
   text-align: center;
+}
+
+.alignRight {
+  text-align: right;
 }
 
 .bold {
@@ -99,80 +101,4 @@ table.table td {
   font-size: 8px;
   text-align: center;
 }
-
-
-/*
-.watermark {
-  font-size:16;
-  font-weight:bold;
-  text-align:center;
-  color:#DDDDDD;
-  display:inline;
-}
-.description {
-  font-size:8px;
-  padding-top:5px;
-  padding-bottom:5px;
-}
-
-.heading1 {
-  font-size:16px;
-  font-weight:bold;
-}
-
-.heading3 {
-  font-size:10px;
-  font-weight:bold;
-}
-.heading4 {
-  font-size:9px;
-  font-weight:bold;
-}
-.header1 {
-  font-family:Times New Roman;
-  font-size:10px;
-}
-.header2 {
-  font-family:Times New Roman;
-  font-size:7px;
-}
-.horizontalLine {
-  border-bottom-style:solid;
-  border-bottom-color:black;
-  border-bottom-width:thin;
-}
-.valueTotal {
-  font-weight:bold;
-  background-color:#eeeeee;
-}
-.valueTotal1 {
-  background-color:#eeeeee;
-}
-
-.background {
-  padding-top:5px;
-  padding-bottom:5px;
-  background-color:#eeeeee;
-}
-.borderLeft {
-  border-left-style:solid;
-  border-left-color:black;
-  border-left-width:thin;
-}
-.borderBottom {
-  border-bottom-style:solid;
-  border-bottom-color:black;
-  border-bottom-width:thin;
-}
-.bold {
-  font-weight:bold;
-}
-.italic {
-  font-style:italic;
-}
-.alignRight {
-  text-align:right;
-}
-
-*/
 

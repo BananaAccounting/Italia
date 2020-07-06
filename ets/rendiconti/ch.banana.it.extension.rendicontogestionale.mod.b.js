@@ -131,13 +131,13 @@ function printRendicontoModB(banDoc, userParam) {
    * COSTI E PROVENTI
    **************************************************************************************/
    tableRow = table.addRow();
-   tableRow.addCell("ONERI E COSTI", "styleTableHeader alignCenter", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(startDate), "styleTableHeader alignCenter", 1);
-   tableRow.addCell("31.12." + previousYear, "styleTableHeader alignCenter", 1);
+   tableRow.addCell("ONERI E COSTI", "styleTableHeader", 1);
+   tableRow.addCell(Banana.Converter.toLocaleDateFormat(startDate), "styleTableHeader alignRight", 1);
+   tableRow.addCell("31.12." + previousYear, "styleTableHeader alignRight", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("PROVENTI E RICAVI", "styleTableHeader alignCenter", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(startDate), "styleTableHeader alignCenter", 1);
-   tableRow.addCell("31.12." + previousYear, "styleTableHeader alignCenter", 1);
+   tableRow.addCell("PROVENTI E RICAVI", "styleTableHeader", 1);
+   tableRow.addCell(Banana.Converter.toLocaleDateFormat(startDate), "styleTableHeader alignRight", 1);
+   tableRow.addCell("31.12." + previousYear, "styleTableHeader alignRight", 1);
 
    /* Row 1 */   
    tableRow = table.addRow();
@@ -159,8 +159,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("1) Proventi da quote associative e apporti dei fondatori", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 3 */
    objC = banDoc.currentBalance("Gr=CA1", startDate, endDate);
@@ -175,8 +175,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("2) Proventi dagli associati per attività mutuali", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 4 */
    objC = banDoc.currentBalance("Gr=CA2", startDate, endDate);
@@ -191,8 +191,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("3) Ricavi per prestazioni e cessioni ad associati e fondatori", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 5 */
    objR = banDoc.currentBalance("Gr=RA4", startDate, endDate);
@@ -204,8 +204,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("4) Erogazioni liberali", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 6 */
    objC = banDoc.currentBalance("Gr=CA3", startDate, endDate);
@@ -220,8 +220,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("5) Proventi del 5 per mille", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 7 */
    objC = banDoc.currentBalance("Gr=CA4", startDate, endDate);
@@ -236,8 +236,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("6) Contributi da soggetti privati", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 8 */
    objR = banDoc.currentBalance("Gr=RA7", startDate, endDate);
@@ -249,8 +249,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("7) Ricavi per prestazioni e cessioni a terzi", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 9 */
    objC = banDoc.currentBalance("Gr=CA5", startDate, endDate);
@@ -265,8 +265,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("8) Contributi da enti pubblici", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 10 */
    objC = banDoc.currentBalance("Gr=CA6", startDate, endDate);
@@ -281,8 +281,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("9) Proventi da contratti con enti pubblici", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 11 */
    objC = banDoc.currentBalance("Gr=CA7", startDate, endDate);
@@ -297,8 +297,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("10) Altri ricavi, rendite e proventi", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 12 */
    objC = banDoc.currentBalance("Gr=CA8", startDate, endDate);
@@ -313,8 +313,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("11) Rimanenze finali", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 13, tot */
    objC = banDoc.currentBalance("Gr=CA", startDate, endDate);
@@ -333,8 +333,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 14, +/- */
    obj = banDoc.currentBalance("Gr=RA-CA", startDate, endDate);
@@ -372,8 +372,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("1) Ricavi per prestazioni e cessioni ad associati e fondatori", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 17 */
    objC = banDoc.currentBalance("Gr=CB2", startDate, endDate);
@@ -388,8 +388,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("2) Contributi da soggetti privati", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 18 */
    objC = banDoc.currentBalance("Gr=CB3", startDate, endDate);
@@ -404,8 +404,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("3) Ricavi per prestazioni e cessioni a terzi", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 19 */
    objC = banDoc.currentBalance("Gr=CB4", startDate, endDate);
@@ -420,8 +420,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("4) Contributi da enti pubblici", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 20 */
    objC = banDoc.currentBalance("Gr=CB5", startDate, endDate);
@@ -436,8 +436,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("5) Proventi da contratti con enti pubblici", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 21 */
    objC = banDoc.currentBalance("Gr=CB6", startDate, endDate);
@@ -452,8 +452,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("6) Altri ricavi, rendite e proventi", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 22 */
    objC = banDoc.currentBalance("Gr=CB7", startDate, endDate);
@@ -468,8 +468,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("7) Rimanenze finali", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 23 */
    objC = banDoc.currentBalance("Gr=CB8", startDate, endDate);
@@ -501,8 +501,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 25, +/- */
    obj = banDoc.currentBalance("Gr=RB-CB", startDate, endDate);
@@ -540,8 +540,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("1) Proventi da raccolte fondi abituali", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 28 */
    objC = banDoc.currentBalance("Gr=CC2", startDate, endDate);
@@ -556,8 +556,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("2) Proventi da raccolte fondi occasionali", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 29 */
    objC = banDoc.currentBalance("Gr=CC3", startDate, endDate);
@@ -572,8 +572,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("3) Altri proventi", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 30, tot */
    objC = banDoc.currentBalance("Gr=CC", startDate, endDate);
@@ -592,8 +592,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 31, +/- */
    obj = banDoc.currentBalance("Gr=RC-CC", startDate, endDate);
@@ -631,8 +631,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("1) Da rapporti bancari", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 34 */
    objC = banDoc.currentBalance("Gr=CD2", startDate, endDate);
@@ -647,8 +647,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("2) Da altri investimenti finanziari", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 35 */
    objC = banDoc.currentBalance("Gr=CD3", startDate, endDate);
@@ -663,8 +663,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("3) Da patrimonio edilizio", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 36 */
    objC = banDoc.currentBalance("Gr=CD4", startDate, endDate);
@@ -679,8 +679,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("4) Da altri beni patrimoniali", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 37 */
    objC = banDoc.currentBalance("Gr=CD5", startDate, endDate);
@@ -708,8 +708,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("5) Altri proventi", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 39, tot */
    objC = banDoc.currentBalance("Gr=CD", startDate, endDate);
@@ -728,8 +728,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 40, +/- */
    obj = banDoc.currentBalance("Gr=RD-CD", startDate, endDate);
@@ -767,8 +767,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("1) Proventi da distacco del personale", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 43 */
    objC = banDoc.currentBalance("Gr=CE2", startDate, endDate);
@@ -783,8 +783,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("2) Altri proventi di supporto generale", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 44 */
    objC = banDoc.currentBalance("Gr=CE3", startDate, endDate);
@@ -868,18 +868,18 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell(formatValue(previousC), "alignRight", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    /* Row 50 */
    tableRow = table.addRow();
    tableRow.addCell("TOTALE ONERI E COSTI", "alignRight bold", 1);
    tableRow.addCell(formatValue(totCurrentC), "alignRight bold", 1);
-   tableRow.addCell(formatValue(totPreviousC), "alignRight", 1);
+   tableRow.addCell(formatValue(totPreviousC), "alignRight bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("TOTALE PROVENTI E RICAVI", "alignRight bold", 1);
-   tableRow.addCell(formatValue(totCurrentR), "alignRight bold", 1);
-   tableRow.addCell(formatValue(totPreviousR), "alignRight bold", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(totCurrentR)), "alignRight bold", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(totPreviousR)), "alignRight bold", 1);
 
    /* Row 51 */
    obj = banDoc.currentBalance("Gr=TADPI", startDate, endDate);
@@ -917,8 +917,8 @@ function printRendicontoModB(banDoc, userParam) {
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("Avanzo/disavanzo d’esercizio (+/-)", "alignRight", 1);
-   tableRow.addCell(formatValue(currentR), "alignRight", 1);
-   tableRow.addCell(formatValue(previousR), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
 
 
@@ -977,8 +977,8 @@ function printRendicontoModB(banDoc, userParam) {
       tableRow.addCell(formatValue(previousC), "alignRight", 1);
       tableRow.addCell("", "", 1);
       tableRow.addCell("1) da attività di interesse generale", "alignLeft", 1);
-      tableRow.addCell(formatValue(currentR), "alignRight", 1);
-      tableRow.addCell(formatValue(previousR), "alignRight", 1);
+      tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+      tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
       /* Row 2 */
       objC = banDoc.currentBalance("Gr=CG2", startDate, endDate);
@@ -993,8 +993,8 @@ function printRendicontoModB(banDoc, userParam) {
       tableRow.addCell(formatValue(previousC), "alignRight", 1);
       tableRow.addCell("", "", 1);
       tableRow.addCell("2) da attività diverse", "alignLeft", 1);
-      tableRow.addCell(formatValue(currentR), "alignRight", 1);
-      tableRow.addCell(formatValue(previousR), "alignRight", 1);
+      tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+      tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
       /* Row 3, tot */
       objC = banDoc.currentBalance("Gr=CG", startDate, endDate);
@@ -1009,8 +1009,8 @@ function printRendicontoModB(banDoc, userParam) {
       tableRow.addCell(formatValue(previousC), "alignRight", 1);
       tableRow.addCell("", "", 1);
       tableRow.addCell("Totale", "alignRight", 1);
-      tableRow.addCell(formatValue(currentR), "alignRight", 1);
-      tableRow.addCell(formatValue(previousR), "alignRight", 1);
+      tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
+      tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
    }
 
