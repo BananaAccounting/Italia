@@ -1,0 +1,136 @@
+
+/* CSS update: 2020-06-19  */
+
+td {
+  vertical-align: top;
+}
+
+@page {
+  margin-top: 7mm;
+  margin-bottom: 7mm;
+  margin-left: 10mm;
+  margin-right: 10mm;
+}
+
+body {
+  font-family: Helvetica;
+}
+
+table {
+  font-size: 8px;
+  width: 100%;
+}
+
+/*table.table td {
+  border-top-style: solid;
+  border-top-color: black;
+  border-top-width: thin;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+  border-bottom-width: thin;
+  border-left-style: solid;
+  border-left-color: black;
+  border-left-width: thin;
+  border-right-style: solid;
+  border-right-color: black;
+  border-right-width: thin;
+}*/
+
+.column1 {
+  width: 73%;
+}
+
+.column2 {
+  width: 13%;
+}
+
+.column3 {
+  width: 13%;
+}
+
+.heading2 {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.table-header {
+  font-weight: bold;
+  text-align: right;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+  border-bottom-width: thin;
+}
+
+.assetsTitle {
+  font-weight: bold;
+}
+
+.liabiltiesTitle {
+  font-weight: bold;
+}
+
+.description-groups-titles {
+  text-align: left;
+  font-weight: bold;
+}
+
+.amount-groups-titles {
+  text-align: right;
+  font-weight: bold;
+}
+
+.description-groups {
+  text-align: left;
+}
+
+.amount-groups {
+  text-align: right;
+}
+
+.description-groups-totals {
+  text-align: left;
+  font-weight: bold;
+}
+
+.amount-groups-totals {
+  text-align: right;
+  font-weight: bold;
+  border-top-style: solid;
+  border-top-color: black;
+  border-top-width: thin;
+}
+
+.description-totals {
+  text-align: left;
+  font-weight: bold;
+}
+
+.amount-totals {
+  text-align: right;
+  font-weight: bold;
+  border-bottom-style: double;
+  border-bottom-color: black;
+  border-bottom-width: thin;
+}
+
+.alignRight {
+  text-align: right;
+}
+
+.alignLeft {
+  text-align: left;
+}
+
+.alignCenter {
+  text-align: center;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.footer {
+  font-family: Helvetica;
+  font-size: 8px;
+  text-align: center;
+}
