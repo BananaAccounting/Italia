@@ -3,6 +3,7 @@
     "country":"italy",
     "countryCode":"it",
     "description": "Rendiconti 2020 per Enti del terzo settore (BETA)",
+    "id":"ch.banana.it.extension.rendicontiets2020",
     "language":"it",
     "publisher": "Banana.ch",
     "title": "Rendiconti 2020 per Enti del terzo settore (BETA)",

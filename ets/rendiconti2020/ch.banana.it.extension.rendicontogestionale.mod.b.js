@@ -906,7 +906,7 @@ function printRendicontoModB(banDoc, userParam) {
    * COSTI E PROVENTI FIGURATIVI
    **************************************************************************************/
 
-   if (userParam.costi_proventi_figurativi) {
+   //if (userParam.costi_proventi_figurativi) {
 
       report.addParagraph(" ", "");
       report.addParagraph(" ", "");
@@ -991,7 +991,7 @@ function printRendicontoModB(banDoc, userParam) {
       tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
       tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
 
-   }
+   //}
 
 
    //checkResults(banDoc, startDate, endDate);
