@@ -1,0 +1,113 @@
+%%info_test_name{ch.banana.it.extension.rendicontocassa.mod.d.test}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+%%SCRIPT{/Users/ivan/Documents/GitHub/Italia/ets/rendiconti2020/test/ch.banana.it.extension.rendicontocassa.mod.d.test.js}
+%
+\begin{testcase}{ReportModDTest}
+\begin{test}{testBananaExtension}
+\begin{reportvalue}{Test 'rendiconto cassa (MOD. D)'}
+RENDICONTO CASSA (MOD. D) ANNO 2022 \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+USCITE  & 31.12.2022  & 31.12.2021  &  & ENTRATE  & 31.12.2022  & 31.12.2021 \\
+A) Uscite da attività di interesse generale  &  &  &  & A) Entrate da attività di interesse generale  &  & \\
+ &  &  &  & 1) Entrate da quote associative e apporti dei fondatori  & 375.00  & 11.00 \\
+1) Materie prime, sussidiarie, di consumo e di merci  & 1.00  & 10.00  &  & 2) Entrate dagli associati per attività mutuali  & 2.00  & 10.00 \\
+2) Servizi  & 9.00  & 24.00  &  & 3) Entrate per prestazioni e cessioni ad associati e fondatori  & 3.00  & 9.00 \\
+ &  &  &  & 4) Erogazioni liberali  & 4.00  & 8.00 \\
+3) Godimento beni di terzi  & 18.00  & 15.00  &  & 5) Entrate del 5 per mille  & 5.00  & 7.00 \\
+4) Personale  & 108.00  & 51.00  &  & 6) Contributi da soggetti privati  & 6.00  & 6.00 \\
+ &  &  &  & 7) Entrate per prestazioni e cessioni a terzi  & 7.00  & 5.00 \\
+5) Uscite diverse di gestione  & 19.00  & 2.00  &  & 8) Contributi da enti pubblici  & 8.00  & 4.00 \\
+ &  &  &  & 9) Entrate da contratti con enti pubblici  & 9.00  & 3.00 \\
+ &  &  &  & 10) Altre entrate  & 10.00  & 2.00 \\
+Totale  & 210.00  & 110.00  &  & Totale  & 440.00  & 66.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & -230.00  & 44.00 \\
+B) Uscite da attività diverse  &  &  &  & B) Entrate da attività diverse  &  & \\
+1) Materie prime, sussidiarie, di consumo e di merci  & 1.00  & 8.00  &  & 1) Entrate per prestazioni e cessioni ad associati e fondatori  & 1.00  & 7.00 \\
+2) Servizi  & 2.00  & 7.00  &  & 2) Contributi da soggetti privati  & 2.00  & 6.00 \\
+3) Godimento beni di terzi  & 3.00  & 6.00  &  & 3) Entrate per prestazioni e cessioni a terzi  & 3.00  & 5.00 \\
+4) Personale  & 4.00  & 5.00  &  & 4) Contributi da enti pubblici  & 4.00  & 4.00 \\
+5) Uscite diverse di gestione  & 7.00  & 2.00  &  & 5) Entrate da contratti con enti pubblici  & 5.00  & 3.00 \\
+ &  &  &  & 6) Altre entrate  & 6.00  & 2.00 \\
+Totale  & 36.00  & 36.00  &  & Totale  & 28.00  & 28.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & 8.00  & 8.00 \\
+C) Uscite da attività di raccolta fondi  &  &  &  & C) Entrate da attività di raccolta fondi  &  & \\
+1) Uscite per raccolte fondi abituali  & 1.00  & 4.00  &  & 1) Entrate da raccolte fondi abituali  & 1.00  & 5.00 \\
+2) Uscite per raccolte fondi occasionali  & 2.00  & 3.00  &  & 2) Entrate da raccolte fondi occasionali  & 2.00  & 3.00 \\
+3) Altre uscite  & 3.00  & 2.00  &  & 3) Altre entrate  & 3.00  & 2.00 \\
+Totale  & 6.00  & 9.00  &  & Totale  & 6.00  & 10.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi (+/-) } & 0.00  & -1.00 \\
+D) Uscite da attività finanziarie e patrimoniali  &  &  &  & D) Entrate da attività finanziarie e patrimoniali  &  & \\
+1) Su rapporti bancari  & 1.00  & 7.00  &  & 1) Da rapporti bancari  & 1.00  & 6.00 \\
+2) Su investimenti finanziari  & 2.00  & 6.00  &  & 2) Da altri investimenti finanziari  & 2.00  & 5.00 \\
+3) Su patrimonio edilizio  & 3.00  & 5.00  &  & 3) Da patrimonio edilizio  & 3.00  & 4.00 \\
+4) Su altri beni patrimoniali  & 4.00  & 4.00  &  & 4) Da altri beni patrimoniali  & 4.00  & 3.00 \\
+5) Altre uscite  & 6.00  & 2.00  &  & 5) Altre entrate  & 5.00  & 2.00 \\
+Totale  & 21.00  & 27.00  &  & Totale  & 15.00  & 20.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & 6.00  & 7.00 \\
+E) Uscite di supporto generale  &  &  &  & E) Entrate di supporto generale  &  & \\
+1) Materie prime, sussidiarie, di consumo e di merci  & 1.00  & 9.00  &  & 1) Entrate da distacco del personale  & 1.00  & 3.00 \\
+2) Servizi  & 2.00  & 8.00  &  & 2) Altre entrate di supporto generale  & 2.00  & 2.00 \\
+3) Godimento beni di terzi  & 3.00  & 7.00  &  &  &  & \\
+4) Personale  & 4.00  & 6.00  &  &  &  & \\
+5) Altre uscite  & 7.00  & 3.00  &  &  &  & \\
+Totale  & 28.00  & 42.00  &  & Totale  & 3.00  & 5.00 \\
+Totale uscite della gestione  & 301.00  & 224.00  &  & Totale entrate della gestione  & 492.00  & 129.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & -191.00  & 95.00 \\
+\multicolumn{5}{l}{Imposte } & 8.00  & 2.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali, e finanziamenti (+/-) } & 3.00  & 5.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi  & 31.12.2022  & 31.12.2021  &  & Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi  & 31.12.2022  & 31.12.2021 \\
+1) Investimenti in immobilizzazioni inerenti alle attività di interesse generale  & 2.00  & 1.00  &  & 1) Disinvestimenti di immobilizzazioni inerenti alle attività di interesse generale  & 1.00  & 3.00 \\
+2) Investimenti in immobilizzazioni inerenti alle attività diverse  & 3.00  & 2.00  &  & 2) Disinvestimenti di immobilizzazioni inerenti alle attività diverse  & 2.00  & 1.00 \\
+3) Investimenti in attività finanziarie e patrimoniali  & 1.00  & 3.00  &  & 3) Disinvestimenti di attività finanziarie e patrimoniali  & 3.00  & 2.00 \\
+4) Rimborso di finanziamenti per quota capitale e di prestiti  & 2.00  & 1.00  &  & 4) Ricevimento di finanziamenti e di prestiti  & 1.00  & 3.00 \\
+Totale  & 8.00  & 7.00  &  & Totale  & 7.00  & 9.00 \\
+\multicolumn{5}{l}{Imposte } & 3.00  & 1.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 1.00  & -2.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2022  & 31.12.2021 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 183.00  & -97.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & -1.00  & 2.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & -3.00  & -1.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{Cassa e banca } & 31.12.2022  & 31.12.2021 \\
+\multicolumn{5}{l}{Cassa } & 2.00  & 9.00 \\
+\multicolumn{5}{l}{Depositi bancari e postali } & 4.00  & 7.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Costi figurativi  & 31.12.2022  & 31.12.2021  &  & Proventi figurativi  & 31.12.2022  & 31.12.2021 \\
+1) da attività di interesse generale  & 1.00  & 3.00  &  & 1) da attività di interesse generale  & 1.00  & 5.00 \\
+2) da attività diverse  & 2.00  & 2.00  &  & 2) da attività diverse  & 2.00  & 4.00 \\
+Totale  & 3.00  & 5.00  &  & Totale  & 3.00  & 9.00 \\
+\end{longtable}
+-  \#page-nr  - \\
+\end{reportvalue}
+\keyvalue{Result}{Passed}
+\end{test}
+\end{testcase}
+\end{document}

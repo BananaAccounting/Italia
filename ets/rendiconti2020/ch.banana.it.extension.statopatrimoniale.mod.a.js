@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2020-07-06
+// @pubdate = 2020-07-08
 // @publisher = Banana.ch SA
 // @description = Stato patrimoniale (MOD. A)
 // @task = app.command
@@ -106,7 +106,7 @@ function printRendicontoModA(banDoc, userParam) {
 
    tableRow = table.addRow();
    tableRow.addCell("", "", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(startDate), "table-header", 1);
+   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
    tableRow.addCell("31.12." + previousYear, "table-header", 1);
 
    tableRow = table.addRow();
@@ -675,7 +675,7 @@ function printRendicontoModA(banDoc, userParam) {
 
    tableRow = table.addRow();
    tableRow.addCell("", "", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(startDate), "table-header", 1);
+   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
    tableRow.addCell("31.12." + previousYear, "table-header", 1);
 
    tableRow = table.addRow();
@@ -1119,133 +1119,3 @@ function settingsDialog() {
 
    return scriptform;
 }
-
-
-
-
-
-
-
-
-// NON UTILIZZATE AL MOMENTO
-function calculateCurrentBalance(banDoc, account, startDate, endDate) {
-
-   var currentBal = banDoc.currentBalance(account, startDate, endDate);
-
-   if (currentBal.bClass === "1") {
-      return currentBal.balance;
-   } else if (currentBal.bClass === "2") {
-      return Banana.SDecimal.invert(currentBal.balance);
-   } else if (currentBal.bClass === "3") {
-      return currentBal.total;
-   } else if (currentBal.bClass === "4") {
-      return Banana.SDecimal.invert(currentBal.total);
-   }
-}
-
-// MANCANO I TOTALI "sum":"" PASSIVO
-function loadForm() {
-
-   var form = [];
-   form.push({"id":"row1", "gr":"AA", "bClass":"1", "description":"A) quote associative o apporti ancora dovuti"});
-   form.push({"id":"row2", "gr":"", "bClass":"", "description":"B) immobilizzazioni"});
-   form.push({"id":"row3", "gr":"", "bClass":"", "description":"I - immobilizzazioni immateriali"});
-   form.push({"id":"row4", "gr":"ABI1", "bClass":"1", "description":"1) costi di impianto e di ampliamento"});
-   form.push({"id":"row5", "gr":"ABI2", "bClass":"1", "description":"2) costi di sviluppo"});
-   form.push({"id":"row6", "gr":"ABI3", "bClass":"1", "description":"3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno"});
-   form.push({"id":"row7", "gr":"ABI4", "bClass":"1", "description":"4) concessioni, licenze, marchi e diritti simili"});
-   form.push({"id":"row8", "gr":"ABI5", "bClass":"1", "description":"5) avviamento"});
-   form.push({"id":"row9", "gr":"ABI6", "bClass":"1", "description":"6) immobilizzazioni in corso e acconti"});
-   form.push({"id":"row10", "gr":"ABI7", "bClass":"1", "description":"7) altre Immobilizzazioni immateriali"});
-   form.push({"id":"row11", "gr":"ABI", "bClass":"1", "description":"Totale immobilizzazioni immateriali", "sum":"ABI1;ABI2;ABI3;ABI4;ABI5;ABI6;ABI7"});
-   form.push({"id":"row12", "gr":"", "bClass":"", "description":"II - immobilizzazioni materiali"});
-   form.push({"id":"row13", "gr":"ABII1", "bClass":"1", "description":"1) terreni e fabbricati"});
-   form.push({"id":"row14", "gr":"ABII2", "bClass":"1", "description":"2) impianti e macchinari"});
-   form.push({"id":"row15", "gr":"ABII3", "bClass":"1", "description":"3) attrezzature"});
-   form.push({"id":"row16", "gr":"ABII4", "bClass":"1", "description":"4) altri beni"});
-   form.push({"id":"row17", "gr":"ABII5", "bClass":"1", "description":"5) immobilizzazioni in corso e acconti"});
-   form.push({"id":"row18", "gr":"ABII", "bClass":"1", "description":"Totale immobilizzazioni materiali", "sum":"ABII1;ABII2;ABII3;ABII4;ABII5"});
-   form.push({"id":"row19", "gr":"", "bClass":"", "description":"III - immobilizzazioni finanziarie, con separata indicazione aggiuntiva, per ciascuna voce dei crediti, degli importi esigibili entro l'esercizio successivo"});
-   form.push({"id":"row20", "gr":"ABIII1", "bClass":"1", "description":"1) partecipazioni"});
-   form.push({"id":"row21", "gr":"ABIII1a", "bClass":"1", "description":"a) partecipazioni in imprese controllate"});
-   form.push({"id":"row22", "gr":"ABIII1b", "bClass":"1", "description":"b) partecipazioni in imprese collegate"});
-   form.push({"id":"row23", "gr":"ABIII1c", "bClass":"1", "description":"c) partecipazioni in altre imprese"});
-   form.push({"id":"row24", "gr":"ABIII2", "bClass":"1", "description":"2) crediti"});
-   form.push({"id":"row25", "gr":"ABIII2a", "bClass":"1", "description":"a) crediti verso imprese controllate"});
-   form.push({"id":"row26", "gr":"ABIII2b", "bClass":"1", "description":"b) crediti verso imprese collegate"});
-   form.push({"id":"row27", "gr":"ABIII2c", "bClass":"1", "description":"c) crediti verso altri enti del Terzo settore"});
-   form.push({"id":"row28", "gr":"ABIII2d", "bClass":"1", "description":"d) crediti verso altri"});
-   form.push({"id":"row29", "gr":"ABIII3", "bClass":"1", "description":"3) altri titoli"});
-   form.push({"id":"row30", "gr":"ABIII", "bClass":"1", "description":"Totale immobilizzazioni finanziarie", "sum":"ABIII1;ABIII1a;ABIII1b;ABIII1c;ABIII2;ABIII2a;ABIII2b;ABIII2c;ABIII2d;ABIII3"});
-   form.push({"id":"row31", "gr":"AB", "bClass":"1", "description":"Totale immobilizzazioni", "sum":"ABI;ABII;ABIII"});
-   form.push({"id":"row32", "gr":"", "bClass":"", "description":"C) attivo circolante"});
-   form.push({"id":"row33", "gr":"", "bClass":"", "description":"I - rimanenze"});
-   form.push({"id":"row34", "gr":"ACI1", "bClass":"1", "description":"1) rimanenze materie prime, sussidiarie e di consumo"});
-   form.push({"id":"row35", "gr":"ACI2", "bClass":"1", "description":"2) rimanenze prodotti in corso di lavorazione e semilavorati"});
-   form.push({"id":"row36", "gr":"ACI3", "bClass":"1", "description":"3) rimanenze lavori in corso su ordinazione"});
-   form.push({"id":"row37", "gr":"ACI4", "bClass":"1", "description":"4) rimanenze prodotti finiti e merci"});
-   form.push({"id":"row38", "gr":"ACI5", "bClass":"1", "description":"5) rimanenze acconti"});
-   form.push({"id":"row39", "gr":"ACI", "bClass":"1", "description":"Totale rimanenze", "sum":"ACI1;ACI2;ACI3;ACI4;ACI5"});
-   form.push({"id":"row40", "gr":"", "bClass":"", "description":"II - crediti, con separata indicazione aggiuntiva, per ciascuna voce, degli importi esigibili oltre l'esercizio successivo"});
-   form.push({"id":"row41", "gr":"ACII1", "bClass":"1", "description":"1) crediti verso utenti e clienti"});
-   form.push({"id":"row42", "gr":"ACII2", "bClass":"1", "description":"2) crediti verso associati e fondatori"});
-   form.push({"id":"row43", "gr":"ACII3", "bClass":"1", "description":"3) crediti verso enti pubblici"});
-   form.push({"id":"row44", "gr":"ACII4", "bClass":"1", "description":"4) crediti verso soggetti privati per contributi"});
-   form.push({"id":"row45", "gr":"ACII5", "bClass":"1", "description":"5) Crediti verso enti della stessa rete associativa"});
-   form.push({"id":"row46", "gr":"ACII6", "bClass":"1", "description":"6) crediti verso altri enti del Terzo settore"});
-   form.push({"id":"row47", "gr":"ACII7", "bClass":"1", "description":"7) crediti verso imprese controllate"});
-   form.push({"id":"row48", "gr":"ACII8", "bClass":"1", "description":"8) crediti verso imprese collegate"});
-   form.push({"id":"row49", "gr":"ACII9", "bClass":"1", "description":"9) crediti tributari"});
-   form.push({"id":"row50", "gr":"ACII10", "bClass":"1", "description":"10) crediti da 5 per mille"});
-   form.push({"id":"row51", "gr":"ACII11", "bClass":"1", "description":"11) crediti per imposte anticipate"});
-   form.push({"id":"row52", "gr":"ACII12", "bClass":"1", "description":"12) crediti verso altri"});
-   form.push({"id":"row53", "gr":"ACII", "bClass":"1", "description":"Totale crediti", "sum":"ACII1;ACII2;ACII3;ACII4;ACII5;ACII6;ACII7;ACII8;ACII9;ACII10;ACII11;ACII12"});
-   form.push({"id":"row54", "gr":"", "bClass":"", "description":"III - attività finanziarie che non costituiscono immobilizzazioni"});
-   form.push({"id":"row55", "gr":"ACIII1", "bClass":"1", "description":"1) partecipazioni in imprese controllate"});
-   form.push({"id":"row56", "gr":"ACIII2", "bClass":"1", "description":"2) partecipazioni in imprese collegate"});
-   form.push({"id":"row57", "gr":"ACIII3", "bClass":"1", "description":"3) altri titoli"});
-   form.push({"id":"row58", "gr":"ACIII", "bClass":"1", "description":"Totale attività finanziarie non immobilizzazioni", "sum":"ACIII1;ACIII2;ACIII3"});
-   form.push({"id":"row59", "gr":"", "bClass":"", "description":"IV - disponibilità liquide"});
-   form.push({"id":"row60", "gr":"ACIV1", "bClass":"1", "description":"1) depositi bancari e postali"});
-   form.push({"id":"row61", "gr":"ACIV2", "bClass":"1", "description":"2) assegni"});
-   form.push({"id":"row62", "gr":"ACIV3", "bClass":"1", "description":"3) danaro e valori in cassa"});
-   form.push({"id":"row63", "gr":"ACIV", "bClass":"1", "description":"Totale disponibilità liquide", "sum":"ACIV1;ACIV2;ACIV3"});
-   form.push({"id":"row64", "gr":"AC", "bClass":"1", "description":"Totale attivo circolante", "sum":"ACI;ACII;ACIII;ACIV"});
-   form.push({"id":"row65", "gr":"AD", "bClass":"1", "description":"D) Ratei e risconti attivi"});
-
-   form.push({"id":"row66", "gr":"", "bClass":"", "description":"A) patrimonio netto"});
-   form.push({"id":"row67", "gr":"PAI", "bClass":"2", "description":"I - fondo di dotazione dell'ente"});
-   form.push({"id":"row68", "gr":"", "bClass":"", "description":"II - patrimonio vincolato"});
-   form.push({"id":"row69", "gr":"PAII1", "bClass":"2", "description":"1) riserve statutarie"});
-   form.push({"id":"row70", "gr":"PAII2", "bClass":"2", "description":"2) riserve vincolate per decisione degli organi istituzionali"});
-   form.push({"id":"row71", "gr":"PAII3", "bClass":"2", "description":"3) riserve vincolate destinate da terzi"});
-   form.push({"id":"row72", "gr":"PAII", "bClass":"2", "description":"Totale patrimonio vincolato"});
-   form.push({"id":"row73", "gr":"", "bClass":"", "description":"III - patrimonio libero"});
-   form.push({"id":"row74", "gr":"PAIII1", "bClass":"2", "description":"1) riserve di utili o avanzi di gestione"});
-   form.push({"id":"row75", "gr":"PAIII2", "bClass":"2", "description":"2) altre riserve"});
-   form.push({"id":"row76", "gr":"PAIII", "bClass":"2", "description":"Totale patrimonio libero"});
-   form.push({"id":"row77", "gr":"PAIV", "bClass":"2", "description":"IV - avanzo/disavanzo d'esercizio"});
-   form.push({"id":"row78", "gr":"PA", "bClass":"2", "description":"Totale patrimonio netto"});
-   form.push({"id":"row79", "gr":"", "bClass":"", "description":"B) fondi per rischi e oneri"});
-   form.push({"id":"row80", "gr":"PB1", "bClass":"2", "description":"1) fondi per trattamento di quiescenza e obblighi simili"});
-   form.push({"id":"row81", "gr":"PB2", "bClass":"2", "description":"2) fondi per imposte, anche differite"});
-   form.push({"id":"row82", "gr":"PB3", "bClass":"2", "description":"3) fondi altri"});
-   form.push({"id":"row83", "gr":"PB", "bClass":"2", "description":"Totale fondi per rischi e oneri"});
-   form.push({"id":"row84", "gr":"PC", "bClass":"2", "description":"C) Fondi trattamento di fine rapporto di lavoro subordinato"});
-   form.push({"id":"row85", "gr":"", "bClass":"", "description":"D) debiti, con separata indicazione aggiuntiva, per ciascuna voce, degli importi esigibili oltre l'esercizio successivo"});
-   form.push({"id":"row86", "gr":"PD1", "bClass":"2", "description":"1) debiti verso banche"});
-   form.push({"id":"row87", "gr":"PD2", "bClass":"2", "description":"2) debiti verso altri finanziatori"});
-   form.push({"id":"row88", "gr":"PD3", "bClass":"2", "description":"3) debiti verso associati e fondatori per finanziamenti"});
-   form.push({"id":"row89", "gr":"PD4", "bClass":"2", "description":"4) debiti verso enti della stessa rete associativa"});
-   form.push({"id":"row90", "gr":"PD5", "bClass":"2", "description":"5) debiti per erogazioni liberali condizionate"});
-   form.push({"id":"row91", "gr":"PD6", "bClass":"2", "description":"6) acconti (Debiti)"});
-   form.push({"id":"row92", "gr":"PD7", "bClass":"2", "description":"7) debiti verso fornitori"});
-   form.push({"id":"row93", "gr":"PD8", "bClass":"2", "description":"8) debiti verso imprese controllate e collegate"});
-   form.push({"id":"row94", "gr":"PD9", "bClass":"2", "description":"9) debiti tributari"});
-   form.push({"id":"row95", "gr":"PD10", "bClass":"2", "description":"10) debiti verso istituti di previdenza e di sicurezza sociale"});
-   form.push({"id":"row96", "gr":"PD11", "bClass":"2", "description":"11) debiti verso dipendenti e collaboratori"});
-   form.push({"id":"row97", "gr":"PD12", "bClass":"2", "description":"12) altri debiti"});
-   form.push({"id":"row98", "gr":"PD", "bClass":"2", "description":"Totale debiti"});
-   form.push({"id":"row99", "gr":"PE", "bClass":"2", "description":"E) ratei e risconti passivi"});
-}
-

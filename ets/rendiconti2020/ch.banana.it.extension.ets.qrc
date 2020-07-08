@@ -5,5 +5,7 @@
     <file>rendicontoModA.css</file>
     <file>ch.banana.it.extension.rendicontogestionale.mod.b.js</file>
     <file>rendicontoModB.css</file>
+    <file>ch.banana.it.extension.rendicontocassa.mod.d.js</file>
+    <file>rendicontoModD.css</file>
  </qresource>
  </RCC>

@@ -1,0 +1,101 @@
+
+/* CSS update: 2020-07-08  */
+
+td {
+  vertical-align: top;
+}
+
+@page {
+  margin-top: 7mm;
+  margin-bottom: 7mm;
+  margin-left: 10mm;
+  margin-right: 10mm;
+}
+
+body {
+  font-family: Helvetica;
+}
+
+table {
+  font-size: 6.7px;
+  width: 100%;
+}
+
+.column1 {
+  width: 29.5%;
+}
+
+.column2 {
+  width: 10%;
+}
+
+.column3 {
+  width: 10%;
+}
+
+.column4 {
+  width: 1%;
+}
+
+.column5 {
+  width: 29.5%;
+}
+
+.column6 {
+  width: 10%;
+}
+
+.column7 {
+  width: 10%;
+}
+
+.heading2 {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.styleTableHeader {
+  color: #ffffff;
+  background-color: #337ab7;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+  border-bottom-width: thin;
+  font-weight: bold;
+}
+
+table.table td {
+  border-top-style: solid;
+  border-top-color: black;
+  border-top-width: thin;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+  border-bottom-width: thin;
+  border-left-style: solid;
+  border-left-color: black;
+  border-left-width: thin;
+  border-right-style: solid;
+  border-right-color: black;
+  border-right-width: thin;
+}
+
+.alignLeft {
+  text-align: left;
+}
+
+.alignCenter {
+  text-align: center;
+}
+
+.alignRight {
+  text-align: right;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.footer {
+  font-family: Helvetica;
+  font-size: 8px;
+  text-align: center;
+}
