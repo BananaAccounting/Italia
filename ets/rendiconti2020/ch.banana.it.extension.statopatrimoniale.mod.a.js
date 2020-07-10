@@ -94,6 +94,23 @@ function printRendicontoModA(banDoc, userParam) {
    var previous = "";
 
 
+
+
+   var listGr = getListGr(banDoc, "Gr");
+   //Banana.console.log(listGr);
+
+   var groups = {};
+   getAccountsListGr(banDoc, "Gr", listGr, groups);
+   //Banana.console.log(JSON.stringify(groups, "", " "));
+
+   var balance = {}
+   balance = calcBalances(banDoc, groups, startDate, endDate);
+   // Banana.console.log(balance["AA"]);
+   // Banana.console.log(balance["AA"].currentFormatted);
+   // Banana.console.log(balance["AA"].previousFormatted);
+
+
+
    /**************************************************************************************
    * ATTIVO
    **************************************************************************************/
@@ -113,13 +130,10 @@ function printRendicontoModA(banDoc, userParam) {
    tableRow.addCell("ATTIVO", "assetsTitle", 3);
 
    /* AA */
-   obj = banDoc.currentBalance("Gr=AA", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "AA").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("A) Quote associative o apporti ancora dovuti", "description-groups-titles", 1);
-   tableRow.addCell(formatValue(current), "amount-groups-titles", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups-titles", 1);
+   tableRow.addCell(balance["AA"].currentFormatted, "amount-groups-titles", 1);
+   tableRow.addCell(balance["AA"].previousFormatted, "amount-groups-titles", 1);
 
    tableRow = table.addRow();
    tableRow.addCell("B) Immobilizzazioni", "description-groups-titles", 1);
@@ -132,76 +146,61 @@ function printRendicontoModA(banDoc, userParam) {
    tableRow.addCell("", "amount-groups", 1);
 
    /* ABI1 */
-   obj = banDoc.currentBalance("Gr=ABI1", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI1").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("        1) costi di impianto e di ampliamento", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
+   tableRow.addCell(balance["ABI1"].currentFormatted, "amount-groups", 1);
+   tableRow.addCell(balance["ABI1"].previousFormatted, "amount-groups", 1);
 
    /* ABI2 */
-   obj = banDoc.currentBalance("Gr=ABI2", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI2").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("        2) costi di sviluppo", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
+   tableRow.addCell(balance["ABI2"].currentFormatted, "amount-groups", 1);
+   tableRow.addCell(balance["ABI2"].previousFormatted, "amount-groups", 1);
 
    /* ABI3 */
-   obj = banDoc.currentBalance("Gr=ABI3", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI3").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("        3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
+   tableRow.addCell(balance["ABI3"].currentFormatted, "amount-groups", 1);
+   tableRow.addCell(balance["ABI3"].previousFormatted, "amount-groups", 1);
 
    /* ABI4 */
-   obj = banDoc.currentBalance("Gr=ABI4", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI4").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("        4) concessioni, licenze, marchi e diritti simili", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
+   tableRow.addCell(balance["ABI4"].currentFormatted, "amount-groups", 1);
+   tableRow.addCell(balance["ABI4"].previousFormatted, "amount-groups", 1);
 
    /* ABI5 */
-   obj = banDoc.currentBalance("Gr=ABI5", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI5").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("        5) avviamento", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
+   tableRow.addCell(balance["ABI5"].currentFormatted, "amount-groups", 1);
+   tableRow.addCell(balance["ABI5"].previousFormatted, "amount-groups", 1);
 
    /* ABI6 */
-   obj = banDoc.currentBalance("Gr=ABI6", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI6").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("        6) immobilizzazioni in corso e acconti", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
+   tableRow.addCell(balance["ABI6"].currentFormatted, "amount-groups", 1);
+   tableRow.addCell(balance["ABI6"].previousFormatted, "amount-groups", 1);
 
    /* ABI7 */
-   obj = banDoc.currentBalance("Gr=ABI7", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI7").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("        7) altre Immobilizzazioni immateriali", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
+   tableRow.addCell(balance["ABI7"].currentFormatted, "amount-groups", 1);
+   tableRow.addCell(balance["ABI7"].previousFormatted, "amount-groups", 1);
 
    /* tot ABI */
-   obj = banDoc.currentBalance("Gr=ABI", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI").value("Prior");
+   var currTotABI = 0;
+   currTotABI = Banana.SDecimal.add(currTotABI, balance["ABI1"].current);
+   currTotABI = Banana.SDecimal.add(currTotABI, balance["ABI2"].current);
+   currTotABI = Banana.SDecimal.add(currTotABI, balance["ABI3"].current);
+   currTotABI = Banana.SDecimal.add(currTotABI, balance["ABI4"].current);
+   currTotABI = Banana.SDecimal.add(currTotABI, balance["ABI5"].current);
+   currTotABI = Banana.SDecimal.add(currTotABI, balance["ABI6"].current);
+   currTotABI = Banana.SDecimal.add(currTotABI, balance["ABI7"].current);
+   var prevTotABI = banDoc.table("Accounts").findRowByValue("Group", "ABI").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("    Totale immobilizzazioni immateriali", "description-groups-totals", 1);
-   tableRow.addCell(formatValue(current), "amount-groups-totals", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups-totals", 1);
+   tableRow.addCell(formatValue(currTotABI), "amount-groups-totals", 1);
+   tableRow.addCell(formatValue(prevTotABI), "amount-groups-totals", 1);
 
    tableRow = table.addRow();
    tableRow.addCell("    II - Immobilizzazioni materiali", "description-groups", 1);
@@ -975,6 +974,7 @@ function printRendicontoModA(banDoc, userParam) {
    //checkResults(banDoc, startDate, endDate);
 
 
+
    addFooter(report);
    return report;
 }
@@ -1023,6 +1023,180 @@ function setCss(banDoc, repStyleObj, userParam) {
    // Parse the CSS text
    repStyleObj.parse(textCSS);
 }
+
+/**************************************************************************************
+ * Utilities functions
+ **************************************************************************************/
+function getListGr(banDoc, grColumn) {
+
+   /*
+      Returns a list from the table Accounts of all the values for the given grColumn.
+
+      i.e. "AA,A,AB,ABI,ABI1,ABI2,ABI3,..."
+
+   */
+
+   if (!grColumn) {
+      grColumn = "Gr1";
+   }
+
+   var grList = new Set();
+
+   for (var i = 0; i < banDoc.table('Accounts').rowCount; i++) {
+      var tRow = banDoc.table('Accounts').row(i);
+      if (tRow.value(grColumn)) {
+         grList.add(tRow.value(grColumn));
+      }
+   }
+
+   // convert set object to array
+   var array = [];
+   for (var i of grList) {
+      array.push(i);
+   }
+
+   return array;
+}
+
+function getAccountsListGr(banDoc, columnGr, listGr, groups) {
+
+   /*
+      For each columnGr returns a list of accounts with the "|" separator.
+      
+      i.e.
+
+      {
+         "AA": "1000|",
+         "A": "",
+         "AB": "",
+         "ABI": "",
+         "ABI1": "1010|",
+         "ABI2": "1020|",
+         "ABI3": "1030|1031|",
+         ...
+      }
+
+   */
+
+   var listGrLength = listGr.length;
+   var accountsRows = banDoc.table('Accounts').rowCount;
+
+   for (var i = 0; i < listGrLength; i++) {
+
+      //load groups with listGr elements
+      groups[listGr[i]] = "";
+
+      for (var j = 0; j < accountsRows; j++) {
+         var tRow = banDoc.table('Accounts').row(j);
+         var gr = tRow.value(columnGr);
+         var account = tRow.value('Account');
+
+         if (gr === listGr[i]
+            && account
+            && account.indexOf(".") < 0
+            && account.indexOf(",") < 0
+            && account.indexOf(";") < 0
+            && account.indexOf(":") < 0) {
+            groups[gr] += account + '|';
+         }
+         // else {
+         //    // conto normale o conto ","
+         // }
+      }
+   }
+
+}
+
+function calcBalances(banDoc, groups, startDate, endDate) {
+
+   /*
+      For each groups, we take the accounts and then we calculate the balances.
+      Each groups has different properties from the currentBalance() function.
+      We also add current, currentFormatted, previous, previousFormatted and isUsed properties.
+      
+      i.e.
+
+      "AA": {
+         "amount": "1.00",
+         "amountCurrency": "",
+         "bClass": "1",
+         "balance": "1.00",
+         "balanceCurrency": "",
+         "credit": "",
+         "creditCurrency": "",
+         "debit": "1.00",
+         "debitCurrency": "",
+         "endDate": "2022-12-31",
+         "opening": "",
+         "openingCurrency": "",
+         "rowCount": "1",
+         "startDate": "2022-01-01",
+         "total": "1.00",
+         "totalCurrency": "",
+         "current": "1.00",
+         "currentFormatted": "1.00",
+         "previous": "2.00",
+         "previousFormatted": "2.00",
+         "isUsed": true
+      },
+      ...
+
+   */
+
+
+   var balance = {}
+   for (group in groups) {
+
+      balance[group] = banDoc.currentBalance(groups[group], startDate, endDate);
+
+      var obj = banDoc.currentBalance(groups[group], startDate, endDate);
+      var current = "";
+      var currentFormatted = "";
+      var previous = "";
+      var previousFormatted = "";
+      var isUsed = false;
+
+      // 1. current and previous balances
+      if (obj.bClass === "1") {
+         current = obj.balance;
+         previous = banDoc.table("Accounts").findRowByValue("Group", group).value("Prior");
+      } 
+      else if (obj.bClass === "2") {
+         current = Banana.SDecimal.invert(obj.balance);
+         previous = Banana.SDecimal.invert(banDoc.table("Accounts").findRowByValue("Group", group).value("Prior"));
+      }
+      else if (obj.bClass === "3") {
+         current = obj.total;
+         previous = banDoc.table("Accounts").findRowByValue("Group", group).value("Prior");
+      }
+      else if (obj.bClass === "4") {
+         current = Banana.SDecimal.invert(obj.total);
+         previous = Banana.SDecimal.invert(banDoc.table("Accounts").findRowByValue("Group", group).value("Prior"));
+      }
+
+      // 2. current formatted balance
+      currentFormatted = formatValue(current);
+
+      // 3. previous formatted balance
+      previousFormatted = formatValue(previous);
+
+      // 4. isUsed
+      if (current || previous) {
+         isUsed = true;
+      }
+
+      balance[group].current = current;
+      balance[group].currentFormatted = currentFormatted;
+      balance[group].previous = previous;
+      balance[group].previousFormatted = previousFormatted;
+      balance[group].isUsed = isUsed;
+   }
+
+   //Banana.console.log(JSON.stringify(balance, "", " "));
+
+   return balance;
+}
+
 
 
 /**************************************************************************************
@@ -1119,3 +1293,4 @@ function settingsDialog() {
 
    return scriptform;
 }
+
