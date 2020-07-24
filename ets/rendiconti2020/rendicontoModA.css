@@ -1,13 +1,13 @@
 
-/* CSS update: 2020-06-19  */
+/* CSS update: 2020-07-21  */
 
 td {
   vertical-align: top;
 }
 
 @page {
-  margin-top: 7mm;
-  margin-bottom: 7mm;
+  margin-top: 10mm;
+  margin-bottom: 10mm;
   margin-left: 10mm;
   margin-right: 10mm;
 }
@@ -54,19 +54,21 @@ table {
 }
 
 .table-header {
-  font-weight: bold;
   text-align: right;
+  font-weight: bold;
   border-bottom-style: solid;
   border-bottom-color: black;
   border-bottom-width: thin;
 }
 
-.assetsTitle {
+.assets-title {
   font-weight: bold;
+  text-align: left;
 }
 
-.liabiltiesTitle {
+.liabilties-title {
   font-weight: bold;
+  text-align: left;
 }
 
 .description-groups-titles {
@@ -94,7 +96,6 @@ table {
 
 .amount-groups-totals {
   text-align: right;
-  font-weight: bold;
   border-top-style: solid;
   border-top-color: black;
   border-top-width: thin;
@@ -107,21 +108,20 @@ table {
 
 .amount-totals {
   text-align: right;
-  font-weight: bold;
-  border-bottom-style: double;
-  border-bottom-color: black;
-  border-bottom-width: thin;
+  border-top-style: solid;
+  border-top-color: black;
+  border-top-width: thin;
 }
 
-.alignRight {
+.align-right {
   text-align: right;
 }
 
-.alignLeft {
+.align-left {
   text-align: left;
 }
 
-.alignCenter {
+.align-center {
   text-align: center;
 }
 
@@ -134,3 +134,24 @@ table {
   font-size: 8px;
   text-align: center;
 }
+
+.lvl0 {
+  padding-left: 0px;
+}
+
+.lvl1 {
+  padding-left: 10px;
+}
+
+.lvl2 {
+  padding-left: 20px;
+}
+
+.lvl3 {
+  padding-left: 30px;
+}
+
+.lvl4 {
+  padding-left: 40px;
+}
+

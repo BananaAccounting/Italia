@@ -1,5 +1,5 @@
 
-/* CSS update: 2020-07-06  */
+/* CSS update: 2020-07-24 */
 
 td {
   vertical-align: top;
@@ -54,7 +54,7 @@ table {
   font-weight: bold;
 }
 
-.styleTableHeader {
+.table-header {
   color: #ffffff;
   background-color: #337ab7;
   border-bottom-style: solid;
@@ -80,15 +80,15 @@ table.table td {
 
 
 
-.alignLeft {
+.align-left {
   text-align: left;
 }
 
-.alignCenter {
+.align-center {
   text-align: center;
 }
 
-.alignRight {
+.align-right {
   text-align: right;
 }
 

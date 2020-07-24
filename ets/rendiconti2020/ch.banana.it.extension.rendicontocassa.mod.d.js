@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2020-07-08
+// @pubdate = 2020-07-24
 // @publisher = Banana.ch SA
 // @description = Rendiconto per cassa (MOD. D)
 // @task = app.command
@@ -23,6 +23,8 @@
 // @outputformat = none
 // @inputdatasource = none
 // @timeout = -1
+// @includejs = breport.js
+// @includejs = errors.js
 
 
 /*
@@ -33,7 +35,160 @@
 
 
 
-var userParam = {};
+var BAN_VERSION = "9.1.0";
+var BAN_EXPM_VERSION = "200615";
+
+
+
+function loadDataStructure() {
+   /*
+      Data structure:
+      - "id" used as GR/GR1 and to identify the object
+      - "type" used to define the type of data (group, title or total)
+      - "indent" used to define the indent level for the print
+      - "bclass" used to define the bclass of the group
+      - "description" used to define the description text used for the print
+      - "sum" used to define how to calculate the total
+
+      Indent levels:
+      lvl0
+         lvl1
+            lvl2
+               lvl3
+                  lvl4
+
+   */
+
+   var dataStructure = [];
+   
+   /* USCITE */
+   dataStructure.push({"id":"dCA", "type":"title", "indent":"", "description":"A) Uscite da attività di interesse generale"});
+   dataStructure.push({"id":"CA1", "type":"group", "indent":"", "bclass":"3", "description":"1) Materie prime, sussidiarie, di consumo e di merci"});
+   dataStructure.push({"id":"CA2", "type":"group", "indent":"", "bclass":"3", "description":"2) Servizi"});
+   dataStructure.push({"id":"CA3", "type":"group", "indent":"", "bclass":"3", "description":"3) Godimento beni di terzi"});
+   dataStructure.push({"id":"CA4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
+   dataStructure.push({"id":"CA7", "type":"group", "indent":"", "bclass":"3", "description":"5) Uscite diverse di gestione"});
+   dataStructure.push({"id":"CA5", "type":"group", "indent":"", "bclass":"3", "description":"A) Ammortamenti"});
+   dataStructure.push({"id":"CA6", "type":"group", "indent":"", "bclass":"3", "description":"A) Accantonamenti per rischi ed oneri"});
+   dataStructure.push({"id":"CA8", "type":"group", "indent":"", "bclass":"3", "description":"A) Rimanenze iniziali"});
+   dataStructure.push({"id":"CA", "type":"total", "indent":"", "description":"Totale", "sum":"CA1;CA2;CA3;CA4;CA7"});
+   dataStructure.push({"id":"dCB", "type":"title", "indent":"", "description":"B) Uscite da attività diverse"});
+   dataStructure.push({"id":"CB1", "type":"group", "indent":"", "bclass":"3", "description":"1) Materie prime, sussidiarie, di consumo e di merci"});
+   dataStructure.push({"id":"CB2", "type":"group", "indent":"", "bclass":"3", "description":"2) Servizi"});
+   dataStructure.push({"id":"CB3", "type":"group", "indent":"", "bclass":"3", "description":"3) Godimento beni di terzi"});
+   dataStructure.push({"id":"CB4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
+   dataStructure.push({"id":"CB7", "type":"group", "indent":"", "bclass":"3", "description":"5) Uscite diverse di gestione"});
+   dataStructure.push({"id":"CB5", "type":"group", "indent":"", "bclass":"3", "description":"B) Ammortamenti"});
+   dataStructure.push({"id":"CB6", "type":"group", "indent":"", "bclass":"3", "description":"B) Accantonamenti per rischi ed oneri"});
+   dataStructure.push({"id":"CB8", "type":"group", "indent":"", "bclass":"3", "description":"B) Rimanenze iniziali"});
+   dataStructure.push({"id":"CB", "type":"total", "indent":"", "description":"Totale", "sum":"CB1;CB2;CB3;CB4;CB7"});
+   dataStructure.push({"id":"dCC", "type":"title", "indent":"", "description":"C) Uscite da attività di raccolta fondi"});
+   dataStructure.push({"id":"CC1", "type":"group", "indent":"", "bclass":"3", "description":"1) Uscite per raccolte fondi abituali"});
+   dataStructure.push({"id":"CC2", "type":"group", "indent":"", "bclass":"3", "description":"2) Uscite per raccolte fondi occasionali"});
+   dataStructure.push({"id":"CC3", "type":"group", "indent":"", "bclass":"3", "description":"3) Altre uscite"});
+   dataStructure.push({"id":"CC", "type":"total", "indent":"", "description":"Totale", "sum":"CC1;CC2;CC3"});
+   dataStructure.push({"id":"dCD", "type":"title", "indent":"", "description":"D) Uscite da attività finanziarie e patrimoniali"});
+   dataStructure.push({"id":"CD1", "type":"group", "indent":"", "bclass":"3", "description":"1) Su rapporti bancari"});
+   dataStructure.push({"id":"CD2", "type":"group", "indent":"", "bclass":"3", "description":"2) Su investimenti finanziari"});
+   dataStructure.push({"id":"CD3", "type":"group", "indent":"", "bclass":"3", "description":"3) Su patrimonio edilizio"});
+   dataStructure.push({"id":"CD4", "type":"group", "indent":"", "bclass":"3", "description":"4) Su altri beni patrimoniali"});
+   dataStructure.push({"id":"CD6", "type":"group", "indent":"", "bclass":"3", "description":"5) Altre uscite"});
+   dataStructure.push({"id":"CD5", "type":"group", "indent":"", "bclass":"3", "description":"C) Accantonamenti per rischi ed oneri"});
+   dataStructure.push({"id":"CD", "type":"total", "indent":"", "description":"Totale", "sum":"CD1;CD2;CD3;CD4;CD6"});
+   dataStructure.push({"id":"dCE", "type":"title", "indent":"", "description":"E) Uscite di supporto generale"});
+   dataStructure.push({"id":"CE1", "type":"group", "indent":"", "bclass":"3", "description":"1) Materie prime, sussidiarie, di consumo e di merci"});
+   dataStructure.push({"id":"CE2", "type":"group", "indent":"", "bclass":"3", "description":"2) Servizi"});
+   dataStructure.push({"id":"CE3", "type":"group", "indent":"", "bclass":"3", "description":"3) Godimento beni di terzi"});
+   dataStructure.push({"id":"CE4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
+   dataStructure.push({"id":"CE7", "type":"group", "indent":"", "bclass":"3", "description":"5) Altre uscite"});
+   dataStructure.push({"id":"CE5", "type":"group", "indent":"", "bclass":"3", "description":"E) Ammortamenti"});
+   dataStructure.push({"id":"CE6", "type":"group", "indent":"", "bclass":"3", "description":"E) Accantonamenti per rischi ed oneri"});
+   dataStructure.push({"id":"CE", "type":"total", "indent":"", "description":"Totale", "sum":"CE1;CE2;CE3;CE4;CE7"});
+   dataStructure.push({"id":"C", "type":"total", "indent":"", "description":"TOTALE ONERI E COSTI", "sum":"CA;CB;CC;CD;CE"});
+   dataStructure.push({"id":"IM", "type":"group", "indent":"", "bclass":"3", "description":"Imposte"});
+
+   /* ENTRATE */
+   dataStructure.push({"id":"dRA", "type":"title", "indent":"", "description":"A) Entrate da attività di interesse generale"});
+   dataStructure.push({"id":"RA1", "type":"group", "indent":"", "bclass":"4", "description":"1) Entrate da quote associative e apporti dei fondatori"});
+   dataStructure.push({"id":"RA2", "type":"group", "indent":"", "bclass":"4", "description":"2) Entrate dagli associati per attività mutuali"});
+   dataStructure.push({"id":"RA3", "type":"group", "indent":"", "bclass":"4", "description":"3) Entrate per prestazioni e cessioni ad associati e fondatori"});
+   dataStructure.push({"id":"RA4", "type":"group", "indent":"", "bclass":"4", "description":"4) Erogazioni liberali"});
+   dataStructure.push({"id":"RA5", "type":"group", "indent":"", "bclass":"4", "description":"5) Entrate del 5 per mille"});
+   dataStructure.push({"id":"RA6", "type":"group", "indent":"", "bclass":"4", "description":"6) Contributi da soggetti privati"});
+   dataStructure.push({"id":"RA7", "type":"group", "indent":"", "bclass":"4", "description":"7) Entrate per prestazioni e cessioni a terzi"});
+   dataStructure.push({"id":"RA8", "type":"group", "indent":"", "bclass":"4", "description":"8) Contributi da enti pubblici"});
+   dataStructure.push({"id":"RA9", "type":"group", "indent":"", "bclass":"4", "description":"9) Entrate da contratti con enti pubblici"});
+   dataStructure.push({"id":"RA10", "type":"group", "indent":"", "bclass":"4", "description":"10) Altre entrate"});
+   dataStructure.push({"id":"RA", "type":"total", "indent":"", "description":"Totale", "sum":"RA1;RA2;RA3;RA4;RA5;RA6;RA7;RA8;RA9;RA10"});
+   dataStructure.push({"id":"dRB", "type":"title", "indent":"", "description":"B) Entrate da attività diverse"});
+   dataStructure.push({"id":"RB1", "type":"group", "indent":"", "bclass":"4", "description":"1) Entrate per prestazioni e cessioni ad associati e fondatori"});
+   dataStructure.push({"id":"RB2", "type":"group", "indent":"", "bclass":"4", "description":"2) Contributi da soggetti privati"});
+   dataStructure.push({"id":"RB3", "type":"group", "indent":"", "bclass":"4", "description":"3) Entrate per prestazioni e cessioni a terzi"});
+   dataStructure.push({"id":"RB4", "type":"group", "indent":"", "bclass":"4", "description":"4) Contributi da enti pubblici"});
+   dataStructure.push({"id":"RB5", "type":"group", "indent":"", "bclass":"4", "description":"5) Entrate da contratti con enti pubblici"});
+   dataStructure.push({"id":"RB6", "type":"group", "indent":"", "bclass":"4", "description":"6) Altre entrate"});
+   dataStructure.push({"id":"RB", "type":"total", "indent":"", "description":"Totale", "sum":"RB1;RB2;RB3;RB4;RB5;RB6"});
+   dataStructure.push({"id":"dRC", "type":"title", "indent":"", "description":"C) Entrate da attività di raccolta fondi"});
+   dataStructure.push({"id":"RC1", "type":"group", "indent":"", "bclass":"4", "description":"1) Entrate da raccolte fondi abituali"});
+   dataStructure.push({"id":"RC2", "type":"group", "indent":"", "bclass":"4", "description":"2) Entrate da raccolte fondi occasionali"});
+   dataStructure.push({"id":"RC3", "type":"group", "indent":"", "bclass":"4", "description":"3) Altre entrate"});
+   dataStructure.push({"id":"RC", "type":"total", "indent":"", "description":"Totale", "sum":"RC1;RC2;RC3"});
+   dataStructure.push({"id":"dRD", "type":"title", "indent":"", "description":"D) Entrate da attività finanziarie e patrimoniali"});
+   dataStructure.push({"id":"RD1", "type":"group", "indent":"", "bclass":"4", "description":"1) Da rapporti bancari"});
+   dataStructure.push({"id":"RD2", "type":"group", "indent":"", "bclass":"4", "description":"2) Da altri investimenti finanziari"});
+   dataStructure.push({"id":"RD3", "type":"group", "indent":"", "bclass":"4", "description":"3) Da patrimonio edilizio"});
+   dataStructure.push({"id":"RD4", "type":"group", "indent":"", "bclass":"4", "description":"4) Da altri beni patrimoniali"});
+   dataStructure.push({"id":"RD5", "type":"group", "indent":"", "bclass":"4", "description":"5) Altre entrate"});
+   dataStructure.push({"id":"RD", "type":"total", "indent":"", "description":"Totale", "sum":"RD1;RD2;RD3;RD4;RD5"});
+   dataStructure.push({"id":"dRE", "type":"title", "indent":"", "description":"E) Entrate di supporto generale"});
+   dataStructure.push({"id":"RE1", "type":"group", "indent":"", "bclass":"4", "description":"1) Entrate da distacco del personale"});
+   dataStructure.push({"id":"RE2", "type":"group", "indent":"", "bclass":"4", "description":"2) Altre entrate di supporto generale"});
+   dataStructure.push({"id":"RE", "type":"total", "indent":"", "description":"Totale", "sum":"RE1;RE2"});
+   dataStructure.push({"id":"R", "type":"total", "indent":"", "description":"Totale entrate della gestione", "sum":"RA;RB;RC;RD;RE"});
+
+   /* USCITE DA INVESTIMENTI */
+   dataStructure.push({"id":"CF1", "type":"group", "indent":"", "bclass":"3", "description":"1) Investimenti in immobilizzazioni inerenti alle attività di interesse generale"});
+   dataStructure.push({"id":"CF2", "type":"group", "indent":"", "bclass":"3", "description":"2) Investimenti in immobilizzazioni inerenti alle attività diverse"});
+   dataStructure.push({"id":"CF3", "type":"group", "indent":"", "bclass":"3", "description":"3) Investimenti in attività finanziarie e patrimoniali"});
+   dataStructure.push({"id":"CF4", "type":"group", "indent":"", "bclass":"3", "description":"4) Rimborso di finanziamenti per quota capitale e di prestiti"});
+   dataStructure.push({"id":"CF", "type":"total", "indent":"", "description":"Totale", "sum":"CF1;CF2;CF3;CF4"});
+   dataStructure.push({"id":"IMRC", "type":"group", "indent":"", "bclass":"3", "description":"Imposte"});
+   
+   /* ENTRATE DA DISINVESTIMENTI */
+   dataStructure.push({"id":"RF1", "type":"group", "indent":"", "bclass":"4", "description":"1) Disinvestimenti di immobilizzazioni inerenti alle attività di interesse generale"});
+   dataStructure.push({"id":"RF2", "type":"group", "indent":"", "bclass":"4", "description":"2) Disinvestimenti di immobilizzazioni inerenti alle attività diverse"});
+   dataStructure.push({"id":"RF3", "type":"group", "indent":"", "bclass":"4", "description":"3) Disinvestimenti di attività finanziarie e patrimoniali"});
+   dataStructure.push({"id":"RF4", "type":"group", "indent":"", "bclass":"4", "description":"4) Ricevimento di finanziamenti e di prestiti"});
+   dataStructure.push({"id":"RF", "type":"total", "indent":"", "description":"Totale", "sum":"RF1;RF2;RF3;RF4"});
+
+   /* AVANZO / DISAVANZO */
+      // => ricavi-costi (es RA;-CA)
+   dataStructure.push({"id":"RA-CA", "type":"total", "indent":"", "description":"Avanzo/disavanzo attività di interesse generale (+/-)", "sum":"RA;-CA"});
+   dataStructure.push({"id":"RB-CB", "type":"total", "indent":"", "description":"Avanzo/disavanzo attività diverse (+/-)", "sum":"RB;-CB"});
+   dataStructure.push({"id":"RC-CC", "type":"total", "indent":"", "description":"Avanzo/disavanzo attività di raccolta fondi (+/-)", "sum":"RC;-CC"});
+   dataStructure.push({"id":"RD-CD", "type":"total", "indent":"", "description":"Avanzo/disavanzo attività finanziarie e patrimoniali (+/-)", "sum":"RD;-CD"});
+   dataStructure.push({"id":"RE-CE", "type":"total", "indent":"", "description":"Avanzo/disavanzo supporto generale (+/-)", "sum":"RE;-CE"});   
+   dataStructure.push({"id":"RF-CF", "type":"total", "indent":"", "description":"Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-)", "sum":"RF;-CF"});
+   dataStructure.push({"id":"TADPI", "type":"total", "indent":"", "description":"Avanzo/disavanzo d’esercizio prima delle imposte (+/-)", "sum":"RA-CA;RB-CB;RC-CC;RD-CD;RE-CE"});
+   dataStructure.push({"id":"TADES", "type":"total", "indent":"", "description":"Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-)", "sum":"TADPI;IM"});
+   dataStructure.push({"id":"TADRC", "type":"total", "indent":"", "description":"Avanzo/disavanzo complessivo (+/-)", "sum":"IMRC"});
+
+   /* CASSA E BANCA */
+   dataStructure.push({"id":"ACIV3", "type":"group", "indent":"", "bclass":"1", "description":"Cassa"});
+   dataStructure.push({"id":"ACIV1", "type":"group", "indent":"", "bclass":"1", "description":"Depositi bancari e postali"});
+
+   /* COSTI FIGURATIVI */
+   dataStructure.push({"id":"CG1", "type":"group", "indent":"", "bclass":"3", "description":"1) da attività di interesse generale"});
+   dataStructure.push({"id":"CG2", "type":"group", "indent":"", "bclass":"3", "description":"2) da attività diverse"});
+   dataStructure.push({"id":"CG", "type":"total", "indent":"", "description":"Totale", "sum":"CG1;CG2"});
+
+   /* PROVENTI FIGURATIVI */
+   dataStructure.push({"id":"RG1", "type":"group", "indent":"", "bclass":"4", "description":"1) da attività di interesse generale"});
+   dataStructure.push({"id":"RG2", "type":"group", "indent":"", "bclass":"4", "description":"2) da attività diverse"});
+   dataStructure.push({"id":"RG", "type":"total", "indent":"", "description":"Totale", "sum":"RG1;RG2"});
+
+   return dataStructure;
+}
 
 
 //Main function
@@ -42,6 +197,12 @@ function exec(string) {
    //Check if we are on an opened document
    if (!Banana.document) {
       return;
+   }
+
+   //Check the banana version
+   var isCurrentBananaVersionSupported = bananaRequiredVersion(BAN_VERSION, BAN_EXPM_VERSION);
+   if (!isCurrentBananaVersionSupported) {
+      return "@Cancel";
    }
 
    var userParam = initUserParam();
@@ -57,19 +218,83 @@ function exec(string) {
       return "@Cancel";
    }
 
-   var report = printRendicontoModD(Banana.document, userParam);
+   //Check that user entered the gr column in extension settings
+   if (!userParam.column) {
+      Banana.document.addMessage(getErrorMessage(ID_ERR_GRUPPO_MANCANTE));
+      return "@Cancel";
+   }
+   /**
+    * 1. Loads the data structure
+    */
+   var dataStructure = loadDataStructure();
+
+   /**
+    * 2. Calls methods to load balances, calculate totals, format amounts
+    * and check entries that can be excluded
+    */
+   const bReport = new BReport(Banana.document, userParam, dataStructure);
+   bReport.loadBalances();
+   bReport.calculateTotals(["currentAmount", "previousAmount"]);
+   bReport.formatValues(["currentAmount", "previousAmount"]);
+   Banana.console.log(JSON.stringify(dataStructure, "", " "));
+
+   /**
+    * 3. Creates the report
+    */
    var stylesheet = Banana.Report.newStyleSheet();
+   var report = printRendicontoModD(Banana.document, userParam, bReport, stylesheet);
    setCss(Banana.document, stylesheet, userParam);
    Banana.Report.preview(report, stylesheet);
 }
 
-function printRendicontoModD(banDoc, userParam) {
+function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
 
    var report = Banana.Report.newReport("Rendiconto per cassa (MOD. D)");
    var startDate = userParam.selectionStartDate;
    var endDate = userParam.selectionEndDate;
    var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
    var previousYear = currentYear - 1;
+
+   // Logo
+   var headerParagraph = report.getHeader().addSection();
+   if (userParam.logo) {
+      headerParagraph = report.addSection("");
+      var logoFormat = Banana.Report.logoFormat(userParam.logoname);
+      if (logoFormat) {
+         var logoElement = logoFormat.createDocNode(headerParagraph, stylesheet, "logo");
+         report.getHeader().addChild(logoElement);
+      }
+      report.addParagraph(" ", "");
+   }
+
+   if (userParam.printheader) {
+      var company = banDoc.info("AccountingDataBase","Company");
+      var address1 = banDoc.info("AccountingDataBase","Address1");
+      var zip = banDoc.info("AccountingDataBase","Zip");
+      var city = banDoc.info("AccountingDataBase","City");
+      var phone = banDoc.info("AccountingDataBase","Phone");
+      var web = banDoc.info("AccountingDataBase","Web");
+      var email = banDoc.info("AccountingDataBase","Email");
+      if (company) {
+         headerParagraph.addParagraph(company, "");
+      }
+      if (address1) {
+         headerParagraph.addParagraph(address1, "");
+      }
+      if (zip && city) {
+         headerParagraph.addParagraph(zip + " " + city, "");
+      }
+      if (phone) {
+         headerParagraph.addParagraph("Tel. " + phone, "");
+      }
+      if (web) {
+         headerParagraph.addParagraph("Web: " + web, "");
+      }
+      if (email) {
+         headerParagraph.addParagraph("Email: " + email, "");
+      }
+      headerParagraph.addParagraph(" ", "");
+   }
 
    var title = "";
    if (userParam.title) {
@@ -78,7 +303,11 @@ function printRendicontoModD(banDoc, userParam) {
       title = banDoc.info("Base", "HeaderLeft") + " - " + "RENDICONTO PER CASSA (MOD. D) ANNO " + currentYear;
    }
  
-   report.addParagraph(title, "heading2");
+   if (userParam.printtitle) {
+      report.addParagraph(" ", "");
+      report.addParagraph(title, "heading2");
+      report.addParagraph(" ", "");
+   }
 
    var table = report.addTable("table");
    var column1 = table.addColumn("column1");
@@ -89,692 +318,459 @@ function printRendicontoModD(banDoc, userParam) {
    var column6 = table.addColumn("column6");
    var column7 = table.addColumn("column7");
    
-   var obj = "";
-   var current = "";
-   var previous = "";   
-   var objC = "";
-   var currentC = "";
-   var previousC = "";
-   var objR = "";
-   var currentR = "";
-   var previousR = "";
-   var totCurrentC = "";
-   var totPreviousC = "";
-   var totCurrentR = "";
-   var totPreviousR = "";
-
-
    /**************************************************************************************
    * COSTI E PROVENTI
    **************************************************************************************/
    tableRow = table.addRow();
-   tableRow.addCell("USCITE", "styleTableHeader", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "styleTableHeader alignRight", 1);
-   tableRow.addCell("31.12." + previousYear, "styleTableHeader alignRight", 1);
+   tableRow.addCell("USCITE", "table-header", 1);
+   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-right", 1);
+   tableRow.addCell("31.12." + previousYear, "table-header align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("ENTRATE", "styleTableHeader", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "styleTableHeader alignRight", 1);
-   tableRow.addCell("31.12." + previousYear, "styleTableHeader alignRight", 1);
+   tableRow.addCell("ENTRATE", "table-header", 1);
+   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-right", 1);
+   tableRow.addCell("31.12." + previousYear, "table-header align-right", 1);
 
    /* Row 1 */   
    tableRow = table.addRow();
-   tableRow.addCell("A) Uscite da attività di interesse generale", "alignLeft bold", 1);
+   tableRow.addCell(bReport.getObjectDescription("dCA"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("A) Entrate da attività di interesse generale", "alignLeft bold", 1);
+   tableRow.addCell(bReport.getObjectDescription("dRA"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 2*/
-   objR = banDoc.currentBalance("Gr=RA1", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RA1").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("1) Entrate da quote associative e apporti dei fondatori", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RA1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA1"), "align-right", 1);
 
    /* Row 3 */
-   objC = banDoc.currentBalance("Gr=CA1", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CA1").value("Prior");
-   objR = banDoc.currentBalance("Gr=RA2", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RA2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) Materie prime, sussidiarie, di consumo e di merci", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA1"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("2) Entrate dagli associati per attività mutuali", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RA2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA2"), "align-right", 1);
 
    /* Row 4 */
-   objC = banDoc.currentBalance("Gr=CA2", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CA2").value("Prior");
-   objR = banDoc.currentBalance("Gr=RA3", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RA3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) Servizi", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA2"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("3) Entrate per prestazioni e cessioni ad associati e fondatori", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RA3"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA3"), "align-right", 1);
 
    /* Row 5 */
-   objR = banDoc.currentBalance("Gr=RA4", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RA4").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("4) Erogazioni liberali", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RA4"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA4"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA4"), "align-right", 1);
 
    /* Row 6 */
-   objC = banDoc.currentBalance("Gr=CA3", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CA3").value("Prior");
-   objR = banDoc.currentBalance("Gr=RA5", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RA5").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) Godimento beni di terzi", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA3"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA3"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("5) Entrate del 5 per mille", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RA5"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA5"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA5"), "align-right", 1);
 
    /* Row 7 */
-   objC = banDoc.currentBalance("Gr=CA4", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CA4").value("Prior");
-   objR = banDoc.currentBalance("Gr=RA6", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RA6").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("4) Personale", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA4"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA4"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA4"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("6) Contributi da soggetti privati", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RA6"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA6"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA6"), "align-right", 1);
 
    /* Row 8 */
-   objR = banDoc.currentBalance("Gr=RA7", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RA7").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("7) Entrate per prestazioni e cessioni a terzi", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RA7"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA7"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA7"), "align-right", 1);
 
    /* Row 9 */
-   objC = banDoc.currentBalance("Gr=CA7", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CA7").value("Prior");
-   objR = banDoc.currentBalance("Gr=RA8", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RA8").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("5) Uscite diverse di gestione", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA7"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA7"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA7"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("8) Contributi da enti pubblici", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RA8"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA8"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA8"), "align-right", 1);
 
    /* Row 10 */
-   objR = banDoc.currentBalance("Gr=RA9", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RA9").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("9) Entrate da contratti con enti pubblici", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RA9"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA9"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA9"), "align-right", 1);
 
    /* Row 11 */
-   objR = banDoc.currentBalance("Gr=RA10", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RA10").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("10) Altre entrate", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RA10"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA10"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA10"), "align-right", 1);
 
    /* Row 12, tot */
-   objC = banDoc.currentBalance("Gr=CA", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CA").value("Prior");
-   objR = banDoc.currentBalance("Gr=RA", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RA").value("Prior");
-   totCurrentC = Banana.SDecimal.add(totCurrentC,currentC);
-   totPreviousC = Banana.SDecimal.add(totPreviousC,previousC);
-   totCurrentR = Banana.SDecimal.add(totCurrentR,currentR);
-   totPreviousR = Banana.SDecimal.add(totPreviousR,previousR);
    tableRow = table.addRow();
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RA"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA"), "align-right", 1);
 
    /* Row 13 */
-   objR = banDoc.currentBalance("Gr=RA-CA", startDate, endDate);
-   current = objR.total;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "RA-CA").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Avanzo/disavanzo attività di interesse generale (+/-)", "alignRight", 5);
-   tableRow.addCell(formatValue(current), "alignRight", 1);
-   tableRow.addCell(formatValue(previous), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RA-CA"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA-CA"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA-CA"), "align-right", 1);
 
    /* Row 14 */
    tableRow = table.addRow();
-   tableRow.addCell("B) Uscite da attività diverse", "alignLeft bold", 1);
+   tableRow.addCell(bReport.getObjectDescription("dCB"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("B) Entrate da attività diverse", "alignLeft bold", 1);
+   tableRow.addCell(bReport.getObjectDescription("dRB"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 15 */
    tableRow = table.addRow();
-   objC = banDoc.currentBalance("Gr=CB1", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CB1").value("Prior");
-   objR = banDoc.currentBalance("Gr=RB1", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RB1").value("Prior");
-   tableRow.addCell("1) Materie prime, sussidiarie, di consumo e di merci", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CB1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB1"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("1) Entrate per prestazioni e cessioni ad associati e fondatori", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RB1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB1"), "align-right", 1);
 
    /* Row 16 */
-   objC = banDoc.currentBalance("Gr=CB2", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CB2").value("Prior");
-   objR = banDoc.currentBalance("Gr=RB2", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RB2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) Servizi", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CB2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB2"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("2) Contributi da soggetti privati", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RB2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB2"), "align-right", 1);
 
    /* Row 17 */
-   objC = banDoc.currentBalance("Gr=CB3", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CB3").value("Prior");
-   objR = banDoc.currentBalance("Gr=RB3", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RB3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) Godimento beni di terzi", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CB3"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB3"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("3) Entrate per prestazioni e cessioni a terzi", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RB3"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB3"), "align-right", 1);
 
    /* Row 18 */
-   objC = banDoc.currentBalance("Gr=CB4", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CB4").value("Prior");
-   objR = banDoc.currentBalance("Gr=RB4", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RB4").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("4) Personale", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CB4"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB4"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB4"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("4) Contributi da enti pubblici", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RB4"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB4"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB4"), "align-right", 1);
 
    /* Row 19 */
-   objC = banDoc.currentBalance("Gr=CB7", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CB7").value("Prior");
-   objR = banDoc.currentBalance("Gr=RB5", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RB5").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("5) Uscite diverse di gestione", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CB7"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB7"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB7"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("5) Entrate da contratti con enti pubblici", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RB5"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB5"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB5"), "align-right", 1);
 
    /* Row 20 */
-   objR = banDoc.currentBalance("Gr=RB6", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RB6").value("Prior");
    tableRow = table.addRow();
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("6) Altre entrate", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RB6"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB6"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB6"), "align-right", 1);
 
    /* Row 21, tot */
-   objC = banDoc.currentBalance("Gr=CB", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CB").value("Prior");
-   objR = banDoc.currentBalance("Gr=RB", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RB").value("Prior");
-   totCurrentC = Banana.SDecimal.add(totCurrentC,currentC);
-   totPreviousC = Banana.SDecimal.add(totPreviousC,previousC);
-   totCurrentR = Banana.SDecimal.add(totCurrentR,currentR);
-   totPreviousR = Banana.SDecimal.add(totPreviousR,previousR);
    tableRow = table.addRow();
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CB"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RB"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB"), "align-right", 1);
 
    /* Row 22 */
-   obj = banDoc.currentBalance("Gr=RB-CB", startDate, endDate);
-   current = obj.total;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "RB-CB").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Avanzo/disavanzo attività diverse (+/-)", "alignRight", 5);
-   tableRow.addCell(formatValue(current), "alignRight", 1);
-   tableRow.addCell(formatValue(previous), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RB-CB"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB-CB"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB-CB"), "align-right", 1);
 
    /* Row 23 */
    tableRow = table.addRow();
-   tableRow.addCell("C) Uscite da attività di raccolta fondi", "alignLeft bold", 1);
+   tableRow.addCell(bReport.getObjectDescription("dCC"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("C) Entrate da attività di raccolta fondi", "alignLeft bold", 1);
+   tableRow.addCell(bReport.getObjectDescription("dRC"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 24 */
-   objC = banDoc.currentBalance("Gr=CC1", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CC1").value("Prior");
-   objR = banDoc.currentBalance("Gr=RC1", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RC1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) Uscite per raccolte fondi abituali", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CC1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CC1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CC1"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("1) Entrate da raccolte fondi abituali", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RC1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RC1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RC1"), "align-right", 1);
 
    /* Row 25 */
-   objC = banDoc.currentBalance("Gr=CC2", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CC2").value("Prior");
-   objR = banDoc.currentBalance("Gr=RC2", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RC2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) Uscite per raccolte fondi occasionali", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CC2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CC2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CC2"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("2) Entrate da raccolte fondi occasionali", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RC2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RC2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RC2"), "align-right", 1);
 
    /* Row 26 */
-   objC = banDoc.currentBalance("Gr=CC3", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CC3").value("Prior");
-   objR = banDoc.currentBalance("Gr=RC3", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RC3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) Altre uscite", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CC3"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CC3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CC3"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("3) Altre entrate", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RC3"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RC3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RC3"), "align-right", 1);
 
    /* Row 27, tot */
-   objC = banDoc.currentBalance("Gr=CC", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CC").value("Prior");
-   objR = banDoc.currentBalance("Gr=RC", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RC").value("Prior");
-   totCurrentC = Banana.SDecimal.add(totCurrentC,currentC);
-   totPreviousC = Banana.SDecimal.add(totPreviousC,previousC);
-   totCurrentR = Banana.SDecimal.add(totCurrentR,currentR);
-   totPreviousR = Banana.SDecimal.add(totPreviousR,previousR);
    tableRow = table.addRow();
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CC"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CC"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CC"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RC"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RC"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RC"), "align-right", 1);
 
    /* Row 28 */
-   obj = banDoc.currentBalance("Gr=RC-CC", startDate, endDate);
-   current = obj.total;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "RC-CC").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Avanzo/disavanzo attività di raccolta fondi (+/-)", "alignRight", 5);
-   tableRow.addCell(formatValue(current), "alignRight", 1);
-   tableRow.addCell(formatValue(previous), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RC-CC"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RC-CC"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RC-CC"), "align-right", 1);
 
    /* Row 29 */
    tableRow = table.addRow();
-   tableRow.addCell("D) Uscite da attività finanziarie e patrimoniali", "alignLeft bold", 1);
+   tableRow.addCell(bReport.getObjectDescription("dCD"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("D) Entrate da attività finanziarie e patrimoniali", "alignLeft bold", 1);
+   tableRow.addCell(bReport.getObjectDescription("dRD"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 30 */
-   objC = banDoc.currentBalance("Gr=CD1", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CD1").value("Prior");
-   objR = banDoc.currentBalance("Gr=RD1", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RD1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) Su rapporti bancari", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CD1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD1"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("1) Da rapporti bancari", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RD1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD1"), "align-right", 1);
 
    /* Row 31 */
-   objC = banDoc.currentBalance("Gr=CD2", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CD2").value("Prior");
-   objR = banDoc.currentBalance("Gr=RD2", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RD2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) Su investimenti finanziari", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CD2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD2"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("2) Da altri investimenti finanziari", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RD2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD2"), "align-right", 1);
 
    /* Row 32 */
-   objC = banDoc.currentBalance("Gr=CD3", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CD3").value("Prior");
-   objR = banDoc.currentBalance("Gr=RD3", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RD3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) Su patrimonio edilizio", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CD3"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD3"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("3) Da patrimonio edilizio", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RD3"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD3"), "align-right", 1);
 
    /* Row 33 */
-   objC = banDoc.currentBalance("Gr=CD4", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CD4").value("Prior");
-   objR = banDoc.currentBalance("Gr=RD4", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RD4").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("4) Su altri beni patrimoniali", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CD4"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD4"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD4"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("4) Da altri beni patrimoniali", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RD4"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD4"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD4"), "align-right", 1);
 
    /* Row 34 */
-   objC = banDoc.currentBalance("Gr=CD6", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CD6").value("Prior");
    tableRow = table.addRow();
-   objR = banDoc.currentBalance("Gr=RD5", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RD5").value("Prior");
-   tableRow.addCell("5) Altre uscite", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CD6"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD6"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD6"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("5) Altre entrate", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RD5"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD5"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD5"), "align-right", 1);
 
    /* Row 35, tot */
-   objC = banDoc.currentBalance("Gr=CD", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CD").value("Prior");
-   objR = banDoc.currentBalance("Gr=RD", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RD").value("Prior");
-   totCurrentC = Banana.SDecimal.add(totCurrentC,currentC);
-   totPreviousC = Banana.SDecimal.add(totPreviousC,previousC);
-   totCurrentR = Banana.SDecimal.add(totCurrentR,currentR);
-   totPreviousR = Banana.SDecimal.add(totPreviousR,previousR);
    tableRow = table.addRow();
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CD"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RD"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD"), "align-right", 1);
 
    /* Row 36 */
-   obj = banDoc.currentBalance("Gr=RD-CD", startDate, endDate);
-   current = obj.total;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "RD-CD").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Avanzo/disavanzo attività finanziarie e patrimoniali (+/-)", "alignRight", 5);
-   tableRow.addCell(formatValue(current), "alignRight", 1);
-   tableRow.addCell(formatValue(previous), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RD-CD"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD-CD"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD-CD"), "align-right", 1);
 
    /* Row 37 */
    tableRow = table.addRow();
-   tableRow.addCell("E) Uscite di supporto generale", "alignLeft bold", 1);
+   tableRow.addCell(bReport.getObjectDescription("dCE"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("E) Entrate di supporto generale", "alignLeft bold", 1);
+   tableRow.addCell(bReport.getObjectDescription("dRE"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 38 */
-   objC = banDoc.currentBalance("Gr=CE1", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CE1").value("Prior");
-   objR = banDoc.currentBalance("Gr=RE1", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RE1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) Materie prime, sussidiarie, di consumo e di merci", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CE1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE1"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("1) Entrate da distacco del personale", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RE1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RE1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RE1"), "align-right", 1);
 
    /* Row 39 */
-   objC = banDoc.currentBalance("Gr=CE2", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CE2").value("Prior");
-   objR = banDoc.currentBalance("Gr=RE2", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RE2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) Servizi", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CE2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE2"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("2) Altre entrate di supporto generale", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RE2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RE2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RE2"), "align-right", 1);
 
    /* Row 40 */
-   objC = banDoc.currentBalance("Gr=CE3", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CE3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) Godimento beni di terzi", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CE3"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE3"), "align-right", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 41 */
-   objC = banDoc.currentBalance("Gr=CE4", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CE4").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("4) Personale", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CE4"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE4"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE4"), "align-right", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 42 */
-   objC = banDoc.currentBalance("Gr=CE7", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CE7").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("5) Altre uscite", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CE7"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE7"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE7"), "align-right", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 43, tot */
-   objC = banDoc.currentBalance("Gr=CE", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CE").value("Prior");
-   objR = banDoc.currentBalance("Gr=RE", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RE").value("Prior");
-   totCurrentC = Banana.SDecimal.add(totCurrentC,currentC);
-   totPreviousC = Banana.SDecimal.add(totPreviousC,previousC);
-   totCurrentR = Banana.SDecimal.add(totCurrentR,currentR);
-   totPreviousR = Banana.SDecimal.add(totPreviousR,previousR);
    tableRow = table.addRow();
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CE"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RE"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RE"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RE"), "align-right", 1);
 
    /* Row 44 */
    tableRow = table.addRow();
-   tableRow.addCell("Totale uscite della gestione", "alignRight bold", 1);
-   tableRow.addCell(formatValue(totCurrentC), "alignRight bold", 1);
-   tableRow.addCell(formatValue(totPreviousC), "alignRight bold", 1);
+   tableRow.addCell(bReport.getObjectDescription("C"), "align-right bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("C"), "align-right bold", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("C"), "align-right bold", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("Totale entrate della gestione", "alignRight bold", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(totCurrentR)), "alignRight bold", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(totPreviousR)), "alignRight bold", 1);
+   tableRow.addCell(bReport.getObjectDescription("R"), "align-right bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("R"), "align-right bold", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("R"), "align-right bold", 1);
 
    /* Row 45 */
-   obj = banDoc.currentBalance("Gr=TADPI", startDate, endDate);
-   current = obj.total;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "TADPI").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Avanzo/disavanzo d’esercizio prima delle imposte (+/-)", "alignRight", 5);
-   tableRow.addCell(formatValue(current), "alignRight", 1);
-   tableRow.addCell(formatValue(previous), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("TADPI"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADPI"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADPI"), "align-right", 1);
 
    /* Row 46 */
-   obj = banDoc.currentBalance("Gr=IM", startDate, endDate);
-   current = obj.total;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "IM").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Imposte", "alignRight", 5);
-   tableRow.addCell(formatValue(current), "alignRight", 1);
-   tableRow.addCell(formatValue(previous), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("IM"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("IM"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("IM"), "align-right", 1);
 
    /* Row 47 */
-   obj = banDoc.currentBalance("Gr=TADES", startDate, endDate);
-   current = obj.total;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "TADES").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali, e finanziamenti (+/-)", "alignRight", 5);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("TADES"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADES"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADES"), "align-right", 1);
 
 
 
@@ -793,127 +789,77 @@ function printRendicontoModD(banDoc, userParam) {
    var column5 = table.addColumn("column5");
    var column6 = table.addColumn("column6");
    var column7 = table.addColumn("column7");
-   
-   var obj = "";
-   var current = "";
-   var previous = "";   
-   var objC = "";
-   var currentC = "";
-   var previousC = "";
-   var objR = "";
-   var currentR = "";
-   var previousR = "";
-   var totCurrentC = "";
-   var totPreviousC = "";
-   var totCurrentR = "";
-   var totPreviousR = "";
 
    tableRow = table.addRow();
-   tableRow.addCell("Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi", "styleTableHeader", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "styleTableHeader alignCenter", 1);
-   tableRow.addCell("31.12." + previousYear, "styleTableHeader alignCenter", 1);
+   tableRow.addCell("Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi", "table-header", 1);
+   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+   tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi", "styleTableHeader", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "styleTableHeader alignCenter", 1);
-   tableRow.addCell("31.12." + previousYear, "styleTableHeader alignCenter", 1);
+   tableRow.addCell("Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi", "table-header", 1);
+   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+   tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
    /* Row 1 */
-   objC = banDoc.currentBalance("Gr=CF1", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CF1").value("Prior");
-   objR = banDoc.currentBalance("Gr=RF1", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RF1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) Investimenti in immobilizzazioni inerenti alle attività di interesse generale", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CF1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CF1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CF1"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("1) Disinvestimenti di immobilizzazioni inerenti alle attività di interesse generale", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RF1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF1"), "align-right", 1);
 
    /* Row 2 */
-   objC = banDoc.currentBalance("Gr=CF2", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CF2").value("Prior");
-   objR = banDoc.currentBalance("Gr=RF2", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RF2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) Investimenti in immobilizzazioni inerenti alle attività diverse", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CF2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CF2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CF2"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("2) Disinvestimenti di immobilizzazioni inerenti alle attività diverse", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RF2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF2"), "align-right", 1);
 
    /* Row 3 */
-   objC = banDoc.currentBalance("Gr=CF3", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CF3").value("Prior");
-   objR = banDoc.currentBalance("Gr=RF3", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RF3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("3) Investimenti in attività finanziarie e patrimoniali", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CF3"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CF3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CF3"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("3) Disinvestimenti di attività finanziarie e patrimoniali", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+    tableRow.addCell(bReport.getObjectDescription("RF3"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF3"), "align-right", 1);
 
    /* Row 4 */
-   objC = banDoc.currentBalance("Gr=CF4", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CF4").value("Prior");
-   objR = banDoc.currentBalance("Gr=RF4", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RF4").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("4) Rimborso di finanziamenti per quota capitale e di prestiti", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CF4"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CF4"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CF4"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("4) Ricevimento di finanziamenti e di prestiti", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RF4"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF4"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF4"), "align-right", 1);
 
    /* Row 5, tot */
-   objC = banDoc.currentBalance("Gr=CF", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CF").value("Prior");
-   objR = banDoc.currentBalance("Gr=RF", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RF").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CF"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CF"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CF"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RF"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF"), "align-right", 1);
    
    /* Row 6 */
-   obj = banDoc.currentBalance("Gr=IMRC", startDate, endDate);
-   current = obj.total;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "IMRC").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Imposte", "alignRight", 5);
-   tableRow.addCell(formatValue(current), "alignRight", 1);
-   tableRow.addCell(formatValue(previous), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("IMRC"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("IMRC"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("IMRC"), "align-right", 1);
 
    /* Row 7 */
-   obj = banDoc.currentBalance("Gr=RF-CF", startDate, endDate);
-   current = obj.total;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "RF-CF").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-)", "alignRight", 5);
-   tableRow.addCell(formatValue(current), "alignRight", 1);
-   tableRow.addCell(formatValue(previous), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RF-CF"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF-CF"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF-CF"), "align-right", 1);
 
 
    /**************************************************************************************
@@ -931,42 +877,28 @@ function printRendicontoModD(banDoc, userParam) {
    var column6 = table.addColumn("column6");
    var column7 = table.addColumn("column7");
    
-   var obj = "";
-   var current = "";
-   var previous = "";
-
-
    tableRow = table.addRow();
-   tableRow.addCell("", "styleTableHeader", 5);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "styleTableHeader alignCenter", 1);
-   tableRow.addCell("31.12." + previousYear, "styleTableHeader alignCenter", 1);
+   tableRow.addCell("", "table-header", 5);
+   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+   tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
    /* Row 1 */
-   obj = banDoc.currentBalance("Gr=TADES", startDate, endDate);
-   current = obj.total;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "TADES").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-)", "", 5);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("TADES"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADES"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADES"), "align-right", 1);
 
    /* Row 2 */
-   obj = banDoc.currentBalance("Gr=RF-CF", startDate, endDate);
-   current = obj.total;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "RF-CF").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-)", "", 5);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RF-CF"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF-CF"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF-CF"), "align-right", 1);
 
    /* Row 3 */
-   obj = banDoc.currentBalance("Gr=TADRC", startDate, endDate);
-   current = obj.total;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "TADRC").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Avanzo/disavanzo complessivo (+/-)", "", 5);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("TADRC"), "align-left", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADRC"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADRC"), "align-right", 1);
 
 
 
@@ -984,33 +916,23 @@ function printRendicontoModD(banDoc, userParam) {
    var column5 = table.addColumn("column5");
    var column6 = table.addColumn("column6");
    var column7 = table.addColumn("column7");
-   
-   var obj = "";
-   var current = "";
-   var previous = "";
 
    tableRow = table.addRow();
-   tableRow.addCell("Cassa e banca", "styleTableHeader", 5);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "styleTableHeader alignCenter", 1);
-   tableRow.addCell("31.12." + previousYear, "styleTableHeader alignCenter", 1);
+   tableRow.addCell("Cassa e banca", "table-header", 5);
+   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+   tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
    /* Row 1 */
-   obj = banDoc.currentBalance("Gr=ACIV3", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACIV3").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Cassa", "", 5);
-   tableRow.addCell(formatValue(current), "alignRight", 1);
-   tableRow.addCell(formatValue(previous), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("ACIV3"), "align-left", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("ACIV3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("ACIV3"), "align-right", 1);
 
    /* Row 2 */
-   obj = banDoc.currentBalance("Gr=ACIV1", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACIV1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Depositi bancari e postali", "", 5);
-   tableRow.addCell(formatValue(current), "alignRight", 1);
-   tableRow.addCell(formatValue(previous), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("ACIV1"), "align-left", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("ACIV1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("ACIV1"), "align-right", 1);
 
 
 
@@ -1028,77 +950,45 @@ function printRendicontoModD(banDoc, userParam) {
    var column5 = table.addColumn("column5");
    var column6 = table.addColumn("column6");
    var column7 = table.addColumn("column7");
-   
-   var obj = "";
-   var current = "";
-   var previous = "";   
-   var objC = "";
-   var currentC = "";
-   var previousC = "";
-   var objR = "";
-   var currentR = "";
-   var previousR = "";
-   var totCurrentC = "";
-   var totPreviousC = "";
-   var totCurrentR = "";
-   var totPreviousR = "";
 
    tableRow = table.addRow();
-   tableRow.addCell("Costi figurativi", "styleTableHeader", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "styleTableHeader alignCenter", 1);
-   tableRow.addCell("31.12." + previousYear, "styleTableHeader alignCenter", 1);
+   tableRow.addCell("Costi figurativi", "table-header", 1);
+   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+   tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("Proventi figurativi", "styleTableHeader", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "styleTableHeader alignCenter", 1);
-   tableRow.addCell("31.12." + previousYear, "styleTableHeader alignCenter", 1);
+   tableRow.addCell("Proventi figurativi", "table-header", 1);
+   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+   tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
    /* Row 1 */
-   objC = banDoc.currentBalance("Gr=CG1", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CG1").value("Prior");
-   objR = banDoc.currentBalance("Gr=RG1", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RG1").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("1) da attività di interesse generale", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CG1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG1"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("1) da attività di interesse generale", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RG1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG1"), "align-right", 1);
 
    /* Row 2 */
-   objC = banDoc.currentBalance("Gr=CG2", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CG2").value("Prior");
-   objR = banDoc.currentBalance("Gr=RG2", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RG2").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("2) da attività diverse", "alignLeft", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CG2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG2"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("2) da attività diverse", "alignLeft", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RG2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG2"), "align-right", 1);
 
    /* Row 3, tot */
-   objC = banDoc.currentBalance("Gr=CG", startDate, endDate);
-   currentC = objC.total;
-   previousC = banDoc.table("Accounts").findRowByValue("Group", "CG").value("Prior");
-   objR = banDoc.currentBalance("Gr=RG", startDate, endDate);
-   currentR = objR.total;
-   previousR = banDoc.table("Accounts").findRowByValue("Group", "RG").value("Prior");
    tableRow = table.addRow();
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(currentC), "alignRight", 1);
-   tableRow.addCell(formatValue(previousC), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("CG"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG"), "align-right", 1);
    tableRow.addCell("", "", 1);
-   tableRow.addCell("Totale", "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(currentR)), "alignRight", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previousR)), "alignRight", 1);
+   tableRow.addCell(bReport.getObjectDescription("RG"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG"), "align-right", 1);
 
 
 
@@ -1169,8 +1059,52 @@ function convertParam(userParam) {
    convertedParam.data = [];
 
    var currentParam = {};
+   currentParam.name = 'logo';
+   currentParam.title = 'Stampa logo intestazione pagina';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.logo ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+      userParam.logo = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
+   currentParam.name = 'logoname';
+   currentParam.title = 'Nome logo (Imposta Logo -> Personalizzazione)';
+   currentParam.type = 'string';
+   currentParam.value = userParam.logoname ? userParam.logoname : 'Logo';
+   currentParam.defaultvalue = 'Logo';
+   currentParam.readValue = function() {
+     userParam.logoname = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'printheader';
+   currentParam.title = 'Stampa testo intestazione pagina (Proprietà file -> Indirizzo)';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.printheader ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+    userParam.printheader = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'printtitle';
+   currentParam.title = 'Stampa titolo';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.printtitle ? true : false;
+   currentParam.defaultvalue = true;
+   currentParam.readValue = function() {
+    userParam.printtitle = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
    currentParam.name = 'title';
-   currentParam.title = 'Titolo';
+   currentParam.title = 'Testo titolo (vuoto = testo predefinito)';
    currentParam.type = 'string';
    currentParam.value = userParam.title ? userParam.title : '';
    currentParam.defaultvalue = '';
@@ -1179,12 +1113,28 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   var currentParam = {};
+   currentParam.name = 'column';
+   currentParam.title = "Colonna raggruppamento (nome XML colonna)";
+   currentParam.type = 'string';
+   currentParam.value = userParam.column ? userParam.column : '';
+   currentParam.defaultvalue = 'Gr';
+   currentParam.readValue = function() {
+      userParam.column = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
 function initUserParam() {
    var userParam = {};
-   userParam.title = "";
+   userParam.logo = false;
+   userParam.logoname = 'Logo';
+   userParam.printheader = false;
+   userParam.printtitle = true;
+   userParam.title = '';
+   userParam.column = 'Gr';
    return userParam;
 }
 
@@ -1208,10 +1158,10 @@ function parametersDialog(userParam) {
 }
 
 function settingsDialog() {
-   var scriptform = initUserParam();
+   var userParam = initUserParam();
    var savedParam = Banana.document.getScriptSettings();
    if (savedParam && savedParam.length > 0) {
-      scriptform = JSON.parse(savedParam);
+      userParam = JSON.parse(savedParam);
    }
 
    //We take the accounting "starting date" and "ending date" from the document. These will be used as default dates
@@ -1220,25 +1170,39 @@ function settingsDialog() {
 
    //A dialog window is opened asking the user to insert the desired period. By default is the accounting period
    var selectedDates = Banana.Ui.getPeriod('', docStartDate, docEndDate,
-      scriptform.selectionStartDate, scriptform.selectionEndDate, scriptform.selectionChecked);
+      userParam.selectionStartDate, userParam.selectionEndDate, userParam.selectionChecked);
 
    //We take the values entered by the user and save them as "new default" values.
    //This because the next time the script will be executed, the dialog window will contains the new values.
    if (selectedDates) {
-      scriptform["selectionStartDate"] = selectedDates.startDate;
-      scriptform["selectionEndDate"] = selectedDates.endDate;
-      scriptform["selectionChecked"] = selectedDates.hasSelection;
+      userParam["selectionStartDate"] = selectedDates.startDate;
+      userParam["selectionEndDate"] = selectedDates.endDate;
+      userParam["selectionChecked"] = selectedDates.hasSelection;
    } else {
       //User clicked cancel
       return null;
    }
 
-   scriptform = parametersDialog(scriptform); // From propertiess
-   if (scriptform) {
-      var paramToString = JSON.stringify(scriptform);
+   userParam = parametersDialog(userParam); // From propertiess
+   if (userParam) {
+      var paramToString = JSON.stringify(userParam);
       Banana.document.setScriptSettings(paramToString);
    }
 
-   return scriptform;
+   return userParam;
 }
 
+/**************************************************************************************
+ * Check the banana version
+ **************************************************************************************/
+function bananaRequiredVersion(requiredVersion, expmVersion) {
+   if (expmVersion) {
+      requiredVersion = requiredVersion + "." + expmVersion;
+   }
+   if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
+      Banana.application.showMessages();
+      Banana.document.addMessage(getErrorMessage(ID_ERR_VERSIONE));
+      return false;
+   }
+   return true;
+}
