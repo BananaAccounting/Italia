@@ -22,114 +22,197 @@
 %
 \begin{testcase}{ReportModATest}
 \begin{test}{testBananaExtension}
-\begin{reportvalue}{Test rendiconto 'Stato Patrimoniale (MOD. A)'}
+\begin{reportvalue}{Test 1: rendiconto 'Stato Patrimoniale (MOD. A)'}
+  \\
 STATO PATRIMONIALE (MOD. A) ANNO 2022 \\
+  \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{ATTIVO }\\
 A) Quote associative o apporti ancora dovuti  & 1.00  & 2.00 \\
-B) Immobilizzazioni  &  & \\
-    I - Immobilizzazioni immateriali  &  & \\
-        1) costi di impianto e di ampliamento  & 3.00  & 4.00 \\
-        2) costi di sviluppo  & 5.00  & 6.00 \\
-        3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno  & 16.00  & 18.00 \\
-        4) concessioni, licenze, marchi e diritti simili  & 11.00  & 12.00 \\
-        5) avviamento  & 13.00  & 14.00 \\
-        6) immobilizzazioni in corso e acconti  & 15.00  & 16.00 \\
-        7) altre Immobilizzazioni immateriali  & 17.00  & 18.00 \\
-    Totale immobilizzazioni immateriali  & 80.00  & 88.00 \\
-    II - Immobilizzazioni materiali  &  & \\
-        1) terreni e fabbricati  & 19.00  & 20.00 \\
-        2) impianti e macchinari  & 21.00  & 22.00 \\
-        3) attrezzature  & 48.00  & 50.00 \\
-        4) altri beni  & 27.00  & 28.00 \\
-        5) immobilizzazioni in corso e acconti  & 29.00  & 30.00 \\
-    Totale immobilizzazioni materiali  & 144.00  & 150.00 \\
-    III - Immobilizzazioni finanziarie  &  & \\
-        1) Partecipazioni  &  & \\
-            a) partecipazioni in imprese controllate  & 1.00  & 2.00 \\
-            b) partecipazioni in imprese collegate  & 3.00  & 4.00 \\
-            c) partecipazioni in altre imprese  & 5.00  & 6.00 \\
-        2) Crediti  &  & \\
-            a) crediti verso imprese controllate  & 3.00  & 15.00 \\
-            b) crediti verso imprese collegate  & 7.00  & 11.00 \\
-            c) crediti verso altri enti del Terzo settore  & 11.00  & 7.00 \\
-            d) crediti verso altri  & 15.00  & 3.00 \\
-        3) Altri titoli  & 1.00  & 2.00 \\
-    Totale immobilizzazioni finanziarie  & 46.00  & 50.00 \\
+B) Immobilizzazioni \\
+I - Immobilizzazioni immateriali \\
+1) costi di impianto e di ampliamento  & 3.00  & 4.00 \\
+2) costi di sviluppo  & 5.00  & 6.00 \\
+3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno  & 16.00  & 18.00 \\
+4) concessioni, licenze, marchi e diritti simili  & 11.00  & 12.00 \\
+5) avviamento  & 13.00  & 14.00 \\
+6) immobilizzazioni in corso e acconti  & 15.00  & 16.00 \\
+7) altre Immobilizzazioni immateriali  & 17.00  & 18.00 \\
+Totale immobilizzazioni immateriali  & 80.00  & 88.00 \\
+II - Immobilizzazioni materiali \\
+1) terreni e fabbricati  & 19.00  & 20.00 \\
+2) impianti e macchinari  & 21.00  & 22.00 \\
+3) attrezzature  & 48.00  & 50.00 \\
+4) altri beni  & 27.00  & 28.00 \\
+5) immobilizzazioni in corso e acconti  & 29.00  & 30.00 \\
+Totale immobilizzazioni materiali  & 144.00  & 150.00 \\
+III - Immobilizzazioni finanziarie \\
+1) Partecipazioni \\
+a) partecipazioni in imprese controllate  & 1.00  & 2.00 \\
+b) partecipazioni in imprese collegate  & 3.00  & 4.00 \\
+c) partecipazioni in altre imprese  & 5.00  & 6.00 \\
+2) Crediti \\
+a) crediti verso imprese controllate  & 3.00  & 15.00 \\
+(di cui esigibili oltre l'anno successivo: saldo anno corrente 1.00 ; saldo anno precedente 8.00) \\
+b) crediti verso imprese collegate  & 7.00  & 11.00 \\
+(di cui esigibili oltre l'anno successivo: saldo anno corrente 3.00 ; saldo anno precedente 6.00) \\
+c) crediti verso altri enti del Terzo settore  & 11.00  & 7.00 \\
+(di cui esigibili oltre l'anno successivo: saldo anno corrente 5.00 ; saldo anno precedente 4.00) \\
+d) crediti verso altri  & 15.00  & 3.00 \\
+(di cui esigibili oltre l'anno successivo: saldo anno corrente 7.00 ; saldo anno precedente 2.00) \\
+3) Altri titoli  & 1.00  & 2.00 \\
+Totale immobilizzazioni finanziarie  & 46.00  & 50.00 \\
 Totale immobilizzazioni B)  & 270.00  & 288.00 \\
-C) Attivo circolante  &  & \\
-    I - Rimanenze  &  & \\
-        1) Rimanenze materie prime, sussidiarie e di consumo  & 1.00  & 2.00 \\
-        2) Rimanenze prodotti in corso di lavorazione e semilavorati  & 2.00  & 4.00 \\
-        3) Rimanenze lavori in corso su ordinazione  & 3.00  & 6.00 \\
-        4) Rimanenze prodotti finiti e merci  & 4.00  & 8.00 \\
-        5) Rimanenze acconti  & 5.00  & 10.00 \\
-    Totale rimanenze  & 15.00  & 30.00 \\
-    II - Crediti  &  & \\
-        1) Crediti verso utenti e clienti  & 2.00  & 10.00 \\
-        2) Crediti verso associati e fondatori  & 4.00  & 8.00 \\
-        3) Crediti verso enti pubblici  & 6.00  & 6.00 \\
-        4) Crediti verso soggetti privati per contributi  & 8.00  & 4.00 \\
-        5) Crediti verso enti della stessa rete associativa  & 10.00  & 2.00 \\
-        6) Crediti verso altri enti del Terzo settore  & 2.00  & 10.00 \\
-        7) Crediti verso imprese controllate  & 4.00  & 8.00 \\
-        8) Crediti verso imprese collegate  & 6.00  & 6.00 \\
-        9) Crediti tributari  & 8.00  & 4.00 \\
-        10) Crediti da 5 per mille  & 10.00  & 2.00 \\
-        11) Crediti per imposte anticipate  & 2.00  & 10.00 \\
-        12) Crediti verso altri  & 4.00  & 8.00 \\
-    Totale crediti  & 66.00  & 78.00 \\
-    III - Attività finanziarie che non costituiscono immobilizzazioni  &  & \\
-        1) Partecipazioni in imprese controllate  & 1.00  & 4.00 \\
-        2) Partecipazioni in imprese collegate  & 2.00  & 5.00 \\
-        3) Altri titoli  & 3.00  & 6.00 \\
-    Totale attività finanziarie che non costituiscono immobilizzazioni  & 6.00  & 15.00 \\
-    IV - Disponibilità liquide  &  & \\
-        1) Depositi bancari e postali  & 4.00  & 7.00 \\
-        2) Assegni  & 5.00  & 8.00 \\
-        3) Danaro e valori in cassa  & 6.00  & 9.00 \\
-    Totale disponibilità liquide  & 15.00  & 24.00 \\
+C) Attivo circolante \\
+I - Rimanenze \\
+1) Rimanenze materie prime, sussidiarie e di consumo  & 1.00  & 2.00 \\
+2) Rimanenze prodotti in corso di lavorazione e semilavorati  & 2.00  & 4.00 \\
+3) Rimanenze lavori in corso su ordinazione  & 3.00  & 6.00 \\
+4) Rimanenze prodotti finiti e merci  & 4.00  & 8.00 \\
+5) Rimanenze acconti  & 5.00  & 10.00 \\
+Totale rimanenze  & 15.00  & 30.00 \\
+II - Crediti \\
+1) Crediti verso utenti e clienti  & 2.00  & 10.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 1.00 ; saldo anno precedente 5.00) \\
+2) Crediti verso associati e fondatori  & 4.00  & 8.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 2.00 ; saldo anno precedente 4.00) \\
+3) Crediti verso enti pubblici  & 6.00  & 6.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 3.00 ; saldo anno precedente 3.00) \\
+4) Crediti verso soggetti privati per contributi  & 8.00  & 4.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 4.00 ; saldo anno precedente 2.00) \\
+5) Crediti verso enti della stessa rete associativa  & 10.00  & 2.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 5.00 ; saldo anno precedente 1.00) \\
+6) Crediti verso altri enti del Terzo settore  & 2.00  & 10.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 1.00 ; saldo anno precedente 5.00) \\
+7) Crediti verso imprese controllate  & 4.00  & 8.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 2.00 ; saldo anno precedente 4.00) \\
+8) Crediti verso imprese collegate  & 6.00  & 6.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 3.00 ; saldo anno precedente 3.00) \\
+9) Crediti tributari  & 8.00  & 4.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 4.00 ; saldo anno precedente 2.00) \\
+10) Crediti da 5 per mille  & 10.00  & 2.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 5.00 ; saldo anno precedente 1.00) \\
+11) Crediti per imposte anticipate  & 2.00  & 10.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 1.00 ; saldo anno precedente 5.00) \\
+12) Crediti verso altri  & 4.00  & 8.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 2.00 ; saldo anno precedente 4.00) \\
+Totale crediti  & 66.00  & 78.00 \\
+III - Attività finanziarie che non costituiscono immobilizzazioni \\
+1) Partecipazioni in imprese controllate  & 1.00  & 4.00 \\
+2) Partecipazioni in imprese collegate  & 2.00  & 5.00 \\
+3) Altri titoli  & 3.00  & 6.00 \\
+Totale attività finanziarie che non costituiscono immobilizzazioni  & 6.00  & 15.00 \\
+IV - Disponibilità liquide \\
+1) Depositi bancari e postali  & 4.00  & 7.00 \\
+2) Assegni  & 5.00  & 8.00 \\
+3) Danaro e valori in cassa  & 6.00  & 9.00 \\
+Totale disponibilità liquide  & 15.00  & 24.00 \\
 Totale attivo circolante C)  & 102.00  & 147.00 \\
 D) Ratei e risconti attivi  & 1.00  & 2.00 \\
 \end{longtable}
+  \\
 STATO PATRIMONIALE (MOD. A) ANNO 2022 \\
-\begin{longtable}[l]{ l  l  l  l }
+  \\
+\begin{longtable}[l]{ l  l  l }
  & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{PASSIVO }\\
-A) Patrimonio netto  &  & \\
-    I - Fondo di dotazione dell'ente  & 1.00  & 2.00 \\
-    II - Patrimonio vincolato  &  & \\
-        1) Riserve statutarie  & 2.00  & 1.00 \\
-        2) Riserve vincolate per decisione degli organi istituzionali  & 3.00  & 2.00 \\
-        3) Riserve vincolate destinate da terzi  & 4.00  & 3.00 \\
-    Totale patrimonio vincolato  & 9.00  & 6.00 \\
-    III - Patrimonio libero  &  & \\
-        1) Riserve di utili o avanzi di gestione  & 5.00  & 1.00 \\
-        2) Altre riserve  & 6.00  & 2.00 \\
-    Totale patrimonio libero  & 11.00  & 3.00 \\
-    IV - Avanzo/disavanzo d'esercizio  & 183.00  & -97.00 \\
-Totale patrimonio netto A)  & 204.00  & -86.00 \\
-B) Fondi per rischi e oneri  &  & \\
-    1) Fondi per trattamento di quiescenza e obblighi simili  & 1.00  & 4.00 \\
-    2) Fondi per imposte, anche differite  & 2.00  & 5.00 \\
-    3) Fondi altri  & 3.00  & 6.00 \\
+A) Patrimonio netto \\
+I - Fondo di dotazione dell'ente  & 1.00  & 2.00 \\
+II - Patrimonio vincolato \\
+1) Riserve statutarie  & 2.00  & 1.00 \\
+2) Riserve vincolate per decisione degli organi istituzionali  & 3.00  & 2.00 \\
+3) Riserve vincolate destinate da terzi  & 4.00  & 3.00 \\
+Totale patrimonio vincolato  & 9.00  & 6.00 \\
+III - Patrimonio libero \\
+1) Riserve di utili o avanzi di gestione  & 5.00  & 1.00 \\
+2) Altre riserve  & 6.00  & 2.00 \\
+Totale patrimonio libero  & 11.00  & 3.00 \\
+IV - Avanzo/disavanzo d'esercizio  & 199.00  & -93.00 \\
+Totale patrimonio netto A)  & 220.00  & -82.00 \\
+B) Fondi per rischi e oneri \\
+1) Fondi per trattamento di quiescenza e obblighi simili  & 1.00  & 4.00 \\
+2) Fondi per imposte, anche differite  & 2.00  & 5.00 \\
+3) Fondi altri  & 3.00  & 6.00 \\
 Totale fondi per rischi e oneri B)  & 6.00  & 15.00 \\
 C) Fondi trattamento di fine rapporto di lavoro subordinato  & 0.00  & 0.00 \\
-D) Debiti  &  & \\
-    1) Debiti verso banche  & 3.00  & 19.00 \\
-    2) Debiti verso altri finanziatori  & 7.00  & 15.00 \\
-    3) Debiti verso associati e fondatori per finanziamenti  & 11.00  & 11.00 \\
-    4) Debiti verso enti della stessa rete associativa  & 15.00  & 7.00 \\
-    5) Debiti per erogazioni liberali condizionate  & 3.00  & 3.00 \\
-    6) Acconti (Debiti)  & 4.00  & 19.00 \\
-    7) Debiti verso fornitori  & 5.00  & 15.00 \\
-    8) Debiti verso imprese controllate e collegate  & 9.00  & 11.00 \\
-    9) Debiti tributari  & 13.00  & 7.00 \\
-    10) Debiti verso istituti di previdenza e di sicurezza sociale  & 9.00  & 3.00 \\
-    11) Debiti verso dipendenti e collaboratori  & 5.00  & 19.00 \\
-    12) Altri debiti  & 3.00  & 15.00 \\
+D) Debiti \\
+1) Debiti verso banche  & 3.00  & 19.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 1.00 ; saldo anno precedente 10.00) \\
+2) Debiti verso altri finanziatori  & 7.00  & 15.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 3.00 ; saldo anno precedente 8.00) \\
+3) Debiti verso associati e fondatori per finanziamenti  & 11.00  & 11.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 5.00 ; saldo anno precedente 6.00) \\
+4) Debiti verso enti della stessa rete associativa  & 15.00  & 7.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 7.00 ; saldo anno precedente 4.00) \\
+5) Debiti per erogazioni liberali condizionate  & 3.00  & 3.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 1.00 ; saldo anno precedente 2.00) \\
+6) Acconti (Debiti)  & 4.00  & 19.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 3.00 ; saldo anno precedente 10.00) \\
+7) Debiti verso fornitori  & 5.00  & 15.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 2.00 ; saldo anno precedente 8.00) \\
+8) Debiti verso imprese controllate e collegate  & 9.00  & 11.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 4.00 ; saldo anno precedente 6.00) \\
+9) Debiti tributari  & 13.00  & 7.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 6.00 ; saldo anno precedente 4.00) \\
+10) Debiti verso istituti di previdenza e di sicurezza sociale  & 9.00  & 3.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 8.00 ; saldo anno precedente 2.00) \\
+11) Debiti verso dipendenti e collaboratori  & 5.00  & 19.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 2.00 ; saldo anno precedente 10.00) \\
+12) Altri debiti  & 3.00  & 15.00 \\
+(di cui esigibili entro l'anno successivo: saldo anno corrente 1.00 ; saldo anno precedente 8.00) \\
 Totale debiti C)  & 87.00  & 144.00 \\
+E) Ratei e risconti passivi  & 1.00  & 2.00 \\
+\end{longtable}
+-  \#page-nr  - \\
+\end{reportvalue}
+\begin{reportvalue}{Test 2: rendiconto 'Stato Patrimoniale (MOD. A)'}
+  \\
+STATO PATRIMONIALE (MOD. A) ANNO 2022 \\
+  \\
+\begin{longtable}[l]{ l  l  l }
+ & 31.12.2022  & 31.12.2021 \\
+\multicolumn{3}{l}{ATTIVO }\\
+A) Quote associative o apporti ancora dovuti  & 1.00  & 2.00 \\
+B) Immobilizzazioni \\
+I - Immobilizzazioni immateriali \\
+Totale immobilizzazioni immateriali  & 0.00  & 0.00 \\
+II - Immobilizzazioni materiali \\
+Totale immobilizzazioni materiali  & 0.00  & 0.00 \\
+III - Immobilizzazioni finanziarie \\
+Totale immobilizzazioni finanziarie  & 0.00  & 0.00 \\
+Totale immobilizzazioni B)  & 0.00  & 0.00 \\
+C) Attivo circolante \\
+I - Rimanenze \\
+Totale rimanenze  & 0.00  & 0.00 \\
+II - Crediti \\
+Totale crediti  & 0.00  & 0.00 \\
+III - Attività finanziarie che non costituiscono immobilizzazioni \\
+Totale attività finanziarie che non costituiscono immobilizzazioni  & 0.00  & 0.00 \\
+IV - Disponibilità liquide \\
+Totale disponibilità liquide  & 0.00  & 0.00 \\
+Totale attivo circolante C)  & 0.00  & 0.00 \\
+D) Ratei e risconti attivi  & 1.00  & 2.00 \\
+\end{longtable}
+  \\
+STATO PATRIMONIALE (MOD. A) ANNO 2022 \\
+  \\
+\begin{longtable}[l]{ l  l  l }
+ & 31.12.2022  & 31.12.2021 \\
+\multicolumn{3}{l}{PASSIVO }\\
+A) Patrimonio netto \\
+I - Fondo di dotazione dell'ente  & 1.00  & 2.00 \\
+II - Patrimonio vincolato \\
+Totale patrimonio vincolato  & 0.00  & 0.00 \\
+III - Patrimonio libero \\
+Totale patrimonio libero  & 0.00  & 0.00 \\
+IV - Avanzo/disavanzo d'esercizio  & -173.00  & -93.00 \\
+Totale patrimonio netto A)  & -172.00  & -91.00 \\
+B) Fondi per rischi e oneri \\
+Totale fondi per rischi e oneri B)  & 0.00  & 0.00 \\
+C) Fondi trattamento di fine rapporto di lavoro subordinato  & 0.00  & 0.00 \\
+D) Debiti \\
+Totale debiti C)  & 0.00  & 0.00 \\
 E) Ratei e risconti passivi  & 1.00  & 2.00 \\
 \end{longtable}
 -  \#page-nr  - \\

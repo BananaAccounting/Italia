@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.rendicontocassa.mod.d.test
 // @api = 1.0
-// @pubdate = 2020-07-08
+// @pubdate = 2020-07-27
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.rendicontocassa.mod.d.js>
 // @task = app.command
@@ -59,21 +59,28 @@ ReportModDTest.prototype.cleanup = function() {
 
 ReportModDTest.prototype.testBananaExtension = function() {
 
-	var banDoc = Banana.application.openDocument("file:script/../test/testcases/11065-doppia-ets-rendiconto-cassa.ac2");
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_cassa.ac2");
 	Test.assert(banDoc);
 
 	var userParam = {};
   	userParam.selectionStartDate = "2022-01-01";
   	userParam.selectionEndDate = "2022-12-31";
   	userParam.title = "RENDICONTO CASSA (MOD. D) ANNO 2022";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr';
 
-	// loadParam(banDoc);
-	// loadForm(banDoc);
-	// loadBalances(banDoc);
-	// preProcess(banDoc);
-	// calcTotals(["amount"]);
-	// formatValues(["amount"]);
+	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_D");
 
-	var report = printRendicontoModD(banDoc, userParam);
+	const bReport = new BReport(banDoc, userParam, dataStructure);
+	bReport.loadBalances();
+	bReport.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport.formatValues(["currentAmount", "previousAmount"]);
+	bReport.excludeEntries();
+
+	var report = printRendicontoModD(banDoc, userParam, bReport, "");
 	Test.logger.addReport("Test 'rendiconto cassa (MOD. D)'", report);
 }

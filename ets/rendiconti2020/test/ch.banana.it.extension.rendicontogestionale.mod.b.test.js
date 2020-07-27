@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.rendicontogestionale.mod.b.test
 // @api = 1.0
-// @pubdate = 2020-07-06
+// @pubdate = 2020-07-27
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.rendicontogestionale.mod.b.js>
 // @task = app.command
@@ -59,22 +59,28 @@ ReportModBTest.prototype.cleanup = function() {
 
 ReportModBTest.prototype.testBananaExtension = function() {
 
-	var banDoc = Banana.application.openDocument("file:script/../test/testcases/11064-doppia-ets-rendiconto-gestionale.ac2");
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_gestionale_pieno.ac2");
 	Test.assert(banDoc);
 
 	var userParam = {};
   	userParam.selectionStartDate = "2022-01-01";
   	userParam.selectionEndDate = "2022-12-31";
   	userParam.title = "RENDICONTO GESTIONALE (MOD. B) ANNO 2022";
-  	userParam.costi_proventi_figurativi = true;
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr';
 
-	// loadParam(banDoc);
-	// loadForm(banDoc);
-	// loadBalances(banDoc);
-	// preProcess(banDoc);
-	// calcTotals(["amount"]);
-	// formatValues(["amount"]);
+	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_B");
 
-	var report = printRendicontoModB(banDoc, userParam);
+	const bReport = new BReport(banDoc, userParam, dataStructure);
+	bReport.loadBalances();
+	bReport.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport.formatValues(["currentAmount", "previousAmount"]);
+	bReport.excludeEntries();
+
+	var report = printRendicontoModB(banDoc, userParam, bReport, "");
 	Test.logger.addReport("Test 'rendiconto gestionale (MOD. B)'", report);
 }

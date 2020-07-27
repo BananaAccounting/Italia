@@ -14,7 +14,6 @@
 
 var ID_ERR_VERSIONE = "ID_ERR_VERSIONE";
 var ID_ERR_GRUPPO_MANCANTE = "ID_ERR_GRUPPO_MANCANTE";
-var ID_ERR_GRUPPO_ERRATO = "ID_ERR_GRUPPO_ERRATO";
 
 /**
  * return the text error message according to error id
@@ -25,8 +24,6 @@ function getErrorMessage(errorId) {
             return "L'estensione non funziona con questa versione di Banana Contabilità. Aggiornare alla versione Experimental più recente.";
         case ID_ERR_GRUPPO_MANCANTE:
             return "Colonna gruppo non definita. Impostare la colonna del gruppo da utilizzare nelle impostazioni dell'estensione.";
-        case ID_ERR_GRUPPO_ERRATO:
-            return "Codice gruppo inserito errato. Modificare il codice gruppo nella tabella Conti.";
     }
     return "";
 }

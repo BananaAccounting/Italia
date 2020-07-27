@@ -1,6 +1,9 @@
 <!DOCTYPE RCC><RCC version="1.0">
  <qresource>
  	<file>ch.banana.it.extension.ets.manifest.json</file>
+ 	<file>datastructure.js</file>
+ 	<file>breport.js</file>
+ 	<file>errors.js</file>
     <file>ch.banana.it.extension.statopatrimoniale.mod.a.js</file>
     <file>rendicontoModA.css</file>
     <file>ch.banana.it.extension.rendicontogestionale.mod.b.js</file>
