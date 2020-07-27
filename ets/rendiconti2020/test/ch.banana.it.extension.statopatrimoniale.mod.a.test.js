@@ -119,5 +119,35 @@ ReportModATest.prototype.testBananaExtension = function() {
 	var report = printRendicontoModA(banDoc, userParam, bReport1, "");
 	Test.logger.addReport("Test 2: rendiconto 'Stato Patrimoniale (MOD. A)'", report);
 
+
+	/**
+	 * Test 3 with all groups balances using the Gr1 column
+	*/
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_gestionale_pieno_gr1.ac2");
+	Test.assert(banDoc);
+
+	var userParam = {};
+  	userParam.selectionStartDate = "2022-01-01";
+  	userParam.selectionEndDate = "2022-12-31";
+  	userParam.title = "STATO PATRIMONIALE (MOD. A) ANNO 2022";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr1';
+	userParam.compattastampa = true;
+
+	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_A");
+
+	const bReport2 = new BReport(banDoc, userParam, dataStructure);
+	bReport2.loadBalances();
+	bReport2.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport2.formatValues(["currentAmount", "previousAmount"]);
+	bReport2.excludeEntries();
+
+	var report = printRendicontoModA(banDoc, userParam, bReport2, "");
+	Test.logger.addReport("Test 3: rendiconto 'Stato Patrimoniale (MOD. A)', colonna Gr1", report);
+
 }
 

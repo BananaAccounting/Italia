@@ -90,6 +90,7 @@ function exec(string) {
     * and check entries that can be excluded
     */
    const bReport = new BReport(Banana.document, userParam, dataStructure);
+   bReport.validateGroups(userParam.column);
    bReport.loadBalances();
    bReport.calculateTotals(["currentAmount", "previousAmount"]);
    bReport.formatValues(["currentAmount", "previousAmount"]);

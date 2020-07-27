@@ -59,6 +59,9 @@ ReportModBTest.prototype.cleanup = function() {
 
 ReportModBTest.prototype.testBananaExtension = function() {
 
+	/**
+	 * Test 1: column Gr
+	 */
 	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_gestionale_pieno.ac2");
 	Test.assert(banDoc);
 
@@ -83,4 +86,33 @@ ReportModBTest.prototype.testBananaExtension = function() {
 
 	var report = printRendicontoModB(banDoc, userParam, bReport, "");
 	Test.logger.addReport("Test 'rendiconto gestionale (MOD. B)'", report);
+
+
+	/**
+	 * Test 2: column Gr1
+	 */
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_gestionale_pieno_gr1.ac2");
+	Test.assert(banDoc);
+
+	var userParam = {};
+  	userParam.selectionStartDate = "2022-01-01";
+  	userParam.selectionEndDate = "2022-12-31";
+  	userParam.title = "RENDICONTO GESTIONALE (MOD. B) ANNO 2022";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr1';
+
+	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_B");
+
+	const bReport1 = new BReport(banDoc, userParam, dataStructure);
+	bReport1.loadBalances();
+	bReport1.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport1.formatValues(["currentAmount", "previousAmount"]);
+	bReport1.excludeEntries();
+
+	var report = printRendicontoModB(banDoc, userParam, bReport1, "");
+	Test.logger.addReport("Test 2: 'rendiconto gestionale (MOD. B)', column Gr1", report);
 }

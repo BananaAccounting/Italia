@@ -136,6 +136,8 @@ function loadDataStructure(reportType) {
 	dataStructure.push({"id":"ACIV", "type":"total", "indent":"lvl1", "description":"Totale disponibilità liquide", "sum":"ACIV1;ACIV2;ACIV3"});
 	dataStructure.push({"id":"AC", "type":"total", "indent":"lvl0", "description":"Totale attivo circolante C)", "sum":"ACI;ACII;ACIII;ACIV"});
 	dataStructure.push({"id":"AD", "type":"group", "indent":"lvl0", "bclass":"1", "description":"D) Ratei e risconti attivi"});
+	dataStructure.push({"id":"A", "type":"total", "indent":"lvl0", "description":"Totale Attivo", "sum":"AA;AB;AC;AD"}); //not used
+
 
 	/* PASSIVO */
 	dataStructure.push({"id":"dPA", "type":"title", "indent":"lvl0", "description":"A) Patrimonio netto"});
@@ -195,6 +197,7 @@ function loadDataStructure(reportType) {
 	dataStructure.push({"id":"PD12", "type":"total", "indent":"lvl1", "description":"12) Altri debiti", "sum":"PD12o;PD12e"});
 	dataStructure.push({"id":"PD", "type":"total", "indent":"lvl0", "description":"Totale debiti C)", "sum":"PD1;PD2;PD3;PD4;PD5;PD6;PD7;PD8;PD9;PD10;PD11;PD12"});
 	dataStructure.push({"id":"PE", "type":"group", "indent":"lvl0", "bclass":"2", "description":"E) Ratei e risconti passivi"});
+	dataStructure.push({"id":"P", "type":"total", "indent":"lvl0", "description":"Totale Passivo", "sum":"PA;PB;PC;PD;PE"}); //not used
 
 	if (reportType === "REPORT_TYPE_MOD_A" || reportType === "REPORT_TYPE_MOD_B") { // costi/ricavi per bilancio e rendiconto gestionale
 
@@ -296,15 +299,14 @@ function loadDataStructure(reportType) {
 		dataStructure.push({"id":"TADES", "type":"total", "indent":"", "description":"Avanzo/disavanzo d’esercizio (+/-)", "sum":"TADPI;IM"});
 		dataStructure.push({"id":"PAIV", "type":"total", "indent":"", "description":"IV - Avanzo/disavanzo d'esercizio", "sum":"TADES"});
 
-		/* COSTI FIGURATIVI */
+		/* COSTI / PROVENTI FIGURATIVI */
 		dataStructure.push({"id":"CG1", "type":"group", "indent":"", "bclass":"3", "description":"1) da attività di interesse generale"});
 		dataStructure.push({"id":"CG2", "type":"group", "indent":"", "bclass":"3", "description":"2) da attività diverse"});
 		dataStructure.push({"id":"CG", "type":"total", "indent":"", "description":"Totale", "sum":"CG1;CG2"});
-
-		/* PROVENTI FIGURATIVI */
 		dataStructure.push({"id":"RG1", "type":"group", "indent":"", "bclass":"4", "description":"1) da attività di interesse generale"});
 		dataStructure.push({"id":"RG2", "type":"group", "indent":"", "bclass":"4", "description":"2) da attività diverse"});
 		dataStructure.push({"id":"RG", "type":"total", "indent":"", "description":"Totale", "sum":"RG1;RG2"});
+		dataStructure.push({"id":"RG-CG", "type":"total", "indent":"", "description":"Totale", "sum":"RG;-CG"}); //not used
 	}
 	else if (reportType === "REPORT_TYPE_MOD_D") { // uscite/entrate per rendiconto cassa
 
@@ -421,15 +423,14 @@ function loadDataStructure(reportType) {
 		dataStructure.push({"id":"TADRC", "type":"total", "indent":"", "description":"Avanzo/disavanzo complessivo (+/-)", "sum":"IMRC"});
 		dataStructure.push({"id":"PAIV", "type":"total", "indent":"", "description":"Avanzo/disavanzo d'esercizio", "sum":"TADES"}); //not used
 
-		/* COSTI FIGURATIVI */
+		/* COSTI / PROVENTI FIGURATIVI */
 		dataStructure.push({"id":"CG1", "type":"group", "indent":"", "bclass":"3", "description":"1) da attività di interesse generale"});
 		dataStructure.push({"id":"CG2", "type":"group", "indent":"", "bclass":"3", "description":"2) da attività diverse"});
 		dataStructure.push({"id":"CG", "type":"total", "indent":"", "description":"Totale", "sum":"CG1;CG2"});
-
-		/* PROVENTI FIGURATIVI */
 		dataStructure.push({"id":"RG1", "type":"group", "indent":"", "bclass":"4", "description":"1) da attività di interesse generale"});
 		dataStructure.push({"id":"RG2", "type":"group", "indent":"", "bclass":"4", "description":"2) da attività diverse"});
 		dataStructure.push({"id":"RG", "type":"total", "indent":"", "description":"Totale", "sum":"RG1;RG2"});
+		dataStructure.push({"id":"RG-CG", "type":"total", "indent":"", "description":"Totale", "sum":"RG;-CG"}); //not used
 	}
 
 	return dataStructure;

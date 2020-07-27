@@ -127,43 +127,63 @@ var BReport = class JsClass {
    }
 
    /**
-    * Creates an array with all the id values of the datastructure
+    * Checks that user defined groups in the given grColumn are valid
     */
-    getGrColumnList() {
-       var columnList = new Set();
-       for (var i in this.dataStructure) {
-          if (this.dataStructure[i]["id"]) {
+   validateGroups(grColumn) {
+      //Get valid groups from the data structure
+      var dataGroups = [];
+      var columnList = new Set();
+      for (var i in this.dataStructure) {
+         if (this.dataStructure[i]["id"] && !this.dataStructure[i]["id"].startsWith('d')) {
             columnList.add(this.dataStructure[i]["id"]);
-          }
-       }
-       //Convert Set object to array
-       var str = [];
-       for (var i of columnList) {
-          str.push(i);
-       }
-       return str;
-    }
+         }
+      }
+      for (var i of columnList) { //Convert Set object to array
+         dataGroups.push(i);
+      }
+
+      //Check if groups in Accounts table are valid
+      for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
+         var tRow = this.banDoc.table('Accounts').row(i);
+         var account = tRow.value('Account');
+         var group = tRow.value(grColumn);
+
+         if (grColumn === "Gr") {
+            if (group && group !== "ACII1P" && group !== "PD7P" && group !== "00" && group !== "TPC" && group !== "TPF" && account.indexOf(":") < 0 && account.indexOf(".") < 0 && account.indexOf(";") < 0) {
+               if (!dataGroups.includes(group)) {
+                  Banana.document.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, group));
+               }
+            }
+         } else {
+            if (group) {
+               if (!dataGroups.includes(group)) {
+                  Banana.document.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, group));
+               }
+            }
+         }
+      }
+   }   
 
    /**
     * Entries preceded by Arabic numbers or lower case letters
     * with zero amounts for two consecutive exercises, can be excluded from the print
     */
-    excludeEntries() {
-       for (var i in this.dataStructure) {
+   excludeEntries() {
+      for (var i in this.dataStructure) {
           
-          // Set all elements to false
-          this.dataStructure[i]["exclude"] = false;
+         // Set all elements to false
+         this.dataStructure[i]["exclude"] = false;
           
-          // Check elements than can be excluded
-          if (this.dataStructure[i]["description"].match(/^[a-z0-9]/)) { // a,b,c,... or 1,2,3...
-             if ((!this.dataStructure[i]["currentAmount"] || this.dataStructure[i]["currentAmount"] == 0 || this.dataStructure[i]["currentAmount"] === "undefined") &&
-                (!this.dataStructure[i]["previousAmount"] || this.dataStructure[i]["previousAmount"] == 0 || this.dataStructure[i]["previousAmount"] === "undefined")) {
+         // Check elements than can be excluded
+         if (this.dataStructure[i]["description"].match(/^[a-z0-9]/)) { // a,b,c,... or 1,2,3...
+            if ((!this.dataStructure[i]["currentAmount"] || this.dataStructure[i]["currentAmount"] == 0 || this.dataStructure[i]["currentAmount"] === "undefined") &&
+               (!this.dataStructure[i]["previousAmount"] || this.dataStructure[i]["previousAmount"] == 0 || this.dataStructure[i]["previousAmount"] === "undefined")) {
 
-                this.dataStructure[i]["exclude"] = true;
-             }
-          }
-       }
-    }
+               this.dataStructure[i]["exclude"] = true;
+            }
+         }
+      }
+   }
 
    /**
     * Returns a specific whole object for the given id value
