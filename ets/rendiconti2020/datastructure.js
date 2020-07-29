@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2020-07-27 */
+/* Update: 2020-07-29 */
 
 
 function loadDataStructure(reportType) {
@@ -136,7 +136,7 @@ function loadDataStructure(reportType) {
 	dataStructure.push({"id":"ACIV", "type":"total", "indent":"lvl1", "description":"Totale disponibilità liquide", "sum":"ACIV1;ACIV2;ACIV3"});
 	dataStructure.push({"id":"AC", "type":"total", "indent":"lvl0", "description":"Totale attivo circolante C)", "sum":"ACI;ACII;ACIII;ACIV"});
 	dataStructure.push({"id":"AD", "type":"group", "indent":"lvl0", "bclass":"1", "description":"D) Ratei e risconti attivi"});
-	dataStructure.push({"id":"A", "type":"total", "indent":"lvl0", "description":"Totale Attivo", "sum":"AA;AB;AC;AD"}); //not used
+	dataStructure.push({"id":"A", "type":"total", "indent":"lvl0", "description":"TOTALE ATTIVO", "sum":"AA;AB;AC;AD"});
 
 
 	/* PASSIVO */
@@ -195,9 +195,9 @@ function loadDataStructure(reportType) {
 	dataStructure.push({"id":"PD12o", "type":"group", "indent":"lvl2", "bclass":"2", "description":"di cui esigibili oltre l'anno successivo"});
 	dataStructure.push({"id":"PD12e", "type":"group", "indent":"lvl2", "bclass":"2", "description":"di cui esigibili entro l'anno successivo"});
 	dataStructure.push({"id":"PD12", "type":"total", "indent":"lvl1", "description":"12) Altri debiti", "sum":"PD12o;PD12e"});
-	dataStructure.push({"id":"PD", "type":"total", "indent":"lvl0", "description":"Totale debiti C)", "sum":"PD1;PD2;PD3;PD4;PD5;PD6;PD7;PD8;PD9;PD10;PD11;PD12"});
+	dataStructure.push({"id":"PD", "type":"total", "indent":"lvl0", "description":"Totale debiti D)", "sum":"PD1;PD2;PD3;PD4;PD5;PD6;PD7;PD8;PD9;PD10;PD11;PD12"});
 	dataStructure.push({"id":"PE", "type":"group", "indent":"lvl0", "bclass":"2", "description":"E) Ratei e risconti passivi"});
-	dataStructure.push({"id":"P", "type":"total", "indent":"lvl0", "description":"Totale Passivo", "sum":"PA;PB;PC;PD;PE"}); //not used
+	dataStructure.push({"id":"P", "type":"total", "indent":"lvl0", "description":"TOTALE PASSIVO", "sum":"PA;PB;PC;PD;PE"});
 
 	if (reportType === "REPORT_TYPE_MOD_A" || reportType === "REPORT_TYPE_MOD_B") { // costi/ricavi per bilancio e rendiconto gestionale
 
@@ -245,7 +245,6 @@ function loadDataStructure(reportType) {
 		dataStructure.push({"id":"CE7", "type":"group", "indent":"", "bclass":"3", "description":"7) Altri oneri"});
 		dataStructure.push({"id":"CE", "type":"total", "indent":"", "description":"Totale", "sum":"CE1;CE2;CE3;CE4;CE5;CE6;CE7"});
 		dataStructure.push({"id":"C", "type":"total", "indent":"", "description":"TOTALE ONERI E COSTI", "sum":"CA;CB;CC;CD;CE"});
-		dataStructure.push({"id":"IM", "type":"group", "indent":"", "bclass":"3", "description":"Imposte"});
 
 		/* PROVENTI */
 		dataStructure.push({"id":"dRA", "type":"title", "indent":"", "description":"A) Ricavi, rendite e proventi da attività di interesse generale"});
@@ -287,6 +286,7 @@ function loadDataStructure(reportType) {
 		dataStructure.push({"id":"RE2", "type":"group", "indent":"", "bclass":"4", "description":"2) Altri proventi di supporto generale"});
 		dataStructure.push({"id":"RE", "type":"total", "indent":"", "description":"Totale", "sum":"RE1;RE2"});
 		dataStructure.push({"id":"R", "type":"total", "indent":"", "description":"TOTALE PROVENTI E RICAVI", "sum":"RA;RB;RC;RD;RE"});
+		dataStructure.push({"id":"IM", "type":"group", "indent":"", "bclass":"4", "description":"Imposte"});
 
 		/* AVANZO / DISAVANZO */
 		  // => ricavi-costi (es RA;-CA)
@@ -354,7 +354,6 @@ function loadDataStructure(reportType) {
 		dataStructure.push({"id":"CE6", "type":"group", "indent":"", "bclass":"3", "description":"E) Accantonamenti per rischi ed oneri"});
 		dataStructure.push({"id":"CE", "type":"total", "indent":"", "description":"Totale", "sum":"CE1;CE2;CE3;CE4;CE7"});
 		dataStructure.push({"id":"C", "type":"total", "indent":"", "description":"TOTALE ONERI E COSTI", "sum":"CA;CB;CC;CD;CE"});
-		dataStructure.push({"id":"IM", "type":"group", "indent":"", "bclass":"3", "description":"Imposte"});
 
 		/* ENTRATE */
 		dataStructure.push({"id":"dRA", "type":"title", "indent":"", "description":"A) Entrate da attività di interesse generale"});
@@ -394,6 +393,7 @@ function loadDataStructure(reportType) {
 		dataStructure.push({"id":"RE2", "type":"group", "indent":"", "bclass":"4", "description":"2) Altre entrate di supporto generale"});
 		dataStructure.push({"id":"RE", "type":"total", "indent":"", "description":"Totale", "sum":"RE1;RE2"});
 		dataStructure.push({"id":"R", "type":"total", "indent":"", "description":"Totale entrate della gestione", "sum":"RA;RB;RC;RD;RE"});
+		dataStructure.push({"id":"IM", "type":"group", "indent":"", "bclass":"4", "description":"Imposte"});
 
 		/* USCITE DA INVESTIMENTI */
 		dataStructure.push({"id":"CF1", "type":"group", "indent":"", "bclass":"3", "description":"1) Investimenti in immobilizzazioni inerenti alle attività di interesse generale"});

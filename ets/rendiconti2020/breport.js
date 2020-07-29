@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2020-07-24 */
+/* Update: 2020-07-29 */
 
 
 var BReport = class JsClass {
@@ -69,7 +69,10 @@ var BReport = class JsClass {
    /**
     * Calculate all the previous balances of the accounts belonging to the same group (grText)
     */ 
-   calculatePreviousBalances(grText, bClass, grColumn) {   
+   calculatePreviousBalances(grText, bClass, grColumn) {
+      if (!grColumn) {
+        grColumn = "Gr";
+      }
       var balance = "";
       for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
          var tRow = this.banDoc.table('Accounts').row(i);
@@ -94,6 +97,10 @@ var BReport = class JsClass {
     * belonging to the same group (grText)
     */ 
    getColumnListForGr(table, grText, codeColumn, grColumn) {
+
+      if (!grColumn) {
+        grColumn = "Gr";
+      }
 
       //Set object excludes duplicates
       var columnList = new Set();

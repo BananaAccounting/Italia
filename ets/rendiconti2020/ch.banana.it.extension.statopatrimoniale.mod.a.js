@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2020-07-27
+// @pubdate = 2020-07-29
 // @publisher = Banana.ch SA
 // @description = Stato patrimoniale (MOD. A)
 // @task = app.command
@@ -71,12 +71,6 @@ function exec(string) {
       userParam = settingsDialog(); // From properties
    }
    if (!userParam) {
-      return "@Cancel";
-   }
-
-   //Check that user entered the gr column in extension settings
-   if (!userParam.column) {
-      Banana.document.addMessage(getErrorMessage(ID_ERR_GRUPPO_MANCANTE));
       return "@Cancel";
    }
 
@@ -144,13 +138,13 @@ function printSubRow(userParam, bReport, table, gr, styleColumnDescription, styl
       // Prints only elements cannot be excluded
       if (!bReport.getObjectValue(gr, "exclude")) { // false = cannot be excluded
          tableRow = table.addRow();
-         tableRow.addCell("("+bReport.getObjectDescription(gr) + ": saldo anno corrente " + bReport.getObjectCurrentAmountFormatted(gr) + " ; saldo anno precedente " + bReport.getObjectPreviousAmountFormatted(gr) + ")", styleColumnDescription + " " + styleIndentLevel, 1);  
+         tableRow.addCell("("+bReport.getObjectDescription(gr) + ": " + bReport.getObjectCurrentAmountFormatted(gr) + " ; anno precedente " + bReport.getObjectPreviousAmountFormatted(gr) + ")", styleColumnDescription + " " + styleIndentLevel, 1);  
       }
    }
    else {
       // Prints all elements
       tableRow = table.addRow();
-      tableRow.addCell("("+bReport.getObjectDescription(gr) + ": saldo anno corrente " + bReport.getObjectCurrentAmountFormatted(gr) + " ; saldo anno precedente " + bReport.getObjectPreviousAmountFormatted(gr) + ")", styleColumnDescription + " " + styleIndentLevel, 1);
+      tableRow.addCell("("+bReport.getObjectDescription(gr) + ": " + bReport.getObjectCurrentAmountFormatted(gr) + " ; anno precedente " + bReport.getObjectPreviousAmountFormatted(gr) + ")", styleColumnDescription + " " + styleIndentLevel, 1);
    }
 }
 
@@ -418,19 +412,26 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
    printRow(userParam, bReport, table, "AC", "description-groups", "amount-groups-totals");
    /* AD */
    printRow(userParam, bReport, table, "AD", "description-groups", "amount-groups");
+   /* tot A */
+   printRow(userParam, bReport, table, "A", "description-groups", "amount-groups-totals");
 
-   report.addPageBreak();
+
+   if (userParam.stampa) {
+      report.addPageBreak();
+
+      if (userParam.printtitle) {
+         report.addParagraph(" ", "");
+         report.addParagraph(title, "heading2");
+         report.addParagraph(" ", "");
+      }
+   } else {
+      report.addParagraph(" ", "");
+      report.addParagraph(" ", "");      
+   }
 
    /**************************************************************************************
    * PASSIVO
    **************************************************************************************/
-
-   if (userParam.printtitle) {
-      report.addParagraph(" ", "");
-      report.addParagraph(title, "heading2");
-      report.addParagraph(" ", "");
-   }
-
    var table = report.addTable("table");
    var column1 = table.addColumn("column1");
    var column2 = table.addColumn("column2");
@@ -549,7 +550,8 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
    printRow(userParam, bReport, table, "PD", "description-groups", "amount-totals");
    /* PE */
    printRow(userParam, bReport, table, "PE", "description-groups", "amount-groups");
-
+   /* tot P */
+   printRow(userParam, bReport, table, "P", "description-groups", "amount-groups-totals");
 
 
    //checkResults(banDoc, startDate, endDate);
@@ -669,7 +671,7 @@ function convertParam(userParam) {
    currentParam.name = 'column';
    currentParam.title = "Colonna raggruppamento (nome XML colonna)";
    currentParam.type = 'string';
-   currentParam.value = userParam.column ? userParam.column : '';
+   currentParam.value = userParam.column ? userParam.column : 'Gr';
    currentParam.defaultvalue = 'Gr';
    currentParam.readValue = function() {
       userParam.column = this.value;
@@ -687,6 +689,17 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   var currentParam = {};
+   currentParam.name = 'stampa';
+   currentParam.title = 'Stampa Attivi e Passivi su pagine separate';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.stampa ? true : false;
+   currentParam.defaultvalue = true;
+   currentParam.readValue = function() {
+      userParam.stampa = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
@@ -699,6 +712,7 @@ function initUserParam() {
    userParam.title = '';
    userParam.column = 'Gr';
    userParam.compattastampa = false;
+   userParam.stampa = true;
    return userParam;
 }
 

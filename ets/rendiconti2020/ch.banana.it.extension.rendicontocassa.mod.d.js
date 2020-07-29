@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2020-07-27
+// @pubdate = 2020-07-29
 // @publisher = Banana.ch SA
 // @description = Rendiconto per cassa (MOD. D)
 // @task = app.command
@@ -66,11 +66,6 @@ function exec(string) {
       return "@Cancel";
    }
 
-   //Check that user entered the gr column in extension settings
-   if (!userParam.column) {
-      Banana.document.addMessage(getErrorMessage(ID_ERR_GRUPPO_MANCANTE));
-      return "@Cancel";
-   }
    /**
     * 1. Loads the data structure
     */
@@ -966,7 +961,7 @@ function convertParam(userParam) {
    currentParam.name = 'column';
    currentParam.title = "Colonna raggruppamento (nome XML colonna)";
    currentParam.type = 'string';
-   currentParam.value = userParam.column ? userParam.column : '';
+   currentParam.value = userParam.column ? userParam.column : 'Gr';
    currentParam.defaultvalue = 'Gr';
    currentParam.readValue = function() {
       userParam.column = this.value;
