@@ -35,8 +35,8 @@
 */
 
 
-var BAN_VERSION = "9.1.0";
-var BAN_EXPM_VERSION = "200615";
+var BAN_VERSION = "10.0.0";
+var BAN_EXPM_VERSION = "200729";
 
 
 //Main function
