@@ -23,23 +23,25 @@
 \begin{testcase}{ReportModBTest}
 \begin{test}{testBananaExtension}
 \begin{reportvalue}{Test 'rendiconto gestionale (MOD. B)'}
-RENDICONTO GESTIONALE (MOD. B) ANNO 2022 \\
+  \\
+Associazione APS - RENDICONTO GESTIONALE (MOD. B) ANNO 2022 \\
+  \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
 ONERI E COSTI  & 31.12.2022  & 31.12.2021  &  & PROVENTI E RICAVI  & 31.12.2022  & 31.12.2021 \\
 A) Costi e oneri da attività di interesse generale  &  &  &  & A) Ricavi, rendite e proventi da attività di interesse generale  &  & \\
- &  &  &  & 1) Proventi da quote associative e apporti dei fondatori  & 375.00  & 11.00 \\
-1) Materie prime, sussidiarie, di consumo e di merci  & 1.00  & 10.00  &  & 2) Proventi dagli associati per attività mutuali  & 2.00  & 10.00 \\
-2) Servizi  & 9.00  & 24.00  &  & 3) Ricavi per prestazioni e cessioni ad associati e fondatori  & 3.00  & 9.00 \\
- &  &  &  & 4) Erogazioni liberali  & 4.00  & 8.00 \\
-3) Godimento beni di terzi  & 18.00  & 15.00  &  & 5) Proventi del 5 per mille  & 5.00  & 7.00 \\
-4) Personale  & 108.00  & 51.00  &  & 6) Contributi da soggetti privati  & 6.00  & 6.00 \\
- &  &  &  & 7) Ricavi per prestazioni e cessioni a terzi  & 7.00  & 5.00 \\
-5) Ammortamenti  & 17.00  & 4.00  &  & 8) Contributi da enti pubblici  & 8.00  & 4.00 \\
-6) Accantonamenti per rischi ed oneri  & 18.00  & 3.00  &  & 9) Proventi da contratti con enti pubblici  & 9.00  & 3.00 \\
-7) Oneri diversi di gestione  & 19.00  & 2.00  &  & 10) Altri ricavi, rendite e proventi  & 10.00  & 2.00 \\
-8) Rimanenze iniziali  & 20.00  & 1.00  &  & 11) Rimanenze finali  & 11.00  & 1.00 \\
+1) Materie prime, sussidiarie, di consumo e di merci  & 1.00  & 10.00  &  & 1) Proventi da quote associative e apporti dei fondatori  & 375.00  & 11.00 \\
+2) Servizi  & 9.00  & 24.00  &  & 2) Proventi dagli associati per attività mutuali  & 2.00  & 10.00 \\
+3) Godimento beni di terzi  & 18.00  & 15.00  &  & 3) Ricavi per prestazioni e cessioni ad associati e fondatori  & 3.00  & 9.00 \\
+4) Personale  & 108.00  & 51.00  &  & 4) Erogazioni liberali  & 4.00  & 8.00 \\
+5) Ammortamenti  & 17.00  & 4.00  &  & 5) Proventi del 5 per mille  & 5.00  & 7.00 \\
+6) Accantonamenti per rischi ed oneri  & 18.00  & 3.00  &  & 6) Contributi da soggetti privati  & 6.00  & 6.00 \\
+7) Oneri diversi di gestione  & 19.00  & 2.00  &  & 7) Ricavi per prestazioni e cessioni a terzi  & 7.00  & 5.00 \\
+8) Rimanenze iniziali  & 20.00  & 1.00  &  & 8) Contributi da enti pubblici  & 8.00  & 4.00 \\
+ &  &  &  & 9) Proventi da contratti con enti pubblici  & 9.00  & 3.00 \\
+ &  &  &  & 10) Altri ricavi, rendite e proventi  & 10.00  & 2.00 \\
+ &  &  &  & 11) Rimanenze finali  & 11.00  & 1.00 \\
 Totale  & 210.00  & 110.00  &  & Totale  & 440.00  & 66.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & -230.00  & 44.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & 230.00  & -44.00 \\
 B) Costi e oneri da attività diverse  &  &  &  & B) Ricavi, rendite e proventi da attività diverse  &  & \\
 1) Materie prime, sussidiarie, di consumo e di merci  & 1.00  & 8.00  &  & 1) Ricavi per prestazioni e cessioni ad associati e fondatori  & 1.00  & 7.00 \\
 2) Servizi  & 2.00  & 7.00  &  & 2) Contributi da soggetti privati  & 2.00  & 6.00 \\
@@ -50,13 +52,13 @@ B) Costi e oneri da attività diverse  &  &  &  & B) Ricavi, rendite e proventi 
 7) Oneri diversi di gestione  & 7.00  & 2.00  &  & 7) Rimanenze finali  & 7.00  & 1.00 \\
 8) Rimanenze iniziali  & 8.00  & 1.00  &  &  &  & \\
 Totale  & 36.00  & 36.00  &  & Totale  & 28.00  & 28.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & 8.00  & 8.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & -8.00  & -8.00 \\
 C) Costi e oneri da attività di raccolta fondi  &  &  &  & C) Ricavi, rendite e proventi da attività di raccolta fondi  &  & \\
 1) Oneri per raccolte fondi abituali  & 1.00  & 4.00  &  & 1) Proventi da raccolte fondi abituali  & 1.00  & 5.00 \\
 2) Oneri per raccolte fondi occasionali  & 2.00  & 3.00  &  & 2) Proventi da raccolte fondi occasionali  & 2.00  & 3.00 \\
 3) Altri oneri  & 3.00  & 2.00  &  & 3) Altri proventi  & 3.00  & 2.00 \\
 Totale  & 6.00  & 9.00  &  & Totale  & 6.00  & 10.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi } & 0.00  & -1.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi } & 0.00  & 1.00 \\
 D) Costi e oneri da attività finanziarie e patrimoniali  &  &  &  & D) Ricavi, rendite e proventi da attività finanziarie e patrimoniali  &  & \\
 1) Su rapporti bancari  & 1.00  & 7.00  &  & 1) Da rapporti bancari  & 1.00  & 6.00 \\
 2) Su prestiti  & 2.00  & 6.00  &  & 2) Da altri investimenti finanziari  & 2.00  & 5.00 \\
@@ -65,7 +67,7 @@ D) Costi e oneri da attività finanziarie e patrimoniali  &  &  &  & D) Ricavi, 
 5) Accantonamenti per rischi ed oneri  & 5.00  & 3.00  &  &  &  & \\
 6) Altri oneri  & 6.00  & 2.00  &  & 5) Altri proventi  & 5.00  & 2.00 \\
 Totale  & 21.00  & 27.00  &  & Totale  & 15.00  & 20.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & 6.00  & 7.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & -6.00  & -7.00 \\
 E) Costi e oneri di supporto generale  &  &  &  & E) Proventi di supporto generale  &  & \\
 1) Materie prime, sussidiarie, di consumo e di merci  & 1.00  & 9.00  &  & 1) Proventi da distacco del personale  & 1.00  & 3.00 \\
 2) Servizi  & 2.00  & 8.00  &  & 2) Altri proventi di supporto generale  & 2.00  & 2.00 \\
@@ -76,9 +78,79 @@ E) Costi e oneri di supporto generale  &  &  &  & E) Proventi di supporto genera
 7) Altri oneri  & 7.00  & 3.00  &  &  &  & \\
 Totale  & 28.00  & 42.00  &  & Totale  & 3.00  & 5.00 \\
 TOTALE ONERI E COSTI  & 301.00  & 224.00  &  & TOTALE PROVENTI E RICAVI  & 492.00  & 129.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & -191.00  & 95.00 \\
-\multicolumn{5}{l}{Imposte } & 8.00  & 2.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio (+/-) } & 3.00  & 5.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 191.00  & -95.00 \\
+\multicolumn{5}{l}{Imposte } & -8.00  & -2.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio (+/-) } & 183.00  & -97.00 \\
+\end{longtable}
+  \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Costi figurativi  & 31.12.2022  & 31.12.2021  &  & Proventi figurativi  & 31.12.2022  & 31.12.2021 \\
+1) da attività di interesse generale  & 1.00  & 3.00  &  & 1) da attività di interesse generale  & 1.00  & 5.00 \\
+2) da attività diverse  & 2.00  & 2.00  &  & 2) da attività diverse  & 2.00  & 4.00 \\
+Totale  & 3.00  & 5.00  &  & Totale  & 3.00  & 9.00 \\
+\end{longtable}
+-  \#page-nr  - \\
+\end{reportvalue}
+\begin{reportvalue}{Test 2: 'rendiconto gestionale (MOD. B)', column Gr1}
+  \\
+Associazione APS - RENDICONTO GESTIONALE (MOD. B) ANNO 2022 \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+ONERI E COSTI  & 31.12.2022  & 31.12.2021  &  & PROVENTI E RICAVI  & 31.12.2022  & 31.12.2021 \\
+A) Costi e oneri da attività di interesse generale  &  &  &  & A) Ricavi, rendite e proventi da attività di interesse generale  &  & \\
+1) Materie prime, sussidiarie, di consumo e di merci  & 1.00  & 10.00  &  & 1) Proventi da quote associative e apporti dei fondatori  & 375.00  & 11.00 \\
+2) Servizi  & 9.00  & 24.00  &  & 2) Proventi dagli associati per attività mutuali  & 2.00  & 10.00 \\
+3) Godimento beni di terzi  & 18.00  & 15.00  &  & 3) Ricavi per prestazioni e cessioni ad associati e fondatori  & 3.00  & 9.00 \\
+4) Personale  & 108.00  & 51.00  &  & 4) Erogazioni liberali  & 4.00  & 8.00 \\
+5) Ammortamenti  & 17.00  & 4.00  &  & 5) Proventi del 5 per mille  & 5.00  & 7.00 \\
+6) Accantonamenti per rischi ed oneri  & 18.00  & 3.00  &  & 6) Contributi da soggetti privati  & 6.00  & 6.00 \\
+7) Oneri diversi di gestione  & 19.00  & 2.00  &  & 7) Ricavi per prestazioni e cessioni a terzi  & 7.00  & 5.00 \\
+8) Rimanenze iniziali  & 20.00  & 1.00  &  & 8) Contributi da enti pubblici  & 8.00  & 4.00 \\
+ &  &  &  & 9) Proventi da contratti con enti pubblici  & 9.00  & 3.00 \\
+ &  &  &  & 10) Altri ricavi, rendite e proventi  & 10.00  & 2.00 \\
+ &  &  &  & 11) Rimanenze finali  & 11.00  & 1.00 \\
+Totale  & 210.00  & 110.00  &  & Totale  & 440.00  & 66.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & 230.00  & -44.00 \\
+B) Costi e oneri da attività diverse  &  &  &  & B) Ricavi, rendite e proventi da attività diverse  &  & \\
+1) Materie prime, sussidiarie, di consumo e di merci  & 1.00  & 8.00  &  & 1) Ricavi per prestazioni e cessioni ad associati e fondatori  & 1.00  & 7.00 \\
+2) Servizi  & 2.00  & 7.00  &  & 2) Contributi da soggetti privati  & 2.00  & 6.00 \\
+3) Godimento beni di terzi  & 3.00  & 6.00  &  & 3) Ricavi per prestazioni e cessioni a terzi  & 3.00  & 5.00 \\
+4) Personale  & 4.00  & 5.00  &  & 4) Contributi da enti pubblici  & 4.00  & 4.00 \\
+5) Ammortamenti  & 5.00  & 4.00  &  & 5) Proventi da contratti con enti pubblici  & 5.00  & 3.00 \\
+6) Accantonamenti per rischi ed oneri  & 6.00  & 3.00  &  & 6) Altri ricavi, rendite e proventi  & 6.00  & 2.00 \\
+7) Oneri diversi di gestione  & 7.00  & 2.00  &  & 7) Rimanenze finali  & 7.00  & 1.00 \\
+8) Rimanenze iniziali  & 8.00  & 1.00  &  &  &  & \\
+Totale  & 36.00  & 36.00  &  & Totale  & 28.00  & 28.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & -8.00  & -8.00 \\
+C) Costi e oneri da attività di raccolta fondi  &  &  &  & C) Ricavi, rendite e proventi da attività di raccolta fondi  &  & \\
+1) Oneri per raccolte fondi abituali  & 1.00  & 4.00  &  & 1) Proventi da raccolte fondi abituali  & 1.00  & 5.00 \\
+2) Oneri per raccolte fondi occasionali  & 2.00  & 3.00  &  & 2) Proventi da raccolte fondi occasionali  & 2.00  & 3.00 \\
+3) Altri oneri  & 3.00  & 2.00  &  & 3) Altri proventi  & 3.00  & 2.00 \\
+Totale  & 6.00  & 9.00  &  & Totale  & 6.00  & 10.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi } & 0.00  & 1.00 \\
+D) Costi e oneri da attività finanziarie e patrimoniali  &  &  &  & D) Ricavi, rendite e proventi da attività finanziarie e patrimoniali  &  & \\
+1) Su rapporti bancari  & 1.00  & 7.00  &  & 1) Da rapporti bancari  & 1.00  & 6.00 \\
+2) Su prestiti  & 2.00  & 6.00  &  & 2) Da altri investimenti finanziari  & 2.00  & 5.00 \\
+3) Da patrimonio edilizio  & 3.00  & 5.00  &  & 3) Da patrimonio edilizio  & 3.00  & 4.00 \\
+4) Da altri beni patrimoniali  & 4.00  & 4.00  &  & 4) Da altri beni patrimoniali  & 4.00  & 3.00 \\
+5) Accantonamenti per rischi ed oneri  & 5.00  & 3.00  &  &  &  & \\
+6) Altri oneri  & 6.00  & 2.00  &  & 5) Altri proventi  & 5.00  & 2.00 \\
+Totale  & 21.00  & 27.00  &  & Totale  & 15.00  & 20.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & -6.00  & -7.00 \\
+E) Costi e oneri di supporto generale  &  &  &  & E) Proventi di supporto generale  &  & \\
+1) Materie prime, sussidiarie, di consumo e di merci  & 1.00  & 9.00  &  & 1) Proventi da distacco del personale  & 1.00  & 3.00 \\
+2) Servizi  & 2.00  & 8.00  &  & 2) Altri proventi di supporto generale  & 2.00  & 2.00 \\
+3) Godimento beni di terzi  & 3.00  & 7.00  &  &  &  & \\
+4) Personale  & 4.00  & 6.00  &  &  &  & \\
+5) Ammortamenti  & 5.00  & 5.00  &  &  &  & \\
+6) Accantonamenti per rischi ed oneri  & 6.00  & 4.00  &  &  &  & \\
+7) Altri oneri  & 7.00  & 3.00  &  &  &  & \\
+Totale  & 28.00  & 42.00  &  & Totale  & 3.00  & 5.00 \\
+TOTALE ONERI E COSTI  & 301.00  & 224.00  &  & TOTALE PROVENTI E RICAVI  & 492.00  & 129.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 191.00  & -95.00 \\
+\multicolumn{5}{l}{Imposte } & -8.00  & -2.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio (+/-) } & 183.00  & -97.00 \\
 \end{longtable}
   \\
   \\

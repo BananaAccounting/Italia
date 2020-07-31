@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2020-07-08
+// @pubdate = 2020-07-31
 // @publisher = Banana.ch SA
 // @description = Stato patrimoniale (MOD. A)
 // @task = app.command
@@ -23,6 +23,9 @@
 // @outputformat = none
 // @inputdatasource = none
 // @timeout = -1
+// @includejs = datastructure.js
+// @includejs = breport.js
+// @includejs = errors.js
 
 
 /*
@@ -40,9 +43,8 @@
 
 */
 
-
-
-var userParam = {};
+var BAN_VERSION = "9.1.0";
+var BAN_EXPM_VERSION = "200615";
 
 
 //Main function
@@ -51,6 +53,12 @@ function exec(string) {
    //Check if we are on an opened document
    if (!Banana.document) {
       return;
+   }
+
+   //Check the banana version
+   var isCurrentBananaVersionSupported = bananaRequiredVersion(BAN_VERSION, BAN_EXPM_VERSION);
+   if (!isCurrentBananaVersionSupported) {
+      return "@Cancel";
    }
 
    var userParam = initUserParam();
@@ -66,15 +74,81 @@ function exec(string) {
       return "@Cancel";
    }
 
+   /**
+    * 1. Loads the data structure
+    */
+   var dataStructure = loadDataStructure("REPORT_TYPE_MOD_A");
 
-   var report = printRendicontoModA(Banana.document, userParam);
+   /**
+    * 2. Calls methods to load balances, calculate totals, format amounts
+    * and check entries that can be excluded
+    */
+   const bReport = new BReport(Banana.document, userParam, dataStructure);
+   bReport.validateGroups(userParam.column);
+   bReport.loadBalances();
+   bReport.calculateTotals(["currentAmount", "previousAmount"]);
+   bReport.formatValues(["currentAmount", "previousAmount"]);
+   bReport.excludeEntries();
+   //Banana.console.log(JSON.stringify(dataStructure, "", " "));
+
+   /**
+    * 3. Creates the report
+    */
    var stylesheet = Banana.Report.newStyleSheet();
+   var report = printRendicontoModA(Banana.document, userParam, bReport, stylesheet);
    setCss(Banana.document, stylesheet, userParam);
-
    Banana.Report.preview(report, stylesheet);
 }
 
-function printRendicontoModA(banDoc, userParam) {
+function printRow(userParam, bReport, table, gr, styleColumnDescription, styleColumnAmount) {
+   var styleIndentLevel = "";
+   var indentLevel = bReport.getObjectIndent(gr);
+   if (indentLevel) {
+      styleIndentLevel = indentLevel;
+   }
+   if (userParam.compattastampa) {
+      // Prints only elements cannot be excluded
+      if (!bReport.getObjectValue(gr, "exclude")) { // false = cannot be excluded
+         tableRow = table.addRow();
+         tableRow.addCell(bReport.getObjectDescription(gr), styleColumnDescription + " " + styleIndentLevel, 1);
+         if (bReport.getObjectType(gr) === 'group' || bReport.getObjectType(gr) === 'total') { //do not print amounts for title types
+            tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
+            tableRow.addCell(bReport.getObjectPreviousAmountFormatted(gr), styleColumnAmount, 1);   
+         }
+      }
+   }
+   else {
+      // Prints all elements
+      tableRow = table.addRow();
+      tableRow.addCell(bReport.getObjectDescription(gr), styleColumnDescription + " " + styleIndentLevel, 1);
+      if (bReport.getObjectType(gr) === 'group' || bReport.getObjectType(gr) === 'total') { //do not print amounts for title types
+         tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
+         tableRow.addCell(bReport.getObjectPreviousAmountFormatted(gr), styleColumnAmount, 1);   
+      } 
+   }
+}
+
+function printSubRow(userParam, bReport, table, gr, styleColumnDescription, styleColumnAmount) {
+   var styleIndentLevel = "";
+   var indentLevel = bReport.getObjectIndent(gr);
+   if (indentLevel) {
+      styleIndentLevel = indentLevel;
+   }
+   if (userParam.compattastampa) {
+      // Prints only elements cannot be excluded
+      if (!bReport.getObjectValue(gr, "exclude")) { // false = cannot be excluded
+         tableRow = table.addRow();
+         tableRow.addCell("("+bReport.getObjectDescription(gr) + ": " + bReport.getObjectCurrentAmountFormatted(gr) + " ; anno precedente " + bReport.getObjectPreviousAmountFormatted(gr) + ")", styleColumnDescription + " " + styleIndentLevel, 1);  
+      }
+   }
+   else {
+      // Prints all elements
+      tableRow = table.addRow();
+      tableRow.addCell("("+bReport.getObjectDescription(gr) + ": " + bReport.getObjectCurrentAmountFormatted(gr) + " ; anno precedente " + bReport.getObjectPreviousAmountFormatted(gr) + ")", styleColumnDescription + " " + styleIndentLevel, 1);
+   }
+}
+
+function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
 
    var report = Banana.Report.newReport("Stato patrimoniale (MOD. A)");
    var startDate = userParam.selectionStartDate;
@@ -82,908 +156,410 @@ function printRendicontoModA(banDoc, userParam) {
    var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
    var previousYear = currentYear - 1;
 
+   // Logo
+   var headerParagraph = report.getHeader().addSection();
+   if (userParam.logo) {
+      headerParagraph = report.addSection("");
+      var logoFormat = Banana.Report.logoFormat(userParam.logoname);
+      if (logoFormat) {
+         var logoElement = logoFormat.createDocNode(headerParagraph, stylesheet, "logo");
+         report.getHeader().addChild(logoElement);
+      }
+      report.addParagraph(" ", "");
+   }
+
+   if (userParam.printheader) {
+      var company = banDoc.info("AccountingDataBase","Company");
+      var address1 = banDoc.info("AccountingDataBase","Address1");
+      var zip = banDoc.info("AccountingDataBase","Zip");
+      var city = banDoc.info("AccountingDataBase","City");
+      var phone = banDoc.info("AccountingDataBase","Phone");
+      var web = banDoc.info("AccountingDataBase","Web");
+      var email = banDoc.info("AccountingDataBase","Email");
+      if (company) {
+         headerParagraph.addParagraph(company, "");
+      }
+      if (address1) {
+         headerParagraph.addParagraph(address1, "");
+      }
+      if (zip && city) {
+         headerParagraph.addParagraph(zip + " " + city, "");
+      }
+      if (phone) {
+         headerParagraph.addParagraph("Tel. " + phone, "");
+      }
+      if (web) {
+         headerParagraph.addParagraph("Web: " + web, "");
+      }
+      if (email) {
+         headerParagraph.addParagraph("Email: " + email, "");
+      }
+      headerParagraph.addParagraph(" ", "");
+   }
+
    var title = "";
    if (userParam.title) {
       title = userParam.title;
    } else {
-      title = banDoc.info("Base", "HeaderLeft") + " - " + "STATO PATRIMONIALE (MOD. A) ANNO " + currentYear;
+      title = "STATO PATRIMONIALE (MOD. A) ANNO " + currentYear;
+   }
+   if (userParam.printtitle) {
+      report.addParagraph(" ", "");
+      report.addParagraph(title, "heading2");
+      report.addParagraph(" ", "");
    }
  
-   var obj = "";
-   var current = "";
-   var previous = "";
-
 
    /**************************************************************************************
    * ATTIVO
    **************************************************************************************/
-   report.addParagraph(title, "heading2");
 
    var table = report.addTable("table");
    var column1 = table.addColumn("column1");
    var column2 = table.addColumn("column2");
    var column3 = table.addColumn("column3");
 
-   tableRow = table.addRow();
+
+   var tableIntestazione = table.getHeader();
+   tableRow = tableIntestazione.addRow(); 
    tableRow.addCell("", "", 1);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
    tableRow.addCell("31.12." + previousYear, "table-header", 1);
 
+   // tableRow = table.addRow();
+   // tableRow.addCell("", "", 1);
+   // tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
+   // tableRow.addCell("31.12." + previousYear, "table-header", 1);
+
    tableRow = table.addRow();
-   tableRow.addCell("ATTIVO", "assetsTitle", 3);
+   tableRow.addCell("ATTIVO", "assets-title lvl0", 3);
 
    /* AA */
-   obj = banDoc.currentBalance("Gr=AA", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "AA").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("A) Quote associative o apporti ancora dovuti", "description-groups-titles", 1);
-   tableRow.addCell(formatValue(current), "amount-groups-titles", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups-titles", 1);
-
-   tableRow = table.addRow();
-   tableRow.addCell("B) Immobilizzazioni", "description-groups-titles", 1);
-   tableRow.addCell("", "amount-groups-titles", 1);
-   tableRow.addCell("", "amount-groups-titles", 1);
-
-   tableRow = table.addRow();
-   tableRow.addCell("    I - Immobilizzazioni immateriali", "description-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "AA", "description-groups", "amount-groups");
+   /* dAB */
+   printRow(userParam, bReport, table, "dAB", "description-groups", "amount-groups");
+   /* dABI */
+   printRow(userParam, bReport, table, "dABI", "description-groups", "amount-groups");
    /* ABI1 */
-   obj = banDoc.currentBalance("Gr=ABI1", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI1").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        1) costi di impianto e di ampliamento", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABI1", "description-groups", "amount-groups");
    /* ABI2 */
-   obj = banDoc.currentBalance("Gr=ABI2", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI2").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        2) costi di sviluppo", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABI2", "description-groups", "amount-groups");
    /* ABI3 */
-   obj = banDoc.currentBalance("Gr=ABI3", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI3").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABI3", "description-groups", "amount-groups");
    /* ABI4 */
-   obj = banDoc.currentBalance("Gr=ABI4", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI4").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        4) concessioni, licenze, marchi e diritti simili", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABI4", "description-groups", "amount-groups");
    /* ABI5 */
-   obj = banDoc.currentBalance("Gr=ABI5", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI5").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        5) avviamento", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABI5", "description-groups", "amount-groups");
    /* ABI6 */
-   obj = banDoc.currentBalance("Gr=ABI6", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI6").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        6) immobilizzazioni in corso e acconti", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABI6", "description-groups", "amount-groups");
    /* ABI7 */
-   obj = banDoc.currentBalance("Gr=ABI7", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI7").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        7) altre Immobilizzazioni immateriali", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABI7", "description-groups", "amount-groups");
    /* tot ABI */
-   obj = banDoc.currentBalance("Gr=ABI", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABI").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    Totale immobilizzazioni immateriali", "description-groups-totals", 1);
-   tableRow.addCell(formatValue(current), "amount-groups-totals", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups-totals", 1);
-
-   tableRow = table.addRow();
-   tableRow.addCell("    II - Immobilizzazioni materiali", "description-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABI", "description-groups", "amount-groups-totals");
+   /* dABII */
+   printRow(userParam, bReport, table, "dABII", "description-groups", "amount-groups");
    /* ABII1 */
-   obj = banDoc.currentBalance("Gr=ABII1", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABII1").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        1) terreni e fabbricati", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABII1", "description-groups", "amount-groups");
    /* ABII2 */
-   obj = banDoc.currentBalance("Gr=ABII2", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABII2").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        2) impianti e macchinari", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABII2", "description-groups", "amount-groups");
    /* ABII3 */
-   obj = banDoc.currentBalance("Gr=ABII3", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABII3").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        3) attrezzature", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABII3", "description-groups", "amount-groups");
    /* ABII4 */
-   obj = banDoc.currentBalance("Gr=ABII4", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABII4").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        4) altri beni", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABII4", "description-groups", "amount-groups");
    /* ABII5 */
-   obj = banDoc.currentBalance("Gr=ABII5", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABII5").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        5) immobilizzazioni in corso e acconti", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABII5", "description-groups", "amount-groups");
    /* tot ABII */
-   obj = banDoc.currentBalance("Gr=ABII", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABII").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    Totale immobilizzazioni materiali", "description-groups-totals", 1);
-   tableRow.addCell(formatValue(current), "amount-groups-totals", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups-totals", 1);
-
-   tableRow = table.addRow();
-   tableRow.addCell("    III - Immobilizzazioni finanziarie", "description-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABII", "description-groups", "amount-groups-totals");
+   /* dABIII */
+   printRow(userParam, bReport, table, "dABIII", "description-groups", "amount-groups");
    /* ABIII1 */
-   tableRow = table.addRow();
-   tableRow.addCell("        1) Partecipazioni", "description-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABIII1", "description-groups", "amount-groups");
    /* ABIII1a */
-   obj = banDoc.currentBalance("Gr=ABIII1a", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII1a").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("            a) partecipazioni in imprese controllate", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABIII1a", "description-groups", "amount-groups");
    /* ABIII1b */
-   obj = banDoc.currentBalance("Gr=ABIII1b", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII1b").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("            b) partecipazioni in imprese collegate", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABIII1b", "description-groups", "amount-groups");
    /* ABIII1c */
-   obj = banDoc.currentBalance("Gr=ABIII1c", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII1c").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("            c) partecipazioni in altre imprese", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABIII1c", "description-groups", "amount-groups");
    /* ABIII2 */
-   tableRow = table.addRow();
-   tableRow.addCell("        2) Crediti", "description-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABIII2", "description-groups", "amount-groups");
    /* ABIII2a */
-   obj = banDoc.currentBalance("Gr=ABIII2a", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII2a").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("            a) crediti verso imprese controllate", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABIII2a", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ABIII2a") || bReport.getObjectPreviousAmountFormatted("ABIII2a")) {
+      printSubRow(userParam, bReport, table, "ABIII2ao", "description-groups", "amount-groups");
+   }
    /* ABIII2b */
-   obj = banDoc.currentBalance("Gr=ABIII2b", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII2b").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("            b) crediti verso imprese collegate", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABIII2b", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ABIII2b") || bReport.getObjectPreviousAmountFormatted("ABIII2b")) {
+      printSubRow(userParam, bReport, table, "ABIII2bo", "description-groups", "amount-groups");
+   }
    /* ABIII2c */
-   obj = banDoc.currentBalance("Gr=ABIII2c", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII2c").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("            c) crediti verso altri enti del Terzo settore", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABIII2c", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ABIII2c") || bReport.getObjectPreviousAmountFormatted("ABIII2c")) {
+      printSubRow(userParam, bReport, table, "ABIII2co", "description-groups", "amount-groups");
+   }
    /* ABIII2d */
-   obj = banDoc.currentBalance("Gr=ABIII2d", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII2d").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("            d) crediti verso altri", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABIII2d", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ABIII2d") || bReport.getObjectPreviousAmountFormatted("ABIII2d")) {
+      printSubRow(userParam, bReport, table, "ABIII2do", "description-groups", "amount-groups");
+   }
    /* ABIII3 */
-   obj = banDoc.currentBalance("Gr=ABIII3", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII3").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        3) Altri titoli", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ABIII3", "description-groups", "amount-groups");
    /* tot ABIII */
-   obj = banDoc.currentBalance("Gr=ABIII", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ABIII").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    Totale immobilizzazioni finanziarie", "description-groups-totals", 1);
-   tableRow.addCell(formatValue(current), "amount-groups-totals", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups-totals", 1);
-
+   printRow(userParam, bReport, table, "ABIII", "description-groups", "amount-groups-totals");
    /* tot AB */
-   obj = banDoc.currentBalance("Gr=AB", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "AB").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("Totale immobilizzazioni B)", "description-totals", 1);
-   tableRow.addCell(formatValue(current), "amount-totals", 1);
-   tableRow.addCell(formatValue(previous), "amount-totals", 1);
-
-   /* AC */
-   tableRow = table.addRow();
-   tableRow.addCell("C) Attivo circolante", "description-groups-titles", 1);
-   tableRow.addCell("", "amount-groups-titles", 1);
-   tableRow.addCell("", "amount-groups-titles", 1);
-
-   /* ACI */
-   tableRow = table.addRow();
-   tableRow.addCell("    I - Rimanenze", "description-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "AB", "description-groups", "amount-totals");
+   /* dAC */
+   printRow(userParam, bReport, table, "dAC", "description-groups", "amount-groups");
+   /* dACI */
+   printRow(userParam, bReport, table, "dACI", "description-groups", "amount-groups");
    /* ACI1 */
-   obj = banDoc.currentBalance("Gr=ACI1", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACI1").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        1) Rimanenze materie prime, sussidiarie e di consumo", "description-groups" ,1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACI1", "description-groups", "amount-groups");
    /* ACI2 */
-   obj = banDoc.currentBalance("Gr=ACI2", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACI2").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        2) Rimanenze prodotti in corso di lavorazione e semilavorati", "description-groups" , 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACI2", "description-groups", "amount-groups");
    /* ACI3 */
-   obj = banDoc.currentBalance("Gr=ACI3", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACI3").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        3) Rimanenze lavori in corso su ordinazione", "description-groups" , 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACI3", "description-groups", "amount-groups");
    /* ACI4 */
-   obj = banDoc.currentBalance("Gr=ACI4", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACI4").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        4) Rimanenze prodotti finiti e merci", "description-groups" , 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACI4", "description-groups", "amount-groups");
    /* ACI5 */
-   obj = banDoc.currentBalance("Gr=ACI5", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACI5").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        5) Rimanenze acconti", "description-groups" , 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACI5", "description-groups", "amount-groups");
    /* tot ACI */
-   obj = banDoc.currentBalance("Gr=ACI", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACI").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    Totale rimanenze", "description-groups-totals", 1);
-   tableRow.addCell(formatValue(current), "amount-groups-totals", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups-totals", 1);
-
-   /* ACII */
-   tableRow = table.addRow();
-   tableRow.addCell("    II - Crediti", "description-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACI", "description-groups", "amount-groups-totals");
+   /* dACII */
+   printRow(userParam, bReport, table, "dACII", "description-groups", "amount-groups");
    /* ACII1 */
-   obj = banDoc.currentBalance("Gr=ACII1", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII1").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        1) Crediti verso utenti e clienti", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII1", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ACII1") || bReport.getObjectPreviousAmountFormatted("ACII1")) {
+      printSubRow(userParam, bReport, table, "ACII1e", "description-groups", "amount-groups");
+   }
    /* ACII2 */
-   obj = banDoc.currentBalance("Gr=ACII2", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII2").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        2) Crediti verso associati e fondatori", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII2", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ACII2") || bReport.getObjectPreviousAmountFormatted("ACII2")) {
+      printSubRow(userParam, bReport, table, "ACII2e", "description-groups", "amount-groups");
+   }
    /* ACII3 */
-   obj = banDoc.currentBalance("Gr=ACII3", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII3").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        3) Crediti verso enti pubblici", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII3", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ACII3") || bReport.getObjectPreviousAmountFormatted("ACII3")) {
+      printSubRow(userParam, bReport, table, "ACII3e", "description-groups", "amount-groups");
+   }
    /* ACII4 */
-   obj = banDoc.currentBalance("Gr=ACII4", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII4").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        4) Crediti verso soggetti privati per contributi", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII4", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ACII4") || bReport.getObjectPreviousAmountFormatted("ACII4")) {
+      printSubRow(userParam, bReport, table, "ACII4e", "description-groups", "amount-groups");
+   }
    /* ACII5 */
-   obj = banDoc.currentBalance("Gr=ACII5", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII5").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        5) Crediti verso enti della stessa rete associativa", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII5", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ACII5") || bReport.getObjectPreviousAmountFormatted("ACII5")) {
+      printSubRow(userParam, bReport, table, "ACII5e", "description-groups", "amount-groups");
+   }
    /* ACII6 */
-   obj = banDoc.currentBalance("Gr=ACII6", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII6").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        6) Crediti verso altri enti del Terzo settore", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII6", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ACII6") || bReport.getObjectPreviousAmountFormatted("ACII6")) {
+      printSubRow(userParam, bReport, table, "ACII6e", "description-groups", "amount-groups");
+   }
    /* ACII7 */
-   obj = banDoc.currentBalance("Gr=ACII7", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII7").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        7) Crediti verso imprese controllate", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII7", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ACII7") || bReport.getObjectPreviousAmountFormatted("ACII7")) {
+      printSubRow(userParam, bReport, table, "ACII7e", "description-groups", "amount-groups");
+   }
    /* ACII8 */
-   obj = banDoc.currentBalance("Gr=ACII8", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII8").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        8) Crediti verso imprese collegate", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII8", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ACII8") || bReport.getObjectPreviousAmountFormatted("ACII8")) {
+      printSubRow(userParam, bReport, table, "ACII8e", "description-groups", "amount-groups");
+   }
    /* ACII9 */
-   obj = banDoc.currentBalance("Gr=ACII9", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII9").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        9) Crediti tributari", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII9", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ACII9") || bReport.getObjectPreviousAmountFormatted("ACII9")) {
+      printSubRow(userParam, bReport, table, "ACII9e", "description-groups", "amount-groups");
+   }
    /* ACII10 */
-   obj = banDoc.currentBalance("Gr=ACII10", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII10").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        10) Crediti da 5 per mille", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII10", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ACII10") || bReport.getObjectPreviousAmountFormatted("ACII10")) {
+      printSubRow(userParam, bReport, table, "ACII10e", "description-groups", "amount-groups");
+   }
    /* ACII11 */
-   obj = banDoc.currentBalance("Gr=ACII11", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII11").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        11) Crediti per imposte anticipate", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII11", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ACII11") || bReport.getObjectPreviousAmountFormatted("ACII11")) {
+      printSubRow(userParam, bReport, table, "ACII11e", "description-groups", "amount-groups");
+   }
    /* ACII12 */
-   obj = banDoc.currentBalance("Gr=ACII12", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII12").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        12) Crediti verso altri", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII12", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("ACII12") || bReport.getObjectPreviousAmountFormatted("ACII12")) {
+      printSubRow(userParam, bReport, table, "ACII12e", "description-groups", "amount-groups");
+   }
    /* tot ACII */
-   obj = banDoc.currentBalance("Gr=ACII", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACII").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    Totale crediti", "description-groups-totals", 1);
-   tableRow.addCell(formatValue(current), "amount-groups-totals", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups-totals", 1);
-
-   /* ACIII */
-   tableRow = table.addRow();
-   tableRow.addCell("    III - Attività finanziarie che non costituiscono immobilizzazioni", "description-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACII", "description-groups", "amount-groups-totals");
+   /* dACIII */
+   printRow(userParam, bReport, table, "dACIII", "description-groups", "amount-groups");
    /* ACIII1 */
-   obj = banDoc.currentBalance("Gr=ACIII1", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACIII1").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        1) Partecipazioni in imprese controllate", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACIII1", "description-groups", "amount-groups");
    /* ACIII2 */
-   obj = banDoc.currentBalance("Gr=ACIII2", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACIII2").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        2) Partecipazioni in imprese collegate", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACIII2", "description-groups", "amount-groups");
    /* ACIII3 */
-   obj = banDoc.currentBalance("Gr=ACIII3", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACIII3").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        3) Altri titoli", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACIII3", "description-groups", "amount-groups");
    /* tot ACIII */
-   obj = banDoc.currentBalance("Gr=ACIII", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACIII").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    Totale attività finanziarie che non costituiscono immobilizzazioni", "description-groups-totals", 1);
-   tableRow.addCell(formatValue(current), "amount-groups-totals", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups-totals", 1);
-
-   /* ACIV */
-   tableRow = table.addRow();
-   tableRow.addCell("    IV - Disponibilità liquide", "description-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACIII", "description-groups", "amount-groups-totals");
+   /* dACIV */
+   printRow(userParam, bReport, table, "dACIV", "description-groups", "amount-groups");
    /* ACIV1 */
-   obj = banDoc.currentBalance("Gr=ACIV1", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACIV1").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        1) Depositi bancari e postali", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACIV1", "description-groups", "amount-groups");
    /* ACIV2 */
-   obj = banDoc.currentBalance("Gr=ACIV2", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACIV2").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        2) Assegni", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACIV2", "description-groups", "amount-groups");
    /* ACIV3 */
-   obj = banDoc.currentBalance("Gr=ACIV3", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACIV3").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        3) Danaro e valori in cassa", "description-groups", 1);
-   tableRow.addCell(formatValue(current), "amount-groups", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "ACIV3", "description-groups", "amount-groups");
    /* tot ACIV */
-   obj = banDoc.currentBalance("Gr=ACIV", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "ACIV").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    Totale disponibilità liquide", "description-groups-totals", 1);
-   tableRow.addCell(formatValue(current), "amount-groups-totals", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups-totals", 1);
-
+   printRow(userParam, bReport, table, "ACIV", "description-groups", "amount-groups-totals");
    /* tot AC */
-   obj = banDoc.currentBalance("Gr=AC", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "AC").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("Totale attivo circolante C)", "description-totals", 1);
-   tableRow.addCell(formatValue(current), "amount-totals", 1);
-   tableRow.addCell(formatValue(previous), "amount-totals", 1);
-
+   printRow(userParam, bReport, table, "AC", "description-groups", "amount-groups-totals");
    /* AD */
-   obj = banDoc.currentBalance("Gr=AD", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "AD").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("D) Ratei e risconti attivi", "description-groups-titles", 1);
-   tableRow.addCell(formatValue(current), "amount-groups-titles", 1);
-   tableRow.addCell(formatValue(previous), "amount-groups-titles", 1);
+   printRow(userParam, bReport, table, "AD", "description-groups", "amount-groups");
+   /* tot A */
+   printRow(userParam, bReport, table, "A", "description-groups", "amount-groups-totals");
 
-   report.addPageBreak();
+
+   if (userParam.stampa) {
+      report.addPageBreak();
+
+      if (userParam.printtitle) {
+         report.addParagraph(" ", "");
+         report.addParagraph(title, "heading2");
+         report.addParagraph(" ", "");
+      }
+   } else {
+      report.addParagraph(" ", "");
+      report.addParagraph(" ", "");      
+   }
 
    /**************************************************************************************
    * PASSIVO
    **************************************************************************************/
-   report.addParagraph(title, "heading2");
-
    var table = report.addTable("table");
    var column1 = table.addColumn("column1");
    var column2 = table.addColumn("column2");
    var column3 = table.addColumn("column3");
-   var column4 = table.addColumn("column4");
 
-   tableRow = table.addRow();
+   var tableIntestazione = table.getHeader();
+   tableRow = tableIntestazione.addRow(); 
    tableRow.addCell("", "", 1);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
    tableRow.addCell("31.12." + previousYear, "table-header", 1);
 
    tableRow = table.addRow();
-   tableRow.addCell("PASSIVO", "liabiltiesTitle", 3);
+   tableRow.addCell("PASSIVO", "liabilties-title lvl0", 3);
 
-   tableRow = table.addRow();
-   tableRow.addCell("A) Patrimonio netto", "description-groups-titles", 1);
-   tableRow.addCell("", "amount-groups-titles", 1);
-   tableRow.addCell("", "amount-groups-titles", 1);
-
+   /* dPA */
+   printRow(userParam, bReport, table, "dPA", "description-groups", "amount-groups");
    /* PAI */
-   obj = banDoc.currentBalance("Gr=PAI", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PAI").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    I - Fondo di dotazione dell'ente", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
-   /* PAII */
-   tableRow = table.addRow();
-   tableRow.addCell("    II - Patrimonio vincolato", "description-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PAI", "description-groups", "amount-groups");
+   /* dPAII */
+   printRow(userParam, bReport, table, "dPAII", "description-groups", "amount-groups");
    /* PAII1 */
-   obj = banDoc.currentBalance("Gr=PAII1", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PAII1").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        1) Riserve statutarie", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PAII1", "description-groups", "amount-groups");
    /* PAII2 */
-   obj = banDoc.currentBalance("Gr=PAII2", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PAII2").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        2) Riserve vincolate per decisione degli organi istituzionali", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PAII2", "description-groups", "amount-groups");
    /* PAII3 */
-   obj = banDoc.currentBalance("Gr=PAII3", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PAII3").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        3) Riserve vincolate destinate da terzi", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PAII3", "description-groups", "amount-groups");
    /* tot PAII */
-   obj = banDoc.currentBalance("Gr=PAII", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PAII").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    Totale patrimonio vincolato", "description-groups-totals", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups-totals", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups-totals", 1);
-
-   /* PAIII */
-   tableRow = table.addRow();
-   tableRow.addCell("    III - Patrimonio libero", "description-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-   tableRow.addCell("", "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PAII", "description-groups", "amount-groups-totals");
+   /* dPAIII */
+   printRow(userParam, bReport, table, "dPAIII", "description-groups", "amount-groups");
    /* PAIII1 */
-   obj = banDoc.currentBalance("Gr=PAIII1", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PAIII1").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        1) Riserve di utili o avanzi di gestione", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PAIII1", "description-groups", "amount-groups");
    /* PAIII2 */
-   obj = banDoc.currentBalance("Gr=PAIII2", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PAIII2").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("        2) Altre riserve", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PAIII2", "description-groups", "amount-groups");
    /* tot PAIII */
-   obj = banDoc.currentBalance("Gr=PAIII", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PAIII").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    Totale patrimonio libero", "description-groups-totals", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups-totals", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups-totals", 1);
-
+   printRow(userParam, bReport, table, "PAIII", "description-groups", "amount-groups-totals");
    /* PAIV */
-   obj = banDoc.currentBalance("Gr=PAIV", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PAIV").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    IV - Avanzo/disavanzo d'esercizio", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PAIV", "description-groups", "amount-groups");
    /* tot PA */
-   obj = banDoc.currentBalance("Gr=PA", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PA").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("Totale patrimonio netto A)", "description-totals", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-totals", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-totals", 1);
-
-   /* PB */
-   tableRow = table.addRow();
-   tableRow.addCell("B) Fondi per rischi e oneri", "description-groups-titles", 1);
-   tableRow.addCell("", "amount-groups-titles", 1);
-   tableRow.addCell("", "amount-groups-titles", 1);
-
+   printRow(userParam, bReport, table, "PA", "description-groups", "amount-totals");
+   /* dPB */
+   printRow(userParam, bReport, table, "dPB", "description-groups", "amount-groups");
    /* PB1 */
-   obj = banDoc.currentBalance("Gr=PB1", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PB1").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    1) Fondi per trattamento di quiescenza e obblighi simili", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PB1", "description-groups", "amount-groups");
    /* PB2 */
-   obj = banDoc.currentBalance("Gr=PB2", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PB2").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    2) Fondi per imposte, anche differite", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PB2", "description-groups", "amount-groups");
    /* PB3 */
-   obj = banDoc.currentBalance("Gr=PB3", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PB3").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    3) Fondi altri", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PB3", "description-groups", "amount-groups");
    /* tot PB */
-   obj = banDoc.currentBalance("Gr=PB", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PB").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("Totale fondi per rischi e oneri B)", "description-totals", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-totals", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-totals", 1);
-
+   printRow(userParam, bReport, table, "PB", "description-groups", "amount-totals");
    /* PC */
-   obj = banDoc.currentBalance("Gr=PC", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PC").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("C) Fondi trattamento di fine rapporto di lavoro subordinato", "description-groups-titles", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups-titles", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups-titles", 1);
-
-   /* PD */
-   tableRow = table.addRow();
-   tableRow.addCell("D) Debiti", "description-groups-titles", 1);
-   tableRow.addCell("", "amount-groups-titles", 1);
-   tableRow.addCell("", "amount-groups-titles", 1);
-
+   printRow(userParam, bReport, table, "PC", "description-groups", "amount-groups");
+   /* dPD */
+   printRow(userParam, bReport, table, "dPD", "description-groups", "amount-groups");
    /* PD1 */
-   obj = banDoc.currentBalance("Gr=PD1", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD1").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    1) Debiti verso banche", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PD1", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("PD1") || bReport.getObjectPreviousAmountFormatted("PD1")) {
+      printSubRow(userParam, bReport, table, "PD1e", "description-groups", "amount-groups");
+   }
    /* PD2 */
-   obj = banDoc.currentBalance("Gr=PD2", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD2").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    2) Debiti verso altri finanziatori", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PD2", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("PD2") || bReport.getObjectPreviousAmountFormatted("PD2")) {
+      printSubRow(userParam, bReport, table, "PD2e", "description-groups", "amount-groups");
+   }
    /* PD3 */
-   obj = banDoc.currentBalance("Gr=PD3", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD3").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    3) Debiti verso associati e fondatori per finanziamenti", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PD3", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("PD3") || bReport.getObjectPreviousAmountFormatted("PD1")) {
+      printSubRow(userParam, bReport, table, "PD3e", "description-groups", "amount-groups");
+   }
    /* PD4 */
-   obj = banDoc.currentBalance("Gr=PD4", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD4").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    4) Debiti verso enti della stessa rete associativa", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PD4", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("PD4") || bReport.getObjectPreviousAmountFormatted("PD4")) {
+      printSubRow(userParam, bReport, table, "PD4e", "description-groups", "amount-groups");
+   }
    /* PD5 */
-   obj = banDoc.currentBalance("Gr=PD5", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD5").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    5) Debiti per erogazioni liberali condizionate", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PD5", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("PD5") || bReport.getObjectPreviousAmountFormatted("PD5")) {
+      printSubRow(userParam, bReport, table, "PD5e", "description-groups", "amount-groups");
+   }
    /* PD6 */
-   obj = banDoc.currentBalance("Gr=PD6", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD6").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    6) Acconti (Debiti)", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PD6", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("PD6") || bReport.getObjectPreviousAmountFormatted("PD6")) {
+      printSubRow(userParam, bReport, table, "PD6e", "description-groups", "amount-groups");
+   }
    /* PD7 */
-   obj = banDoc.currentBalance("Gr=PD7", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD7").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    7) Debiti verso fornitori", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PD7", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("PD7") || bReport.getObjectPreviousAmountFormatted("PD7")) {
+      printSubRow(userParam, bReport, table, "PD7e", "description-groups", "amount-groups");
+   }
    /* PD8 */
-   obj = banDoc.currentBalance("Gr=PD8", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD8").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    8) Debiti verso imprese controllate e collegate", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PD8", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("PD8") || bReport.getObjectPreviousAmountFormatted("PD8")) {
+      printSubRow(userParam, bReport, table, "PD8e", "description-groups", "amount-groups");
+   }
    /* PD9 */
-   obj = banDoc.currentBalance("Gr=PD9", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD9").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    9) Debiti tributari", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PD9", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("PD9") || bReport.getObjectPreviousAmountFormatted("PD9")) {
+      printSubRow(userParam, bReport, table, "PD9e", "description-groups", "amount-groups");
+   }
    /* PD10 */
-   obj = banDoc.currentBalance("Gr=PD10", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD10").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    10) Debiti verso istituti di previdenza e di sicurezza sociale", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PD10", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("PD10") || bReport.getObjectPreviousAmountFormatted("PD10")) {
+      printSubRow(userParam, bReport, table, "PD10e", "description-groups", "amount-groups");
+   }
    /* PD11 */
-   obj = banDoc.currentBalance("Gr=PD11", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD11").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    11) Debiti verso dipendenti e collaboratori", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PD11", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("PD11") || bReport.getObjectPreviousAmountFormatted("PD11")) {
+      printSubRow(userParam, bReport, table, "PD11e", "description-groups", "amount-groups");
+   }
    /* PD12 */
-   obj = banDoc.currentBalance("Gr=PD12", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD12").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("    12) Altri debiti", "description-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups", 1);
-
+   printRow(userParam, bReport, table, "PD12", "description-groups", "amount-groups");
+   if (bReport.getObjectCurrentAmountFormatted("PD12") || bReport.getObjectPreviousAmountFormatted("PD12")) {
+      printSubRow(userParam, bReport, table, "PD12e", "description-groups", "amount-groups");
+   }
    /* tot PD */
-   obj = banDoc.currentBalance("Gr=PD", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PD").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("Totale debiti C)", "description-totals", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-totals", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-totals", 1);
-
+   printRow(userParam, bReport, table, "PD", "description-groups", "amount-totals");
    /* PE */
-   obj = banDoc.currentBalance("Gr=PE", startDate, endDate);
-   current = obj.balance;
-   previous = banDoc.table("Accounts").findRowByValue("Group", "PE").value("Prior");
-   tableRow = table.addRow();
-   tableRow.addCell("E) Ratei e risconti passivi", "description-groups-titles", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(current)), "amount-groups-titles", 1);
-   tableRow.addCell(formatValue(Banana.SDecimal.invert(previous)), "amount-groups-titles", 1);
+   printRow(userParam, bReport, table, "PE", "description-groups", "amount-groups");
+   /* tot P */
+   printRow(userParam, bReport, table, "P", "description-groups", "amount-groups-totals");
 
 
    //checkResults(banDoc, startDate, endDate);
 
 
+
    addFooter(report);
    return report;
-}
-
-function formatValue(value) {
-   if (!value || value === "0" || value == null) {
-      value = "0";
-   }
-   return Banana.Converter.toLocaleNumberFormat(value);
 }
 
 function checkResults(banDoc, startDate, endDate) {
@@ -1025,6 +601,8 @@ function setCss(banDoc, repStyleObj, userParam) {
 }
 
 
+
+
 /**************************************************************************************
  * Functions to manage the parameters
  **************************************************************************************/
@@ -1035,8 +613,52 @@ function convertParam(userParam) {
    convertedParam.data = [];
 
    var currentParam = {};
+   currentParam.name = 'logo';
+   currentParam.title = 'Stampa logo intestazione pagina';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.logo ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+      userParam.logo = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
+   currentParam.name = 'logoname';
+   currentParam.title = 'Nome logo (Imposta Logo -> Personalizzazione)';
+   currentParam.type = 'string';
+   currentParam.value = userParam.logoname ? userParam.logoname : 'Logo';
+   currentParam.defaultvalue = 'Logo';
+   currentParam.readValue = function() {
+     userParam.logoname = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'printheader';
+   currentParam.title = 'Stampa testo intestazione pagina (Proprietà file -> Indirizzo)';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.printheader ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+    userParam.printheader = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'printtitle';
+   currentParam.title = 'Stampa titolo';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.printtitle ? true : false;
+   currentParam.defaultvalue = true;
+   currentParam.readValue = function() {
+    userParam.printtitle = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
    currentParam.name = 'title';
-   currentParam.title = 'Titolo';
+   currentParam.title = 'Testo titolo (vuoto = testo predefinito)';
    currentParam.type = 'string';
    currentParam.value = userParam.title ? userParam.title : '';
    currentParam.defaultvalue = '';
@@ -1045,24 +667,52 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-    // var currentParam = {};
-    // currentParam.name = 'exclude_zero_amounts';
-    // currentParam.title = 'Escludi voci con importi nulli per due esercizi consecutivi';
-    // currentParam.type = 'bool';
-    // currentParam.value = userParam.exclude_zero_amounts ? true : false;
-    // currentParam.defaultvalue = false;
-    // currentParam.readValue = function() {
-    //     userParam.exclude_zero_amounts = this.value;
-    // }
-    // convertedParam.data.push(currentParam);
+   var currentParam = {};
+   currentParam.name = 'column';
+   currentParam.title = "Colonna raggruppamento (nome XML colonna)";
+   currentParam.type = 'string';
+   currentParam.value = userParam.column ? userParam.column : 'Gr';
+   currentParam.defaultvalue = 'Gr';
+   currentParam.readValue = function() {
+      userParam.column = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
+   currentParam.name = 'compattastampa';
+   currentParam.title = 'Escludi voci con importi nulli per due esercizi consecutivi';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.compattastampa ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+      userParam.compattastampa = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
+   currentParam.name = 'stampa';
+   currentParam.title = 'Stampa Attivi e Passivi su pagine separate';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.stampa ? true : false;
+   currentParam.defaultvalue = true;
+   currentParam.readValue = function() {
+      userParam.stampa = this.value;
+   }
+   convertedParam.data.push(currentParam);
 
    return convertedParam;
 }
 
 function initUserParam() {
    var userParam = {};
-   userParam.title = "";
-   userParam.exclude_zero_amounts = false;
+   userParam.logo = false;
+   userParam.logoname = 'Logo';
+   userParam.printheader = false;
+   userParam.printtitle = true;
+   userParam.title = '';
+   userParam.column = 'Gr';
+   userParam.compattastampa = false;
+   userParam.stampa = true;
    return userParam;
 }
 
@@ -1086,10 +736,10 @@ function parametersDialog(userParam) {
 }
 
 function settingsDialog() {
-   var scriptform = initUserParam();
+   var userParam = initUserParam();
    var savedParam = Banana.document.getScriptSettings();
    if (savedParam && savedParam.length > 0) {
-      scriptform = JSON.parse(savedParam);
+      userParam = JSON.parse(savedParam);
    }
 
    //We take the accounting "starting date" and "ending date" from the document. These will be used as default dates
@@ -1098,24 +748,44 @@ function settingsDialog() {
 
    //A dialog window is opened asking the user to insert the desired period. By default is the accounting period
    var selectedDates = Banana.Ui.getPeriod('', docStartDate, docEndDate,
-      scriptform.selectionStartDate, scriptform.selectionEndDate, scriptform.selectionChecked);
+      userParam.selectionStartDate, userParam.selectionEndDate, userParam.selectionChecked);
 
    //We take the values entered by the user and save them as "new default" values.
    //This because the next time the script will be executed, the dialog window will contains the new values.
    if (selectedDates) {
-      scriptform["selectionStartDate"] = selectedDates.startDate;
-      scriptform["selectionEndDate"] = selectedDates.endDate;
-      scriptform["selectionChecked"] = selectedDates.hasSelection;
+      userParam["selectionStartDate"] = selectedDates.startDate;
+      userParam["selectionEndDate"] = selectedDates.endDate;
+      userParam["selectionChecked"] = selectedDates.hasSelection;
    } else {
       //User clicked cancel
       return null;
    }
 
-   scriptform = parametersDialog(scriptform); // From propertiess
-   if (scriptform) {
-      var paramToString = JSON.stringify(scriptform);
+   userParam = parametersDialog(userParam); // From propertiess
+   if (userParam) {
+      var paramToString = JSON.stringify(userParam);
       Banana.document.setScriptSettings(paramToString);
    }
 
-   return scriptform;
+   return userParam;
 }
+
+
+
+
+
+/**************************************************************************************
+ * Check the banana version
+ **************************************************************************************/
+function bananaRequiredVersion(requiredVersion, expmVersion) {
+   if (expmVersion) {
+      requiredVersion = requiredVersion + "." + expmVersion;
+   }
+   if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
+      Banana.application.showMessages();
+      Banana.document.addMessage(getErrorMessage(ID_ERR_VERSIONE));
+      return false;
+   }
+   return true;
+}
+

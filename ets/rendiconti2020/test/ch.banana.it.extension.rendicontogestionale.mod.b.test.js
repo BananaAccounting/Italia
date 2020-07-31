@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.rendicontogestionale.mod.b.test
 // @api = 1.0
-// @pubdate = 2020-07-06
+// @pubdate = 2020-07-31
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.rendicontogestionale.mod.b.js>
 // @task = app.command
@@ -59,22 +59,62 @@ ReportModBTest.prototype.cleanup = function() {
 
 ReportModBTest.prototype.testBananaExtension = function() {
 
-	var banDoc = Banana.application.openDocument("file:script/../test/testcases/11064-doppia-ets-rendiconto-gestionale.ac2");
+	/**
+	 * Test 1: column Gr
+	 */
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_gestionale_pieno.ac2");
 	Test.assert(banDoc);
 
 	var userParam = {};
   	userParam.selectionStartDate = "2022-01-01";
   	userParam.selectionEndDate = "2022-12-31";
   	userParam.title = "RENDICONTO GESTIONALE (MOD. B) ANNO 2022";
-  	userParam.costi_proventi_figurativi = true;
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr';
 
-	// loadParam(banDoc);
-	// loadForm(banDoc);
-	// loadBalances(banDoc);
-	// preProcess(banDoc);
-	// calcTotals(["amount"]);
-	// formatValues(["amount"]);
+	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_B");
 
-	var report = printRendicontoModB(banDoc, userParam);
+	const bReport = new BReport(banDoc, userParam, dataStructure);
+	bReport.validateGroups(userParam.column);
+	bReport.loadBalances();
+	bReport.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport.formatValues(["currentAmount", "previousAmount"]);
+	bReport.excludeEntries();
+
+	var report = printRendicontoModB(banDoc, userParam, bReport, "");
 	Test.logger.addReport("Test 'rendiconto gestionale (MOD. B)'", report);
+
+
+	/**
+	 * Test 2: column Gr1
+	 */
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_gestionale_gr_gr1.ac2");
+	Test.assert(banDoc);
+
+	var userParam = {};
+  	userParam.selectionStartDate = "2022-01-01";
+  	userParam.selectionEndDate = "2022-12-31";
+  	userParam.title = "RENDICONTO GESTIONALE (MOD. B) ANNO 2022";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr1';
+
+	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_B");
+
+	const bReport1 = new BReport(banDoc, userParam, dataStructure);
+	bReport1.validateGroups(userParam.column);
+	bReport1.loadBalances();
+	bReport1.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport1.formatValues(["currentAmount", "previousAmount"]);
+	bReport1.excludeEntries();
+
+	var report = printRendicontoModB(banDoc, userParam, bReport1, "");
+	Test.logger.addReport("Test 2: 'rendiconto gestionale (MOD. B)', column Gr1", report);
 }

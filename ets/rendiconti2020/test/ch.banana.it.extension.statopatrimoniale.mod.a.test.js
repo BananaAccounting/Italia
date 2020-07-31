@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a.test
 // @api = 1.0
-// @pubdate = 2020-07-06
+// @pubdate = 2020-07-31
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.statopatrimoniale.mod.a.js>
 // @task = app.command
@@ -59,21 +59,98 @@ ReportModATest.prototype.cleanup = function() {
 
 ReportModATest.prototype.testBananaExtension = function() {
 
-	var banDoc = Banana.application.openDocument("file:script/../test/testcases/11064-doppia-ets-rendiconto-gestionale.ac2");
+	/**
+	 * Test 1 with all groups balances
+	*/
+
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_gestionale_pieno.ac2");
 	Test.assert(banDoc);
 
 	var userParam = {};
   	userParam.selectionStartDate = "2022-01-01";
   	userParam.selectionEndDate = "2022-12-31";
   	userParam.title = "STATO PATRIMONIALE (MOD. A) ANNO 2022";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr';
+	userParam.compattastampa = false;
 
-	// loadParam(banDoc);
-	// loadForm(banDoc);
-	// loadBalances(banDoc);
-	// preProcess(banDoc);
-	// calcTotals(["amount"]);
-	// formatValues(["amount"]);
+	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_A");
 
-	var report = printRendicontoModA(banDoc, userParam);
-	Test.logger.addReport("Test rendiconto 'Stato Patrimoniale (MOD. A)'", report);
+	const bReport = new BReport(banDoc, userParam, dataStructure);
+	bReport.validateGroups(userParam.column);
+	bReport.loadBalances();
+	bReport.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport.formatValues(["currentAmount", "previousAmount"]);
+	bReport.excludeEntries();
+
+	var report = printRendicontoModA(banDoc, userParam, bReport, "");
+	Test.logger.addReport("Test 1: rendiconto 'Stato Patrimoniale (MOD. A)'", report);
+
+
+	/**
+	 * Test 2 without groups balances that can be excluded
+	*/
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_gestionale_vuoto.ac2");
+	Test.assert(banDoc);
+
+	var userParam = {};
+  	userParam.selectionStartDate = "2022-01-01";
+  	userParam.selectionEndDate = "2022-12-31";
+  	userParam.title = "STATO PATRIMONIALE (MOD. A) ANNO 2022";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr';
+	userParam.compattastampa = true;
+
+	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_A");
+
+	const bReport1 = new BReport(banDoc, userParam, dataStructure);
+	bReport1.validateGroups(userParam.column);
+	bReport1.loadBalances();
+	bReport1.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport1.formatValues(["currentAmount", "previousAmount"]);
+	bReport1.excludeEntries();
+
+	var report = printRendicontoModA(banDoc, userParam, bReport1, "");
+	Test.logger.addReport("Test 2: rendiconto 'Stato Patrimoniale (MOD. A)'", report);
+
+
+	/**
+	 * Test 3 with all groups balances using the Gr1 column
+	*/
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_gestionale_gr_gr1.ac2");
+	Test.assert(banDoc);
+
+	var userParam = {};
+  	userParam.selectionStartDate = "2022-01-01";
+  	userParam.selectionEndDate = "2022-12-31";
+  	userParam.title = "STATO PATRIMONIALE (MOD. A) ANNO 2022";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr1';
+	userParam.compattastampa = true;
+
+	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_A");
+
+	const bReport2 = new BReport(banDoc, userParam, dataStructure);
+	bReport2.validateGroups(userParam.column);
+	bReport2.loadBalances();
+	bReport2.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport2.formatValues(["currentAmount", "previousAmount"]);
+	bReport2.excludeEntries();
+
+	var report = printRendicontoModA(banDoc, userParam, bReport2, "");
+	Test.logger.addReport("Test 3: rendiconto 'Stato Patrimoniale (MOD. A)', colonna Gr1", report);
+
 }
+
