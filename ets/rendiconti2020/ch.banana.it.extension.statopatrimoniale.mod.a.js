@@ -177,24 +177,24 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
       var web = banDoc.info("AccountingDataBase","Web");
       var email = banDoc.info("AccountingDataBase","Email");
       if (company) {
-         headerParagraph.addParagraph(company, "");
+         headerParagraph.addParagraph(company, "address-header");
       }
       if (address1) {
-         headerParagraph.addParagraph(address1, "");
+         headerParagraph.addParagraph(address1, "address-header");
       }
       if (zip && city) {
-         headerParagraph.addParagraph(zip + " " + city, "");
+         headerParagraph.addParagraph(zip + " " + city, "address-header");
       }
       if (phone) {
-         headerParagraph.addParagraph("Tel. " + phone, "");
+         headerParagraph.addParagraph(phone, "address-header");
       }
       if (web) {
-         headerParagraph.addParagraph("Web: " + web, "");
+         headerParagraph.addParagraph(web, "address-header");
       }
       if (email) {
-         headerParagraph.addParagraph("Email: " + email, "");
+         headerParagraph.addParagraph(email, "address-header");
       }
-      headerParagraph.addParagraph(" ", "");
+      headerParagraph.addParagraph(" ", "address-header");
    }
 
    var title = "";

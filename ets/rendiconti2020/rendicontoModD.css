@@ -49,6 +49,10 @@ table {
   width: 10%;
 }
 
+.address-header {
+  font-size: 8px;
+}
+
 .heading2 {
   font-size: 12px;
   font-weight: bold;
