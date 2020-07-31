@@ -16,17 +16,16 @@
 /* Update: 2020-07-29 */
 
 
+/**
+ * Loads the data structure:
+ * - "id" used as GR/GR1 and to identify the object
+ * - "type" used to define the type of data (group, title or total)
+ * - "indent" used to define the indent level for the print
+ * - "bclass" used to define the bclass of the group
+ * - "description" used to define the description text used for the print
+ * - "sum" used to define how to calculate the total
+ */
 function loadDataStructure(reportType) {
-
-   /**
-    *  Data structure:
-    *  - "id" used as GR/GR1 and to identify the object
-    *  - "type" used to define the type of data (group, title or total)
-    *  - "indent" used to define the indent level for the print
-    *  - "bclass" used to define the bclass of the group
-    *  - "description" used to define the description text used for the print
-    *  - "sum" used to define how to calculate the total
-    */
 
 	var dataStructure = [];
 
@@ -81,7 +80,9 @@ function loadDataStructure(reportType) {
 	dataStructure.push({"id":"dACII", "type":"title", "indent":"lvl1", "description":"II - Crediti"});
 	dataStructure.push({"id":"ACII1o", "type":"group", "indent":"lvl3", "bclass":"1", "description":"di cui esigibili oltre l'anno successivo"});
 	dataStructure.push({"id":"ACII1e", "type":"group", "indent":"lvl3", "bclass":"1", "description":"di cui esigibili entro l'anno successivo"});
-	dataStructure.push({"id":"ACII1", "type":"total", "indent":"lvl2", "description":"1) Crediti verso utenti e clienti", "sum":"ACII1o;ACII1e"});
+	dataStructure.push({"id":"TPC", "type":"group", "indent":"", "bclass":"1", "description":"Crediti verso clienti"});
+	dataStructure.push({"id":"ACII1P", "type":"total", "indent":"", "description":"Crediti verso utenti e clienti da partitario", "sum":"TPC"});
+	dataStructure.push({"id":"ACII1", "type":"total", "indent":"lvl2", "description":"1) Crediti verso utenti e clienti", "sum":"ACII1o;ACII1e;TPC"});
 	dataStructure.push({"id":"ACII2o", "type":"group", "indent":"lvl3", "bclass":"1", "description":"di cui esigibili oltre l'anno successivo"});
 	dataStructure.push({"id":"ACII2e", "type":"group", "indent":"lvl3", "bclass":"1", "description":"di cui esigibili entro l'anno successivo"});
 	dataStructure.push({"id":"ACII2", "type":"total", "indent":"lvl2", "description":"2) Crediti verso associati e fondatori", "sum":"ACII2o;ACII2e"});
@@ -179,7 +180,9 @@ function loadDataStructure(reportType) {
 	dataStructure.push({"id":"PD6", "type":"total", "indent":"lvl1", "description":"6) Acconti (Debiti)", "sum":"PD6o;PD6e"});
 	dataStructure.push({"id":"PD7o", "type":"group", "indent":"lvl2", "bclass":"2", "description":"di cui esigibili oltre l'anno successivo"});
 	dataStructure.push({"id":"PD7e", "type":"group", "indent":"lvl2", "bclass":"2", "description":"di cui esigibili entro l'anno successivo"});
-	dataStructure.push({"id":"PD7", "type":"total", "indent":"lvl1", "description":"7) Debiti verso fornitori", "sum":"PD7o;PD7e"});
+	dataStructure.push({"id":"TPF", "type":"group", "indent":"", "bclass":"2", "description":"Partitario fornitori"});
+	dataStructure.push({"id":"PD7P", "type":"total", "indent":"", "description":"Debiti verso fornitori da partitario", "sum":"TPF"});
+	dataStructure.push({"id":"PD7", "type":"total", "indent":"lvl1", "description":"7) Debiti verso fornitori", "sum":"PD7o;PD7e;PD7P"});
 	dataStructure.push({"id":"PD8o", "type":"group", "indent":"lvl2", "bclass":"2", "description":"di cui esigibili oltre l'anno successivo"});
 	dataStructure.push({"id":"PD8e", "type":"group", "indent":"lvl2", "bclass":"2", "description":"di cui esigibili entro l'anno successivo"});
 	dataStructure.push({"id":"PD8", "type":"total", "indent":"lvl1", "description":"8) Debiti verso imprese controllate e collegate", "sum":"PD8o;PD8e"});
@@ -435,3 +438,4 @@ function loadDataStructure(reportType) {
 
 	return dataStructure;
 }
+

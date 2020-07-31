@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2020-07-29 */
+/* Update: 2020-07-31 */
 
 
 var BReport = class JsClass {
@@ -134,20 +134,42 @@ var BReport = class JsClass {
    }
 
    /**
-    * Checks that user defined groups in the given grColumn are valid
+    * Checks that user defined groups in the given grColumn are valid.
+    * User can olny use groups ID defined in the data structure.
     */
    validateGroups(grColumn) {
-      //Get valid groups from the data structure
+      
       var dataGroups = [];
       var columnList = new Set();
-      for (var i in this.dataStructure) {
-         if (this.dataStructure[i]["id"] && !this.dataStructure[i]["id"].startsWith('d')) {
-            columnList.add(this.dataStructure[i]["id"]);
+
+      //Get valid groups from each data structure type
+      var groupsModA = loadDataStructure("REPORT_TYPE_MOD_A");
+      for (var i in groupsModA) {
+         if (groupsModA[i]["id"] && !groupsModA[i]["id"].startsWith('d')) {
+            columnList.add(groupsModA[i]["id"]);
          }
       }
-      for (var i of columnList) { //Convert Set object to array
+
+      var groupsModB = loadDataStructure("REPORT_TYPE_MOD_B");
+      for (var i in groupsModB) {
+         if (groupsModB[i]["id"] && !groupsModB[i]["id"].startsWith('d')) {
+            columnList.add(groupsModB[i]["id"]);
+         }
+      }
+
+      var groupsModD = loadDataStructure("REPORT_TYPE_MOD_D");
+      for (var i in groupsModD) {
+         if (groupsModD[i]["id"] && !groupsModD[i]["id"].startsWith('d')) {
+            columnList.add(groupsModD[i]["id"]);
+         }
+      }
+
+      //Convert Set object to array
+      for (var i of columnList) {
          dataGroups.push(i);
       }
+
+      //Banana.console.log(dataGroups);
 
       //Check if groups in Accounts table are valid
       for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
@@ -156,20 +178,20 @@ var BReport = class JsClass {
          var group = tRow.value(grColumn);
 
          if (grColumn === "Gr") {
-            if (group && group !== "ACII1P" && group !== "PD7P" && group !== "00" && group !== "TPC" && group !== "TPF" && account.indexOf(":") < 0 && account.indexOf(".") < 0 && account.indexOf(";") < 0) {
+            if (group && group !== "00" && account.indexOf(":") < 0 && account.indexOf(".") < 0 && account.indexOf(";") < 0) {
                if (!dataGroups.includes(group)) {
-                  Banana.document.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, group));
+                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, group));
                }
             }
          } else {
             if (group) {
                if (!dataGroups.includes(group)) {
-                  Banana.document.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, group));
+                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, group));
                }
             }
          }
       }
-   }   
+   }
 
    /**
     * Entries preceded by Arabic numbers or lower case letters

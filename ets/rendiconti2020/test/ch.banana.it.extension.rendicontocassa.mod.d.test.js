@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.rendicontocassa.mod.d.test
 // @api = 1.0
-// @pubdate = 2020-07-27
+// @pubdate = 2020-07-31
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.rendicontocassa.mod.d.js>
 // @task = app.command
@@ -59,7 +59,10 @@ ReportModDTest.prototype.cleanup = function() {
 
 ReportModDTest.prototype.testBananaExtension = function() {
 
-	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_cassa.ac2");
+	/**
+	 *	Test with Gr column
+	 */
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_cassa_gr_gr1.ac2");
 	Test.assert(banDoc);
 
 	var userParam = {};
@@ -76,6 +79,7 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_D");
 
 	const bReport = new BReport(banDoc, userParam, dataStructure);
+	bReport.validateGroups(userParam.column);
 	bReport.loadBalances();
 	bReport.calculateTotals(["currentAmount", "previousAmount"]);
 	bReport.formatValues(["currentAmount", "previousAmount"]);
@@ -83,4 +87,35 @@ ReportModDTest.prototype.testBananaExtension = function() {
 
 	var report = printRendicontoModD(banDoc, userParam, bReport, "");
 	Test.logger.addReport("Test 'rendiconto cassa (MOD. D)'", report);
+
+
+	/**
+	 *	Test with Gr1 column
+	 */
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_cassa_gr_gr1.ac2");
+	Test.assert(banDoc);
+
+	var userParam = {};
+  	userParam.selectionStartDate = "2022-01-01";
+  	userParam.selectionEndDate = "2022-12-31";
+  	userParam.title = "RENDICONTO CASSA (MOD. D) ANNO 2022";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr1';
+
+	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_D");
+
+	const bReport1 = new BReport(banDoc, userParam, dataStructure);
+	bReport1.validateGroups(userParam.column);
+	bReport1.loadBalances();
+	bReport1.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport1.formatValues(["currentAmount", "previousAmount"]);
+	bReport1.excludeEntries();
+
+	var report = printRendicontoModD(banDoc, userParam, bReport1, "");
+	Test.logger.addReport("Test GR1 'rendiconto cassa (MOD. D)'", report);
+
 }

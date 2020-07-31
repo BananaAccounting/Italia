@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2020-07-29
+// @pubdate = 2020-07-31
 // @publisher = Banana.ch SA
 // @description = Rendiconto per cassa (MOD. D)
 // @task = app.command
@@ -186,9 +186,9 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
 
    /* Row 2*/
    tableRow = table.addRow();
-   tableRow.addCell("", "", 1);
-   tableRow.addCell("", "", 1);
-   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA1"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA1"), "align-right", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell(bReport.getObjectDescription("RA1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA1"), "align-right", 1);
@@ -196,9 +196,9 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
 
    /* Row 3 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("CA1"), "align-left", 1);
-   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA1"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA2"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA2"), "align-right", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell(bReport.getObjectDescription("RA2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA2"), "align-right", 1);
@@ -206,9 +206,9 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
 
    /* Row 4 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("CA2"), "align-left", 1);
-   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA2"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA2"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA3"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA3"), "align-right", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell(bReport.getObjectDescription("RA3"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA3"), "align-right", 1);
@@ -216,9 +216,9 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
 
    /* Row 5 */
    tableRow = table.addRow();
-   tableRow.addCell("", "", 1);
-   tableRow.addCell("", "", 1);
-   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA4"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA4"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA4"), "align-right", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell(bReport.getObjectDescription("RA4"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA4"), "align-right", 1);
@@ -226,9 +226,9 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
 
    /* Row 6 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("CA3"), "align-left", 1);
-   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA3"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA7"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA7"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA7"), "align-right", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell(bReport.getObjectDescription("RA5"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA5"), "align-right", 1);
@@ -236,9 +236,9 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
 
    /* Row 7 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("CA4"), "align-left", 1);
-   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA4"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA4"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell(bReport.getObjectDescription("RA6"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA6"), "align-right", 1);
@@ -256,9 +256,9 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
 
    /* Row 9 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("CA7"), "align-left", 1);
-   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA7"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA7"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell(bReport.getObjectDescription("RA8"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA8"), "align-right", 1);

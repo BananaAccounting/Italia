@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a.test
 // @api = 1.0
-// @pubdate = 2020-07-27
+// @pubdate = 2020-07-31
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.statopatrimoniale.mod.a.js>
 // @task = app.command
@@ -81,6 +81,7 @@ ReportModATest.prototype.testBananaExtension = function() {
 	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_A");
 
 	const bReport = new BReport(banDoc, userParam, dataStructure);
+	bReport.validateGroups(userParam.column);
 	bReport.loadBalances();
 	bReport.calculateTotals(["currentAmount", "previousAmount"]);
 	bReport.formatValues(["currentAmount", "previousAmount"]);
@@ -111,6 +112,7 @@ ReportModATest.prototype.testBananaExtension = function() {
 	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_A");
 
 	const bReport1 = new BReport(banDoc, userParam, dataStructure);
+	bReport1.validateGroups(userParam.column);
 	bReport1.loadBalances();
 	bReport1.calculateTotals(["currentAmount", "previousAmount"]);
 	bReport1.formatValues(["currentAmount", "previousAmount"]);
@@ -123,7 +125,7 @@ ReportModATest.prototype.testBananaExtension = function() {
 	/**
 	 * Test 3 with all groups balances using the Gr1 column
 	*/
-	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_gestionale_pieno_gr1.ac2");
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_test_gestionale_gr_gr1.ac2");
 	Test.assert(banDoc);
 
 	var userParam = {};
@@ -141,6 +143,7 @@ ReportModATest.prototype.testBananaExtension = function() {
 	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_A");
 
 	const bReport2 = new BReport(banDoc, userParam, dataStructure);
+	bReport2.validateGroups(userParam.column);
 	bReport2.loadBalances();
 	bReport2.calculateTotals(["currentAmount", "previousAmount"]);
 	bReport2.formatValues(["currentAmount", "previousAmount"]);
