@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2020-07-31
+// @pubdate = 2020-09-21
 // @publisher = Banana.ch SA
 // @description = Stato patrimoniale (MOD. A)
 // @task = app.command
@@ -44,7 +44,7 @@
 */
 
 var BAN_VERSION = "10.0.0";
-var BAN_EXPM_VERSION = "200729";
+var BAN_EXPM_VERSION = "";
 
 
 //Main function
