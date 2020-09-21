@@ -43,7 +43,7 @@
 
 */
 
-var BAN_VERSION = "10.0.0";
+var BAN_VERSION = "10.0.1";
 var BAN_EXPM_VERSION = "";
 
 
