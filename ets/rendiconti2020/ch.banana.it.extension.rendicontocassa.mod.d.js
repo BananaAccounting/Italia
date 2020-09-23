@@ -14,11 +14,11 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2020-09-21
+// @pubdate = 2020-09-23
 // @publisher = Banana.ch SA
 // @description = Rendiconto per cassa (MOD. D)
 // @task = app.command
-// @doctype = 100.100
+// @doctype = 100.100;110.100;130.100
 // @docproperties = 
 // @outputformat = none
 // @inputdatasource = none
