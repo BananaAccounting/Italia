@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2020-07-31 */
+/* Update: 2020-09-25 */
 
 
 var BReport = class JsClass {
@@ -44,9 +44,17 @@ var BReport = class JsClass {
     */
    calculateCurrentBalances(grText, bClass, grColumn, startDate, endDate) {
       var accounts = [];
-      var accountNumbers = this.getColumnListForGr(this.banDoc.table("Accounts"), grText, "Account", grColumn);
-      accountNumbers = accountNumbers.join("|");
-      accounts.push(accountNumbers);
+
+      if (this.banDoc.table("Categories") && (bClass === "3" || bClass === "4")) {
+        var categoryNumbers = this.getColumnListForGr(this.banDoc.table("Categories"), grText, "Category", grColumn);
+        categoryNumbers = categoryNumbers.join("|");
+        accounts.push(categoryNumbers);
+      }
+      else {
+        var accountNumbers = this.getColumnListForGr(this.banDoc.table("Accounts"), grText, "Account", grColumn);
+        accountNumbers = accountNumbers.join("|");
+        accounts.push(accountNumbers);
+      }
       
       //Sum the amounts of opening, debit, credit, total and balance for all transactions for this accounts
       var currentBal = this.banDoc.currentBalance(accounts, startDate, endDate);
@@ -59,10 +67,20 @@ var BReport = class JsClass {
          return Banana.SDecimal.invert(currentBal.balance);
       }
       else if (bClass === "3") {
-         return currentBal.total;
+        if (!this.banDoc.table("Categories")) {
+          return currentBal.total;
+        }
+        else {
+          return Banana.SDecimal.invert(currentBal.total)
+        }
       }
       else if (bClass === "4") {
-         return Banana.SDecimal.invert(currentBal.total);
+        if (!this.banDoc.table("Categories")) {
+          return Banana.SDecimal.invert(currentBal.total);
+        }
+        else {
+          return currentBal.total;
+        }
       }
    }
 
@@ -74,20 +92,40 @@ var BReport = class JsClass {
         grColumn = "Gr";
       }
       var balance = "";
-      for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
-         var tRow = this.banDoc.table('Accounts').row(i);
-         var gr = tRow.value(grColumn);
-         var prior = tRow.value("Prior");
-         if (gr && gr === grText) {
-            balance = Banana.SDecimal.add(balance, prior);
-         }
+
+      if (this.banDoc.table("Categories") && (bClass === "3" || bClass === "4")) {
+        for (var i = 0; i < this.banDoc.table('Categories').rowCount; i++) {
+           var tRow = this.banDoc.table('Categories').row(i);
+           var gr = tRow.value(grColumn);
+           var prior = tRow.value("Prior");
+           if (gr && gr === grText) {
+              balance = Banana.SDecimal.add(balance, prior);
+           }
+        }
+        //The bClass decides which value to use
+        if (bClass === "3") {
+           return Banana.SDecimal.invert(balance);
+        }
+        else if (bClass === "4") {
+           return balance;
+        }
       }
-      //The bClass decides which value to use
-      if (bClass === "1" || bClass === "3") {
-         return balance;
-      }
-      else if (bClass === "2" || bClass === "4") {
-         return Banana.SDecimal.invert(balance);
+      else {
+        for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
+           var tRow = this.banDoc.table('Accounts').row(i);
+           var gr = tRow.value(grColumn);
+           var prior = tRow.value("Prior");
+           if (gr && gr === grText) {
+              balance = Banana.SDecimal.add(balance, prior);
+           }
+        }
+        //The bClass decides which value to use
+        if (bClass === "1" || bClass === "3") {
+           return balance;
+        }
+        else if (bClass === "2" || bClass === "4") {
+           return Banana.SDecimal.invert(balance);
+        }
       }
    }
 
