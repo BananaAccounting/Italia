@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2020-07-31 */
+/* Update: 2020-09-21 */
 
 
 var ID_ERR_VERSIONE = "ID_ERR_VERSIONE";
@@ -26,7 +26,12 @@ var ID_ERR_GRUPPO_ERRATO = "ID_ERR_GRUPPO_ERRATO";
 function getErrorMessage(errorId, column, value) {
     switch (errorId) {
         case ID_ERR_VERSIONE:
-            return "L'estensione non funziona con questa versione di Banana Contabilità. Aggiornare alla versione Experimental più recente.";
+            if (BAN_EXPM_VERSION) {
+                return "L'estensione non funziona con questa versione di Banana Contabilità. Aggiornare a Banana Experimental (" + BAN_VERSION + "." + BAN_EXPM_VERSION + ").";
+            }
+            else {
+                return "L'estensione non funziona con questa versione di Banana Contabilità. Aggiornare alla versione " + BAN_VERSION + " o successiva.";
+            }
         case ID_ERR_GRUPPO_ERRATO:
             //grColumn, riga, valore
             return "colonna <" + column + ">, valore <"+ value +"> Codice gruppo inserito errato. Modificare il codice gruppo nella tabella Conti.";
