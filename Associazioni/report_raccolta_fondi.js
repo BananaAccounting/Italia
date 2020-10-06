@@ -135,17 +135,33 @@ function printReport(banDoc) {
 			tableRow.addCell(Banana.Converter.toLocaleDateFormat(tRow.value("Date")), "heading3");
 			tableRow.addCell(tRow.value("Doc"), "heading3");
 			tableRow.addCell(tRow.value("JDescription"), "heading3");
-			
-			if (tRow.value('JDebitAmount')) {
-				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JDebitAmount')), "heading3 alignRight");
-			} else {
-				tableRow.addCell("", "heading3 alignRight");
-			}
 
-			if (tRow.value('JCreditAmount')) {
-				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JCreditAmount')), "heading3 alignRight");
-			} else {
-				tableRow.addCell("", "heading3 alignRight");
+
+			if (banDoc.table("Categories")) {
+				if (tRow.value('JDebitAmount')) {
+					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JDebitAmount')), "heading3 alignRight");
+				} else {
+					tableRow.addCell("", "heading3 alignRight");
+				}
+
+				if (tRow.value('JCreditAmount')) {
+					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JCreditAmount')), "heading3 alignRight");
+				} else {
+					tableRow.addCell("", "heading3 alignRight");
+				}
+			}
+			else {
+				if (tRow.value('JCreditAmount')) {
+					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JCreditAmount')), "heading3 alignRight");
+				} else {
+					tableRow.addCell("", "heading3 alignRight");
+				}
+
+				if (tRow.value('JDebitAmount')) {
+					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JDebitAmount')), "heading3 alignRight");
+				} else {
+					tableRow.addCell("", "heading3 alignRight");
+				}
 			}
 		}
 
@@ -157,19 +173,38 @@ function printReport(banDoc) {
 			tableRow.addCell(tRow.value(" "), " ");
 			tableRow.addCell(tRow.value("Doc"), "heading3");
 			tableRow.addCell(tRow.value("JDescription"), "heading3 bold");
-			
-			if (tRow.value('JDebitAmount')) {
-				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JDebitAmount')), "heading3 alignRight bold");
-				totExpenses = tRow.value('JDebitAmount');
-			} else {
-				tableRow.addCell("", "heading3 alignRight");
-			}
 
-			if (tRow.value('JCreditAmount')) {
-				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JCreditAmount')), "heading3 alignRight bold");
+			if (banDoc.table("Categories")) {
+				if (tRow.value('JDebitAmount')) {
+					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JDebitAmount')), "heading3 alignRight bold");
+				} else {
+					tableRow.addCell("", "heading3 alignRight");
+				}
+
+				if (tRow.value('JCreditAmount')) {
+					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JCreditAmount')), "heading3 alignRight bold");
+				} else {
+					tableRow.addCell("", "heading3 alignRight");
+				}
+
+				totIncome = tRow.value('JDebitAmount');
+				totExpenses = tRow.value('JCreditAmount');
+			}
+			else {
+				if (tRow.value('JCreditAmount')) {
+					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JCreditAmount')), "heading3 alignRight bold");
+				} else {
+					tableRow.addCell("", "heading3 alignRight");
+				}
+
+				if (tRow.value('JDebitAmount')) {
+					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JDebitAmount')), "heading3 alignRight bold");
+				} else {
+					tableRow.addCell("", "heading3 alignRight");
+				}
+
 				totIncome = tRow.value('JCreditAmount');
-			} else {
-				tableRow.addCell("", "heading3 alignRight");
+				totExpenses = tRow.value('JDebitAmount');
 			}
 		}
 
