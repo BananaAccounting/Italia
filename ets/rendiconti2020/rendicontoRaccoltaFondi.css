@@ -1,0 +1,88 @@
+/* Update 2020-10-16 */
+
+@page {
+   margin-top: 20mm;
+   margin-bottom: 20mm;
+   margin-left: 25mm;
+   margin-right: 15mm;
+}
+
+body {
+   font-family: Times New Roman;
+}
+
+.heading1 {
+   font-size: 16px;
+   font-weight: bold;
+}
+
+.heading2 {
+   font-size: 14px;
+   font-weight: bold;
+}
+
+.heading3 {
+   font-size: 12px;
+}
+
+.background {
+   padding-top: 5px;
+   padding-bottom: 5px;
+   background-color: #eeeeee;
+}
+
+.borderLeft {
+   border-left-style: solid;
+   border-left-color: black;
+   border-left-width: thin;
+}
+
+.borderBottom {
+   border-bottom-style: solid;
+   border-bottom-color: black;
+   border-bottom-width: thin;
+}
+
+.bold {
+   font-weight: bold;
+}
+
+.italic {
+   font-style: italic;
+}
+
+.alignRight {
+   text-align: right;
+}
+
+.alignCenter {
+   text-align: center;
+}
+
+table {
+   font-size: 12px;
+   width: 100%;
+}
+
+td {
+   vertical-align: top;
+}
+
+caption {
+   text-align: left;
+}
+
+table.table td {
+   border-top-style: solid;
+   border-top-color: black;
+   border-top-width: thin;
+   border-bottom-style: solid;
+   border-bottom-color: black;
+   border-bottom-width: thin;
+   border-left-style: solid;
+   border-left-color: black;
+   border-left-width: thin;
+   border-right-style: solid;
+   border-right-color: black;
+   border-right-width: thin;
+}

@@ -13,10 +13,12 @@
 // limitations under the License.
 
 
-/* Update: 2020-09-21 */
+/* Update: 2020-10-23 */
 
 
 var ID_ERR_VERSIONE = "ID_ERR_VERSIONE";
+var ID_ERR_LICENZA_ADVANCED = "ID_ERR_LICENZA_ADVANCED";
+var ID_ERR_LICENZA_PROFESSIONAL = "ID_ERR_LICENZA_PROFESSIONAL";
 var ID_ERR_GRUPPO_MANCANTE = "ID_ERR_GRUPPO_MANCANTE";
 var ID_ERR_GRUPPO_ERRATO = "ID_ERR_GRUPPO_ERRATO";
 
@@ -27,14 +29,21 @@ function getErrorMessage(errorId, column, value) {
     switch (errorId) {
         case ID_ERR_VERSIONE:
             if (BAN_EXPM_VERSION) {
-                return "L'estensione non funziona con questa versione di Banana Contabilità. Aggiornare a Banana Experimental (" + BAN_VERSION + "." + BAN_EXPM_VERSION + ").";
+                return "L'estensione richiede come versione minima Banana Contabilità Plus " + BAN_VERSION + "." + BAN_EXPM_VERSION;
             }
             else {
-                return "L'estensione non funziona con questa versione di Banana Contabilità. Aggiornare alla versione " + BAN_VERSION + " o successiva.";
+                return "L'estensione richiede come versione minima Banana Contabilità Plus " + BAN_VERSION;
+                //return "L'estensione non funziona con questa versione di Banana Contabilità. Aggiornare alla versione " + BAN_VERSION + " o successiva.";
             }
         case ID_ERR_GRUPPO_ERRATO:
             //grColumn, riga, valore
             return "colonna <" + column + ">, valore <"+ value +"> Codice gruppo inserito errato. Modificare il codice gruppo nella tabella Conti.";
+    
+        case ID_ERR_LICENZA_ADVANCED:
+            return "L'estensione richiede il piano Advanced.";
+
+        case ID_ERR_LICENZA_PROFESSIONAL:
+            return "L'estensione richiede il piano Professional.";
     }
     return "";
 }

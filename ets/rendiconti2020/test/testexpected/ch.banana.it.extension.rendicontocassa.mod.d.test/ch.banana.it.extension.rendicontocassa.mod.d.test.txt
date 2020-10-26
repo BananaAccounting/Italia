@@ -92,7 +92,7 @@ Totale  & 8.00  & 7.00  &  & Totale  & 7.00  & 9.00 \\
 \multicolumn{5}{l}{} & 31.12.2022  & 31.12.2021 \\
 \multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 255.00  & -71.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & -1.00  & 2.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & 3.00  & 1.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & 257.00  & -68.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
@@ -179,7 +179,7 @@ Totale  & 8.00  & 7.00  &  & Totale  & 7.00  & 9.00 \\
 \multicolumn{5}{l}{} & 31.12.2022  & 31.12.2021 \\
 \multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 255.00  & -71.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & -1.00  & 2.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & 3.00  & 1.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & 257.00  & -68.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }

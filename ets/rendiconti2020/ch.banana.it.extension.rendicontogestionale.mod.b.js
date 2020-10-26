@@ -14,9 +14,9 @@
 //
 // @id = ch.banana.it.extension.rendicontogestionale.mod.b
 // @api = 1.0
-// @pubdate = 2020-09-23
+// @pubdate = 2020-10-23
 // @publisher = Banana.ch SA
-// @description = Rendiconto gestionale (MOD. B)
+// @description = 2. Rendiconto gestionale (MOD. B)
 // @task = app.command
 // @doctype = 100.100;110.100;130.100
 // @docproperties = 
@@ -931,6 +931,17 @@ function bananaRequiredVersion(requiredVersion, expmVersion) {
       Banana.document.addMessage(getErrorMessage(ID_ERR_VERSIONE));
       return false;
    }
-   return true;
+   else {
+      if (Banana.application.license) {
+         if (Banana.application.license.licenseType === "advanced") {
+            return true;
+         }
+         else {
+            Banana.application.showMessages();
+            Banana.document.addMessage(getErrorMessage(ID_ERR_LICENZA_ADVANCED));           
+            return false;
+         }
+      }
+   }
 }
 

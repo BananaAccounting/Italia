@@ -14,9 +14,9 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2020-09-23
+// @pubdate = 2020-10-23
 // @publisher = Banana.ch SA
-// @description = Rendiconto per cassa (MOD. D)
+// @description = 3. Rendiconto per cassa (MOD. D)
 // @task = app.command
 // @doctype = 100.100;110.100;130.100
 // @docproperties = 
@@ -1048,5 +1048,22 @@ function bananaRequiredVersion(requiredVersion, expmVersion) {
       Banana.document.addMessage(getErrorMessage(ID_ERR_VERSIONE));
       return false;
    }
-   return true;
+   else {
+      var fileTypeGroup = Banana.document.info("Base", "FileTypeGroup");
+      var fileTypeNumber = Banana.document.info("Base", "FileTypeNumber");
+      if (fileTypeGroup === "130" && fileTypeNumber === "100") { //cash manager free
+         return true;
+      }
+      else if (Banana.application.license) {
+         if (Banana.application.license.licenseType === "professional" || Banana.application.license.licenseType === "advanced") {
+            return true;
+         }
+         else {
+            Banana.application.showMessages();
+            Banana.document.addMessage(getErrorMessage(ID_ERR_LICENZA_PROFESSIONAL));           
+            return false;
+         }
+      }
+   }
 }
+

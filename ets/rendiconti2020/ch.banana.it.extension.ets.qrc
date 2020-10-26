@@ -10,5 +10,10 @@
     <file>rendicontoModB.css</file>
     <file>ch.banana.it.extension.rendicontocassa.mod.d.js</file>
     <file>rendicontoModD.css</file>
+    <file>ch.banana.it.extension.reportcinquepermille.js</file>
+    <file>rendiconto5xMille.css</file>
+    <file>ch.banana.it.extension.reportraccoltafondi.js</file>
+    <file>rendicontoRaccoltaFondi.css</file>
+    <file>images/ministero_del_lavoro.png</file>
  </qresource>
  </RCC>
