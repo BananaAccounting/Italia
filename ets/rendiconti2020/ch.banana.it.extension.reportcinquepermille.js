@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.reportcinquepermille
 // @api = 1.0
-// @pubdate = 2020-10-23
+// @pubdate = 2020-11-04
 // @publisher = Banana.ch SA
 // @description = 4. Report cinque per mille
 // @task = app.command
@@ -752,18 +752,6 @@ function convertParam(userParam, segment5XMList) {
 	convertedParam.data.push(currentParam);
 
 	var currentParam = {};
-	currentParam.name = 'dataPercezione';
-	currentParam.parentObject = 'anagrafica';
-	currentParam.title = 'Data di percezione';
-	currentParam.type = 'string';
-	currentParam.value = userParam.dataPercezione ? userParam.dataPercezione : '';
-	currentParam.defaultvalue = '31.12.2020';
-	currentParam.readValue = function() {
-	  userParam.dataPercezione = this.value;
-	}
-	convertedParam.data.push(currentParam);
-
-	var currentParam = {};
 	currentParam.name = 'rendiconto';
 	currentParam.parentObject = '';
 	currentParam.title = 'Rendiconto spese';
@@ -811,6 +799,17 @@ function convertParam(userParam, segment5XMList) {
 	}
 	convertedParam.data.push(currentParam);
 
+	var currentParam = {};
+	currentParam.name = 'dataPercezione';
+	currentParam.parentObject = 'rendiconto';
+	currentParam.title = 'Data di percezione';
+	currentParam.type = 'string';
+	currentParam.value = userParam.dataPercezione ? userParam.dataPercezione : '';
+	currentParam.defaultvalue = '31.12.2020';
+	currentParam.readValue = function() {
+	  userParam.dataPercezione = this.value;
+	}
+	convertedParam.data.push(currentParam);
 
 	return convertedParam;
 }
