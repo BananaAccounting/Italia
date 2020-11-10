@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2020-10-23
+// @pubdate = 2020-11-10
 // @publisher = Banana.ch SA
 // @description = 1. Stato patrimoniale (MOD. A)
 // @task = app.command
@@ -23,7 +23,7 @@
 // @outputformat = none
 // @inputdatasource = none
 // @timeout = -1
-// @includejs = datastructure.js
+// @includejs = reportstructure.js
 // @includejs = breport.js
 // @includejs = errors.js
 
@@ -75,21 +75,21 @@ function exec(string) {
    }
 
    /**
-    * 1. Loads the data structure
+    * 1. Loads the report structure
     */
-   var dataStructure = loadDataStructure("REPORT_TYPE_MOD_A");
+   var reportStructure = createReportStructureStatoPatrimoniale();
 
    /**
     * 2. Calls methods to load balances, calculate totals, format amounts
     * and check entries that can be excluded
     */
-   const bReport = new BReport(Banana.document, userParam, dataStructure);
+   const bReport = new BReport(Banana.document, userParam, reportStructure);
    bReport.validateGroups(userParam.column);
    bReport.loadBalances();
    bReport.calculateTotals(["currentAmount", "previousAmount"]);
    bReport.formatValues(["currentAmount", "previousAmount"]);
    bReport.excludeEntries();
-   //Banana.console.log(JSON.stringify(dataStructure, "", " "));
+   //Banana.console.log(JSON.stringify(reportStructure, "", " "));
 
    /**
     * 3. Creates the report
@@ -102,7 +102,7 @@ function exec(string) {
 
 function printRow(userParam, bReport, table, gr, styleColumnDescription, styleColumnAmount) {
    var styleIndentLevel = "";
-   var indentLevel = bReport.getObjectIndent(gr);
+   var indentLevel = "lvl"+bReport.getObjectIndent(gr);
    if (indentLevel) {
       styleIndentLevel = indentLevel;
    }
@@ -130,7 +130,7 @@ function printRow(userParam, bReport, table, gr, styleColumnDescription, styleCo
 
 function printSubRow(userParam, bReport, table, gr, styleColumnDescription, styleColumnAmount) {
    var styleIndentLevel = "";
-   var indentLevel = bReport.getObjectIndent(gr);
+   var indentLevel = "lvl"+bReport.getObjectIndent(gr);
    if (indentLevel) {
       styleIndentLevel = indentLevel;
    }
@@ -788,7 +788,7 @@ function bananaRequiredVersion(requiredVersion, expmVersion) {
    }
    else {
       if (Banana.application.license) {
-         if (Banana.application.license.licenseType === "advanced") {
+         if (Banana.application.license.licenseType === "professional" || Banana.application.license.licenseType === "advanced") {
             return true;
          }
          else {

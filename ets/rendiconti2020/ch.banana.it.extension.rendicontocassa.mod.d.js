@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2020-10-23
+// @pubdate = 2020-11-10
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa (MOD. D)
 // @task = app.command
@@ -23,7 +23,7 @@
 // @outputformat = none
 // @inputdatasource = none
 // @timeout = -1
-// @includejs = datastructure.js
+// @includejs = reportstructure.js
 // @includejs = breport.js
 // @includejs = errors.js
 
@@ -67,20 +67,20 @@ function exec(string) {
    }
 
    /**
-    * 1. Loads the data structure
+    * 1. Loads the report structure
     */
-   var dataStructure = loadDataStructure("REPORT_TYPE_MOD_D");
+   var reportStructure = createReportStructureRendicontoCassa();
 
    /**
     * 2. Calls methods to load balances, calculate totals, format amounts
     * and check entries that can be excluded
     */
-   const bReport = new BReport(Banana.document, userParam, dataStructure);
+   const bReport = new BReport(Banana.document, userParam, reportStructure);
    bReport.validateGroups(userParam.column);
    bReport.loadBalances();
    bReport.calculateTotals(["currentAmount", "previousAmount"]);
    bReport.formatValues(["currentAmount", "previousAmount"]);
-   //Banana.console.log(JSON.stringify(dataStructure, "", " "));
+   //Banana.console.log(JSON.stringify(reportStructure, "", " "));
 
    /**
     * 3. Creates the report

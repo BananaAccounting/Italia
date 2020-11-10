@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.rendicontocassa.mod.d.test
 // @api = 1.0
-// @pubdate = 2020-07-31
+// @pubdate = 2020-11-10
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.rendicontocassa.mod.d.js>
 // @task = app.command
@@ -76,9 +76,9 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	userParam.title = '';
 	userParam.column = 'Gr';
 
-	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_D");
+	var reportStructure = createReportStructureRendicontoCassa();
 
-	const bReport = new BReport(banDoc, userParam, dataStructure);
+	const bReport = new BReport(banDoc, userParam, reportStructure);
 	bReport.validateGroups(userParam.column);
 	bReport.loadBalances();
 	bReport.calculateTotals(["currentAmount", "previousAmount"]);
@@ -106,9 +106,9 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	userParam.title = '';
 	userParam.column = 'Gr1';
 
-	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_D");
+	var reportStructure = createReportStructureRendicontoCassa();
 
-	const bReport1 = new BReport(banDoc, userParam, dataStructure);
+	const bReport1 = new BReport(banDoc, userParam, reportStructure);
 	bReport1.validateGroups(userParam.column);
 	bReport1.loadBalances();
 	bReport1.calculateTotals(["currentAmount", "previousAmount"]);

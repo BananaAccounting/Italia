@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a.test
 // @api = 1.0
-// @pubdate = 2020-07-31
+// @pubdate = 2020-11-10
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.statopatrimoniale.mod.a.js>
 // @task = app.command
@@ -78,9 +78,9 @@ ReportModATest.prototype.testBananaExtension = function() {
 	userParam.column = 'Gr';
 	userParam.compattastampa = false;
 
-	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_A");
+	var reportStructure = createReportStructureStatoPatrimoniale();
 
-	const bReport = new BReport(banDoc, userParam, dataStructure);
+	const bReport = new BReport(banDoc, userParam, reportStructure);
 	bReport.validateGroups(userParam.column);
 	bReport.loadBalances();
 	bReport.calculateTotals(["currentAmount", "previousAmount"]);
@@ -109,9 +109,9 @@ ReportModATest.prototype.testBananaExtension = function() {
 	userParam.column = 'Gr';
 	userParam.compattastampa = true;
 
-	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_A");
+	var reportStructure = createReportStructureStatoPatrimoniale();
 
-	const bReport1 = new BReport(banDoc, userParam, dataStructure);
+	const bReport1 = new BReport(banDoc, userParam, reportStructure);
 	bReport1.validateGroups(userParam.column);
 	bReport1.loadBalances();
 	bReport1.calculateTotals(["currentAmount", "previousAmount"]);
@@ -140,9 +140,9 @@ ReportModATest.prototype.testBananaExtension = function() {
 	userParam.column = 'Gr1';
 	userParam.compattastampa = true;
 
-	var dataStructure = loadDataStructure("REPORT_TYPE_MOD_A");
+	var reportStructure = createReportStructureStatoPatrimoniale();
 
-	const bReport2 = new BReport(banDoc, userParam, dataStructure);
+	const bReport2 = new BReport(banDoc, userParam, reportStructure);
 	bReport2.validateGroups(userParam.column);
 	bReport2.loadBalances();
 	bReport2.calculateTotals(["currentAmount", "previousAmount"]);

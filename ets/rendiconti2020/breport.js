@@ -13,27 +13,59 @@
 // limitations under the License.
 
 
-/* Update: 2020-09-25 */
+/* Update: 2020-11-10 */
+
+
+
+
+/**
+ * Report structure:
+ * - "id" used as GR/GR1 and to identify the object
+ * - "type" used to define the type of data ("title", "group" and "total")
+ *     - title:
+ *        - Normally used when a title or a description text without amount must be displayed.
+ *        - The "id" group starts with a "d" (description).
+ *        - Example:
+ *          {"id":"dABI", "type":"title", "indent":"1", "description":"I - Immobilizzazioni immateriali"}
+ *     - group:
+ *        - Used when a group with text and amount must be displayed.
+ *        - Examples:
+ *          {"id":"ABI1", "type":"group", "indent":"2", "bclass":"1", "description":"1) costi di impianto e di ampliamento"}
+ *          {"id":"ABI2", "type":"group", "indent":"2", "bclass":"1", "description":"2) costi di sviluppo"}
+ *     - total:
+ *        - Used for the total of a group with and amount.
+ *        - The amount is the sum groups amounts.
+ *        - Use the property "sum" to indicate the list of all "id" groups that must be summed together, separated by a semicolon ";".
+ *        - To subtract amounts use the minus sign "-" before the group "id".
+ *        - Examples:
+ *          {"id":"ABI", "type":"total", "indent":"1", "description":"Totale immobilizzazioni immateriali", "sum":"ABI1;ABI2"}      => sum = ABI1 + ABI2
+ *          {"id":"ABI", "type":"total", "indent":"1", "description":"Totale immobilizzazioni immateriali", "sum":"ABI1;-ABI2"}     => sum = ABI1 - ABI2
+ *
+ * - "indent" used to define the indent level for the print
+ * - "bclass" used to define the bclass of the group
+ * - "description" used to define the description text used for the print
+ * - "sum" used to define how to calculate the total
+ */
 
 
 var BReport = class JsClass {
    
-   constructor(banDoc, userParam, dataStructure) {
+   constructor(banDoc, userParam, reportStructure) {
       this.banDoc = banDoc;
       this.userParam = userParam;
-      this.dataStructure = dataStructure;
+      this.reportStructure = reportStructure;
       this.version = '1.0';
    }
 
    /**
-    * Load all the current/previous balances and save the values into the dataStructure
+    * Load all the current/previous balances and save the values into the reportStructure
     */
    loadBalances() {
-      for (var i in this.dataStructure) {
-         if (this.dataStructure[i]["bclass"]) {
-            if (this.dataStructure[i]["id"]) {
-               this.dataStructure[i]["currentAmount"] = this.calculateCurrentBalances(this.dataStructure[i]["id"], this.dataStructure[i]["bclass"], this.userParam.column, this.userParam.selectionStartDate, this.userParam.selectionEndDate);
-               this.dataStructure[i]["previousAmount"] = this.calculatePreviousBalances(this.dataStructure[i]["id"], this.dataStructure[i]["bclass"], this.userParam.column);
+      for (var i in this.reportStructure) {
+         if (this.reportStructure[i]["bclass"]) {
+            if (this.reportStructure[i]["id"]) {
+               this.reportStructure[i]["currentAmount"] = this.calculateCurrentBalances(this.reportStructure[i]["id"], this.reportStructure[i]["bclass"], this.userParam.column, this.userParam.selectionStartDate, this.userParam.selectionEndDate);
+               this.reportStructure[i]["previousAmount"] = this.calculatePreviousBalances(this.reportStructure[i]["id"], this.reportStructure[i]["bclass"], this.userParam.column);
             }
          }
       }
@@ -129,6 +161,50 @@ var BReport = class JsClass {
       }
    }
 
+   /**
+    * Calculate the balances for the given column (column) of the accounts belonging to the same group (grText)
+    */ 
+   calculateColumnBalances(grText, bClass, grColumn, column) {
+      if (!grColumn) {
+        grColumn = "Gr";
+      }
+      var balance = "";
+
+      if (this.banDoc.table("Categories") && (bClass === "3" || bClass === "4")) {
+        for (var i = 0; i < this.banDoc.table('Categories').rowCount; i++) {
+           var tRow = this.banDoc.table('Categories').row(i);
+           var gr = tRow.value(grColumn);
+           var col = tRow.value(column);
+           if (gr && gr === grText) {
+              balance = Banana.SDecimal.add(balance, col);
+           }
+        }
+        //The bClass decides which value to use
+        if (bClass === "3") {
+           return Banana.SDecimal.invert(balance);
+        }
+        else if (bClass === "4") {
+           return balance;
+        }
+      }
+      else {
+        for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
+           var tRow = this.banDoc.table('Accounts').row(i);
+           var gr = tRow.value(grColumn);
+           var col = tRow.value(column);
+           if (gr && gr === grText) {
+              balance = Banana.SDecimal.add(balance, col);
+           }
+        }
+        //The bClass decides which value to use
+        if (bClass === "1" || bClass === "3") {
+           return balance;
+        }
+        else if (bClass === "2" || bClass === "4") {
+           return Banana.SDecimal.invert(balance);
+        }
+      }
+   }
    
    /**
     * Creates an array with all the values of a given column of the table (codeColumn)
@@ -181,21 +257,21 @@ var BReport = class JsClass {
       var columnList = new Set();
 
       //Get valid groups from each data structure type
-      var groupsModA = loadDataStructure("REPORT_TYPE_MOD_A");
+      var groupsModA = createReportStructureStatoPatrimoniale();
       for (var i in groupsModA) {
          if (groupsModA[i]["id"] && !groupsModA[i]["id"].startsWith('d')) {
             columnList.add(groupsModA[i]["id"]);
          }
       }
 
-      var groupsModB = loadDataStructure("REPORT_TYPE_MOD_B");
+      var groupsModB = createReportStructureRendicontoGestionale();
       for (var i in groupsModB) {
          if (groupsModB[i]["id"] && !groupsModB[i]["id"].startsWith('d')) {
             columnList.add(groupsModB[i]["id"]);
          }
       }
 
-      var groupsModD = loadDataStructure("REPORT_TYPE_MOD_D");
+      var groupsModD = createReportStructureRendicontoCassa();
       for (var i in groupsModD) {
          if (groupsModD[i]["id"] && !groupsModD[i]["id"].startsWith('d')) {
             columnList.add(groupsModD[i]["id"]);
@@ -236,17 +312,17 @@ var BReport = class JsClass {
     * with zero amounts for two consecutive exercises, can be excluded from the print
     */
    excludeEntries() {
-      for (var i in this.dataStructure) {
+      for (var i in this.reportStructure) {
           
          // Set all elements to false
-         this.dataStructure[i]["exclude"] = false;
+         this.reportStructure[i]["exclude"] = false;
           
          // Check elements than can be excluded
-         if (this.dataStructure[i]["description"].match(/^[a-z0-9]/)) { // a,b,c,... or 1,2,3...
-            if ((!this.dataStructure[i]["currentAmount"] || this.dataStructure[i]["currentAmount"] == 0 || this.dataStructure[i]["currentAmount"] === "undefined") &&
-               (!this.dataStructure[i]["previousAmount"] || this.dataStructure[i]["previousAmount"] == 0 || this.dataStructure[i]["previousAmount"] === "undefined")) {
+         if (this.reportStructure[i]["description"].match(/^[a-z0-9]/)) { // a,b,c,... or 1,2,3...
+            if ((!this.reportStructure[i]["currentAmount"] || this.reportStructure[i]["currentAmount"] == 0 || this.reportStructure[i]["currentAmount"] === "undefined") &&
+               (!this.reportStructure[i]["previousAmount"] || this.reportStructure[i]["previousAmount"] == 0 || this.reportStructure[i]["previousAmount"] === "undefined")) {
 
-               this.dataStructure[i]["exclude"] = true;
+               this.reportStructure[i]["exclude"] = true;
             }
          }
       }
@@ -256,9 +332,9 @@ var BReport = class JsClass {
     * Returns a specific whole object for the given id value
     */  
    getObject(id) {
-      for (var i = 0; i < this.dataStructure.length; i++) {
-         if (this.dataStructure[i]["id"] === id) {
-            return this.dataStructure[i];
+      for (var i = 0; i < this.reportStructure.length; i++) {
+         if (this.reportStructure[i]["id"] === id) {
+            return this.reportStructure[i];
          }
       }
       this.banDoc.addMessage("Couldn't find object with id: " + id);
@@ -269,9 +345,9 @@ var BReport = class JsClass {
     */
    getObjectValue(id, property) {
       var searchId = id.trim();
-      for (var i = 0; i < this.dataStructure.length; i++) {
-         if (this.dataStructure[i].id === searchId) {
-            return this.dataStructure[i][property];
+      for (var i = 0; i < this.reportStructure.length; i++) {
+         if (this.reportStructure[i].id === searchId) {
+            return this.reportStructure[i][property];
          }
       }
       this.banDoc.addMessage("Couldn't find object with id: " + id);
@@ -282,9 +358,9 @@ var BReport = class JsClass {
     */
    getObjectIndent(id) {
       var searchId = id.trim();
-      for (var i = 0; i < this.dataStructure.length; i++) {
-         if (this.dataStructure[i]["id"] === searchId) {
-            return this.dataStructure[i]["indent"];
+      for (var i = 0; i < this.reportStructure.length; i++) {
+         if (this.reportStructure[i]["id"] === searchId) {
+            return this.reportStructure[i]["indent"];
          }
       }
       this.banDoc.addMessage("Couldn't find object with id: " + id);
@@ -295,9 +371,9 @@ var BReport = class JsClass {
     */
    getObjectType(id) {
       var searchId = id.trim();
-      for (var i = 0; i < this.dataStructure.length; i++) {
-         if (this.dataStructure[i]["id"] === searchId) {
-            return this.dataStructure[i]["type"];
+      for (var i = 0; i < this.reportStructure.length; i++) {
+         if (this.reportStructure[i]["id"] === searchId) {
+            return this.reportStructure[i]["type"];
          }
       }
       this.banDoc.addMessage("Couldn't find object with id: " + id);
@@ -308,9 +384,9 @@ var BReport = class JsClass {
     */
    getObjectDescription(id) {
       var searchId = id.trim();
-      for (var i = 0; i < this.dataStructure.length; i++) {
-         if (this.dataStructure[i]["id"] === searchId) {
-            return this.dataStructure[i]["description"];
+      for (var i = 0; i < this.reportStructure.length; i++) {
+         if (this.reportStructure[i]["id"] === searchId) {
+            return this.reportStructure[i]["description"];
          }
       }
       this.banDoc.addMessage("Couldn't find object with id: " + id);
@@ -321,9 +397,9 @@ var BReport = class JsClass {
     */
    getObjectCurrentAmountFormatted(id) {
       var searchId = id.trim();
-      for (var i = 0; i < this.dataStructure.length; i++) {
-         if (this.dataStructure[i]["id"] === searchId) {
-            return this.dataStructure[i]["currentAmountFormatted"];
+      for (var i = 0; i < this.reportStructure.length; i++) {
+         if (this.reportStructure[i]["id"] === searchId) {
+            return this.reportStructure[i]["currentAmountFormatted"];
          }
       }
       this.banDoc.addMessage("Couldn't find object with id: " + id);
@@ -334,9 +410,9 @@ var BReport = class JsClass {
     */
    getObjectPreviousAmountFormatted(id) {
       var searchId = id.trim();
-      for (var i = 0; i < this.dataStructure.length; i++) {
-         if (this.dataStructure[i]["id"] === searchId) {
-            return this.dataStructure[i]["previousAmountFormatted"];
+      for (var i = 0; i < this.reportStructure.length; i++) {
+         if (this.reportStructure[i]["id"] === searchId) {
+            return this.reportStructure[i]["previousAmountFormatted"];
          }
       }
       this.banDoc.addMessage("Couldn't find object with id: " + id);
@@ -346,8 +422,8 @@ var BReport = class JsClass {
     * Converts all the amounts to local format for the given list of field
     */
    formatValues(fields) {
-      for (var i = 0; i < this.dataStructure.length; i++) {
-         var valueObj = this.getObject(this.dataStructure[i].id);
+      for (var i = 0; i < this.reportStructure.length; i++) {
+         var valueObj = this.getObject(this.reportStructure[i].id);
 
          for (var j = 0; j < fields.length; j++) {
             //Check amount value
@@ -360,16 +436,16 @@ var BReport = class JsClass {
    }
 
    /**
-    * Calculates all totals of the dataStructure for the given list of fields
+    * Calculates all totals of the reportStructure for the given list of fields
     */
    calculateTotals(fields) {
-      for (var i = 0; i < this.dataStructure.length; i++) {
-         this.calculateTotal(this.dataStructure[i].id, fields);
+      for (var i = 0; i < this.reportStructure.length; i++) {
+         this.calculateTotal(this.reportStructure[i].id, fields);
       }
    }
 
    /**
-    * Calculates a single total of the dataStructure
+    * Calculates a single total of the reportStructure
     */
    calculateTotal(id, fields) {
 
