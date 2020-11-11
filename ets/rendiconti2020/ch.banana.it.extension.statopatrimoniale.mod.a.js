@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2020-11-10
+// @pubdate = 2020-11-11
 // @publisher = Banana.ch SA
 // @description = 1. Stato patrimoniale (MOD. A)
 // @task = app.command
@@ -150,7 +150,7 @@ function printSubRow(userParam, bReport, table, gr, styleColumnDescription, styl
 
 function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
 
-   var report = Banana.Report.newReport("Stato patrimoniale (MOD. A)");
+   var report = Banana.Report.newReport("Stato patrimoniale");
    var startDate = userParam.selectionStartDate;
    var endDate = userParam.selectionEndDate;
    var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
@@ -201,7 +201,7 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
    if (userParam.title) {
       title = userParam.title;
    } else {
-      title = "STATO PATRIMONIALE (MOD. A) ANNO " + currentYear;
+      title = banDoc.info("Base", "HeaderLeft") + " - " + "STATO PATRIMONIALE ANNO " + currentYear;
    }
    if (userParam.printtitle) {
       report.addParagraph(" ", "");

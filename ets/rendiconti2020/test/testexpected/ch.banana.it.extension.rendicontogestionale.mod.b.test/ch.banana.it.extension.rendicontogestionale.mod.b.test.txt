@@ -24,7 +24,7 @@
 \begin{test}{testBananaExtension}
 \begin{reportvalue}{Test 'rendiconto gestionale (MOD. B)'}
   \\
-Associazione APS - RENDICONTO GESTIONALE (MOD. B) ANNO 2022 \\
+Associazione APS - RENDICONTO GESTIONALE ANNO 2022 \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
 ONERI E COSTI  & 31.12.2022  & 31.12.2021  &  & PROVENTI E RICAVI  & 31.12.2022  & 31.12.2021 \\
@@ -94,7 +94,7 @@ Totale  & 3.00  & 5.00  &  & Totale  & 3.00  & 9.00 \\
 \end{reportvalue}
 \begin{reportvalue}{Test 2: 'rendiconto gestionale (MOD. B)', column Gr1}
   \\
-Associazione APS - RENDICONTO GESTIONALE (MOD. B) ANNO 2022 \\
+Associazione APS - RENDICONTO GESTIONALE ANNO 2022 \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
 ONERI E COSTI  & 31.12.2022  & 31.12.2021  &  & PROVENTI E RICAVI  & 31.12.2022  & 31.12.2021 \\
@@ -164,7 +164,7 @@ Totale  & 3.00  & 5.00  &  & Totale  & 3.00  & 9.00 \\
 \end{reportvalue}
 \begin{reportvalue}{Test 3: 'rendiconto gestionale (MOD. B)', column Gr1}
   \\
-Associazione Aiuto agli Anziani - RENDICONTO GESTIONALE (MOD. B) ANNO 2020 \\
+Associazione Aiuto agli Anziani - RENDICONTO GESTIONALE ANNO 2020 \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
 ONERI E COSTI  & 31.12.2020  & 31.12.2019  &  & PROVENTI E RICAVI  & 31.12.2020  & 31.12.2019 \\

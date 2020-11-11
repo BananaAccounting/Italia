@@ -24,7 +24,7 @@
 \begin{test}{testBananaExtension}
 \begin{reportvalue}{Test 1: rendiconto 'Stato Patrimoniale (MOD. A)'}
   \\
-STATO PATRIMONIALE (MOD. A) ANNO 2022 \\
+Associazione APS - STATO PATRIMONIALE ANNO 2022 \\
   \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2022  & 31.12.2021 \\
@@ -169,7 +169,7 @@ TOTALE PASSIVO  & 298.00  & 75.00 \\
 \end{reportvalue}
 \begin{reportvalue}{Test 2: rendiconto 'Stato Patrimoniale (MOD. A)'}
   \\
-STATO PATRIMONIALE (MOD. A) ANNO 2022 \\
+Associazione APS - STATO PATRIMONIALE ANNO 2022 \\
   \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2022  & 31.12.2021 \\
@@ -221,7 +221,7 @@ TOTALE PASSIVO  & -187.00  & -93.00 \\
 \end{reportvalue}
 \begin{reportvalue}{Test 3: rendiconto 'Stato Patrimoniale (MOD. A)', colonna Gr1}
   \\
-STATO PATRIMONIALE (MOD. A) ANNO 2022 \\
+Associazione APS - STATO PATRIMONIALE ANNO 2022 \\
   \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2022  & 31.12.2021 \\
@@ -366,7 +366,7 @@ TOTALE PASSIVO  & 298.00  & 77.00 \\
 \end{reportvalue}
 \begin{reportvalue}{Test 4: rendiconto 'Stato Patrimoniale (MOD. A)', colonna Gr1}
   \\
-STATO PATRIMONIALE (MOD. A) ANNO 2020 \\
+Associazione Aiuto agli Anziani - STATO PATRIMONIALE ANNO 2020 \\
   \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2020  & 31.12.2019 \\

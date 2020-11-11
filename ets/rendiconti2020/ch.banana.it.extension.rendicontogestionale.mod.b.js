@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontogestionale.mod.b
 // @api = 1.0
-// @pubdate = 2020-11-10
+// @pubdate = 2020-11-11
 // @publisher = Banana.ch SA
 // @description = 2. Rendiconto gestionale (MOD. B)
 // @task = app.command
@@ -94,7 +94,7 @@ function exec(string) {
 
 function printRendicontoModB(banDoc, userParam, bReport, stylesheet) {
 
-   var report = Banana.Report.newReport("Rendiconto gestionale (MOD. B)");
+   var report = Banana.Report.newReport("Rendiconto gestionale");
    var startDate = userParam.selectionStartDate;
    var endDate = userParam.selectionEndDate;
    var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
@@ -145,7 +145,7 @@ function printRendicontoModB(banDoc, userParam, bReport, stylesheet) {
    if (userParam.title) {
       title = userParam.title;
    } else {
-      title = banDoc.info("Base", "HeaderLeft") + " - " + "RENDICONTO GESTIONALE (MOD. B) ANNO " + currentYear;
+      title = banDoc.info("Base", "HeaderLeft") + " - " + "RENDICONTO GESTIONALE ANNO " + currentYear;
    }
 
    if (userParam.printtitle) {
