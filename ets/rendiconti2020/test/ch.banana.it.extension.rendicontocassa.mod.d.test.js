@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.rendicontocassa.mod.d.test
 // @api = 1.0
-// @pubdate = 2020-11-10
+// @pubdate = 2020-11-11
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.rendicontocassa.mod.d.js>
 // @task = app.command
@@ -116,6 +116,36 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	bReport1.excludeEntries();
 
 	var report = printRendicontoModD(banDoc, userParam, bReport1, "");
+	Test.logger.addReport("Test GR1 'rendiconto cassa (MOD. D)'", report);
+
+
+	/**
+	 *	Test using the tutorial template
+	 */
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/11094-entrate-uscite-ets-rendiconto-cassa-tutorial.ac2");
+	Test.assert(banDoc);
+
+	var userParam = {};
+  	userParam.selectionStartDate = "2020-01-01";
+  	userParam.selectionEndDate = "2020-12-31";
+  	userParam.title = "RENDICONTO CASSA (MOD. D) ANNO 2020";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr1';
+
+	var reportStructure = createReportStructureRendicontoCassa();
+
+	const bReport2 = new BReport(banDoc, userParam, reportStructure);
+	bReport2.validateGroups(userParam.column);
+	bReport2.loadBalances();
+	bReport2.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport2.formatValues(["currentAmount", "previousAmount"]);
+	bReport2.excludeEntries();
+
+	var report = printRendicontoModD(banDoc, userParam, bReport2, "");
 	Test.logger.addReport("Test GR1 'rendiconto cassa (MOD. D)'", report);
 
 }

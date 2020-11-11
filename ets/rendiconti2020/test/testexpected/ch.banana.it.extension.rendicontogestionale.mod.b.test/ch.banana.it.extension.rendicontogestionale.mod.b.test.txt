@@ -162,6 +162,76 @@ Totale  & 3.00  & 5.00  &  & Totale  & 3.00  & 9.00 \\
 \end{longtable}
 -  \#page-nr  - \\
 \end{reportvalue}
+\begin{reportvalue}{Test 3: 'rendiconto gestionale (MOD. B)', column Gr1}
+  \\
+Associazione Aiuto agli Anziani - RENDICONTO GESTIONALE (MOD. B) ANNO 2020 \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+ONERI E COSTI  & 31.12.2020  & 31.12.2019  &  & PROVENTI E RICAVI  & 31.12.2020  & 31.12.2019 \\
+A) Costi e oneri da attività di interesse generale  &  &  &  & A) Ricavi, rendite e proventi da attività di interesse generale  &  & \\
+1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & 1) Proventi da quote associative e apporti dei fondatori  & 11'500.00  & 0.00 \\
+2) Servizi  & 3'700.00  & 0.00  &  & 2) Proventi dagli associati per attività mutuali  & 0.00  & 0.00 \\
+3) Godimento beni di terzi  & 3'100.00  & 0.00  &  & 3) Ricavi per prestazioni e cessioni ad associati e fondatori  & 0.00  & 0.00 \\
+4) Personale  & 67'960.00  & 0.00  &  & 4) Erogazioni liberali  & 3'500.00  & 0.00 \\
+5) Ammortamenti  & 0.00  & 0.00  &  & 5) Proventi del 5 per mille  & 34'100.00  & 0.00 \\
+6) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  & 6) Contributi da soggetti privati  & 31'600.00  & 0.00 \\
+7) Oneri diversi di gestione  & 9'941.00  & 0.00  &  & 7) Ricavi per prestazioni e cessioni a terzi  & 0.00  & 0.00 \\
+8) Rimanenze iniziali  & 0.00  & 0.00  &  & 8) Contributi da enti pubblici  & 3'000.00  & 0.00 \\
+ &  &  &  & 9) Proventi da contratti con enti pubblici  & 0.00  & 0.00 \\
+ &  &  &  & 10) Altri ricavi, rendite e proventi  & 0.00  & 0.00 \\
+ &  &  &  & 11) Rimanenze finali  & 0.00  & 0.00 \\
+Totale  & 84'701.00  & 0.00  &  & Totale  & 83'700.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & -1'001.00  & 0.00 \\
+B) Costi e oneri da attività diverse  &  &  &  & B) Ricavi, rendite e proventi da attività diverse  &  & \\
+1) Materie prime, sussidiarie, di consumo e di merci  & 1'000.00  & 0.00  &  & 1) Ricavi per prestazioni e cessioni ad associati e fondatori  & 0.00  & 0.00 \\
+2) Servizi  & 0.00  & 0.00  &  & 2) Contributi da soggetti privati  & 0.00  & 0.00 \\
+3) Godimento beni di terzi  & 0.00  & 0.00  &  & 3) Ricavi per prestazioni e cessioni a terzi  & 0.00  & 0.00 \\
+4) Personale  & 0.00  & 0.00  &  & 4) Contributi da enti pubblici  & 0.00  & 0.00 \\
+5) Ammortamenti  & 0.00  & 0.00  &  & 5) Proventi da contratti con enti pubblici  & 0.00  & 0.00 \\
+6) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  & 6) Altri ricavi, rendite e proventi  & 0.00  & 0.00 \\
+7) Oneri diversi di gestione  & 0.00  & 0.00  &  & 7) Rimanenze finali  & 0.00  & 0.00 \\
+8) Rimanenze iniziali  & 0.00  & 0.00  &  &  &  & \\
+Totale  & 1'000.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & -1'000.00  & 0.00 \\
+C) Costi e oneri da attività di raccolta fondi  &  &  &  & C) Ricavi, rendite e proventi da attività di raccolta fondi  &  & \\
+1) Oneri per raccolte fondi abituali  & 0.00  & 0.00  &  & 1) Proventi da raccolte fondi abituali  & 2'400.00  & 0.00 \\
+2) Oneri per raccolte fondi occasionali  & 0.00  & 0.00  &  & 2) Proventi da raccolte fondi occasionali  & 8'900.00  & 0.00 \\
+3) Altri oneri  & 0.00  & 0.00  &  & 3) Altri proventi  & 0.00  & 0.00 \\
+Totale  & 0.00  & 0.00  &  & Totale  & 11'300.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi } & 11'300.00  & 0.00 \\
+D) Costi e oneri da attività finanziarie e patrimoniali  &  &  &  & D) Ricavi, rendite e proventi da attività finanziarie e patrimoniali  &  & \\
+1) Su rapporti bancari  & 0.00  & 0.00  &  & 1) Da rapporti bancari  & 0.00  & 0.00 \\
+2) Su prestiti  & 0.00  & 0.00  &  & 2) Da altri investimenti finanziari  & 0.00  & 0.00 \\
+3) Da patrimonio edilizio  & 0.00  & 0.00  &  & 3) Da patrimonio edilizio  & 0.00  & 0.00 \\
+4) Da altri beni patrimoniali  & 0.00  & 0.00  &  & 4) Da altri beni patrimoniali  & 0.00  & 0.00 \\
+5) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  &  &  & \\
+6) Altri oneri  & 450.00  & 0.00  &  & 5) Altri proventi  & 0.00  & 0.00 \\
+Totale  & 450.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & -450.00  & 0.00 \\
+E) Costi e oneri di supporto generale  &  &  &  & E) Proventi di supporto generale  &  & \\
+1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & 1) Proventi da distacco del personale  & 0.00  & 0.00 \\
+2) Servizi  & 0.00  & 0.00  &  & 2) Altri proventi di supporto generale  & 0.00  & 0.00 \\
+3) Godimento beni di terzi  & 0.00  & 0.00  &  &  &  & \\
+4) Personale  & 0.00  & 0.00  &  &  &  & \\
+5) Ammortamenti  & 0.00  & 0.00  &  &  &  & \\
+6) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  &  &  & \\
+7) Altri oneri  & 0.00  & 0.00  &  &  &  & \\
+Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
+TOTALE ONERI E COSTI  & 86'151.00  & 0.00  &  & TOTALE PROVENTI E RICAVI  & 95'000.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 8'849.00  & 0.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio (+/-) } & 8'849.00  & 0.00 \\
+\end{longtable}
+  \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Costi figurativi  & 31.12.2020  & 31.12.2019  &  & Proventi figurativi  & 31.12.2020  & 31.12.2019 \\
+1) da attività di interesse generale  & 0.00  & 0.00  &  & 1) da attività di interesse generale  & 0.00  & 0.00 \\
+2) da attività diverse  & 0.00  & 0.00  &  & 2) da attività diverse  & 0.00  & 0.00 \\
+Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
+\end{longtable}
+-  \#page-nr  - \\
+\end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}
 \end{testcase}
