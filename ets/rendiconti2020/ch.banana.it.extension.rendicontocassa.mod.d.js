@@ -839,7 +839,7 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
    //checkResults(banDoc, startDate, endDate);
 
 
-   addFooter(report);
+   //addFooter(report);
    return report;
 }
 
