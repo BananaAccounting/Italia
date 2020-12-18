@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2020-11-10 */
+/* Update: 2020-12-16 */
 
 
 
@@ -387,6 +387,19 @@ var BReport = class JsClass {
       for (var i = 0; i < this.reportStructure.length; i++) {
          if (this.reportStructure[i]["id"] === searchId) {
             return this.reportStructure[i]["description"];
+         }
+      }
+      this.banDoc.addMessage("Couldn't find object with id: " + id);
+   }
+
+   /**
+    * Gets the Description from the object for the given id value
+    */
+   getObjectId(id) {
+      var searchId = id.trim();
+      for (var i = 0; i < this.reportStructure.length; i++) {
+         if (this.reportStructure[i]["id"] === searchId) {
+            return this.reportStructure[i]["id"];
          }
       }
       this.banDoc.addMessage("Couldn't find object with id: " + id);

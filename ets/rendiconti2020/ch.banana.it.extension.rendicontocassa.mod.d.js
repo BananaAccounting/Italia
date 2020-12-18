@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2020-12-02
+// @pubdate = 2020-12-18
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -154,465 +154,753 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
    }
 
    var table = report.addTable("table");
-   var column1 = table.addColumn("column1");
-   var column2 = table.addColumn("column2");
-   var column3 = table.addColumn("column3");
-   var column4 = table.addColumn("column4");
-   var column5 = table.addColumn("column5");
-   var column6 = table.addColumn("column6");
-   var column7 = table.addColumn("column7");
+   if (userParam.printGr1) {
+      var column0 = table.addColumn("column00");
+      var column1 = table.addColumn("column01");
+      var column2 = table.addColumn("column02");
+      var column3 = table.addColumn("column03");
+      var column4 = table.addColumn("column04");
+      var column5 = table.addColumn("column05");
+      var column6 = table.addColumn("column06");
+      var column7 = table.addColumn("column07");
+      var column8 = table.addColumn("column08");
+   }
+   else {
+      var column1 = table.addColumn("column1");
+      var column2 = table.addColumn("column2");
+      var column3 = table.addColumn("column3");
+      var column4 = table.addColumn("column4");
+      var column5 = table.addColumn("column5");
+      var column6 = table.addColumn("column6");
+      var column7 = table.addColumn("column7");
+   }
    
    /**************************************************************************************
    * COSTI E PROVENTI
    **************************************************************************************/
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("GR1", "table-header", 1);
+   }
    tableRow.addCell("USCITE", "table-header", 1);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-right", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("GR1", "table-header", 1);
+   }
    tableRow.addCell("ENTRATE", "table-header", 1);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-right", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-right", 1);
 
    /* Row 1 */   
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("", "", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("dCA"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("", "", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("dRA"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 2*/
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CA1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CA1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA1"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RA1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RA1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA1"), "align-right", 1);
 
    /* Row 3 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CA2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CA2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA2"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RA2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RA2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA2"), "align-right", 1);
 
    /* Row 4 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CA3"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CA3"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA3"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RA3"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RA3"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA3"), "align-right", 1);
 
    /* Row 5 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CA4"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CA4"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA4"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA4"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RA4"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RA4"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA4"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA4"), "align-right", 1);
 
    /* Row 6 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CA7"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CA7"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA7"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA7"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RA5"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RA5"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA5"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA5"), "align-right", 1);
 
    /* Row 7 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","",1);
+   }
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RA6"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RA6"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA6"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA6"), "align-right", 1);
 
    /* Row 8 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","",1);
+   }
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RA7"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RA7"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA7"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA7"), "align-right", 1);
 
    /* Row 9 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","",1);
+   }
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RA8"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RA8"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA8"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA8"), "align-right", 1);
 
    /* Row 10 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","",1);
+   }
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RA9"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RA9"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA9"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA9"), "align-right", 1);
 
    /* Row 11 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","",1);
+   }
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RA10"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RA10"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA10"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA10"), "align-right", 1);
 
    /* Row 12, tot */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("", "", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CA"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("", "", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RA"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA"), "align-right", 1);
 
    /* Row 13 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("RA-CA"), "align-right", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectDescription("RA-CA"), "align-right", 7);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("RA-CA"), "align-right", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA-CA"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA-CA"), "align-right", 1);
 
    /* Row 14 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("dCB"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("dRB"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 15 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CB1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CB1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB1"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RB1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RB1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB1"), "align-right", 1);
 
    /* Row 16 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CB2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CB2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB2"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RB2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RB2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB2"), "align-right", 1);
 
    /* Row 17 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CB3"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CB3"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB3"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RB3"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RB3"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB3"), "align-right", 1);
 
    /* Row 18 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CB4"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CB4"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB4"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB4"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RB4"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RB4"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB4"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB4"), "align-right", 1);
 
    /* Row 19 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CB7"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CB7"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB7"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB7"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RB5"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RB5"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB5"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB5"), "align-right", 1);
 
    /* Row 20 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RB6"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RB6"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB6"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB6"), "align-right", 1);
 
    /* Row 21, tot */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CB"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RB"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB"), "align-right", 1);
 
    /* Row 22 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("RB-CB"), "align-right", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectDescription("RB-CB"), "align-right", 7);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("RB-CB"), "align-right", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB-CB"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB-CB"), "align-right", 1);
 
    /* Row 23 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("dCC"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("dRC"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 24 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CC1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CC1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CC1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CC1"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RC1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RC1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RC1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RC1"), "align-right", 1);
 
    /* Row 25 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CC2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CC2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CC2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CC2"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RC2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RC2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RC2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RC2"), "align-right", 1);
 
    /* Row 26 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CC3"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CC3"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CC3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CC3"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RC3"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RC3"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RC3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RC3"), "align-right", 1);
 
    /* Row 27, tot */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","",1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CC"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CC"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CC"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","",1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RC"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RC"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RC"), "align-right", 1);
 
    /* Row 28 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("RC-CC"), "align-right", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectDescription("RC-CC"), "align-right", 7);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("RC-CC"), "align-right", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RC-CC"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RC-CC"), "align-right", 1);
 
    /* Row 29 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("dCD"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("dRD"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 30 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CD1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CD1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD1"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RD1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RD1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD1"), "align-right", 1);
 
    /* Row 31 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CD2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CD2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD2"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RD2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RD2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD2"), "align-right", 1);
 
    /* Row 32 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CD3"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CD3"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD3"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RD3"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RD3"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD3"), "align-right", 1);
 
    /* Row 33 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CD4"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CD4"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD4"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD4"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RD4"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RD4"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD4"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD4"), "align-right", 1);
 
    /* Row 34 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CD6"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CD6"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD6"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD6"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RD5"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RD5"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD5"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD5"), "align-right", 1);
 
    /* Row 35, tot */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CD"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","",1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RD"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD"), "align-right", 1);
 
    /* Row 36 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("RD-CD"), "align-right", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectDescription("RD-CD"), "align-right", 7);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("RD-CD"), "align-right", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD-CD"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD-CD"), "align-right", 1);
 
    /* Row 37 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","",1);
+   }
    tableRow.addCell(bReport.getObjectDescription("dCE"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("dRE"), "align-left bold", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 38 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CE1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CE1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE1"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RE1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RE1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RE1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RE1"), "align-right", 1);
 
    /* Row 39 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CE2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CE2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE2"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RE2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RE2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RE2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RE2"), "align-right", 1);
 
    /* Row 40 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CE3"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CE3"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE3"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","",1);
+   }
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 41 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CE4"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CE4"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE4"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE4"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 42 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CE7"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CE7"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE7"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE7"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
    /* Row 43, tot */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CE"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RE"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RE"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RE"), "align-right", 1);
 
    /* Row 44 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("C"), "align-right bold", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("C"), "align-right bold", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("C"), "align-right bold", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("R"), "align-right bold", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("R"), "align-right bold", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("R"), "align-right bold", 1);
 
    /* Row 45 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("TADPI"), "align-right", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectDescription("TADPI"), "align-right", 7);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("TADPI"), "align-right", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADPI"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADPI"), "align-right", 1);
 
    /* Row 46 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("IM"), "align-right", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("IM"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectDescription("IM"), "align-right", 6);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("IM"), "align-right", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("IM"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("IM"), "align-right", 1);
 
    /* Row 47 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("TADES"), "align-right", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectDescription("TADES"), "align-right", 7);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("TADES"), "align-right", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADES"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADES"), "align-right", 1);
 
@@ -626,82 +914,140 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
    report.addParagraph(" ", "");
 
    var table = report.addTable("table");
-   var column1 = table.addColumn("column1");
-   var column2 = table.addColumn("column2");
-   var column3 = table.addColumn("column3");
-   var column4 = table.addColumn("column4");
-   var column5 = table.addColumn("column5");
-   var column6 = table.addColumn("column6");
-   var column7 = table.addColumn("column7");
+   if (userParam.printGr1) {
+      var column0 = table.addColumn("column00");
+      var column1 = table.addColumn("column01");
+      var column2 = table.addColumn("column02");
+      var column3 = table.addColumn("column03");
+      var column4 = table.addColumn("column04");
+      var column5 = table.addColumn("column05");
+      var column6 = table.addColumn("column06");
+      var column7 = table.addColumn("column07");
+      var column8 = table.addColumn("column08");
+   }
+   else {
+      var column1 = table.addColumn("column1");
+      var column2 = table.addColumn("column2");
+      var column3 = table.addColumn("column3");
+      var column4 = table.addColumn("column4");
+      var column5 = table.addColumn("column5");
+      var column6 = table.addColumn("column6");
+      var column7 = table.addColumn("column7");
+   }
 
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("GR1","table-header", 1);
+   }
    tableRow.addCell("Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi", "table-header", 1);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("GR1","table-header", 1);
+   }
    tableRow.addCell("Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi", "table-header", 1);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
    /* Row 1 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CF1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CF1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CF1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CF1"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RF1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RF1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF1"), "align-right", 1);
 
    /* Row 2 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CF2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CF2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CF2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CF2"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RF2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RF2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF2"), "align-right", 1);
 
    /* Row 3 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CF3"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CF3"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CF3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CF3"), "align-right", 1);
    tableRow.addCell("", "", 1);
-    tableRow.addCell(bReport.getObjectDescription("RF3"), "align-left", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RF3"), "align-left", 1);
+   }
+   tableRow.addCell(bReport.getObjectDescription("RF3"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF3"), "align-right", 1);
 
    /* Row 4 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CF4"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CF4"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CF4"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CF4"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RF4"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RF4"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF4"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF4"), "align-right", 1);
 
    /* Row 5, tot */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CF"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CF"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CF"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RF"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF"), "align-right", 1);
    
    /* Row 6 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("IMRC"), "align-right", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("IMRC"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectDescription("IMRC"), "align-right", 6);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("IMRC"), "align-right", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("IMRC"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("IMRC"), "align-right", 1);
 
    /* Row 7 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("RF-CF"), "align-right", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectDescription("RF-CF"), "align-right", 7);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("RF-CF"), "align-right", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF-CF"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF-CF"), "align-right", 1);
 
@@ -713,34 +1059,63 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
    report.addParagraph(" ", "");
 
    var table = report.addTable("table");
-   var column1 = table.addColumn("column1");
-   var column2 = table.addColumn("column2");
-   var column3 = table.addColumn("column3");
-   var column4 = table.addColumn("column4");
-   var column5 = table.addColumn("column5");
-   var column6 = table.addColumn("column6");
-   var column7 = table.addColumn("column7");
+   if (userParam.printGr1) {
+      var column0 = table.addColumn("column00");
+      var column1 = table.addColumn("column01");
+      var column2 = table.addColumn("column02");
+      var column3 = table.addColumn("column03");
+      var column4 = table.addColumn("column04");
+      var column5 = table.addColumn("column05");
+      var column6 = table.addColumn("column06");
+      var column7 = table.addColumn("column07");
+      var column8 = table.addColumn("column08");
+   }
+   else {
+      var column1 = table.addColumn("column1");
+      var column2 = table.addColumn("column2");
+      var column3 = table.addColumn("column3");
+      var column4 = table.addColumn("column4");
+      var column5 = table.addColumn("column5");
+      var column6 = table.addColumn("column6");
+      var column7 = table.addColumn("column7");
+   }
    
    tableRow = table.addRow();
-   tableRow.addCell("", "table-header", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell("", "table-header", 7);
+   } else {
+      tableRow.addCell("", "table-header", 5);
+   }
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
    /* Row 1 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("TADES"), "align-right", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectDescription("TADES"), "align-right", 7);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("TADES"), "align-right", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADES"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADES"), "align-right", 1);
 
    /* Row 2 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("RF-CF"), "align-right", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectDescription("RF-CF"), "align-right", 7);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("RF-CF"), "align-right", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF-CF"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF-CF"), "align-right", 1);
 
    /* Row 3 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("TADRC"), "align-right", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectDescription("TADRC"), "align-right", 7);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("TADRC"), "align-right", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADRC"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADRC"), "align-right", 1);
 
@@ -753,28 +1128,56 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
    report.addParagraph(" ", "");
 
    var table = report.addTable("table");
-   var column1 = table.addColumn("column1");
-   var column2 = table.addColumn("column2");
-   var column3 = table.addColumn("column3");
-   var column4 = table.addColumn("column4");
-   var column5 = table.addColumn("column5");
-   var column6 = table.addColumn("column6");
-   var column7 = table.addColumn("column7");
+   if (userParam.printGr1) {
+      var column0 = table.addColumn("column00");
+      var column1 = table.addColumn("column01");
+      var column2 = table.addColumn("column02");
+      var column3 = table.addColumn("column03");
+      var column4 = table.addColumn("column04");
+      var column5 = table.addColumn("column05");
+      var column6 = table.addColumn("column06");
+      var column7 = table.addColumn("column07");
+      var column8 = table.addColumn("column08");
+   }
+   else {
+      var column1 = table.addColumn("column1");
+      var column2 = table.addColumn("column2");
+      var column3 = table.addColumn("column3");
+      var column4 = table.addColumn("column4");
+      var column5 = table.addColumn("column5");
+      var column6 = table.addColumn("column6");
+      var column7 = table.addColumn("column7");
+   }
 
    tableRow = table.addRow();
-   tableRow.addCell("Cassa e banca", "table-header", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell("GR1", "table-header", 1);
+      tableRow.addCell("Cassa e banca", "table-header", 6);
+   } else {
+      tableRow.addCell("Cassa e banca", "table-header", 5);
+   }
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
    /* Row 1 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("ACIV3"), "align-left", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("ACIV3"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectDescription("ACIV3"), "align-left", 6);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("ACIV3"), "align-left", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("ACIV3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("ACIV3"), "align-right", 1);
 
    /* Row 2 */
    tableRow = table.addRow();
-   tableRow.addCell(bReport.getObjectDescription("ACIV1"), "align-left", 5);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("ACIV1"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectDescription("ACIV1"), "align-left", 6);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("ACIV1"), "align-left", 5);
+   }
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("ACIV1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("ACIV1"), "align-right", 1);
 
@@ -787,49 +1190,86 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
    report.addParagraph(" ", "");
 
    var table = report.addTable("table");
-   var column1 = table.addColumn("column1");
-   var column2 = table.addColumn("column2");
-   var column3 = table.addColumn("column3");
-   var column4 = table.addColumn("column4");
-   var column5 = table.addColumn("column5");
-   var column6 = table.addColumn("column6");
-   var column7 = table.addColumn("column7");
+   if (userParam.printGr1) {
+      var column0 = table.addColumn("column00");
+      var column1 = table.addColumn("column01");
+      var column2 = table.addColumn("column02");
+      var column3 = table.addColumn("column03");
+      var column4 = table.addColumn("column04");
+      var column5 = table.addColumn("column05");
+      var column6 = table.addColumn("column06");
+      var column7 = table.addColumn("column07");
+      var column8 = table.addColumn("column08");
+   }
+   else {
+      var column1 = table.addColumn("column1");
+      var column2 = table.addColumn("column2");
+      var column3 = table.addColumn("column3");
+      var column4 = table.addColumn("column4");
+      var column5 = table.addColumn("column5");
+      var column6 = table.addColumn("column6");
+      var column7 = table.addColumn("column7");
+   }
 
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("GR1", "table-header", 1);
+   }
    tableRow.addCell("Costi figurativi", "table-header", 1);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("GR1", "table-header", 1);
+   }
    tableRow.addCell("Proventi figurativi", "table-header", 1);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
    /* Row 1 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CG1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CG1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG1"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RG1"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RG1"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG1"), "align-right", 1);
 
    /* Row 2 */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("CG2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CG2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG2"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell(bReport.getObjectId("RG2"), "align-left", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RG2"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG2"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG2"), "align-right", 1);
 
    /* Row 3, tot */
    tableRow = table.addRow();
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("CG"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG"), "align-right", 1);
    tableRow.addCell("", "", 1);
+   if (userParam.printGr1) {
+      tableRow.addCell("","", 1);
+   }
    tableRow.addCell(bReport.getObjectDescription("RG"), "align-right", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG"), "align-right", 1);
@@ -968,6 +1408,17 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   var currentParam = {};
+   currentParam.name = 'printGr1';
+   currentParam.title = 'Stampa colonna raggruppamento';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.printGr1 ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+      userParam.printGr1 = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
@@ -1049,12 +1500,12 @@ function bananaRequiredVersion(requiredVersion, expmVersion) {
       return false;
    }
    else {
-      var fileTypeGroup = Banana.document.info("Base", "FileTypeGroup");
-      var fileTypeNumber = Banana.document.info("Base", "FileTypeNumber");
-      if (fileTypeGroup === "130" && fileTypeNumber === "100") { //cash manager free
-         return true;
-      }
-      else if (Banana.application.license) {
+      // var fileTypeGroup = Banana.document.info("Base", "FileTypeGroup");
+      // var fileTypeNumber = Banana.document.info("Base", "FileTypeNumber");
+      // if (fileTypeGroup === "130" && fileTypeNumber === "100") { //cash manager free
+      //    return true;
+      // }
+      if (Banana.application.license) {
          if (Banana.application.license.licenseType === "professional" || Banana.application.license.licenseType === "advanced") {
             return true;
          }

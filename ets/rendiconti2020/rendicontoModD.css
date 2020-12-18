@@ -49,6 +49,42 @@ table {
   width: 10%;
 }
 
+.column00 {
+  width: 3.5%;
+}
+
+.column01 {
+  width: 29.5%;
+}
+
+.column02 {
+  width: 8.25%;
+}
+
+.column03 {
+  width: 8.25%;
+}
+
+.column04 {
+  width: 1%;
+}
+
+.column05 {
+  width: 3.5%;
+}
+
+.column06 {
+  width: 29.5%;
+}
+
+.column07 {
+  width: 8.25%;
+}
+
+.column08 {
+  width: 8.25%;
+}
+
 .address-header {
   font-size: 8px;
 }
