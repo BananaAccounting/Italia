@@ -536,10 +536,10 @@ function loadAccountsMap(banDoc, userParam, tabAccounts1, tabAccounts2, file2) {
 		for (var i = 0; i < tabAccounts1.rowCount; i++) {
 			var tRow = tabAccounts1.row(i);
 			if (tRow.value("Account") &&
-				tRow.value("Account").indexOf(":") < 0 && 
-				tRow.value("Account").indexOf(".") < 0 && 
-				tRow.value("Account").indexOf(",") < 0 && 
-				tRow.value("Account").indexOf(";") < 0) {
+				!tRow.value("Account").startsWith(":") && 
+				!tRow.value("Account").startsWith(".") && 
+				!tRow.value("Account").startsWith(",") && 
+				!tRow.value("Account").startsWith(";")) {
 
 				var currentBal = banDoc.currentBalance(tRow.value("Account") + userParam.segment5XM, "", "");
 				var total1 = currentBal.total;
@@ -581,10 +581,10 @@ function loadAccountsMap(banDoc, userParam, tabAccounts1, tabAccounts2, file2) {
 		for (var i = 0; i < tabAccounts1.rowCount; i++) {
 			var tRow = tabAccounts1.row(i);
 			if (tRow.value("Category") &&
-				tRow.value("Category").indexOf(":") < 0 && 
-				tRow.value("Category").indexOf(".") < 0 && 
-				tRow.value("Category").indexOf(",") < 0 && 
-				tRow.value("Category").indexOf(";") < 0) {
+				!tRow.value("Category").startsWith(":") && 
+				!tRow.value("Category").startsWith(".") && 
+				!tRow.value("Category").startsWith(",") && 
+				!tRow.value("Category").startsWith(";")) {
 
 				var currentBal = banDoc.currentBalance(tRow.value("Category") + userParam.segment5XM, "", "");
 				var total1 = currentBal.total;
