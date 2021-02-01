@@ -1,0 +1,465 @@
+%%info_test_name{IT01641790702_a9Gf1_ie}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+\info{TITLE}{STAMPA DI PIÙ FATTURE PER CLIENTE }
+\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/IT01641790702\_A9GF1\_IE.AC2}
+\info{PARAM}{FATTURE CLIENTE 1101}
+%************************************************************************
+\begin{jsonvalue}{Param}
+{
+    "output": 0,
+    "periodAll": true,
+    "periodEndDate": "",
+    "periodSelected": 1,
+    "periodStartDate": "",
+    "report": {
+        "color_1": "#337ab7",
+        "color_2": "#ffffff",
+        "font_family": "",
+        "footer": "",
+        "header_row_1": "",
+        "header_row_2": "",
+        "header_row_3": "",
+        "header_row_4": "",
+        "header_row_5": "",
+        "print_header": true,
+        "print_logo": true,
+        "print_quantity": true
+    },
+    "selection": 1,
+    "selection_customer": "1101",
+    "selection_invoice": "",
+    "xml": {
+        "destination_folder": "",
+        "open_file": false,
+        "progressive": "1"
+    }
+}
+\end{jsonvalue}
+%************************************************************************
+\begin{xmlvalue}{Xml document}
+<?xml version="1.0" encoding="utf-8"?>
+
+<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPA12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+<FatturaElettronicaHeader>
+<DatiTrasmissione>
+<IdTrasmittente>
+<IdPaese>IT</IdPaese>
+<IdCodice>LBSCLD30P44F205U</IdCodice>
+</IdTrasmittente>
+<ProgressivoInvio>00001</ProgressivoInvio>
+<FormatoTrasmissione>FPA12</FormatoTrasmissione>
+<CodiceDestinatario>0000000</CodiceDestinatario>
+<PECDestinatario>12345678</PECDestinatario>
+</DatiTrasmissione>
+<CedentePrestatore>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>0118710373</IdCodice>
+</IdFiscaleIVA>
+<CodiceFiscale>LBSCLD30P44F205U</CodiceFiscale>
+<Anagrafica>
+<Nome>Claudia</Nome>
+<Cognome>Albisetti&amp;Santi</Cognome>
+</Anagrafica>
+<RegimeFiscale>RF01</RegimeFiscale>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>viale Stazione</Indirizzo>
+<NumeroCivico>123</NumeroCivico>
+<CAP>20121</CAP>
+<Comune>Milano</Comune>
+<Provincia>MI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CedentePrestatore>
+<CessionarioCommittente>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>1235</IdCodice>
+</IdFiscaleIVA>
+<Anagrafica>
+<Nome>Dario</Nome>
+<Cognome>Bianchetti</Cognome>
+</Anagrafica>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via Torino n.25</Indirizzo>
+<CAP>56010</CAP>
+<Comune>Vicopisano</Comune>
+<Provincia>LI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CessionarioCommittente>
+</FatturaElettronicaHeader>
+<FatturaElettronicaBody>
+<DatiGenerali>
+<DatiGeneraliDocumento>
+<TipoDocumento>TD01</TipoDocumento>
+<Divisa>EUR</Divisa>
+<Data>2021-01-01</Data>
+<Numero>1</Numero>
+<ImportoTotaleDocumento>1220.00</ImportoTotaleDocumento>
+</DatiGeneraliDocumento>
+</DatiGenerali>
+<DatiBeniServizi>
+<DettaglioLinee>
+<NumeroLinea>1</NumeroLinea>
+<Descrizione>Fattura 1</Descrizione>
+<Quantita>10.0000</Quantita>
+<UnitaMisura>pz</UnitaMisura>
+<PrezzoUnitario>100.00</PrezzoUnitario>
+<PrezzoTotale>1000.00</PrezzoTotale>
+<AliquotaIVA>22.00</AliquotaIVA>
+</DettaglioLinee>
+<DatiRiepilogo>
+<AliquotaIVA>22.00</AliquotaIVA>
+<ImponibileImporto>1000.00</ImponibileImporto>
+<Imposta>220.00</Imposta>
+</DatiRiepilogo>
+</DatiBeniServizi>
+</FatturaElettronicaBody>
+</p:FatturaElettronica>
+\end{xmlvalue}
+%************************************************************************
+\begin{reportvalue}{Report}
+\begin{longtable}[l]{ l }
+SOCIETA' ALPHA SRL \newline \newline Viale Roma 543 \newline 07100 Sassari \newline P.IVA IT01234567890 \newline \\
+\end{longtable}
+\begin{longtable}[l]{ l  l  l }
+\multicolumn{3}{l}{  }\\
+Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 1 \newline 01.01.2021 \newline 1101 \newline 1235 \newline 31.01.2021 \newline \#page-nr \newline  & \\
+\end{longtable}
+\begin{longtable}[l]{ l  l  l }
+\multicolumn{3}{l}{  }\\
+Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 1 \newline 01.01.2021 \newline 1101 \newline 1235 \newline 31.01.2021 \newline \#page-nr \newline  & Dario Bianchetti \newline Via Torino n.25 \newline 56010 Vicopisano \newline Italia \newline \\
+\end{longtable}
+\begin{longtable}[l]{ l  l  l  l }
+Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
+Fattura 1 \newline \newline  & 10.00  & 100.00  & 1'000.00 \\
+\multicolumn{4}{l}{}\\
+\multicolumn{4}{l}{}\\
+   & Imponibile Iva  &    & 1'000.00 \\
+ & Iva 22.00\%  & 1'000.00  & 220.00 \\
+\multicolumn{4}{l}{}\\
+ & \multicolumn{2}{l}{IMPORTO EUR } & 1'220.00 \\
+\multicolumn{4}{l}{}\\
+\end{longtable}
+\end{reportvalue}
+\info{TITLE}{STAMPA DI PIÙ FATTURE PER CLIENTE }
+\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/IT01641790702\_A9GF1\_IE.AC2}
+\info{PARAM}{FATTURE CLIENTE 1102}
+%************************************************************************
+\begin{jsonvalue}{Param}
+{
+    "output": 0,
+    "periodAll": true,
+    "periodEndDate": "",
+    "periodSelected": 1,
+    "periodStartDate": "",
+    "report": {
+        "color_1": "#337ab7",
+        "color_2": "#ffffff",
+        "font_family": "Helvetica",
+        "footer": "",
+        "header_row_1": "",
+        "header_row_2": "",
+        "header_row_3": "",
+        "header_row_4": "",
+        "header_row_5": "",
+        "print_header": true,
+        "print_logo": true,
+        "print_quantity": true
+    },
+    "selection": 1,
+    "selection_customer": "1102",
+    "selection_invoice": "",
+    "xml": {
+        "destination_folder": "",
+        "open_file": false,
+        "progressive": "1"
+    }
+}
+\end{jsonvalue}
+%************************************************************************
+\begin{xmlvalue}{Xml document}
+<?xml version="1.0" encoding="utf-8"?>
+
+<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+<FatturaElettronicaHeader>
+<DatiTrasmissione>
+<IdTrasmittente>
+<IdPaese>IT</IdPaese>
+<IdCodice>LBSCLD30P44F205U</IdCodice>
+</IdTrasmittente>
+<ProgressivoInvio>00001</ProgressivoInvio>
+<FormatoTrasmissione>FPR12</FormatoTrasmissione>
+<CodiceDestinatario>1234567</CodiceDestinatario>
+</DatiTrasmissione>
+<CedentePrestatore>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>0118710373</IdCodice>
+</IdFiscaleIVA>
+<CodiceFiscale>LBSCLD30P44F205U</CodiceFiscale>
+<Anagrafica>
+<Nome>Claudia</Nome>
+<Cognome>Albisetti&amp;Santi</Cognome>
+</Anagrafica>
+<RegimeFiscale>RF01</RegimeFiscale>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>viale Stazione</Indirizzo>
+<NumeroCivico>123</NumeroCivico>
+<CAP>20121</CAP>
+<Comune>Milano</Comune>
+<Provincia>MI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CedentePrestatore>
+<CessionarioCommittente>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>1236</IdCodice>
+</IdFiscaleIVA>
+<Anagrafica>
+<Denominazione>Fratelli Luisoni</Denominazione>
+</Anagrafica>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via Sicilia, 50</Indirizzo>
+<CAP>56010</CAP>
+<Comune>Vicopisano</Comune>
+<Provincia>LI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CessionarioCommittente>
+</FatturaElettronicaHeader>
+<FatturaElettronicaBody>
+<DatiGenerali>
+<DatiGeneraliDocumento>
+<TipoDocumento>TD01</TipoDocumento>
+<Divisa>EUR</Divisa>
+<Data>2021-01-02</Data>
+<Numero>2</Numero>
+<ImportoTotaleDocumento>2440.00</ImportoTotaleDocumento>
+</DatiGeneraliDocumento>
+</DatiGenerali>
+<DatiBeniServizi>
+<DettaglioLinee>
+<NumeroLinea>1</NumeroLinea>
+<Descrizione>Fattura 2</Descrizione>
+<Quantita>20.0000</Quantita>
+<UnitaMisura>pz</UnitaMisura>
+<PrezzoUnitario>100.00</PrezzoUnitario>
+<PrezzoTotale>2000.00</PrezzoTotale>
+<AliquotaIVA>22.00</AliquotaIVA>
+</DettaglioLinee>
+<DatiRiepilogo>
+<AliquotaIVA>22.00</AliquotaIVA>
+<ImponibileImporto>2000.00</ImponibileImporto>
+<Imposta>440.00</Imposta>
+</DatiRiepilogo>
+</DatiBeniServizi>
+</FatturaElettronicaBody>
+</p:FatturaElettronica>
+\end{xmlvalue}
+%************************************************************************
+\begin{reportvalue}{Report}
+\begin{longtable}[l]{ l }
+SOCIETA' ALPHA SRL \newline \newline Viale Roma 543 \newline 07100 Sassari \newline P.IVA IT01234567890 \newline \\
+\end{longtable}
+\begin{longtable}[l]{ l  l  l }
+\multicolumn{3}{l}{  }\\
+Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 2 \newline 02.01.2021 \newline 1102 \newline 1236 \newline 01.02.2021 \newline \#page-nr \newline  & \\
+\end{longtable}
+\begin{longtable}[l]{ l  l  l }
+\multicolumn{3}{l}{  }\\
+Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 2 \newline 02.01.2021 \newline 1102 \newline 1236 \newline 01.02.2021 \newline \#page-nr \newline  & Fratelli Luisoni \newline Via Sicilia, 50 \newline 56010 Vicopisano \newline Italia \newline \\
+\end{longtable}
+\begin{longtable}[l]{ l  l  l  l }
+Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
+Fattura 2 \newline \newline  & 20.00  & 100.00  & 2'000.00 \\
+\multicolumn{4}{l}{}\\
+\multicolumn{4}{l}{}\\
+   & Imponibile Iva  &    & 2'000.00 \\
+ & Iva 22.00\%  & 2'000.00  & 440.00 \\
+\multicolumn{4}{l}{}\\
+ & \multicolumn{2}{l}{IMPORTO EUR } & 2'440.00 \\
+\multicolumn{4}{l}{}\\
+\end{longtable}
+\end{reportvalue}
+\info{TITLE}{STAMPA DI PIÙ FATTURE PER CLIENTE }
+\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/IT01641790702\_A9GF1\_IE.AC2}
+\info{PARAM}{FATTURE CLIENTE 1103}
+%************************************************************************
+\begin{jsonvalue}{Param}
+{
+    "output": 0,
+    "periodAll": true,
+    "periodEndDate": "",
+    "periodSelected": 1,
+    "periodStartDate": "",
+    "report": {
+        "color_1": "#337ab7",
+        "color_2": "#ffffff",
+        "font_family": "Helvetica",
+        "footer": "",
+        "header_row_1": "",
+        "header_row_2": "",
+        "header_row_3": "",
+        "header_row_4": "",
+        "header_row_5": "",
+        "print_header": true,
+        "print_logo": true,
+        "print_quantity": true
+    },
+    "selection": 1,
+    "selection_customer": "1103",
+    "selection_invoice": "",
+    "xml": {
+        "destination_folder": "",
+        "open_file": false,
+        "progressive": "1"
+    }
+}
+\end{jsonvalue}
+%************************************************************************
+\begin{xmlvalue}{Xml document}
+<?xml version="1.0" encoding="utf-8"?>
+
+<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+<FatturaElettronicaHeader>
+<DatiTrasmissione>
+<IdTrasmittente>
+<IdPaese>IT</IdPaese>
+<IdCodice>LBSCLD30P44F205U</IdCodice>
+</IdTrasmittente>
+<ProgressivoInvio>00001</ProgressivoInvio>
+<FormatoTrasmissione>FPR12</FormatoTrasmissione>
+<CodiceDestinatario>1234567</CodiceDestinatario>
+</DatiTrasmissione>
+<CedentePrestatore>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>0118710373</IdCodice>
+</IdFiscaleIVA>
+<CodiceFiscale>LBSCLD30P44F205U</CodiceFiscale>
+<Anagrafica>
+<Nome>Claudia</Nome>
+<Cognome>Albisetti&amp;Santi</Cognome>
+</Anagrafica>
+<RegimeFiscale>RF01</RegimeFiscale>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>viale Stazione</Indirizzo>
+<NumeroCivico>123</NumeroCivico>
+<CAP>20121</CAP>
+<Comune>Milano</Comune>
+<Provincia>MI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CedentePrestatore>
+<CessionarioCommittente>
+<DatiAnagrafici>
+<CodiceFiscale>BNCDRA81A03F207C</CodiceFiscale>
+<Anagrafica>
+<Nome>Gianni</Nome>
+<Cognome>Verdi</Cognome>
+</Anagrafica>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Bahnhofstrasse 9</Indirizzo>
+<CAP>30000</CAP>
+<Comune>Berlin</Comune>
+<Nazione>DE</Nazione>
+</Sede>
+</CessionarioCommittente>
+</FatturaElettronicaHeader>
+<FatturaElettronicaBody>
+<DatiGenerali>
+<DatiGeneraliDocumento>
+<TipoDocumento>TD01</TipoDocumento>
+<Divisa>EUR</Divisa>
+<Data>2021-01-03</Data>
+<Numero>3</Numero>
+<ImportoTotaleDocumento>6000.00</ImportoTotaleDocumento>
+</DatiGeneraliDocumento>
+</DatiGenerali>
+<DatiBeniServizi>
+<DettaglioLinee>
+<NumeroLinea>1</NumeroLinea>
+<Descrizione>Fattura 3 su più righe</Descrizione>
+<Quantita>30.0000</Quantita>
+<UnitaMisura>pz</UnitaMisura>
+<PrezzoUnitario>81.97</PrezzoUnitario>
+<PrezzoTotale>2459.02</PrezzoTotale>
+<AliquotaIVA>22.00</AliquotaIVA>
+</DettaglioLinee>
+<DettaglioLinee>
+<NumeroLinea>2</NumeroLinea>
+<Descrizione>Fattura 3 su più righe</Descrizione>
+<Quantita>30.0000</Quantita>
+<UnitaMisura>pz</UnitaMisura>
+<PrezzoUnitario>81.97</PrezzoUnitario>
+<PrezzoTotale>2459.02</PrezzoTotale>
+<AliquotaIVA>22.00</AliquotaIVA>
+</DettaglioLinee>
+<DatiRiepilogo>
+<AliquotaIVA>22.00</AliquotaIVA>
+<ImponibileImporto>4918.04</ImponibileImporto>
+<Imposta>1081.96</Imposta>
+</DatiRiepilogo>
+</DatiBeniServizi>
+</FatturaElettronicaBody>
+</p:FatturaElettronica>
+\end{xmlvalue}
+%************************************************************************
+\begin{reportvalue}{Report}
+\begin{longtable}[l]{ l }
+SOCIETA' ALPHA SRL \newline \newline Viale Roma 543 \newline 07100 Sassari \newline P.IVA IT01234567890 \newline \\
+\end{longtable}
+\begin{longtable}[l]{ l  l  l }
+\multicolumn{3}{l}{  }\\
+Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 3 \newline 03.01.2021 \newline 1103 \newline   \newline 02.02.2021 \newline \#page-nr \newline  & \\
+\end{longtable}
+\begin{longtable}[l]{ l  l  l }
+\multicolumn{3}{l}{  }\\
+Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 3 \newline 03.01.2021 \newline 1103 \newline   \newline 02.02.2021 \newline \#page-nr \newline  & Gianni Verdi \newline Bahnhofstrasse 9 \newline 30000 Berlin \newline Germania \newline \\
+\end{longtable}
+\begin{longtable}[l]{ l  l  l  l }
+Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
+Fattura 3 su più righe \newline \newline  & 30.00  & 81.97  & 2'459.02 \\
+Fattura 3 su più righe \newline \newline  & 30.00  & 81.97  & 2'459.02 \\
+\multicolumn{4}{l}{}\\
+\multicolumn{4}{l}{}\\
+   & Imponibile Iva  &    & 4'918.04 \\
+ & Iva 22.00\%  & 4'918.04  & 1'081.96 \\
+\multicolumn{4}{l}{}\\
+ & \multicolumn{2}{l}{IMPORTO EUR } & 6'000.00 \\
+\multicolumn{4}{l}{}\\
+\end{longtable}
+\end{reportvalue}
+\end{document}

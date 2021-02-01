@@ -24,7 +24,6 @@
 // @timeout = -1
 // @includejs = ch.banana.it.efattura.2021.preview.js
 // @includejs = ch.banana.it.efattura.2021.xml.js
-// @includejs = ch.banana.script.italy_vat.daticontribuente.js
 
 //TODO: aggiungere codice destinatario
 
@@ -401,7 +400,7 @@ function settingsDialog() {
       periodComboBox.currentIndex = 0;         
    }
    dialog.showHelp = function () {
-      Banana.Ui.showHelp("ch.banana.it.efattura.b2b");
+      Banana.Ui.showHelp("ch.banana.it.efattura.2021");
    }
    dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
    dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
@@ -482,7 +481,7 @@ function EFattura(banDocument) {
       this.banDocument = Banana.document;
    this.name = "Banana Accounting EFattura";
    this.version = "V1.0";
-   this.helpId = "ch.banana.it.efattura.b2b.js";
+   this.helpId = "ch.banana.it.efattura.2021.js";
    this.errorList = [];
 
    /* errors id*/
@@ -692,10 +691,12 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       if (Banana.SDecimal.isZero(aliquotaIva) && this.banDocument.table("VatCodes")) {
          //riprende il codice natura dalla tabella codici iva, colonna Gr1
          var natura = this.getCodiceNatura(invoiceObj.items[i].unit_price.vat_code);
-         if (!['N1','N2.1','N2.2','N3.1','N3.2','N3.3','N3.4','N3.5','N3.6','N4','N5','N6.1','N6.2','N6.3','N6.4','N6.5','N6.6','N6.7','N6.8','N6.9','N7'].includes(natura)) {
-            var msg = this.getErrorMessage(this.ID_ERR_NATURA_NOTVALID);
-            msg = msg.replace("%1", natura);
-            this.addMessage(msg, this.ID_ERR_NATURA_NOTVALID);
+         if (natura.length) {
+            if (!['N1', 'N2.1', 'N2.2', 'N3.1', 'N3.2', 'N3.3', 'N3.4', 'N3.5', 'N3.6', 'N4', 'N5', 'N6.1', 'N6.2', 'N6.3', 'N6.4', 'N6.5', 'N6.6', 'N6.7', 'N6.8', 'N6.9', 'N7'].includes(natura)) {
+               var msg = this.getErrorMessage(this.ID_ERR_NATURA_NOTVALID);
+               msg = msg.replace("%1", natura);
+               this.addMessage(msg, this.ID_ERR_NATURA_NOTVALID);
+            }
          }
 
          var nodeNatura = nodeDettaglioLinee.addElement("Natura");
@@ -1043,7 +1044,7 @@ EFattura.prototype.getCodiceNatura = function (vatCode) {
             codNatura = 'N5';
          }
          else if (vatGr.indexOf("-REV") >= 0 && Banana.SDecimal.isZero(vatRate)) {
-            codNatura = 'N6.1';
+            codNatura = 'N6';
          }
       }
    }
@@ -1500,13 +1501,33 @@ EFattura.prototype.setParam = function (param) {
 }
 
 EFattura.prototype.verifyBananaVersion = function () {
-   //From Experimental 06/09/2018
-   var requiredVersion = "9.0.3.180906";
-   if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
+
+   var banVersionMin = "10.0.7";
+   var banDevVersionMin = "210127";
+
+   //verifica se la versione è compatibile
+   var isCompatible = false;
+   if (banDevVersionMin)
+      banVersionMin = banVersionMin + "." + banDevVersionMin;
+   if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, banVersionMin) >= 0) {
+      isCompatible = true;
+   }
+
+   //verifica se versione advanced
+   var isAdvanced = false;
+   if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, "10.0.7") >= 0) {
+      var license = Banana.application.license;
+      if (license.licenseType === "advanced" || license.isWithinMaxFreeLines) {
+         isAdvanced = true;
+      }
+   }
+
+   if (!isCompatible || !isAdvanced) {
       var msg = this.getErrorMessage(this.ID_ERR_VERSION_NOTSUPPORTED);
       this.addMessage(msg, this.ID_ERR_VERSION_NOTSUPPORTED);
       return false;
    }
+
    //controlla se gli indirizzi sono stati impostati
    if (this.banDocument.table('Accounts')) {
       var tColumnNames = this.banDocument.table('Accounts').columnNames.join(";");
