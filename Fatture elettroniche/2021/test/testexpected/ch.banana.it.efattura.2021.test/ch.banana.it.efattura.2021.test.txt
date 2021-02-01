@@ -25,6 +25,10 @@
 \textvalue{FILE:SCRIPT/../TEST/TESTCASES/ALPHA SRL 2021.AC2 - Lunghezza campo non valida: DettaglioLinee/UnitaMisura  (No fattura 129), valore inserito: , lunghezza minima: 1 [ID\_ERR\_XML\_LUNGHEZZAMIN\_NONVALIDA]  idMsg:[ch.banana.it.efattura.2021.js::ID\_ERR\_XML\_LUNGHEZZAMIN\_NONVALIDA]}\\
 \textvalue{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2020.AC2 - Lunghezza campo non valida: DettaglioLinee/Natura  (No fattura 1), valore inserito: , lunghezza minima: 2 [ID\_ERR\_XML\_LUNGHEZZAMIN\_NONVALIDA]  idMsg:[ch.banana.it.efattura.2021.js::ID\_ERR\_XML\_LUNGHEZZAMIN\_NONVALIDA]}\\
 \textvalue{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2020.AC2 - Lunghezza campo non valida: DettaglioLinee/Natura  (No fattura 2), valore inserito: , lunghezza minima: 2 [ID\_ERR\_XML\_LUNGHEZZAMIN\_NONVALIDA]  idMsg:[ch.banana.it.efattura.2021.js::ID\_ERR\_XML\_LUNGHEZZAMIN\_NONVALIDA]}\\
+\textvalue{FILE:SCRIPT/../TEST/TESTCASES/REVERSE CHARGE.AC2 - Il campo Natura N6 non è valido. Verificare il valore inserito nella tabella Codici IVA in corrispondenza della colonna Gr1 [ID\_ERR\_NATURA\_NOTVALID]  idMsg:[ch.banana.it.efattura.2021.js::ID\_ERR\_NATURA\_NOTVALID]}\\
+\textvalue{FILE:SCRIPT/../TEST/TESTCASES/REVERSE CHARGE.AC2 - Il campo Natura N6 non è valido. Verificare il valore inserito nella tabella Codici IVA in corrispondenza della colonna Gr1 [ID\_ERR\_NATURA\_NOTVALID]  idMsg:[ch.banana.it.efattura.2021.js::ID\_ERR\_NATURA\_NOTVALID]}\\
+\textvalue{FILE:SCRIPT/../TEST/TESTCASES/REVERSE CHARGE.AC2 - Lunghezza campo non valida: DettaglioLinee/Natura  (No fattura 123456), valore inserito: , lunghezza minima: 2 [ID\_ERR\_XML\_LUNGHEZZAMIN\_NONVALIDA]  idMsg:[ch.banana.it.efattura.2021.js::ID\_ERR\_XML\_LUNGHEZZAMIN\_NONVALIDA]}\\
+\textvalue{FILE:SCRIPT/../TEST/TESTCASES/REVERSE CHARGE.AC2 - Il campo Natura N6 non è valido. Verificare il valore inserito nella tabella Codici IVA in corrispondenza della colonna Gr1 [ID\_ERR\_NATURA\_NOTVALID]  idMsg:[ch.banana.it.efattura.2021.js::ID\_ERR\_NATURA\_NOTVALID]}\\
 \keyvalue{Result}{Passed}
 \end{test}
 \begin{test}{test2}

@@ -74,6 +74,7 @@ EFatturaTest.prototype.initTestCase = function() {
    this.fileNameList.push("file:script/../test/testcases/InventatoIVA2021.ac2");
    this.fileNameList.push("file:script/../test/testcases/IT01641790702_a9Gf1.ac2");
    this.fileNameList.push("file:script/../test/testcases/IT01641790702_a9Gf1_ie.ac2");
+   this.fileNameList.push("file:script/../test/testcases/reverse charge.ac2");
    this.fileNameList.push("file:script/../test/testcases/test fatture importo 0.ac2");
 }
 
