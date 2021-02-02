@@ -16,13 +16,12 @@
 // @api = 1.0
 // @pubdate = 2021-02-02
 // @publisher = Banana.ch SA
-// @description = Fattura elettronica 2021 (XML, PDF)...
-// @description.it = Fattura elettronica 2021 (XML, PDF)...
+// @description = Fattura elettronica XML...
+// @description.it = Fattura elettronica XML...
 // @doctype = *
 // @task = app.command
 // @inputdatasource = none
 // @timeout = -1
-// @includejs = ch.banana.it.efattura.b2b.preview.js
 // @includejs = ch.banana.it.efattura.b2b.xml.js
 
 //TODO: aggiungere codice destinatario
@@ -48,58 +47,36 @@ function exec(inData, options) {
          return "@Cancel";
       param = JSON.parse(Banana.document.getScriptSettings());
    }
-   
+
    eFattura.setParam(param);
    var jsonCustomerList = eFattura.loadData();
-   
-   if (jsonCustomerList.length<=0)
+
+   if (jsonCustomerList.length <= 0)
       return;
 
-   if (eFattura.param.output == 0) {
-      //anteprima
-      var docs = [];
-      var styles = [];
-      for (var i in jsonCustomerList) {
-         var jsonInvoices = jsonCustomerList[i];
-         for (var j = 0; j < jsonInvoices.length; j++) {
-            var jsonInvoice = jsonInvoices[j];
-            if (jsonInvoice.customer_info) {
-               var repDocObj = Banana.Report.newReport('');
-               var repStyleObj = Banana.Report.newStyleSheet();
-               eFattura.createReport(jsonInvoice, repDocObj, repStyleObj);
-               docs.push(repDocObj);
-               styles.push(repStyleObj);
-            }
-         }
-      }
-      if (docs.length) {
-         /*TEST*/
-         /*if (typeof (Banana.Report.exportPdf) !== 'undefined') {
-            var destFolder = "c:\\temp\\";
-            var fileName = destFolder + "helloworld.pdf"
-            Banana.Report.exportPdf(fileName, docs, styles);
-         }*/
-         /*END TEST*/
-         Banana.Report.preview("", docs, styles);
-      }
-   }
-   else {
-      //output xml
-      for (var i in jsonCustomerList) {
-         var jsonInvoices = jsonCustomerList[i];
-         var xmlDocument = Banana.Xml.newDocument("root");
-         var output = eFattura.createXml(jsonInvoices, xmlDocument, true);
-         if (output != "@Cancel") {
-            var xslt = "<?xml-stylesheet type='text/xsl' href='fatturaordinaria_v1.2.1.xslt'?>";
+   //output xml
+   for (var i in jsonCustomerList) {
+      var jsonInvoices = jsonCustomerList[i];
+      var xmlDocument = Banana.Xml.newDocument("root");
+      eFattura.clearErrorList();
+      var output = eFattura.createXml(jsonInvoices, xmlDocument, true);
+      if (output != "@Cancel") {
+         if (eFattura.param.output == 0) {
+            //Preview HTML
+            var escapedString = xml_escapeString(eFattura.param.xml.xslt_filename);
+            var xslt = "<?xml-stylesheet type='text/xsl' href='" + escapedString + "'?>";
             var outputStyled = output.slice(0, 39) + xslt + output.slice(39);
-            eFattura.saveFile(outputStyled);
+            eFattura.saveFile(outputStyled, "html");
+         }
+         else {
+            eFattura.saveFile(outputStyled, "xml");
          }
       }
    }
 }
 
 /*Update script's parameters*/
-var blockSignal=false;
+var blockSignal = false;
 function settingsDialog() {
    var eFattura = new EFattura(Banana.document);
    var savedParam = Banana.document.getScriptSettings();
@@ -113,26 +90,14 @@ function settingsDialog() {
    var numeroFatturaLineEdit = dialog.tabWidget.findChild('numeroFatturaLineEdit');
    var clienteRadioButton = dialog.tabWidget.findChild('clienteRadioButton');
    var clienteComboBox = dialog.tabWidget.findChild('clienteComboBox');
-   var stampaPDFRadioButton = dialog.tabWidget.findChild('stampaPDFRadioButton');
-   var stampaXmlRadioButton = dialog.tabWidget.findChild('stampaXmlRadioButton');
+   var stampaHtmlRadioButton = dialog.tabWidget.findChild('stampaHTMLRadioButton');
+   var stampaXmlRadioButton = dialog.tabWidget.findChild('stampaXMLRadioButton');
    var numeroProgressivoLineEdit = dialog.tabWidget.findChild('numeroProgressivoLineEdit');
    var destFolderLineEdit = dialog.tabWidget.findChild('destFolderLineEdit');
    var apriXmlCheckBox = dialog.tabWidget.findChild('apriXmlCheckBox');
+   var xsltLineEdit = dialog.tabWidget.findChild('xsltLineEdit');
 
-   var printHeaderCheckBox = dialog.tabWidget.findChild('printHeaderCheckBox');
-   var printLogoCheckBox = dialog.tabWidget.findChild('printLogoCheckBox');
-   var printQuantityCheckBox = dialog.tabWidget.findChild('printQuantityCheckBox');
-   var fontTypeLineEdit = dialog.tabWidget.findChild('fontTypeLineEdit');
-   var bgColorLineEdit = dialog.tabWidget.findChild('bgColorLineEdit');
-   var textColorLineEdit = dialog.tabWidget.findChild('textColorLineEdit');
-   var invoiceRow1LineEdit = dialog.tabWidget.findChild('invoiceRow1LineEdit');
-   var invoiceRow2LineEdit = dialog.tabWidget.findChild('invoiceRow2LineEdit');
-   var invoiceRow3LineEdit = dialog.tabWidget.findChild('invoiceRow3LineEdit');
-   var invoiceRow4LineEdit = dialog.tabWidget.findChild('invoiceRow4LineEdit');
-   var invoiceRow5LineEdit = dialog.tabWidget.findChild('invoiceRow5LineEdit');
-   var invoiceFooterTextEdit = dialog.tabWidget.findChild('invoiceFooterTextEdit');
 
-   
    //periodo
    var periodAllRadioButton = dialog.findChild('periodAllRadioButton');
    var periodAllLabel = dialog.findChild('periodAllLabel');
@@ -143,7 +108,7 @@ function settingsDialog() {
    var toDateEdit = dialog.findChild('toDateEdit');
    var periodComboBox = dialog.findChild('periodComboBox');
    var yearComboBox = dialog.findChild('yearComboBox');
-   
+
 
 
    //Lettura dati
@@ -159,44 +124,30 @@ function settingsDialog() {
    clienteComboBox.addItems(elencoClienti);
    var index = 0;
    for (var i in elencoClienti) {
-      if (elencoClienti[i].indexOf(eFattura.param.selection_customer)>=0) {
+      if (elencoClienti[i].indexOf(eFattura.param.selection_customer) >= 0) {
          index = i;
          break;
       }
    }
    //clienteComboBox.currentText = eFattura.param.selection_customer;
    clienteComboBox.currentIndex = index;
-   
+
    //imposta il numero fattura dalla selezione della tabella registrazioni
    var selectedRow = parseInt(Banana.document.cursor.rowNr);
    if (selectedRow && Banana.document.table('Transactions') && Banana.document.table('Transactions').rowCount > selectedRow) {
       var noFattura = Banana.document.table('Transactions').value(selectedRow, "DocInvoice");
-      if (noFattura && noFattura.length>0)
+      if (noFattura && noFattura.length > 0)
          numeroFatturaLineEdit.text = noFattura;
    }
 
    if (eFattura.param.output == 1)
       stampaXmlRadioButton.checked = true;
    else
-      stampaPDFRadioButton.checked = true;
+      stampaHtmlRadioButton.checked = true;
    numeroProgressivoLineEdit.text = eFattura.param.xml.progressive || '0';
    destFolderLineEdit.text = eFattura.param.xml.destination_folder;
    apriXmlCheckBox.checked = eFattura.param.xml.open_file;
-
-   printHeaderCheckBox.checked = eFattura.param.report.print_header;
-   printLogoCheckBox.checked = eFattura.param.report.print_logo;
-   printQuantityCheckBox.checked = eFattura.param.report.print_quantity;
-   fontTypeLineEdit.text = eFattura.param.report.font_family;
-   bgColorLineEdit.text = eFattura.param.report.color_1;
-   textColorLineEdit.text = eFattura.param.report.color_2;
-   invoiceRow1LineEdit.text = eFattura.param.report.header_row_1;
-   invoiceRow2LineEdit.text = eFattura.param.report.header_row_2;
-   invoiceRow3LineEdit.text = eFattura.param.report.header_row_3;
-   invoiceRow4LineEdit.text = eFattura.param.report.header_row_4;
-   invoiceRow5LineEdit.text = eFattura.param.report.header_row_5;
-   //invoiceFooterTextEdit.setHtml(eFattura.param.report.footer);
-   invoiceFooterTextEdit.setText(eFattura.param.report.footer);
-
+   xsltLineEdit.text = eFattura.param.xml.xslt_filename;
 
    //Groupbox periodo
    if (eFattura.param.periodAll)
@@ -222,7 +173,7 @@ function settingsDialog() {
    toDateEdit.setDate(toDate);
    periodComboBox.currentIndex = parseInt(eFattura.param.periodSelected);
    yearComboBox.addItems(years);
-   
+
    var periods = [];
    periods.push("");
    periods.push("gennaio");
@@ -249,10 +200,10 @@ function settingsDialog() {
    periods.push("Anno");
    periodComboBox.addItems(periods);
 
-   
+
    //funzioni dialogo
    dialog.checkdata = function () {
-      if (numeroFatturaLineEdit.text.length<=0 && numeroFatturaRadioButton.checked) {
+      if (numeroFatturaLineEdit.text.length <= 0 && numeroFatturaRadioButton.checked) {
          var msg = eFattura.getErrorMessage(eFattura.ID_ERR_INVOICENUMBER_MISSING);
          eFattura.addMessage(msg, eFattura.ID_ERR_INVOICENUMBER_MISSING);
          return;
@@ -294,13 +245,13 @@ function settingsDialog() {
       }
    }
    dialog.updateDates = function () {
-      blockSignal=true;
+      blockSignal = true;
       var index = parseInt(periodComboBox.currentIndex.toString());
       if (index == 0) {
          return;
       }
       else if (index == 13 || index == 18 || index == 21) {
-         periodComboBox.currentIndex = index+1;
+         periodComboBox.currentIndex = index + 1;
          return;
       }
       var year = yearComboBox.currentIndex.toString();
@@ -316,7 +267,7 @@ function settingsDialog() {
          //mese con 28 o 29 giorni
          var day = 28;
          if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
-           day = 29;
+            day = 29;
          fromDate = year + '-02-01';
          toDate = year + '-02-' + day.toString();
       }
@@ -392,12 +343,12 @@ function settingsDialog() {
       toDate = Banana.Converter.toInternalDateFormat(toDate, "yyyy-mm-dd");
       startDateEdit.setDate(fromDate);
       toDateEdit.setDate(toDate);
-      blockSignal=false;
-  }
+      blockSignal = false;
+   }
    dialog.updatePeriods = function () {
       if (blockSignal)
          return;
-      periodComboBox.currentIndex = 0;         
+      periodComboBox.currentIndex = 0;
    }
    dialog.showHelp = function () {
       Banana.Ui.showHelp("ch.banana.it.efattura.b2b");
@@ -439,22 +390,9 @@ function settingsDialog() {
    eFattura.param.xml.progressive = parseInt(numeroProgressivoLineEdit.text);
    eFattura.param.xml.destination_folder = destFolderLineEdit.text;
    eFattura.param.xml.open_file = apriXmlCheckBox.checked;
+   eFattura.param.xml.xslt_filename = xsltLineEdit.text;
 
-   eFattura.param.report.print_header = printHeaderCheckBox.checked;
-   eFattura.param.report.print_logo = printLogoCheckBox.checked;
-   eFattura.param.report.print_quantity = printQuantityCheckBox.checked;
-   eFattura.param.report.font_family = fontTypeLineEdit.text;
-   eFattura.param.report.color_1 = bgColorLineEdit.text;
-   eFattura.param.report.color_2 = textColorLineEdit.text;
-   eFattura.param.report.header_row_1 = invoiceRow1LineEdit.text;
-   eFattura.param.report.header_row_2 = invoiceRow2LineEdit.text;
-   eFattura.param.report.header_row_3 = invoiceRow3LineEdit.text;
-   eFattura.param.report.header_row_4 = invoiceRow4LineEdit.text;
-   eFattura.param.report.header_row_5 = invoiceRow5LineEdit.text;
-   //eFattura.param.report.footer = invoiceFooterTextEdit.html;
-   eFattura.param.report.footer = invoiceFooterTextEdit.plainText;
 
-   
    //Groupbox periodo
    if (periodAllRadioButton.checked) {
       eFattura.param.periodAll = true;
@@ -469,7 +407,7 @@ function settingsDialog() {
       eFattura.param.periodEndDate = Banana.Converter.toInternalDateFormat(eFattura.param.periodEndDate, "dd/mm/yyyy");
       eFattura.param.periodSelected = periodComboBox.currentIndex.toString();
    }
-   
+
    var paramToString = JSON.stringify(eFattura.param);
    Banana.document.setScriptSettings(paramToString);
    return true;
@@ -516,22 +454,22 @@ EFattura.prototype.addMessage = function (msg, idMsg) {
 EFattura.prototype.addTextNode = function (parentNode, text, len, context) {
    if (!parentNode)
       return;
-      
+
    if (!text)
       text = '';
-      
+
    var fixedLen = 0;
    var minLen = 0;
    var maxLen = 0;
    var msg = '';
-   if (len && len.indexOf("...")>0) {
+   if (len && len.indexOf("...") > 0) {
       var lenArray = len.split("...");
-      if (lenArray.length>1) {
+      if (lenArray.length > 1) {
          minLen = parseInt(lenArray[0]);
          maxLen = parseInt(lenArray[1]);
       }
    }
-   else if (len && len.length>0) {
+   else if (len && len.length > 0) {
       fixedLen = parseInt(len);
    }
    if (fixedLen > 0 && text.length != fixedLen) {
@@ -558,42 +496,34 @@ EFattura.prototype.addTextNode = function (parentNode, text, len, context) {
    parentNode.addTextNode(text);
 }
 
-EFattura.prototype.formatAmount = function(amount) {
+EFattura.prototype.formatAmount = function (amount) {
 
-  var amountFormatted = amount;
-  /*if (amountFormatted)
-    amountFormatted = Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(amountFormatted))
-  else
-      amountFormatted = "";*/
-  if (Banana.SDecimal.isZero(amountFormatted))
-    return "0.00";
-  return amountFormatted;
+   var amountFormatted = amount;
+   /*if (amountFormatted)
+     amountFormatted = Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.abs(amountFormatted))
+   else
+       amountFormatted = "";*/
+   if (Banana.SDecimal.isZero(amountFormatted))
+      return "0.00";
+   return amountFormatted;
 }
 
 EFattura.prototype.clearErrorList = function () {
    this.errorList = [];
 }
 
-EFattura.prototype.createReport = function (jsonInvoice, report, stylesheet) {
-
-   if (jsonInvoice && jsonInvoice.customer_info) {
-      printInvoice(jsonInvoice, report, stylesheet, this.param.report);
-      setInvoiceStyle(report, stylesheet, this.param.report);
-      stylesheet.addStyle("@page").setAttribute("margin", "0");
-   }
-}
-
 EFattura.prototype.createXml = function (jsonInvoiceList, xmlDocument, indent) {
 
-   if (!xmlDocument || jsonInvoiceList.length<=0)
+   if (!xmlDocument || jsonInvoiceList.length <= 0)
       return "@Cancel";
-      
+
    var nodeRoot = this.createXmlHeader(jsonInvoiceList[0], xmlDocument);
    if (!nodeRoot || this.isEmpty(nodeRoot))
       return "@Cancel";
    for (var i = 0; i < jsonInvoiceList.length; i++) {
       this.createXmlBody(jsonInvoiceList[i], nodeRoot);
    }
+
    return Banana.Xml.save(xmlDocument, indent);
 }
 /*
@@ -613,7 +543,7 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
 
    //Numero fattura da visualizzare in eventuali messaggi d'errore per facilitare l'individuazione dell'errore
    var msgHelpNoFattura = " (No fattura " + invoiceObj.document_info.number + ")";
-   
+
    // Body
    var nodeFatturaElettronicaBody = nodeRoot.addElement("FatturaElettronicaBody");
    var nodeDatiGenerali = nodeFatturaElettronicaBody.addElement("DatiGenerali");
@@ -626,28 +556,28 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       if (key.startsWith('TD') && key.len > 2)
          docType = key.substr(3);
    }
-   
+
    //nel caso il tipodocumento non sia un tipo ammesso, segnala l'errore
-   if (!['TD01','TD02','TD03','TD04','TD05','TD06','TD16','TD17','TD18','TD19','TD20','TD21','TD22','TD23','TD24','TD25','TD26','TD27'].includes(docType)) {
+   if (!['TD01', 'TD02', 'TD03', 'TD04', 'TD05', 'TD06', 'TD16', 'TD17', 'TD18', 'TD19', 'TD20', 'TD21', 'TD22', 'TD23', 'TD24', 'TD25', 'TD26', 'TD27'].includes(docType)) {
       var msg = this.getErrorMessage(this.ID_ERR_DOCTYPE_NOTVALID);
       msg = msg.replace("%1", docType);
       this.addMessage(msg, this.ID_ERR_DOCTYPE_NOTVALID);
    }
 
 
-   this.addTextNode(nodeTipoDocumento, docType, '4', 'DatiGeneraliDocumento/TipoDocumento '+ msgHelpNoFattura);
+   this.addTextNode(nodeTipoDocumento, docType, '4', 'DatiGeneraliDocumento/TipoDocumento ' + msgHelpNoFattura);
    var nodeDivisa = nodeDatiGeneraliDocumento.addElement("Divisa");
-   this.addTextNode(nodeDivisa, invoiceObj.document_info.currency, '3', 'DatiGeneraliDocumento/Divisa '+ msgHelpNoFattura);
+   this.addTextNode(nodeDivisa, invoiceObj.document_info.currency, '3', 'DatiGeneraliDocumento/Divisa ' + msgHelpNoFattura);
    var nodeData = nodeDatiGeneraliDocumento.addElement("Data");
-   this.addTextNode(nodeData, invoiceObj.document_info.date, '10', 'DatiGeneraliDocumento/Data '+ msgHelpNoFattura);
+   this.addTextNode(nodeData, invoiceObj.document_info.date, '10', 'DatiGeneraliDocumento/Data ' + msgHelpNoFattura);
    var nodeNumero = nodeDatiGeneraliDocumento.addElement("Numero");
-   this.addTextNode(nodeNumero, invoiceObj.document_info.number, '1...20', 'DatiGeneraliDocumento/Numero '+ msgHelpNoFattura);
-   
+   this.addTextNode(nodeNumero, invoiceObj.document_info.number, '1...20', 'DatiGeneraliDocumento/Numero ' + msgHelpNoFattura);
+
    //2.1.1.9 <ImportoTotaleDocumento> Importo totale del documento al netto dell'eventuale sconto e comprensivo di imposta a debito del cessionario / committente
    //Elemento non obbligatorio, però se non specificato risultano fatture con totale 0 nel nostro sistema di interscambio
    var nodeTotaleDocumento = nodeDatiGeneraliDocumento.addElement("ImportoTotaleDocumento");
-   var totaleDaPagare = Banana.SDecimal.round(invoiceObj.billing_info.total_to_pay, {'decimals':2});
-   this.addTextNode(nodeTotaleDocumento, this.formatAmount(totaleDaPagare), '4...15', 'DatiGeneraliDocumento/ImportoTotaleDocumento '+ msgHelpNoFattura);
+   var totaleDaPagare = Banana.SDecimal.round(invoiceObj.billing_info.total_to_pay, { 'decimals': 2 });
+   this.addTextNode(nodeTotaleDocumento, this.formatAmount(totaleDaPagare), '4...15', 'DatiGeneraliDocumento/ImportoTotaleDocumento ' + msgHelpNoFattura);
 
    //In total_vat_rates[] non sono presenti imponibile/imposta per aliquota allo 0%, da correggere in Banana
    //imponibili con aliquota allo 0% vengono raggruppati per codice natura perché nel riepilogo la natura dev'essere specificata
@@ -658,36 +588,36 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
          continue;
       var nodeDettaglioLinee = nodeDatiBeniServizi.addElement("DettaglioLinee");
       var nodeNumeroLinea = nodeDettaglioLinee.addElement("NumeroLinea");
-      this.addTextNode(nodeNumeroLinea, parseInt(i + 1).toString(), '1...4', 'DettaglioLinee/NumeroLinea '+ msgHelpNoFattura);
+      this.addTextNode(nodeNumeroLinea, parseInt(i + 1).toString(), '1...4', 'DettaglioLinee/NumeroLinea ' + msgHelpNoFattura);
       var nodeDescrizione = nodeDettaglioLinee.addElement("Descrizione");
-      this.addTextNode(nodeDescrizione, invoiceObj.items[i].description, '1...1000', 'DettaglioLinee/Descrizione '+ msgHelpNoFattura);
+      this.addTextNode(nodeDescrizione, invoiceObj.items[i].description, '1...1000', 'DettaglioLinee/Descrizione ' + msgHelpNoFattura);
       var stampaQuantita = false;
       if (!Banana.SDecimal.isZero(invoiceObj.items[i].quantity))
          stampaQuantita = true;
-      if (stampaQuantita && parseInt(invoiceObj.items[i].quantity)===1 && invoiceObj.items[i].mesure_unit.length<=0)
+      if (stampaQuantita && parseInt(invoiceObj.items[i].quantity) === 1 && invoiceObj.items[i].mesure_unit.length <= 0)
          stampaQuantita = false;
       if (stampaQuantita) {
-         var quantita = Banana.SDecimal.round(invoiceObj.items[i].quantity, {'decimals':4});
+         var quantita = Banana.SDecimal.round(invoiceObj.items[i].quantity, { 'decimals': 4 });
          var nodeQuantita = nodeDettaglioLinee.addElement("Quantita");
-         this.addTextNode(nodeQuantita, quantita , '4...21', 'DettaglioLinee/Quantita '+ msgHelpNoFattura);
+         this.addTextNode(nodeQuantita, quantita, '4...21', 'DettaglioLinee/Quantita ' + msgHelpNoFattura);
          var nodeUnitaMisura = nodeDettaglioLinee.addElement("UnitaMisura");
-         this.addTextNode(nodeUnitaMisura, invoiceObj.items[i].mesure_unit , '1...10', 'DettaglioLinee/UnitaMisura '+ msgHelpNoFattura);
+         this.addTextNode(nodeUnitaMisura, invoiceObj.items[i].mesure_unit, '1...10', 'DettaglioLinee/UnitaMisura ' + msgHelpNoFattura);
       }
       var nodePrezzoUnitario = nodeDettaglioLinee.addElement("PrezzoUnitario");
       var prezzoUnitario = invoiceObj.items[i].unit_price.calculated_amount_vat_exclusive;
-      this.addTextNode(nodePrezzoUnitario, this.formatAmount(prezzoUnitario), '4...21', 'DettaglioLinee/PrezzoUnitario '+ msgHelpNoFattura);
+      this.addTextNode(nodePrezzoUnitario, this.formatAmount(prezzoUnitario), '4...21', 'DettaglioLinee/PrezzoUnitario ' + msgHelpNoFattura);
       var nodePrezzoTotale = nodeDettaglioLinee.addElement("PrezzoTotale");
       var prezzoTotale = invoiceObj.items[i].total_amount_vat_exclusive;
-      this.addTextNode(nodePrezzoTotale, this.formatAmount(prezzoTotale), '4...21', 'DettaglioLinee/PrezzoTotale '+ msgHelpNoFattura);
+      this.addTextNode(nodePrezzoTotale, this.formatAmount(prezzoTotale), '4...21', 'DettaglioLinee/PrezzoTotale ' + msgHelpNoFattura);
       var nodeAliquotaIVA = nodeDettaglioLinee.addElement("AliquotaIVA");
-      var aliquotaIva = Banana.SDecimal.round(invoiceObj.items[i].unit_price.vat_rate, {'decimals':2});
+      var aliquotaIva = Banana.SDecimal.round(invoiceObj.items[i].unit_price.vat_rate, { 'decimals': 2 });
       //se la linea di dettaglio è una linea di descrizione con importo totale a 0, imposta il codice IVA al 22%, così non chiede il codice natura
       if (invoiceObj.items[i].item_type === "note" && Banana.SDecimal.isZero(prezzoTotale) && Banana.SDecimal.isZero(aliquotaIva)) {
-         aliquotaIva = Banana.SDecimal.round("22", {'decimals':2});
+         aliquotaIva = Banana.SDecimal.round("22", { 'decimals': 2 });
       }
       //Aliquota IVA: nel caso di non applicabilità, il campo deve essere valorizzato a zero
       //if (invoiceObj.items[i].unit_price.vat_code.length>0) {
-      this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DettaglioLinee/AliquotaIVA '+ msgHelpNoFattura);
+      this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DettaglioLinee/AliquotaIVA ' + msgHelpNoFattura);
       if (Banana.SDecimal.isZero(aliquotaIva) && this.banDocument.table("VatCodes")) {
          //riprende il codice natura dalla tabella codici iva, colonna Gr1
          var natura = this.getCodiceNatura(invoiceObj.items[i].unit_price.vat_code);
@@ -700,8 +630,8 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
          }
 
          var nodeNatura = nodeDettaglioLinee.addElement("Natura");
-         this.addTextNode(nodeNatura, natura, '2...4', 'DettaglioLinee/Natura '+ msgHelpNoFattura);
-         if (natura.length<=0)
+         this.addTextNode(nodeNatura, natura, '2...4', 'DettaglioLinee/Natura ' + msgHelpNoFattura);
+         if (natura.length <= 0)
             natura = "void";
          if (!imponibileAliquota0List[natura])
             imponibileAliquota0List[natura] = 0;
@@ -712,20 +642,20 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    }
    //Dati Riepilogo <1.N> blocco sempre obbligatorio contenente i dati di riepilogo per ogni aliquota IVA o natura
    for (var i = 0; i < invoiceObj.billing_info.total_vat_rates.length; i++) {
-      var aliquotaIva = Banana.SDecimal.round(invoiceObj.billing_info.total_vat_rates[i].vat_rate, {'decimals':2});
+      var aliquotaIva = Banana.SDecimal.round(invoiceObj.billing_info.total_vat_rates[i].vat_rate, { 'decimals': 2 });
       if (Banana.SDecimal.isZero(aliquotaIva))
          continue;
       var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
       var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
-      this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DatiRiepilogo/AliquotaIVA '+ msgHelpNoFattura);
+      this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DatiRiepilogo/AliquotaIVA ' + msgHelpNoFattura);
 
-	  var imponibileImporto = invoiceObj.billing_info.total_vat_rates[i].total_amount_vat_exclusive;
+      var imponibileImporto = invoiceObj.billing_info.total_vat_rates[i].total_amount_vat_exclusive;
       var nodeImponibileImporto = nodeDatiRiepilogo.addElement("ImponibileImporto");
-      this.addTextNode(nodeImponibileImporto, this.formatAmount(imponibileImporto), '4...15', 'DatiRiepilogo/ImponibileImporto '+ msgHelpNoFattura);
+      this.addTextNode(nodeImponibileImporto, this.formatAmount(imponibileImporto), '4...15', 'DatiRiepilogo/ImponibileImporto ' + msgHelpNoFattura);
 
-	  var imposta = invoiceObj.billing_info.total_vat_rates[i].total_vat_amount;
+      var imposta = invoiceObj.billing_info.total_vat_rates[i].total_vat_amount;
       var nodeImposta = nodeDatiRiepilogo.addElement("Imposta");
-      this.addTextNode(nodeImposta, this.formatAmount(imposta), '4...15', 'DatiRiepilogo/Imposta '+ msgHelpNoFattura);
+      this.addTextNode(nodeImposta, this.formatAmount(imposta), '4...15', 'DatiRiepilogo/Imposta ' + msgHelpNoFattura);
    }
    for (var codNatura in imponibileAliquota0List) {
       var imponibileAliquota0 = imponibileAliquota0List[codNatura];
@@ -733,19 +663,19 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
          continue;
       var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
       var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
-      this.addTextNode(nodeAliquotaIVA, "0.00", '4...6', 'DatiRiepilogo/AliquotaIVA '+ msgHelpNoFattura);
-      
+      this.addTextNode(nodeAliquotaIVA, "0.00", '4...6', 'DatiRiepilogo/AliquotaIVA ' + msgHelpNoFattura);
+
       if (codNatura !== "void") {
          var nodeNatura = nodeDatiRiepilogo.addElement("Natura");
-         this.addTextNode(nodeNatura, codNatura, '2...4', 'DettaglioLinee/Natura '+ msgHelpNoFattura);
+         this.addTextNode(nodeNatura, codNatura, '2...4', 'DettaglioLinee/Natura ' + msgHelpNoFattura);
       }
-      
+
       var nodeImponibileImporto = nodeDatiRiepilogo.addElement("ImponibileImporto");
-      this.addTextNode(nodeImponibileImporto, imponibileAliquota0, '4...15', 'DatiRiepilogo/ImponibileImporto '+ msgHelpNoFattura);
-      
+      this.addTextNode(nodeImponibileImporto, imponibileAliquota0, '4...15', 'DatiRiepilogo/ImponibileImporto ' + msgHelpNoFattura);
+
       var nodeImposta = nodeDatiRiepilogo.addElement("Imposta");
-      this.addTextNode(nodeImposta, "0.00", '4...15', 'DatiRiepilogo/Imposta '+ msgHelpNoFattura);
-      
+      this.addTextNode(nodeImposta, "0.00", '4...15', 'DatiRiepilogo/Imposta ' + msgHelpNoFattura);
+
    }
 }
 
@@ -772,13 +702,13 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    var accountObj = this.getAccount(invoiceObj.customer_info.number);
    if (accountObj && accountObj["Code1"]) {
       var value = accountObj["Code1"];
-      if (value && value.length>0) {
+      if (value && value.length > 0) {
          var values = value.split(":");
-         if (values.length>0)
+         if (values.length > 0)
             formatoTrasmissione = values[0];
-         if (values.length>1)
+         if (values.length > 1)
             codiceDestinatario = values[1];
-         if (values.length>2)
+         if (values.length > 2)
             pecDestinatario = values[2];
       }
    }
@@ -829,7 +759,7 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    //[1.1.3] FormatoTrasmissione 
    var nodeFormatoTrasmissione = nodeDatiTrasmissione.addElement("FormatoTrasmissione");
    this.addTextNode(nodeFormatoTrasmissione, formatoTrasmissione, '5', 'DatiTrasmissione/FormatoTrasmissione' + msgHelpNoFattura);
-   
+
    /*   
 Come precisato nel provvedimento Agenzia delle Entrate 30 aprile 2018 n. 89757, nella sezione relativa ai dati per la trasmissione della e-fattura il fornitore deve riportare, nel campo “CodiceDestinatario”:
 – il codice a 7 cifre eventualmente comunicato dal cliente, che indica il canale telematico da questi prescelto per la ricezione (web service o FTP);
@@ -840,12 +770,12 @@ Come precisato nel provvedimento Agenzia delle Entrate 30 aprile 2018 n. 89757, 
    var nodeCodiceDestinatario = nodeDatiTrasmissione.addElement("CodiceDestinatario");
    if (codiceDestinatario === "0000000") {
       this.addTextNode(nodeCodiceDestinatario, codiceDestinatario, '7', 'DatiTrasmissione/CodiceDestinatario' + msgHelpNoFattura);
-      if (pecDestinatario.length>0) {
+      if (pecDestinatario.length > 0) {
          var nodePECDestinatario = nodeDatiTrasmissione.addElement("PECDestinatario");
          this.addTextNode(nodePECDestinatario, pecDestinatario, '7...256', 'DatiTrasmissione/PECDestinatario' + msgHelpNoFattura);
       }
    }
-   else{
+   else {
       this.addTextNode(nodeCodiceDestinatario, codiceDestinatario, '6...7', 'DatiTrasmissione/CodiceDestinatario' + msgHelpNoFattura);
    }
    //[1.2] CedentePrestatore 
@@ -861,7 +791,7 @@ Come precisato nel provvedimento Agenzia delle Entrate 30 aprile 2018 n. 89757, 
    var nodeIdCodice = nodeIdFiscaleIVA.addElement("IdCodice");
    this.addTextNode(nodeIdCodice, this.datiContribuente.partitaIva, '1...28', 'CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice' + msgHelpNoFattura);
    //[1.2.1.2] CodiceFiscale 
-   if (this.datiContribuente.codiceFiscale.length>0) {
+   if (this.datiContribuente.codiceFiscale.length > 0) {
       var nodeCodiceFiscale = nodeDatiAnagrafici.addElement("CodiceFiscale");
       this.addTextNode(nodeCodiceFiscale, this.datiContribuente.codiceFiscale, '11...16', 'CedentePrestatore/DatiAnagrafici/CodiceFiscale' + msgHelpNoFattura);
    }
@@ -889,7 +819,7 @@ Come precisato nel provvedimento Agenzia delle Entrate 30 aprile 2018 n. 89757, 
    var nodeSede = nodeCedentePrestatore.addElement("Sede");
    var nodeIndirizzo = nodeSede.addElement("Indirizzo");
    this.addTextNode(nodeIndirizzo, this.datiContribuente.indirizzo, '1...60', '<CedentePrestatore><Sede><Indirizzo>' + msgHelpNoFattura);
-   if (this.datiContribuente.ncivico.length>0) {
+   if (this.datiContribuente.ncivico.length > 0) {
       var nodeNumeroCivico = nodeSede.addElement("NumeroCivico");
       this.addTextNode(nodeNumeroCivico, this.datiContribuente.ncivico, '1...8', '<CedentePrestatore><Sede><NumeroCivico>' + msgHelpNoFattura);
    }
@@ -910,7 +840,7 @@ Come precisato nel provvedimento Agenzia delle Entrate 30 aprile 2018 n. 89757, 
       var nodeIdFiscaleIVA = nodeDatiAnagrafici.addElement("IdFiscaleIVA");
       var nodeIdPaese = nodeIdFiscaleIVA.addElement("IdPaese");
       var countryCode = invoiceObj.customer_info.country_code;
-      if (!countryCode || countryCode.length<=0) {
+      if (!countryCode || countryCode.length <= 0) {
          countryCode = this.getCountryCode(invoiceObj.customer_info.country);
       }
       this.addTextNode(nodeIdPaese, countryCode, '2', '<CessionarioCommittente><DatiAnagrafici><IdFiscaleIVA><IdPaese>' + msgHelpNoFattura);
@@ -944,7 +874,7 @@ Come precisato nel provvedimento Agenzia delle Entrate 30 aprile 2018 n. 89757, 
    var nodeComune = nodeSede.addElement("Comune");
    this.addTextNode(nodeComune, invoiceObj.customer_info.city, '1...60', '<CessionarioCommittente><Sede><Comune>' + msgHelpNoFattura);
    var countryCode = invoiceObj.customer_info.country_code;
-   if (!countryCode || countryCode.length<=0) {
+   if (!countryCode || countryCode.length <= 0) {
       countryCode = this.getCountryCode(invoiceObj.customer_info.country);
    }
    if (countryCode === 'IT') {
@@ -1109,7 +1039,7 @@ EFattura.prototype.getCustomerList = function () {
          }
       }
    }
-   
+
    for (var i = 0; i < this.journalInvoices.rowCount; i++) {
       var tRow = this.journalInvoices.row(i);
       if (tRow.value('ObjectType') === 'Counterparty' && tRow.value('CounterpartyId').length > 0) {
@@ -1126,7 +1056,7 @@ EFattura.prototype.getCustomerList = function () {
          customersList.push(customerId);
       }
    }
-   
+
    return customersList;
 }
 
@@ -1220,7 +1150,7 @@ EFattura.prototype.getErrorMessage = function (errorId) {
       else
          rtnMsg = "The value of the field Natura %1 is not valid. Please check the column Gr1 of the table VatCodes";
    }
-   
+
    return rtnMsg + " [" + errorId + "] ";
 }
 
@@ -1279,31 +1209,18 @@ EFattura.prototype.initParam = function () {
    /*invoice number*/
    this.param.selection_invoice = '';
    this.param.selection_customer = '';
-   
+
    /* periodSelected 0=none, 1=1.Q, 2=2.Q, 3=3Q, 4=4Q, 10=1.S, 12=2.S, 30=Year */
    this.param.periodAll = true;
    this.param.periodSelected = 1;
    this.param.periodStartDate = '';
    this.param.periodEndDate = '';
-   
+
    this.param.xml = {};
    this.param.xml.progressive = '1';
-   this.param.xml.open_file = false;
    this.param.xml.destination_folder = '';
-
-   this.param.report = {};
-   this.param.report.print_header = true;
-   this.param.report.print_logo = true;
-   this.param.report.print_quantity = false;
-   this.param.report.font_family = '';
-   this.param.report.color_1 = '#337ab7';
-   this.param.report.color_2 = '#ffffff';
-   this.param.report.header_row_1 = '';
-   this.param.report.header_row_2 = '';
-   this.param.report.header_row_3 = '';
-   this.param.report.header_row_4 = '';
-   this.param.report.header_row_5 = '';
-   this.param.report.footer = '';
+   this.param.xml.open_file = false;
+   this.param.xml.xslt_filename = 'https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.1/Foglio_di_stile_fatturaordinaria_v1.2.1.xsl';
 }
 
 EFattura.prototype.initSchemarefs = function () {
@@ -1337,7 +1254,7 @@ EFattura.prototype.loadData = function () {
    var periodAll = this.param.periodAll;
    var startDate = this.param.periodStartDate;
    var endDate = this.param.periodEndDate;
-  
+
    for (var i = 0; i < this.journalInvoices.rowCount; i++) {
       var tRow = this.journalInvoices.row(i);
       if (tRow.value('ObjectJSonData') && tRow.value('ObjectType') === 'InvoiceDocument') {
@@ -1361,7 +1278,7 @@ EFattura.prototype.loadData = function () {
       }
    }
 
-   if (jsonInvoiceList.length<=0) {
+   if (jsonInvoiceList.length <= 0) {
       var msg = this.getErrorMessage(this.ID_ERR_NOINVOICE);
       this.addMessage(msg, this.ID_ERR_NOINVOICE);
    }
@@ -1378,7 +1295,7 @@ EFattura.prototype.loadData = function () {
          jsonCustomerList[accountId].push(jsonInvoice);
       }
    }
-   
+
    return jsonCustomerList;
 }
 
@@ -1455,9 +1372,9 @@ EFattura.prototype.readAccountingData = function (param) {
    return param;
 }
 
-EFattura.prototype.saveFile = function (output) {
-  //nomenclatura nome file
-  //Codice PaeseIdentificativo univoco del Trasmittente  _  Progressivo univoco del file
+EFattura.prototype.saveFile = function (output, fileExtension) {
+   //nomenclatura nome file
+   //Codice PaeseIdentificativo univoco del Trasmittente  _  Progressivo univoco del file
    var nazione = "";
    var codiceFiscale = "";
    if (!this.isEmpty(this.datiContribuente)) {
@@ -1470,10 +1387,13 @@ EFattura.prototype.saveFile = function (output) {
    // Names the file to 'test.xml', easier to reload each time on browser, for testing purposes
    //fileName = 'test';
 
+   // estensione xml o hmtl
+   fileName += "." + fileExtension;
+
    if (this.param.xml.destination_folder.length > 0)
-      fileName = this.param.xml.destination_folder + fileName + ".xml";
-   
-   fileName = Banana.IO.getSaveFileName("Save as", fileName, "XML file (*.xml);;All files (*)");
+      fileName = this.param.xml.destination_folder + fileName;
+
+   fileName = Banana.IO.getSaveFileName("Save as", fileName, fileExtension.toUpperCase() + " file (*." + fileExtension + ");;All files (*)");
    if (fileName.length) {
       var file = Banana.IO.getLocalFile(fileName);
       file.codecName = "UTF-8";
@@ -1555,14 +1475,14 @@ EFattura.prototype.verifyBananaVersion = function () {
 EFattura.prototype.verifyParam = function () {
    if (!this.param)
       this.param = {};
-      
-   if (!this.param.output)   
+
+   if (!this.param.output)
       this.param.output = 0;
-   if (!this.param.selection)   
+   if (!this.param.selection)
       this.param.selection = 0;
-   if (!this.param.selection_invoice)   
+   if (!this.param.selection_invoice)
       this.param.selection_invoice = '';
-   if (!this.param.selection_customer)   
+   if (!this.param.selection_customer)
       this.param.selection_customer = '';
 
    if (!this.param.periodAll)
@@ -1573,40 +1493,16 @@ EFattura.prototype.verifyParam = function () {
       this.param.periodStartDate = '';
    if (!this.param.periodEndDate)
       this.param.periodEndDate = '';
-      
-   if (!this.param.xml)   
-      this.param.xml = {};
-   if (!this.param.xml.progressive)   
-      this.param.xml.progressive = '1';
-   if (!this.param.xml.open_file)   
-      this.param.xml.open_file = false;
-   if (!this.param.xml.destination_folder)   
-      this.param.xml.destination_folder = '';
 
-   if (!this.param.report)   
-      this.param.report = {};
-   if (!this.param.report.print_header)   
-      this.param.report.print_header = false;
-   if (!this.param.report.print_logo)   
-      this.param.report.print_logo = false;
-   if (!this.param.report.print_quantity)   
-      this.param.report.print_quantity = false;
-   if (!this.param.report.font_family)   
-      this.param.report.font_family = '';
-   if (!this.param.report.color_1)   
-      this.param.report.color_1 = '#337ab7';
-   if (!this.param.report.color_2)   
-      this.param.report.color_2 = '#ffffff';
-   if (!this.param.report.header_row_1)   
-      this.param.report.header_row_1 = '';
-   if (!this.param.report.header_row_2)   
-      this.param.report.header_row_2 = '';
-   if (!this.param.report.header_row_3)   
-      this.param.report.header_row_3 = '';
-   if (!this.param.report.header_row_4)   
-      this.param.report.header_row_4 = '';
-   if (!this.param.report.header_row_5)   
-      this.param.report.header_row_5 = '';
-   if (!this.param.report.footer)   
-      this.param.report.footer = '';
+   if (!this.param.xml)
+      this.param.xml = {};
+   if (!this.param.xml.progressive)
+      this.param.xml.progressive = '1';
+   if (!this.param.xml.destination_folder)
+      this.param.xml.destination_folder = '';
+   if (!this.param.xml.open_file)
+      this.param.xml.open_file = false;
+   if (!this.param.xml.xslt_filename)
+      this.param.xml.xslt_filename = '';
+
 }
