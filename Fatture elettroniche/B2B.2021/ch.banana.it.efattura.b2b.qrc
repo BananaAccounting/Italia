@@ -1,10 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
 	<qresource>
-		<file alias="manifest.json">ch.banana.it.efattura.2021.manifest.json</file>
-		<file>ch.banana.it.efattura.2021.dialog.ui</file>
-		<file>ch.banana.it.efattura.2021.js</file>
-		<file>ch.banana.it.efattura.2021.preview.js</file>
-        <file>ch.banana.it.efattura.2021.xml.js</file>
+		<file alias="manifest.json">ch.banana.it.efattura.b2b.manifest.json</file>
+		<file>ch.banana.it.efattura.b2b.dialog.ui</file>
+		<file>ch.banana.it.efattura.b2b.js</file>
+		<file>ch.banana.it.efattura.b2b.preview.js</file>
+        <file>ch.banana.it.efattura.b2b.xml.js</file>
         <file alias="ch.banana.script.italy_vat.daticontribuente.js">../../Iva/2017/ch.banana.script.italy_vat.daticontribuente.js</file>
         <file alias="ch.banana.script.italy_vat.daticontribuente.dialog.ui">../../Iva/2017/ch.banana.script.italy_vat.daticontribuente.dialog.ui</file>
 	</qresource>

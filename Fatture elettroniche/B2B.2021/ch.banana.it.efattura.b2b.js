@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// @id = ch.banana.it.efattura.2021
+// @id = ch.banana.it.efattura.b2b
 // @api = 1.0
-// @pubdate = 2021-01-29
+// @pubdate = 2021-02-02
 // @publisher = Banana.ch SA
 // @description = Fattura elettronica 2021 (XML, PDF)...
 // @description.it = Fattura elettronica 2021 (XML, PDF)...
@@ -22,8 +22,8 @@
 // @task = app.command
 // @inputdatasource = none
 // @timeout = -1
-// @includejs = ch.banana.it.efattura.2021.preview.js
-// @includejs = ch.banana.it.efattura.2021.xml.js
+// @includejs = ch.banana.it.efattura.b2b.preview.js
+// @includejs = ch.banana.it.efattura.b2b.xml.js
 
 //TODO: aggiungere codice destinatario
 
@@ -107,7 +107,7 @@ function settingsDialog() {
       eFattura.setParam(JSON.parse(savedParam));
    }
 
-   var dialog = Banana.Ui.createUi("ch.banana.it.efattura.2021.dialog.ui");
+   var dialog = Banana.Ui.createUi("ch.banana.it.efattura.b2b.dialog.ui");
    var allRadioButton = dialog.tabWidget.findChild('allRadioButton');
    var numeroFatturaRadioButton = dialog.tabWidget.findChild('numeroFatturaRadioButton');
    var numeroFatturaLineEdit = dialog.tabWidget.findChild('numeroFatturaLineEdit');
@@ -400,7 +400,7 @@ function settingsDialog() {
       periodComboBox.currentIndex = 0;         
    }
    dialog.showHelp = function () {
-      Banana.Ui.showHelp("ch.banana.it.efattura.2021");
+      Banana.Ui.showHelp("ch.banana.it.efattura.b2b");
    }
    dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
    dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
@@ -481,7 +481,7 @@ function EFattura(banDocument) {
       this.banDocument = Banana.document;
    this.name = "Banana Accounting EFattura";
    this.version = "V1.0";
-   this.helpId = "ch.banana.it.efattura.2021.js";
+   this.helpId = "ch.banana.it.efattura.b2b.js";
    this.errorList = [];
 
    /* errors id*/

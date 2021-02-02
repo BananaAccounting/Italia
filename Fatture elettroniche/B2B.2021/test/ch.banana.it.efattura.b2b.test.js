@@ -14,18 +14,18 @@
 //
 
 
-// @id = ch.banana.it.efattura.2021.test
+// @id = ch.banana.it.efattura.b2b.test
 // @api = 1.0
 // @pubdate = 2021-01-29
 // @publisher = Banana.ch SA
-// @description = <TEST ch.banana.it.efattura.2021.test>
+// @description = <TEST ch.banana.it.efattura.b2b.test>
 // @task = app.command
 // @doctype = *.*
 // @docproperties = 
 // @outputformat = none
 // @inputdataform = none
 // @timeout = -1
-// @includejs = ../ch.banana.it.efattura.2021.js
+// @includejs = ../ch.banana.it.efattura.b2b.js
 
 
 /*

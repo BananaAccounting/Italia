@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// @id = ch.banana.it.efattura.2021.preview.js
+// @id = ch.banana.it.efattura.b2b.preview.js
 // @api = 1.0
 // @pubdate = 2021-01-29
 // @publisher = Banana.ch SA
