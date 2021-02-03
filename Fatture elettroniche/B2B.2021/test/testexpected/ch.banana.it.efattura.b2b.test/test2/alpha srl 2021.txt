@@ -29,27 +29,14 @@
     "periodEndDate": "",
     "periodSelected": 1,
     "periodStartDate": "",
-    "report": {
-        "color_1": "#337ab7",
-        "color_2": "#ffffff",
-        "font_family": "",
-        "footer": "",
-        "header_row_1": "",
-        "header_row_2": "",
-        "header_row_3": "",
-        "header_row_4": "",
-        "header_row_5": "",
-        "print_header": true,
-        "print_logo": true,
-        "print_quantity": true
-    },
     "selection": 1,
     "selection_customer": "1101",
     "selection_invoice": "",
     "xml": {
         "destination_folder": "",
         "open_file": false,
-        "progressive": "1"
+        "progressive": "1",
+        "xslt_filename": ""
     }
 }
 \end{jsonvalue}
@@ -226,85 +213,6 @@
 </FatturaElettronicaBody>
 </p:FatturaElettronica>
 \end{xmlvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-SOCIETA' ALPHA SRL \newline \newline Viale Roma 543 \newline 07100 Sassari \newline P.IVA IT01234567890 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 123 \newline 18.01.2021 \newline 1101 \newline 01629650167 \newline 17.02.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 123 \newline 18.01.2021 \newline 1101 \newline 01629650167 \newline 17.02.2021 \newline \#page-nr \newline  & Dario Bianchetti \newline Via Torino n.25 \newline 56010 Vicopisano \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Descrizione bene/servizio \newline \newline  & 5.00  & 0.82  & 4.10 \\
-Forniture varie per ufficio \newline \newline  & 10.00  & 1.64  & 16.39 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 20.49 \\
- & Iva 22.00\%  & 20.49  & 4.51 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 25.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-SOCIETA' ALPHA SRL \newline \newline Viale Roma 543 \newline 07100 Sassari \newline P.IVA IT01234567890 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 125 \newline 18.01.2021 \newline 1101 \newline 01629650167 \newline 17.02.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 125 \newline 18.01.2021 \newline 1101 \newline 01629650167 \newline 17.02.2021 \newline \#page-nr \newline  & Dario Bianchetti \newline Via Torino n.25 \newline 56010 Vicopisano \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Descrizione bene/servizio \newline \newline  & 300.00  & 0.82  & 245.90 \\
-Forniture varie per ufficio \newline \newline  & 250.00  & 1.82  & 454.55 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 700.45 \\
- & Iva 22.00\%  & 245.90  & 54.10 \\
- & Iva 10.00\%  & 454.55  & 45.45 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 800.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-SOCIETA' ALPHA SRL \newline \newline Viale Roma 543 \newline 07100 Sassari \newline P.IVA IT01234567890 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 126 \newline 18.01.2021 \newline 1101 \newline 01629650167 \newline 17.02.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 126 \newline 18.01.2021 \newline 1101 \newline 01629650167 \newline 17.02.2021 \newline \#page-nr \newline  & Dario Bianchetti \newline Via Torino n.25 \newline 56010 Vicopisano \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Fornitura con iva inclusa \newline \newline  & 1.00  & 1'000.00  & 1'000.00 \\
-Fornitura con iva esclusa \newline \newline  & 1.00  & 1'000.00  & 1'000.00 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 2'000.00 \\
- & Iva 22.00\%  & 2'000.00  & 440.00 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 2'440.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
 \info{TITLE}{STAMPA DI PIÙ FATTURE PER CLIENTE }
 \info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/ALPHA SRL 2021.AC2}
 \info{PARAM}{FATTURE CLIENTE 1102}
@@ -316,27 +224,14 @@ Fornitura con iva esclusa \newline \newline  & 1.00  & 1'000.00  & 1'000.00 \\
     "periodEndDate": "",
     "periodSelected": 1,
     "periodStartDate": "",
-    "report": {
-        "color_1": "#337ab7",
-        "color_2": "#ffffff",
-        "font_family": "Helvetica",
-        "footer": "",
-        "header_row_1": "",
-        "header_row_2": "",
-        "header_row_3": "",
-        "header_row_4": "",
-        "header_row_5": "",
-        "print_header": true,
-        "print_logo": true,
-        "print_quantity": true
-    },
     "selection": 1,
     "selection_customer": "1102",
     "selection_invoice": "",
     "xml": {
         "destination_folder": "",
         "open_file": false,
-        "progressive": "1"
+        "progressive": "1",
+        "xslt_filename": ""
     }
 }
 \end{jsonvalue}
@@ -916,128 +811,4 @@ Fornitura con iva esclusa \newline \newline  & 1.00  & 1'000.00  & 1'000.00 \\
 </FatturaElettronicaBody>
 </p:FatturaElettronica>
 \end{xmlvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-SOCIETA' ALPHA SRL \newline \newline Viale Roma 543 \newline 07100 Sassari \newline P.IVA IT01234567890 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 124 \newline 18.01.2021 \newline 1102 \newline   \newline 17.02.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 124 \newline 18.01.2021 \newline 1102 \newline   \newline 17.02.2021 \newline \#page-nr \newline  & Fratelli Luisoni \newline Via Sicilia, 50 \newline 56010 Vicopisano \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-Prodotto A \newline \newline  & 20.00  & 2.00  & 40.00 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 1'800.00 \\
- & Iva 22.00\%  & 1'800.00  & 396.00 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 2'196.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-SOCIETA' ALPHA SRL \newline \newline Viale Roma 543 \newline 07100 Sassari \newline P.IVA IT01234567890 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 128 \newline 18.01.2021 \newline 1102 \newline   \newline 17.02.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 128 \newline 18.01.2021 \newline 1102 \newline   \newline 17.02.2021 \newline \#page-nr \newline  & Fratelli Luisoni \newline Via Sicilia, 50 \newline 56010 Vicopisano \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Prodotto A \newline \newline  & 1.00  & 246.84  & 246.84 \\
-Prodotto A \newline \newline  & 1.00  & 644.55  & 644.55 \\
-Prodotto A \newline \newline  & 1.00  & 709.00  & 709.00 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 1'600.39 \\
- & Iva 22.00\%  & 246.84  & 54.31 \\
- & Iva 10.00\%  & 644.55  & 64.45 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 1'719.15 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-SOCIETA' ALPHA SRL \newline \newline Viale Roma 543 \newline 07100 Sassari \newline P.IVA IT01234567890 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 129 \newline 31.03.2021 \newline 1102 \newline   \newline 30.04.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 129 \newline 31.03.2021 \newline 1102 \newline   \newline 30.04.2021 \newline \#page-nr \newline  & Fratelli Luisoni \newline Via Sicilia, 50 \newline 56010 Vicopisano \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Servizio \newline \newline  & 1.00  & 206.01  & 206.01 \\
-Servizio \newline \newline  & 1.00  & 206.01  & 206.01 \\
-Prodotti \newline \newline  & 2.00  & 206.01  & 412.02 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 824.04 \\
- & Iva 22.00\%  & 824.04  & 181.28 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 1'005.32 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
 \end{document}

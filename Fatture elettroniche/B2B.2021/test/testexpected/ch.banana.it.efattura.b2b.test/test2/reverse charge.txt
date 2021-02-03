@@ -29,27 +29,14 @@
     "periodEndDate": "",
     "periodSelected": 1,
     "periodStartDate": "",
-    "report": {
-        "color_1": "#337ab7",
-        "color_2": "#ffffff",
-        "font_family": "",
-        "footer": "",
-        "header_row_1": "",
-        "header_row_2": "",
-        "header_row_3": "",
-        "header_row_4": "",
-        "header_row_5": "",
-        "print_header": true,
-        "print_logo": true,
-        "print_quantity": true
-    },
     "selection": 1,
     "selection_customer": "30001",
     "selection_invoice": "",
     "xml": {
         "destination_folder": "",
         "open_file": false,
-        "progressive": "1"
+        "progressive": "1",
+        "xslt_filename": ""
     }
 }
 \end{jsonvalue}
@@ -186,52 +173,4 @@
 </FatturaElettronicaBody>
 </p:FatturaElettronica>
 \end{xmlvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-\newline \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 123456 \newline 01.05.2021 \newline 30001 \newline 08973230967 \newline 31.05.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 123456 \newline 01.05.2021 \newline 30001 \newline 08973230967 \newline 31.05.2021 \newline \#page-nr \newline  & Studio Cristina Zanini \newline via Rizzoli \newline 60000 Bologna \newline ITALIA \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Fattura a Zanini \newline \newline  & 1.00  & 31.10  & 31.10 \\
-Fattura a Zanini \newline \newline  & 1.00  & 5.70  & 5.70 \\
-Fattura a Zanini senza codice IVA \newline \newline  & 1.00  & 9.20  & 9.20 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 46.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-\newline \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 123457 \newline 02.05.2021 \newline 30001 \newline 08973230967 \newline 01.06.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 123457 \newline 02.05.2021 \newline 30001 \newline 08973230967 \newline 01.06.2021 \newline \#page-nr \newline  & Studio Cristina Zanini \newline via Rizzoli \newline 60000 Bologna \newline ITALIA \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Fattura a Zanini \newline \newline  & 1.00  & 50.11  & 50.11 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 50.11 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
 \end{document}

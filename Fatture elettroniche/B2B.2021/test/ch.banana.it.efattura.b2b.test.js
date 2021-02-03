@@ -133,14 +133,7 @@ EFatturaTest.prototype.getParam1 = function() {
    param.xml = {};
    param.xml.progressive = '1';
    param.xml.open_file = false;
-
-   param.report = {};
-   param.report.print_header = true;
-   param.report.print_logo = true;
-   param.report.print_quantity = true;
-   param.report.font_family = '';
-   param.report.color_1 = '#337ab7';
-   param.report.color_2 = '#ffffff';
+   param.xml.xslt_filename = '';
 
    return param;
 }
@@ -158,15 +151,8 @@ EFatturaTest.prototype.getParam2 = function() {
    param.xml = {};
    param.xml.progressive = '1';
    param.xml.open_file = false;
+   param.xml.xslt_filename = '';
 
-   param.report = {};
-   param.report.print_header = true;
-   param.report.print_logo = true;
-   param.report.print_quantity = true;
-   param.report.font_family = '';
-   param.report.color_1 = '#337ab7';
-   param.report.color_2 = '#ffffff';
-   
    return param;
 }
 
@@ -183,15 +169,8 @@ EFatturaTest.prototype.getParam3 = function() {
    param.xml = {};
    param.xml.progressive = '1';
    param.xml.open_file = false;
+   param.xml.xslt_filename = '';
 
-   param.report = {};
-   param.report.print_header = true;
-   param.report.print_logo = true;
-   param.report.print_quantity = true;
-   param.report.font_family = '';
-   param.report.color_1 = '#337ab7';
-   param.report.color_2 = '#ffffff';
-   
    return param;
 }
 
@@ -255,15 +234,6 @@ EFatturaTest.prototype.printAll = function(fileName, banDocument, param) {
       //this.xml_validate_test(output, '../Schema_del_file_xml_FatturaPA_versione_1.2.xsd',  "STAMPA DI TUTTO " + fileName.toUpperCase());
       this.testLogger.addComment('************************************************************************');
       this.testLogger.addXml("Xml document", output);
-
-      //report
-      for (var j = 0; j < jsonInvoices.length; j++) {
-         var report = Banana.Report.newReport('');
-         var stylesheet = Banana.Report.newStyleSheet();
-         eFattura.createReport(jsonInvoices[j], report, stylesheet);
-         this.testLogger.addComment('************************************************************************');
-         this.testLogger.addReport("Report", report);
-      }
    }
 }
 
@@ -294,15 +264,6 @@ EFatturaTest.prototype.printSingleCustomer = function(fileName, banDocument, par
          //this.xml_validate_test(output, '../Schema_del_file_xml_FatturaPA_versione_1.2.xsd',  "STAMPA DI PIÙ FATTURE " + param.selection_customer + " " + fileName.toUpperCase());
          this.testLogger.addComment('************************************************************************');
          this.testLogger.addXml("Xml document", output);
-         
-         //report
-         for (var k = 0; k < jsonInvoices.length; k++) {
-            var report = Banana.Report.newReport('');
-            var stylesheet = Banana.Report.newStyleSheet();
-            eFattura.createReport(jsonInvoices[k], report, stylesheet);
-            this.testLogger.addComment('************************************************************************');
-            this.testLogger.addReport("Report", report);
-         }
       }
    }
 }
@@ -346,15 +307,6 @@ EFatturaTest.prototype.printSingleInvoice = function(fileName, banDocument, para
          //this.xml_validate_test(output, '../Schema_del_file_xml_FatturaPA_versione_1.2.xsd', "STAMPA SINGOLA FATTURA " + param.selection_invoice + " " + fileName.toUpperCase());
          this.testLogger.addComment('************************************************************************');
          this.testLogger.addXml("Xml document", output);
-
-         //report
-         for (var k = 0; k < jsonInvoices.length; k++) {
-            var report = Banana.Report.newReport('');
-            var stylesheet = Banana.Report.newStyleSheet();
-            eFattura.createReport(jsonInvoices[k], report, stylesheet);
-            this.testLogger.addComment('************************************************************************');
-            this.testLogger.addReport("Report", report);
-         }
       }
       
       //errors

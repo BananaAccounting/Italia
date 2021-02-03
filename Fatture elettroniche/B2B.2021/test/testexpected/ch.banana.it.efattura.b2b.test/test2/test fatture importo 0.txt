@@ -29,27 +29,14 @@
     "periodEndDate": "",
     "periodSelected": 1,
     "periodStartDate": "",
-    "report": {
-        "color_1": "#337ab7",
-        "color_2": "#ffffff",
-        "font_family": "",
-        "footer": "",
-        "header_row_1": "",
-        "header_row_2": "",
-        "header_row_3": "",
-        "header_row_4": "",
-        "header_row_5": "",
-        "print_header": true,
-        "print_logo": true,
-        "print_quantity": true
-    },
     "selection": 1,
     "selection_customer": "31009",
     "selection_invoice": "",
     "xml": {
         "destination_folder": "",
         "open_file": false,
-        "progressive": "1"
+        "progressive": "1",
+        "xslt_filename": ""
     }
 }
 \end{jsonvalue}
@@ -243,127 +230,4 @@
 </FatturaElettronicaBody>
 </p:FatturaElettronica>
 \end{xmlvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-CLIENTE INVENTATO \newline \newline Via delle Libertà n. 84 \newline 56023 ZAMBRA DI CASCINA PI \newline Tel: +39xxx \newline P.IVA 01433000500 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 1 \newline 01.01.2018 \newline 31009 \newline 01591860505 \newline 31.01.2018 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 1 \newline 01.01.2018 \newline 31009 \newline 01591860505 \newline 31.01.2018 \newline \#page-nr \newline  & Bulleri Bullero \newline Via Mare blu \newline 56010 Pontasserchio \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Prodotti IVA 22\% \newline \newline  & 1.00  & 409.84  & 409.84 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 409.84 \\
- & Iva 22.00\%  & 409.84  & 90.16 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 500.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-CLIENTE INVENTATO \newline \newline Via delle Libertà n. 84 \newline 56023 ZAMBRA DI CASCINA PI \newline Tel: +39xxx \newline P.IVA 01433000500 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 2 \newline 03.01.2018 \newline 31009 \newline 01591860505 \newline 02.02.2018 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 2 \newline 03.01.2018 \newline 31009 \newline 01591860505 \newline 02.02.2018 \newline \#page-nr \newline  & Bulleri Bullero \newline Via Mare blu \newline 56010 Pontasserchio \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Prodotti IVA 0\% \newline \newline  & 1.00  & 500.00  & 500.00 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 500.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-CLIENTE INVENTATO \newline \newline Via delle Libertà n. 84 \newline 56023 ZAMBRA DI CASCINA PI \newline Tel: +39xxx \newline P.IVA 01433000500 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 3 \newline 04.01.2018 \newline 31009 \newline 01591860505 \newline 03.02.2018 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 3 \newline 04.01.2018 \newline 31009 \newline 01591860505 \newline 03.02.2018 \newline \#page-nr \newline  & Bulleri Bullero \newline Via Mare blu \newline 56010 Pontasserchio \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Prodotti omaggio IVA 22\% \newline \newline  & \multicolumn{2}{l}{} & \\
-Prodotti IVA 21\% \newline \newline  & 1.00  & 82.64  & 82.64 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 82.64 \\
- & Iva 22.00\%  & 0.00  & 0.00 \\
- & Iva 21.00\%  & 82.64  & 17.36 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 100.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-CLIENTE INVENTATO \newline \newline Via delle Libertà n. 84 \newline 56023 ZAMBRA DI CASCINA PI \newline Tel: +39xxx \newline P.IVA 01433000500 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 4 \newline 04.01.2018 \newline 31009 \newline 01591860505 \newline 03.02.2018 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 4 \newline 04.01.2018 \newline 31009 \newline 01591860505 \newline 03.02.2018 \newline \#page-nr \newline  & Bulleri Bullero \newline Via Mare blu \newline 56010 Pontasserchio \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Prodotti omaggio IVA 22\% \newline \newline  & \multicolumn{2}{l}{} & \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 0.00 \\
- & Iva 22.00\%  & 0.00  & 0.00 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 0.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-CLIENTE INVENTATO \newline \newline Via delle Libertà n. 84 \newline 56023 ZAMBRA DI CASCINA PI \newline Tel: +39xxx \newline P.IVA 01433000500 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 5 \newline 04.01.2018 \newline 31009 \newline 01591860505 \newline 03.02.2018 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 5 \newline 04.01.2018 \newline 31009 \newline 01591860505 \newline 03.02.2018 \newline \#page-nr \newline  & Bulleri Bullero \newline Via Mare blu \newline 56010 Pontasserchio \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Prodotti omaggio IVA 0\% \newline \newline  & \multicolumn{2}{l}{} & \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 0.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
 \end{document}

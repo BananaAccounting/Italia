@@ -29,27 +29,14 @@
     "periodEndDate": "",
     "periodSelected": 1,
     "periodStartDate": "",
-    "report": {
-        "color_1": "#337ab7",
-        "color_2": "#ffffff",
-        "font_family": "",
-        "footer": "",
-        "header_row_1": "",
-        "header_row_2": "",
-        "header_row_3": "",
-        "header_row_4": "",
-        "header_row_5": "",
-        "print_header": true,
-        "print_logo": true,
-        "print_quantity": true
-    },
     "selection": 0,
     "selection_customer": "",
     "selection_invoice": "1",
     "xml": {
         "destination_folder": "",
         "open_file": false,
-        "progressive": "1"
+        "progressive": "1",
+        "xslt_filename": ""
     }
 }
 \end{jsonvalue}
@@ -134,31 +121,6 @@
 </FatturaElettronicaBody>
 </p:FatturaElettronica>
 \end{xmlvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-CLIENTE INVENTATO \newline \newline Via delle Libertà n. 84 \newline 56023 ZAMBRA DI CASCINA PI \newline Tel: +39xxx \newline P.IVA 01433000500 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 1 \newline 01.01.2021 \newline 31001 \newline 00120470505 \newline 31.01.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 1 \newline 01.01.2021 \newline 31001 \newline 00120470505 \newline 31.01.2021 \newline \#page-nr \newline  & Associati per l'impresa \newline Via verdi  \newline 56010 Vicopisano \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Fattura 2020 con stessa numerazione \newline \newline  & 1.00  & 81.97  & 81.97 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 81.97 \\
- & Iva 22.00\%  & 81.97  & 18.03 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 100.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
 \info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
 \info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2021.AC2}
 \info{PARAM}{FATTURA NO 10}
@@ -170,27 +132,14 @@ Fattura 2020 con stessa numerazione \newline \newline  & 1.00  & 81.97  & 81.97 
     "periodEndDate": "",
     "periodSelected": 1,
     "periodStartDate": "",
-    "report": {
-        "color_1": "#337ab7",
-        "color_2": "#ffffff",
-        "font_family": "Helvetica",
-        "footer": "",
-        "header_row_1": "",
-        "header_row_2": "",
-        "header_row_3": "",
-        "header_row_4": "",
-        "header_row_5": "",
-        "print_header": true,
-        "print_logo": true,
-        "print_quantity": true
-    },
     "selection": 0,
     "selection_customer": "",
     "selection_invoice": "10",
     "xml": {
         "destination_folder": "",
         "open_file": false,
-        "progressive": "1"
+        "progressive": "1",
+        "xslt_filename": ""
     }
 }
 \end{jsonvalue}
@@ -332,36 +281,216 @@ Fattura 2020 con stessa numerazione \newline \newline  & 1.00  & 81.97  & 81.97 
 </FatturaElettronicaBody>
 </p:FatturaElettronica>
 \end{xmlvalue}
+\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
+\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2021.AC2}
+\info{PARAM}{FATTURA NO 11}
 %************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-CLIENTE INVENTATO \newline \newline Via delle Libertà n. 84 \newline 56023 ZAMBRA DI CASCINA PI \newline Tel: +39xxx \newline P.IVA 01433000500 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 10 \newline 01.01.2021 \newline 31001 \newline 00120470505 \newline 31.01.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 10 \newline 01.01.2021 \newline 31001 \newline 00120470505 \newline 31.01.2021 \newline \#page-nr \newline  & Associati per l'impresa \newline Via verdi  \newline 56010 Vicopisano \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Fattura per controllo codici natura v22 \newline \newline  & 1.00  & 81.97  & 81.97 \\
-Fattura per controllo codici natura v10 \newline \newline  & 1.00  & 90.91  & 90.91 \\
-Fattura per controllo codici natura v10 \newline \newline  & 1.00  & 90.91  & 90.91 \\
-Fattura per controllo codici natura v-es1 \newline \newline  & 1.00  & 100.00  & 100.00 \\
-Fattura per controllo codici natura v-es2 \newline \newline  & 1.00  & 100.00  & 100.00 \\
-Fattura per controllo codici natura v-es2 \newline \newline  & 1.00  & 100.00  & 100.00 \\
-Fattura per controllo codici natura v-es3 \newline \newline  & 1.00  & 100.00  & 100.00 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 663.79 \\
- & Iva 22.00\%  & 81.97  & 18.03 \\
- & Iva 10.00\%  & 181.82  & 18.18 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 700.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
+\begin{jsonvalue}{Param}
+{
+    "output": 0,
+    "periodAll": true,
+    "periodEndDate": "",
+    "periodSelected": 1,
+    "periodStartDate": "",
+    "selection": 0,
+    "selection_customer": "",
+    "selection_invoice": "11",
+    "xml": {
+        "destination_folder": "",
+        "open_file": false,
+        "progressive": "1",
+        "xslt_filename": ""
+    }
+}
+\end{jsonvalue}
+%************************************************************************
+\begin{xmlvalue}{Xml document}
+<?xml version="1.0" encoding="utf-8"?>
+
+<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+<FatturaElettronicaHeader>
+<DatiTrasmissione>
+<IdTrasmittente>
+<IdPaese>IT</IdPaese>
+<IdCodice>SLTSFN72M13B950Y</IdCodice>
+</IdTrasmittente>
+<ProgressivoInvio>00001</ProgressivoInvio>
+<FormatoTrasmissione>FPR12</FormatoTrasmissione>
+<CodiceDestinatario>0000000</CodiceDestinatario>
+<PECDestinatario>12345678</PECDestinatario>
+</DatiTrasmissione>
+<CedentePrestatore>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>01433000500</IdCodice>
+</IdFiscaleIVA>
+<CodiceFiscale>SLTSFN72M13B950Y</CodiceFiscale>
+<Anagrafica>
+<Denominazione>CLIENTE INVENTATO</Denominazione>
+</Anagrafica>
+<RegimeFiscale>RF01</RegimeFiscale>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via delle Libertà n. 84</Indirizzo>
+<CAP>56023</CAP>
+<Comune>ZAMBRA DI CASCINA PI</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CedentePrestatore>
+<CessionarioCommittente>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>00128720455</IdCodice>
+</IdFiscaleIVA>
+<Anagrafica>
+<Denominazione>Camaldoli spa</Denominazione>
+</Anagrafica>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via Rossi</Indirizzo>
+<CAP>56020</CAP>
+<Comune>Ponsacco</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CessionarioCommittente>
+</FatturaElettronicaHeader>
+<FatturaElettronicaBody>
+<DatiGenerali>
+<DatiGeneraliDocumento>
+<TipoDocumento>TD01</TipoDocumento>
+<Divisa>EUR</Divisa>
+<Data>2021-02-02</Data>
+<Numero>11</Numero>
+<ImportoTotaleDocumento>200.00</ImportoTotaleDocumento>
+</DatiGeneraliDocumento>
+</DatiGenerali>
+<DatiBeniServizi>
+<DettaglioLinee>
+<NumeroLinea>1</NumeroLinea>
+<Descrizione>Fattura con tipo documento e codice natura</Descrizione>
+<PrezzoUnitario>200.00</PrezzoUnitario>
+<PrezzoTotale>200.00</PrezzoTotale>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N3</Natura>
+</DettaglioLinee>
+<DatiRiepilogo>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N3</Natura>
+<ImponibileImporto>200.00</ImponibileImporto>
+<Imposta>0.00</Imposta>
+</DatiRiepilogo>
+</DatiBeniServizi>
+</FatturaElettronicaBody>
+</p:FatturaElettronica>
+\end{xmlvalue}
+\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
+\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2021.AC2}
+\info{PARAM}{FATTURA NO 11NC}
+%************************************************************************
+\begin{jsonvalue}{Param}
+{
+    "output": 0,
+    "periodAll": true,
+    "periodEndDate": "",
+    "periodSelected": 1,
+    "periodStartDate": "",
+    "selection": 0,
+    "selection_customer": "",
+    "selection_invoice": "11NC",
+    "xml": {
+        "destination_folder": "",
+        "open_file": false,
+        "progressive": "1",
+        "xslt_filename": ""
+    }
+}
+\end{jsonvalue}
+%************************************************************************
+\begin{xmlvalue}{Xml document}
+<?xml version="1.0" encoding="utf-8"?>
+
+<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+<FatturaElettronicaHeader>
+<DatiTrasmissione>
+<IdTrasmittente>
+<IdPaese>IT</IdPaese>
+<IdCodice>SLTSFN72M13B950Y</IdCodice>
+</IdTrasmittente>
+<ProgressivoInvio>00001</ProgressivoInvio>
+<FormatoTrasmissione>FPR12</FormatoTrasmissione>
+<CodiceDestinatario>0000000</CodiceDestinatario>
+<PECDestinatario>12345678</PECDestinatario>
+</DatiTrasmissione>
+<CedentePrestatore>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>01433000500</IdCodice>
+</IdFiscaleIVA>
+<CodiceFiscale>SLTSFN72M13B950Y</CodiceFiscale>
+<Anagrafica>
+<Denominazione>CLIENTE INVENTATO</Denominazione>
+</Anagrafica>
+<RegimeFiscale>RF01</RegimeFiscale>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via delle Libertà n. 84</Indirizzo>
+<CAP>56023</CAP>
+<Comune>ZAMBRA DI CASCINA PI</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CedentePrestatore>
+<CessionarioCommittente>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>00128720455</IdCodice>
+</IdFiscaleIVA>
+<Anagrafica>
+<Denominazione>Camaldoli spa</Denominazione>
+</Anagrafica>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via Rossi</Indirizzo>
+<CAP>56020</CAP>
+<Comune>Ponsacco</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CessionarioCommittente>
+</FatturaElettronicaHeader>
+<FatturaElettronicaBody>
+<DatiGenerali>
+<DatiGeneraliDocumento>
+<TipoDocumento>TD01</TipoDocumento>
+<Divisa>EUR</Divisa>
+<Data>2021-02-02</Data>
+<Numero>11NC</Numero>
+<ImportoTotaleDocumento>-100.00</ImportoTotaleDocumento>
+</DatiGeneraliDocumento>
+</DatiGenerali>
+<DatiBeniServizi>
+<DettaglioLinee>
+<NumeroLinea>1</NumeroLinea>
+<Descrizione>Nota di credito fattura 11</Descrizione>
+<PrezzoUnitario>-100.00</PrezzoUnitario>
+<PrezzoTotale>-100.00</PrezzoTotale>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N3</Natura>
+</DettaglioLinee>
+<DatiRiepilogo>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N3</Natura>
+<ImponibileImporto>-100.00</ImponibileImporto>
+<Imposta>0.00</Imposta>
+</DatiRiepilogo>
+</DatiBeniServizi>
+</FatturaElettronicaBody>
+</p:FatturaElettronica>
+\end{xmlvalue}
 \end{document}

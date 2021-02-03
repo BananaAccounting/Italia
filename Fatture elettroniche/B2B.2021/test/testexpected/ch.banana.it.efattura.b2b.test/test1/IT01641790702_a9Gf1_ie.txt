@@ -29,27 +29,14 @@
     "periodEndDate": "",
     "periodSelected": 1,
     "periodStartDate": "",
-    "report": {
-        "color_1": "#337ab7",
-        "color_2": "#ffffff",
-        "font_family": "",
-        "footer": "",
-        "header_row_1": "",
-        "header_row_2": "",
-        "header_row_3": "",
-        "header_row_4": "",
-        "header_row_5": "",
-        "print_header": true,
-        "print_logo": true,
-        "print_quantity": true
-    },
     "selection": 0,
     "selection_customer": "",
     "selection_invoice": "1",
     "xml": {
         "destination_folder": "",
         "open_file": false,
-        "progressive": "1"
+        "progressive": "1",
+        "xslt_filename": ""
     }
 }
 \end{jsonvalue}
@@ -140,31 +127,6 @@
 </FatturaElettronicaBody>
 </p:FatturaElettronica>
 \end{xmlvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-SOCIETA' ALPHA SRL \newline \newline Viale Roma 543 \newline 07100 Sassari \newline P.IVA IT01234567890 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 1 \newline 01.01.2021 \newline 1101 \newline 1235 \newline 31.01.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 1 \newline 01.01.2021 \newline 1101 \newline 1235 \newline 31.01.2021 \newline \#page-nr \newline  & Dario Bianchetti \newline Via Torino n.25 \newline 56010 Vicopisano \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Fattura 1 \newline \newline  & 10.00  & 100.00  & 1'000.00 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 1'000.00 \\
- & Iva 22.00\%  & 1'000.00  & 220.00 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 1'220.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
 \info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
 \info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/IT01641790702\_A9GF1\_IE.AC2}
 \info{PARAM}{FATTURA NO 2}
@@ -176,27 +138,14 @@ Fattura 1 \newline \newline  & 10.00  & 100.00  & 1'000.00 \\
     "periodEndDate": "",
     "periodSelected": 1,
     "periodStartDate": "",
-    "report": {
-        "color_1": "#337ab7",
-        "color_2": "#ffffff",
-        "font_family": "Helvetica",
-        "footer": "",
-        "header_row_1": "",
-        "header_row_2": "",
-        "header_row_3": "",
-        "header_row_4": "",
-        "header_row_5": "",
-        "print_header": true,
-        "print_logo": true,
-        "print_quantity": true
-    },
     "selection": 0,
     "selection_customer": "",
     "selection_invoice": "2",
     "xml": {
         "destination_folder": "",
         "open_file": false,
-        "progressive": "1"
+        "progressive": "1",
+        "xslt_filename": ""
     }
 }
 \end{jsonvalue}
@@ -285,31 +234,6 @@ Fattura 1 \newline \newline  & 10.00  & 100.00  & 1'000.00 \\
 </FatturaElettronicaBody>
 </p:FatturaElettronica>
 \end{xmlvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-SOCIETA' ALPHA SRL \newline \newline Viale Roma 543 \newline 07100 Sassari \newline P.IVA IT01234567890 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 2 \newline 02.01.2021 \newline 1102 \newline 1236 \newline 01.02.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 2 \newline 02.01.2021 \newline 1102 \newline 1236 \newline 01.02.2021 \newline \#page-nr \newline  & Fratelli Luisoni \newline Via Sicilia, 50 \newline 56010 Vicopisano \newline Italia \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Fattura 2 \newline \newline  & 20.00  & 100.00  & 2'000.00 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 2'000.00 \\
- & Iva 22.00\%  & 2'000.00  & 440.00 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 2'440.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
 \info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
 \info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/IT01641790702\_A9GF1\_IE.AC2}
 \info{PARAM}{FATTURA NO 3}
@@ -321,27 +245,14 @@ Fattura 2 \newline \newline  & 20.00  & 100.00  & 2'000.00 \\
     "periodEndDate": "",
     "periodSelected": 1,
     "periodStartDate": "",
-    "report": {
-        "color_1": "#337ab7",
-        "color_2": "#ffffff",
-        "font_family": "Helvetica",
-        "footer": "",
-        "header_row_1": "",
-        "header_row_2": "",
-        "header_row_3": "",
-        "header_row_4": "",
-        "header_row_5": "",
-        "print_header": true,
-        "print_logo": true,
-        "print_quantity": true
-    },
     "selection": 0,
     "selection_customer": "",
     "selection_invoice": "3",
     "xml": {
         "destination_folder": "",
         "open_file": false,
-        "progressive": "1"
+        "progressive": "1",
+        "xslt_filename": ""
     }
 }
 \end{jsonvalue}
@@ -436,30 +347,4 @@ Fattura 2 \newline \newline  & 20.00  & 100.00  & 2'000.00 \\
 </FatturaElettronicaBody>
 </p:FatturaElettronica>
 \end{xmlvalue}
-%************************************************************************
-\begin{reportvalue}{Report}
-\begin{longtable}[l]{ l }
-SOCIETA' ALPHA SRL \newline \newline Viale Roma 543 \newline 07100 Sassari \newline P.IVA IT01234567890 \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 3 \newline 03.01.2021 \newline 1103 \newline   \newline 02.02.2021 \newline \#page-nr \newline  & \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l }
-\multicolumn{3}{l}{  }\\
-Fattura: \newline Data: \newline No cliente: \newline P.IVA cliente: \newline Scadenza: \newline Pagina: \newline  & 3 \newline 03.01.2021 \newline 1103 \newline   \newline 02.02.2021 \newline \#page-nr \newline  & Gianni Verdi \newline Bahnhofstrasse 9 \newline 30000 Berlin \newline Germania \newline \\
-\end{longtable}
-\begin{longtable}[l]{ l  l  l  l }
-Descrizione  & Quantità  & Prezzo unità  & Importo EUR \\
-Fattura 3 su più righe \newline \newline  & 30.00  & 81.97  & 2'459.02 \\
-Fattura 3 su più righe \newline \newline  & 30.00  & 81.97  & 2'459.02 \\
-\multicolumn{4}{l}{}\\
-\multicolumn{4}{l}{}\\
-   & Imponibile Iva  &    & 4'918.04 \\
- & Iva 22.00\%  & 4'918.04  & 1'081.96 \\
-\multicolumn{4}{l}{}\\
- & \multicolumn{2}{l}{IMPORTO EUR } & 6'000.00 \\
-\multicolumn{4}{l}{}\\
-\end{longtable}
-\end{reportvalue}
 \end{document}
