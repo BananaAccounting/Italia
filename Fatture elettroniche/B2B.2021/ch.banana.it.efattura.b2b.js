@@ -65,12 +65,9 @@ function exec(inData, options) {
             //Preview HTML
             var escapedString = xml_escapeString(eFattura.param.xml.xslt_filename);
             var xslt = "<?xml-stylesheet type='text/xsl' href='" + escapedString + "'?>";
-            var outputStyled = output.slice(0, 39) + xslt + output.slice(39);
-            eFattura.saveFile(outputStyled, "html");
+            output = output.slice(0, 39) + xslt + output.slice(39);
          }
-         else {
-            eFattura.saveFile(outputStyled, "xml");
-         }
+         eFattura.saveFile(output, "xml");
       }
    }
 }

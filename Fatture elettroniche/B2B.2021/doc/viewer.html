@@ -1,0 +1,47 @@
+<html>
+
+<head>
+    <script>
+        function reqListener() {
+            document.getElementById("example").appendChild("xx");
+            document.getElementById("example").appendChild(this.responseText);
+        }
+
+        function loadXMLDoc(fname) {
+            if (window.ActiveXObject) {
+                xhttp = new ActiveXObject("Msxml2.XMLHTTP.3.0");
+            }
+            else {
+                xhttp = new XMLHttpRequest();
+            }
+            xhttp.addEventListener("error", reqListener);
+            xhttp.addEventListener("load", reqListener);
+            xhttp.open("GET", fname, true);
+            xhttp.send("");
+            return xhttp.responseXML;
+        }
+
+        function displayResult() {
+            xml = loadXMLDoc("blogdata.xml");
+            xsl = loadXMLDoc("blogdata.xsl");
+            // code for IE
+            if (window.ActiveXObject) {
+                ex = xml.transformNode(xsl);
+                document.getElementById("example").innerHTML = ex;
+            }
+            // code for Mozilla, Firefox, Opera, etc.
+            else if (document.implementation && document.implementation.createDocument) {
+                xsltProcessor = new XSLTProcessor();
+                xsltProcessor.importStylesheet(xsl);
+                resultDocument = xsltProcessor.transformToFragment(xml, document);
+                document.getElementById("example").appendChild(resultDocument);
+            }
+        }
+    </script>
+</head>
+
+<body onload="displayResult()">
+    <div id="example" />
+</body>
+
+</html>

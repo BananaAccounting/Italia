@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="blogData.xsl"?>
+<blog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="blogData.xsd">
+
+    <Profile>
+        <Name>Husna</Name>
+        <Age>23</Age>
+        <BirthPlace>Hyderabad, India.</BirthPlace>
+        <CurrentResidence>Tempe, AZ.</CurrentResidence>
+        <Occupation>Student</Occupation>
+        <flag gender="f" />
+    </Profile>
+
+    <BlogEntries id="1">
+        <ID>1</ID>
+        <Title>Blog-1 : High Performance Web Sites</Title>
+        <CreationTime>1999-12-04T20:12:00.000</CreationTime>
+        <Description>
+            Book Overview : The book has been written by Steve Souders,
+            is one of the most elaborate one's discussing the performance parameters.
+            In the words of Nate Koechley, Senior Frontend Engineer Yahoo! User Interface (YUI) Team,
+            Platform. As a frontend engineer, you hold a tremendous amount of power and responsibility.
+            Youre the users last line of defense.The decisions you make directly shape their experience.
+            I believe our number one job is to take care of them and to give them what they wantquickly.
+            This book is a toolbox to create happy users (and bosses, too).Best of all,
+            once you put these techniques in placein most cases, a one-time tweakyoull be reaping the rewards far into
+            the future.
+        </Description>
+
+        <Comments>
+            <Comment>
+                <Title>Comment - 1.1</Title>
+                <Description>This is the first comment by the User written about the blog1</Description>
+                <Creator>User - 1.1</Creator>
+            </Comment>
+            <Comment>
+                <Title>Comment - 1.2</Title>
+                <Description>This is the second comment by the User written about the blog1</Description>
+                <Creator>User - 1.2</Creator>
+            </Comment>
+        </Comments>
+    </BlogEntries>
+
+    <BlogEntries id="2">
+        <ID>2</ID>
+        <Title>Blog-2 :The Importance of Frontend Performance</Title>
+        <CreationTime>03-01-12, 9 AM</CreationTime>
+        <Description>
+            Most of my web career has been spent as a backend engineer.As such, I dutifully
+            approached each performance project as an exercise in backend optimization, concentrating
+            on compiler options, database indexes, memory management, etc.Theres
+            a lot of attention and many books devoted to optimizing performance in these areas,
+            so thats where most people spend time looking for improvements.In reality, for
+            most web pages, less than 1020% of the end user response time is spent getting the
+            HTML document from the web server to the browser.If you want to dramatically
+            reduce the response times of your web pages, you have to focus on the other 8090%
+            of the end user experience.What is that 8090% spent on? How can it be reduced?
+            The chapters that follow lay the groundwork for understanding todays web pages
+            and provide 14 rules for making them faster.
+        </Description>
+
+        <Comments>
+            <Comment>
+                <Title>Comment - 2.1</Title>
+                <Description>This is the only comment by the User written about the blog2</Description>
+                <Creator>User - 2.1</Creator>
+            </Comment>
+        </Comments>
+    </BlogEntries>
+
+    <BlogEntries id="3">
+        <ID>3</ID>
+        <Title>Blog-3 :Tracking Web Page Performance</Title>
+        <CreationTime>02-01-2012, 6 PM</CreationTime>
+        <Description>
+            In order to know what to improve, we need to know where the user spends her time
+            waiting.Figure A-1 shows the HTTP traffic when Yahoo!s home page (http://www.
+            yahoo.com) is downloaded using Internet Explorer.Each bar is one HTTP request.
+            The first bar, labeled html, is the initial request for the HTML document.Th e
+            browser parses the HTML and starts downloading the components in the page.In
+            this case, the browsers cache was empty, so all of the components had to be downloaded.
+            The HTML document is only 5% of the total response time.The user spends
+            most of the other 95% waiting for the components to download; she also spends a
+            small amount of time waiting for HTML, scripts, and stylesheets to be parsed, as
+            shown by the blank gaps between downloads.
+        </Description>
+        <Comments>
+            <Comment>
+                <Title>Comment - 3.1</Title>
+                <Description>This is the first comment by the User written about the blog3</Description>
+                <Creator>User - 3.1</Creator>
+            </Comment>
+            <Comment>
+                <Title>Comment - 3.2</Title>
+                <Description>This is the second comment by the User written about the blog3</Description>
+                <Creator>User - 3.2</Creator>
+            </Comment>
+            <Comment>
+                <Title>Comment - 3.3</Title>
+                <Description>This is the third comment by the User written about the blog3</Description>
+                <Creator>User - 3.3</Creator>
+            </Comment>
+        </Comments>
+    </BlogEntries>
+
+</blog>

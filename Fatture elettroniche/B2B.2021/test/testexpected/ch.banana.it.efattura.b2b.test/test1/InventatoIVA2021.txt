@@ -493,4 +493,122 @@
 </FatturaElettronicaBody>
 </p:FatturaElettronica>
 \end{xmlvalue}
+\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
+\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2021.AC2}
+\info{PARAM}{FATTURA NO 12}
+%************************************************************************
+\begin{jsonvalue}{Param}
+{
+    "output": 0,
+    "periodAll": true,
+    "periodEndDate": "",
+    "periodSelected": 1,
+    "periodStartDate": "",
+    "selection": 0,
+    "selection_customer": "",
+    "selection_invoice": "12",
+    "xml": {
+        "destination_folder": "",
+        "open_file": false,
+        "progressive": "1",
+        "xslt_filename": ""
+    }
+}
+\end{jsonvalue}
+%************************************************************************
+\begin{xmlvalue}{Xml document}
+<?xml version="1.0" encoding="utf-8"?>
+
+<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+<FatturaElettronicaHeader>
+<DatiTrasmissione>
+<IdTrasmittente>
+<IdPaese>IT</IdPaese>
+<IdCodice>SLTSFN72M13B950Y</IdCodice>
+</IdTrasmittente>
+<ProgressivoInvio>00001</ProgressivoInvio>
+<FormatoTrasmissione>FPR12</FormatoTrasmissione>
+<CodiceDestinatario>0000000</CodiceDestinatario>
+<PECDestinatario>12345678</PECDestinatario>
+</DatiTrasmissione>
+<CedentePrestatore>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>01433000500</IdCodice>
+</IdFiscaleIVA>
+<CodiceFiscale>SLTSFN72M13B950Y</CodiceFiscale>
+<Anagrafica>
+<Denominazione>CLIENTE INVENTATO</Denominazione>
+</Anagrafica>
+<RegimeFiscale>RF01</RegimeFiscale>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via delle Libertà n. 84</Indirizzo>
+<CAP>56023</CAP>
+<Comune>ZAMBRA DI CASCINA PI</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CedentePrestatore>
+<CessionarioCommittente>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>00128720455</IdCodice>
+</IdFiscaleIVA>
+<Anagrafica>
+<Denominazione>Camaldoli spa</Denominazione>
+</Anagrafica>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via Rossi</Indirizzo>
+<CAP>56020</CAP>
+<Comune>Ponsacco</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CessionarioCommittente>
+</FatturaElettronicaHeader>
+<FatturaElettronicaBody>
+<DatiGenerali>
+<DatiGeneraliDocumento>
+<TipoDocumento>TD01</TipoDocumento>
+<Divisa>EUR</Divisa>
+<Data>2021-02-03</Data>
+<Numero>12</Numero>
+<ImportoTotaleDocumento>442.00</ImportoTotaleDocumento>
+</DatiGeneraliDocumento>
+</DatiGenerali>
+<DatiBeniServizi>
+<DettaglioLinee>
+<NumeroLinea>1</NumeroLinea>
+<Descrizione>Fattura con iva 0%</Descrizione>
+<PrezzoUnitario>221.00</PrezzoUnitario>
+<PrezzoTotale>221.00</PrezzoTotale>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N4</Natura>
+</DettaglioLinee>
+<DettaglioLinee>
+<NumeroLinea>2</NumeroLinea>
+<Descrizione>Fattura con iva 22%</Descrizione>
+<PrezzoUnitario>181.15</PrezzoUnitario>
+<PrezzoTotale>181.15</PrezzoTotale>
+<AliquotaIVA>22.00</AliquotaIVA>
+</DettaglioLinee>
+<DatiRiepilogo>
+<AliquotaIVA>22.00</AliquotaIVA>
+<ImponibileImporto>181.15</ImponibileImporto>
+<Imposta>39.85</Imposta>
+</DatiRiepilogo>
+<DatiRiepilogo>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N4</Natura>
+<ImponibileImporto>221.00</ImponibileImporto>
+<Imposta>0.00</Imposta>
+</DatiRiepilogo>
+</DatiBeniServizi>
+</FatturaElettronicaBody>
+</p:FatturaElettronica>
+\end{xmlvalue}
 \end{document}
