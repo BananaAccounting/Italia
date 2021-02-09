@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.efattura.b2b.test
 // @api = 1.0
-// @pubdate = 2021-01-29
+// @pubdate = 2021-02-09
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.efattura.b2b.test>
 // @task = app.command
@@ -111,21 +111,11 @@ EFatturaTest.prototype.test2 = function() {
    this.testLogger = Test.logger;
 }
 
-/*EFatturaTest.prototype.test3 = function() {
-   this.testLogger = Test.logger.newGroupLogger("test3");
-   this.testLogger.addKeyValue("EFatturaTest", "test3");
-   this.testLogger.addComment("Test ch.banana.it.efattura PARAM3");
-   this.printReports(3);
-   this.testLogger.close();
-   this.testLogger = Test.logger;
-}*/
-
 EFatturaTest.prototype.getParam1 = function() {
    //Param1
    //Set params (normally are taken from settings)
    var param = {};
    param.periodAll = true;
-   param.output = 0; //0=report, 1=xml
    param.selection = 0; //0=singola fattura,1=fatture singolo cliente,2=tutto
    param.selection_customer = ''; //no cliente
    param.selection_invoice = ''; //no fattura
@@ -134,6 +124,7 @@ EFatturaTest.prototype.getParam1 = function() {
    param.xml.progressive = '1';
    param.xml.open_file = false;
    param.xml.xslt_filename = '';
+   param.xml.xsd_filename = '';
 
    return param;
 }
@@ -143,7 +134,6 @@ EFatturaTest.prototype.getParam2 = function() {
    //Set params (normally are taken from settings)
    var param = {};
    param.periodAll = true;
-   param.output = 0; //0=report, 1=xml
    param.selection = 1; //0=singola fattura,1=fatture singolo cliente,2=tutto
    param.selection_customer = ''; //no cliente
    param.selection_invoice = ''; //no fattura
@@ -152,6 +142,7 @@ EFatturaTest.prototype.getParam2 = function() {
    param.xml.progressive = '1';
    param.xml.open_file = false;
    param.xml.xslt_filename = '';
+   param.xml.xsd_filename = '';
 
    return param;
 }
@@ -161,7 +152,6 @@ EFatturaTest.prototype.getParam3 = function() {
    //Set params (normally are taken from settings)
    var param = {};
    param.periodAll = true;
-   param.output = 0; //0=report, 1=xml
    param.selection = 2; //0=singola fattura,1=fatture singolo cliente,2=tutto
    param.selection_customer = ''; //no cliente
    param.selection_invoice = ''; //no fattura
@@ -170,6 +160,7 @@ EFatturaTest.prototype.getParam3 = function() {
    param.xml.progressive = '1';
    param.xml.open_file = false;
    param.xml.xslt_filename = '';
+   param.xml.xsd_filename = '';
 
    return param;
 }

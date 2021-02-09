@@ -16,8 +16,8 @@
 // @api = 1.0
 // @pubdate = 2021-02-02
 // @publisher = Banana.ch SA
-// @description = Fattura elettronica XML...
-// @description.it = Fattura elettronica XML...
+// @description = Esporta fattura elettronica XML...
+// @description.it = Esporta fattura elettronica XML...
 // @doctype = *
 // @task = app.command
 // @inputdatasource = none
@@ -56,18 +56,29 @@ function exec(inData, options) {
 
    //output xml
    for (var i in jsonCustomerList) {
+      Banana.console.debug(i);
       var jsonInvoices = jsonCustomerList[i];
       var xmlDocument = Banana.Xml.newDocument("root");
       eFattura.clearErrorList();
-      var output = eFattura.createXml(jsonInvoices, xmlDocument, true);
-      if (output != "@Cancel") {
-         if (eFattura.param.output == 0) {
-            //Preview HTML
+      var xmlContent = eFattura.createXml(jsonInvoices, xmlDocument, true);
+      if (xmlContent != "@Cancel") {
+         // add stylesheet xslt
+         if (eFattura.param.xml.xslt_filename) {
             var escapedString = xml_escapeString(eFattura.param.xml.xslt_filename);
             var xslt = "<?xml-stylesheet type='text/xsl' href='" + escapedString + "'?>";
-            output = output.slice(0, 39) + xslt + output.slice(39);
+            xmlContent = xmlContent.slice(0, 39) + xslt + xmlContent.slice(39);
          }
-         eFattura.saveFile(output, "xml");
+         // validate data
+         if (eFattura.param.xml.xsd_filename){
+            var escapedString = xml_escapeString(eFattura.param.xml.xsd_filename);
+            if (!Banana.Xml.validate(Banana.Xml.parse(xmlContent), escapedString)) {
+               var msg = eFattura.getErrorMessage(eFattura.ID_ERR_FILE_NOTVALID);
+               msg = msg.replace("%1", Banana.Xml.errorString);
+               eFattura.addMessage(msg, eFattura.ID_ERR_FILE_NOTVALID);
+               return "@Cancel";
+           }            
+         }
+         eFattura.saveFile(xmlContent, "xml");
       }
    }
 }
@@ -87,12 +98,11 @@ function settingsDialog() {
    var numeroFatturaLineEdit = dialog.tabWidget.findChild('numeroFatturaLineEdit');
    var clienteRadioButton = dialog.tabWidget.findChild('clienteRadioButton');
    var clienteComboBox = dialog.tabWidget.findChild('clienteComboBox');
-   var stampaHtmlRadioButton = dialog.tabWidget.findChild('stampaHTMLRadioButton');
-   var stampaXmlRadioButton = dialog.tabWidget.findChild('stampaXMLRadioButton');
    var numeroProgressivoLineEdit = dialog.tabWidget.findChild('numeroProgressivoLineEdit');
    var destFolderLineEdit = dialog.tabWidget.findChild('destFolderLineEdit');
    var apriXmlCheckBox = dialog.tabWidget.findChild('apriXmlCheckBox');
    var xsltLineEdit = dialog.tabWidget.findChild('xsltLineEdit');
+   var xsdLineEdit = dialog.tabWidget.findChild('xsdLineEdit');
 
 
    //periodo
@@ -137,14 +147,11 @@ function settingsDialog() {
          numeroFatturaLineEdit.text = noFattura;
    }
 
-   if (eFattura.param.output == 1)
-      stampaXmlRadioButton.checked = true;
-   else
-      stampaHtmlRadioButton.checked = true;
    numeroProgressivoLineEdit.text = eFattura.param.xml.progressive || '0';
    destFolderLineEdit.text = eFattura.param.xml.destination_folder;
    apriXmlCheckBox.checked = eFattura.param.xml.open_file;
    xsltLineEdit.text = eFattura.param.xml.xslt_filename;
+   xsdLineEdit.text = eFattura.param.xml.xsd_filename;
 
    //Groupbox periodo
    if (eFattura.param.periodAll)
@@ -379,16 +386,12 @@ function settingsDialog() {
       eFattura.param.selection = 1;
    else
       eFattura.param.selection = 0;
-   if (stampaXmlRadioButton.checked)
-      eFattura.param.output = 1;
-   else
-      eFattura.param.output = 0;
 
    eFattura.param.xml.progressive = parseInt(numeroProgressivoLineEdit.text);
    eFattura.param.xml.destination_folder = destFolderLineEdit.text;
    eFattura.param.xml.open_file = apriXmlCheckBox.checked;
    eFattura.param.xml.xslt_filename = xsltLineEdit.text;
-
+   eFattura.param.xml.xsd_filename = xsdLineEdit.text;
 
    //Groupbox periodo
    if (periodAllRadioButton.checked) {
@@ -428,6 +431,7 @@ function EFattura(banDocument) {
    this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED = "ID_ERR_TABLE_ADDRESS_NOT_UPDATED";
    this.ID_ERR_VERSION = "ID_ERR_VERSION";
    this.ID_ERR_VERSION_NOTSUPPORTED = "ID_ERR_VERSION_NOTSUPPORTED";
+   this.ID_ERR_XML_FILE_NONVALIDO = "ID_ERR_XML_FILE_NONVALIDO";
    this.ID_ERR_XML_FORMATO_NONVALIDO = "ID_ERR_XML_FORMATO_NONVALIDO";
    this.ID_ERR_XML_LUNGHEZZA_NONVALIDA = "ID_ERR_XML_LUNGHEZZA_NONVALIDA";
    this.ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA = "ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA";
@@ -1111,6 +1115,12 @@ EFattura.prototype.getErrorMessage = function (errorId) {
       else
          rtnMsg = "This script does not run with this version of Banana Accounting. Please update to Banana Experimental";
    }
+   else if (errorId == this.ID_ERR_XML_FILE_NONVALIDO) {
+      if (lang == 'it')
+         rtnMsg = "File trasmissione non valido: %1";
+      else
+         rtnMsg = "Not valid transmission file: %1";
+   }
    else if (errorId == this.ID_ERR_XML_FORMATO_NONVALIDO) {
       if (lang == 'it')
          rtnMsg = "Formato trasmissione non valido";
@@ -1199,8 +1209,6 @@ EFattura.prototype.initNamespaces = function () {
 
 EFattura.prototype.initParam = function () {
    this.param = {};
-   /*output 0=pdf, 1=xml*/
-   this.param.output = 0;
    /*selection 0=fattura singola, 1=singolo cliente 2=tutto*/
    this.param.selection = 0;
    /*invoice number*/
@@ -1218,6 +1226,7 @@ EFattura.prototype.initParam = function () {
    this.param.xml.destination_folder = '';
    this.param.xml.open_file = false;
    this.param.xml.xslt_filename = 'https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.1/Foglio_di_stile_fatturaordinaria_v1.2.1.xsl';
+   this.param.xml.xsd_filename = 'https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.1/Schema_del_file_xml_FatturaPA_versione_1.2.1.xsd';
 }
 
 EFattura.prototype.initSchemarefs = function () {
@@ -1473,8 +1482,6 @@ EFattura.prototype.verifyParam = function () {
    if (!this.param)
       this.param = {};
 
-   if (!this.param.output)
-      this.param.output = 0;
    if (!this.param.selection)
       this.param.selection = 0;
    if (!this.param.selection_invoice)
@@ -1501,5 +1508,7 @@ EFattura.prototype.verifyParam = function () {
       this.param.xml.open_file = false;
    if (!this.param.xml.xslt_filename)
       this.param.xml.xslt_filename = '';
+   if (!this.param.xml.xsd_filename)
+      this.param.xml.xsd_filename = '';
 
 }

@@ -2,11 +2,6 @@
 
 <head>
     <script>
-        function reqListener() {
-            document.getElementById("example").appendChild("xx");
-            document.getElementById("example").appendChild(this.responseText);
-        }
-
         function loadXMLDoc(fname) {
             if (window.ActiveXObject) {
                 xhttp = new ActiveXObject("Msxml2.XMLHTTP.3.0");
@@ -14,16 +9,17 @@
             else {
                 xhttp = new XMLHttpRequest();
             }
-            xhttp.addEventListener("error", reqListener);
-            xhttp.addEventListener("load", reqListener);
+            xhttp.addEventListener("load", function () {
+                document.getElementById("example").innerHTML = "the document has been loaded";
+            });
             xhttp.open("GET", fname, true);
             xhttp.send("");
             return xhttp.responseXML;
         }
 
         function displayResult() {
-            xml = loadXMLDoc("blogdata.xml");
-            xsl = loadXMLDoc("blogdata.xsl");
+            xml = loadXMLDoc("viewer_test.xml");
+            xsl = loadXMLDoc("viewer_test.xsl");
             // code for IE
             if (window.ActiveXObject) {
                 ex = xml.transformNode(xsl);
