@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// @id = ch.banana.it.efattura.b2b
+// @id = ch.banana.it.efattura
 // @api = 1.0
-// @pubdate = 2021-02-02
+// @pubdate = 2021-02-10
 // @publisher = Banana.ch SA
 // @description = Esporta fattura elettronica XML...
 // @description.it = Esporta fattura elettronica XML...
@@ -49,8 +49,9 @@ function exec(inData, options) {
    eFattura.setParam(param);
    var jsonCustomerList = eFattura.loadData();
 
-   if (jsonCustomerList.length <= 0)
+   if (jsonCustomerList.length <= 0) {
       return;
+   }
 
    //output xml
    for (var i in jsonCustomerList) {
@@ -67,345 +68,57 @@ function exec(inData, options) {
             xmlContent = xmlContent.slice(0, 39) + xslt + xmlContent.slice(39);
          }
          // validate data
-         if (eFattura.param.xml.xsd_filename){
+         if (eFattura.param.xml.xsd_filename) {
             var escapedString = xml_escapeString(eFattura.param.xml.xsd_filename);
             if (!Banana.Xml.validate(Banana.Xml.parse(xmlContent), escapedString)) {
                var msg = eFattura.getErrorMessage(eFattura.ID_ERR_FILE_NOTVALID);
                msg = msg.replace("%1", Banana.Xml.errorString);
                eFattura.addMessage(msg, eFattura.ID_ERR_FILE_NOTVALID);
                return "@Cancel";
-           }            
+            }
          }
          eFattura.saveFile(xmlContent, "xml");
       }
    }
 }
 
+/*function onCurrentIndexChanged_selection(index, value, params) {
+   Banana.console.debug(index + " value: " +value);
+   var enabled = true;
+   if (value == 'Tutto')
+      enabled = false;
+   for (var i = 0; i < params.data.length; i++) {
+      if (params.data[i].name === 'selection_invoice') {
+          params.data[i].enabled = enabled;
+      }
+      if (params.data[i].name === 'selection_customer') {
+         params.data[i].enabled = enabled;
+     }
+  }
+  return params;
+}*/
+
 /*Update script's parameters*/
-var blockSignal = false;
 function settingsDialog() {
    var eFattura = new EFattura(Banana.document);
+   if (!eFattura.verifyBananaVersion())
+      return false;
+
    var savedParam = Banana.document.getScriptSettings();
    if (savedParam.length > 0) {
       eFattura.setParam(JSON.parse(savedParam));
    }
 
-   var dialog = Banana.Ui.createUi("ch.banana.it.efattura.b2b.dialog.ui");
-   var allRadioButton = dialog.tabWidget.findChild('allRadioButton');
-   var numeroFatturaRadioButton = dialog.tabWidget.findChild('numeroFatturaRadioButton');
-   var numeroFatturaLineEdit = dialog.tabWidget.findChild('numeroFatturaLineEdit');
-   var clienteRadioButton = dialog.tabWidget.findChild('clienteRadioButton');
-   var clienteComboBox = dialog.tabWidget.findChild('clienteComboBox');
-   var numeroProgressivoLineEdit = dialog.tabWidget.findChild('numeroProgressivoLineEdit');
-   var destFolderLineEdit = dialog.tabWidget.findChild('destFolderLineEdit');
-   var apriXmlCheckBox = dialog.tabWidget.findChild('apriXmlCheckBox');
-   var xsltLineEdit = dialog.tabWidget.findChild('xsltLineEdit');
-   var xsdLineEdit = dialog.tabWidget.findChild('xsdLineEdit');
-
-
-   //periodo
-   var periodAllRadioButton = dialog.findChild('periodAllRadioButton');
-   var periodAllLabel = dialog.findChild('periodAllLabel');
-   var periodSelectedRadioButton = dialog.findChild('periodSelectedRadioButton');
-   var startDateLabel = dialog.findChild('startDateLabel');
-   var startDateEdit = dialog.findChild('startDateEdit');
-   var toDateLabel = dialog.findChild('toDateLabel');
-   var toDateEdit = dialog.findChild('toDateEdit');
-   var periodComboBox = dialog.findChild('periodComboBox');
-   var yearComboBox = dialog.findChild('yearComboBox');
-
-
-
-   //Lettura dati
-   if (eFattura.param.selection == 2)
-      allRadioButton.checked = true;
-   else if (eFattura.param.selection == 1)
-      clienteRadioButton.checked = true;
-   else
-      numeroFatturaRadioButton.checked = true;
-
-   numeroFatturaLineEdit.text = eFattura.param.selection_invoice;
-   var elencoClienti = eFattura.getCustomerList();
-   clienteComboBox.addItems(elencoClienti);
-   var index = 0;
-   for (var i in elencoClienti) {
-      if (elencoClienti[i].indexOf(eFattura.param.selection_customer) >= 0) {
-         index = i;
-         break;
-      }
-   }
-   //clienteComboBox.currentText = eFattura.param.selection_customer;
-   clienteComboBox.currentIndex = index;
-
-   //imposta il numero fattura dalla selezione della tabella registrazioni
-   var selectedRow = parseInt(Banana.document.cursor.rowNr);
-   if (selectedRow && Banana.document.table('Transactions') && Banana.document.table('Transactions').rowCount > selectedRow) {
-      var noFattura = Banana.document.table('Transactions').value(selectedRow, "DocInvoice");
-      if (noFattura && noFattura.length > 0)
-         numeroFatturaLineEdit.text = noFattura;
-   }
-
-   numeroProgressivoLineEdit.text = eFattura.param.xml.progressive || '0';
-   destFolderLineEdit.text = eFattura.param.xml.destination_folder;
-   apriXmlCheckBox.checked = eFattura.param.xml.open_file;
-   xsltLineEdit.text = eFattura.param.xml.xslt_filename;
-   xsdLineEdit.text = eFattura.param.xml.xsd_filename;
-
-   //Groupbox periodo
-   if (eFattura.param.periodAll)
-      periodAllRadioButton.checked = true;
-   else
-      periodSelectedRadioButton.checked = true;
-   var accountingData = {};
-   eFattura.readAccountingData(accountingData);
-   periodAllLabel.text = accountingData.openingYear;
-   var years = [];
-   years.push(accountingData.openingYear);
-   if (accountingData.closureYear != accountingData.openingYear) {
-      periodAllLabel.text += '/' + accountingData.closureYear;
-      years.push(accountingData.closureYear);
-   }
-   var fromDate = eFattura.param.periodStartDate;
-   var toDate = eFattura.param.periodEndDate;
-   if (!fromDate || !toDate) {
-      fromDate = Banana.Converter.stringToDate(accountingData.accountingOpeningDate, "YYYY-MM-DD");
-      toDate = Banana.Converter.stringToDate(accountingData.accountingClosureDate, "YYYY-MM-DD");
-   }
-   startDateEdit.setDate(fromDate);
-   toDateEdit.setDate(toDate);
-   periodComboBox.currentIndex = parseInt(eFattura.param.periodSelected);
-   yearComboBox.addItems(years);
-
-   var periods = [];
-   periods.push("");
-   periods.push("gennaio");
-   periods.push("febbraio");
-   periods.push("marzo");
-   periods.push("aprile");
-   periods.push("maggio");
-   periods.push("giugno");
-   periods.push("luglio");
-   periods.push("agosto");
-   periods.push("settembre");
-   periods.push("ottobre");
-   periods.push("novembre");
-   periods.push("dicembre");
-   periods.push("------");
-   periods.push("1. trimestre");
-   periods.push("2. trimestre");
-   periods.push("3. trimestre");
-   periods.push("4. trimestre");
-   periods.push("------");
-   periods.push("1. semestre");
-   periods.push("2. semestre");
-   periods.push("------");
-   periods.push("Anno");
-   periodComboBox.addItems(periods);
-
-
-   //funzioni dialogo
-   dialog.checkdata = function () {
-      if (numeroFatturaLineEdit.text.length <= 0 && numeroFatturaRadioButton.checked) {
-         var msg = eFattura.getErrorMessage(eFattura.ID_ERR_INVOICENUMBER_MISSING);
-         eFattura.addMessage(msg, eFattura.ID_ERR_INVOICENUMBER_MISSING);
-         return;
-      }
-      dialog.accept();
-   }
-   dialog.enableButtons = function () {
-      if (periodAllRadioButton.checked) {
-         startDateEdit.enabled = false;
-         startDateEdit.update();
-         toDateEdit.enabled = false;
-         toDateEdit.update();
-         periodComboBox.enabled = false;
-         periodComboBox.update();
-         yearComboBox.enabled = false;
-         yearComboBox.update();
-      }
-      else {
-         startDateEdit.enabled = true;
-         startDateEdit.update();
-         toDateEdit.enabled = true;
-         toDateEdit.update();
-         periodComboBox.enabled = true;
-         periodComboBox.update();
-         yearComboBox.enabled = true;
-         yearComboBox.update();
-      }
-      if (numeroFatturaRadioButton.checked) {
-         numeroFatturaLineEdit.enabled = true;
-         clienteComboBox.enabled = false;
-      }
-      else if (clienteRadioButton.checked) {
-         numeroFatturaLineEdit.enabled = false;
-         clienteComboBox.enabled = true;
-      }
-      else {
-         numeroFatturaLineEdit.enabled = false;
-         clienteComboBox.enabled = false;
-      }
-   }
-   dialog.updateDates = function () {
-      blockSignal = true;
-      var index = parseInt(periodComboBox.currentIndex.toString());
-      if (index == 0) {
-         return;
-      }
-      else if (index == 13 || index == 18 || index == 21) {
-         periodComboBox.currentIndex = index + 1;
-         return;
-      }
-      var year = yearComboBox.currentIndex.toString();
-      if (year.length < 4)
-         year = accountingData.closureYear;
-      var fromDate = year + '-01-01';
-      var toDate = year + '-12-31';
-      if (index == 1) {
-         fromDate = year + '-01-01';
-         toDate = year + '-01-31';
-      }
-      else if (index == 2) {
-         //mese con 28 o 29 giorni
-         var day = 28;
-         if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
-            day = 29;
-         fromDate = year + '-02-01';
-         toDate = year + '-02-' + day.toString();
-      }
-      else if (index == 3) {
-         fromDate = year + '-03-01';
-         toDate = year + '-03-31';
-      }
-      else if (index == 4) {
-         fromDate = year + '-04-01';
-         toDate = year + '-04-30';
-      }
-      else if (index == 5) {
-         fromDate = year + '-05-01';
-         toDate = year + '-05-31';
-      }
-      else if (index == 6) {
-         fromDate = year + '-06-01';
-         toDate = year + '-06-30';
-      }
-      else if (index == 7) {
-         fromDate = year + '-07-01';
-         toDate = year + '-07-31';
-      }
-      else if (index == 8) {
-         fromDate = year + '-08-01';
-         toDate = year + '-08-31';
-      }
-      else if (index == 9) {
-         fromDate = year + '-09-01';
-         toDate = year + '-09-30';
-      }
-      else if (index == 10) {
-         fromDate = year + '-10-01';
-         toDate = year + '-10-31';
-      }
-      else if (index == 11) {
-         fromDate = year + '-11-01';
-         toDate = year + '-11-30';
-      }
-      else if (index == 12) {
-         fromDate = year + '-12-01';
-         toDate = year + '-12-31';
-      }
-      else if (index == 14) {
-         fromDate = year + '-01-01';
-         toDate = year + '-03-31';
-      }
-      else if (index == 15) {
-         fromDate = year + '-04-01';
-         toDate = year + '-06-30';
-      }
-      else if (index == 16) {
-         fromDate = year + '-07-01';
-         toDate = year + '-09-30';
-      }
-      else if (index == 17) {
-         fromDate = year + '-10-01';
-         toDate = year + '-12-31';
-      }
-      else if (index == 19) {
-         fromDate = year + '-01-01';
-         toDate = year + '-06-30';
-      }
-      else if (index == 20) {
-         fromDate = year + '-06-30';
-         toDate = year + '-12-31';
-      }
-      else if (index == 22) {
-         fromDate = year + '-01-01';
-         toDate = year + '-12-31';
-      }
-      fromDate = Banana.Converter.toInternalDateFormat(fromDate, "yyyy-mm-dd");
-      toDate = Banana.Converter.toInternalDateFormat(toDate, "yyyy-mm-dd");
-      startDateEdit.setDate(fromDate);
-      toDateEdit.setDate(toDate);
-      blockSignal = false;
-   }
-   dialog.updatePeriods = function () {
-      if (blockSignal)
-         return;
-      periodComboBox.currentIndex = 0;
-   }
-   dialog.showHelp = function () {
-      Banana.Ui.showHelp("ch.banana.it.efattura.b2b");
-   }
-   dialog.buttonBox.accepted.connect(dialog, dialog.checkdata);
-   dialog.buttonBox.helpRequested.connect(dialog, dialog.showHelp);
-   allRadioButton.clicked.connect(dialog.enableButtons);
-   numeroFatturaRadioButton.clicked.connect(dialog.enableButtons);
-   clienteRadioButton.clicked.connect(dialog.enableButtons);
-   periodAllRadioButton.clicked.connect(dialog, dialog.enableButtons);
-   periodSelectedRadioButton.clicked.connect(dialog, dialog.enableButtons);
-   periodComboBox.currentIndexChanged.connect(dialog, dialog.updateDates);
-   startDateEdit.dateChanged.connect(dialog, dialog.updatePeriods);
-   toDateEdit.dateChanged.connect(dialog, dialog.updatePeriods);
-
-   //Visualizzazione dialogo
-   Banana.application.progressBar.pause();
-   dialog.enableButtons();
-   var dlgResult = dialog.exec();
-   Banana.application.progressBar.resume();
-   if (dlgResult !== 1)
+   var dialogTitle = 'Settings';
+   var pageAnchor = 'dlgSettings';
+   var convertedParam = eFattura.convertParam(eFattura.param);
+   if (!Banana.Ui.openPropertyEditor(dialogTitle, convertedParam, pageAnchor))
       return false;
-
-   //Salvataggio dati
-   eFattura.param.selection_invoice = numeroFatturaLineEdit.text;
-   eFattura.param.selection_customer = eFattura.getCustomerId(clienteComboBox.currentText);
-   //Banana.console.debug("selection_customer" +  eFattura.param.selection_customer );
-   if (allRadioButton.checked)
-      eFattura.param.selection = 2;
-   else if (clienteRadioButton.checked)
-      eFattura.param.selection = 1;
-   else
-      eFattura.param.selection = 0;
-
-   eFattura.param.xml.progressive = parseInt(numeroProgressivoLineEdit.text);
-   eFattura.param.xml.destination_folder = destFolderLineEdit.text;
-   eFattura.param.xml.open_file = apriXmlCheckBox.checked;
-   eFattura.param.xml.xslt_filename = xsltLineEdit.text;
-   eFattura.param.xml.xsd_filename = xsdLineEdit.text;
-
-   //Groupbox periodo
-   if (periodAllRadioButton.checked) {
-      eFattura.param.periodAll = true;
-      eFattura.param.periodStartDate = accountingData.accountingOpeningDate;
-      eFattura.param.periodEndDate = accountingData.accountingClosureDate;
+   for (var i = 0; i < convertedParam.data.length; i++) {
+      // Read values to param (through the readValue function)
+      if (typeof (convertedParam.data[i].readValue) !== 'undefined')
+         convertedParam.data[i].readValue();
    }
-   else {
-      eFattura.param.periodAll = false;
-      eFattura.param.periodStartDate = startDateEdit.text < 10 ? "0" + startDateEdit.text : startDateEdit.text;
-      eFattura.param.periodStartDate = Banana.Converter.toInternalDateFormat(eFattura.param.periodStartDate, "dd/mm/yyyy");
-      eFattura.param.periodEndDate = toDateEdit.text < 10 ? "0" + toDateEdit.text : toDateEdit.text;
-      eFattura.param.periodEndDate = Banana.Converter.toInternalDateFormat(eFattura.param.periodEndDate, "dd/mm/yyyy");
-      eFattura.param.periodSelected = periodComboBox.currentIndex.toString();
-   }
-
    var paramToString = JSON.stringify(eFattura.param);
    Banana.document.setScriptSettings(paramToString);
    return true;
@@ -417,12 +130,11 @@ function EFattura(banDocument) {
       this.banDocument = Banana.document;
    this.name = "Banana Accounting EFattura";
    this.version = "V1.0";
-   this.helpId = "ch.banana.it.efattura.b2b.js";
+   this.helpId = "ch.banana.it.efattura.js";
    this.errorList = [];
 
    /* errors id*/
    this.ID_ERR_ACCOUNTING_TYPE_NOTVALID = "ID_ERR_ACCOUNTING_TYPE_NOTVALID";
-   this.ID_ERR_DATICONTRIBUENTE_NOTFOUND = "ID_ERR_DATICONTRIBUENTE_NOTFOUND";
    this.ID_ERR_INVOICENUMBER_MISSING = "ID_ERR_INVOICENUMBER_MISSING";
    this.ID_ERR_NOINVOICE = "ID_ERR_NOINVOICE";
    this.ID_ERR_TABLE_ADDRESS_MISSING = "ID_ERR_TABLE_ADDRESS_MISSING";
@@ -511,6 +223,301 @@ EFattura.prototype.clearErrorList = function () {
    this.errorList = [];
 }
 
+EFattura.prototype.convertParam = function (param) {
+   var convertedParam = {};
+   convertedParam.version = '1.0';
+   /* array of script's parameters */
+   convertedParam.data = [];
+
+   /*******************************************************************************************
+   * STAMPA
+   *******************************************************************************************/
+   var currentParam = {};
+   currentParam.name = 'selection';
+   currentParam.title = 'Filtra';
+   currentParam.type = 'bool';
+   currentParam.value = param.selection ? param.selection : false;
+   currentParam.readValue = function () {
+      param.selection = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'selection_invoice';
+   currentParam.title = 'Numero fattura';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'selection';
+   currentParam.value = param.selection_invoice ? param.selection_invoice : '';
+   currentParam.readValue = function () {
+      param.selection_invoice = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'selection_customer';
+   currentParam.title = 'Numero cliente';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'selection';
+   currentParam.value = param.selection_customer ? param.selection_customer : '';
+   currentParam.readValue = function () {
+      param.selection_customer = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'period';
+   currentParam.title = 'Periodo';
+   currentParam.type = 'bool';
+   currentParam.value = param.period ? param.period : false;
+   currentParam.readValue = function () {
+      param.period = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'periodStartDate';
+   currentParam.title = 'Dalla data';
+   currentParam.type = 'date';
+   currentParam.parentObject = 'period';
+   currentParam.value = param.periodStartDate ? param.periodStartDate : '';
+   currentParam.readValue = function () {
+      param.periodStartDate = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'periodEndDate';
+   currentParam.title = 'Alla data';
+   currentParam.type = 'date';
+   currentParam.parentObject = 'period';
+   currentParam.value = param.periodEndDate ? param.periodEndDate : '';
+   currentParam.readValue = function () {
+      param.periodEndDate = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   /*******************************************************************************************
+   * DATI CONTRIBUENTE
+   *******************************************************************************************/
+   currentParam = {};
+   currentParam.name = 'contribuente';
+   currentParam.title = 'Dati contribuente';
+   currentParam.editable = false;
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'tipoContribuente';
+   currentParam.title = 'Tipo';
+   currentParam.type = 'combobox';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.tipoContribuente ? param.contribuente.tipoContribuente : 'persona fisica';
+   currentParam.items = ['persona fisica', 'persona giuridica'];
+   currentParam.readValue = function () {
+      param.contribuente.tipoContribuente = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'codiceFiscale';
+   currentParam.title = 'Codice Fiscale';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.codiceFiscale ? param.contribuente.codiceFiscale : '';
+   currentParam.readValue = function () {
+      param.contribuente.codiceFiscale = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'partitaIva';
+   currentParam.title = 'Partita Iva';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.partitaIva ? param.contribuente.partitaIva : '';
+   currentParam.readValue = function () {
+      param.contribuente.partitaIva = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'societa';
+   currentParam.title = 'Società';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.societa ? param.contribuente.societa : '';
+   currentParam.readValue = function () {
+      param.contribuente.societa = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'cognome';
+   currentParam.title = 'Cognome';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.cognome ? param.contribuente.cognome : '';
+   currentParam.readValue = function () {
+      param.contribuente.cognome = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'nome';
+   currentParam.title = 'Nome';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.nome ? param.contribuente.nome : '';
+   currentParam.readValue = function () {
+      param.contribuente.nome = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'indirizzo';
+   currentParam.title = 'Indirizzo';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.indirizzo ? param.contribuente.indirizzo : '';
+   currentParam.readValue = function () {
+      param.contribuente.indirizzo = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'ncivico';
+   currentParam.title = 'N. civico';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.ncivico ? param.contribuente.ncivico : '';
+   currentParam.readValue = function () {
+      param.contribuente.ncivico = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'cap';
+   currentParam.title = 'Cap';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.cap ? param.contribuente.cap : '';
+   currentParam.readValue = function () {
+      param.contribuente.cap = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'comune';
+   currentParam.title = 'Comune';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.comune ? param.contribuente.comune : '';
+   currentParam.readValue = function () {
+      param.contribuente.comune = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'provincia';
+   currentParam.title = 'Provincia';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.provincia ? param.contribuente.provincia : '';
+   currentParam.readValue = function () {
+      param.contribuente.provincia = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'nazione';
+   currentParam.title = 'Nazione';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.nazione ? param.contribuente.nazione : '';
+   currentParam.readValue = function () {
+      param.contribuente.nazione = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'tipoRegimeFiscale';
+   currentParam.title = 'Tipo regime fiscale';
+   currentParam.type = 'combobox';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.tipoRegimeFiscale ? param.contribuente.tipoRegimeFiscale : 'persona fisica';
+   currentParam.items = ['RF01', 'RF02', 'RF03', 'RF04', 'RF05', 'RF06', 'RF07', 'RF08', 'RF09', 'RF10', 'RF11', 'RF12', 'RF13', 'RF14', 'RF15', 'RF16', 'RF17', 'RF18', 'RF19'];
+   currentParam.readValue = function () {
+      param.contribuente.tipoContribuente = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   /*******************************************************************************************
+   * OPZIONI XML
+   *******************************************************************************************/
+   currentParam = {};
+   currentParam.name = 'xml';
+   currentParam.title = 'Opzioni XML';
+   currentParam.editable = false;
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'progressive';
+   currentParam.title = 'Numero progressivo invio';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'xml';
+   currentParam.value = param.xml.progressive ? param.xml.progressive : '';
+   currentParam.readValue = function () {
+      param.xml.progressive = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'destination_folder';
+   currentParam.title = 'Cartella di destinazione';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'xml';
+   currentParam.value = param.xml.destination_folder ? param.xml.destination_folder : '';
+   currentParam.readValue = function () {
+      param.xml.destination_folder = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'open_file';
+   currentParam.title = 'Visualizza file immediatamente';
+   currentParam.type = 'bool';
+   currentParam.parentObject = 'xml';
+   currentParam.value = param.xml.open_file ? param.xml.open_file : true;
+   currentParam.readValue = function () {
+      param.xml.open_file = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'xslt_filename';
+   currentParam.title = 'Foglio di stile';
+   currentParam.type = 'string';
+   currentParam.parentObject = 'xml';
+   currentParam.value = param.xml.xslt_filename ? param.xml.xslt_filename : '';
+   currentParam.readValue = function () {
+      param.xml.xslt_filename = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'xsd_filename';
+   currentParam.title = 'Schema di validazione';
+   currentParam.type = 'string';
+   currentParam.defaultvalue = '';
+   currentParam.parentObject = 'xml';
+   currentParam.value = param.xml.xsd_filename ? param.xml.xsd_filename : '';
+   currentParam.readValue = function () {
+      param.xml.xsd_filename = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   return convertedParam;
+}
+
 EFattura.prototype.createXml = function (jsonInvoiceList, xmlDocument, indent) {
 
    if (!xmlDocument || jsonInvoiceList.length <= 0)
@@ -537,7 +544,7 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       invoiceObj = JSON.parse(jsonInvoice)
    }
 
-   if (!nodeRoot || !invoiceObj || this.isEmpty(this.datiContribuente))
+   if (!nodeRoot || !invoiceObj)
       return;
 
    //Numero fattura da visualizzare in eventuali messaggi d'errore per facilitare l'individuazione dell'errore
@@ -689,7 +696,7 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
       invoiceObj = JSON.parse(jsonInvoice)
    }
 
-   if (!xmlDocument || !invoiceObj || this.isEmpty(this.datiContribuente))
+   if (!xmlDocument || !invoiceObj)
       return null;
 
    //<Document>
@@ -748,10 +755,10 @@ EFattura.prototype.createXmlHeader = function (jsonInvoice, xmlDocument) {
    var nodeIdTrasmittente = nodeDatiTrasmissione.addElement("IdTrasmittente");
    //[1.1.1.1] IdPaese 
    var nodeIdPaese = nodeIdTrasmittente.addElement("IdPaese");
-   this.addTextNode(nodeIdPaese, this.datiContribuente.nazione, '2', 'IdTrasmittente/IdPaese' + msgHelpNoFattura);
+   this.addTextNode(nodeIdPaese, this.param.contribuente.nazione, '2', 'IdTrasmittente/IdPaese' + msgHelpNoFattura);
    //[1.1.1.2] IdCodice 
    var nodeIdCodice = nodeIdTrasmittente.addElement("IdCodice");
-   this.addTextNode(nodeIdCodice, this.datiContribuente.codiceFiscale, '1...28', 'IdTrasmittente/IdCodice' + msgHelpNoFattura);
+   this.addTextNode(nodeIdCodice, this.param.contribuente.codiceFiscale, '1...28', 'IdTrasmittente/IdCodice' + msgHelpNoFattura);
    //[1.1.2] ProgressivoInvio 
    var nodeProgressivoInvio = nodeDatiTrasmissione.addElement("ProgressivoInvio");
    this.addTextNode(nodeProgressivoInvio, this.getProgressiveNumber(), '1...10', 'DatiTrasmissione/ProgressivoInvio' + msgHelpNoFattura);
@@ -785,53 +792,53 @@ Come precisato nel provvedimento Agenzia delle Entrate 30 aprile 2018 n. 89757, 
    var nodeIdFiscaleIVA = nodeDatiAnagrafici.addElement("IdFiscaleIVA");
    //[1.2.1.1.1] IdPaese 
    var nodeIdPaese = nodeIdFiscaleIVA.addElement("IdPaese");
-   this.addTextNode(nodeIdPaese, this.datiContribuente.nazione, '2', 'CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese' + msgHelpNoFattura);
+   this.addTextNode(nodeIdPaese, this.param.contribuente.nazione, '2', 'CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese' + msgHelpNoFattura);
    //[1.2.1.1.2] IdCodice 
    var nodeIdCodice = nodeIdFiscaleIVA.addElement("IdCodice");
-   this.addTextNode(nodeIdCodice, this.datiContribuente.partitaIva, '1...28', 'CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice' + msgHelpNoFattura);
+   this.addTextNode(nodeIdCodice, this.param.contribuente.partitaIva, '1...28', 'CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice' + msgHelpNoFattura);
    //[1.2.1.2] CodiceFiscale 
-   if (this.datiContribuente.codiceFiscale.length > 0) {
+   if (this.param.contribuente.codiceFiscale.length > 0) {
       var nodeCodiceFiscale = nodeDatiAnagrafici.addElement("CodiceFiscale");
-      this.addTextNode(nodeCodiceFiscale, this.datiContribuente.codiceFiscale, '11...16', 'CedentePrestatore/DatiAnagrafici/CodiceFiscale' + msgHelpNoFattura);
+      this.addTextNode(nodeCodiceFiscale, this.param.contribuente.codiceFiscale, '11...16', 'CedentePrestatore/DatiAnagrafici/CodiceFiscale' + msgHelpNoFattura);
    }
    //[1.2.1.3] Anagrafica 
    var nodeAnagrafica = nodeDatiAnagrafici.addElement("Anagrafica");
-   if (this.datiContribuente.tipoContribuente === 0) {
+   if (this.param.contribuente.tipoContribuente === 0) {
       var nodeNome = nodeAnagrafica.addElement("Nome");
       var nodeCognome = nodeAnagrafica.addElement("Cognome");
 
-      this.addTextNode(nodeNome, this.datiContribuente.nome, '1...60', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Nome>' + msgHelpNoFattura);
-      this.addTextNode(nodeCognome, this.datiContribuente.cognome, '1...60', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Cognome>' + msgHelpNoFattura);
+      this.addTextNode(nodeNome, this.param.contribuente.nome, '1...60', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Nome>' + msgHelpNoFattura);
+      this.addTextNode(nodeCognome, this.param.contribuente.cognome, '1...60', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Cognome>' + msgHelpNoFattura);
 
    }
-   else if (this.datiContribuente.tipoContribuente === 1) {
+   else if (this.param.contribuente.tipoContribuente === 1) {
       var nodeDenominazione = nodeAnagrafica.addElement("Denominazione");
-      this.addTextNode(nodeDenominazione, this.datiContribuente.societa, '1...80', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Denominazione>' + msgHelpNoFattura);
+      this.addTextNode(nodeDenominazione, this.param.contribuente.societa, '1...80', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Denominazione>' + msgHelpNoFattura);
    }
 
    var nodeRegimeFiscale = nodeDatiAnagrafici.addElement("RegimeFiscale");
    var regFis = 'RF';
-   if (this.datiContribuente.tipoRegimeFiscale + 1 < 10)
+   if (this.param.contribuente.tipoRegimeFiscale + 1 < 10)
       regFis += '0';
-   regFis += this.datiContribuente.tipoRegimeFiscale + 1;
+   regFis += this.param.contribuente.tipoRegimeFiscale + 1;
    this.addTextNode(nodeRegimeFiscale, regFis, '4', '<CedentePrestatore><DatiAnagrafici><RegimeFiscale>' + msgHelpNoFattura);
    var nodeSede = nodeCedentePrestatore.addElement("Sede");
    var nodeIndirizzo = nodeSede.addElement("Indirizzo");
-   this.addTextNode(nodeIndirizzo, this.datiContribuente.indirizzo, '1...60', '<CedentePrestatore><Sede><Indirizzo>' + msgHelpNoFattura);
-   if (this.datiContribuente.ncivico.length > 0) {
+   this.addTextNode(nodeIndirizzo, this.param.contribuente.indirizzo, '1...60', '<CedentePrestatore><Sede><Indirizzo>' + msgHelpNoFattura);
+   if (this.param.contribuente.ncivico.length > 0) {
       var nodeNumeroCivico = nodeSede.addElement("NumeroCivico");
-      this.addTextNode(nodeNumeroCivico, this.datiContribuente.ncivico, '1...8', '<CedentePrestatore><Sede><NumeroCivico>' + msgHelpNoFattura);
+      this.addTextNode(nodeNumeroCivico, this.param.contribuente.ncivico, '1...8', '<CedentePrestatore><Sede><NumeroCivico>' + msgHelpNoFattura);
    }
    var nodeCAP = nodeSede.addElement("CAP");
-   this.addTextNode(nodeCAP, this.datiContribuente.cap, '5', '<CedentePrestatore><Sede><CAP>' + msgHelpNoFattura);
+   this.addTextNode(nodeCAP, this.param.contribuente.cap, '5', '<CedentePrestatore><Sede><CAP>' + msgHelpNoFattura);
    var nodeComune = nodeSede.addElement("Comune");
-   this.addTextNode(nodeComune, this.datiContribuente.comune, '1...60', '<CedentePrestatore><Sede><Comune>' + msgHelpNoFattura);
-   if (this.datiContribuente.nazione === 'IT') {
+   this.addTextNode(nodeComune, this.param.contribuente.comune, '1...60', '<CedentePrestatore><Sede><Comune>' + msgHelpNoFattura);
+   if (this.param.contribuente.nazione === 'IT') {
       var nodeProvincia = nodeSede.addElement("Provincia");
-      this.addTextNode(nodeProvincia, this.datiContribuente.provincia, '2', '<CedentePrestatore><Sede><Provincia>' + msgHelpNoFattura);
+      this.addTextNode(nodeProvincia, this.param.contribuente.provincia, '2', '<CedentePrestatore><Sede><Provincia>' + msgHelpNoFattura);
    }
    var nodeNazione = nodeSede.addElement("Nazione");
-   this.addTextNode(nodeNazione, this.datiContribuente.nazione, '2', '<CedentePrestatore><Sede><Nazione>' + msgHelpNoFattura);
+   this.addTextNode(nodeNazione, this.param.contribuente.nazione, '2', '<CedentePrestatore><Sede><Nazione>' + msgHelpNoFattura);
 
    var nodeCessionarioCommittente = nodeFatturaElettronicaHeader.addElement("CessionarioCommittente");
    var nodeDatiAnagrafici = nodeCessionarioCommittente.addElement("DatiAnagrafici");
@@ -1071,12 +1078,6 @@ EFattura.prototype.getErrorMessage = function (errorId) {
       else
          rtnMsg = "The file is not valid. The table Accounts is missing";
    }
-   else if (errorId == this.ID_ERR_DATICONTRIBUENTE_NOTFOUND) {
-      if (lang == 'it')
-         rtnMsg = "Dati contribuente non definiti. Impostare con il comando dell'app 'Dati contribuente'";
-      else
-         rtnMsg = "Dati contribuente not found. Please use the app command 'Dati contribuente'";
-   }
    else if (errorId == this.ID_ERR_INVOICENUMBER_MISSING) {
       if (lang == 'it')
          rtnMsg = "Indicare il numero fattura";
@@ -1174,20 +1175,6 @@ EFattura.prototype.getProgressiveNumber = function () {
    return stringaNumeroInvio;
 }
 
-EFattura.prototype.initDatiContribuente = function () {
-   this.datiContribuente = {};
-   var savedParam = this.banDocument.getScriptSettings("ch.banana.script.italy_vat.daticontribuente.js");
-   if (savedParam.length > 0) {
-      this.datiContribuente = JSON.parse(savedParam);
-      return true;
-   }
-   else {
-      var msg = this.getErrorMessage(this.ID_ERR_DATICONTRIBUENTE_NOTFOUND);
-      this.addMessage(msg, this.ID_ERR_DATICONTRIBUENTE_NOTFOUND);
-   }
-   return false;
-}
-
 EFattura.prototype.initNamespaces = function () {
    this.namespaces = [
       {
@@ -1207,18 +1194,34 @@ EFattura.prototype.initNamespaces = function () {
 
 EFattura.prototype.initParam = function () {
    this.param = {};
-   /*selection 0=fattura singola, 1=singolo cliente 2=tutto*/
-   this.param.selection = 0;
-   /*invoice number*/
+
+   /*filter*/
+   this.param.selection = false;
    this.param.selection_invoice = '';
    this.param.selection_customer = '';
 
-   /* periodSelected 0=none, 1=1.Q, 2=2.Q, 3=3Q, 4=4Q, 10=1.S, 12=2.S, 30=Year */
-   this.param.periodAll = true;
-   this.param.periodSelected = 1;
+   /*period*/
+   this.param.period = false;
    this.param.periodStartDate = '';
    this.param.periodEndDate = '';
 
+   /* dati contribuente */
+   this.param.contribuente = {};
+   this.param.contribuente.tipoContribuente = 0;
+   this.param.contribuente.codiceFiscale = '';
+   this.param.contribuente.partitaIva = '';
+   this.param.contribuente.societa = '';
+   this.param.contribuente.cognome = '';
+   this.param.contribuente.nome = '';
+   this.param.contribuente.indirizzo = '';
+   this.param.contribuente.ncivico = '';
+   this.param.contribuente.cap = '';
+   this.param.contribuente.comune = '';
+   this.param.contribuente.provincia = '';
+   this.param.contribuente.nazione = 'IT';
+   this.param.contribuente.tipoRegimeFiscale = 0;
+
+   /* xml file */
    this.param.xml = {};
    this.param.xml.progressive = '1';
    this.param.xml.destination_folder = '';
@@ -1247,31 +1250,24 @@ EFattura.prototype.loadData = function () {
       this.journalInvoices = this.banDocument.invoicesCustomers();
    }
 
-   var jsonInvoiceList = [];
-   if (this.param.selection == 0 && this.param.selection_invoice.length <= 0)
-      return jsonInvoiceList;
-   if (this.param.selection == 1 && this.param.selection_customer.length <= 0)
-      return jsonInvoiceList;
-   if (!this.initDatiContribuente())
-      return jsonInvoiceList;
-
-   var periodAll = this.param.periodAll;
+   var period = this.param.period;
    var startDate = this.param.periodStartDate;
    var endDate = this.param.periodEndDate;
 
+   var jsonInvoiceList = [];
    for (var i = 0; i < this.journalInvoices.rowCount; i++) {
       var tRow = this.journalInvoices.row(i);
       if (tRow.value('ObjectJSonData') && tRow.value('ObjectType') === 'InvoiceDocument') {
          var jsonData = {};
          jsonData = JSON.parse(tRow.value('ObjectJSonData'));
          var addInvoice = true;
-         if (parseInt(this.param.selection) === 0 && jsonData.InvoiceDocument.document_info.number !== this.param.selection_invoice) {
-            addInvoice = false;
+         if (this.param.selection) {
+            if (this.param.selection_invoice && jsonData.InvoiceDocument.document_info.number !== this.param.selection_invoice)
+               addInvoice = false;
+            if (this.param.selection_customer && jsonData.InvoiceDocument.customer_info.number !== this.param.selection_customer)
+               addInvoice = false;
          }
-         if (parseInt(this.param.selection) === 1 && jsonData.InvoiceDocument.customer_info.number !== this.param.selection_customer) {
-            addInvoice = false;
-         }
-         if (addInvoice && !periodAll) {
+         if (addInvoice && period) {
             if (jsonData.InvoiceDocument.document_info.date < startDate || jsonData.InvoiceDocument.document_info.date > endDate) {
                addInvoice = false;
             }
@@ -1379,12 +1375,8 @@ EFattura.prototype.readAccountingData = function (param) {
 EFattura.prototype.saveFile = function (output, fileExtension) {
    //nomenclatura nome file
    //Codice PaeseIdentificativo univoco del Trasmittente  _  Progressivo univoco del file
-   var nazione = "";
-   var codiceFiscale = "";
-   if (!this.isEmpty(this.datiContribuente)) {
-      nazione = this.datiContribuente.nazione;
-      codiceFiscale = this.datiContribuente.codiceFiscale;
-   }
+   var nazione = this.param.contribuente.nazione;
+   var codiceFiscale = this.param.contribuente.codiceFiscale;
 
    var fileName = nazione + codiceFiscale + "_";
    fileName += this.getProgressiveNumber();
@@ -1413,10 +1405,6 @@ EFattura.prototype.saveFile = function (output, fileExtension) {
       }
    }
 
-}
-
-EFattura.prototype.setDatiContribuente = function (newDatiContribuenti) {
-   this.datiContribuente = newDatiContribuenti;
 }
 
 EFattura.prototype.setParam = function (param) {
@@ -1481,20 +1469,47 @@ EFattura.prototype.verifyParam = function () {
       this.param = {};
 
    if (!this.param.selection)
-      this.param.selection = 0;
+      this.param.selection = false;
    if (!this.param.selection_invoice)
       this.param.selection_invoice = '';
    if (!this.param.selection_customer)
       this.param.selection_customer = '';
 
-   if (!this.param.periodAll)
-      this.param.periodAll = false;
-   if (!this.param.periodSelected)
-      this.param.periodSelected = 1;
+   if (!this.param.period)
+      this.param.period = false;
    if (!this.param.periodStartDate)
       this.param.periodStartDate = '';
    if (!this.param.periodEndDate)
       this.param.periodEndDate = '';
+
+   if (!this.param.contribuente)
+      this.param.contribuente = {};
+   if (!this.param.contribuente.tipoContribuente)
+      this.param.contribuente.tipoContribuente = 0;
+   if (!this.param.contribuente.codiceFiscale)
+      this.param.contribuente.codiceFiscale = '';
+   if (!this.param.contribuente.partitaIva)
+      this.param.contribuente.partitaIva = '';
+   if (!this.param.contribuente.societa)
+      this.param.contribuente.societa = '';
+   if (!this.param.contribuente.cognome)
+      this.param.contribuente.cognome = '';
+   if (!this.param.contribuente.nome)
+      this.param.contribuente.nome = '';
+   if (!this.param.contribuente.indirizzo)
+      this.param.contribuente.indirizzo = '';
+   if (!this.param.contribuente.ncivico)
+      this.param.contribuente.ncivico = '';
+   if (!this.param.contribuente.cap)
+      this.param.contribuente.cap = '';
+   if (!this.param.contribuente.comune)
+      this.param.contribuente.comune = '';
+   if (!this.param.contribuente.provincia)
+      this.param.contribuente.provincia = '';
+   if (!this.param.contribuente.nazione)
+      this.param.contribuente.nazione = 'IT';
+   if (!this.param.contribuente.tipoRegimeFiscale)
+      this.param.contribuente.tipoRegimeFiscale = 0;
 
    if (!this.param.xml)
       this.param.xml = {};
