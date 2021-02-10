@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2020-12-02
+// @pubdate = 2021-02-10
 // @publisher = Banana.ch SA
 // @description = 1. Stato patrimoniale
 // @task = app.command
@@ -110,6 +110,13 @@ function printRow(userParam, bReport, table, gr, styleColumnDescription, styleCo
       // Prints only elements cannot be excluded
       if (!bReport.getObjectValue(gr, "exclude")) { // false = cannot be excluded
          tableRow = table.addRow();
+         if (userParam.printcolumn) {
+            if (!bReport.getObjectId(gr).startsWith("d")) {
+               tableRow.addCell(bReport.getObjectId(gr), "", 1);
+            } else {
+               tableRow.addCell("", "", 1);
+            }
+         }
          tableRow.addCell(bReport.getObjectDescription(gr), styleColumnDescription + " " + styleIndentLevel, 1);
          if (bReport.getObjectType(gr) === 'group' || bReport.getObjectType(gr) === 'total') { //do not print amounts for title types
             tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
@@ -120,11 +127,18 @@ function printRow(userParam, bReport, table, gr, styleColumnDescription, styleCo
    else {
       // Prints all elements
       tableRow = table.addRow();
+      if (userParam.printcolumn) {
+         if (!bReport.getObjectId(gr).startsWith("d")) {
+            tableRow.addCell(bReport.getObjectId(gr), "", 1);
+         } else {
+            tableRow.addCell("", "", 1);
+         }
+      }
       tableRow.addCell(bReport.getObjectDescription(gr), styleColumnDescription + " " + styleIndentLevel, 1);
       if (bReport.getObjectType(gr) === 'group' || bReport.getObjectType(gr) === 'total') { //do not print amounts for title types
          tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
          tableRow.addCell(bReport.getObjectPreviousAmountFormatted(gr), styleColumnAmount, 1);   
-      } 
+      }
    }
 }
 
@@ -138,12 +152,26 @@ function printSubRow(userParam, bReport, table, gr, styleColumnDescription, styl
       // Prints only elements cannot be excluded
       if (!bReport.getObjectValue(gr, "exclude")) { // false = cannot be excluded
          tableRow = table.addRow();
+         if (userParam.printcolumn) {
+            if (!bReport.getObjectId(gr).startsWith("d")) {
+               tableRow.addCell(bReport.getObjectId(gr), "", 1);
+            } else {
+               tableRow.addCell("", "", 1);
+            }
+         }
          tableRow.addCell("("+bReport.getObjectDescription(gr) + ": " + bReport.getObjectCurrentAmountFormatted(gr) + " ; anno precedente " + bReport.getObjectPreviousAmountFormatted(gr) + ")", styleColumnDescription + " " + styleIndentLevel, 1);  
       }
    }
    else {
       // Prints all elements
       tableRow = table.addRow();
+      if (userParam.printcolumn) {
+         if (!bReport.getObjectId(gr).startsWith("d")) {
+            tableRow.addCell(bReport.getObjectId(gr), "", 1);
+         } else {
+            tableRow.addCell("", "", 1);
+         }
+      }
       tableRow.addCell("("+bReport.getObjectDescription(gr) + ": " + bReport.getObjectCurrentAmountFormatted(gr) + " ; anno precedente " + bReport.getObjectPreviousAmountFormatted(gr) + ")", styleColumnDescription + " " + styleIndentLevel, 1);
    }
 }
@@ -169,32 +197,44 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
    }
 
    if (userParam.printheader) {
-      var company = banDoc.info("AccountingDataBase","Company");
-      var address1 = banDoc.info("AccountingDataBase","Address1");
-      var zip = banDoc.info("AccountingDataBase","Zip");
-      var city = banDoc.info("AccountingDataBase","City");
-      var phone = banDoc.info("AccountingDataBase","Phone");
-      var web = banDoc.info("AccountingDataBase","Web");
-      var email = banDoc.info("AccountingDataBase","Email");
-      if (company) {
-         headerParagraph.addParagraph(company, "address-header");
+      if (userParam.headertext.length <= 0) {
+         var company = banDoc.info("AccountingDataBase","Company");
+         var address1 = banDoc.info("AccountingDataBase","Address1");
+         var zip = banDoc.info("AccountingDataBase","Zip");
+         var city = banDoc.info("AccountingDataBase","City");
+         var phone = banDoc.info("AccountingDataBase","Phone");
+         var web = banDoc.info("AccountingDataBase","Web");
+         var email = banDoc.info("AccountingDataBase","Email");
+         if (company) {
+            headerParagraph.addParagraph(company, "address-header");
+         }
+         if (address1) {
+            headerParagraph.addParagraph(address1, "address-header");
+         }
+         if (zip && city) {
+            headerParagraph.addParagraph(zip + " " + city, "address-header");
+         }
+         if (phone) {
+            headerParagraph.addParagraph(phone, "address-header");
+         }
+         if (web) {
+            headerParagraph.addParagraph(web, "address-header");
+         }
+         if (email) {
+            headerParagraph.addParagraph(email, "address-header");
+         }
+         headerParagraph.addParagraph(" ", "address-header");
       }
-      if (address1) {
-         headerParagraph.addParagraph(address1, "address-header");
+      else {
+         var text = userParam.headertext.split("\n");
+         for (var i = 0; i < text.length; i++) {
+            if (text[i]) {
+               headerParagraph.addParagraph(text[i], "address-header");
+            } else {
+               headerParagraph.addParagraph(" ", "address-header");
+            }
+         }
       }
-      if (zip && city) {
-         headerParagraph.addParagraph(zip + " " + city, "address-header");
-      }
-      if (phone) {
-         headerParagraph.addParagraph(phone, "address-header");
-      }
-      if (web) {
-         headerParagraph.addParagraph(web, "address-header");
-      }
-      if (email) {
-         headerParagraph.addParagraph(email, "address-header");
-      }
-      headerParagraph.addParagraph(" ", "address-header");
    }
 
    var title = "";
@@ -215,23 +255,32 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
    **************************************************************************************/
 
    var table = report.addTable("table");
-   var column1 = table.addColumn("column1");
-   var column2 = table.addColumn("column2");
-   var column3 = table.addColumn("column3");
+   if (userParam.printcolumn) {
+      var column1 = table.addColumn("column01");
+      var column2 = table.addColumn("column02");
+      var column3 = table.addColumn("column03");
+      var column4 = table.addColumn("column04");
+   }
+   else {
+      var column1 = table.addColumn("column1");
+      var column2 = table.addColumn("column2");
+      var column3 = table.addColumn("column3");
+   }
 
 
    var tableIntestazione = table.getHeader();
    tableRow = tableIntestazione.addRow(); 
+   if (userParam.printcolumn) {
+      tableRow.addCell("", "", 1);
+   }
    tableRow.addCell("", "", 1);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
    tableRow.addCell("31.12." + previousYear, "table-header", 1);
 
-   // tableRow = table.addRow();
-   // tableRow.addCell("", "", 1);
-   // tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
-   // tableRow.addCell("31.12." + previousYear, "table-header", 1);
-
    tableRow = table.addRow();
+   if (userParam.printcolumn) {
+      tableRow.addCell(userParam.column, "assets-title lvl0", 1);
+   }
    tableRow.addCell("ATTIVO", "assets-title lvl0", 3);
 
    /* AA */
@@ -433,17 +482,31 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
    * PASSIVO
    **************************************************************************************/
    var table = report.addTable("table");
-   var column1 = table.addColumn("column1");
-   var column2 = table.addColumn("column2");
-   var column3 = table.addColumn("column3");
+   if (userParam.printcolumn) {
+      var column1 = table.addColumn("column01");
+      var column2 = table.addColumn("column02");
+      var column3 = table.addColumn("column03");
+      var column4 = table.addColumn("column04");
+   }
+   else {
+      var column1 = table.addColumn("column1");
+      var column2 = table.addColumn("column2");
+      var column3 = table.addColumn("column3");
+   }
 
    var tableIntestazione = table.getHeader();
-   tableRow = tableIntestazione.addRow(); 
+   tableRow = tableIntestazione.addRow();
+   if (userParam.printcolumn) {
+      tableRow.addCell("", "", 1);
+   }
    tableRow.addCell("", "", 1);
    tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
    tableRow.addCell("31.12." + previousYear, "table-header", 1);
 
    tableRow = table.addRow();
+   if (userParam.printcolumn) {
+      tableRow.addCell(userParam.column, "liabilties-title lvl0", 1);
+   }
    tableRow.addCell("PASSIVO", "liabilties-title lvl0", 3);
 
    /* dPA */
@@ -613,8 +676,20 @@ function convertParam(userParam) {
    convertedParam.data = [];
 
    var currentParam = {};
+   currentParam.name = 'header_group';
+   currentParam.title = 'Intestazione pagina';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+      userParam.header_group = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
    currentParam.name = 'logo';
-   currentParam.title = 'Stampa logo intestazione pagina';
+   currentParam.parentObject = 'header_group';
+   currentParam.title = 'Stampa logo';
    currentParam.type = 'bool';
    currentParam.value = userParam.logo ? true : false;
    currentParam.defaultvalue = false;
@@ -625,6 +700,7 @@ function convertParam(userParam) {
 
    var currentParam = {};
    currentParam.name = 'logoname';
+   currentParam.parentObject = 'header_group';
    currentParam.title = 'Nome logo (Imposta Logo -> Personalizzazione)';
    currentParam.type = 'string';
    currentParam.value = userParam.logoname ? userParam.logoname : 'Logo';
@@ -636,7 +712,8 @@ function convertParam(userParam) {
 
    currentParam = {};
    currentParam.name = 'printheader';
-   currentParam.title = 'Stampa testo intestazione pagina (Proprietà file -> Indirizzo)';
+   currentParam.parentObject = 'header_group';
+   currentParam.title = 'Stampa testo indirizzo';
    currentParam.type = 'bool';
    currentParam.value = userParam.printheader ? true : false;
    currentParam.defaultvalue = false;
@@ -645,8 +722,32 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   var currentParam = {};
+   currentParam.name = 'headertext';
+   currentParam.parentObject = 'header_group';
+   currentParam.title = 'Testo indirizzo alternativo (su più righe)';
+   currentParam.type = 'multilinestring';
+   currentParam.value = userParam.headertext ? userParam.headertext : '';
+   currentParam.defaultvalue = '';
+   currentParam.readValue = function() {
+     userParam.headertext = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
+   currentParam.name = 'title_group';
+   currentParam.title = 'Titolo';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+      userParam.title_group = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    currentParam = {};
    currentParam.name = 'printtitle';
+   currentParam.parentObject = 'title_group';
    currentParam.title = 'Stampa titolo';
    currentParam.type = 'bool';
    currentParam.value = userParam.printtitle ? true : false;
@@ -658,7 +759,8 @@ function convertParam(userParam) {
 
    var currentParam = {};
    currentParam.name = 'title';
-   currentParam.title = 'Testo titolo (vuoto = testo predefinito)';
+   currentParam.parentObject = 'title_group';
+   currentParam.title = 'Testo titolo alternativo (vuoto = testo predefinito)';
    currentParam.type = 'string';
    currentParam.value = userParam.title ? userParam.title : '';
    currentParam.defaultvalue = '';
@@ -668,18 +770,43 @@ function convertParam(userParam) {
    convertedParam.data.push(currentParam);
 
    var currentParam = {};
+   currentParam.name = 'report_group';
+   currentParam.title = 'Dettagli stato patrimoniale';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+      userParam.report_group = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
    currentParam.name = 'column';
+   currentParam.parentObject = 'report_group';
    currentParam.title = "Colonna raggruppamento (nome XML colonna)";
    currentParam.type = 'string';
-   currentParam.value = userParam.column ? userParam.column : 'Gr';
-   currentParam.defaultvalue = 'Gr';
+   currentParam.value = userParam.column ? userParam.column : 'Gr1';
+   currentParam.defaultvalue = 'Gr1';
    currentParam.readValue = function() {
       userParam.column = this.value;
    }
    convertedParam.data.push(currentParam);
 
    var currentParam = {};
+   currentParam.name = 'printcolumn';
+   currentParam.parentObject = 'report_group';
+   currentParam.title = 'Stampa colonna raggruppamento';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.printcolumn ? true : false;
+   currentParam.defaultvalue = true;
+   currentParam.readValue = function() {
+      userParam.printcolumn = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
    currentParam.name = 'compattastampa';
+   currentParam.parentObject = 'report_group';
    currentParam.title = 'Escludi voci con importi nulli per due esercizi consecutivi';
    currentParam.type = 'bool';
    currentParam.value = userParam.compattastampa ? true : false;
@@ -691,6 +818,7 @@ function convertParam(userParam) {
 
    var currentParam = {};
    currentParam.name = 'stampa';
+   currentParam.parentObject = 'report_group';
    currentParam.title = 'Stampa Attivi e Passivi su pagine separate';
    currentParam.type = 'bool';
    currentParam.value = userParam.stampa ? true : false;
@@ -708,9 +836,11 @@ function initUserParam() {
    userParam.logo = false;
    userParam.logoname = 'Logo';
    userParam.printheader = false;
+   userParam.headertext = '';
    userParam.printtitle = true;
    userParam.title = '';
-   userParam.column = 'Gr';
+   userParam.column = 'Gr1';
+   userParam.printcolumn = true;
    userParam.compattastampa = false;
    userParam.stampa = true;
    return userParam;

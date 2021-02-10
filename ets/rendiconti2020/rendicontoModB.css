@@ -1,5 +1,5 @@
 
-/* CSS update: 2020-07-24 */
+/* CSS update: 2021-02-10 */
 
 td {
   vertical-align: top;
@@ -47,6 +47,42 @@ table {
 
 .column7 {
   width: 10%;
+}
+
+.column00 {
+  width: 5%;
+}
+
+.column01 {
+  width: 28%;
+}
+
+.column02 {
+  width: 8.25%;
+}
+
+.column03 {
+  width: 8.25%;
+}
+
+.column04 {
+  width: 1%;
+}
+
+.column05 {
+  width: 5%;
+}
+
+.column06 {
+  width: 28%;
+}
+
+.column07 {
+  width: 8.25%;
+}
+
+.column08 {
+  width: 8.25%;
 }
 
 .address-header {

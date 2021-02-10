@@ -64,8 +64,8 @@ D) Costi e oneri da attività finanziarie e patrimoniali  &  &  &  & D) Ricavi, 
 2) Su prestiti  & 2.00  & 6.00  &  & 2) Da altri investimenti finanziari  & 2.00  & 5.00 \\
 3) Da patrimonio edilizio  & 3.00  & 5.00  &  & 3) Da patrimonio edilizio  & 3.00  & 4.00 \\
 4) Da altri beni patrimoniali  & 4.00  & 4.00  &  & 4) Da altri beni patrimoniali  & 4.00  & 3.00 \\
-5) Accantonamenti per rischi ed oneri  & 5.00  & 3.00  &  &  &  & \\
-6) Altri oneri  & 6.00  & 2.00  &  & 5) Altri proventi  & 5.00  & 2.00 \\
+5) Accantonamenti per rischi ed oneri  & 5.00  & 3.00  &  & 5) Altri proventi  & 5.00  & 2.00 \\
+6) Altri oneri  & 6.00  & 2.00  &  &  &  & \\
 Totale  & 21.00  & 27.00  &  & Totale  & 15.00  & 20.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & -6.00  & -7.00 \\
 E) Costi e oneri di supporto generale  &  &  &  & E) Proventi di supporto generale  &  & \\
@@ -133,8 +133,8 @@ D) Costi e oneri da attività finanziarie e patrimoniali  &  &  &  & D) Ricavi, 
 2) Su prestiti  & 2.00  & 6.00  &  & 2) Da altri investimenti finanziari  & 2.00  & 5.00 \\
 3) Da patrimonio edilizio  & 3.00  & 5.00  &  & 3) Da patrimonio edilizio  & 3.00  & 4.00 \\
 4) Da altri beni patrimoniali  & 4.00  & 4.00  &  & 4) Da altri beni patrimoniali  & 4.00  & 3.00 \\
-5) Accantonamenti per rischi ed oneri  & 5.00  & 3.00  &  &  &  & \\
-6) Altri oneri  & 6.00  & 2.00  &  & 5) Altri proventi  & 5.00  & 2.00 \\
+5) Accantonamenti per rischi ed oneri  & 5.00  & 3.00  &  & 5) Altri proventi  & 5.00  & 2.00 \\
+6) Altri oneri  & 6.00  & 2.00  &  &  &  & \\
 Totale  & 21.00  & 27.00  &  & Totale  & 15.00  & 20.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & -6.00  & -7.00 \\
 E) Costi e oneri di supporto generale  &  &  &  & E) Proventi di supporto generale  &  & \\
@@ -202,8 +202,8 @@ D) Costi e oneri da attività finanziarie e patrimoniali  &  &  &  & D) Ricavi, 
 2) Su prestiti  & 0.00  & 0.00  &  & 2) Da altri investimenti finanziari  & 0.00  & 0.00 \\
 3) Da patrimonio edilizio  & 0.00  & 0.00  &  & 3) Da patrimonio edilizio  & 0.00  & 0.00 \\
 4) Da altri beni patrimoniali  & 0.00  & 0.00  &  & 4) Da altri beni patrimoniali  & 0.00  & 0.00 \\
-5) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  &  &  & \\
-6) Altri oneri  & 450.00  & 0.00  &  & 5) Altri proventi  & 0.00  & 0.00 \\
+5) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  & 5) Altri proventi  & 0.00  & 0.00 \\
+6) Altri oneri  & 450.00  & 0.00  &  &  &  & \\
 Totale  & 450.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & -450.00  & 0.00 \\
 E) Costi e oneri di supporto generale  &  &  &  & E) Proventi di supporto generale  &  & \\
@@ -227,6 +227,75 @@ Costi figurativi  & 31.12.2020  & 31.12.2019  &  & Proventi figurativi  & 31.12.
 1) da attività di interesse generale  & 0.00  & 0.00  &  & 1) da attività di interesse generale  & 0.00  & 0.00 \\
 2) da attività diverse  & 0.00  & 0.00  &  & 2) da attività diverse  & 0.00  & 0.00 \\
 Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
+\end{longtable}
+\end{reportvalue}
+\begin{reportvalue}{Test 4: 'rendiconto gestionale (MOD. B)', stampa colonna raggruppamento}
+  \\
+Associazione Aiuto agli Anziani - RENDICONTO GESTIONALE ANNO 2020 \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
+GR1  & ONERI E COSTI  & 31.12.2020  & 31.12.2019  &  & GR1  & PROVENTI E RICAVI  & 31.12.2020  & 31.12.2019 \\
+ & A) Costi e oneri da attività di interesse generale  &  &  &  &  & A) Ricavi, rendite e proventi da attività di interesse generale  &  & \\
+CA1  & 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & RA1  & 1) Proventi da quote associative e apporti dei fondatori  & 11'500.00  & 0.00 \\
+CA2  & 2) Servizi  & 3'700.00  & 0.00  &  & RA2  & 2) Proventi dagli associati per attività mutuali  & 0.00  & 0.00 \\
+CA3  & 3) Godimento beni di terzi  & 3'100.00  & 0.00  &  & RA3  & 3) Ricavi per prestazioni e cessioni ad associati e fondatori  & 0.00  & 0.00 \\
+CA4  & 4) Personale  & 67'960.00  & 0.00  &  & RA4  & 4) Erogazioni liberali  & 3'500.00  & 0.00 \\
+CA5  & 5) Ammortamenti  & 0.00  & 0.00  &  & RA5  & 5) Proventi del 5 per mille  & 34'100.00  & 0.00 \\
+CA6  & 6) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  & RA6  & 6) Contributi da soggetti privati  & 31'600.00  & 0.00 \\
+CA7  & 7) Oneri diversi di gestione  & 9'941.00  & 0.00  &  & RA7  & 7) Ricavi per prestazioni e cessioni a terzi  & 0.00  & 0.00 \\
+CA8  & 8) Rimanenze iniziali  & 0.00  & 0.00  &  & RA8  & 8) Contributi da enti pubblici  & 3'000.00  & 0.00 \\
+ &  &  &  &  & RA9  & 9) Proventi da contratti con enti pubblici  & 0.00  & 0.00 \\
+ &  &  &  &  & RA10  & 10) Altri ricavi, rendite e proventi  & 0.00  & 0.00 \\
+ &  &  &  &  & RA11  & 11) Rimanenze finali  & 0.00  & 0.00 \\
+CA  & Totale  & 84'701.00  & 0.00  &  & RA  & Totale  & 83'700.00  & 0.00 \\
+RA-CA  & \multicolumn{6}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & -1'001.00  & 0.00 \\
+ & B) Costi e oneri da attività diverse  &  &  &  &  & B) Ricavi, rendite e proventi da attività diverse  &  & \\
+CB1  & 1) Materie prime, sussidiarie, di consumo e di merci  & 1'000.00  & 0.00  &  & RB1  & 1) Ricavi per prestazioni e cessioni ad associati e fondatori  & 0.00  & 0.00 \\
+CB2  & 2) Servizi  & 0.00  & 0.00  &  & RB2  & 2) Contributi da soggetti privati  & 0.00  & 0.00 \\
+CB3  & 3) Godimento beni di terzi  & 0.00  & 0.00  &  & RB3  & 3) Ricavi per prestazioni e cessioni a terzi  & 0.00  & 0.00 \\
+CB4  & 4) Personale  & 0.00  & 0.00  &  & RB4  & 4) Contributi da enti pubblici  & 0.00  & 0.00 \\
+CB5  & 5) Ammortamenti  & 0.00  & 0.00  &  & RB5  & 5) Proventi da contratti con enti pubblici  & 0.00  & 0.00 \\
+CB6  & 6) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  & RB6  & 6) Altri ricavi, rendite e proventi  & 0.00  & 0.00 \\
+CB7  & 7) Oneri diversi di gestione  & 0.00  & 0.00  &  & RB7  & 7) Rimanenze finali  & 0.00  & 0.00 \\
+CB8  & 8) Rimanenze iniziali  & 0.00  & 0.00  &  &  &  &  & \\
+CB  & Totale  & 1'000.00  & 0.00  &  & RB  & Totale  & 0.00  & 0.00 \\
+RB-CB  & \multicolumn{6}{l}{Avanzo/disavanzo attività diverse (+/-) } & -1'000.00  & 0.00 \\
+ & C) Costi e oneri da attività di raccolta fondi  &  &  &  &  & C) Ricavi, rendite e proventi da attività di raccolta fondi  &  & \\
+CC1  & 1) Oneri per raccolte fondi abituali  & 0.00  & 0.00  &  & RC1  & 1) Proventi da raccolte fondi abituali  & 2'400.00  & 0.00 \\
+CC2  & 2) Oneri per raccolte fondi occasionali  & 0.00  & 0.00  &  & RC2  & 2) Proventi da raccolte fondi occasionali  & 8'900.00  & 0.00 \\
+CC3  & 3) Altri oneri  & 0.00  & 0.00  &  & RC3  & 3) Altri proventi  & 0.00  & 0.00 \\
+CC  & Totale  & 0.00  & 0.00  &  & RC  & Totale  & 11'300.00  & 0.00 \\
+RC-CC  & \multicolumn{6}{l}{Avanzo/disavanzo attività di raccolta fondi } & 11'300.00  & 0.00 \\
+ & D) Costi e oneri da attività finanziarie e patrimoniali  &  &  &  &  & D) Ricavi, rendite e proventi da attività finanziarie e patrimoniali  &  & \\
+CD1  & 1) Su rapporti bancari  & 0.00  & 0.00  &  & RD1  & 1) Da rapporti bancari  & 0.00  & 0.00 \\
+CD2  & 2) Su prestiti  & 0.00  & 0.00  &  & RD2  & 2) Da altri investimenti finanziari  & 0.00  & 0.00 \\
+CD3  & 3) Da patrimonio edilizio  & 0.00  & 0.00  &  & RD3  & 3) Da patrimonio edilizio  & 0.00  & 0.00 \\
+CD4  & 4) Da altri beni patrimoniali  & 0.00  & 0.00  &  & RD4  & 4) Da altri beni patrimoniali  & 0.00  & 0.00 \\
+CD5  & 5) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  & RD5  & 5) Altri proventi  & 0.00  & 0.00 \\
+CD6  & 6) Altri oneri  & 450.00  & 0.00  &  &  &  &  & \\
+CD  & Totale  & 450.00  & 0.00  &  & RD  & Totale  & 0.00  & 0.00 \\
+RD-CD  & \multicolumn{6}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & -450.00  & 0.00 \\
+ & E) Costi e oneri di supporto generale  &  &  &  &  & E) Proventi di supporto generale  &  & \\
+CE1  & 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & RE1  & 1) Proventi da distacco del personale  & 0.00  & 0.00 \\
+CE2  & 2) Servizi  & 0.00  & 0.00  &  & RE2  & 2) Altri proventi di supporto generale  & 0.00  & 0.00 \\
+CE3  & 3) Godimento beni di terzi  & 0.00  & 0.00  &  &  &  &  & \\
+CE4  & 4) Personale  & 0.00  & 0.00  &  &  &  &  & \\
+CE5  & 5) Ammortamenti  & 0.00  & 0.00  &  &  &  &  & \\
+CE6  & 6) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  &  &  &  & \\
+CE7  & 7) Altri oneri  & 0.00  & 0.00  &  &  &  &  & \\
+CE  & Totale  & 0.00  & 0.00  &  & RE  & Totale  & 0.00  & 0.00 \\
+C  & TOTALE ONERI E COSTI  & 86'151.00  & 0.00  &  & R  & TOTALE PROVENTI E RICAVI  & 95'000.00  & 0.00 \\
+TADPI  & \multicolumn{6}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 8'849.00  & 0.00 \\
+IM  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
+TADES  & \multicolumn{6}{l}{Avanzo/disavanzo d’esercizio (+/-) } & 8'849.00  & 0.00 \\
+\end{longtable}
+  \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
+GR1  & Costi figurativi  & 31.12.2020  & 31.12.2019  &  & GR1  & Proventi figurativi  & 31.12.2020  & 31.12.2019 \\
+CG1  & 1) da attività di interesse generale  & 0.00  & 0.00  &  & RG1  & 1) da attività di interesse generale  & 0.00  & 0.00 \\
+CG2  & 2) da attività diverse  & 0.00  & 0.00  &  & RG2  & 2) da attività diverse  & 0.00  & 0.00 \\
+CG  & Totale  & 0.00  & 0.00  &  & RG  & Totale  & 0.00  & 0.00 \\
 \end{longtable}
 \end{reportvalue}
 \keyvalue{Result}{Passed}

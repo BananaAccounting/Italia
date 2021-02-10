@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a.test
 // @api = 1.0
-// @pubdate = 2020-11-11
+// @pubdate = 2021-02-10
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.statopatrimoniale.mod.a.js>
 // @task = app.command
@@ -181,6 +181,37 @@ ReportModATest.prototype.testBananaExtension = function() {
 
 	var report = printRendicontoModA(banDoc, userParam, bReport3, "");
 	Test.logger.addReport("Test 4: rendiconto 'Stato Patrimoniale (MOD. A)', colonna Gr1", report);
+
+	/**
+	 * Test 5 using the tutorial template, with Gr1 column
+	*/
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/11094-entrate-uscite-ets-rendiconto-cassa-tutorial.ac2");
+	Test.assert(banDoc);
+
+	var userParam = {};
+  	userParam.selectionStartDate = "2020-01-01";
+  	userParam.selectionEndDate = "2020-12-31";
+  	userParam.title = "STATO PATRIMONIALE (MOD. A) ANNO 2020";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr1';
+	userParam.printcolumn = true;
+	userParam.compattastampa = false;
+
+	var reportStructure = createReportStructureStatoPatrimoniale();
+
+	const bReport5 = new BReport(banDoc, userParam, reportStructure);
+	bReport5.validateGroups(userParam.column);
+	bReport5.loadBalances();
+	bReport5.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport5.formatValues(["currentAmount", "previousAmount"]);
+	bReport5.excludeEntries();
+
+	var report = printRendicontoModA(banDoc, userParam, bReport5, "");
+	Test.logger.addReport("Test 5: rendiconto 'Stato Patrimoniale (MOD. A)', stampa colonna raggruppamento", report);
 
 }
 
