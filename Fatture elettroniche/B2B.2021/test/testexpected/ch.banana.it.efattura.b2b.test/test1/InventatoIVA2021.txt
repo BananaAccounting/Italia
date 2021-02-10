@@ -1,0 +1,528 @@
+%%info_test_name{InventatoIVA2021}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+%************************************************************************
+\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
+\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2021.AC2}
+\info{PARAM}{FATTURA NO 1}
+%************************************************************************
+\begin{xmlvalue}{Xml document}
+<?xml version="1.0" encoding="utf-8"?>
+
+<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+<FatturaElettronicaHeader>
+<DatiTrasmissione>
+<IdTrasmittente>
+<IdPaese>IT</IdPaese>
+<IdCodice>SLTSFN72M13B950Y</IdCodice>
+</IdTrasmittente>
+<ProgressivoInvio>00001</ProgressivoInvio>
+<FormatoTrasmissione>FPR12</FormatoTrasmissione>
+<CodiceDestinatario>0000000</CodiceDestinatario>
+</DatiTrasmissione>
+<CedentePrestatore>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>01433000500</IdCodice>
+</IdFiscaleIVA>
+<CodiceFiscale>SLTSFN72M13B950Y</CodiceFiscale>
+<Anagrafica>
+<Denominazione>CLIENTE INVENTATO</Denominazione>
+</Anagrafica>
+<RegimeFiscale>RF01</RegimeFiscale>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via delle Libertà n. 84</Indirizzo>
+<CAP>56023</CAP>
+<Comune>ZAMBRA DI CASCINA PI</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CedentePrestatore>
+<CessionarioCommittente>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>00120470505</IdCodice>
+</IdFiscaleIVA>
+<Anagrafica>
+<Denominazione>Associati per l'impresa</Denominazione>
+</Anagrafica>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via verdi </Indirizzo>
+<CAP>56010</CAP>
+<Comune>Vicopisano</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CessionarioCommittente>
+</FatturaElettronicaHeader>
+<FatturaElettronicaBody>
+<DatiGenerali>
+<DatiGeneraliDocumento>
+<TipoDocumento>TD01</TipoDocumento>
+<Divisa>EUR</Divisa>
+<Data>2021-01-01</Data>
+<Numero>1</Numero>
+<ImportoTotaleDocumento>100.00</ImportoTotaleDocumento>
+</DatiGeneraliDocumento>
+</DatiGenerali>
+<DatiBeniServizi>
+<DettaglioLinee>
+<NumeroLinea>1</NumeroLinea>
+<Descrizione>Fattura no 1</Descrizione>
+<PrezzoUnitario>81.97</PrezzoUnitario>
+<PrezzoTotale>81.97</PrezzoTotale>
+<AliquotaIVA>22.00</AliquotaIVA>
+</DettaglioLinee>
+<DatiRiepilogo>
+<AliquotaIVA>22.00</AliquotaIVA>
+<ImponibileImporto>81.97</ImponibileImporto>
+<Imposta>18.03</Imposta>
+</DatiRiepilogo>
+</DatiBeniServizi>
+</FatturaElettronicaBody>
+</p:FatturaElettronica>
+\end{xmlvalue}
+%************************************************************************
+\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
+\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2021.AC2}
+\info{PARAM}{FATTURA NO 10}
+%************************************************************************
+\begin{xmlvalue}{Xml document}
+<?xml version="1.0" encoding="utf-8"?>
+
+<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+<FatturaElettronicaHeader>
+<DatiTrasmissione>
+<IdTrasmittente>
+<IdPaese>IT</IdPaese>
+<IdCodice>SLTSFN72M13B950Y</IdCodice>
+</IdTrasmittente>
+<ProgressivoInvio>00001</ProgressivoInvio>
+<FormatoTrasmissione>FPR12</FormatoTrasmissione>
+<CodiceDestinatario>0000000</CodiceDestinatario>
+</DatiTrasmissione>
+<CedentePrestatore>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>01433000500</IdCodice>
+</IdFiscaleIVA>
+<CodiceFiscale>SLTSFN72M13B950Y</CodiceFiscale>
+<Anagrafica>
+<Denominazione>CLIENTE INVENTATO</Denominazione>
+</Anagrafica>
+<RegimeFiscale>RF01</RegimeFiscale>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via delle Libertà n. 84</Indirizzo>
+<CAP>56023</CAP>
+<Comune>ZAMBRA DI CASCINA PI</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CedentePrestatore>
+<CessionarioCommittente>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>00120470505</IdCodice>
+</IdFiscaleIVA>
+<Anagrafica>
+<Denominazione>Associati per l'impresa</Denominazione>
+</Anagrafica>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via verdi </Indirizzo>
+<CAP>56010</CAP>
+<Comune>Vicopisano</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CessionarioCommittente>
+</FatturaElettronicaHeader>
+<FatturaElettronicaBody>
+<DatiGenerali>
+<DatiGeneraliDocumento>
+<TipoDocumento>TD01</TipoDocumento>
+<Divisa>EUR</Divisa>
+<Data>2021-01-01</Data>
+<Numero>10</Numero>
+<ImportoTotaleDocumento>350.00</ImportoTotaleDocumento>
+</DatiGeneraliDocumento>
+</DatiGenerali>
+<DatiBeniServizi>
+<DettaglioLinee>
+<NumeroLinea>1</NumeroLinea>
+<Descrizione>Fattura no 10 2</Descrizione>
+<PrezzoUnitario>40.98</PrezzoUnitario>
+<PrezzoTotale>40.98</PrezzoTotale>
+<AliquotaIVA>22.00</AliquotaIVA>
+</DettaglioLinee>
+<DettaglioLinee>
+<NumeroLinea>2</NumeroLinea>
+<Descrizione>Fattura no 10 3</Descrizione>
+<PrezzoUnitario>54.55</PrezzoUnitario>
+<PrezzoTotale>54.55</PrezzoTotale>
+<AliquotaIVA>10.00</AliquotaIVA>
+</DettaglioLinee>
+<DettaglioLinee>
+<NumeroLinea>3</NumeroLinea>
+<Descrizione>Fattura no 10 5</Descrizione>
+<PrezzoUnitario>70.00</PrezzoUnitario>
+<PrezzoTotale>70.00</PrezzoTotale>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N4</Natura>
+</DettaglioLinee>
+<DettaglioLinee>
+<NumeroLinea>4</NumeroLinea>
+<Descrizione>Fattura no 10 6</Descrizione>
+<PrezzoUnitario>80.00</PrezzoUnitario>
+<PrezzoTotale>80.00</PrezzoTotale>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N2</Natura>
+</DettaglioLinee>
+<DettaglioLinee>
+<NumeroLinea>5</NumeroLinea>
+<Descrizione>Fattura no 10 7</Descrizione>
+<PrezzoUnitario>90.00</PrezzoUnitario>
+<PrezzoTotale>90.00</PrezzoTotale>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N5</Natura>
+</DettaglioLinee>
+<DatiRiepilogo>
+<AliquotaIVA>22.00</AliquotaIVA>
+<ImponibileImporto>40.98</ImponibileImporto>
+<Imposta>9.02</Imposta>
+</DatiRiepilogo>
+<DatiRiepilogo>
+<AliquotaIVA>10.00</AliquotaIVA>
+<ImponibileImporto>54.55</ImponibileImporto>
+<Imposta>5.45</Imposta>
+</DatiRiepilogo>
+<DatiRiepilogo>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N4</Natura>
+<ImponibileImporto>70.00</ImponibileImporto>
+<Imposta>0.00</Imposta>
+</DatiRiepilogo>
+<DatiRiepilogo>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N2</Natura>
+<ImponibileImporto>80.00</ImponibileImporto>
+<Imposta>0.00</Imposta>
+</DatiRiepilogo>
+<DatiRiepilogo>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N5</Natura>
+<ImponibileImporto>90.00</ImponibileImporto>
+<Imposta>0.00</Imposta>
+</DatiRiepilogo>
+</DatiBeniServizi>
+</FatturaElettronicaBody>
+</p:FatturaElettronica>
+\end{xmlvalue}
+%************************************************************************
+\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
+\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2021.AC2}
+\info{PARAM}{FATTURA NO 11}
+%************************************************************************
+\begin{xmlvalue}{Xml document}
+<?xml version="1.0" encoding="utf-8"?>
+
+<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+<FatturaElettronicaHeader>
+<DatiTrasmissione>
+<IdTrasmittente>
+<IdPaese>IT</IdPaese>
+<IdCodice>SLTSFN72M13B950Y</IdCodice>
+</IdTrasmittente>
+<ProgressivoInvio>00001</ProgressivoInvio>
+<FormatoTrasmissione>FPR12</FormatoTrasmissione>
+<CodiceDestinatario>0000000</CodiceDestinatario>
+<PECDestinatario>12345678</PECDestinatario>
+</DatiTrasmissione>
+<CedentePrestatore>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>01433000500</IdCodice>
+</IdFiscaleIVA>
+<CodiceFiscale>SLTSFN72M13B950Y</CodiceFiscale>
+<Anagrafica>
+<Denominazione>CLIENTE INVENTATO</Denominazione>
+</Anagrafica>
+<RegimeFiscale>RF01</RegimeFiscale>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via delle Libertà n. 84</Indirizzo>
+<CAP>56023</CAP>
+<Comune>ZAMBRA DI CASCINA PI</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CedentePrestatore>
+<CessionarioCommittente>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>00128720455</IdCodice>
+</IdFiscaleIVA>
+<Anagrafica>
+<Denominazione>Camaldoli spa</Denominazione>
+</Anagrafica>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via Rossi</Indirizzo>
+<CAP>56020</CAP>
+<Comune>Ponsacco</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CessionarioCommittente>
+</FatturaElettronicaHeader>
+<FatturaElettronicaBody>
+<DatiGenerali>
+<DatiGeneraliDocumento>
+<TipoDocumento>TD01</TipoDocumento>
+<Divisa>EUR</Divisa>
+<Data>2021-02-02</Data>
+<Numero>11</Numero>
+<ImportoTotaleDocumento>200.00</ImportoTotaleDocumento>
+</DatiGeneraliDocumento>
+</DatiGenerali>
+<DatiBeniServizi>
+<DettaglioLinee>
+<NumeroLinea>1</NumeroLinea>
+<Descrizione>Fattura no 11</Descrizione>
+<PrezzoUnitario>200.00</PrezzoUnitario>
+<PrezzoTotale>200.00</PrezzoTotale>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N3</Natura>
+</DettaglioLinee>
+<DatiRiepilogo>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N3</Natura>
+<ImponibileImporto>200.00</ImponibileImporto>
+<Imposta>0.00</Imposta>
+</DatiRiepilogo>
+</DatiBeniServizi>
+</FatturaElettronicaBody>
+</p:FatturaElettronica>
+\end{xmlvalue}
+%************************************************************************
+\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
+\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2021.AC2}
+\info{PARAM}{FATTURA NO 11NC}
+%************************************************************************
+\begin{xmlvalue}{Xml document}
+<?xml version="1.0" encoding="utf-8"?>
+
+<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+<FatturaElettronicaHeader>
+<DatiTrasmissione>
+<IdTrasmittente>
+<IdPaese>IT</IdPaese>
+<IdCodice>SLTSFN72M13B950Y</IdCodice>
+</IdTrasmittente>
+<ProgressivoInvio>00001</ProgressivoInvio>
+<FormatoTrasmissione>FPR12</FormatoTrasmissione>
+<CodiceDestinatario>0000000</CodiceDestinatario>
+<PECDestinatario>12345678</PECDestinatario>
+</DatiTrasmissione>
+<CedentePrestatore>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>01433000500</IdCodice>
+</IdFiscaleIVA>
+<CodiceFiscale>SLTSFN72M13B950Y</CodiceFiscale>
+<Anagrafica>
+<Denominazione>CLIENTE INVENTATO</Denominazione>
+</Anagrafica>
+<RegimeFiscale>RF01</RegimeFiscale>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via delle Libertà n. 84</Indirizzo>
+<CAP>56023</CAP>
+<Comune>ZAMBRA DI CASCINA PI</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CedentePrestatore>
+<CessionarioCommittente>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>00128720455</IdCodice>
+</IdFiscaleIVA>
+<Anagrafica>
+<Denominazione>Camaldoli spa</Denominazione>
+</Anagrafica>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via Rossi</Indirizzo>
+<CAP>56020</CAP>
+<Comune>Ponsacco</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CessionarioCommittente>
+</FatturaElettronicaHeader>
+<FatturaElettronicaBody>
+<DatiGenerali>
+<DatiGeneraliDocumento>
+<TipoDocumento>TD01</TipoDocumento>
+<Divisa>EUR</Divisa>
+<Data>2021-02-02</Data>
+<Numero>11NC</Numero>
+<ImportoTotaleDocumento>-200.00</ImportoTotaleDocumento>
+</DatiGeneraliDocumento>
+</DatiGenerali>
+<DatiBeniServizi>
+<DettaglioLinee>
+<NumeroLinea>1</NumeroLinea>
+<Descrizione>Nota di credito no 11</Descrizione>
+<PrezzoUnitario>-200.00</PrezzoUnitario>
+<PrezzoTotale>-200.00</PrezzoTotale>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N3</Natura>
+</DettaglioLinee>
+<DatiRiepilogo>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N3</Natura>
+<ImponibileImporto>-200.00</ImponibileImporto>
+<Imposta>0.00</Imposta>
+</DatiRiepilogo>
+</DatiBeniServizi>
+</FatturaElettronicaBody>
+</p:FatturaElettronica>
+\end{xmlvalue}
+%************************************************************************
+\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
+\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2021.AC2}
+\info{PARAM}{FATTURA NO 12}
+%************************************************************************
+\begin{xmlvalue}{Xml document}
+<?xml version="1.0" encoding="utf-8"?>
+
+<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+<FatturaElettronicaHeader>
+<DatiTrasmissione>
+<IdTrasmittente>
+<IdPaese>IT</IdPaese>
+<IdCodice>SLTSFN72M13B950Y</IdCodice>
+</IdTrasmittente>
+<ProgressivoInvio>00001</ProgressivoInvio>
+<FormatoTrasmissione>FPR12</FormatoTrasmissione>
+<CodiceDestinatario>0000000</CodiceDestinatario>
+<PECDestinatario>12345678</PECDestinatario>
+</DatiTrasmissione>
+<CedentePrestatore>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>01433000500</IdCodice>
+</IdFiscaleIVA>
+<CodiceFiscale>SLTSFN72M13B950Y</CodiceFiscale>
+<Anagrafica>
+<Denominazione>CLIENTE INVENTATO</Denominazione>
+</Anagrafica>
+<RegimeFiscale>RF01</RegimeFiscale>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via delle Libertà n. 84</Indirizzo>
+<CAP>56023</CAP>
+<Comune>ZAMBRA DI CASCINA PI</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CedentePrestatore>
+<CessionarioCommittente>
+<DatiAnagrafici>
+<IdFiscaleIVA>
+<IdPaese>IT</IdPaese>
+<IdCodice>00128720455</IdCodice>
+</IdFiscaleIVA>
+<Anagrafica>
+<Denominazione>Camaldoli spa</Denominazione>
+</Anagrafica>
+</DatiAnagrafici>
+<Sede>
+<Indirizzo>Via Rossi</Indirizzo>
+<CAP>56020</CAP>
+<Comune>Ponsacco</Comune>
+<Provincia>PI</Provincia>
+<Nazione>IT</Nazione>
+</Sede>
+</CessionarioCommittente>
+</FatturaElettronicaHeader>
+<FatturaElettronicaBody>
+<DatiGenerali>
+<DatiGeneraliDocumento>
+<TipoDocumento>TD01</TipoDocumento>
+<Divisa>EUR</Divisa>
+<Data>2021-02-03</Data>
+<Numero>12</Numero>
+<ImportoTotaleDocumento>732.60</ImportoTotaleDocumento>
+</DatiGeneraliDocumento>
+</DatiGenerali>
+<DatiBeniServizi>
+<DettaglioLinee>
+<NumeroLinea>1</NumeroLinea>
+<Descrizione>Fattura no 12 1</Descrizione>
+<PrezzoUnitario>110.00</PrezzoUnitario>
+<PrezzoTotale>110.00</PrezzoTotale>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N4</Natura>
+</DettaglioLinee>
+<DettaglioLinee>
+<NumeroLinea>2</NumeroLinea>
+<Descrizione>Fattura no 12 2</Descrizione>
+<PrezzoUnitario>180.33</PrezzoUnitario>
+<PrezzoTotale>180.33</PrezzoTotale>
+<AliquotaIVA>22.00</AliquotaIVA>
+</DettaglioLinee>
+<DettaglioLinee>
+<NumeroLinea>3</NumeroLinea>
+<Descrizione>Fattura no 12 3</Descrizione>
+<PrezzoUnitario>330.00</PrezzoUnitario>
+<PrezzoTotale>330.00</PrezzoTotale>
+<AliquotaIVA>22.00</AliquotaIVA>
+</DettaglioLinee>
+<DatiRiepilogo>
+<AliquotaIVA>22.00</AliquotaIVA>
+<ImponibileImporto>510.33</ImponibileImporto>
+<Imposta>112.27</Imposta>
+</DatiRiepilogo>
+<DatiRiepilogo>
+<AliquotaIVA>0.00</AliquotaIVA>
+<Natura>N4</Natura>
+<ImponibileImporto>110.00</ImponibileImporto>
+<Imposta>0.00</Imposta>
+</DatiRiepilogo>
+</DatiBeniServizi>
+</FatturaElettronicaBody>
+</p:FatturaElettronica>
+\end{xmlvalue}
+\end{document}

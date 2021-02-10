@@ -24,8 +24,6 @@
 // @timeout = -1
 // @includejs = ch.banana.it.efattura.b2b.xml.js
 
-//TODO: aggiungere codice destinatario
-
 function exec(inData, options) {
    if (!Banana.document) {
       return "@Cancel";

@@ -147,24 +147,6 @@ EFatturaTest.prototype.getParam2 = function() {
    return param;
 }
 
-EFatturaTest.prototype.getParam3 = function() {
-   //Param1
-   //Set params (normally are taken from settings)
-   var param = {};
-   param.periodAll = true;
-   param.selection = 2; //0=singola fattura,1=fatture singolo cliente,2=tutto
-   param.selection_customer = ''; //no cliente
-   param.selection_invoice = ''; //no fattura
-   
-   param.xml = {};
-   param.xml.progressive = '1';
-   param.xml.open_file = false;
-   param.xml.xslt_filename = '';
-   param.xml.xsd_filename = '';
-
-   return param;
-}
-
 EFatturaTest.prototype.printReports = function(idParam) {
    var parentLogger = this.testLogger;
    this.progressBar.start(this.fileNameList.length);
@@ -178,8 +160,6 @@ EFatturaTest.prototype.printReports = function(idParam) {
             param = this.getParam1();
          else if (parseInt(idParam) === 2)
             param = this.getParam2();
-         else if (parseInt(idParam) === 3)
-            param = this.getParam3();
          //imposta anno nei parametri
          //var nAnno = banDocument.info("AccountingDataBase", "ClosureDate");
          //if (nAnno.length >= 10)
@@ -209,10 +189,10 @@ EFatturaTest.prototype.printAll = function(fileName, banDocument, param) {
    
    eFattura.setParam(param);
 
+   this.testLogger.addComment('************************************************************************');
    this.testLogger.addInfo("TITLE", "STAMPA DI TUTTO ");
    this.testLogger.addInfo("FILENAME",  fileName.toUpperCase());
-   this.testLogger.addComment('************************************************************************');
-   this.testLogger.addJson("Param", JSON.stringify(param))
+   // this.testLogger.addJson("Param", JSON.stringify(param))
 
    var jsonCustomerList = eFattura.loadData();
 
@@ -238,11 +218,11 @@ EFatturaTest.prototype.printSingleCustomer = function(fileName, banDocument, par
       param.selection_customer = eFattura.getCustomerId(customerNumberList[i]);
       eFattura.setParam(param);
 
+      this.testLogger.addComment('************************************************************************');
       this.testLogger.addInfo("TITLE", "STAMPA DI PIÙ FATTURE PER CLIENTE ");
       this.testLogger.addInfo("FILENAME",  fileName.toUpperCase());
       this.testLogger.addInfo("PARAM",  "FATTURE CLIENTE " + param.selection_customer);
-      this.testLogger.addComment('************************************************************************');
-      this.testLogger.addJson("Param", JSON.stringify(param))
+      // this.testLogger.addJson("Param", JSON.stringify(param))
 
       var jsonCustomerList = eFattura.loadData();
 
@@ -281,11 +261,11 @@ EFatturaTest.prototype.printSingleInvoice = function(fileName, banDocument, para
       eFattura.setParam(param);
       eFattura.clearErrorList();
       
+      this.testLogger.addComment('************************************************************************');
       this.testLogger.addInfo("TITLE", "STAMPA DI UNA SINGOLA FATTURA");
       this.testLogger.addInfo("FILENAME",  fileName.toUpperCase());
       this.testLogger.addInfo("PARAM",  "FATTURA NO " + param.selection_invoice);
-      this.testLogger.addComment('************************************************************************');
-      this.testLogger.addJson("Param", JSON.stringify(param))
+      // this.testLogger.addJson("Param", JSON.stringify(param))
 
       var jsonCustomerList = eFattura.loadData();
 
