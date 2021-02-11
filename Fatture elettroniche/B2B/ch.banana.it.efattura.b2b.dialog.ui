@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>427</width>
-    <height>444</height>
+    <width>384</width>
+    <height>365</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string notr="true">Fattura elettronica</string>
+   <string notr="true">Esporta fattura elettronica XML</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_8">
+  <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -21,7 +21,7 @@
      </property>
      <widget class="QWidget" name="tabEsporta">
       <attribute name="title">
-       <string>Fattura</string>
+       <string>Base</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
@@ -33,7 +33,7 @@
           <item>
            <widget class="QRadioButton" name="allRadioButton">
             <property name="text">
-             <string>T&amp;utto</string>
+             <string>T&amp;utte le fatture</string>
             </property>
             <property name="checked">
              <bool>false</bool>
@@ -248,32 +248,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="stampaGroupBox">
-         <property name="title">
-          <string>Formato</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="QRadioButton" name="stampaPDFRadioButton">
-            <property name="text">
-             <string>&amp;Anteprima di stampa</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="stampaXmlRadioButton">
-            <property name="text">
-             <string>File &amp;XML per trasmissione</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
         <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -288,292 +262,125 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabOpzioniPdf">
+     <widget class="QWidget" name="tabOptions">
       <attribute name="title">
-       <string>Opzioni stampa</string>
+       <string>Opzioni</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_10">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="0">
-            <widget class="QLabel" name="fontTypeLabel">
-             <property name="text">
-              <string notr="true">Tipo &amp;carattere (font)</string>
-             </property>
-             <property name="buddy">
-              <cstring>fontTypeLineEdit</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="fontTypeLineEdit"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="bgColorLabel">
-             <property name="text">
-              <string notr="true">Colore &amp;sfondo (HEX)</string>
-             </property>
-             <property name="buddy">
-              <cstring>bgColorLineEdit</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="bgColorLineEdit"/>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="textColorLabel">
-             <property name="text">
-              <string notr="true">Colore &amp;testo (HEX)</string>
-             </property>
-             <property name="buddy">
-              <cstring>textColorLineEdit</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="textColorLineEdit"/>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>13</width>
-             <height>58</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QCheckBox" name="printHeaderCheckBox">
-             <property name="text">
-              <string>Visualizza &amp;intestazione</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="printLogoCheckBox">
-             <property name="text">
-              <string>Visualizza &amp;logo</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="printQuantityCheckBox">
-             <property name="text">
-              <string>Visualizza colonna &amp;quantità</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="invoiceHeaderGroupBox">
+        <widget class="QGroupBox" name="stampaGroupBox">
          <property name="title">
-          <string>Intestazione</string>
+          <string>File XML</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_7">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <layout class="QGridLayout" name="gridLayout_4">
+           <layout class="QGridLayout" name="gridLayout">
             <item row="0" column="0">
-             <widget class="QLabel" name="invoiceRow1Label">
+             <widget class="QLabel" name="numeroProgressivoLabel">
               <property name="text">
-               <string>Riga &amp;1</string>
+               <string notr="true">N. progressivo &amp;invio</string>
               </property>
               <property name="buddy">
-               <cstring>invoiceRow1LineEdit</cstring>
+               <cstring>numeroProgressivoLineEdit</cstring>
               </property>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLineEdit" name="invoiceRow1LineEdit"/>
+             <widget class="QLineEdit" name="numeroProgressivoLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="mouseTracking">
+               <bool>false</bool>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
+              <property name="acceptDrops">
+               <bool>false</bool>
+              </property>
+              <property name="toolTip">
+               <string notr="true"/>
+              </property>
+              <property name="inputMethodHints">
+               <set>Qt::ImhNone</set>
+              </property>
+              <property name="inputMask">
+               <string notr="true"/>
+              </property>
+              <property name="text">
+               <string notr="true"/>
+              </property>
+              <property name="frame">
+               <bool>true</bool>
+              </property>
+              <property name="echoMode">
+               <enum>QLineEdit::Normal</enum>
+              </property>
+              <property name="cursorPosition">
+               <number>0</number>
+              </property>
+              <property name="placeholderText">
+               <string notr="true"/>
+              </property>
+              <property name="cursorMoveStyle">
+               <enum>Qt::LogicalMoveStyle</enum>
+              </property>
+             </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="invoiceRow2Label">
+             <widget class="QLabel" name="destFolderLabel">
               <property name="text">
-               <string>Riga &amp;2</string>
+               <string>Ca&amp;rtella di destinazione</string>
               </property>
               <property name="buddy">
-               <cstring>invoiceRow2LineEdit</cstring>
+               <cstring>destFolderLineEdit</cstring>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QLineEdit" name="invoiceRow2LineEdit"/>
+             <widget class="QLineEdit" name="destFolderLineEdit"/>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="invoiceRow3Label">
+             <widget class="QLabel" name="xsltLabel">
               <property name="text">
-               <string>Riga &amp;3</string>
+               <string>Foglio stile XSLT</string>
               </property>
               <property name="buddy">
-               <cstring>invoiceRow3LineEdit</cstring>
+               <cstring>destFolderLineEdit</cstring>
               </property>
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QLineEdit" name="invoiceRow3LineEdit"/>
+             <widget class="QLineEdit" name="xsltLineEdit"/>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="invoiceRow4Label">
+             <widget class="QLabel" name="xsdLabel">
               <property name="text">
-               <string>Riga &amp;4</string>
+               <string>Schema XSD</string>
               </property>
               <property name="buddy">
-               <cstring>invoiceRow4LineEdit</cstring>
+               <cstring>destFolderLineEdit</cstring>
               </property>
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="QLineEdit" name="invoiceRow4LineEdit"/>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="invoiceRow5Label">
-              <property name="text">
-               <string>Riga &amp;5</string>
-              </property>
-              <property name="buddy">
-               <cstring>invoiceRow5LineEdit</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QLineEdit" name="invoiceRow5LineEdit"/>
+             <widget class="QLineEdit" name="xsdLineEdit"/>
             </item>
            </layout>
           </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="invoiceFooterGroupBox">
-         <property name="title">
-          <string>Testo chiusura</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
-           <widget class="QTextEdit" name="invoiceFooterTextEdit">
-            <property name="acceptRichText">
-             <bool>false</bool>
+           <widget class="QCheckBox" name="apriXmlCheckBox">
+            <property name="text">
+             <string>&amp;Visualizza file immediatamente</string>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabOpzioniXml">
-      <attribute name="title">
-       <string>Opzioni XML</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_9">
-       <item>
-        <layout class="QGridLayout" name="gridLayout_6">
-         <item row="0" column="0">
-          <widget class="QLabel" name="numeroProgressivoLabel">
-           <property name="text">
-            <string notr="true">Progressivo &amp;invio</string>
-           </property>
-           <property name="buddy">
-            <cstring>numeroProgressivoLineEdit</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="numeroProgressivoLineEdit">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="mouseTracking">
-            <bool>false</bool>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
-           </property>
-           <property name="acceptDrops">
-            <bool>false</bool>
-           </property>
-           <property name="toolTip">
-            <string notr="true"/>
-           </property>
-           <property name="inputMethodHints">
-            <set>Qt::ImhNone</set>
-           </property>
-           <property name="inputMask">
-            <string notr="true"/>
-           </property>
-           <property name="text">
-            <string notr="true"/>
-           </property>
-           <property name="frame">
-            <bool>true</bool>
-           </property>
-           <property name="echoMode">
-            <enum>QLineEdit::Normal</enum>
-           </property>
-           <property name="cursorPosition">
-            <number>0</number>
-           </property>
-           <property name="placeholderText">
-            <string notr="true"/>
-           </property>
-           <property name="cursorMoveStyle">
-            <enum>Qt::LogicalMoveStyle</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <spacer name="horizontalSpacer_13">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="destFolderLabel">
-           <property name="text">
-            <string>Ca&amp;rtella di destinazione</string>
-           </property>
-           <property name="buddy">
-            <cstring>destFolderLineEdit</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" colspan="2">
-          <widget class="QLineEdit" name="destFolderLineEdit"/>
-         </item>
-         <item row="2" column="0" colspan="3">
-          <widget class="QCheckBox" name="apriXmlCheckBox">
-           <property name="text">
-            <string>&amp;Visualizza immediatamente</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
        <item>
         <spacer name="verticalSpacer">
@@ -583,7 +390,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>273</height>
+           <height>109</height>
           </size>
          </property>
         </spacer>
@@ -614,22 +421,10 @@
   <tabstop>toDateEdit</tabstop>
   <tabstop>periodComboBox</tabstop>
   <tabstop>yearComboBox</tabstop>
-  <tabstop>stampaPDFRadioButton</tabstop>
-  <tabstop>stampaXmlRadioButton</tabstop>
-  <tabstop>fontTypeLineEdit</tabstop>
-  <tabstop>bgColorLineEdit</tabstop>
-  <tabstop>textColorLineEdit</tabstop>
-  <tabstop>printHeaderCheckBox</tabstop>
-  <tabstop>printLogoCheckBox</tabstop>
-  <tabstop>printQuantityCheckBox</tabstop>
-  <tabstop>invoiceRow1LineEdit</tabstop>
-  <tabstop>invoiceRow2LineEdit</tabstop>
-  <tabstop>invoiceRow3LineEdit</tabstop>
-  <tabstop>invoiceRow4LineEdit</tabstop>
-  <tabstop>invoiceRow5LineEdit</tabstop>
-  <tabstop>invoiceFooterTextEdit</tabstop>
   <tabstop>numeroProgressivoLineEdit</tabstop>
   <tabstop>destFolderLineEdit</tabstop>
+  <tabstop>xsltLineEdit</tabstop>
+  <tabstop>xsdLineEdit</tabstop>
   <tabstop>apriXmlCheckBox</tabstop>
  </tabstops>
  <resources/>
