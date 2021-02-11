@@ -24,8 +24,5 @@
 \begin{test}{test1}
 \keyvalue{Result}{Passed}
 \end{test}
-\begin{test}{test2}
-\keyvalue{Result}{Passed}
-\end{test}
 \end{testcase}
 \end{document}

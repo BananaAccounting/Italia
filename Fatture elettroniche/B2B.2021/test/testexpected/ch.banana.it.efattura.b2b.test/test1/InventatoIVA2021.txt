@@ -184,6 +184,10 @@
 </p:FatturaElettronica>
 \end{xmlvalue}
 %************************************************************************
+%SCHEMA VALIDATION FORFILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2021.AC2
+%************************************************************************
+\textvalue{Validation result => Xml document is not valid against testcases/Schema\_del\_file\_xml\_FatturaPA\_versione\_1.2.1.xsd<html xmlns='http://www.w3.org/1999/xhtml/'><body><p>Content of element <span class='XQuery-keyword'>PECDestinatario</span> does not match its type definition: String content does not match pattern facet..</p></body></html> line 12}\\
+%************************************************************************
 \begin{xmlvalue}{Xml document}
 <?xml version="1.0" encoding="utf-8"?>
 
@@ -257,11 +261,11 @@
 <PrezzoUnitario>200.00</PrezzoUnitario>
 <PrezzoTotale>200.00</PrezzoTotale>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N3</Natura>
+<Natura>N3.1</Natura>
 </DettaglioLinee>
 <DatiRiepilogo>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N3</Natura>
+<Natura>N3.1</Natura>
 <ImponibileImporto>200.00</ImponibileImporto>
 <Imposta>0.00</Imposta>
 </DatiRiepilogo>
@@ -284,11 +288,11 @@
 <PrezzoUnitario>-200.00</PrezzoUnitario>
 <PrezzoTotale>-200.00</PrezzoTotale>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N3</Natura>
+<Natura>N3.1</Natura>
 </DettaglioLinee>
 <DatiRiepilogo>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N3</Natura>
+<Natura>N3.1</Natura>
 <ImponibileImporto>-200.00</ImponibileImporto>
 <Imposta>0.00</Imposta>
 </DatiRiepilogo>

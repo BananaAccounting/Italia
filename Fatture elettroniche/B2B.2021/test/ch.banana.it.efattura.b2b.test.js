@@ -102,14 +102,14 @@ EFatturaTest.prototype.test1 = function() {
    this.testLogger = Test.logger;
 }
 
-EFatturaTest.prototype.test2 = function() {
+/*EFatturaTest.prototype.test2 = function() {
    this.testLogger = Test.logger.newGroupLogger("test2");
    this.testLogger.addKeyValue("EFatturaTest", "test2");
    this.testLogger.addComment("Test ch.banana.it.efattura PARAM2");
    this.printReports(2);
    this.testLogger.close();
    this.testLogger = Test.logger;
-}
+}*/
 
 EFatturaTest.prototype.getParam1 = function() {
    //Param1
@@ -203,7 +203,6 @@ EFatturaTest.prototype.printReports = function(idParam) {
       } else {
          this.testLogger.addFatalError("File not found: " + fileName);
       }
-      //Banana.console.log(idParam + " " + fileName + " " + banDocument);
       this.testLogger.close();
       this.testLogger = parentLogger;
       if (!this.progressBar.step())
@@ -231,8 +230,8 @@ EFatturaTest.prototype.outputXml = function(fileName, banDocument, param) {
       //xml
       var xmlDocument = Banana.Xml.newDocument("root");
       var output = eFattura.createXml(jsonInvoices, xmlDocument, false);
-      if (param.xsd_filename) {
-         this.xml_validate_test(output, param.xsd_filename, "STAMPA DI TUTTO " + fileName.toUpperCase());
+      if (param.xml.xsd_filename) {
+         this.xml_validate_test(output, param.xml.xsd_filename, "SCHEMA VALIDATION FOR" + fileName.toUpperCase());
       }
       this.testLogger.addComment('************************************************************************');
       this.testLogger.addXml("Xml document", output);
@@ -241,12 +240,12 @@ EFatturaTest.prototype.outputXml = function(fileName, banDocument, param) {
 
 EFatturaTest.prototype.xml_validate_test = function (xml, schemaFileName, key) {
    // Validate against schema (schema is passed as a file path relative to the script)
-   Banana.console.debug("---------- STARTING VALIDATING XML FILE--------- " + key);
    if (!Banana.Xml.validate(Banana.Xml.parse(xml), schemaFileName)) {
-      Test.logger.addText("Validation result => Xml document is not valid against " + schemaFileName + " (" + key + "): " + Banana.Xml.errorString);
-      Banana.console.debug("Validation result => Xml document is not valid against " + schemaFileName + " (" + key + "): " + Banana.Xml.errorString);
+      this.testLogger.addComment('************************************************************************');
+      this.testLogger.addComment(key);
+      this.testLogger.addComment('************************************************************************');
+      this.testLogger.addText("Validation result => Xml document is not valid against " + schemaFileName + Banana.Xml.errorString);
    }
-   Banana.console.debug("---------- FINISHED VALIDATING XML FILE--------- " + key);
 }
 
 

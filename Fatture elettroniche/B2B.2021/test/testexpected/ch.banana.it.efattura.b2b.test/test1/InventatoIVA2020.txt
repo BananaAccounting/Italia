@@ -22,6 +22,10 @@
 \info{TITLE}{OUTPUT XML}
 \info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2020.AC2}
 %************************************************************************
+%SCHEMA VALIDATION FORFILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2020.AC2
+%************************************************************************
+\textvalue{Validation result => Xml document is not valid against testcases/Schema\_del\_file\_xml\_FatturaPA\_versione\_1.2.1.xsd<html xmlns='http://www.w3.org/1999/xhtml/'><body><p>Content of element <span class='XQuery-keyword'>PECDestinatario</span> does not match its type definition: String content does not match pattern facet..</p></body></html> line 12}\\
+%************************************************************************
 \begin{xmlvalue}{Xml document}
 <?xml version="1.0" encoding="utf-8"?>
 
@@ -159,6 +163,10 @@
 </FatturaElettronicaBody>
 </p:FatturaElettronica>
 \end{xmlvalue}
+%************************************************************************
+%SCHEMA VALIDATION FORFILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2020.AC2
+%************************************************************************
+\textvalue{Validation result => Xml document is not valid against testcases/Schema\_del\_file\_xml\_FatturaPA\_versione\_1.2.1.xsd<html xmlns='http://www.w3.org/1999/xhtml/'><body><p>Content of element <span class='XQuery-keyword'>PECDestinatario</span> does not match its type definition: String content does not match pattern facet..</p></body></html> line 12}\\
 %************************************************************************
 \begin{xmlvalue}{Xml document}
 <?xml version="1.0" encoding="utf-8"?>
