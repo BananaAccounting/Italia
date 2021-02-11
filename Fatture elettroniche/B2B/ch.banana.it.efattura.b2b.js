@@ -1121,9 +1121,9 @@ EFattura.prototype.getErrorMessage = function (errorId) {
    }
    else if (errorId == this.ID_ERR_VERSION_NOTSUPPORTED) {
       if (lang == 'it')
-         rtnMsg = "Lo script non funziona con questa versione di Banana Contabilità. Aggiornare a Banana Experimental";
+         rtnMsg = "Lo script non funziona con questa versione di Banana Contabilità. Aggiornare a Banana+ Advanced";
       else
-         rtnMsg = "This script does not run with this version of Banana Accounting. Please update to Banana Experimental";
+         rtnMsg = "This script does not run with this version of Banana Accounting. Please update to Banana+ Advanced";
    }
    else if (errorId == this.ID_ERR_XML_FILE_NONVALIDO) {
       if (lang == 'it')
