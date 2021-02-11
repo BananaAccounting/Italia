@@ -70,7 +70,7 @@ function exec(inData, options) {
             xmlContent = xmlContent.slice(0, 39) + xslt + xmlContent.slice(39);
          }
          // validate data
-         if (eFattura.param.xml.xsd_filename) {
+         if (eFattura.param.xml.validate_file && eFattura.param.xml.xsd_filename) {
             var escapedString = xml_escapeString(eFattura.param.xml.xsd_filename);
             var result = Banana.Xml.validate(Banana.Xml.parse(xmlContent), escapedString);
             if (!result) {
@@ -78,7 +78,6 @@ function exec(inData, options) {
                msg = msg.replace("%1", Banana.Xml.errorString);
                Banana.console.debug("msg----------" + msg);
                Banana.document.addMessage(msg, eFattura.ID_ERR_XML_FILE_NONVALIDO);
-               continue;
             }
          }
          // save data
@@ -463,7 +462,7 @@ EFattura.prototype.convertParam = function (param) {
    currentParam.name = 'xml';
    currentParam.title = 'Opzioni XML';
    currentParam.editable = false;
-   currentParam.collapse = true;
+   //currentParam.collapse = true;
    convertedParam.data.push(currentParam);
 
    currentParam = {};
@@ -489,13 +488,25 @@ EFattura.prototype.convertParam = function (param) {
    convertedParam.data.push(currentParam);
 
    currentParam = {};
-   currentParam.name = 'open_file';
-   currentParam.title = 'Visualizza file immediatamente';
+   currentParam.name = 'validate_file';
+   currentParam.title = 'Valida file';
    currentParam.type = 'bool';
    currentParam.parentObject = 'xml';
-   currentParam.value = param.xml.open_file ? param.xml.open_file : true;
+   currentParam.value = param.xml.validate_file ? param.xml.validate_file : false;
    currentParam.readValue = function () {
-      param.xml.open_file = this.value;
+      param.xml.validate_file = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'xsd_filename';
+   currentParam.title = 'Schema di validazione';
+   currentParam.type = 'string';
+   currentParam.defaultvalue = '';
+   currentParam.parentObject = 'xml';
+   currentParam.value = param.xml.xsd_filename ? param.xml.xsd_filename : '';
+   currentParam.readValue = function () {
+      param.xml.xsd_filename = this.value;
    }
    convertedParam.data.push(currentParam);
 
@@ -511,14 +522,13 @@ EFattura.prototype.convertParam = function (param) {
    convertedParam.data.push(currentParam);
 
    currentParam = {};
-   currentParam.name = 'xsd_filename';
-   currentParam.title = 'Schema di validazione';
-   currentParam.type = 'string';
-   currentParam.defaultvalue = '';
+   currentParam.name = 'open_file';
+   currentParam.title = 'Visualizza file immediatamente';
+   currentParam.type = 'bool';
    currentParam.parentObject = 'xml';
-   currentParam.value = param.xml.xsd_filename ? param.xml.xsd_filename : '';
+   currentParam.value = param.xml.open_file ? param.xml.open_file : true;
    currentParam.readValue = function () {
-      param.xml.xsd_filename = this.value;
+      param.xml.open_file = this.value;
    }
    convertedParam.data.push(currentParam);
 
@@ -624,13 +634,11 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       this.addTextNode(nodePrezzoTotale, this.formatAmount(prezzoTotale), '4...21', 'DettaglioLinee/PrezzoTotale ' + msgHelpNoFattura);
       var nodeAliquotaIVA = nodeDettaglioLinee.addElement("AliquotaIVA");
       var aliquotaIva = Banana.SDecimal.round(invoiceObj.items[i].unit_price.vat_rate, { 'decimals': 2 });
-      //se la linea di dettaglio è una linea di descrizione con importo totale a 0, imposta il codice IVA al 22%, così non chiede il codice natura
-      if (invoiceObj.items[i].item_type === "note" && Banana.SDecimal.isZero(prezzoTotale) && Banana.SDecimal.isZero(aliquotaIva)) {
-         aliquotaIva = Banana.SDecimal.round("22", { 'decimals': 2 });
-      }
+
       //Aliquota IVA: nel caso di non applicabilità, il campo deve essere valorizzato a zero
       //if (invoiceObj.items[i].unit_price.vat_code.length>0) {
       this.addTextNode(nodeAliquotaIVA, aliquotaIva, '4...6', 'DettaglioLinee/AliquotaIVA ' + msgHelpNoFattura);
+
       if (Banana.SDecimal.isZero(aliquotaIva) && this.banDocument.table("VatCodes")) {
          //riprende il codice natura dalla tabella codici iva, colonna Gr1
          var natura = this.getCodiceNatura(invoiceObj.items[i].unit_price.vat_code);
@@ -640,12 +648,12 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
                msg = msg.replace("%1", natura);
                this.addMessage(msg, this.ID_ERR_NATURA_NOTVALID);
             }
+            var nodeNatura = nodeDettaglioLinee.addElement("Natura");
+            this.addTextNode(nodeNatura, natura, '2...4', 'DettaglioLinee/Natura ' + msgHelpNoFattura);
          }
-
-         var nodeNatura = nodeDettaglioLinee.addElement("Natura");
-         this.addTextNode(nodeNatura, natura, '2...4', 'DettaglioLinee/Natura ' + msgHelpNoFattura);
-         if (natura.length <= 0)
+         else {
             natura = "void";
+         }
          if (!imponibileAliquota0List[natura])
             imponibileAliquota0List[natura] = 0;
          var imponibileAliquota0 = invoiceObj.items[i].total_amount_vat_exclusive;
@@ -653,6 +661,7 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
       }
       //}
    }
+
    //Dati Riepilogo <1.N> blocco sempre obbligatorio contenente i dati di riepilogo per ogni aliquota IVA o natura
    for (var i = 0; i < invoiceObj.billing_info.total_vat_rates.length; i++) {
       var aliquotaIva = Banana.SDecimal.round(invoiceObj.billing_info.total_vat_rates[i].vat_rate, { 'decimals': 2 });
@@ -672,8 +681,6 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    }
    for (var codNatura in imponibileAliquota0List) {
       var imponibileAliquota0 = imponibileAliquota0List[codNatura];
-      if (Banana.SDecimal.isZero(imponibileAliquota0))
-         continue;
       var nodeDatiRiepilogo = nodeDatiBeniServizi.addElement("DatiRiepilogo")
       var nodeAliquotaIVA = nodeDatiRiepilogo.addElement("AliquotaIVA");
       this.addTextNode(nodeAliquotaIVA, "0.00", '4...6', 'DatiRiepilogo/AliquotaIVA ' + msgHelpNoFattura);
@@ -984,7 +991,7 @@ EFattura.prototype.getCodiceNatura = function (vatCode) {
             codNatura = 'N5';
          }
          else if (vatGr.indexOf("-REV") >= 0 && Banana.SDecimal.isZero(vatRate)) {
-            codNatura = 'N6';
+            codNatura = 'N6.1';
          }
       }
    }
@@ -1230,6 +1237,7 @@ EFattura.prototype.initParam = function () {
    this.param.xml.progressive = '1';
    this.param.xml.destination_folder = '';
    this.param.xml.open_file = false;
+   this.param.xml.validate_file = false;
    this.param.xml.xslt_filename = '';
    this.param.xml.xsd_filename = '';
 }
@@ -1523,6 +1531,8 @@ EFattura.prototype.verifyParam = function () {
       this.param.xml.destination_folder = '';
    if (!this.param.xml.open_file)
       this.param.xml.open_file = false;
+   if (!this.param.xml.validate_file)
+      this.param.xml.validate_file = false;
    if (!this.param.xml.xslt_filename)
       this.param.xml.xslt_filename = '';
    if (!this.param.xml.xsd_filename)

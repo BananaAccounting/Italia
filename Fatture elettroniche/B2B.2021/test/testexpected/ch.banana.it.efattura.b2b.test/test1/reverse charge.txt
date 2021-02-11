@@ -22,10 +22,6 @@
 \info{TITLE}{OUTPUT XML}
 \info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/REVERSE CHARGE.AC2}
 %************************************************************************
-%SCHEMA VALIDATION FORFILE:SCRIPT/../TEST/TESTCASES/REVERSE CHARGE.AC2
-%************************************************************************
-\textvalue{Validation result => Xml document is not valid against testcases/Schema\_del\_file\_xml\_FatturaPA\_versione\_1.2.1.xsd<html xmlns='http://www.w3.org/1999/xhtml/'><body><p>Content of element <span class='XQuery-keyword'>Natura</span> does not match its type definition: String content is not listed in the enumeration facet..</p></body></html> line 87}\\
-%************************************************************************
 \begin{xmlvalue}{Xml document}
 <?xml version="1.0" encoding="utf-8"?>
 
@@ -98,7 +94,7 @@
 <PrezzoUnitario>31.10</PrezzoUnitario>
 <PrezzoTotale>31.10</PrezzoTotale>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N6</Natura>
+<Natura>N6.1</Natura>
 </DettaglioLinee>
 <DettaglioLinee>
 <NumeroLinea>2</NumeroLinea>
@@ -106,7 +102,7 @@
 <PrezzoUnitario>5.70</PrezzoUnitario>
 <PrezzoTotale>5.70</PrezzoTotale>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N6</Natura>
+<Natura>N6.1</Natura>
 </DettaglioLinee>
 <DettaglioLinee>
 <NumeroLinea>3</NumeroLinea>
@@ -114,11 +110,10 @@
 <PrezzoUnitario>9.20</PrezzoUnitario>
 <PrezzoTotale>9.20</PrezzoTotale>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura/>
 </DettaglioLinee>
 <DatiRiepilogo>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N6</Natura>
+<Natura>N6.1</Natura>
 <ImponibileImporto>36.80</ImponibileImporto>
 <Imposta>0.00</Imposta>
 </DatiRiepilogo>
@@ -146,11 +141,11 @@
 <PrezzoUnitario>50.11</PrezzoUnitario>
 <PrezzoTotale>50.11</PrezzoTotale>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N6</Natura>
+<Natura>N6.1</Natura>
 </DettaglioLinee>
 <DatiRiepilogo>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N6</Natura>
+<Natura>N6.1</Natura>
 <ImponibileImporto>50.11</ImponibileImporto>
 <Imposta>0.00</Imposta>
 </DatiRiepilogo>
