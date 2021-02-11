@@ -54,8 +54,10 @@ function exec(inData, options) {
    }
 
    //output xml
+   var progressBar = Banana.application.progressBar;
+   progressBar.start(jsonCustomerList.length);
    for (var i in jsonCustomerList) {
-      Banana.console.debug(i);
+      progressBar.step("Elaborazione cliente " + i, 1);
       var jsonInvoices = jsonCustomerList[i];
       var xmlDocument = Banana.Xml.newDocument("root");
       eFattura.clearErrorList();
@@ -70,16 +72,20 @@ function exec(inData, options) {
          // validate data
          if (eFattura.param.xml.xsd_filename) {
             var escapedString = xml_escapeString(eFattura.param.xml.xsd_filename);
-            if (!Banana.Xml.validate(Banana.Xml.parse(xmlContent), escapedString)) {
-               var msg = eFattura.getErrorMessage(eFattura.ID_ERR_FILE_NOTVALID);
+            var result = Banana.Xml.validate(Banana.Xml.parse(xmlContent), escapedString);
+            if (!result) {
+               var msg = eFattura.getErrorMessage(eFattura.ID_ERR_XML_FILE_NONVALIDO);
                msg = msg.replace("%1", Banana.Xml.errorString);
-               eFattura.addMessage(msg, eFattura.ID_ERR_FILE_NOTVALID);
-               return "@Cancel";
+               Banana.console.debug("msg----------" + msg);
+               Banana.document.addMessage(msg, eFattura.ID_ERR_XML_FILE_NONVALIDO);
+               continue;
             }
          }
+         // save data
          eFattura.saveFile(xmlContent, "xml");
       }
    }
+   progressBar.finish();
 }
 
 /*function onCurrentIndexChanged_selection(index, value, params) {
@@ -443,10 +449,10 @@ EFattura.prototype.convertParam = function (param) {
    currentParam.title = 'Tipo regime fiscale';
    currentParam.type = 'combobox';
    currentParam.parentObject = 'contribuente';
-   currentParam.value = param.contribuente.tipoRegimeFiscale ? param.contribuente.tipoRegimeFiscale : 'persona fisica';
+   currentParam.value = param.contribuente.tipoRegimeFiscale ? param.contribuente.tipoRegimeFiscale : '';
    currentParam.items = ['RF01', 'RF02', 'RF03', 'RF04', 'RF05', 'RF06', 'RF07', 'RF08', 'RF09', 'RF10', 'RF11', 'RF12', 'RF13', 'RF14', 'RF15', 'RF16', 'RF17', 'RF18', 'RF19'];
    currentParam.readValue = function () {
-      param.contribuente.tipoContribuente = this.value;
+      param.contribuente.tipoRegimeFiscale = this.value;
    }
    convertedParam.data.push(currentParam);
 
@@ -457,6 +463,7 @@ EFattura.prototype.convertParam = function (param) {
    currentParam.name = 'xml';
    currentParam.title = 'Opzioni XML';
    currentParam.editable = false;
+   currentParam.collapse = true;
    convertedParam.data.push(currentParam);
 
    currentParam = {};
@@ -803,7 +810,7 @@ Come precisato nel provvedimento Agenzia delle Entrate 30 aprile 2018 n. 89757, 
    }
    //[1.2.1.3] Anagrafica 
    var nodeAnagrafica = nodeDatiAnagrafici.addElement("Anagrafica");
-   if (this.param.contribuente.tipoContribuente === 0) {
+   if (this.param.contribuente.tipoContribuente === 'persona fisica') {
       var nodeNome = nodeAnagrafica.addElement("Nome");
       var nodeCognome = nodeAnagrafica.addElement("Cognome");
 
@@ -811,16 +818,13 @@ Come precisato nel provvedimento Agenzia delle Entrate 30 aprile 2018 n. 89757, 
       this.addTextNode(nodeCognome, this.param.contribuente.cognome, '1...60', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Cognome>' + msgHelpNoFattura);
 
    }
-   else if (this.param.contribuente.tipoContribuente === 1) {
+   else if (this.param.contribuente.tipoContribuente === 'persona giuridica') {
       var nodeDenominazione = nodeAnagrafica.addElement("Denominazione");
       this.addTextNode(nodeDenominazione, this.param.contribuente.societa, '1...80', '<CedentePrestatore><DatiAnagrafici><Anagrafica><Denominazione>' + msgHelpNoFattura);
    }
 
    var nodeRegimeFiscale = nodeDatiAnagrafici.addElement("RegimeFiscale");
-   var regFis = 'RF';
-   if (this.param.contribuente.tipoRegimeFiscale + 1 < 10)
-      regFis += '0';
-   regFis += this.param.contribuente.tipoRegimeFiscale + 1;
+   var regFis = this.param.contribuente.tipoRegimeFiscale;
    this.addTextNode(nodeRegimeFiscale, regFis, '4', '<CedentePrestatore><DatiAnagrafici><RegimeFiscale>' + msgHelpNoFattura);
    var nodeSede = nodeCedentePrestatore.addElement("Sede");
    var nodeIndirizzo = nodeSede.addElement("Indirizzo");
@@ -1207,7 +1211,7 @@ EFattura.prototype.initParam = function () {
 
    /* dati contribuente */
    this.param.contribuente = {};
-   this.param.contribuente.tipoContribuente = 0;
+   this.param.contribuente.tipoContribuente = 'persona fisica';
    this.param.contribuente.codiceFiscale = '';
    this.param.contribuente.partitaIva = '';
    this.param.contribuente.societa = '';
@@ -1226,8 +1230,8 @@ EFattura.prototype.initParam = function () {
    this.param.xml.progressive = '1';
    this.param.xml.destination_folder = '';
    this.param.xml.open_file = false;
-   this.param.xml.xslt_filename = 'https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.1/Foglio_di_stile_fatturaordinaria_v1.2.1.xsl';
-   this.param.xml.xsd_filename = 'https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.1/Schema_del_file_xml_FatturaPA_versione_1.2.1.xsd';
+   this.param.xml.xslt_filename = '';
+   this.param.xml.xsd_filename = '';
 }
 
 EFattura.prototype.initSchemarefs = function () {
@@ -1485,7 +1489,7 @@ EFattura.prototype.verifyParam = function () {
    if (!this.param.contribuente)
       this.param.contribuente = {};
    if (!this.param.contribuente.tipoContribuente)
-      this.param.contribuente.tipoContribuente = 0;
+      this.param.contribuente.tipoContribuente = 'persona fisica';
    if (!this.param.contribuente.codiceFiscale)
       this.param.contribuente.codiceFiscale = '';
    if (!this.param.contribuente.partitaIva)

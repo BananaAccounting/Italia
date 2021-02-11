@@ -115,16 +115,33 @@ EFatturaTest.prototype.getParam1 = function() {
    //Param1
    //Set params (normally are taken from settings)
    var param = {};
-   param.periodAll = true;
-   param.selection = 0; //0=singola fattura,1=fatture singolo cliente,2=tutto
-   param.selection_customer = ''; //no cliente
-   param.selection_invoice = ''; //no fattura
+   param.period = false;
+   param.periodStartDate = '';
+   param.periodEndDate = '';
+   param.selection = false;
+   param.selection_customer = '';
+   param.selection_invoice = '';
    
+   param.contribuente = {};
+   param.contribuente.tipoContribuente = 'persona fisica';
+   param.contribuente.codiceFiscale = 'SLTSFN72M13B950Y';
+   param.contribuente.partitaIva = '01433000500';
+   param.contribuente.societa = '';
+   param.contribuente.cognome = 'CLIENTE';
+   param.contribuente.nome = 'INVENTATO';
+   param.contribuente.indirizzo = 'Via delle Libertà';
+   param.contribuente.ncivico = '84';
+   param.contribuente.cap = '56023';
+   param.contribuente.comune = 'ZAMBRA DI CASCINA PI';
+   param.contribuente.provincia = 'PI';
+   param.contribuente.nazione = 'IT';
+   param.contribuente.tipoRegimeFiscale = 'RF01';
+
    param.xml = {};
    param.xml.progressive = '1';
    param.xml.open_file = false;
-   param.xml.xslt_filename = '';
-   param.xml.xsd_filename = '';
+   param.xml.xslt_filename = 'fatturaPA_v1.2.1.xsl';
+   param.xml.xsd_filename = 'testcases/Schema_del_file_xml_FatturaPA_versione_1.2.1.xsd';
 
    return param;
 }
@@ -133,16 +150,33 @@ EFatturaTest.prototype.getParam2 = function() {
    //Param1
    //Set params (normally are taken from settings)
    var param = {};
-   param.periodAll = true;
-   param.selection = 1; //0=singola fattura,1=fatture singolo cliente,2=tutto
-   param.selection_customer = ''; //no cliente
-   param.selection_invoice = ''; //no fattura
+   param.period = false;
+   param.periodStartDate = '';
+   param.periodEndDate = '';
+   param.selection = false;
+   param.selection_customer = '';
+   param.selection_invoice = '';
+
+   param.contribuente = {};
+   param.contribuente.tipoContribuente = 'persona giuridica';
+   param.contribuente.codiceFiscale = 'SLTSFN72M13B950Y';
+   param.contribuente.partitaIva = '01433000500';
+   param.contribuente.societa = 'CLIENTE INVENTATO';
+   param.contribuente.cognome = '';
+   param.contribuente.nome = '';
+   param.contribuente.indirizzo = 'Via delle Libertà';
+   param.contribuente.ncivico = '84';
+   param.contribuente.cap = '56023';
+   param.contribuente.comune = 'ZAMBRA DI CASCINA PI';
+   param.contribuente.provincia = 'PI';
+   param.contribuente.nazione = 'IT';
+   param.contribuente.tipoRegimeFiscale = 'RF01';
    
    param.xml = {};
    param.xml.progressive = '1';
    param.xml.open_file = false;
    param.xml.xslt_filename = '';
-   param.xml.xsd_filename = '';
+   param.xml.xsd_filename = 'testcases/Schema_del_file_xml_FatturaPA_versione_1.2.1.xsd';
 
    return param;
 }
@@ -165,12 +199,7 @@ EFatturaTest.prototype.printReports = function(idParam) {
          //if (nAnno.length >= 10)
          //   param.annoSelezionato = nAnno.substring(0, 4);
          //this.testLogger.addInfo("ANNO", param.annoSelezionato);
-         if (parseInt(param.selection) === 0)
-            this.printSingleInvoice(fileName, banDocument, param);
-         else if (parseInt(param.selection) === 1)
-            this.printSingleCustomer(fileName, banDocument, param);
-         else if (parseInt(param.selection) === 2)
-            this.printAll(fileName, banDocument, param);
+         this.outputXml(fileName, banDocument, param);
       } else {
          this.testLogger.addFatalError("File not found: " + fileName);
       }
@@ -183,14 +212,14 @@ EFatturaTest.prototype.printReports = function(idParam) {
    this.progressBar.finish();
 }
 
-EFatturaTest.prototype.printAll = function(fileName, banDocument, param) {
+EFatturaTest.prototype.outputXml = function(fileName, banDocument, param) {
 
    var eFattura = new EFattura(banDocument);
    
    eFattura.setParam(param);
 
    this.testLogger.addComment('************************************************************************');
-   this.testLogger.addInfo("TITLE", "STAMPA DI TUTTO ");
+   this.testLogger.addInfo("TITLE", "OUTPUT XML");
    this.testLogger.addInfo("FILENAME",  fileName.toUpperCase());
    // this.testLogger.addJson("Param", JSON.stringify(param))
 
@@ -202,88 +231,11 @@ EFatturaTest.prototype.printAll = function(fileName, banDocument, param) {
       //xml
       var xmlDocument = Banana.Xml.newDocument("root");
       var output = eFattura.createXml(jsonInvoices, xmlDocument, false);
-      //this.xml_validate_test(output, '../Schema_del_file_xml_FatturaPA_versione_1.2.xsd',  "STAMPA DI TUTTO " + fileName.toUpperCase());
+      if (param.xsd_filename) {
+         this.xml_validate_test(output, param.xsd_filename, "STAMPA DI TUTTO " + fileName.toUpperCase());
+      }
       this.testLogger.addComment('************************************************************************');
       this.testLogger.addXml("Xml document", output);
-   }
-}
-
-EFatturaTest.prototype.printSingleCustomer = function(fileName, banDocument, param) {
-
-   var eFattura = new EFattura(banDocument);
-   var customerNumberList = eFattura.getCustomerList();
-   
-   for (var i=0; i<customerNumberList.length;i++) {
-      param.selection = 1;
-      param.selection_customer = eFattura.getCustomerId(customerNumberList[i]);
-      eFattura.setParam(param);
-
-      this.testLogger.addComment('************************************************************************');
-      this.testLogger.addInfo("TITLE", "STAMPA DI PIÙ FATTURE PER CLIENTE ");
-      this.testLogger.addInfo("FILENAME",  fileName.toUpperCase());
-      this.testLogger.addInfo("PARAM",  "FATTURE CLIENTE " + param.selection_customer);
-      // this.testLogger.addJson("Param", JSON.stringify(param))
-
-      var jsonCustomerList = eFattura.loadData();
-
-      for (var j in jsonCustomerList) {
-         var jsonInvoices = jsonCustomerList[j];
-
-         //xml
-         var xmlDocument = Banana.Xml.newDocument("root");
-         var output = eFattura.createXml(jsonInvoices, xmlDocument, false);
-         //this.xml_validate_test(output, '../Schema_del_file_xml_FatturaPA_versione_1.2.xsd',  "STAMPA DI PIÙ FATTURE " + param.selection_customer + " " + fileName.toUpperCase());
-         this.testLogger.addComment('************************************************************************');
-         this.testLogger.addXml("Xml document", output);
-      }
-   }
-}
-
-EFatturaTest.prototype.printSingleInvoice = function(fileName, banDocument, param) {
-
-   var eFattura = new EFattura(banDocument);
-   eFattura.loadData();
-   var invoiceList = [];
-   if (eFattura.journalInvoices) {
-      for (var i = 0; i < eFattura.journalInvoices.rowCount; i++) {
-         var tRow = eFattura.journalInvoices.row(i);
-         if (tRow.value('ObjectType') === 'InvoiceDocument' && tRow.value('Invoice').length > 0) {
-            var invoiceId = tRow.value('Invoice').toString();
-            if (invoiceList.indexOf(invoiceId) < 0)
-               invoiceList.push(invoiceId);
-         }
-      }
-   }
-   
-   for (var i=0; i<invoiceList.length;i++) {
-      param.selection = 0;
-      param.selection_invoice = invoiceList[i];
-      eFattura.setParam(param);
-      eFattura.clearErrorList();
-      
-      this.testLogger.addComment('************************************************************************');
-      this.testLogger.addInfo("TITLE", "STAMPA DI UNA SINGOLA FATTURA");
-      this.testLogger.addInfo("FILENAME",  fileName.toUpperCase());
-      this.testLogger.addInfo("PARAM",  "FATTURA NO " + param.selection_invoice);
-      // this.testLogger.addJson("Param", JSON.stringify(param))
-
-      var jsonCustomerList = eFattura.loadData();
-
-      for (var j in jsonCustomerList) {
-         var jsonInvoices = jsonCustomerList[j];
-
-         //xml
-         var xmlDocument = Banana.Xml.newDocument("root");
-         var output = eFattura.createXml(jsonInvoices, xmlDocument, false);
-         //this.xml_validate_test(output, '../Schema_del_file_xml_FatturaPA_versione_1.2.xsd', "STAMPA SINGOLA FATTURA " + param.selection_invoice + " " + fileName.toUpperCase());
-         this.testLogger.addComment('************************************************************************');
-         this.testLogger.addXml("Xml document", output);
-      }
-      
-      //errors
-      for (var j = 0; j < eFattura.errorList.length; j++) {
-         Test.logger.addText(fileName.toUpperCase() + " - " + eFattura.errorList[j]);
-      }
    }
 }
 

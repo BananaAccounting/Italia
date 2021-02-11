@@ -19,9 +19,8 @@
 \newenvironment{test}[1]{\section*{Test case: #1}}{}
 %Begin test data
 %************************************************************************
-\info{TITLE}{STAMPA DI PIÙ FATTURE PER CLIENTE }
+\info{TITLE}{OUTPUT XML}
 \info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2021.AC2}
-\info{PARAM}{FATTURE CLIENTE 31001}
 %************************************************************************
 \begin{xmlvalue}{Xml document}
 <?xml version="1.0" encoding="utf-8"?>
@@ -50,7 +49,8 @@
 <RegimeFiscale>RF01</RegimeFiscale>
 </DatiAnagrafici>
 <Sede>
-<Indirizzo>Via delle Libertà n. 84</Indirizzo>
+<Indirizzo>Via delle Libertà</Indirizzo>
+<NumeroCivico>84</NumeroCivico>
 <CAP>56023</CAP>
 <Comune>ZAMBRA DI CASCINA PI</Comune>
 <Provincia>PI</Provincia>
@@ -140,7 +140,7 @@
 <PrezzoUnitario>80.00</PrezzoUnitario>
 <PrezzoTotale>80.00</PrezzoTotale>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N2</Natura>
+<Natura>N2.1</Natura>
 </DettaglioLinee>
 <DettaglioLinee>
 <NumeroLinea>5</NumeroLinea>
@@ -168,7 +168,7 @@
 </DatiRiepilogo>
 <DatiRiepilogo>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N2</Natura>
+<Natura>N2.1</Natura>
 <ImponibileImporto>80.00</ImponibileImporto>
 <Imposta>0.00</Imposta>
 </DatiRiepilogo>
@@ -182,10 +182,6 @@
 </FatturaElettronicaBody>
 </p:FatturaElettronica>
 \end{xmlvalue}
-%************************************************************************
-\info{TITLE}{STAMPA DI PIÙ FATTURE PER CLIENTE }
-\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/INVENTATOIVA2021.AC2}
-\info{PARAM}{FATTURE CLIENTE 31002}
 %************************************************************************
 \begin{xmlvalue}{Xml document}
 <?xml version="1.0" encoding="utf-8"?>
@@ -215,7 +211,8 @@
 <RegimeFiscale>RF01</RegimeFiscale>
 </DatiAnagrafici>
 <Sede>
-<Indirizzo>Via delle Libertà n. 84</Indirizzo>
+<Indirizzo>Via delle Libertà</Indirizzo>
+<NumeroCivico>84</NumeroCivico>
 <CAP>56023</CAP>
 <Comune>ZAMBRA DI CASCINA PI</Comune>
 <Provincia>PI</Provincia>

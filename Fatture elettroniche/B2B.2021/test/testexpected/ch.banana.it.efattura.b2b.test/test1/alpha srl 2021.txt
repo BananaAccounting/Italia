@@ -19,9 +19,8 @@
 \newenvironment{test}[1]{\section*{Test case: #1}}{}
 %Begin test data
 %************************************************************************
-\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
+\info{TITLE}{OUTPUT XML}
 \info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/ALPHA SRL 2021.AC2}
-\info{PARAM}{FATTURA NO 123}
 %************************************************************************
 \begin{xmlvalue}{Xml document}
 <?xml version="1.0" encoding="utf-8"?>
@@ -31,7 +30,7 @@
 <DatiTrasmissione>
 <IdTrasmittente>
 <IdPaese>IT</IdPaese>
-<IdCodice>LBSCLD30P44F205U</IdCodice>
+<IdCodice>SLTSFN72M13B950Y</IdCodice>
 </IdTrasmittente>
 <ProgressivoInvio>00001</ProgressivoInvio>
 <FormatoTrasmissione>FPA12</FormatoTrasmissione>
@@ -42,21 +41,21 @@
 <DatiAnagrafici>
 <IdFiscaleIVA>
 <IdPaese>IT</IdPaese>
-<IdCodice>0118710373</IdCodice>
+<IdCodice>01433000500</IdCodice>
 </IdFiscaleIVA>
-<CodiceFiscale>LBSCLD30P44F205U</CodiceFiscale>
+<CodiceFiscale>SLTSFN72M13B950Y</CodiceFiscale>
 <Anagrafica>
-<Nome>Claudia</Nome>
-<Cognome>Albisetti&amp;Santi</Cognome>
+<Nome>INVENTATO</Nome>
+<Cognome>CLIENTE</Cognome>
 </Anagrafica>
 <RegimeFiscale>RF01</RegimeFiscale>
 </DatiAnagrafici>
 <Sede>
-<Indirizzo>viale Stazione</Indirizzo>
-<NumeroCivico>123</NumeroCivico>
-<CAP>20121</CAP>
-<Comune>Milano</Comune>
-<Provincia>MI</Provincia>
+<Indirizzo>Via delle Libertà</Indirizzo>
+<NumeroCivico>84</NumeroCivico>
+<CAP>56023</CAP>
+<Comune>ZAMBRA DI CASCINA PI</Comune>
+<Provincia>PI</Provincia>
 <Nazione>IT</Nazione>
 </Sede>
 </CedentePrestatore>
@@ -116,70 +115,6 @@
 </DatiRiepilogo>
 </DatiBeniServizi>
 </FatturaElettronicaBody>
-</p:FatturaElettronica>
-\end{xmlvalue}
-%************************************************************************
-\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
-\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/ALPHA SRL 2021.AC2}
-\info{PARAM}{FATTURA NO 125}
-%************************************************************************
-\begin{xmlvalue}{Xml document}
-<?xml version="1.0" encoding="utf-8"?>
-
-<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPA12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
-<FatturaElettronicaHeader>
-<DatiTrasmissione>
-<IdTrasmittente>
-<IdPaese>IT</IdPaese>
-<IdCodice>LBSCLD30P44F205U</IdCodice>
-</IdTrasmittente>
-<ProgressivoInvio>00001</ProgressivoInvio>
-<FormatoTrasmissione>FPA12</FormatoTrasmissione>
-<CodiceDestinatario>0000000</CodiceDestinatario>
-<PECDestinatario>12345678</PECDestinatario>
-</DatiTrasmissione>
-<CedentePrestatore>
-<DatiAnagrafici>
-<IdFiscaleIVA>
-<IdPaese>IT</IdPaese>
-<IdCodice>0118710373</IdCodice>
-</IdFiscaleIVA>
-<CodiceFiscale>LBSCLD30P44F205U</CodiceFiscale>
-<Anagrafica>
-<Nome>Claudia</Nome>
-<Cognome>Albisetti&amp;Santi</Cognome>
-</Anagrafica>
-<RegimeFiscale>RF01</RegimeFiscale>
-</DatiAnagrafici>
-<Sede>
-<Indirizzo>viale Stazione</Indirizzo>
-<NumeroCivico>123</NumeroCivico>
-<CAP>20121</CAP>
-<Comune>Milano</Comune>
-<Provincia>MI</Provincia>
-<Nazione>IT</Nazione>
-</Sede>
-</CedentePrestatore>
-<CessionarioCommittente>
-<DatiAnagrafici>
-<IdFiscaleIVA>
-<IdPaese>IT</IdPaese>
-<IdCodice>01629650167</IdCodice>
-</IdFiscaleIVA>
-<Anagrafica>
-<Nome>Dario</Nome>
-<Cognome>Bianchetti</Cognome>
-</Anagrafica>
-</DatiAnagrafici>
-<Sede>
-<Indirizzo>Via Torino n.25</Indirizzo>
-<CAP>56010</CAP>
-<Comune>Vicopisano</Comune>
-<Provincia>LI</Provincia>
-<Nazione>IT</Nazione>
-</Sede>
-</CessionarioCommittente>
-</FatturaElettronicaHeader>
 <FatturaElettronicaBody>
 <DatiGenerali>
 <DatiGeneraliDocumento>
@@ -221,70 +156,6 @@
 </DatiRiepilogo>
 </DatiBeniServizi>
 </FatturaElettronicaBody>
-</p:FatturaElettronica>
-\end{xmlvalue}
-%************************************************************************
-\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
-\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/ALPHA SRL 2021.AC2}
-\info{PARAM}{FATTURA NO 126}
-%************************************************************************
-\begin{xmlvalue}{Xml document}
-<?xml version="1.0" encoding="utf-8"?>
-
-<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPA12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
-<FatturaElettronicaHeader>
-<DatiTrasmissione>
-<IdTrasmittente>
-<IdPaese>IT</IdPaese>
-<IdCodice>LBSCLD30P44F205U</IdCodice>
-</IdTrasmittente>
-<ProgressivoInvio>00001</ProgressivoInvio>
-<FormatoTrasmissione>FPA12</FormatoTrasmissione>
-<CodiceDestinatario>0000000</CodiceDestinatario>
-<PECDestinatario>12345678</PECDestinatario>
-</DatiTrasmissione>
-<CedentePrestatore>
-<DatiAnagrafici>
-<IdFiscaleIVA>
-<IdPaese>IT</IdPaese>
-<IdCodice>0118710373</IdCodice>
-</IdFiscaleIVA>
-<CodiceFiscale>LBSCLD30P44F205U</CodiceFiscale>
-<Anagrafica>
-<Nome>Claudia</Nome>
-<Cognome>Albisetti&amp;Santi</Cognome>
-</Anagrafica>
-<RegimeFiscale>RF01</RegimeFiscale>
-</DatiAnagrafici>
-<Sede>
-<Indirizzo>viale Stazione</Indirizzo>
-<NumeroCivico>123</NumeroCivico>
-<CAP>20121</CAP>
-<Comune>Milano</Comune>
-<Provincia>MI</Provincia>
-<Nazione>IT</Nazione>
-</Sede>
-</CedentePrestatore>
-<CessionarioCommittente>
-<DatiAnagrafici>
-<IdFiscaleIVA>
-<IdPaese>IT</IdPaese>
-<IdCodice>01629650167</IdCodice>
-</IdFiscaleIVA>
-<Anagrafica>
-<Nome>Dario</Nome>
-<Cognome>Bianchetti</Cognome>
-</Anagrafica>
-</DatiAnagrafici>
-<Sede>
-<Indirizzo>Via Torino n.25</Indirizzo>
-<CAP>56010</CAP>
-<Comune>Vicopisano</Comune>
-<Provincia>LI</Provincia>
-<Nazione>IT</Nazione>
-</Sede>
-</CessionarioCommittente>
-</FatturaElettronicaHeader>
 <FatturaElettronicaBody>
 <DatiGenerali>
 <DatiGeneraliDocumento>
@@ -324,10 +195,6 @@
 </p:FatturaElettronica>
 \end{xmlvalue}
 %************************************************************************
-\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
-\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/ALPHA SRL 2021.AC2}
-\info{PARAM}{FATTURA NO 124}
-%************************************************************************
 \begin{xmlvalue}{Xml document}
 <?xml version="1.0" encoding="utf-8"?>
 
@@ -336,7 +203,7 @@
 <DatiTrasmissione>
 <IdTrasmittente>
 <IdPaese>IT</IdPaese>
-<IdCodice>LBSCLD30P44F205U</IdCodice>
+<IdCodice>SLTSFN72M13B950Y</IdCodice>
 </IdTrasmittente>
 <ProgressivoInvio>00001</ProgressivoInvio>
 <FormatoTrasmissione>FPR12</FormatoTrasmissione>
@@ -346,21 +213,21 @@
 <DatiAnagrafici>
 <IdFiscaleIVA>
 <IdPaese>IT</IdPaese>
-<IdCodice>0118710373</IdCodice>
+<IdCodice>01433000500</IdCodice>
 </IdFiscaleIVA>
-<CodiceFiscale>LBSCLD30P44F205U</CodiceFiscale>
+<CodiceFiscale>SLTSFN72M13B950Y</CodiceFiscale>
 <Anagrafica>
-<Nome>Claudia</Nome>
-<Cognome>Albisetti&amp;Santi</Cognome>
+<Nome>INVENTATO</Nome>
+<Cognome>CLIENTE</Cognome>
 </Anagrafica>
 <RegimeFiscale>RF01</RegimeFiscale>
 </DatiAnagrafici>
 <Sede>
-<Indirizzo>viale Stazione</Indirizzo>
-<NumeroCivico>123</NumeroCivico>
-<CAP>20121</CAP>
-<Comune>Milano</Comune>
-<Provincia>MI</Provincia>
+<Indirizzo>Via delle Libertà</Indirizzo>
+<NumeroCivico>84</NumeroCivico>
+<CAP>56023</CAP>
+<Comune>ZAMBRA DI CASCINA PI</Comune>
+<Provincia>PI</Provincia>
 <Nazione>IT</Nazione>
 </Sede>
 </CedentePrestatore>
@@ -803,65 +670,6 @@
 </DatiRiepilogo>
 </DatiBeniServizi>
 </FatturaElettronicaBody>
-</p:FatturaElettronica>
-\end{xmlvalue}
-%************************************************************************
-\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
-\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/ALPHA SRL 2021.AC2}
-\info{PARAM}{FATTURA NO 128}
-%************************************************************************
-\begin{xmlvalue}{Xml document}
-<?xml version="1.0" encoding="utf-8"?>
-
-<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
-<FatturaElettronicaHeader>
-<DatiTrasmissione>
-<IdTrasmittente>
-<IdPaese>IT</IdPaese>
-<IdCodice>LBSCLD30P44F205U</IdCodice>
-</IdTrasmittente>
-<ProgressivoInvio>00001</ProgressivoInvio>
-<FormatoTrasmissione>FPR12</FormatoTrasmissione>
-<CodiceDestinatario>1234567</CodiceDestinatario>
-</DatiTrasmissione>
-<CedentePrestatore>
-<DatiAnagrafici>
-<IdFiscaleIVA>
-<IdPaese>IT</IdPaese>
-<IdCodice>0118710373</IdCodice>
-</IdFiscaleIVA>
-<CodiceFiscale>LBSCLD30P44F205U</CodiceFiscale>
-<Anagrafica>
-<Nome>Claudia</Nome>
-<Cognome>Albisetti&amp;Santi</Cognome>
-</Anagrafica>
-<RegimeFiscale>RF01</RegimeFiscale>
-</DatiAnagrafici>
-<Sede>
-<Indirizzo>viale Stazione</Indirizzo>
-<NumeroCivico>123</NumeroCivico>
-<CAP>20121</CAP>
-<Comune>Milano</Comune>
-<Provincia>MI</Provincia>
-<Nazione>IT</Nazione>
-</Sede>
-</CedentePrestatore>
-<CessionarioCommittente>
-<DatiAnagrafici>
-<CodiceFiscale>BNCDRA81A03F205C</CodiceFiscale>
-<Anagrafica>
-<Denominazione>Fratelli Luisoni</Denominazione>
-</Anagrafica>
-</DatiAnagrafici>
-<Sede>
-<Indirizzo>Via Sicilia, 50</Indirizzo>
-<CAP>56010</CAP>
-<Comune>Vicopisano</Comune>
-<Provincia>LI</Provincia>
-<Nazione>IT</Nazione>
-</Sede>
-</CessionarioCommittente>
-</FatturaElettronicaHeader>
 <FatturaElettronicaBody>
 <DatiGenerali>
 <DatiGeneraliDocumento>
@@ -919,65 +727,6 @@
 </DatiRiepilogo>
 </DatiBeniServizi>
 </FatturaElettronicaBody>
-</p:FatturaElettronica>
-\end{xmlvalue}
-%************************************************************************
-\info{TITLE}{STAMPA DI UNA SINGOLA FATTURA}
-\info{FILENAME}{FILE:SCRIPT/../TEST/TESTCASES/ALPHA SRL 2021.AC2}
-\info{PARAM}{FATTURA NO 129}
-%************************************************************************
-\begin{xmlvalue}{Xml document}
-<?xml version="1.0" encoding="utf-8"?>
-
-<p:FatturaElettronica xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xsi:schemaLocation=" http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
-<FatturaElettronicaHeader>
-<DatiTrasmissione>
-<IdTrasmittente>
-<IdPaese>IT</IdPaese>
-<IdCodice>LBSCLD30P44F205U</IdCodice>
-</IdTrasmittente>
-<ProgressivoInvio>00001</ProgressivoInvio>
-<FormatoTrasmissione>FPR12</FormatoTrasmissione>
-<CodiceDestinatario>1234567</CodiceDestinatario>
-</DatiTrasmissione>
-<CedentePrestatore>
-<DatiAnagrafici>
-<IdFiscaleIVA>
-<IdPaese>IT</IdPaese>
-<IdCodice>0118710373</IdCodice>
-</IdFiscaleIVA>
-<CodiceFiscale>LBSCLD30P44F205U</CodiceFiscale>
-<Anagrafica>
-<Nome>Claudia</Nome>
-<Cognome>Albisetti&amp;Santi</Cognome>
-</Anagrafica>
-<RegimeFiscale>RF01</RegimeFiscale>
-</DatiAnagrafici>
-<Sede>
-<Indirizzo>viale Stazione</Indirizzo>
-<NumeroCivico>123</NumeroCivico>
-<CAP>20121</CAP>
-<Comune>Milano</Comune>
-<Provincia>MI</Provincia>
-<Nazione>IT</Nazione>
-</Sede>
-</CedentePrestatore>
-<CessionarioCommittente>
-<DatiAnagrafici>
-<CodiceFiscale>BNCDRA81A03F205C</CodiceFiscale>
-<Anagrafica>
-<Denominazione>Fratelli Luisoni</Denominazione>
-</Anagrafica>
-</DatiAnagrafici>
-<Sede>
-<Indirizzo>Via Sicilia, 50</Indirizzo>
-<CAP>56010</CAP>
-<Comune>Vicopisano</Comune>
-<Provincia>LI</Provincia>
-<Nazione>IT</Nazione>
-</Sede>
-</CessionarioCommittente>
-</FatturaElettronicaHeader>
 <FatturaElettronicaBody>
 <DatiGenerali>
 <DatiGeneraliDocumento>
