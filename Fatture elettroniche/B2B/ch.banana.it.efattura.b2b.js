@@ -503,7 +503,7 @@ EFattura.prototype.convertParam = function (param, includiOpzioniStampa) {
 
    currentParam = {};
    currentParam.name = 'validate_file';
-   currentParam.title = 'Valida file';
+   currentParam.title = 'Convalida file';
    currentParam.type = 'bool';
    currentParam.parentObject = 'xml';
    currentParam.value = param.xml.validate_file ? param.xml.validate_file : false;
@@ -590,8 +590,9 @@ EFattura.prototype.createXmlBody = function (jsonInvoice, nodeRoot) {
    //tipodocumento
    var docType = 'TD01';
    for (var key in invoiceObj.parameters) {
-      if (key.startsWith('TD') && key.len > 2)
-         docType = key.substr(3);
+      if (key.startsWith('TD') && key.length == 4) {
+         docType = key;
+      }
    }
 
    //nel caso il tipodocumento non sia un tipo ammesso, segnala l'errore
