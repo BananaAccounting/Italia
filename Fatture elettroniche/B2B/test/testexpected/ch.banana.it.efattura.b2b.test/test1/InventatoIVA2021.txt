@@ -244,7 +244,7 @@
 <FatturaElettronicaBody>
 <DatiGenerali>
 <DatiGeneraliDocumento>
-<TipoDocumento>TD01</TipoDocumento>
+<TipoDocumento>TD02</TipoDocumento>
 <Divisa>EUR</Divisa>
 <Data>2021-02-02</Data>
 <Numero>11</Numero>
@@ -254,7 +254,7 @@
 <DatiBeniServizi>
 <DettaglioLinee>
 <NumeroLinea>1</NumeroLinea>
-<Descrizione>Fattura no 11</Descrizione>
+<Descrizione>Anticipo fattura</Descrizione>
 <PrezzoUnitario>200.00</PrezzoUnitario>
 <PrezzoTotale>200.00</PrezzoTotale>
 <AliquotaIVA>0.00</AliquotaIVA>
@@ -271,7 +271,7 @@
 <FatturaElettronicaBody>
 <DatiGenerali>
 <DatiGeneraliDocumento>
-<TipoDocumento>TD01</TipoDocumento>
+<TipoDocumento>TD04</TipoDocumento>
 <Divisa>EUR</Divisa>
 <Data>2021-02-02</Data>
 <Numero>11NC</Numero>
