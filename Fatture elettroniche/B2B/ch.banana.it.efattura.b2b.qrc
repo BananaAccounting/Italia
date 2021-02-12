@@ -2,6 +2,7 @@
 	<qresource>
 		<file alias="manifest.json">ch.banana.it.efattura.b2b.manifest.json</file>
 		<file>ch.banana.it.efattura.b2b.js</file>
+        <file>ch.banana.it.efattura.b2b.contribuente.js</file>
         <file>ch.banana.it.efattura.b2b.xml.js</file>
 	</qresource>
 </RCC>

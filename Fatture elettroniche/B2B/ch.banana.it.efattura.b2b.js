@@ -16,8 +16,8 @@
 // @api = 1.0
 // @pubdate = 2021-02-10
 // @publisher = Banana.ch SA
-// @description = Esporta fattura elettronica XML...
-// @description.it = Esporta fattura elettronica XML...
+// @description = Esporta e-fattura XML...
+// @description.it = Esporta e-fattura XML...
 // @doctype = *
 // @task = app.command
 // @inputdatasource = none
@@ -38,12 +38,12 @@ function exec(inData, options) {
       param = JSON.parse(inData);
    }
    else if (options && options.useLastSettings) {
-      param = JSON.parse(Banana.document.getScriptSettings());
+      param = JSON.parse(Banana.document.getScriptSettings("efatturaXMLItalia"));
    }
    else {
       if (!settingsDialog())
          return "@Cancel";
-      param = JSON.parse(Banana.document.getScriptSettings());
+      param = JSON.parse(Banana.document.getScriptSettings("efatturaXMLItalia"));
    }
 
    eFattura.setParam(param);
@@ -109,14 +109,14 @@ function settingsDialog() {
    if (!eFattura.verifyBananaVersion())
       return false;
 
-   var savedParam = Banana.document.getScriptSettings();
+   var savedParam = Banana.document.getScriptSettings("efatturaXMLItalia");
    if (savedParam.length > 0) {
       eFattura.setParam(JSON.parse(savedParam));
    }
 
    var dialogTitle = 'Settings';
    var pageAnchor = 'dlgSettings';
-   var convertedParam = eFattura.convertParam(eFattura.param);
+   var convertedParam = eFattura.convertParam(eFattura.param, true);
    if (!Banana.Ui.openPropertyEditor(dialogTitle, convertedParam, pageAnchor))
       return false;
    for (var i = 0; i < convertedParam.data.length; i++) {
@@ -125,7 +125,7 @@ function settingsDialog() {
          convertedParam.data[i].readValue();
    }
    var paramToString = JSON.stringify(eFattura.param);
-   Banana.document.setScriptSettings(paramToString);
+   Banana.document.setScriptSettings("efatturaXMLItalia", paramToString);
    return true;
 }
 
@@ -228,7 +228,7 @@ EFattura.prototype.clearErrorList = function () {
    this.errorList = [];
 }
 
-EFattura.prototype.convertParam = function (param) {
+EFattura.prototype.convertParam = function (param, includiOpzioniStampa) {
    var convertedParam = {};
    convertedParam.version = '1.0';
    /* array of script's parameters */
@@ -237,89 +237,80 @@ EFattura.prototype.convertParam = function (param) {
    /*******************************************************************************************
    * STAMPA
    *******************************************************************************************/
-   var currentParam = {};
-   currentParam.name = 'selection';
-   currentParam.title = 'Filtra';
-   currentParam.type = 'bool';
-   currentParam.value = param.selection ? param.selection : false;
-   currentParam.readValue = function () {
-      param.selection = this.value;
-   }
-   convertedParam.data.push(currentParam);
+   if (includiOpzioniStampa) {
+      var currentParam = {};
+      currentParam.name = 'selection';
+      currentParam.title = 'Filtra';
+      currentParam.type = 'bool';
+      currentParam.value = param.selection ? param.selection : false;
+      currentParam.readValue = function () {
+         param.selection = this.value;
+      }
+      convertedParam.data.push(currentParam);
 
-   currentParam = {};
-   currentParam.name = 'selection_invoice';
-   currentParam.title = 'Numero fattura';
-   currentParam.type = 'string';
-   currentParam.parentObject = 'selection';
-   currentParam.value = param.selection_invoice ? param.selection_invoice : '';
-   currentParam.readValue = function () {
-      param.selection_invoice = this.value;
-   }
-   convertedParam.data.push(currentParam);
+      currentParam = {};
+      currentParam.name = 'selection_invoice';
+      currentParam.title = 'Numero fattura';
+      currentParam.type = 'string';
+      currentParam.parentObject = 'selection';
+      currentParam.value = param.selection_invoice ? param.selection_invoice : '';
+      currentParam.readValue = function () {
+         param.selection_invoice = this.value;
+      }
+      convertedParam.data.push(currentParam);
 
-   currentParam = {};
-   currentParam.name = 'selection_customer';
-   currentParam.title = 'Numero cliente';
-   currentParam.type = 'string';
-   currentParam.parentObject = 'selection';
-   currentParam.value = param.selection_customer ? param.selection_customer : '';
-   currentParam.readValue = function () {
-      param.selection_customer = this.value;
-   }
-   convertedParam.data.push(currentParam);
+      currentParam = {};
+      currentParam.name = 'selection_customer';
+      currentParam.title = 'Numero cliente';
+      currentParam.type = 'string';
+      currentParam.parentObject = 'selection';
+      currentParam.value = param.selection_customer ? param.selection_customer : '';
+      currentParam.readValue = function () {
+         param.selection_customer = this.value;
+      }
+      convertedParam.data.push(currentParam);
 
-   currentParam = {};
-   currentParam.name = 'period';
-   currentParam.title = 'Periodo';
-   currentParam.type = 'bool';
-   currentParam.value = param.period ? param.period : false;
-   currentParam.readValue = function () {
-      param.period = this.value;
-   }
-   convertedParam.data.push(currentParam);
+      currentParam = {};
+      currentParam.name = 'period';
+      currentParam.title = 'Periodo';
+      currentParam.type = 'bool';
+      currentParam.value = param.period ? param.period : false;
+      currentParam.readValue = function () {
+         param.period = this.value;
+      }
+      convertedParam.data.push(currentParam);
 
-   currentParam = {};
-   currentParam.name = 'periodStartDate';
-   currentParam.title = 'Dalla data';
-   currentParam.type = 'date';
-   currentParam.parentObject = 'period';
-   currentParam.value = param.periodStartDate ? param.periodStartDate : '';
-   currentParam.readValue = function () {
-      param.periodStartDate = this.value;
-   }
-   convertedParam.data.push(currentParam);
+      currentParam = {};
+      currentParam.name = 'periodStartDate';
+      currentParam.title = 'Dalla data';
+      currentParam.type = 'date';
+      currentParam.parentObject = 'period';
+      currentParam.value = param.periodStartDate ? param.periodStartDate : '';
+      currentParam.readValue = function () {
+         param.periodStartDate = this.value;
+      }
+      convertedParam.data.push(currentParam);
 
-   currentParam = {};
-   currentParam.name = 'periodEndDate';
-   currentParam.title = 'Alla data';
-   currentParam.type = 'date';
-   currentParam.parentObject = 'period';
-   currentParam.value = param.periodEndDate ? param.periodEndDate : '';
-   currentParam.readValue = function () {
-      param.periodEndDate = this.value;
+      currentParam = {};
+      currentParam.name = 'periodEndDate';
+      currentParam.title = 'Alla data';
+      currentParam.type = 'date';
+      currentParam.parentObject = 'period';
+      currentParam.value = param.periodEndDate ? param.periodEndDate : '';
+      currentParam.readValue = function () {
+         param.periodEndDate = this.value;
+      }
+      convertedParam.data.push(currentParam);
    }
-   convertedParam.data.push(currentParam);
-
    /*******************************************************************************************
    * DATI CONTRIBUENTE
    *******************************************************************************************/
-   currentParam = {};
+   var currentParam = {};
    currentParam.name = 'contribuente';
    currentParam.title = 'Dati contribuente';
    currentParam.editable = false;
-   convertedParam.data.push(currentParam);
-
-   currentParam = {};
-   currentParam.name = 'tipoContribuente';
-   currentParam.title = 'Tipo';
-   currentParam.type = 'combobox';
-   currentParam.parentObject = 'contribuente';
-   currentParam.value = param.contribuente.tipoContribuente ? param.contribuente.tipoContribuente : 'persona fisica';
-   currentParam.items = ['persona fisica', 'persona giuridica'];
-   currentParam.readValue = function () {
-      param.contribuente.tipoContribuente = this.value;
-   }
+   if (includiOpzioniStampa)
+      currentParam.collapse = true;
    convertedParam.data.push(currentParam);
 
    currentParam = {};
@@ -341,6 +332,18 @@ EFattura.prototype.convertParam = function (param) {
    currentParam.value = param.contribuente.partitaIva ? param.contribuente.partitaIva : '';
    currentParam.readValue = function () {
       param.contribuente.partitaIva = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'tipoContribuente';
+   currentParam.title = 'Tipo';
+   currentParam.type = 'combobox';
+   currentParam.parentObject = 'contribuente';
+   currentParam.value = param.contribuente.tipoContribuente ? param.contribuente.tipoContribuente : 'persona fisica';
+   currentParam.items = ['persona fisica', 'persona giuridica'];
+   currentParam.readValue = function () {
+      param.contribuente.tipoContribuente = this.value;
    }
    convertedParam.data.push(currentParam);
 
@@ -462,7 +465,8 @@ EFattura.prototype.convertParam = function (param) {
    currentParam.name = 'xml';
    currentParam.title = 'Opzioni XML';
    currentParam.editable = false;
-   //currentParam.collapse = true;
+   if (includiOpzioniStampa)
+      currentParam.collapse = true;
    convertedParam.data.push(currentParam);
 
    currentParam = {};
@@ -1413,7 +1417,7 @@ EFattura.prototype.saveFile = function (output, fileExtension) {
          if (this.param.xml.open_file)
             Banana.IO.openUrl(fileName);
          this.param.xml.progressive++;
-         this.banDocument.setScriptSettings(JSON.stringify(this.param))
+         this.banDocument.setScriptSettings("efatturaXMLItalia", JSON.stringify(this.param))
       }
    }
 
