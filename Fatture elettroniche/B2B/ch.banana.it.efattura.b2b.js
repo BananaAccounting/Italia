@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.efattura
 // @api = 1.0
-// @pubdate = 2021-02-10
+// @pubdate = 2021-02-12
 // @publisher = Banana.ch SA
 // @description = Esporta e-fattura XML...
 // @description.it = Esporta e-fattura XML...
@@ -54,10 +54,18 @@ function exec(inData, options) {
    }
 
    //output xml
+
    var progressBar = Banana.application.progressBar;
-   progressBar.start(jsonCustomerList.length);
+   if (typeof (progressBar.setText) !== 'undefined')
+      progressBar.setText("Esporta fatture in XML...");
+   progressBar.start(jsonCustomerList.length + 1);
+
    for (var i in jsonCustomerList) {
-      progressBar.step("Elaborazione cliente " + i, 1);
+      if (!progressBar.step())
+         return;
+      if (typeof(progressBar.setText) !== 'undefined')
+         progressBar.setText("creazione file XML in corso..." + i.toString());
+
       var jsonInvoices = jsonCustomerList[i];
       var xmlDocument = Banana.Xml.newDocument("root");
       eFattura.clearErrorList();
@@ -71,12 +79,13 @@ function exec(inData, options) {
          }
          // validate data
          if (eFattura.param.xml.validate_file && eFattura.param.xml.xsd_filename) {
+            if (typeof(progressBar.setText) !== 'undefined')
+               progressBar.setText("validazione file XML in corso..." + i.toString());
             var escapedString = xml_escapeString(eFattura.param.xml.xsd_filename);
             var result = Banana.Xml.validate(Banana.Xml.parse(xmlContent), escapedString);
             if (!result) {
                var msg = eFattura.getErrorMessage(eFattura.ID_ERR_XML_FILE_NONVALIDO);
                msg = msg.replace("%1", Banana.Xml.errorString);
-               Banana.console.debug("msg----------" + msg);
                Banana.document.addMessage(msg, eFattura.ID_ERR_XML_FILE_NONVALIDO);
             }
          }
@@ -84,6 +93,7 @@ function exec(inData, options) {
          eFattura.saveFile(xmlContent, "xml");
       }
    }
+
    progressBar.finish();
 }
 
