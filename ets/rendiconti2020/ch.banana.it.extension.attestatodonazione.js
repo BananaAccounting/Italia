@@ -14,10 +14,10 @@
 //
 // @id = ch.banana.it.extension.attestatodonazioni.js
 // @api = 1.0
-// @pubdate = 2020-11-25
+// @pubdate = 2021-02-19
 // @publisher = Banana.ch SA
 // @description = 6. Attestato di donazione
-// @doctype = 100.100;110.100;130.100
+// @doctype = 100.*;110.*;130.*
 // @docproperties = 
 // @task = app.command
 // @outputformat = none

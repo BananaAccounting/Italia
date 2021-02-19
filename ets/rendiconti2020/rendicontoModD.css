@@ -1,5 +1,5 @@
 
-/* CSS update: 2020-07-24  */
+/* CSS update: 2021-02-16  */
 
 td {
   vertical-align: top;
@@ -138,4 +138,8 @@ table.table td {
   font-family: Helvetica;
   font-size: 8px;
   text-align: center;
+}
+
+.text-color-red {
+  color: red;
 }

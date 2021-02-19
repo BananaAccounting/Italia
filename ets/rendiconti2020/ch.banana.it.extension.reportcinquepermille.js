@@ -14,11 +14,11 @@
 //
 // @id = it.banana.app.reportcinquepermille
 // @api = 1.0
-// @pubdate = 2020-11-04
+// @pubdate = 2021-02-19
 // @publisher = Banana.ch SA
 // @description = 4. Report cinque per mille
 // @task = app.command
-// @doctype = 100.100;110.100;130.100
+// @doctype = 100.*;110.*;130.*
 // @docproperties = 
 // @outputformat = none
 // @inputdatasource = none
@@ -768,8 +768,8 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.parentObject = 'rendiconto';
 	currentParam.title = "Colonna raggruppamento (nome XML colonna)";
 	currentParam.type = 'string';
-	currentParam.value = userParam.colonnaRaggruppamento ? userParam.colonnaRaggruppamento : 'Gr';
-	currentParam.defaultvalue = 'Gr';
+	currentParam.value = userParam.colonnaRaggruppamento ? userParam.colonnaRaggruppamento : 'Gr1';
+	currentParam.defaultvalue = 'Gr1';
 	currentParam.readValue = function() {
 	  userParam.colonnaRaggruppamento = this.value;
 	}
@@ -820,7 +820,7 @@ function initUserParam(segment5XMList) {
    userParam.rappresentanteLegale = "Sig. Mario Rossi";
    userParam.cfRappresentanteLegale = "123456789";
    userParam.dataPercezione = "31.12.2020";
-   userParam.colonnaRaggruppamento = "Gr";
+   userParam.colonnaRaggruppamento = "Gr1";
    userParam.fileAnnoPrecedente = false;
    userParam.segment5XM = segment5XMList;
    return userParam;

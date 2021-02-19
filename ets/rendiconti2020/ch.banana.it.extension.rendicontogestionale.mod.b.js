@@ -14,11 +14,11 @@
 //
 // @id = ch.banana.it.extension.rendicontogestionale.mod.b
 // @api = 1.0
-// @pubdate = 2021-02-10
+// @pubdate = 2021-02-19
 // @publisher = Banana.ch SA
 // @description = 2. Rendiconto gestionale
 // @task = app.command
-// @doctype = 100.100;110.100;130.100
+// @doctype = 100.*;110.*;130.*
 // @docproperties = 
 // @outputformat = none
 // @inputdatasource = none

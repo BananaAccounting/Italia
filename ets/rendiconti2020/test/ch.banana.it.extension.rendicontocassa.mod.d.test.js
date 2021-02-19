@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.rendicontocassa.mod.d.test
 // @api = 1.0
-// @pubdate = 2021-02-10
+// @pubdate = 2021-02-17
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.rendicontocassa.mod.d.js>
 // @task = app.command
@@ -75,6 +75,7 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	userParam.printtitle = true;
 	userParam.title = '';
 	userParam.column = 'Gr';
+	userParam.printcostifigurativi = true;
 
 	var reportStructure = createReportStructureRendicontoCassa();
 
@@ -105,6 +106,7 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	userParam.printtitle = true;
 	userParam.title = '';
 	userParam.column = 'Gr1';
+	userParam.printcostifigurativi = true;
 
 	var reportStructure = createReportStructureRendicontoCassa();
 
@@ -135,6 +137,7 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	userParam.printtitle = true;
 	userParam.title = '';
 	userParam.column = 'Gr1';
+	userParam.printcostifigurativi = true;
 
 	var reportStructure = createReportStructureRendicontoCassa();
 
@@ -166,6 +169,7 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	userParam.title = '';
 	userParam.column = 'Gr1';
 	userParam.printcolumn = true;
+	userParam.printcostifigurativi = true;
 
 	var reportStructure = createReportStructureRendicontoCassa();
 
@@ -178,5 +182,37 @@ ReportModDTest.prototype.testBananaExtension = function() {
 
 	var report = printRendicontoModD(banDoc, userParam, bReport3, "");
 	Test.logger.addReport("Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento", report);
+
+
+	/**
+	 *	Test using the tutorial template, print Gr1 column, without table costi/ricavi figurativi
+	 */
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/11094-entrate-uscite-ets-rendiconto-cassa-tutorial.ac2");
+	Test.assert(banDoc);
+
+	var userParam = {};
+  	userParam.selectionStartDate = "2020-01-01";
+  	userParam.selectionEndDate = "2020-12-31";
+  	userParam.title = "RENDICONTO CASSA (MOD. D) ANNO 2020";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr1';
+	userParam.printcolumn = true;
+	userParam.printcostifigurativi = false;
+
+	var reportStructure = createReportStructureRendicontoCassa();
+
+	const bReport4 = new BReport(banDoc, userParam, reportStructure);
+	bReport4.validateGroups(userParam.column);
+	bReport4.loadBalances();
+	bReport4.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport4.formatValues(["currentAmount", "previousAmount"]);
+	bReport4.excludeEntries();
+
+	var report = printRendicontoModD(banDoc, userParam, bReport4, "");
+	Test.logger.addReport("Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento senza costi/ricavi figurativi", report);
 
 }

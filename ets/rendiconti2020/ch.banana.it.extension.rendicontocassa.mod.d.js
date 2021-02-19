@@ -14,11 +14,11 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2021-02-10
+// @pubdate = 2021-02-19
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
-// @doctype = 100.100;110.100;130.100
+// @doctype = 100.*;110.*;130.*
 // @docproperties = 
 // @outputformat = none
 // @inputdatasource = none
@@ -1198,98 +1198,99 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
    /**************************************************************************************
    * COSTI E PROVENTI FIGURATIVI
    **************************************************************************************/
+   if (userParam.printcostifigurativi) {
 
-   report.addParagraph(" ", "");
+      report.addParagraph(" ", "");
 
-   var table = report.addTable("table");
-   if (userParam.printcolumn) {
-      var column0 = table.addColumn("column00");
-      var column1 = table.addColumn("column01");
-      var column2 = table.addColumn("column02");
-      var column3 = table.addColumn("column03");
-      var column4 = table.addColumn("column04");
-      var column5 = table.addColumn("column05");
-      var column6 = table.addColumn("column06");
-      var column7 = table.addColumn("column07");
-      var column8 = table.addColumn("column08");
-   }
-   else {
-      var column1 = table.addColumn("column1");
-      var column2 = table.addColumn("column2");
-      var column3 = table.addColumn("column3");
-      var column4 = table.addColumn("column4");
-      var column5 = table.addColumn("column5");
-      var column6 = table.addColumn("column6");
-      var column7 = table.addColumn("column7");
-   }
+      var table = report.addTable("table");
+      if (userParam.printcolumn) {
+         var column0 = table.addColumn("column00");
+         var column1 = table.addColumn("column01");
+         var column2 = table.addColumn("column02");
+         var column3 = table.addColumn("column03");
+         var column4 = table.addColumn("column04");
+         var column5 = table.addColumn("column05");
+         var column6 = table.addColumn("column06");
+         var column7 = table.addColumn("column07");
+         var column8 = table.addColumn("column08");
+      }
+      else {
+         var column1 = table.addColumn("column1");
+         var column2 = table.addColumn("column2");
+         var column3 = table.addColumn("column3");
+         var column4 = table.addColumn("column4");
+         var column5 = table.addColumn("column5");
+         var column6 = table.addColumn("column6");
+         var column7 = table.addColumn("column7");
+      }
 
-   tableRow = table.addRow();
-   if (userParam.printcolumn) {
-      tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
-   }
-   tableRow.addCell("Costi figurativi", "table-header", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
-   tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
-   tableRow.addCell("", "", 1);
-   if (userParam.printcolumn) {
-      tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
-   }
-   tableRow.addCell("Proventi figurativi", "table-header", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
-   tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
+      tableRow = table.addRow();
+      if (userParam.printcolumn) {
+         tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
+      }
+      tableRow.addCell("Costi figurativi", "table-header", 1);
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+      tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
+      tableRow.addCell("", "", 1);
+      if (userParam.printcolumn) {
+         tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
+      }
+      tableRow.addCell("Proventi figurativi", "table-header", 1);
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+      tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
-   /* Row 1 */
-   tableRow = table.addRow();
-   if (userParam.printcolumn) {
-      tableRow.addCell(bReport.getObjectId("CG1"), "align-left", 1);
-   }
-   tableRow.addCell(bReport.getObjectDescription("CG1"), "align-left", 1);
-   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG1"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG1"), "align-right", 1);
-   tableRow.addCell("", "", 1);
-   if (userParam.printcolumn) {
-      tableRow.addCell(bReport.getObjectId("RG1"), "align-left", 1);
-   }
-   tableRow.addCell(bReport.getObjectDescription("RG1"), "align-left", 1);
-   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG1"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG1"), "align-right", 1);
+      /* Row 1 */
+      tableRow = table.addRow();
+      if (userParam.printcolumn) {
+         tableRow.addCell(bReport.getObjectId("CG1"), "align-left", 1);
+      }
+      tableRow.addCell(bReport.getObjectDescription("CG1"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG1"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG1"), "align-right", 1);
+      tableRow.addCell("", "", 1);
+      if (userParam.printcolumn) {
+         tableRow.addCell(bReport.getObjectId("RG1"), "align-left", 1);
+      }
+      tableRow.addCell(bReport.getObjectDescription("RG1"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG1"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG1"), "align-right", 1);
 
-   /* Row 2 */
-   tableRow = table.addRow();
-   if (userParam.printcolumn) {
-      tableRow.addCell(bReport.getObjectId("CG2"), "align-left", 1);
-   }
-   tableRow.addCell(bReport.getObjectDescription("CG2"), "align-left", 1);
-   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG2"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG2"), "align-right", 1);
-   tableRow.addCell("", "", 1);
-   if (userParam.printcolumn) {
-      tableRow.addCell(bReport.getObjectId("RG2"), "align-left", 1);
-   }
-   tableRow.addCell(bReport.getObjectDescription("RG2"), "align-left", 1);
-   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG2"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG2"), "align-right", 1);
+      /* Row 2 */
+      tableRow = table.addRow();
+      if (userParam.printcolumn) {
+         tableRow.addCell(bReport.getObjectId("CG2"), "align-left", 1);
+      }
+      tableRow.addCell(bReport.getObjectDescription("CG2"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG2"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG2"), "align-right", 1);
+      tableRow.addCell("", "", 1);
+      if (userParam.printcolumn) {
+         tableRow.addCell(bReport.getObjectId("RG2"), "align-left", 1);
+      }
+      tableRow.addCell(bReport.getObjectDescription("RG2"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG2"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG2"), "align-right", 1);
 
-   /* Row 3, tot */
-   tableRow = table.addRow();
-   if (userParam.printcolumn) {
-      tableRow.addCell("","", 1);
+      /* Row 3, tot */
+      tableRow = table.addRow();
+      if (userParam.printcolumn) {
+         tableRow.addCell("","", 1);
+      }
+      tableRow.addCell(bReport.getObjectDescription("CG"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG"), "align-right", 1);
+      tableRow.addCell("", "", 1);
+      if (userParam.printcolumn) {
+         tableRow.addCell("","", 1);
+      }
+      tableRow.addCell(bReport.getObjectDescription("RG"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG"), "align-right", 1);
    }
-   tableRow.addCell(bReport.getObjectDescription("CG"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG"), "align-right", 1);
-   tableRow.addCell("", "", 1);
-   if (userParam.printcolumn) {
-      tableRow.addCell("","", 1);
-   }
-   tableRow.addCell(bReport.getObjectDescription("RG"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG"), "align-right", 1);
-   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG"), "align-right", 1);
-
 
 
    //checkResults(banDoc, startDate, endDate);
-
+   //checkLiquidity(bReport, report);
 
    //addFooter(report);
    return report;
@@ -1315,6 +1316,36 @@ function checkResults(banDoc, startDate, endDate) {
    var res0 = Banana.SDecimal.add(currentA, currentP);
    if (res0 !== "0") {
       Banana.document.addMessage("Differenza Attivo e Passivo.");
+   }
+}
+
+function checkLiquidity(bReport, report) {
+   /**
+    * previous(ACIV1 + ACIV3) + current(Avanzo/Disavanzo complessivo) == current(ACIV1 + ACIV3)
+    */
+
+   var preACIV1 = bReport.getObjectValue("ACIV1", "previousAmount"); // saldo precedente banca/posta
+   var preACIV3 = bReport.getObjectValue("ACIV3", "previousAmount"); // saldo precedente cassa
+   var curTADRC = bReport.getObjectValue("TADRC", "currentAmount"); // saldo corrente avanzo/disavanzo complessivo
+   var curACIV1 = bReport.getObjectValue("ACIV1", "currentAmount"); // saldo corrente banca/posta
+   var curACIV3 = bReport.getObjectValue("ACIV3", "currentAmount"); // saldo corrente cassa
+   
+   var totLiqPrec = Banana.SDecimal.add(preACIV1,preACIV3);
+   var totLiqPrecAvanzo = Banana.SDecimal.add(totLiqPrec,curTADRC);
+   var totLiqCurr = Banana.SDecimal.add(curACIV1,curACIV3);
+
+   // Banana.console.log("ACIV1 precedente: " + preACIV1);
+   // Banana.console.log("ACIV3 precedente: " + preACIV3);
+   // Banana.console.log("->tot liquidità precedente: " + totLiqPrec);
+   // Banana.console.log("TADRC corrente: " + curTADRC);
+   // Banana.console.log("->tot liquidità precedente + TADRC corrente: " + totLiqPrecAvanzo);
+   // Banana.console.log("ACIV1 corrente: " + curACIV1);
+   // Banana.console.log("ACIV3 corrente: " + curACIV3);
+   // Banana.console.log("->tot liquidità corrente: " + totLiqCurr);
+   // Banana.console.log(">>>> " + totLiqPrecAvanzo + " ?= " + totLiqCurr);
+
+   if (Banana.SDecimal.compare(totLiqPrecAvanzo,totLiqCurr) != 0) {
+      report.addParagraph("Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' non corrisponde alla 'somma della liquidità anno corrente'", "text-color-red");
    }
 }
 
@@ -1483,6 +1514,18 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   var currentParam = {};
+   currentParam.name = 'printcostifigurativi';
+   currentParam.parentObject = 'report_group';
+   currentParam.title = 'Stampa sezione costi e proventi figurativi';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.printcostifigurativi ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+      userParam.printcostifigurativi = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
@@ -1496,6 +1539,7 @@ function initUserParam() {
    userParam.title = '';
    userParam.column = 'Gr1';
    userParam.printcolumn = true;
+   userParam.printcostifigurativi = false;
    return userParam;
 }
 
