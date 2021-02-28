@@ -922,7 +922,16 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
    /**************************************************************************************
    * Uscite da investimenti / Entrate da disinvestimenti
    **************************************************************************************/
-
+   /**
+    *  Nella contabilità doppia le registrazioni di disinvestimenti (entrate) vanno con il segno -, 
+    *  mentre gli investimenti (uscite) con il segno +.
+    *  Questo perché vengono trattati come ricavi e costi: le entrate sono con il segno - e le uscite con il segno +.
+    *
+    *  Nella contabilità entrate/uscite le registrazioni di disinvestimenti (entrate) vanno con il segno +,
+    *  mentre gli investimenti con il segno -.
+    *  Questo perché vengono trattati come entrate e uscite: nella contabilità le entrate sono con il segno +
+    *  e le uscite con il segno -.
+    */
    report.addParagraph(" ", "");
 
    var table = report.addTable("table");
