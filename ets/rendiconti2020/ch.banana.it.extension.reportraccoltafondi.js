@@ -1,4 +1,4 @@
-// Copyright [2020] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.reportraccoltafondi
 // @api = 1.0
-// @pubdate = 2021-02-19
+// @pubdate = 2021-03-01
 // @publisher = Banana.ch SA
 // @description = 5. Report raccolta fondi
 // @task = app.command
@@ -44,8 +44,7 @@ var BAN_EXPM_VERSION = "";
  *		- Relazione: si inserice una relazione illustrativa della raccolta fondi. Si possono inserire più righe.  
  *
  * 4. Per ogni conto raccolta fondi viene generato una pagina di report, contantente i rispettivi dati dei parametri.
- *
- * La tabella "TestiReport" non è più necessaria, viene fatto tutto con i parametri. 
+ * 
  */
 
 
@@ -58,16 +57,16 @@ function exec(string) {
 	}
 
 	// Check banana version
-	var isCurrentBananaVersionSupported = bananaRequiredVersion(BAN_VERSION, BAN_EXPM_VERSION);
+	let isCurrentBananaVersionSupported = bananaRequiredVersion(BAN_VERSION, BAN_EXPM_VERSION);
 	if (!isCurrentBananaVersionSupported) {
 		return "@Cancel";
 	}
 
-	var segmentList = getSegmentList();
+	let segmentList = getSegmentsLvl2(Banana.document);
 
 	// User parameters
-	var userParam = initUserParam(segmentList);
-	var savedParam = Banana.document.getScriptSettings();
+	let userParam = initUserParam(segmentList);
+	let savedParam = Banana.document.getScriptSettings();
 	if (savedParam && savedParam.length > 0) {
 		userParam = JSON.parse(savedParam);
 	}
@@ -80,13 +79,13 @@ function exec(string) {
 	}
 	
 	//Create the stylesheet using the css file
-	var stylesheet = Banana.Report.newStyleSheet();
+	let stylesheet = Banana.Report.newStyleSheet();
 
 	//Create the report
-	var report = printReport(Banana.document, userParam, segmentList, stylesheet);
+	let report = printReport(Banana.document, userParam, segmentList, stylesheet);
 
 	//Set styles
-	setCss(Banana.document, stylesheet);
+	setCss(stylesheet);
 	
 	//Create the report preview
 	Banana.Report.preview(report, stylesheet);
@@ -95,227 +94,206 @@ function exec(string) {
 //The purpose of this function is to create and print the report
 function printReport(banDoc, userParam, segmentList, stylesheet) {
 
-	var report = Banana.Report.newReport("Rendiconto raccolta fondi");
+	let report = Banana.Report.newReport("Rendiconto raccolta fondi");
 
-	// Logo
-	var headerParagraph = report.getHeader().addSection();
-	if (userParam.stampaLogo) {
-		headerParagraph = report.addSection("");
-		var logoFormat = Banana.Report.logoFormat(userParam.nomeLogo);
-		if (logoFormat) {
-			var logoElement = logoFormat.createDocNode(headerParagraph, stylesheet, "logo");
-			report.getHeader().addChild(logoElement);
+	printReport_header(report, banDoc, userParam, stylesheet);
+
+	for (let i = 0; i < segmentList.length; i++) {
+		printReport_information(report, banDoc, userParam, segmentList[i]);
+		printReport_transactions(report, banDoc, userParam, segmentList[i]);
+		printReport_finalnotes(report, userParam, segmentList[i]);
+
+		if (i !== segmentList.length-1) {
+			report.addPageBreak(); //add page break after each account
 		}
 	}
-
 	
-	for (var j = 0; j < segmentList.length; j++) {
-
-		//Take vale from table "Testi Report"
-		var strAccount = segmentList[j].account;
-		var startDate = "";
-		var endDate = "";
-		var racFondi = "";
-		var responsabile = "";
-
-		startDate = userParam[segmentList[j].account+'_dataInizio'];
-		endDate = userParam[segmentList[j].account+'_dataFine'];
-		racFondi = userParam[segmentList[j].account+'_descrizione'];
-		responsabile = userParam[segmentList[j].account+'_responsabile'];
-
-		//Take info from Banana file and account properties
-		var headerLeft = banDoc.info("Base","HeaderLeft");
-		var headerRight = banDoc.info("Base","HeaderRight");
-
-		var totExpenses = "";
-		var totIncome = "";
-
-		//Print the report
-		if (userParam.stampaLogo) {
-			report.addParagraph(" ", "");
-			report.addParagraph(" ", "");
-		}
-		report.addParagraph("RENDICONTO DELLA RACCOLTA FONDI", "heading1 alignCenter");
-		report.addParagraph('"' + racFondi + '"', "heading1 alignCenter");
-		//report.addParagraph("(" + strAccount +")" , "heading1 alignCenter");
-		report.addParagraph(" ");
-		report.addParagraph(" ");
-		report.addParagraph("Ente: " + headerLeft, "heading3");
-		report.addParagraph(" ");
-		report.addParagraph("Raccolta fondi svolta dal " + startDate + " al " + endDate, "heading3");
-		report.addParagraph(" ");
-		report.addParagraph("Responsabile: " + responsabile, "heading3");
-		report.addParagraph(" ");
-		report.addParagraph(" ");
-		
-		//Create a table object with all transactions for the given account and period
-		var transTab = banDoc.currentCard(segmentList[j].account, startDate, endDate);
-
-		//Create the table that will be printed on the report
-		var table = report.addTable("table");
-
-		//Add column titles to the table report
-		var tableHeader = table.getHeader();
-		tableRow = tableHeader.addRow();
-		tableRow.addCell("Data", "heading3 bold");
-		tableRow.addCell("Doc", "heading3 bold");
-		tableRow.addCell("Descrizione", "heading3 bold");
-		tableRow.addCell("Entrate €", "heading3 bold");
-		tableRow.addCell("Uscite €", "heading3 bold");
-
-		//Add the values taken from each row of the table (except the last one) to the respective cells of the table
-		for (var i = 0; i < transTab.rowCount-1; i++) {	
-			var tRow = transTab.row(i);
-			tableRow = table.addRow();
-			tableRow.addCell(Banana.Converter.toLocaleDateFormat(tRow.value("Date")), "heading3");
-			tableRow.addCell(tRow.value("Doc"), "heading3");
-			tableRow.addCell(tRow.value("JDescription"), "heading3");
-
-
-			if (banDoc.table("Categories")) {
-				if (tRow.value('JDebitAmount')) {
-					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JDebitAmount')), "heading3 alignRight");
-				} else {
-					tableRow.addCell("", "heading3 alignRight");
-				}
-
-				if (tRow.value('JCreditAmount')) {
-					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JCreditAmount')), "heading3 alignRight");
-				} else {
-					tableRow.addCell("", "heading3 alignRight");
-				}
-			}
-			else {
-				if (tRow.value('JCreditAmount')) {
-					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JCreditAmount')), "heading3 alignRight");
-				} else {
-					tableRow.addCell("", "heading3 alignRight");
-				}
-
-				if (tRow.value('JDebitAmount')) {
-					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JDebitAmount')), "heading3 alignRight");
-				} else {
-					tableRow.addCell("", "heading3 alignRight");
-				}
-			}
-		}
-
-		//We add last row (totals) separately because we want to apply a different style only to this row
-		for(var i = transTab.rowCount-1; i < transTab.rowCount; i++) {
-			var tRow = transTab.row(i);
-
-			tableRow = table.addRow();
-			tableRow.addCell("", "", 2);
-			tableRow.addCell("Totali movimenti", "heading3 bold");
-
-			if (banDoc.table("Categories")) {
-				if (tRow.value('JDebitAmount')) {
-					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JDebitAmount')), "heading3 alignRight bold");
-				} else {
-					tableRow.addCell("", "heading3 alignRight");
-				}
-
-				if (tRow.value('JCreditAmount')) {
-					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JCreditAmount')), "heading3 alignRight bold");
-				} else {
-					tableRow.addCell("", "heading3 alignRight");
-				}
-
-				totIncome = tRow.value('JDebitAmount');
-				totExpenses = tRow.value('JCreditAmount');
-			}
-			else {
-				if (tRow.value('JCreditAmount')) {
-					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JCreditAmount')), "heading3 alignRight bold");
-				} else {
-					tableRow.addCell("", "heading3 alignRight");
-				}
-
-				if (tRow.value('JDebitAmount')) {
-					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tRow.value('JDebitAmount')), "heading3 alignRight bold");
-				} else {
-					tableRow.addCell("", "heading3 alignRight");
-				}
-
-				totIncome = tRow.value('JCreditAmount');
-				totExpenses = tRow.value('JDebitAmount');
-			}
-		}
-
-		//Calculate the difference between expenses and income amounts
-		var res = Banana.SDecimal.subtract(totExpenses, totIncome);
-
-		tableRow = table.addRow();
-		tableRow.addCell("", "", 2);
-
-		//Print the final total, the difference between expenses and income amounts
-		if (Banana.SDecimal.sign(res) == 1) { //It is an expense: amount > 0
-			tableRow.addCell("DISAVANZO D'ESERCIZIO", "heading3 bold", 1);
-			tableRow.addCell("€ "+ Banana.Converter.toLocaleNumberFormat(res), "heading3 alignCenter bold", 2);
-		} else if (Banana.SDecimal.sign(res) == -1) { //It is an income: amount < 0
-			tableRow.addCell("AVANZO D'ESERCIZIO", "heading3 bold", 1);
-			tableRow.addCell("€ "+ Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(res)), "heading3 alignCenter bold", 2);
-		} else { //The difference is = 0
-			tableRow.addCell("AVANZO/DISAVANZO D'ESERCIZIO", "heading3 bold", 1);
-			tableRow.addCell("€ "+ Banana.Converter.toLocaleNumberFormat(res), "heading3 alignCenter bold", 2);
-		}
-
-		//Add all the texts taken from the "Testi Report" table
-		//Each text is printed on a new line
-		report.addParagraph(" ");
-		report.addParagraph(" ");
-		report.addParagraph("RELAZIONE ILLUSTRATIVA DELLA RACCOLTA FONDI:", "bold heading3");
-		report.addParagraph(" ");
-		report.addParagraph(userParam[segmentList[j].account+'_relazione'], "heading3");
-
-		//Add the signatures
-		report.addParagraph(" ");
-		report.addParagraph(" ");
-		report.addParagraph(" ");
-		report.addParagraph(" ");
-		var table1 = report.addTable("table1");
-		tableRow = table1.addRow();
-		tableRow.addCell("Firma del Rappresentante Legale", "alignCenter", 1);
-		tableRow.addCell("Firma del Responsabile", "alignCenter", 1);
-		tableRow = table1.addRow();
-		tableRow.addCell(" ", "alignCenter", 1);
-		tableRow.addCell(" ", "alignCenter", 1);
-		tableRow = table1.addRow();
-		tableRow.addCell("_____________________________", "alignCenter", 1);
-		tableRow.addCell("_____________________________", "alignCenter", 1);
-
-		//Add a page break after each account detail
-		if (j !== segmentList.length-1) {
-			report.addPageBreak();
-		}
-	}
-
 	return report;
 }
 
-//This function take from Banana table 'Accounts/Categories'  all the lvl 2 segments
-function getSegmentList() {
-	var segmentObj = [];
+function printReport_header(report, banDoc, userParam, stylesheet) {	
+	// Logo
+	let headerParagraph = report.getHeader().addSection();
+	if (userParam.stampaLogo) {
+		headerParagraph = report.addSection("");
+		let logoFormat = Banana.Report.logoFormat(userParam.nomeLogo);
+		if (logoFormat) {
+			let logoElement = logoFormat.createDocNode(headerParagraph, stylesheet, "logo");
+			report.getHeader().addChild(logoElement);
+		}
+	}
+}
 
- //    for (var i = 0; userParam['segments'].length; ++i) {
-	// 	segmentObj.push({"account":userParam['segments'][i].account, "description":userParam['segments'][i].description});	  	
-	// }
+function printReport_information(report, banDoc, userParam, segment) {
 
-	if (Banana.document.table('Categories')) {
-		for (var i = 0; i < Banana.document.table('Categories').rowCount; i++) {
-			var tRow = Banana.document.table('Categories').row(i);
-			if (tRow.value("Category").indexOf("::") > -1 && tRow.value("Category").indexOf(":::") < 0 && tRow.value("Category").substring(2,3)) {
-				segmentObj.push({"account":tRow.value("Category"), "description":tRow.value("Description")});
-				//segmentObj.push(tRow.value("Category"));
+	let strAccount = "";
+	let startDate = "";
+	let endDate = "";
+	let racFondi = "";
+	let responsabile = "";
+	let headerLeft = "";
+	let headerRight = "";
+
+	strAccount = segment.account;
+	startDate = userParam[segment.account+'_dataInizio'];
+	endDate = userParam[segment.account+'_dataFine'];
+	racFondi = userParam[segment.account+'_descrizione'];
+	responsabile = userParam[segment.account+'_responsabile'];
+	headerLeft = banDoc.info("Base","HeaderLeft");
+	headerRight = banDoc.info("Base","HeaderRight");
+
+	if (userParam.stampaLogo) {
+		report.addParagraph(" ", "");
+		report.addParagraph(" ", "");
+	}
+	report.addParagraph("RENDICONTO DELLA RACCOLTA FONDI", "heading1 alignCenter");
+	report.addParagraph('"' + racFondi + '"', "heading1 alignCenter");
+	//report.addParagraph("(" + strAccount +")" , "heading1 alignCenter");
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph("Ente: " + headerLeft, "heading3");
+	report.addParagraph(" ");
+	report.addParagraph("Raccolta fondi svolta dal " + startDate + " al " + endDate, "heading3");
+	report.addParagraph(" ");
+	report.addParagraph("Responsabile: " + responsabile, "heading3");
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+}
+
+function printReport_transactions(report, banDoc, userParam, segment) {
+	
+	let totExpenses = "";
+	let totIncome = "";
+	let startDate = "";
+	let endDate = "";
+
+	startDate = userParam[segment.account+'_dataInizio'];
+	endDate = userParam[segment.account+'_dataFine'];
+
+	//Create a table object with all transactions for the given account and period
+	let transTab = banDoc.currentCard(segment.account, startDate, endDate);
+
+	//Create the table that will be printed on the report
+	let table = report.addTable("table");
+
+	//Add column titles to the table report
+	let tableHeader = table.getHeader();
+	tableRow = tableHeader.addRow();
+	tableRow.addCell("Data", "heading3 bold");
+	tableRow.addCell("Doc", "heading3 bold");
+	tableRow.addCell("Descrizione", "heading3 bold");
+	tableRow.addCell("Entrate €", "heading3 bold");
+	tableRow.addCell("Uscite €", "heading3 bold");
+
+	//Add the values taken from each row of the table (except the last one) to the respective cells of the table
+	for (let i = 0; i < transTab.rowCount-1; i++) {	
+		let tRow = transTab.row(i);
+		let jdebitamount = tRow.value('JDebitAmount');
+		let jcreditamount = tRow.value('JCreditAmount');
+
+		tableRow = table.addRow();
+		tableRow.addCell(Banana.Converter.toLocaleDateFormat(tRow.value("Date")), "heading3");
+		tableRow.addCell(tRow.value("Doc"), "heading3");
+		tableRow.addCell(tRow.value("JDescription"), "heading3");
+
+		if (banDoc.table("Categories")) {
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jdebitamount,2,false), "heading3 alignRight");
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jcreditamount,2,false), "heading3 alignRight");
+		}
+		else {
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jcreditamount,2,false), "heading3 alignRight");
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jdebitamount,2,false), "heading3 alignRight");
+		}
+	}
+
+	//We add last row (totals) separately because we want to apply a different style only to this row
+	for(let i = transTab.rowCount-1; i < transTab.rowCount; i++) {
+		let tRow = transTab.row(i);
+		let jdebitamount = tRow.value('JDebitAmount');
+		let jcreditamount = tRow.value('JCreditAmount');
+
+		tableRow = table.addRow();
+		tableRow.addCell("", "", 2);
+		tableRow.addCell("Totali movimenti", "heading3 bold");
+
+		if (banDoc.table("Categories")) {
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jdebitamount,2,false), "heading3 alignRight bold");
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jcreditamount,2,false), "heading3 alignRight bold");
+			totIncome = jdebitamount;
+			totExpenses = jcreditamount;
+		}
+		else {
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jcreditamount,2,false), "heading3 alignRight bold");
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jdebitamount,2,false), "heading3 alignRight bold");
+			totIncome = jcreditamount;
+			totExpenses = jdebitamount;
+		}
+	}
+
+	//Calculate the difference between expenses and income amounts
+	let res = Banana.SDecimal.subtract(totExpenses, totIncome);
+
+	tableRow = table.addRow();
+	tableRow.addCell("", "", 2);
+
+	//Print the final total, the difference between expenses and income amounts
+	if (Banana.SDecimal.sign(res) == 1) { //It is an expense: amount > 0
+		tableRow.addCell("DISAVANZO D'ESERCIZIO", "heading3 bold", 1);
+		tableRow.addCell("€ "+ Banana.Converter.toLocaleNumberFormat(res,2,true), "heading3 alignCenter bold", 2);
+	} else if (Banana.SDecimal.sign(res) == -1) { //It is an income: amount < 0
+		tableRow.addCell("AVANZO D'ESERCIZIO", "heading3 bold", 1);
+		tableRow.addCell("€ "+ Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(res),2,true), "heading3 alignCenter bold", 2);
+	} else { //The difference is = 0
+		tableRow.addCell("AVANZO/DISAVANZO D'ESERCIZIO", "heading3 bold", 1);
+		tableRow.addCell("€ "+ Banana.Converter.toLocaleNumberFormat(res,2,true), "heading3 alignCenter bold", 2);
+	}
+}
+
+function printReport_finalnotes(report, userParam, segment) {
+
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph("RELAZIONE ILLUSTRATIVA DELLA RACCOLTA FONDI:", "bold heading3");
+	report.addParagraph(" ");
+	report.addParagraph(userParam[segment.account+'_relazione'], "heading3");
+
+	//Add the signatures
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	let table1 = report.addTable("table1");
+	tableRow = table1.addRow();
+	tableRow.addCell("Firma del Rappresentante Legale", "alignCenter", 1);
+	tableRow.addCell("Firma del Responsabile", "alignCenter", 1);
+	tableRow = table1.addRow();
+	tableRow.addCell(" ", "alignCenter", 1);
+	tableRow.addCell(" ", "alignCenter", 1);
+	tableRow = table1.addRow();
+	tableRow.addCell("_____________________________", "alignCenter", 1);
+	tableRow.addCell("_____________________________", "alignCenter", 1);
+}
+
+//This function take from Banana tables 'Accounts/Categories'  all the lvl 2 segments
+function getSegmentsLvl2(banDoc) {
+	let segmentObj = [];
+	if (banDoc.table('Categories')) {
+		for (let i = 0; i < banDoc.table('Categories').rowCount; i++) {
+			let tRow = banDoc.table('Categories').row(i);
+			let account = tRow.value("Category");
+			let description = tRow.value("Description");
+			if (account.indexOf("::") > -1 && account.indexOf(":::") < 0 && account.substring(2,3)) {
+				segmentObj.push({"account":account, "description":description});
 			}
 		}
 	}
 	else {
-		for (var i = 0; i < Banana.document.table('Accounts').rowCount; i++) {
-			var tRow = Banana.document.table('Accounts').row(i);
-			if (tRow.value("Account").indexOf("::") > -1 && tRow.value("Account").indexOf(":::") < 0 && tRow.value("Account").substring(2,3)) {
-				segmentObj.push({"account":tRow.value("Account"), "description":tRow.value("Description")});
-				//segmentObj.push(tRow.value("Account"));
+		for (let i = 0; i < banDoc.table('Accounts').rowCount; i++) {
+			let tRow = banDoc.table('Accounts').row(i);
+			let account = tRow.value("Account");
+			let description = tRow.value("Description");
+			if (account.indexOf("::") > -1 && account.indexOf(":::") < 0 && account.substring(2,3)) {
+				segmentObj.push({"account":account, "description":description});
 			}
 		}
 	}
@@ -324,19 +302,19 @@ function getSegmentList() {
 }
 
 //The main purpose of this function is to create styles for the report print
-function setCss(banDoc, repStyleObj) {
-   var textCSS = "";
-   var file = Banana.IO.getLocalFile("file:script/rendicontoRaccoltaFondi.css");
-   var fileContent = file.read();
-   if (!file.errorString) {
-      Banana.IO.openPath(fileContent);
-      //Banana.console.log(fileContent);
-      textCSS = fileContent;
-   } else {
-      Banana.console.log(file.errorString);
-   }
-   // Parse the CSS text
-   repStyleObj.parse(textCSS);
+function setCss(repStyleObj) {
+	let textCSS = "";
+	let file = Banana.IO.getLocalFile("file:script/rendicontoRaccoltaFondi.css");
+	let fileContent = file.read();
+	if (!file.errorString) {
+		Banana.IO.openPath(fileContent);
+		//Banana.console.log(fileContent);
+		textCSS = fileContent;
+	} else {
+		Banana.console.log(file.errorString);
+	}
+	// Parse the CSS text
+	repStyleObj.parse(textCSS);
 }
 
 

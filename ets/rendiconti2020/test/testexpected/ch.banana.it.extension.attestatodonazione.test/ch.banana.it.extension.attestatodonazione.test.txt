@@ -1,0 +1,402 @@
+%%info_test_name{ch.banana.it.extension.attestatodonazione.test}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+%%SCRIPT{/Users/ivan/Documents/GitHub/Italia/ets/rendiconti2020/test/ch.banana.it.extension.attestatodonazione.test.js}
+%
+\begin{testcase}{TestAttestatoDonazioni}
+\begin{test}{testExtension}
+%****************************************************************************** TEST #1 ******************************************************************************
+\begin{reportvalue}{Whole year report}
+Associazione Aiuto agli Anziani \\
+Gradenigo 10 \\
+35131 Padova \\
+Tel. 0498686849 \\
+Email: info@example.com \\
+\begin{longtable}[l]{ l }
+Carlo Giorgi \\
+Via dei Mille 5 \\
+00199 Roma \\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+  \\
+Attestato di donazione 2021 \\
+  \\
+  \\
+  \\
+Con la presente dichiariamo che  Carlo Giorgi, Via dei Mille 5, 00199 Roma  nel periodo  01.01.2021 - 31.12.2021  ha donato  EUR 600.00  alla nostra Associazione. \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l }
+\\
+\\
+\\
+\\
+\\
+\\
+1  & 25.01.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+2  & 25.02.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+3  & 25.03.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+4  & 25.04.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+5  & 25.05.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+6  & 25.06.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+7  & 25.07.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+8  & 25.08.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+9  & 25.09.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+10  & 25.10.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+11  & 25.11.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+12  & 20.12.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+ &  &  & 600.00  & \\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l }
+ & \\
+ & Associazione Aiuto agli Anziani \\
+\end{longtable}
+\begin{longtable}[l]{ l }
+Roberto Verdi \\
+Via Fiume 25 \\
+20121 Milano \\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+  \\
+Attestato di donazione 2021 \\
+  \\
+  \\
+  \\
+Con la presente dichiariamo che  Roberto Verdi, Via Fiume 25, 20121 Milano  nel periodo  01.01.2021 - 31.12.2021  ha donato  EUR 500.00  alla nostra Associazione. \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l }
+\\
+1  & 01.02.2021  & EUR  & 500.00  & Associazione Aiuto agli Anziani \\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+ &  &  & 500.00  & \\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l }
+ & \\
+ & Associazione Aiuto agli Anziani \\
+\end{longtable}
+\begin{longtable}[l]{ l }
+Mauro Bianchi \\
+Via delle Serre 16 \\
+00199 Roma \\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+  \\
+Attestato di donazione 2021 \\
+  \\
+  \\
+  \\
+Con la presente dichiariamo che  Mauro Bianchi, Via delle Serre 16, 00199 Roma  nel periodo  01.01.2021 - 31.12.2021  ha donato  EUR 350.00  alla nostra Associazione. \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l }
+\\
+\\
+\\
+1  & 10.01.2021  & EUR  & 150.00  & Associazione Aiuto agli Anziani \\
+2  & 10.07.2021  & EUR  & 200.00  & Associazione Aiuto agli Anziani \\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+ &  &  & 350.00  & \\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l }
+ & \\
+ & Associazione Aiuto agli Anziani \\
+\end{longtable}
+\end{reportvalue}
+%****************************************************************************** TEST #2 ******************************************************************************
+\begin{reportvalue}{Six months report}
+Associazione Aiuto agli Anziani \\
+Gradenigo 10 \\
+35131 Padova \\
+Tel. 0498686849 \\
+Email: info@example.com \\
+\begin{longtable}[l]{ l }
+Carlo Giorgi \\
+Via dei Mille 5 \\
+00199 Roma \\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+  \\
+Donazioni \#;S001: 2. Semestre 2021 \\
+  \\
+  \\
+  \\
+Con la presente attestiamo che  Carlo Giorgi  ha donato alla nostra associazione  EUR 300.00 . \\
+  \\
+Periodo delle donazioni: dal 01.07.2021 al 31.12.2021. \\
+  \\
+Indirizzo: Via dei Mille 5, 00199 Roma. \\
+  \\
+Ringraziamo cordialmente. \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l }
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+1  & 25.07.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+2  & 25.08.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+3  & 25.09.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+4  & 25.10.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+5  & 25.11.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+6  & 20.12.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
+ &  &  & 300.00  & \\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l }
+Milano, dicembre 2021  & Pinco Pallino \\
+ & Associazione Aiuto agli Anziani \\
+\end{longtable}
+\begin{longtable}[l]{ l }
+Roberto Verdi \\
+Via Fiume 25 \\
+20121 Milano \\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+  \\
+Donazioni \#;S002: 2. Semestre 2021 \\
+  \\
+  \\
+  \\
+Con la presente attestiamo che  Roberto Verdi  ha donato alla nostra associazione  EUR 0.00 . \\
+  \\
+Periodo delle donazioni: dal 01.07.2021 al 31.12.2021. \\
+  \\
+Indirizzo: Via Fiume 25, 20121 Milano. \\
+  \\
+Ringraziamo cordialmente. \\
+  \\
+  \\
+\begin{longtable}[l]{}
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l }
+Milano, dicembre 2021  & Pinco Pallino \\
+ & Associazione Aiuto agli Anziani \\
+\end{longtable}
+\begin{longtable}[l]{ l }
+Mauro Bianchi \\
+Via delle Serre 16 \\
+00199 Roma \\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+  \\
+Donazioni \#;S003: 2. Semestre 2021 \\
+  \\
+  \\
+  \\
+Con la presente attestiamo che  Mauro Bianchi  ha donato alla nostra associazione  EUR 200.00 . \\
+  \\
+Periodo delle donazioni: dal 01.07.2021 al 31.12.2021. \\
+  \\
+Indirizzo: Via delle Serre 16, 00199 Roma. \\
+  \\
+Ringraziamo cordialmente. \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l }
+\\
+\\
+\\
+\\
+1  & 10.07.2021  & EUR  & 200.00  & Associazione Aiuto agli Anziani \\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+ &  &  & 200.00  & \\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l }
+Milano, dicembre 2021  & Pinco Pallino \\
+ & Associazione Aiuto agli Anziani \\
+\end{longtable}
+\begin{longtable}[l]{ l }
+Michele Rossi \\
+Via Giacomo Leopardi 2 \\
+20122 Milano \\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+  \\
+Donazioni \#;S004: 2. Semestre 2021 \\
+  \\
+  \\
+  \\
+Con la presente attestiamo che  Michele Rossi  ha donato alla nostra associazione  EUR 0.00 . \\
+  \\
+Periodo delle donazioni: dal 01.07.2021 al 31.12.2021. \\
+  \\
+Indirizzo: Via Giacomo Leopardi 2, 20122 Milano. \\
+  \\
+Ringraziamo cordialmente. \\
+  \\
+  \\
+\begin{longtable}[l]{}
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\\
+\end{longtable}
+  \\
+  \\
+  \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l }
+Milano, dicembre 2021  & Pinco Pallino \\
+ & Associazione Aiuto agli Anziani \\
+\end{longtable}
+\end{reportvalue}
+\keyvalue{Result}{Passed}
+\end{test}
+\end{testcase}
+\end{document}

@@ -1,4 +1,4 @@
-// Copyright [2020] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.attestatodonazioni.js
 // @api = 1.0
-// @pubdate = 2021-02-19
+// @pubdate = 2021-03-03
 // @publisher = Banana.ch SA
 // @description = 6. Attestato di donazione
 // @doctype = 100.*;110.*;130.*
@@ -714,7 +714,7 @@ function getCC3Accounts(banDoc) {
     for (var i = 0; i < accountsTable.rowCount; i++) {
         var tRow = accountsTable.row(i);
         var account = tRow.value("Account");
-        if (account.substring(0,1) === ";") {
+        if (account.substring(0,1) === ";" && account.substring(1,2)) {
             membershipList.push(account);
         }
     }

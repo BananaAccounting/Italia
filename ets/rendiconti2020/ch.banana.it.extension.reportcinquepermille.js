@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.reportcinquepermille
 // @api = 1.0
-// @pubdate = 2021-02-28
+// @pubdate = 2021-03-01
 // @publisher = Banana.ch SA
 // @description = 4. Report cinque per mille
 // @task = app.command
@@ -62,25 +62,23 @@
 
 */
 
-var BAN_VERSION = "10.0.1";
-var BAN_EXPM_VERSION = "";
+let BAN_VERSION = "10.0.1";
+let BAN_EXPM_VERSION = "";
 
-var totalExpenses = "";
-var totalIncome = "";
-var accountsMap = {};
-var groups = [];
-
+let totalIncome = "";
+let totalExpenses = "";
 
 //The purpose of this function is to create and load the structure that will contains all the data used to create the report
-function loadGroups() {
-	groups = [];
-	groups.push({"group":"0", "income":true, "gr1":"RA5"});
-	groups.push({"group":"1", "income":false, "gr1":"CA4;CB4;CE4", "title":"Risorse umane", "text":"(dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato"});
-	groups.push({"group":"2", "income":false, "gr1":"CA1;CA3;CA7;CA8;CD1;CD2;CD3;CD4;CD6;IM;CG1","title":"Costi di funzionamento", "text":"(dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc…)"});
-	groups.push({"group":"3", "income":false, "gr1":"CA2;CA5;CB2;CB3;CB5;CE2;CE3;CE5;CC1;CC2;CC3", "title":"Acquisto beni e servizi", "text":"(dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…)"});
-	groups.push({"group":"4", "income":false, "gr1":"CB1", "title":"Erogazioni ai sensi della propria finalità istituzionale", "text":"N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato"});
-	groups.push({"group":"5", "income":false, "gr1":"CB7;CB8;CE1;CE7;CG2", "title":"Altre voci di spesa riconducibili al raggiungimento dello scopo sociale", "text":""});
-	groups.push({"group":"6", "income":false, "gr1":"CA6;CB6;CD5;CE6", "title":"Accantonamento", "text":"(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo)"});
+function loadReportGroups() {
+	let reportGroups = [];
+	reportGroups.push({"group":"0", "income":true, "gr1":"RA5"});
+	reportGroups.push({"group":"1", "income":false, "gr1":"CA4;CB4;CE4", "title":"Risorse umane", "text":"(dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato"});
+	reportGroups.push({"group":"2", "income":false, "gr1":"CA1;CA3;CA7;CA8;CD1;CD2;CD3;CD4;CD6;IM;CG1","title":"Costi di funzionamento", "text":"(dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc…)"});
+	reportGroups.push({"group":"3", "income":false, "gr1":"CA2;CA5;CB2;CB3;CB5;CE2;CE3;CE5;CC1;CC2;CC3", "title":"Acquisto beni e servizi", "text":"(dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…)"});
+	reportGroups.push({"group":"4", "income":false, "gr1":"CB1", "title":"Erogazioni ai sensi della propria finalità istituzionale", "text":"N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato"});
+	reportGroups.push({"group":"5", "income":false, "gr1":"CB7;CB8;CE1;CE7;CG2", "title":"Altre voci di spesa riconducibili al raggiungimento dello scopo sociale", "text":""});
+	reportGroups.push({"group":"6", "income":false, "gr1":"CA6;CB6;CD5;CE6", "title":"Accantonamento", "text":"(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo)"});
+	return reportGroups;
 }
 
 //Main function
@@ -99,18 +97,18 @@ function exec(string) {
 
 
 	/**
-	 * File 1, current year.
+	 * Current year file.
 	 * For double accounting, get the Accounts table of the current opened file.
 	 * For simple accounting, get the Categories table of the current opened file.
 	 * Retrieve all the 5XM segments from that table.
 	 */
-	var accounts1 = "";
+	var accounts = "";
 	if (!Banana.document.table("Categories")) {
-		accounts1 = Banana.document.table("Accounts");
+		accounts = Banana.document.table("Accounts");
 	} else {
-		accounts1 = Banana.document.table("Categories");
+		accounts = Banana.document.table("Categories");
 	}
-	var segment5XMList = getSegmentList(accounts1);
+	var segment5XMList = getSegmentList(accounts);
 
 
 	/**
@@ -131,9 +129,7 @@ function exec(string) {
 
 
 	/**
-	 * File 2, previous year, selection.
-	 * For double accounting, get the Accounts table of the previous file.
-	 * For simple accounting, get the Categories table of the previous file.
+	 * Last year file selection.
 	 */
 	let fileLastYear = "";
 	if (userParam.fileAnnoPrecedente) {
@@ -149,18 +145,18 @@ function exec(string) {
 	 */
 	if (userParam.segment5XM) {
 
-		//Load the gorups
-		loadGroups();
+		//Load the report gorups with gr1 codes and texts.
+		let reportGroups = loadReportGroups();
 
-		//Create all the account objects for the selected segment
-		accountsMap = {};
-		loadAccountsMap(Banana.document, userParam);
+		//Create all the accounts objects for current year and last year.
+		let accountsMap = {};
+		loadAccountsMap(Banana.document, userParam, accountsMap);
 		if (fileLastYear) {
-			loadAccountsMap(fileLastYear, userParam);
+			loadAccountsMap(fileLastYear, userParam, accountsMap);
 		}
 				
 		//Create the report
-		let report = printReport(Banana.document, userParam, fileLastYear);
+		let report = printReport(Banana.document, fileLastYear, userParam, reportGroups, accountsMap);
 		
 		//Create the stylesheet using the css file
 		let stylesheet = Banana.Report.newStyleSheet();
@@ -168,24 +164,21 @@ function exec(string) {
 
 		//Create the report preview
 		Banana.Report.preview(report, stylesheet);
-
 	}
 }
 
-function printReport(banDoc, userParam, fileLastYear) {
+// Funzione che stampa il report.
+function printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap) {
 	let report = Banana.Report.newReport("Rendiconto 5 per mille");
 
 	printReport_Header(report, banDoc, userParam);
-	printReport_Rendiconto(report, banDoc, userParam, fileLastYear);
+	printReport_Rendiconto(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	printReport_Finale(report, banDoc, userParam)
 
 	return report;
 }
 
-
-
-
-//This function creates and print the report
+// Funzione che stampa l'intestazione.
 function printReport_Header(report, banDoc, userParam) {
 	/*
 		PRINT LOGO
@@ -248,14 +241,14 @@ function printReport_Header(report, banDoc, userParam) {
 	report.addParagraph(" ");
 }
 
-
-function printReport_Rendiconto(report, banDoc, userParam, fileLastYear) {
+// Funzione che stampa il rendiconto.
+function printReport_Rendiconto(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap) {
 	/* 
 		PRINT TABLE "RENDICONTO DELLE SPESE SOSTENUTE" 
 	*/
 
-	totalExpenses = "";
 	totalIncome = "";
+	totalExpenses = "";
 
 	let thisYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase","OpeningDate")).getFullYear();
 	let lastYear = "";
@@ -286,10 +279,10 @@ function printReport_Rendiconto(report, banDoc, userParam, fileLastYear) {
 	tableRow = table.addRow();
 
 	//Creation and print of the INCOME groups with all the details
-	for (var i = 0; i < groups.length; i++) {
-		var groupObj = getObject(groups, groups[i]["group"]);
+	for (var i = 0; i < reportGroups.length; i++) {
+		var groupObj = getObject(reportGroups, reportGroups[i]["group"]);
 		if (groupObj.income) {
-			printReport_Rendiconto_createGroup(banDoc, groupObj, table, fileLastYear);
+			printReport_Rendiconto_createGroup(banDoc, groupObj, table, accountsMap);
 		}
 	}
 
@@ -301,10 +294,10 @@ function printReport_Rendiconto(report, banDoc, userParam, fileLastYear) {
 
 
 	//Creation and print of the six EXPENSES groups with all the details
-	for (var i = 0; i < groups.length; i++) {
-		var groupObj = getObject(groups, groups[i]["group"]);
+	for (var i = 0; i < reportGroups.length; i++) {
+		var groupObj = getObject(reportGroups, reportGroups[i]["group"]);
 		if (!groupObj.income) {
-			printReport_Rendiconto_createGroup(banDoc, groupObj, table, fileLastYear);
+			printReport_Rendiconto_createGroup(banDoc, groupObj, table, accountsMap);
 		}
 	}
 	
@@ -314,7 +307,7 @@ function printReport_Rendiconto(report, banDoc, userParam, fileLastYear) {
 	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold", 1);
 }
 
-
+// Funzione che stampa la parte finale del report.
 function printReport_Finale(report, banDoc, userParam) {
 	//Add the current date (DD-MM-YYYY)
 	var date = new Date();
@@ -350,10 +343,9 @@ function printReport_Finale(report, banDoc, userParam) {
 	report.addParagraph("N.B. Si fa presente che è obbligatoria, per gli enti beneficiari del contributo, la redazione di una relazione in cui venga descritto in maniera analitica ed esaustiva l’utilizzo dei contributi percepiti. In particolar modo per le spese di personale eventualmente imputate, è necessario specificare per ciascun soggetto: il numero di ore imputate ed il costo orario di riferimento come indicato dalle relative tabelle ministeriali.", "bold underline");
 
 }
-
-//This function creates and print a whole group 
-//Questa funzione stampa il gruppo e tutte le categorie/conti che appartengono al gruppo.
-function printReport_Rendiconto_createGroup(banDoc, groupObj, table) {
+ 
+// Funzione che crea e stampa il gruppo e tutte le categorie/conti che appartengono al gruppo.
+function printReport_Rendiconto_createGroup(banDoc, groupObj, table, accountsMap) {
 	
 	//Take the data from the given group
 	var _group = groupObj.group;
@@ -363,7 +355,6 @@ function printReport_Rendiconto_createGroup(banDoc, groupObj, table) {
 	var arrGr = groupObj.gr1.split(";");
 	
 	var arrAcc = [];
-	var arrAcc2 = [];
 	var arrDesc = [];
 	var arrTot = [];
 	let total = "";
@@ -397,7 +388,7 @@ function printReport_Rendiconto_createGroup(banDoc, groupObj, table) {
 					arrAcc.push(account);
 					arrDesc.push(accountsMap[account].description);
 					arrTot.push(accountsMap[account].total);
-					Banana.console.log(account + "; " + accountsMap[account].total);	
+					// Banana.console.log(account + "; " + accountsMap[account].total);	
 				}
 			}
 		}
@@ -449,24 +440,23 @@ function printReport_Rendiconto_createGroup(banDoc, groupObj, table) {
 	}
 }
 
-
-
-//This function, for the given segment and period, creates all the accounts objects
-function loadAccountsMap(banDoc, userParam) {
+// Funzione che crea l'oggetto del conto/categoria.
+// Ogni oggetto contine descrizione, codice gr1 e importo.
+function loadAccountsMap(banDoc, userParam, accountsMap) {
 	
 	tabAccounts = banDoc.table("Accounts");
 	tabCategories = banDoc.table("Categories");
 
 	if (!tabCategories) {
-		loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts);
+		loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts, accountsMap);
 	}
 	else {
-		loadAccountsMap_IncomeAndExpenses(banDoc, userParam, tabCategories);
+		loadAccountsMap_IncomeAndExpenses(banDoc, userParam, tabCategories, accountsMap);
 	}
 }
 
-
-function loadAccountsMap_IncomeAndExpenses(banDoc, userParam, tabCategories) {
+// Funzione che crea l'oggetto per ogni conto della tabella Cagegorie (contabilità entrate-uscite).
+function loadAccountsMap_IncomeAndExpenses(banDoc, userParam, tabCategories, accountsMap) {
 	for (var i = 0; i < tabCategories.rowCount; i++) {
 		var tRow = tabCategories.row(i);
 		let account = tRow.value("Category");
@@ -495,7 +485,8 @@ function loadAccountsMap_IncomeAndExpenses(banDoc, userParam, tabCategories) {
 	}
 }
 
-function loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts) {
+// Funzione che crea l'oggetto per ogni conto della tabella Conti (contabilità doppia).
+function loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts, accountsMap) {
 	for (var i = 0; i < tabAccounts.rowCount; i++) {
 		var tRow = tabAccounts.row(i);
 		let account = tRow.value("Account");
@@ -507,6 +498,8 @@ function loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts) {
 
 			var currentBal = banDoc.currentBalance(account + userParam.segment5XM, "", "");
 			var total = currentBal.total;
+			//Segno degli importi come nelle entrate-uscite
+			//var total = Banana.SDecimal.invert(currentBal.total);
 
 			if (total) {
 				if (!accountsMap[account]) {
@@ -524,7 +517,7 @@ function loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts) {
 	}
 }
 
-//This function returns a specific object
+// Funzione che ritorna un oggetto specifico.
 function getObject(form, nr) {
 	for (var i = 0; i < form.length; i++) {
 		if (form[i]["group"] === nr) {
@@ -534,7 +527,7 @@ function getObject(form, nr) {
 	Banana.document.addMessage("Couldn't find object with nr: " + nr);
 }
 
-//This function take from Banana table 'Accounts/Categories'  all the 5XM segments
+// Funzione che riprende dalle tabella Conti/Categorie tutti i segmenti 5XMille.
 function getSegmentList(tabAccounts) {
 	var arrList = [];
 	if (Banana.document.table('Categories')) {
@@ -556,7 +549,7 @@ function getSegmentList(tabAccounts) {
 	return arrList;
 }
 
-//This function returns the description for a given segment
+// Funzione che ritorna la descrizione di un segmento.
 function getDescription(banDoc, segment) {
 	if (!banDoc.table('Categories')) {
 		for (var i = 0; i < banDoc.table('Accounts').rowCount; i++) {
@@ -576,7 +569,7 @@ function getDescription(banDoc, segment) {
 	}
 }
 
-//The main purpose of this function is to create styles for the report print
+// Funzione che crea imposta lo stile css per la stampa del report.
 function setCss(banDoc, repStyleObj) {
    var textCSS = "";
    var file = Banana.IO.getLocalFile("file:script/rendiconto5xMille.css");
