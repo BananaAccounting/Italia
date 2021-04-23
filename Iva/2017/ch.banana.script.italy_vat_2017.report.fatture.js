@@ -606,7 +606,7 @@ DatiFatture.prototype.createInstanceBlocco2DatiRiepilogo = function(noDoc, dataD
       xbrlDatiIVA += xml_createElementWithValidation("Aliquota", rows[i]["IT_Aliquota"],0,'4...6',msgContext);
       xbrlDatiRiepilogo += xml_createElementWithValidation("DatiIVA",xbrlDatiIVA,1);
       if (rows[i]["IT_Natura"].length)
-        xbrlDatiRiepilogo += xml_createElementWithValidation("Natura", rows[i]["IT_Natura"],0,'2');
+        xbrlDatiRiepilogo += xml_createElementWithValidation("Natura", rows[i]["IT_Natura"],0,'2...5');
       if (rows[i]["IT_Detraibile"].length)
         xbrlDatiRiepilogo += xml_createElementWithValidation("Detraibile", rows[i]["IT_Detraibile"],0,'4...6');
       if (rows[i]["IT_Deducibile"].length)

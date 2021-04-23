@@ -562,7 +562,7 @@ Journal.prototype.load = function() {
           rowVatDescription = "";
         rowVatDescription = rowVatDescription.toLowerCase();
         rowVatDescription = rowVatDescription.replace(" ","");
-        if (vatGr1.length==2 && vatGr1.startsWith("N")) {
+        if (vatGr1.startsWith("N")) {
           jsonLine["IT_Natura"] = vatGr1;
         }
         else if (vatGr1 == "ESCL") {
