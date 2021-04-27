@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2021-02-19
+// @pubdate = 2021-04-26
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -86,19 +86,30 @@ function exec(string) {
     * 3. Creates the report
     */
    var stylesheet = Banana.Report.newStyleSheet();
-   var report = printRendicontoModD(Banana.document, userParam, bReport, stylesheet);
+   var report = printReport(Banana.document, userParam, bReport, stylesheet);
    setCss(Banana.document, stylesheet, userParam);
    Banana.Report.preview(report, stylesheet);
 }
 
-function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
-
+// Funzione che stampa il report
+function printReport(banDoc, userParam, bReport, stylesheet) {
+	
    var report = Banana.Report.newReport("Rendiconto per cassa");
-   var startDate = userParam.selectionStartDate;
-   var endDate = userParam.selectionEndDate;
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
-   var previousYear = currentYear - 1;
 
+	printReport_Intestazione(report, banDoc, userParam, stylesheet);
+	printReport_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bReport);
+   printReport_Rendiconto_Investimenti_Disinvestimenti(report, banDoc, userParam, bReport);
+   printReport_Rendiconto_Avanzo_Disavanzo(report, banDoc, userParam, bReport);
+   printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport);
+   printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport);
+
+	return report;
+}
+
+function printReport_Intestazione(report, banDoc, userParam, stylesheet) {
+   
+   // INTESTAZIONE (LOGO, INDIRIZZO, TITOLO)
+   
    // Logo
    var headerParagraph = report.getHeader().addSection();
    if (userParam.logo) {
@@ -110,7 +121,7 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
       }
       report.addParagraph(" ", "");
    }
-
+   // Address
    if (userParam.printheader) {
       if (userParam.headertext.length <= 0) {
          var company = banDoc.info("AccountingDataBase","Company");
@@ -151,7 +162,8 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
          }
       }
    }
-
+   // Title
+   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
    var title = "";
    if (userParam.title) {
       title = userParam.title;
@@ -164,6 +176,16 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
       report.addParagraph(title, "heading2");
       report.addParagraph(" ", "");
    }
+}
+
+function printReport_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bReport) {
+
+   // SEZIONE "USCITE E ENTRATE"
+
+   var endDate = userParam.selectionEndDate;
+   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var previousYear = currentYear - 1;
+
 
    var table = report.addTable("table");
    if (userParam.printcolumn) {
@@ -187,9 +209,6 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
       var column7 = table.addColumn("column7");
    }
    
-   /**************************************************************************************
-   * COSTI E PROVENTI
-   **************************************************************************************/
    tableRow = table.addRow();
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
@@ -917,11 +936,17 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADES"), "align-right", 1);
 
 
+   //checkResults(banDoc, startDate, endDate);
+   //checkLiquidity(bReport, report);
 
+   //addFooter(report);
+   return report;
+}
 
-   /**************************************************************************************
-   * Uscite da investimenti / Entrate da disinvestimenti
-   **************************************************************************************/
+function printReport_Rendiconto_Investimenti_Disinvestimenti(report, banDoc, userParam, bReport) {
+
+   // SEZIONE "Uscite da investimenti / Entrate da disinvestimenti"
+   
    /**
     *  Nella contabilità doppia le registrazioni di disinvestimenti (entrate) vanno con il segno -, 
     *  mentre gli investimenti (uscite) con il segno +.
@@ -932,6 +957,13 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
     *  Questo perché vengono trattati come entrate e uscite: nella contabilità le entrate sono con il segno +
     *  e le uscite con il segno -.
     */
+
+   var startDate = userParam.selectionStartDate;
+   var endDate = userParam.selectionEndDate;
+   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var previousYear = currentYear - 1;
+
+
    report.addParagraph(" ", "");
 
    var table = report.addTable("table");
@@ -1072,10 +1104,16 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF-CF"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF-CF"), "align-right", 1);
 
+   return report;
+}
 
-   /**************************************************************************************
-   * Avanzo/disavanzo
-   **************************************************************************************/
+function printReport_Rendiconto_Avanzo_Disavanzo(report, banDoc, userParam, bReport) {
+
+   // SEZIONE "AVANZO E DISAVANZO"
+
+   var endDate = userParam.selectionEndDate;
+   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var previousYear = currentYear - 1;
 
    report.addParagraph(" ", "");
 
@@ -1140,11 +1178,16 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADRC"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADRC"), "align-right", 1);
 
+   return report;
+}
 
+function printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport) {
 
-   /**************************************************************************************
-   * Cassa e Banca
-   **************************************************************************************/
+   // SEZIONE "CASSA E BANCA"
+
+   var endDate = userParam.selectionEndDate;
+   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var previousYear = currentYear - 1;
 
    report.addParagraph(" ", "");
 
@@ -1202,11 +1245,17 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("ACIV1"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("ACIV1"), "align-right", 1);
 
+   return report;
+}
 
+function printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport) {
 
-   /**************************************************************************************
-   * COSTI E PROVENTI FIGURATIVI
-   **************************************************************************************/
+   // SEZIONE "COSTI E PROVENTI FIGURATIVI"
+
+   var endDate = userParam.selectionEndDate;
+   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var previousYear = currentYear - 1;
+
    if (userParam.printcostifigurativi) {
 
       report.addParagraph(" ", "");
@@ -1297,14 +1346,13 @@ function printRendicontoModD(banDoc, userParam, bReport, stylesheet) {
       tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG"), "align-right", 1);
    }
 
-
-   //checkResults(banDoc, startDate, endDate);
-   //checkLiquidity(bReport, report);
-
-   //addFooter(report);
    return report;
 }
 
+
+/**************************************************************************************
+ * Functionalities
+ **************************************************************************************/
 function formatValue(value) {
    if (!value || value === "0" || value == null) {
       value = "0";

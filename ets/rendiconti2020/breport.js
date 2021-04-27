@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2020-12-16 */
+/* Update: 2021-04-26 */
 
 
 
@@ -464,7 +464,7 @@ var BReport = class JsClass {
 
       var valueObj = this.getObject(id);
       
-      if (valueObj[fields[0]]) { //first field is present
+      if (valueObj[fields[0]] || valueObj[fields[1]]) { //first field is present
          return; //calc already done, return
       }
       

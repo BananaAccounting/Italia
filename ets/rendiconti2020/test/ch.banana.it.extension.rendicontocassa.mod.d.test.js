@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.rendicontocassa.mod.d.test
 // @api = 1.0
-// @pubdate = 2021-02-17
+// @pubdate = 2021-04-26
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.rendicontocassa.mod.d.js>
 // @task = app.command
@@ -86,7 +86,7 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	bReport.formatValues(["currentAmount", "previousAmount"]);
 	bReport.excludeEntries();
 
-	var report = printRendicontoModD(banDoc, userParam, bReport, "");
+	var report = printReport(banDoc, userParam, bReport, "");
 	Test.logger.addReport("Test 'rendiconto cassa (MOD. D)'", report);
 
 
@@ -117,7 +117,7 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	bReport1.formatValues(["currentAmount", "previousAmount"]);
 	bReport1.excludeEntries();
 
-	var report = printRendicontoModD(banDoc, userParam, bReport1, "");
+	var report = printReport(banDoc, userParam, bReport1, "");
 	Test.logger.addReport("Test GR1 'rendiconto cassa (MOD. D)'", report);
 
 
@@ -148,7 +148,7 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	bReport2.formatValues(["currentAmount", "previousAmount"]);
 	bReport2.excludeEntries();
 
-	var report = printRendicontoModD(banDoc, userParam, bReport2, "");
+	var report = printReport(banDoc, userParam, bReport2, "");
 	Test.logger.addReport("Test GR1 'rendiconto cassa (MOD. D)'", report);
 
 
@@ -180,7 +180,7 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	bReport3.formatValues(["currentAmount", "previousAmount"]);
 	bReport3.excludeEntries();
 
-	var report = printRendicontoModD(banDoc, userParam, bReport3, "");
+	var report = printReport(banDoc, userParam, bReport3, "");
 	Test.logger.addReport("Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento", report);
 
 
@@ -212,7 +212,71 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	bReport4.formatValues(["currentAmount", "previousAmount"]);
 	bReport4.excludeEntries();
 
-	var report = printRendicontoModD(banDoc, userParam, bReport4, "");
+	var report = printReport(banDoc, userParam, bReport4, "");
 	Test.logger.addReport("Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento senza costi/ricavi figurativi", report);
+
+
+	/**
+	 *	Test with current and previous year amounts
+	 */
+	 var banDoc = Banana.application.openDocument("file:script/../test/testcases/entrate-uscite-corrente-e-precedente.ac2");
+	 Test.assert(banDoc);
+ 
+	 var userParam = {};
+	 userParam.selectionStartDate = "2020-01-01";
+	 userParam.selectionEndDate = "2020-12-31";
+	 userParam.title = "RENDICONTO CASSA (MOD. D) ANNO 2020";
+	 userParam.logo = false;
+	 userParam.logoname = 'Logo';
+	 userParam.printheader = false;
+	 userParam.printtitle = true;
+	 userParam.title = '';
+	 userParam.column = 'Gr1';
+	 userParam.printcolumn = true;
+	 userParam.printcostifigurativi = true;
+ 
+	 var reportStructure = createReportStructureRendicontoCassa();
+ 
+	 const bReport5 = new BReport(banDoc, userParam, reportStructure);
+	 bReport5.validateGroups(userParam.column);
+	 bReport5.loadBalances();
+	 bReport5.calculateTotals(["currentAmount", "previousAmount"]);
+	 bReport5.formatValues(["currentAmount", "previousAmount"]);
+	 bReport5.excludeEntries();
+ 
+	 var report = printReport(banDoc, userParam, bReport5, "");
+	 Test.logger.addReport("Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento senza costi/ricavi figurativi", report);
+
+
+	/**
+	 *	Test with only previous year amounts
+	 */
+	 var banDoc = Banana.application.openDocument("file:script/../test/testcases/entrate-uscite-solo-precedente.ac2");
+	 Test.assert(banDoc);
+ 
+	 var userParam = {};
+	 userParam.selectionStartDate = "2020-01-01";
+	 userParam.selectionEndDate = "2020-12-31";
+	 userParam.title = "RENDICONTO CASSA (MOD. D) ANNO 2020";
+	 userParam.logo = false;
+	 userParam.logoname = 'Logo';
+	 userParam.printheader = false;
+	 userParam.printtitle = true;
+	 userParam.title = '';
+	 userParam.column = 'Gr1';
+	 userParam.printcolumn = true;
+	 userParam.printcostifigurativi = true;
+ 
+	 var reportStructure = createReportStructureRendicontoCassa();
+ 
+	 const bReport6 = new BReport(banDoc, userParam, reportStructure);
+	 bReport6.validateGroups(userParam.column);
+	 bReport6.loadBalances();
+	 bReport6.calculateTotals(["currentAmount", "previousAmount"]);
+	 bReport6.formatValues(["currentAmount", "previousAmount"]);
+	 bReport6.excludeEntries();
+ 
+	 var report = printReport(banDoc, userParam, bReport6, "");
+	 Test.logger.addReport("Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento senza costi/ricavi figurativi", report);
 
 }
