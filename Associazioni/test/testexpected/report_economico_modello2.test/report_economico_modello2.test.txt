@@ -25,8 +25,7 @@
 \begin{reportvalue}{Test report ecomomico modello 2 (contabilità semplice)}
                   giunta regionale – 8\^{} legislatura \\
   \\
-ALLEGATO \_A\_ Dgr n.    4314  del   29/12/2009          pag. \\
-  \\
+ALLEGATO \_A\_ Dgr n.    4314  del   29/12/2009          pag. \#page-nr   \\
   \\
   \\
 Associazione CSV - BILANCIO ECONOMICO (Modello 2) ANNO 2018 \\
@@ -105,16 +104,14 @@ P3  & NETTO  & 25'200.00 \\
 PAG  & AVANZO DI GESTIONE  & 5'609.00 \\
 PTP  & TOTALE A PAREGGIO  & 104'530.00 \\
 \end{longtable}
-Banana Accounting -  Pagina  \\
-\end{reportvalue}
+Banana Accounting -  Pagina  \#page-nr \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}
 \begin{test}{testBananaAppDoppia}
 \begin{reportvalue}{Test report ecomomico modello 2 (contabilità doppia)}
                   giunta regionale – 8\^{} legislatura \\
   \\
-ALLEGATO \_A\_ Dgr n.    4314  del   29/12/2009          pag. \\
-  \\
+ALLEGATO \_A\_ Dgr n.    4314  del   29/12/2009          pag. \#page-nr   \\
   \\
   \\
 Associazione CSV - BILANCIO ECONOMICO (Modello 2) ANNO 2018 \\
@@ -193,8 +190,7 @@ P3  & NETTO  & 25'200.00 \\
 PAG  & AVANZO DI GESTIONE  & 22'109.00 \\
 PTP  & TOTALE A PAREGGIO  & 119'030.00 \\
 \end{longtable}
-Banana Accounting -  Pagina  \\
-\end{reportvalue}
+Banana Accounting -  Pagina  \#page-nr \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}
 \end{testcase}
