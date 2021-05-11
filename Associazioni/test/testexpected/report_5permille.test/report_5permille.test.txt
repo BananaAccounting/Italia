@@ -18,7 +18,7 @@
 \newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
 \newenvironment{test}[1]{\section*{Test case: #1}}{}
 %Begin test data
-%%SCRIPT{/Users/lorenzo/Programmazione/GitHub/BananaAccounting/Italia/Associazioni/test/report_5permille.test.js}
+%%SCRIPT{/Users/ivan/Documents/GitHub/Italia/Associazioni/test/report_5permille.test.js}
 %
 \begin{testcase}{Report5permilleTest}
 \begin{test}{testBananaAppSemplice}
@@ -36,7 +36,7 @@ C.F. del soggetto beneficiario  & 1234567890 \\
 Indirizzo  & Gradenigo 10 \\
 Città  & Padova \\
 N. Telefono  & 0498686849 \\
-N. Fax  & 0498689273 \\
+N. Fax  & \\
 Indirizzo email  & info@csvpadova.org \\
 Nome del rappresentante legale  & Sig. Mario Rossi \\
 C.F. del rappresentante legale  & 9876543210 \\
@@ -51,17 +51,17 @@ RENDICONTO DELLE SPESE SOSTENUTE (EUR) \multicolumn{2}{l}{Finanaziamento cinque 
 \multicolumn{2}{l}{IMPORTO PERCEPITO } & 0.00 \\
 \multicolumn{3}{l}{  }\\
 \multicolumn{2}{l}{1. Risorse umane \newline (dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50\% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato \newline } & \\
-3202  & (PERS. ATIPICI E OCCASIONALI) Collaborazioni a progetto e occasionali  & -4'500.00 \\
+3202  & (PERS. ATIPICI E OCCASIONALI) Collaborazioni a progetto e occasionali  & 4'500.00 \\
 \multicolumn{2}{l}{Totale gruppo 1 } & 4'500.00 \\
 \multicolumn{2}{l}{2. Costi di funzionamento \newline (dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc…) \newline } & \\
-3502  & (MAT. CONS. STRUTTURA) Valori postali e bollati  & -250.00 \\
+3502  & (MAT. CONS. STRUTTURA) Valori postali e bollati  & 250.00 \\
 \multicolumn{2}{l}{Totale gruppo 2 } & 250.00 \\
 \multicolumn{2}{l}{3. Acquisto beni e servizi \newline (dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…) \newline } & \\
-3302  & (ACQ. SERVIZI) Pulizie locali  & -3'500.00 \\
-3601  & (GODIM. BDT) noleggio attrezzature  & -4'500.00 \\
+3302  & (ACQ. SERVIZI) Pulizie locali  & 3'500.00 \\
+3601  & (GODIM. BDT) noleggio attrezzature  & 4'500.00 \\
 \multicolumn{2}{l}{Totale gruppo 3 } & 8'000.00 \\
 \multicolumn{2}{l}{4. Erogazioni ai sensi della propria finalità istituzionale \newline N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato \newline } & \\
-4002  & (ALTRE USCITE) Versate ad altre odv   & -1'000.00 \\
+4002  & (ALTRE USCITE) Versate ad altre odv   & 1'000.00 \\
 \multicolumn{2}{l}{Totale gruppo 4 } & 1'000.00 \\
 \multicolumn{2}{l}{5. Altre voci di spesa riconducibili al raggiungimento dello scopo sociale \newline \newline } & \\
 \multicolumn{2}{l}{Totale gruppo 5 } & 0.00 \\
@@ -70,7 +70,7 @@ RENDICONTO DELLE SPESE SOSTENUTE (EUR) \multicolumn{2}{l}{Finanaziamento cinque 
 \multicolumn{2}{l}{TOTALE SPESE } & 13'750.00 \\
 \end{longtable}
   \\
-\excltest{Data: 26.06.2018} \\
+\excltest{Data: 11.05.2021} \\
   \\
   \\
 Firma del rappresentante legale \\
@@ -90,8 +90,7 @@ Si precisa che il trattamento di dati personali è eseguito senza il consenso de
   \\
   \\
 N.B. Si fa presente che è obbligatoria, per gli enti beneficiari del contributo, la redazione di una relazione in cui venga descritto in maniera analitica ed esaustiva l’utilizzo dei contributi percepiti. In particolar modo per le spese di personale eventualmente imputate, è necessario specificare per ciascun soggetto: il numero di ore imputate ed il costo orario di riferimento come indicato dalle relative tabelle ministeriali. \\
-Banana Accounting 8 -  Pagina  \\
-\end{reportvalue}
+Banana Accounting 8 -  Pagina  \#page-nr \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}
 \begin{test}{testBananaAppDoppia}
@@ -109,7 +108,7 @@ C.F. del soggetto beneficiario  & 1234567890 \\
 Indirizzo  & Gradenigo 10 \\
 Città  & Padova \\
 N. Telefono  & 0498686849 \\
-N. Fax  & 0498689273 \\
+N. Fax  & \\
 Indirizzo email  & info@csvpadova.org \\
 Nome del rappresentante legale  & Sig. Mario Rossi \\
 C.F. del rappresentante legale  & 9876543210 \\
@@ -140,7 +139,7 @@ RENDICONTO DELLE SPESE SOSTENUTE (EUR) \multicolumn{2}{l}{Finanziamento cinque p
 \multicolumn{2}{l}{TOTALE SPESE } & 9'500.00 \\
 \end{longtable}
   \\
-\excltest{Data: 26.06.2018} \\
+\excltest{Data: 11.05.2021} \\
   \\
   \\
 Firma del rappresentante legale \\
@@ -160,8 +159,7 @@ Si precisa che il trattamento di dati personali è eseguito senza il consenso de
   \\
   \\
 N.B. Si fa presente che è obbligatoria, per gli enti beneficiari del contributo, la redazione di una relazione in cui venga descritto in maniera analitica ed esaustiva l’utilizzo dei contributi percepiti. In particolar modo per le spese di personale eventualmente imputate, è necessario specificare per ciascun soggetto: il numero di ore imputate ed il costo orario di riferimento come indicato dalle relative tabelle ministeriali. \\
-Banana Accounting 8 -  Pagina  \\
-\end{reportvalue}
+Banana Accounting 8 -  Pagina  \#page-nr \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}
 \end{testcase}
