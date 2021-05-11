@@ -41,7 +41,7 @@ Data  & Doc  & Descrizione  & Entrate  & Uscite \\
 01.08.2018  & 20  & Entrate Raccolta fondi 2  & 2'400.00  & \\
 01.08.2018  & 21  & Uscite Raccolta fondi  &  & 450.00 \\
  &  & Totali movimenti  & 2'900.00  & 450.00 \\
- &  & DISAVANZO D'ESERCIZIO  & \multicolumn{2}{l}{2'450.00 }\\
+ &  & AVANZO D'ESERCIZIO  & \multicolumn{2}{l}{2'450.00 }\\
 \end{longtable}
   \\
   \\
@@ -75,7 +75,7 @@ Responsabile: Signor Marco Rossi \\
 Data  & Doc  & Descrizione  & Entrate  & Uscite \\
 01.08.2018  & 20  & Entrate Raccolta fondi 3  & 10.00  & \\
  &  & Totali movimenti  & 10.00  & \\
- &  & DISAVANZO D'ESERCIZIO  & \multicolumn{2}{l}{10.00 }\\
+ &  & AVANZO D'ESERCIZIO  & \multicolumn{2}{l}{10.00 }\\
 \end{longtable}
   \\
   \\
@@ -175,10 +175,10 @@ Responsabile: Signor Marco Rossi \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l }
 Data  & Doc  & Descrizione  & Entrate  & Uscite \\
-01.08.2018  &  & Entrate Raccolta fondi 1  &  & 500.00 \\
-01.08.2018  &  & Entrate Raccolta fondi 2  &  & 2'400.00 \\
-01.08.2018  &  & Uscite Raccolta fondi  & 450.00  & \\
- &  & Totali movimenti  & 450.00  & 2'900.00 \\
+01.08.2018  &  & Entrate Raccolta fondi 1  & 500.00  & \\
+01.08.2018  &  & Entrate Raccolta fondi 2  & 2'400.00  & \\
+01.08.2018  &  & Uscite Raccolta fondi  &  & 450.00 \\
+ &  & Totali movimenti  & 2'900.00  & 450.00 \\
  &  & AVANZO D'ESERCIZIO  & \multicolumn{2}{l}{2'450.00 }\\
 \end{longtable}
   \\
@@ -211,8 +211,8 @@ Responsabile: Signor Marco Rossi \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l }
 Data  & Doc  & Descrizione  & Entrate  & Uscite \\
-01.08.2018  &  & Entrate Raccolta fondi 3  &  & 10.00 \\
- &  & Totali movimenti  &  & 10.00 \\
+01.08.2018  &  & Entrate Raccolta fondi 3  & 10.00  & \\
+ &  & Totali movimenti  & 10.00  & \\
  &  & AVANZO D'ESERCIZIO  & \multicolumn{2}{l}{10.00 }\\
 \end{longtable}
   \\
