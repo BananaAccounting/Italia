@@ -25,6 +25,7 @@
 // @includejs = ch.banana.it.efattura.b2b.xml.js
 
 function exec(inData, options) {
+
    if (!Banana.document) {
       return "@Cancel";
    }
@@ -151,6 +152,7 @@ function EFattura(banDocument) {
    /* errors id*/
    this.ID_ERR_ACCOUNTING_TYPE_NOTVALID = "ID_ERR_ACCOUNTING_TYPE_NOTVALID";
    this.ID_ERR_INVOICENUMBER_MISSING = "ID_ERR_INVOICENUMBER_MISSING";
+   this.ID_ERR_LICENSE_NOTVALID = "ID_ERR_LICENSE_NOTVALID";
    this.ID_ERR_NOINVOICE = "ID_ERR_NOINVOICE";
    this.ID_ERR_TABLE_ADDRESS_MISSING = "ID_ERR_TABLE_ADDRESS_MISSING";
    this.ID_ERR_TABLE_ADDRESS_NOT_UPDATED = "ID_ERR_TABLE_ADDRESS_NOT_UPDATED";
@@ -972,7 +974,7 @@ EFattura.prototype.getCodiceNatura = function (vatCode) {
             rowVatDescription = "";
          rowVatDescription = rowVatDescription.toLowerCase();
          rowVatDescription = rowVatDescription.replace(" ", "");
-         if (vatGr1.length == 2 && vatGr1.startsWith("N")) {
+         if (vatGr1.length > 0 && vatGr1.startsWith("N")) {
             codNatura = vatGr1;
          }
          else if (vatGr1 == "ESCL") {
@@ -1094,7 +1096,9 @@ EFattura.prototype.getCustomerList = function () {
 
 EFattura.prototype.getErrorMessage = function (errorId) {
    //Document language
-   var lang = this.banDocument.locale;
+   var lang = 'en';
+   if (this.banDocument)
+      lang = this.banDocument.locale;
    if (lang.length > 2)
       lang = lang.substr(0, 2);
    var rtnMsg = '';
@@ -1109,6 +1113,12 @@ EFattura.prototype.getErrorMessage = function (errorId) {
          rtnMsg = "Indicare il numero fattura";
       else
          rtnMsg = "Please indicate the invoice number";
+   }
+   else if (errorId == this.ID_ERR_LICENSE_NOTVALID) {
+      if (lang == 'it')
+         rtnMsg = "Questa estensione richiede Banana Contabilità+ Advanced";
+      else
+         rtnMsg = "This extension requires Banana Accounting+ Advanced";
    }
    else if (errorId == this.ID_ERR_NOINVOICE) {
       if (lang == 'it')
@@ -1136,9 +1146,9 @@ EFattura.prototype.getErrorMessage = function (errorId) {
    }
    else if (errorId == this.ID_ERR_VERSION_NOTSUPPORTED) {
       if (lang == 'it')
-         rtnMsg = "Lo script non funziona con questa versione di Banana Contabilità. Aggiornare a Banana+ Advanced";
+         rtnMsg = "Lo script non funziona con la vostra attuale versione di Banana Contabilità.\nVersione minimina richiesta: %1.\nPer aggiornare o per maggiori informazioni cliccare su Aiuto";
       else
-         rtnMsg = "This script does not run with this version of Banana Accounting. Please update to Banana+ Advanced";
+         rtnMsg = "This script does not run with your current version of Banana Accounting.\nMinimum version required: %1.\nTo update or for more information click on Help";
    }
    else if (errorId == this.ID_ERR_XML_FILE_NONVALIDO) {
       if (lang == 'it')
@@ -1440,30 +1450,25 @@ EFattura.prototype.setParam = function (param) {
 }
 
 EFattura.prototype.verifyBananaVersion = function () {
+   if (!this.banDocument)
+      return false;
 
-   var banVersionMin = "10.0.7";
-   var banDevVersionMin = "210127";
-
-   //verifica se la versione è compatibile
-   var isCompatible = false;
-   if (banDevVersionMin)
-      banVersionMin = banVersionMin + "." + banDevVersionMin;
-   if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, banVersionMin) >= 0) {
-      isCompatible = true;
-   }
-
-   //verifica se versione advanced
-   var isAdvanced = false;
-   if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, "10.0.7") >= 0) {
-      var license = Banana.application.license;
-      if (license.licenseType === "advanced" || license.isWithinMaxFreeLines) {
-         isAdvanced = true;
-      }
-   }
-
-   if (!isCompatible || !isAdvanced) {
+   //Banana+ is required
+   var requiredVersion = "10.0.9";
+   if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
       var msg = this.getErrorMessage(this.ID_ERR_VERSION_NOTSUPPORTED);
-      this.addMessage(msg, this.ID_ERR_VERSION_NOTSUPPORTED);
+      msg = msg.replace("%1", requiredVersion);
+      this.banDocument.addMessage(msg, this.ID_ERR_VERSION_NOTSUPPORTED);
+      return false;
+   }
+   /*if (!Banana.application.isExperimental) {
+   var msg = "The Experimental version is required";
+   this.banDocument.addMessage(msg, "ID_ERR_EXPERIMENTAL_REQUIRED");
+   return false;
+   }*/
+   if (!Banana.application.license || Banana.application.license.licenseType !== "advanced") {
+      var msg = this.getErrorMessage(this.ID_ERR_LICENSE_NOTVALID);
+      this.banDocument.addMessage(msg, this.ID_ERR_LICENSE_NOTVALID);
       return false;
    }
 
@@ -1487,7 +1492,6 @@ EFattura.prototype.verifyBananaVersion = function () {
       this.addMessage(msg, this.ID_ERR_ACCOUNTING_TYPE_NOTVALID);
       return false;
    }
-
    return true;
 }
 

@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.audit.fattura.pa.v12
 // @api = 1.0
-// @pubdate = 2021-05-18
+// @pubdate = 2021-05-27
 // @publisher = Banana.ch SA
 // @description = Importazione fattura elettronica pa v1.2(*.xml)
 // @task = import.file
@@ -30,6 +30,10 @@ function exec(inData) {
     if (!Banana.document || inData.length <= 0)
         return "@Cancel";
 
+    var eFatturaImport = new EFatturaImport(Banana.document);
+    if (!eFatturaImport.verifyBananaVersion())
+        return "@Cancel";
+
     var jsonData = {};
     try {
         jsonData = JSON.parse(inData);
@@ -41,7 +45,6 @@ function exec(inData) {
     if (!jsonData)
         return "@Cancel";
 
-    var eFatturaImport = new EFatturaImport(Banana.document);
     var savedParam = Banana.document.getScriptSettings();
     if (savedParam.length > 0) {
         eFatturaImport.setParam(JSON.parse(savedParam));
@@ -64,10 +67,13 @@ function exec(inData) {
 /*Update script's parameters*/
 function settingsDialog() {
 
-    if (typeof (Banana.Ui.openPropertyEditor) === 'undefined')
-        return;
-
     var eFatturaImport = new EFatturaImport(Banana.document);
+    if (!eFatturaImport.verifyBananaVersion())
+        return false;
+
+    if (typeof (Banana.Ui.openPropertyEditor) === 'undefined')
+        return false;
+
     var savedParam = Banana.document.getScriptSettings();
     if (savedParam.length > 0) {
         eFatturaImport.setParam(JSON.parse(savedParam));
@@ -77,7 +83,7 @@ function settingsDialog() {
     var convertedParam = eFatturaImport.convertParam(eFatturaImport.param);
     var pageAnchor = 'dlgSettings';
     if (!Banana.Ui.openPropertyEditor(dialogTitle, convertedParam, pageAnchor))
-        return;
+        return false;
     for (var i = 0; i < convertedParam.data.length; i++) {
         // Read values to param (through the readValue function)
         convertedParam.data[i].readValue();
@@ -85,6 +91,7 @@ function settingsDialog() {
 
     var paramToString = JSON.stringify(eFatturaImport.param);
     var value = Banana.document.setScriptSettings(paramToString);
+    return true;
 }
 
 /*Function called from converter*/
@@ -100,7 +107,8 @@ function EFatturaImport(banDocument) {
 	//array dei patches
 	this.jsonDocArray = [];
 	
-    this.ID_ERR_ = "ID_ERR_";
+    this.ID_ERR_LICENSE_NOTVALID = "ID_ERR_LICENSE_NOTVALID";
+    this.ID_ERR_VERSION_NOTSUPPORTED = "ID_ERR_VERSION_NOTSUPPORTED";
 }
 
 /*Il metodo createJsonDocument() riprende i dati dal file xml della fattura elettronica
@@ -602,11 +610,26 @@ EFatturaImport.prototype.getAccountingInfo = function () {
 }
 
 EFatturaImport.prototype.getErrorMessage = function (errorId) {
-    switch (errorId) {
-        case this.ID_ERR_:
-            return "";
+    //Document language
+    var lang = 'en';
+    if (this.banDocument)
+        lang = this.banDocument.locale;
+    if (lang.length > 2)
+        lang = lang.substr(0, 2);
+    var rtnMsg = '';
+    if (errorId == this.ID_ERR_LICENSE_NOTVALID) {
+        if (lang == 'it')
+            rtnMsg = "Questa estensione richiede Banana Contabilità+ Advanced";
+        else
+            rtnMsg = "This extension requires Banana Accounting+ Advanced";
     }
-    return "";
+    else if (errorId == this.ID_ERR_VERSION_NOTSUPPORTED) {
+        if (lang == 'it')
+            rtnMsg = "Lo script non funziona con la vostra attuale versione di Banana Contabilità.\nVersione minimina richiesta: %1.\nPer aggiornare o per maggiori informazioni cliccare su Aiuto";
+        else
+            rtnMsg = "This script does not run with your current version of Banana Accounting.\nMinimum version required: %1.\nTo update or for more information click on Help";
+    }
+    return rtnMsg + " [" + errorId + "] ";
 }
 
 EFatturaImport.prototype.getNewAccountId = function () {
@@ -890,6 +913,28 @@ EFatturaImport.prototype.setParam = function (param) {
         this.param = JSON.parse(param)
     }
     this.verifyParam();
+}
+
+EFatturaImport.prototype.verifyBananaVersion = function () {
+    if (!this.banDocument)
+        return false;
+
+    //Banana+ is required
+    var requiredVersion = "10.0.9";
+    if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
+        var msg = this.getErrorMessage(this.ID_ERR_VERSION_NOTSUPPORTED);
+        msg = msg.replace("%1", requiredVersion);
+        this.banDocument.addMessage(msg, this.ID_ERR_VERSION_NOTSUPPORTED);
+        return false;
+    }
+
+    if (!Banana.application.license || Banana.application.license.licenseType !== "advanced") {
+        var msg = this.getErrorMessage(this.ID_ERR_LICENSE_NOTVALID);
+        this.banDocument.addMessage(msg, this.ID_ERR_LICENSE_NOTVALID);
+        return false;
+    }
+
+    return true;
 }
 
 EFatturaImport.prototype.verifyParam = function () {

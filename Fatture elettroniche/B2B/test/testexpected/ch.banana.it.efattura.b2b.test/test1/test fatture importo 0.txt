@@ -123,11 +123,11 @@
 <PrezzoUnitario>500.00</PrezzoUnitario>
 <PrezzoTotale>500.00</PrezzoTotale>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N4</Natura>
+<Natura>N3.1</Natura>
 </DettaglioLinee>
 <DatiRiepilogo>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N4</Natura>
+<Natura>N3.1</Natura>
 <ImponibileImporto>500.00</ImponibileImporto>
 <Imposta>0.00</Imposta>
 </DatiRiepilogo>
@@ -212,11 +212,11 @@
 <PrezzoUnitario>0.00</PrezzoUnitario>
 <PrezzoTotale>0.00</PrezzoTotale>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N4</Natura>
+<Natura>N3.1</Natura>
 </DettaglioLinee>
 <DatiRiepilogo>
 <AliquotaIVA>0.00</AliquotaIVA>
-<Natura>N4</Natura>
+<Natura>N3.1</Natura>
 <ImponibileImporto>0</ImponibileImporto>
 <Imposta>0.00</Imposta>
 </DatiRiepilogo>
