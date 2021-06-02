@@ -23,287 +23,283 @@
 \begin{testcase}{Rendiconto5XMilleTest}
 \begin{test}{testContabilitaSemplice\_AnnoCorrente}
 \begin{reportvalue}{Test report 5 per mille - contabilità entrate/uscite - 5X2022 anno corrente}
-Ministero del Lavoro e delle Politiche Sociali \\
-Direzione Generale per il Terzo Settore e le Formazioni Sociali \\
   \\
   \\
-MODELLO PER IL RENDICONTO DELLE SOMME PERCEPITE IN VIRTÙ DEL BENEFICIO DEL 5 PER MILLE DELL'IRPEF DAGLI AVENTI DIRITTO \\
+RENDICONTO DEGLI IMPORTI DEL “5 PER MILLE DELL’IRPEF” PERCEPITI DAGLI AVENTI DIRITTO \\
   \\
 \begin{longtable}[l]{ l  l }
 ANAGRAFICA Denominazione sociale  & Associazione Aiuto agli Anziani \\
 Scopi dell'attività sociale  & Sostenere e qualificare l'attività di volontariato \\
-C.F. del soggetto beneficiario  & 1234567890 \\
-Indirizzo  & Gradenigo 10 \\
+C.F. dell'Ente  & 1234567890 \\
 Città  & Padova \\
-N. Telefono  & 0498686849 \\
-N. Fax  & \\
-Indirizzo email  & info@example.com \\
+Provincia  & \\
+CAP  & 35131 \\
+Via  & Gradenigo 10 \\
+Telefono  & 0498686849 \\
+Fax  & \\
+Email  & info@example.com \\
+PEC  & \\
 Nome del rappresentante legale  & Sig. Mario Rossi \\
 C.F. del rappresentante legale  & 123456789 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l }
-RENDICONTO DELLE SPESE SOSTENUTE (EUR) \multicolumn{2}{l}{Finanziamento cinque per mille anno 2022 (anno corrente) } & :5X2022 \\
-\multicolumn{2}{l}{Anno finanziario } & 2021-2022 \\
-\multicolumn{2}{l}{Data di percezione } & 31.12.2022 \\
+RENDICONTO ANNO FINANZIARIO 2021-2022 \multicolumn{2}{l}{Finanziamento cinque per mille anno 2022 (anno corrente) } & :5X2022 \\
+\multicolumn{2}{l}{Data di percezione del contributo } & 31.12.2022 \\
 \\
 \multicolumn{3}{l}{0. Entrate }\\
-\multicolumn{2}{l}{Totale gruppo 0 } & 0.00 \\
-\multicolumn{2}{l}{IMPORTO PERCEPITO } & 0.00 \\
+\multicolumn{2}{l}{Totale gruppo 0 } & € 0.00 \\
+\multicolumn{2}{l}{IMPORTO PERCEPITO } & € 0.00 \\
 \multicolumn{3}{l}{  }\\
-\multicolumn{2}{l}{1. Risorse umane \newline (dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50\% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato \newline } & \\
-Previdenziali occasionali  & Contributi previdenziali su collaborazioni a progetto e occasionali  & 1'000.00 \\
-\multicolumn{2}{l}{Totale gruppo 1 } & 1'000.00 \\
-\multicolumn{2}{l}{2. Costi di funzionamento \newline (dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc…) \newline } & \\
-Cancelleria  & Cancelleria  & 200.00 \\
-\multicolumn{2}{l}{Totale gruppo 2 } & 200.00 \\
-\multicolumn{2}{l}{3. Acquisto beni e servizi \newline (dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…) \newline } & \\
-\multicolumn{2}{l}{Totale gruppo 3 } & 0.00 \\
-\multicolumn{2}{l}{4. Erogazioni ai sensi della propria finalità istituzionale \newline N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato \newline } & \\
-\multicolumn{2}{l}{Totale gruppo 4 } & 0.00 \\
-\multicolumn{2}{l}{5. Altre voci di spesa riconducibili al raggiungimento dello scopo sociale \newline \newline } & \\
-\multicolumn{2}{l}{Totale gruppo 5 } & 0.00 \\
-\multicolumn{2}{l}{6. Accantonamento \newline (è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo) \newline } & \\
-Accantonamenti  & Accantonamenti per rischi ed oneri, accantonamenti 5 per mille  & 8'000.00 \\
-\multicolumn{2}{l}{Totale gruppo 6 } & 8'000.00 \\
-\multicolumn{2}{l}{TOTALE SPESE } & 9'200.00 \\
+\multicolumn{2}{l}{1. Risorse umane \newline (dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50\% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato. \newline } & \\
+Previdenziali occasionali  & Contributi previdenziali su collaborazioni a progetto e occasionali  & € 1'000.00 \\
+\multicolumn{2}{l}{Totale gruppo 1 } & € 1'000.00 \\
+\multicolumn{2}{l}{2. Costi di funzionamento \newline (dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc...) \newline } & \\
+Cancelleria  & Cancelleria  & € 200.00 \\
+\multicolumn{2}{l}{Totale gruppo 2 } & € 200.00 \\
+\multicolumn{2}{l}{3. Acquisto beni e servizi \newline (dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc...) \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 3 } & € 0.00 \\
+\multicolumn{2}{l}{4. Erogazioni ai sensi della propria finalità istituzionale \newline (N.B. In caso di erogazioni liberali in favore di altri enti/soggetti è obbligatorio allegare copia del bonifico effettuato) \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 4 } & € 0.00 \\
+\multicolumn{2}{l}{5. Altre voci di spesa connesse alla realizzazione di attività direttamente riconducibili alle finalità e agli scopi istituzionali del soggetto beneficiario \newline \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 5 } & € 0.00 \\
+\multicolumn{2}{l}{6. Accantonamento \newline (è possibile accantonare in tutto o in parte l’importo percepito, fermo restando per il soggetto beneficiario l’obbligo di specificare nella relazione allegata al presente documento le finalità dell’accantonamento allegando il verbale dell’organo direttivo che abbia deliberato l’accantonamento. Il soggetto beneficiario è tenuto ad utilizzare le somme accantonate e a rinviare il presente modello entro 24 mesi dalla percezione del contributo) \newline } & \\
+Accantonamenti  & Accantonamenti per rischi ed oneri, accantonamenti 5 per mille  & € 8'000.00 \\
+\multicolumn{2}{l}{Totale gruppo 6 } & € 8'000.00 \\
+\multicolumn{2}{l}{TOTALE SPESE } & € 9'200.00 \\
 \end{longtable}
   \\
-\excltest{Data: 01.03.2021} \\
+  \\
+I soggetti beneficiari sono tenuti a redigere, oltre al presente rendiconto, una relazione che dettagli i costi inseriti e sostenuti ed illustri in maniera analitica ed esaustiva l’utilizzo del contributo percepito. \\
   \\
   \\
+\excltest{Data: 02.06.2021} \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
   \\
   \\
   \\
   \\
-Il rappresentante legale, sottoscrittore del rendiconto, certifica che le informazioni contenute nel presente documento sono autentiche e veritiere, nella consapevolezza che, ai sensi degli artt. 47 e 76 del DPR 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi o ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. Il rendiconto, inoltre, ai sensi dell’art. 46 del DPR 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del sottoscrittore. \\
+Il rappresentante legale, con la sottoscrizione del presente rendiconto, attesta l’autenticità delle informazioni contenute nel presente documento e la loro integrale rispondenza con quanto riportato nelle scritture contabili dell’organizzazione, consapevole che, ai sensi degli articoli 47 e 76 del d.P.R. n. 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi ovvero ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. \\
+Il presente rendiconto, inoltre, ai sensi dell’articolo 46 del citato d.P.R. n. 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del soggetto che lo abbia sottoscritto. \\
   \\
   \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
-  \\
-  \\
-  \\
-  \\
-Si precisa che il trattamento di dati personali è eseguito senza il consenso dell’interessato  in quanto trattasi di consenso obbligatorio previsto da norma di legge. \\
-  \\
-  \\
-N.B. Si fa presente che è obbligatoria, per gli enti beneficiari del contributo, la redazione di una relazione in cui venga descritto in maniera analitica ed esaustiva l’utilizzo dei contributi percepiti. In particolar modo per le spese di personale eventualmente imputate, è necessario specificare per ciascun soggetto: il numero di ore imputate ed il costo orario di riferimento come indicato dalle relative tabelle ministeriali. \\
 \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}
 \begin{test}{testContabilitaSemplice\_AnnoPrecedente}
 \begin{reportvalue}{Test report 5 per mille - contabilità entrate/uscite - 5X2021 anno precedente}
-Ministero del Lavoro e delle Politiche Sociali \\
-Direzione Generale per il Terzo Settore e le Formazioni Sociali \\
   \\
   \\
-MODELLO PER IL RENDICONTO DELLE SOMME PERCEPITE IN VIRTÙ DEL BENEFICIO DEL 5 PER MILLE DELL'IRPEF DAGLI AVENTI DIRITTO \\
+RENDICONTO DEGLI IMPORTI DEL “5 PER MILLE DELL’IRPEF” PERCEPITI DAGLI AVENTI DIRITTO \\
   \\
 \begin{longtable}[l]{ l  l }
 ANAGRAFICA Denominazione sociale  & Associazione Aiuto agli Anziani \\
 Scopi dell'attività sociale  & Sostenere e qualificare l'attività di volontariato \\
-C.F. del soggetto beneficiario  & 1234567890 \\
-Indirizzo  & Gradenigo 10 \\
+C.F. dell'Ente  & 1234567890 \\
 Città  & Padova \\
-N. Telefono  & 0498686849 \\
-N. Fax  & \\
-Indirizzo email  & info@example.com \\
+Provincia  & \\
+CAP  & 35131 \\
+Via  & Gradenigo 10 \\
+Telefono  & 0498686849 \\
+Fax  & \\
+Email  & info@example.com \\
+PEC  & \\
 Nome del rappresentante legale  & Sig. Mario Rossi \\
 C.F. del rappresentante legale  & 123456789 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l }
-RENDICONTO DELLE SPESE SOSTENUTE (EUR) \multicolumn{2}{l}{Finanziamento cinque per mille anno 2021 (anno precedente) } & :5X2021 \\
-\multicolumn{2}{l}{Anno finanziario } & 2021-2022 \\
-\multicolumn{2}{l}{Data di percezione } & 31.12.2022 \\
+RENDICONTO ANNO FINANZIARIO 2021-2022 \multicolumn{2}{l}{Finanziamento cinque per mille anno 2021 (anno precedente) } & :5X2021 \\
+\multicolumn{2}{l}{Data di percezione del contributo } & 31.12.2022 \\
 \\
 \multicolumn{3}{l}{0. Entrate }\\
-Entrate 5 mille  & Entrate del 5 per mille  & 10'000.00 \\
-\multicolumn{2}{l}{Totale gruppo 0 } & 10'000.00 \\
-\multicolumn{2}{l}{IMPORTO PERCEPITO } & 10'000.00 \\
+Entrate 5 mille  & Entrate del 5 per mille  & € 10'000.00 \\
+\multicolumn{2}{l}{Totale gruppo 0 } & € 10'000.00 \\
+\multicolumn{2}{l}{IMPORTO PERCEPITO } & € 10'000.00 \\
 \multicolumn{3}{l}{  }\\
-\multicolumn{2}{l}{1. Risorse umane \newline (dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50\% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato \newline } & \\
-Collaborazioni  & Collaborazioni a progetto e occasionali  & 500.00 \\
-\multicolumn{2}{l}{Totale gruppo 1 } & 500.00 \\
-\multicolumn{2}{l}{2. Costi di funzionamento \newline (dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc…) \newline } & \\
-Cancelleria  & Cancelleria  & 2'400.00 \\
-\multicolumn{2}{l}{Totale gruppo 2 } & 2'400.00 \\
-\multicolumn{2}{l}{3. Acquisto beni e servizi \newline (dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…) \newline } & \\
-Ammortamenti  & Ammortamenti  & 800.00 \\
-\multicolumn{2}{l}{Totale gruppo 3 } & 800.00 \\
-\multicolumn{2}{l}{4. Erogazioni ai sensi della propria finalità istituzionale \newline N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato \newline } & \\
-\multicolumn{2}{l}{Totale gruppo 4 } & 0.00 \\
-\multicolumn{2}{l}{5. Altre voci di spesa riconducibili al raggiungimento dello scopo sociale \newline \newline } & \\
-\multicolumn{2}{l}{Totale gruppo 5 } & 0.00 \\
-\multicolumn{2}{l}{6. Accantonamento \newline (è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo) \newline } & \\
-\multicolumn{2}{l}{Totale gruppo 6 } & 0.00 \\
-\multicolumn{2}{l}{TOTALE SPESE } & 3'700.00 \\
+\multicolumn{2}{l}{1. Risorse umane \newline (dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50\% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato. \newline } & \\
+Collaborazioni  & Collaborazioni a progetto e occasionali  & € 500.00 \\
+\multicolumn{2}{l}{Totale gruppo 1 } & € 500.00 \\
+\multicolumn{2}{l}{2. Costi di funzionamento \newline (dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc...) \newline } & \\
+Cancelleria  & Cancelleria  & € 2'400.00 \\
+\multicolumn{2}{l}{Totale gruppo 2 } & € 2'400.00 \\
+\multicolumn{2}{l}{3. Acquisto beni e servizi \newline (dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc...) \newline } & \\
+Ammortamenti  & Ammortamenti  & € 800.00 \\
+\multicolumn{2}{l}{Totale gruppo 3 } & € 800.00 \\
+\multicolumn{2}{l}{4. Erogazioni ai sensi della propria finalità istituzionale \newline (N.B. In caso di erogazioni liberali in favore di altri enti/soggetti è obbligatorio allegare copia del bonifico effettuato) \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 4 } & € 0.00 \\
+\multicolumn{2}{l}{5. Altre voci di spesa connesse alla realizzazione di attività direttamente riconducibili alle finalità e agli scopi istituzionali del soggetto beneficiario \newline \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 5 } & € 0.00 \\
+\multicolumn{2}{l}{6. Accantonamento \newline (è possibile accantonare in tutto o in parte l’importo percepito, fermo restando per il soggetto beneficiario l’obbligo di specificare nella relazione allegata al presente documento le finalità dell’accantonamento allegando il verbale dell’organo direttivo che abbia deliberato l’accantonamento. Il soggetto beneficiario è tenuto ad utilizzare le somme accantonate e a rinviare il presente modello entro 24 mesi dalla percezione del contributo) \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 6 } & € 0.00 \\
+\multicolumn{2}{l}{TOTALE SPESE } & € 3'700.00 \\
 \end{longtable}
   \\
-\excltest{Data: 01.03.2021} \\
+  \\
+I soggetti beneficiari sono tenuti a redigere, oltre al presente rendiconto, una relazione che dettagli i costi inseriti e sostenuti ed illustri in maniera analitica ed esaustiva l’utilizzo del contributo percepito. \\
   \\
   \\
+\excltest{Data: 02.06.2021} \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
   \\
   \\
   \\
   \\
-Il rappresentante legale, sottoscrittore del rendiconto, certifica che le informazioni contenute nel presente documento sono autentiche e veritiere, nella consapevolezza che, ai sensi degli artt. 47 e 76 del DPR 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi o ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. Il rendiconto, inoltre, ai sensi dell’art. 46 del DPR 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del sottoscrittore. \\
+Il rappresentante legale, con la sottoscrizione del presente rendiconto, attesta l’autenticità delle informazioni contenute nel presente documento e la loro integrale rispondenza con quanto riportato nelle scritture contabili dell’organizzazione, consapevole che, ai sensi degli articoli 47 e 76 del d.P.R. n. 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi ovvero ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. \\
+Il presente rendiconto, inoltre, ai sensi dell’articolo 46 del citato d.P.R. n. 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del soggetto che lo abbia sottoscritto. \\
   \\
   \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
-  \\
-  \\
-  \\
-  \\
-Si precisa che il trattamento di dati personali è eseguito senza il consenso dell’interessato  in quanto trattasi di consenso obbligatorio previsto da norma di legge. \\
-  \\
-  \\
-N.B. Si fa presente che è obbligatoria, per gli enti beneficiari del contributo, la redazione di una relazione in cui venga descritto in maniera analitica ed esaustiva l’utilizzo dei contributi percepiti. In particolar modo per le spese di personale eventualmente imputate, è necessario specificare per ciascun soggetto: il numero di ore imputate ed il costo orario di riferimento come indicato dalle relative tabelle ministeriali. \\
 \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}
 \begin{test}{testContabilitaDoppia\_AnnoCorrente}
 \begin{reportvalue}{Test report 5 per mille - contabilità doppia - 5X2022 anno corrente}
-Ministero del Lavoro e delle Politiche Sociali \\
-Direzione Generale per il Terzo Settore e le Formazioni Sociali \\
   \\
   \\
-MODELLO PER IL RENDICONTO DELLE SOMME PERCEPITE IN VIRTÙ DEL BENEFICIO DEL 5 PER MILLE DELL'IRPEF DAGLI AVENTI DIRITTO \\
+RENDICONTO DEGLI IMPORTI DEL “5 PER MILLE DELL’IRPEF” PERCEPITI DAGLI AVENTI DIRITTO \\
   \\
 \begin{longtable}[l]{ l  l }
 ANAGRAFICA Denominazione sociale  & Associazione Aiuto agli Anziani \\
 Scopi dell'attività sociale  & Sostenere e qualificare l'attività di volontariato \\
-C.F. del soggetto beneficiario  & 1234567890 \\
-Indirizzo  & Gradenigo 10 \\
+C.F. dell'Ente  & 1234567890 \\
 Città  & Padova \\
-N. Telefono  & 0498686849 \\
-N. Fax  & \\
-Indirizzo email  & info@example.com \\
+Provincia  & \\
+CAP  & 35131 \\
+Via  & Gradenigo 10 \\
+Telefono  & 0498686849 \\
+Fax  & \\
+Email  & info@example.com \\
+PEC  & \\
 Nome del rappresentante legale  & Sig. Mario Rossi \\
 C.F. del rappresentante legale  & 123456789 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l }
-RENDICONTO DELLE SPESE SOSTENUTE (EUR) \multicolumn{2}{l}{Finanziamento cinque per mille anno 2022 (anno corrente) } & :5X2022 \\
-\multicolumn{2}{l}{Anno finanziario } & 2021-2022 \\
-\multicolumn{2}{l}{Data di percezione } & 31.12.2022 \\
+RENDICONTO ANNO FINANZIARIO 2021-2022 \multicolumn{2}{l}{Finanziamento cinque per mille anno 2022 (anno corrente) } & :5X2022 \\
+\multicolumn{2}{l}{Data di percezione del contributo } & 31.12.2022 \\
 \\
 \multicolumn{3}{l}{0. Entrate }\\
-\multicolumn{2}{l}{Totale gruppo 0 } & 0.00 \\
-\multicolumn{2}{l}{IMPORTO PERCEPITO } & 0.00 \\
+\multicolumn{2}{l}{Totale gruppo 0 } & € 0.00 \\
+\multicolumn{2}{l}{IMPORTO PERCEPITO } & € 0.00 \\
 \multicolumn{3}{l}{  }\\
-\multicolumn{2}{l}{1. Risorse umane \newline (dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50\% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato \newline } & \\
-Previdenziali occasionali  & Contributi previdenziali su collaborazioni a progetto e occasionali  & 1'000.00 \\
-\multicolumn{2}{l}{Totale gruppo 1 } & 1'000.00 \\
-\multicolumn{2}{l}{2. Costi di funzionamento \newline (dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc…) \newline } & \\
-Cancelleria  & Cancelleria  & 200.00 \\
-\multicolumn{2}{l}{Totale gruppo 2 } & 200.00 \\
-\multicolumn{2}{l}{3. Acquisto beni e servizi \newline (dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…) \newline } & \\
-\multicolumn{2}{l}{Totale gruppo 3 } & 0.00 \\
-\multicolumn{2}{l}{4. Erogazioni ai sensi della propria finalità istituzionale \newline N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato \newline } & \\
-\multicolumn{2}{l}{Totale gruppo 4 } & 0.00 \\
-\multicolumn{2}{l}{5. Altre voci di spesa riconducibili al raggiungimento dello scopo sociale \newline \newline } & \\
-\multicolumn{2}{l}{Totale gruppo 5 } & 0.00 \\
-\multicolumn{2}{l}{6. Accantonamento \newline (è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo) \newline } & \\
-Accantonamenti  & Accantonamenti per rischi ed oneri  & 8'000.00 \\
-\multicolumn{2}{l}{Totale gruppo 6 } & 8'000.00 \\
-\multicolumn{2}{l}{TOTALE SPESE } & 9'200.00 \\
+\multicolumn{2}{l}{1. Risorse umane \newline (dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50\% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato. \newline } & \\
+Previdenziali occasionali  & Contributi previdenziali su collaborazioni a progetto e occasionali  & € 1'000.00 \\
+\multicolumn{2}{l}{Totale gruppo 1 } & € 1'000.00 \\
+\multicolumn{2}{l}{2. Costi di funzionamento \newline (dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc...) \newline } & \\
+Cancelleria  & Cancelleria  & € 200.00 \\
+\multicolumn{2}{l}{Totale gruppo 2 } & € 200.00 \\
+\multicolumn{2}{l}{3. Acquisto beni e servizi \newline (dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc...) \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 3 } & € 0.00 \\
+\multicolumn{2}{l}{4. Erogazioni ai sensi della propria finalità istituzionale \newline (N.B. In caso di erogazioni liberali in favore di altri enti/soggetti è obbligatorio allegare copia del bonifico effettuato) \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 4 } & € 0.00 \\
+\multicolumn{2}{l}{5. Altre voci di spesa connesse alla realizzazione di attività direttamente riconducibili alle finalità e agli scopi istituzionali del soggetto beneficiario \newline \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 5 } & € 0.00 \\
+\multicolumn{2}{l}{6. Accantonamento \newline (è possibile accantonare in tutto o in parte l’importo percepito, fermo restando per il soggetto beneficiario l’obbligo di specificare nella relazione allegata al presente documento le finalità dell’accantonamento allegando il verbale dell’organo direttivo che abbia deliberato l’accantonamento. Il soggetto beneficiario è tenuto ad utilizzare le somme accantonate e a rinviare il presente modello entro 24 mesi dalla percezione del contributo) \newline } & \\
+Accantonamenti  & Accantonamenti per rischi ed oneri  & € 8'000.00 \\
+\multicolumn{2}{l}{Totale gruppo 6 } & € 8'000.00 \\
+\multicolumn{2}{l}{TOTALE SPESE } & € 9'200.00 \\
 \end{longtable}
   \\
-\excltest{Data: 01.03.2021} \\
+  \\
+I soggetti beneficiari sono tenuti a redigere, oltre al presente rendiconto, una relazione che dettagli i costi inseriti e sostenuti ed illustri in maniera analitica ed esaustiva l’utilizzo del contributo percepito. \\
   \\
   \\
+\excltest{Data: 02.06.2021} \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
   \\
   \\
   \\
   \\
-Il rappresentante legale, sottoscrittore del rendiconto, certifica che le informazioni contenute nel presente documento sono autentiche e veritiere, nella consapevolezza che, ai sensi degli artt. 47 e 76 del DPR 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi o ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. Il rendiconto, inoltre, ai sensi dell’art. 46 del DPR 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del sottoscrittore. \\
+Il rappresentante legale, con la sottoscrizione del presente rendiconto, attesta l’autenticità delle informazioni contenute nel presente documento e la loro integrale rispondenza con quanto riportato nelle scritture contabili dell’organizzazione, consapevole che, ai sensi degli articoli 47 e 76 del d.P.R. n. 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi ovvero ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. \\
+Il presente rendiconto, inoltre, ai sensi dell’articolo 46 del citato d.P.R. n. 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del soggetto che lo abbia sottoscritto. \\
   \\
   \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
-  \\
-  \\
-  \\
-  \\
-Si precisa che il trattamento di dati personali è eseguito senza il consenso dell’interessato  in quanto trattasi di consenso obbligatorio previsto da norma di legge. \\
-  \\
-  \\
-N.B. Si fa presente che è obbligatoria, per gli enti beneficiari del contributo, la redazione di una relazione in cui venga descritto in maniera analitica ed esaustiva l’utilizzo dei contributi percepiti. In particolar modo per le spese di personale eventualmente imputate, è necessario specificare per ciascun soggetto: il numero di ore imputate ed il costo orario di riferimento come indicato dalle relative tabelle ministeriali. \\
 \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}
 \begin{test}{testContabilitaDoppia\_AnnoPrecedente}
 \begin{reportvalue}{Test report 5 per mille - contabilità doppia - 5X2022 anno precedente}
-Ministero del Lavoro e delle Politiche Sociali \\
-Direzione Generale per il Terzo Settore e le Formazioni Sociali \\
   \\
   \\
-MODELLO PER IL RENDICONTO DELLE SOMME PERCEPITE IN VIRTÙ DEL BENEFICIO DEL 5 PER MILLE DELL'IRPEF DAGLI AVENTI DIRITTO \\
+RENDICONTO DEGLI IMPORTI DEL “5 PER MILLE DELL’IRPEF” PERCEPITI DAGLI AVENTI DIRITTO \\
   \\
 \begin{longtable}[l]{ l  l }
 ANAGRAFICA Denominazione sociale  & Associazione Aiuto agli Anziani \\
 Scopi dell'attività sociale  & Sostenere e qualificare l'attività di volontariato \\
-C.F. del soggetto beneficiario  & 1234567890 \\
-Indirizzo  & Gradenigo 10 \\
+C.F. dell'Ente  & 1234567890 \\
 Città  & Padova \\
-N. Telefono  & 0498686849 \\
-N. Fax  & \\
-Indirizzo email  & info@example.com \\
+Provincia  & \\
+CAP  & 35131 \\
+Via  & Gradenigo 10 \\
+Telefono  & 0498686849 \\
+Fax  & \\
+Email  & info@example.com \\
+PEC  & \\
 Nome del rappresentante legale  & Sig. Mario Rossi \\
 C.F. del rappresentante legale  & 123456789 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l }
-RENDICONTO DELLE SPESE SOSTENUTE (EUR) \multicolumn{2}{l}{Finanziamento cinque per mille anno 2021 (anno precedente) } & :5X2021 \\
-\multicolumn{2}{l}{Anno finanziario } & 2021-2022 \\
-\multicolumn{2}{l}{Data di percezione } & 31.12.2022 \\
+RENDICONTO ANNO FINANZIARIO 2021-2022 \multicolumn{2}{l}{Finanziamento cinque per mille anno 2021 (anno precedente) } & :5X2021 \\
+\multicolumn{2}{l}{Data di percezione del contributo } & 31.12.2022 \\
 \\
 \multicolumn{3}{l}{0. Entrate }\\
-Entrate 5 mille  & Entrate del 5 per mille  & 10'000.00 \\
-\multicolumn{2}{l}{Totale gruppo 0 } & 10'000.00 \\
-\multicolumn{2}{l}{IMPORTO PERCEPITO } & 10'000.00 \\
+Entrate 5 mille  & Entrate del 5 per mille  & € 10'000.00 \\
+\multicolumn{2}{l}{Totale gruppo 0 } & € 10'000.00 \\
+\multicolumn{2}{l}{IMPORTO PERCEPITO } & € 10'000.00 \\
 \multicolumn{3}{l}{  }\\
-\multicolumn{2}{l}{1. Risorse umane \newline (dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50\% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato \newline } & \\
-Consulenze  & Consulenze (es. fisioterapista)  & 500.00 \\
-\multicolumn{2}{l}{Totale gruppo 1 } & 500.00 \\
-\multicolumn{2}{l}{2. Costi di funzionamento \newline (dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc…) \newline } & \\
-Cancelleria  & Cancelleria  & 2'400.00 \\
-\multicolumn{2}{l}{Totale gruppo 2 } & 2'400.00 \\
-\multicolumn{2}{l}{3. Acquisto beni e servizi \newline (dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…) \newline } & \\
-Ammortamenti  & Ammortamenti  & 800.00 \\
-\multicolumn{2}{l}{Totale gruppo 3 } & 800.00 \\
-\multicolumn{2}{l}{4. Erogazioni ai sensi della propria finalità istituzionale \newline N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato \newline } & \\
-\multicolumn{2}{l}{Totale gruppo 4 } & 0.00 \\
-\multicolumn{2}{l}{5. Altre voci di spesa riconducibili al raggiungimento dello scopo sociale \newline \newline } & \\
-\multicolumn{2}{l}{Totale gruppo 5 } & 0.00 \\
-\multicolumn{2}{l}{6. Accantonamento \newline (è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo) \newline } & \\
-\multicolumn{2}{l}{Totale gruppo 6 } & 0.00 \\
-\multicolumn{2}{l}{TOTALE SPESE } & 3'700.00 \\
+\multicolumn{2}{l}{1. Risorse umane \newline (dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50\% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato. \newline } & \\
+Consulenze  & Consulenze (es. fisioterapista)  & € 500.00 \\
+\multicolumn{2}{l}{Totale gruppo 1 } & € 500.00 \\
+\multicolumn{2}{l}{2. Costi di funzionamento \newline (dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc...) \newline } & \\
+Cancelleria  & Cancelleria  & € 2'400.00 \\
+\multicolumn{2}{l}{Totale gruppo 2 } & € 2'400.00 \\
+\multicolumn{2}{l}{3. Acquisto beni e servizi \newline (dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc...) \newline } & \\
+Ammortamenti  & Ammortamenti  & € 800.00 \\
+\multicolumn{2}{l}{Totale gruppo 3 } & € 800.00 \\
+\multicolumn{2}{l}{4. Erogazioni ai sensi della propria finalità istituzionale \newline (N.B. In caso di erogazioni liberali in favore di altri enti/soggetti è obbligatorio allegare copia del bonifico effettuato) \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 4 } & € 0.00 \\
+\multicolumn{2}{l}{5. Altre voci di spesa connesse alla realizzazione di attività direttamente riconducibili alle finalità e agli scopi istituzionali del soggetto beneficiario \newline \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 5 } & € 0.00 \\
+\multicolumn{2}{l}{6. Accantonamento \newline (è possibile accantonare in tutto o in parte l’importo percepito, fermo restando per il soggetto beneficiario l’obbligo di specificare nella relazione allegata al presente documento le finalità dell’accantonamento allegando il verbale dell’organo direttivo che abbia deliberato l’accantonamento. Il soggetto beneficiario è tenuto ad utilizzare le somme accantonate e a rinviare il presente modello entro 24 mesi dalla percezione del contributo) \newline } & \\
+\multicolumn{2}{l}{Totale gruppo 6 } & € 0.00 \\
+\multicolumn{2}{l}{TOTALE SPESE } & € 3'700.00 \\
 \end{longtable}
   \\
-\excltest{Data: 01.03.2021} \\
+  \\
+I soggetti beneficiari sono tenuti a redigere, oltre al presente rendiconto, una relazione che dettagli i costi inseriti e sostenuti ed illustri in maniera analitica ed esaustiva l’utilizzo del contributo percepito. \\
   \\
   \\
+\excltest{Data: 02.06.2021} \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
   \\
   \\
   \\
   \\
-Il rappresentante legale, sottoscrittore del rendiconto, certifica che le informazioni contenute nel presente documento sono autentiche e veritiere, nella consapevolezza che, ai sensi degli artt. 47 e 76 del DPR 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi o ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. Il rendiconto, inoltre, ai sensi dell’art. 46 del DPR 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del sottoscrittore. \\
+Il rappresentante legale, con la sottoscrizione del presente rendiconto, attesta l’autenticità delle informazioni contenute nel presente documento e la loro integrale rispondenza con quanto riportato nelle scritture contabili dell’organizzazione, consapevole che, ai sensi degli articoli 47 e 76 del d.P.R. n. 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi ovvero ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. \\
+Il presente rendiconto, inoltre, ai sensi dell’articolo 46 del citato d.P.R. n. 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del soggetto che lo abbia sottoscritto. \\
   \\
   \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
-  \\
-  \\
-  \\
-  \\
-Si precisa che il trattamento di dati personali è eseguito senza il consenso dell’interessato  in quanto trattasi di consenso obbligatorio previsto da norma di legge. \\
-  \\
-  \\
-N.B. Si fa presente che è obbligatoria, per gli enti beneficiari del contributo, la redazione di una relazione in cui venga descritto in maniera analitica ed esaustiva l’utilizzo dei contributi percepiti. In particolar modo per le spese di personale eventualmente imputate, è necessario specificare per ciascun soggetto: il numero di ore imputate ed il costo orario di riferimento come indicato dalle relative tabelle ministeriali. \\
 \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}

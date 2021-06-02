@@ -1,32 +1,24 @@
-/* Update 2020-10-16 */
+/* Update 2020-06-02 */
 
 @page {
-	margin-top: 20mm;
-	margin-bottom: 15mm;
-	margin-left: 25mm;
+	margin-top: 10mm;
+	margin-bottom: 10mm;
+	margin-left: 15mm;
 	margin-right: 15mm;
 }
 
 body {
-	font-family: Times New Roman;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 9pt;
 }
 
 .description {
-	font-size: 10px;
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
 
-.heading1 {
-	font-size: 20px;
-}
-
-.heading2 {
-	font-size: 16px;
-}
-
-.heading3 {
-	font-size: 11px;
+.heading {
+	font-size: 14px;
 	font-weight: bold;
 }
 
@@ -46,22 +38,25 @@ body {
 	text-align: center;
 }
 
+.alignJustify {
+	text-align: justify;
+  }
+
 .underline {
 	text-decoration: underline;
 }
 
+.border {
+	border: 1px solid black;
+	padding: 6px;
+}
+
 .img {
-	width: 60;
-	height: 60;
+	height: 45;
 }
 
-table {
-	font-size: 10px;
+.table {
 	width: 100%;
-}
-
-td {
-	vertical-align: top;
 }
 
 caption {
@@ -69,6 +64,33 @@ caption {
 }
 
 table.table td {
+	border-top-style: solid;
+	border-top-color: black;
+	border-top-width: thin;
+	border-bottom-style: solid;
+	border-bottom-color: black;
+	border-bottom-width: thin;
+	border-left-style: solid;
+	border-left-color: black;
+	border-left-width: thin;
+	border-right-style: solid;
+	border-right-color: black;
+	border-right-width: thin;
+}
+
+.tableAnagrafica {
+	width: 100%;
+}
+
+.col1Anagrafica {
+	width: 30%;
+}
+
+.col2Anagrafica {
+	width: 70%;
+}
+
+table.tableAnagrafica td {
 	border-top-style: solid;
 	border-top-color: black;
 	border-top-width: thin;

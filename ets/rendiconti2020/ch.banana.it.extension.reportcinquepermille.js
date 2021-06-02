@@ -1,4 +1,4 @@
-// Copyright [2020] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.reportcinquepermille
 // @api = 1.0
-// @pubdate = 2021-03-01
+// @pubdate = 2021-06-02
 // @publisher = Banana.ch SA
 // @description = 4. Report cinque per mille
 // @task = app.command
@@ -60,6 +60,16 @@
 	gruppo 5, Altre voci di spesa 	   => 5XM_ALT : CB7, CB8, CE1, CE7, CG2
 	gruppo 6, Accantonamento           => 5XM_ACC : CA6, CB6, CD5, CE6
 
+
+	Info:
+	https://www.agenziaentrate.gov.it/portale/area-tematica-5x1000
+	https://www.lavoro.gov.it/temi-e-priorita/Terzo-settore-e-responsabilita-sociale-imprese/Pagine/Modulistica.aspx
+
+	Modello fac-simile 2021:
+	https://www.lavoro.gov.it/strumenti-e-servizi/Modulistica/Documents/5%20per%20mille,%20richiesta%20di%20reiscrizione/Modello-rendiconto-5-per-mille.pdf
+
+
+
 */
 
 let BAN_VERSION = "10.0.1";
@@ -72,12 +82,12 @@ let totalExpenses = "";
 function loadReportGroups() {
 	let reportGroups = [];
 	reportGroups.push({"group":"0", "income":true, "gr1":"RA5"});
-	reportGroups.push({"group":"1", "income":false, "gr1":"CA4;CB4;CE4", "title":"Risorse umane", "text":"(dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato"});
-	reportGroups.push({"group":"2", "income":false, "gr1":"CA1;CA3;CA7;CA8;CD1;CD2;CD3;CD4;CD6;IM;CG1","title":"Costi di funzionamento", "text":"(dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc…)"});
-	reportGroups.push({"group":"3", "income":false, "gr1":"CA2;CA5;CB2;CB3;CB5;CE2;CE3;CE5;CC1;CC2;CC3", "title":"Acquisto beni e servizi", "text":"(dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc…)"});
-	reportGroups.push({"group":"4", "income":false, "gr1":"CB1", "title":"Erogazioni ai sensi della propria finalità istituzionale", "text":"N.B. in caso di erogazioni liberali ad altri enti/soggetti, anche esteri, è obbligatorio allegare copia del bonifico effettuato"});
-	reportGroups.push({"group":"5", "income":false, "gr1":"CB7;CB8;CE1;CE7;CG2", "title":"Altre voci di spesa riconducibili al raggiungimento dello scopo sociale", "text":""});
-	reportGroups.push({"group":"6", "income":false, "gr1":"CA6;CB6;CD5;CE6", "title":"Accantonamento", "text":"(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando che l’Ente beneficiario deve specificare nella relazione allegata al presente documento le finalità dell’accantonamento effettuato ed allegare il verbale del Consiglio di Amministrazione in cui viene deliberato l’accantonamento. Si fa presente, comunque, l’obbligo di spendere tutte le somme accantonate e rinviare il presente modello entro 24 mesi dalla percezione del contributo)"});
+	reportGroups.push({"group":"1", "income":false, "gr1":"CA4;CB4;CE4", "title":"Risorse umane", "text":"(dettagliare i costi a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). N.B. nel caso in cui i compensi per il personale superano il 50% dell’importo percepito è obbligatorio per le associazioni allegare copia delle buste paga del personale imputato fino alla concorrenza dell’importo rendicontato."});
+	reportGroups.push({"group":"2", "income":false, "gr1":"CA1;CA3;CA7;CA8;CD1;CD2;CD3;CD4;CD6;IM;CG1","title":"Costi di funzionamento", "text":"(dettagliare i costi a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc...)"});
+	reportGroups.push({"group":"3", "income":false, "gr1":"CA2;CA5;CB2;CB3;CB5;CE2;CE3;CE5;CC1;CC2;CC3", "title":"Acquisto beni e servizi", "text":"(dettagliare i costi a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc...)"});
+	reportGroups.push({"group":"4", "income":false, "gr1":"CB1", "title":"Erogazioni ai sensi della propria finalità istituzionale", "text":"(N.B. In caso di erogazioni liberali in favore di altri enti/soggetti è obbligatorio allegare copia del bonifico effettuato)"});
+	reportGroups.push({"group":"5", "income":false, "gr1":"CB7;CB8;CE1;CE7;CG2", "title":"Altre voci di spesa connesse alla realizzazione di attività direttamente riconducibili alle finalità e agli scopi istituzionali del soggetto beneficiario", "text":""});
+	reportGroups.push({"group":"6", "income":false, "gr1":"CA6;CB6;CD5;CE6", "title":"Accantonamento", "text":"(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando per il soggetto beneficiario l’obbligo di specificare nella relazione allegata al presente documento le finalità dell’accantonamento allegando il verbale dell’organo direttivo che abbia deliberato l’accantonamento. Il soggetto beneficiario è tenuto ad utilizzare le somme accantonate e a rinviare il presente modello entro 24 mesi dalla percezione del contributo)"});
 	return reportGroups;
 }
 
@@ -183,21 +193,24 @@ function printReport_Header(report, banDoc, userParam) {
 	/*
 		PRINT LOGO
 	*/
-	report.addImage("images/ministero_del_lavoro.png", "img alignCenter");
-	report.addParagraph("Ministero del Lavoro e delle Politiche Sociali", "heading1 alignCenter italic bold");
-	report.addParagraph("Direzione Generale per il Terzo Settore e le Formazioni Sociali", "heading2 alignCenter italic");
-	report.addParagraph(" ");
-	report.addParagraph(" ");
+	var headerParagraph = report.getHeader();
+	headerParagraph.addImage("images/ministero_del_lavoro.png", "img alignCenter");
+	headerParagraph.addParagraph(" ");
+	headerParagraph.addParagraph(" ");
 
 
 	/*
 		PRINT TABLE "ANAGRAFICA"
 	*/
-	report.addParagraph("MODELLO PER IL RENDICONTO DELLE SOMME PERCEPITE IN VIRTÙ DEL BENEFICIO DEL 5 PER MILLE DELL'IRPEF DAGLI AVENTI DIRITTO", "heading3");
+	report.addParagraph("RENDICONTO DEGLI IMPORTI DEL “5 PER MILLE DELL’IRPEF” PERCEPITI DAGLI AVENTI DIRITTO", "heading alignCenter");
 	report.addParagraph(" ");
 
-	var tableAnagrafica = report.addTable("table");
+	var tableAnagrafica = report.addTable("tableAnagrafica");
+	var col1Anagrafica = tableAnagrafica.addColumn("col1Anagrafica");
+	var col2Anagrafica = tableAnagrafica.addColumn("col2Anagrafica");
+
 	tableAnagrafica.getCaption().addText("ANAGRAFICA", "description bold");
+
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Denominazione sociale", "", 1);
 	tableRow.addCell(banDoc.info("AccountingDataBase", "Company"), "", 1);
@@ -207,28 +220,40 @@ function printReport_Header(report, banDoc, userParam) {
 	tableRow.addCell(userParam.scopoAttivita, "", 1);
 
 	tableRow = tableAnagrafica.addRow();
-	tableRow.addCell("C.F. del soggetto beneficiario", "", 1);
+	tableRow.addCell("C.F. dell'Ente", "", 1);
 	tableRow.addCell(banDoc.info("AccountingDataBase", "FiscalNumber"), "", 1);
-
-	tableRow = tableAnagrafica.addRow();
-	tableRow.addCell("Indirizzo", "", 1);
-	tableRow.addCell(banDoc.info("AccountingDataBase", "Address1"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Città", "", 1);
 	tableRow.addCell(banDoc.info("AccountingDataBase", "City"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
-	tableRow.addCell("N. Telefono", "", 1);
+	tableRow.addCell("Provincia", "", 1);
+	tableRow.addCell(userParam.provincia, "", 1);
+
+	tableRow = tableAnagrafica.addRow();
+	tableRow.addCell("CAP", "", 1);
+	tableRow.addCell(banDoc.info("AccountingDataBase", "Zip"), "", 1);
+
+	tableRow = tableAnagrafica.addRow();
+	tableRow.addCell("Via", "", 1);
+	tableRow.addCell(banDoc.info("AccountingDataBase", "Address1"), "", 1);
+
+	tableRow = tableAnagrafica.addRow();
+	tableRow.addCell("Telefono", "", 1);
 	tableRow.addCell(banDoc.info("AccountingDataBase", "Phone"), "", 1);
 
 	tableRow = tableAnagrafica.addRow();
-	tableRow.addCell("N. Fax", "", 1);
-	tableRow.addCell(banDoc.info("AccountingDataBase", "Fax"), "", 1);
+	tableRow.addCell("Fax", "", 1);
+	tableRow.addCell(userParam.fax, "", 1);
 
 	tableRow = tableAnagrafica.addRow();
-	tableRow.addCell("Indirizzo email", "", 1);
+	tableRow.addCell("Email", "", 1);
 	tableRow.addCell(banDoc.info("AccountingDataBase", "Email"), "", 1);
+
+	tableRow = tableAnagrafica.addRow();
+	tableRow.addCell("PEC", "", 1);
+	tableRow.addCell(userParam.pec, "", 1);
 
 	tableRow = tableAnagrafica.addRow();
 	tableRow.addCell("Nome del rappresentante legale", "", 1);
@@ -257,24 +282,21 @@ function printReport_Rendiconto(report, banDoc, fileLastYear, userParam, reportG
 	}
 
 	let table = report.addTable("table");
-	table.getCaption().addText("RENDICONTO DELLE SPESE SOSTENUTE (" + banDoc.info("AccountingDataBase","BasicCurrency") +")", "description bold");
+	
+	let annofinanziario = "";
+	if (fileLastYear) {
+		annofinanziario = lastYear + "-" + thisYear;
+	} else {
+		annofinanziario = thisYear;
+	}
+	table.getCaption().addText("RENDICONTO ANNO FINANZIARIO " + annofinanziario, "description bold");
 	tableRow = table.addRow();
 	tableRow.addCell(getDescription(banDoc, userParam.segment5XM), "alignRight bold", 2);
 	tableRow.addCell(userParam.segment5XM, "alignCenter bold", 1);
-	tableRow = table.addRow();
-	tableRow.addCell("Anno finanziario", "alignRight bold", 2);
-
-	if (fileLastYear) {
-		tableRow.addCell(lastYear + "-" + thisYear, "alignCenter bold", 1);
-	} else {
-		tableRow.addCell(thisYear, "alignCenter bold", 1);
-	}
 
 	tableRow = table.addRow();
-	tableRow.addCell("Data di percezione", "alignRight bold", 2);
+	tableRow.addCell("Data di percezione del contributo", "alignRight bold", 2);
 	tableRow.addCell(userParam.dataPercezione, "alignCenter bold", 1);
-
-
 	
 	tableRow = table.addRow();
 
@@ -288,7 +310,7 @@ function printReport_Rendiconto(report, banDoc, fileLastYear, userParam, reportG
 
 	tableRow = table.addRow();
 	tableRow.addCell("IMPORTO PERCEPITO", "alignRight bold", 2);
-	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totalIncome), "alignRight bold", 1);
+	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(totalIncome), "alignRight bold", 1);
 	tableRow = table.addRow();
 	tableRow.addCell(" ", "", 3);
 
@@ -304,11 +326,17 @@ function printReport_Rendiconto(report, banDoc, fileLastYear, userParam, reportG
 	//Add the final total
 	tableRow = table.addRow();
 	tableRow.addCell("TOTALE SPESE", "alignRight bold", 2);
-	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold", 1);
+	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold", 1);
 }
 
 // Funzione che stampa la parte finale del report.
 function printReport_Finale(report, banDoc, userParam) {
+
+	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph("I soggetti beneficiari sono tenuti a redigere, oltre al presente rendiconto, una relazione che dettagli i costi inseriti e sostenuti ed illustri in maniera analitica ed esaustiva l’utilizzo del contributo percepito.", "bold alignJustify border");
+	report.addParagraph(" ");
+
 	//Add the current date (DD-MM-YYYY)
 	var date = new Date();
 	report.addParagraph(" ");
@@ -317,7 +345,7 @@ function printReport_Finale(report, banDoc, userParam) {
 
 	//Add signature
 	report.addParagraph(" ");
-	report.addParagraph(" ");
+	report.addParagraph("________________________________________________", "alignCenter");
 	report.addParagraph("Firma del rappresentante legale", "alignCenter");
 
 	//Add observations
@@ -325,22 +353,15 @@ function printReport_Finale(report, banDoc, userParam) {
 	report.addParagraph(" ");
 	report.addParagraph(" ");
 	report.addParagraph(" ");
-	report.addParagraph("Il rappresentante legale, sottoscrittore del rendiconto, certifica che le informazioni contenute nel presente documento sono autentiche e veritiere, nella consapevolezza che, ai sensi degli artt. 47 e 76 del DPR 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi o ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. Il rendiconto, inoltre, ai sensi dell’art. 46 del DPR 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del sottoscrittore.", "italic");
+	report.addParagraph("Il rappresentante legale, con la sottoscrizione del presente rendiconto, attesta l’autenticità delle informazioni contenute nel presente documento e la loro integrale rispondenza con quanto riportato nelle scritture contabili dell’organizzazione, consapevole che, ai sensi degli articoli 47 e 76 del d.P.R. n. 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi ovvero ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia.", "alignJustify");
+	report.addParagraph("Il presente rendiconto, inoltre, ai sensi dell’articolo 46 del citato d.P.R. n. 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del soggetto che lo abbia sottoscritto.", "alignJustify");
 
 	//Add signature
 	report.addParagraph(" ");
 	report.addParagraph(" ");
+	report.addParagraph(" ");
+	report.addParagraph("________________________________________________", "alignCenter");
 	report.addParagraph("Firma del rappresentante legale", "alignCenter");
-
-	report.addParagraph(" ");
-	report.addParagraph(" ");
-	report.addParagraph(" ");
-	report.addParagraph(" ");
-	report.addParagraph("Si precisa che il trattamento di dati personali è eseguito senza il consenso dell’interessato  in quanto trattasi di consenso obbligatorio previsto da norma di legge.", "italic");
-
-	report.addParagraph(" ");
-	report.addParagraph(" ");
-	report.addParagraph("N.B. Si fa presente che è obbligatoria, per gli enti beneficiari del contributo, la redazione di una relazione in cui venga descritto in maniera analitica ed esaustiva l’utilizzo dei contributi percepiti. In particolar modo per le spese di personale eventualmente imputate, è necessario specificare per ciascun soggetto: il numero di ore imputate ed il costo orario di riferimento come indicato dalle relative tabelle ministeriali.", "bold underline");
 
 }
  
@@ -415,7 +436,7 @@ function printReport_Rendiconto_createGroup(banDoc, groupObj, table, accountsMap
 			tableRow = table.addRow();
 			tableRow.addCell(arrAcc[i], "alignCenter", 1);
 			tableRow.addCell(arrDesc[i], "", 1);
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tmpAmount), "alignRight", 1);
+			tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(tmpAmount), "alignRight", 1);
 		}
 
 		/**
@@ -423,7 +444,7 @@ function printReport_Rendiconto_createGroup(banDoc, groupObj, table, accountsMap
 		**/	
 		tableRow = table.addRow();
 		tableRow.addCell("Totale gruppo " + _group, "bold alignRight italic", 2);
-		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(total), "bold alignRight italic", 1);
+		tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(total), "bold alignRight italic", 1);
 	}
 
 	//If the accountsMap is empty, then print the empty total group adding some spaces to adjust the alignment
@@ -436,7 +457,7 @@ function printReport_Rendiconto_createGroup(banDoc, groupObj, table, accountsMap
 		tableRow = table.addRow();
 		tableRow.addCell("", "", 1);
 		tableRow.addCell("                                          Totale gruppo " + _group, "bold alignRight italic", 1);
-		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(tmpTotal), "bold alignRight italic", 1);
+		tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(tmpTotal), "bold alignRight italic", 1);
 	}
 }
 
@@ -595,7 +616,9 @@ function convertParam(userParam, segment5XMList) {
 	convertedParam.version = '1.0';
 	convertedParam.data = [];
 
-
+	/*
+	* ANAGRAFICA
+	*/
 	var currentParam = {};
 	currentParam.name = 'anagrafica';
 	currentParam.parentObject = '';
@@ -621,12 +644,48 @@ function convertParam(userParam, segment5XMList) {
 	convertedParam.data.push(currentParam);
 
 	var currentParam = {};
+	currentParam.name = 'provincia';
+	currentParam.parentObject = 'anagrafica';
+	currentParam.title = "Provincia";
+	currentParam.type = 'string';
+	currentParam.value = userParam.provincia ? userParam.provincia : '';
+	currentParam.defaultvalue = "";
+	currentParam.readValue = function() {
+	  userParam.provincia = this.value;
+	}
+	convertedParam.data.push(currentParam);	
+
+	var currentParam = {};
+	currentParam.name = 'fax';
+	currentParam.parentObject = 'anagrafica';
+	currentParam.title = "Fax";
+	currentParam.type = 'string';
+	currentParam.value = userParam.fax ? userParam.fax : '';
+	currentParam.defaultvalue = "";
+	currentParam.readValue = function() {
+	  userParam.fax = this.value;
+	}
+	convertedParam.data.push(currentParam);	
+
+	var currentParam = {};
+	currentParam.name = 'pec';
+	currentParam.parentObject = 'anagrafica';
+	currentParam.title = "PEC";
+	currentParam.type = 'string';
+	currentParam.value = userParam.pec ? userParam.pec : '';
+	currentParam.defaultvalue = "";
+	currentParam.readValue = function() {
+	  userParam.pec = this.value;
+	}
+	convertedParam.data.push(currentParam);	
+
+	var currentParam = {};
 	currentParam.name = 'rappresentanteLegale';
 	currentParam.parentObject = 'anagrafica';
 	currentParam.title = 'Nome del rappresentante legale';
 	currentParam.type = 'string';
 	currentParam.value = userParam.rappresentanteLegale ? userParam.rappresentanteLegale : '';
-	currentParam.defaultvalue = 'Sig. Mario Rossi';
+	currentParam.defaultvalue = 'Mario Rossi';
 	currentParam.readValue = function() {
 	  userParam.rappresentanteLegale = this.value;
 	}
@@ -638,7 +697,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.title = 'Codice fiscale del rappresentante legale';
 	currentParam.type = 'string';
 	currentParam.value = userParam.cfRappresentanteLegale ? userParam.cfRappresentanteLegale : '';
-	currentParam.defaultvalue = '123456789';
+	currentParam.defaultvalue = '';
 	currentParam.readValue = function() {
 	  userParam.cfRappresentanteLegale = this.value;
 	}
@@ -698,7 +757,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.title = 'Data di percezione';
 	currentParam.type = 'string';
 	currentParam.value = userParam.dataPercezione ? userParam.dataPercezione : '';
-	currentParam.defaultvalue = '31.12.2020';
+	currentParam.defaultvalue = '31.12.2021';
 	currentParam.readValue = function() {
 	  userParam.dataPercezione = this.value;
 	}
@@ -710,9 +769,12 @@ function convertParam(userParam, segment5XMList) {
 function initUserParam(segment5XMList) {
    var userParam = {};
    userParam.scopoAttivita = "Sostenere e qualificare l'attività di volontariato";
-   userParam.rappresentanteLegale = "Sig. Mario Rossi";
-   userParam.cfRappresentanteLegale = "123456789";
-   userParam.dataPercezione = "31.12.2020";
+   userParam.provincia = "";
+   userParam.fax = "";
+   userParam.pec = "";
+   userParam.rappresentanteLegale = "Mario Rossi";
+   userParam.cfRappresentanteLegale = "1234567890";
+   userParam.dataPercezione = "31.12.2021";
    userParam.colonnaRaggruppamento = "Gr1";
    userParam.fileAnnoPrecedente = false;
    userParam.segment5XM = segment5XMList;
