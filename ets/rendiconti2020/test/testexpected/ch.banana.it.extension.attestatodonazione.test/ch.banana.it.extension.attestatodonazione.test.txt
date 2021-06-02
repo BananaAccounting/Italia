@@ -27,8 +27,10 @@
 Associazione Aiuto agli Anziani \\
 Gradenigo 10 \\
 35131 Padova \\
-Tel. 0498686849 \\
-Email: info@example.com \\
+Tel. 0498686849 ,  info@example.com \\
+CF: 1234567890 \\
+\begin{longtable}[l]{}
+\end{longtable}
 \begin{longtable}[l]{ l }
 Carlo Giorgi \\
 Via dei Mille 5 \\
@@ -47,26 +49,26 @@ Attestato di donazione 2021 \\
 Con la presente dichiariamo che  Carlo Giorgi, Via dei Mille 5, 00199 Roma  nel periodo  01.01.2021 - 31.12.2021  ha donato  EUR 600.00  alla nostra Associazione. \\
   \\
   \\
-\begin{longtable}[l]{ l  l  l  l  l }
+\begin{longtable}[l]{ l  l  l  l  l  l }
 \\
 \\
 \\
 \\
 \\
 \\
-1  & 25.01.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-2  & 25.02.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-3  & 25.03.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-4  & 25.04.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-5  & 25.05.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-6  & 25.06.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-7  & 25.07.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-8  & 25.08.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-9  & 25.09.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-10  & 25.10.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-11  & 25.11.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-12  & 20.12.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
- &  &  & 600.00  & \\
+1  & 25.01.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, gennaio 2021 \\
+2  & 25.02.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, febbraio 2021 \\
+3  & 25.03.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, marzo 2021 \\
+4  & 25.04.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, aprile 2021 \\
+5  & 25.05.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, maggio 2021 \\
+6  & 25.06.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, giugno 2021 \\
+7  & 25.07.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, luglio 2021 \\
+8  & 25.08.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, agosto 2021 \\
+9  & 25.09.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, settembre 2021 \\
+10  & 25.10.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, ottobre 2021 \\
+11  & 25.11.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, novembre 2021 \\
+12  & 20.12.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, dicembre 2021 \\
+ & Totale  & EUR  & 600.00  &  & \\
 \end{longtable}
   \\
   \\
@@ -76,6 +78,8 @@ Con la presente dichiariamo che  Carlo Giorgi, Via dei Mille 5, 00199 Roma  nel 
 \begin{longtable}[l]{ l  l }
  & \\
  & Associazione Aiuto agli Anziani \\
+\end{longtable}
+\begin{longtable}[l]{}
 \end{longtable}
 \begin{longtable}[l]{ l }
 Roberto Verdi \\
@@ -95,11 +99,9 @@ Attestato di donazione 2021 \\
 Con la presente dichiariamo che  Roberto Verdi, Via Fiume 25, 20121 Milano  nel periodo  01.01.2021 - 31.12.2021  ha donato  EUR 500.00  alla nostra Associazione. \\
   \\
   \\
-\begin{longtable}[l]{ l  l  l  l  l }
+\begin{longtable}[l]{ l  l  l  l  l  l }
 \\
-1  & 01.02.2021  & EUR  & 500.00  & Associazione Aiuto agli Anziani \\
-\\
-\\
+1  & 01.02.2021  & EUR  & 500.00  &    & Donazione da parte di un privato \\
 \\
 \\
 \\
@@ -114,7 +116,9 @@ Con la presente dichiariamo che  Roberto Verdi, Via Fiume 25, 20121 Milano  nel 
 \\
 \\
 \\
- &  &  & 500.00  & \\
+\\
+\\
+ & Totale  & EUR  & 500.00  &  & \\
 \end{longtable}
   \\
   \\
@@ -124,6 +128,8 @@ Con la presente dichiariamo che  Roberto Verdi, Via Fiume 25, 20121 Milano  nel 
 \begin{longtable}[l]{ l  l }
  & \\
  & Associazione Aiuto agli Anziani \\
+\end{longtable}
+\begin{longtable}[l]{}
 \end{longtable}
 \begin{longtable}[l]{ l }
 Mauro Bianchi \\
@@ -143,16 +149,12 @@ Attestato di donazione 2021 \\
 Con la presente dichiariamo che  Mauro Bianchi, Via delle Serre 16, 00199 Roma  nel periodo  01.01.2021 - 31.12.2021  ha donato  EUR 350.00  alla nostra Associazione. \\
   \\
   \\
-\begin{longtable}[l]{ l  l  l  l  l }
+\begin{longtable}[l]{ l  l  l  l  l  l }
 \\
 \\
 \\
-1  & 10.01.2021  & EUR  & 150.00  & Associazione Aiuto agli Anziani \\
-2  & 10.07.2021  & EUR  & 200.00  & Associazione Aiuto agli Anziani \\
-\\
-\\
-\\
-\\
+1  & 10.01.2021  & EUR  & 150.00  &    & Donazione da parte di un privato \\
+2  & 10.07.2021  & EUR  & 200.00  &    & Donazione da parte di un privato \\
 \\
 \\
 \\
@@ -162,7 +164,11 @@ Con la presente dichiariamo che  Mauro Bianchi, Via delle Serre 16, 00199 Roma  
 \\
 \\
 \\
- &  &  & 350.00  & \\
+\\
+\\
+\\
+\\
+ & Totale  & EUR  & 350.00  &  & \\
 \end{longtable}
   \\
   \\
@@ -179,8 +185,10 @@ Con la presente dichiariamo che  Mauro Bianchi, Via delle Serre 16, 00199 Roma  
 Associazione Aiuto agli Anziani \\
 Gradenigo 10 \\
 35131 Padova \\
-Tel. 0498686849 \\
-Email: info@example.com \\
+Tel. 0498686849 ,  info@example.com \\
+CF: 1234567890 \\
+\begin{longtable}[l]{}
+\end{longtable}
 \begin{longtable}[l]{ l }
 Carlo Giorgi \\
 Via dei Mille 5 \\
@@ -205,7 +213,7 @@ Indirizzo: Via dei Mille 5, 00199 Roma. \\
 Ringraziamo cordialmente. \\
   \\
   \\
-\begin{longtable}[l]{ l  l  l  l  l }
+\begin{longtable}[l]{ l  l  l  l  l  l }
 \\
 \\
 \\
@@ -218,13 +226,13 @@ Ringraziamo cordialmente. \\
 \\
 \\
 \\
-1  & 25.07.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-2  & 25.08.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-3  & 25.09.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-4  & 25.10.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-5  & 25.11.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
-6  & 20.12.2021  & EUR  & 50.00  & Associazione Aiuto agli Anziani \\
- &  &  & 300.00  & \\
+1  & 25.07.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, luglio 2021 \\
+2  & 25.08.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, agosto 2021 \\
+3  & 25.09.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, settembre 2021 \\
+4  & 25.10.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, ottobre 2021 \\
+5  & 25.11.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, novembre 2021 \\
+6  & 20.12.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, dicembre 2021 \\
+ & Totale  & EUR  & 300.00  &  & \\
 \end{longtable}
   \\
   \\
@@ -234,6 +242,8 @@ Ringraziamo cordialmente. \\
 \begin{longtable}[l]{ l  l }
 Milano, dicembre 2021  & Pinco Pallino \\
  & Associazione Aiuto agli Anziani \\
+\end{longtable}
+\begin{longtable}[l]{}
 \end{longtable}
 \begin{longtable}[l]{ l }
 Roberto Verdi \\
@@ -288,6 +298,8 @@ Ringraziamo cordialmente. \\
 Milano, dicembre 2021  & Pinco Pallino \\
  & Associazione Aiuto agli Anziani \\
 \end{longtable}
+\begin{longtable}[l]{}
+\end{longtable}
 \begin{longtable}[l]{ l }
 Mauro Bianchi \\
 Via delle Serre 16 \\
@@ -312,17 +324,12 @@ Indirizzo: Via delle Serre 16, 00199 Roma. \\
 Ringraziamo cordialmente. \\
   \\
   \\
-\begin{longtable}[l]{ l  l  l  l  l }
+\begin{longtable}[l]{ l  l  l  l  l  l }
 \\
 \\
 \\
 \\
-1  & 10.07.2021  & EUR  & 200.00  & Associazione Aiuto agli Anziani \\
-\\
-\\
-\\
-\\
-\\
+1  & 10.07.2021  & EUR  & 200.00  &    & Donazione da parte di un privato \\
 \\
 \\
 \\
@@ -331,7 +338,12 @@ Ringraziamo cordialmente. \\
 \\
 \\
 \\
- &  &  & 200.00  & \\
+\\
+\\
+\\
+\\
+\\
+ & Totale  & EUR  & 200.00  &  & \\
 \end{longtable}
   \\
   \\
@@ -341,6 +353,8 @@ Ringraziamo cordialmente. \\
 \begin{longtable}[l]{ l  l }
 Milano, dicembre 2021  & Pinco Pallino \\
  & Associazione Aiuto agli Anziani \\
+\end{longtable}
+\begin{longtable}[l]{}
 \end{longtable}
 \begin{longtable}[l]{ l }
 Michele Rossi \\

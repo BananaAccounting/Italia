@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.attestatodonazione.test
 // @api = 1.0
-// @pubdate = 2021-03-03
+// @pubdate = 2021-06-02
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.attestatodonazione.js>
 // @task = app.command
@@ -28,7 +28,7 @@
 // @timeout = -1
 
 
-var texts;
+
 
 // Register test case to be executed
 Test.registerTestCase(new TestAttestatoDonazioni());
@@ -67,14 +67,16 @@ TestAttestatoDonazioni.prototype.testExtension = function() {
   Test.assert(banDoc);
 
   var userParam = {};
-  var texts = {};
-  var lang = "it";
-  texts = loadTexts(banDoc,lang);
+  var texts = loadTexts();
 
   // Test #1
   Test.logger.addComment("****************************************************************************** TEST #1 ******************************************************************************");
   userParam.costcenter = 'S001,S002,S003,S004';
   userParam.minimumAmount = '1.00';
+  userParam.address = '';
+  userParam.alignleft = false;
+  userParam.addressPositionDX = '0';
+  userParam.addressPositionDY = '0';
   userParam.texts = '';
   userParam.useDefaultTexts = false;
   userParam.titleText = texts.title;
@@ -83,6 +85,7 @@ TestAttestatoDonazioni.prototype.testExtension = function() {
   userParam.text3 = '';
   userParam.text4 = '';
   userParam.details = true;
+  userParam.description = true;
   userParam.signature = '';
   userParam.localityAndDate = '';
   userParam.printLogo = '';
@@ -93,12 +96,16 @@ TestAttestatoDonazioni.prototype.testExtension = function() {
   userParam.headerLogoName = 'Logo';
   userParam.fontFamily = '';
   userParam.fontSize = '';
-  this.report_test(banDoc, "2021-01-01", "2021-12-31", userParam, lang, "Whole year report");
+  this.report_test(banDoc, "2021-01-01", "2021-12-31", userParam, "Whole year report");
 
   // Test #2
   Test.logger.addComment("****************************************************************************** TEST #2 ******************************************************************************");
   userParam.costcenter = '';
   userParam.minimumAmount = '0.00';
+  userParam.address = '';
+  userParam.alignleft = false;
+  userParam.addressPositionDX = '0';
+  userParam.addressPositionDY = '0';
   userParam.texts = '';
   userParam.useDefaultTexts = false;
   userParam.titleText = 'Donazioni #<Account>: <Period>';
@@ -107,6 +114,7 @@ TestAttestatoDonazioni.prototype.testExtension = function() {
   userParam.text3 = 'Indirizzo: <Address>.';
   userParam.text4 = 'Ringraziamo cordialmente.';
   userParam.details = true;
+  userParam.description = true;
   userParam.signature = 'Pinco Pallino';
   userParam.localityAndDate = 'Milano, dicembre 2021';
   userParam.printLogo = false;
@@ -117,14 +125,15 @@ TestAttestatoDonazioni.prototype.testExtension = function() {
   userParam.headerLogoName = "";
   userParam.fontFamily = '';
   userParam.fontSize = '';
-  this.report_test(banDoc, "2021-07-01", "2021-12-31", userParam, lang, "Six months report");
+  this.report_test(banDoc, "2021-07-01", "2021-12-31", userParam, "Six months report");
+
 }
 
 //Function that create the report for the test
-TestAttestatoDonazioni.prototype.report_test = function(banDoc, startDate, endDate, userParam, lang, reportName) {
-  texts = loadTexts(banDoc,lang);
-  var accounts = getAccountsToPrint(banDoc, startDate, endDate, userParam);
-  var report = createReport(banDoc, startDate, endDate, userParam, accounts, lang, "");
+TestAttestatoDonazioni.prototype.report_test = function(banDoc, startDate, endDate, userParam, reportName) {
+  texts = loadTexts();
+  var accounts = getAccountsToPrint(banDoc, startDate, endDate, userParam, texts);
+  var report = printReport(banDoc, startDate, endDate, userParam, accounts, texts, "");
   Test.logger.addReport(reportName, report);
 }
 

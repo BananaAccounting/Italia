@@ -1,4 +1,4 @@
-// Copyright [2020] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2021-04-26
+// @pubdate = 2021-06-02
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -102,6 +102,8 @@ function printReport(banDoc, userParam, bReport, stylesheet) {
    printReport_Rendiconto_Avanzo_Disavanzo(report, banDoc, userParam, bReport);
    printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport);
    printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport);
+
+   checkLiquidity(bReport, report);
 
 	return report;
 }
@@ -935,11 +937,6 @@ function printReport_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bRepor
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADES"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADES"), "align-right", 1);
 
-
-   //checkResults(banDoc, startDate, endDate);
-   //checkLiquidity(bReport, report);
-
-   //addFooter(report);
    return report;
 }
 
@@ -1360,22 +1357,6 @@ function formatValue(value) {
    return Banana.Converter.toLocaleNumberFormat(value);
 }
 
-function checkResults(banDoc, startDate, endDate) {
-
-   /* tot A */
-   var objA = banDoc.currentBalance("Gr=A", startDate, endDate);
-   currentA = objA.balance;
-
-   /* tot P */
-   var objP = banDoc.currentBalance("Gr=P", startDate, endDate);
-   currentP = objP.balance;
-
-   var res0 = Banana.SDecimal.add(currentA, currentP);
-   if (res0 !== "0") {
-      Banana.document.addMessage("Differenza Attivo e Passivo.");
-   }
-}
-
 function checkLiquidity(bReport, report) {
    /**
     * previous(ACIV1 + ACIV3) + current(Avanzo/Disavanzo complessivo) == current(ACIV1 + ACIV3)
@@ -1402,7 +1383,8 @@ function checkLiquidity(bReport, report) {
    // Banana.console.log(">>>> " + totLiqPrecAvanzo + " ?= " + totLiqCurr);
 
    if (Banana.SDecimal.compare(totLiqPrecAvanzo,totLiqCurr) != 0) {
-      report.addParagraph("Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' non corrisponde alla 'somma della liquidità anno corrente'", "text-color-red");
+      report.addParagraph(" ", "");
+      report.addParagraph("Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <" + formatValue(totLiqPrecAvanzo) + "> non corrisponde alla 'somma della liquidità anno corrente' <"+ formatValue(totLiqCurr) +">", "text-color-red");
    }
 }
 

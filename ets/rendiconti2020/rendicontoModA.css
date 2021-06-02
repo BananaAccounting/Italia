@@ -175,3 +175,7 @@ table {
   padding-left: 40px;
 }
 
+.alert-message {
+  font-size: 12pt;
+  color: red;
+}

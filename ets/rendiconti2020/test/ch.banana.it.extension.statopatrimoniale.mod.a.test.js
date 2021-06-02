@@ -1,4 +1,4 @@
-// Copyright [2020] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a.test
 // @api = 1.0
-// @pubdate = 2021-02-10
+// @pubdate = 2021-06-02
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.statopatrimoniale.mod.a.js>
 // @task = app.command
@@ -76,6 +76,8 @@ ReportModATest.prototype.testBananaExtension = function() {
 	userParam.printtitle = true;
 	userParam.title = '';
 	userParam.column = 'Gr';
+	userParam.printcolumn = false;
+	userParam.printpreviousyear = true;
 	userParam.compattastampa = false;
 
 	var reportStructure = createReportStructureStatoPatrimoniale();
@@ -107,6 +109,8 @@ ReportModATest.prototype.testBananaExtension = function() {
 	userParam.printtitle = true;
 	userParam.title = '';
 	userParam.column = 'Gr';
+	userParam.printcolumn = false;
+	userParam.printpreviousyear = true;
 	userParam.compattastampa = true;
 
 	var reportStructure = createReportStructureStatoPatrimoniale();
@@ -138,6 +142,8 @@ ReportModATest.prototype.testBananaExtension = function() {
 	userParam.printtitle = true;
 	userParam.title = '';
 	userParam.column = 'Gr1';
+	userParam.printcolumn = false;
+	userParam.printpreviousyear = true;
 	userParam.compattastampa = true;
 
 	var reportStructure = createReportStructureStatoPatrimoniale();
@@ -168,6 +174,8 @@ ReportModATest.prototype.testBananaExtension = function() {
 	userParam.printtitle = true;
 	userParam.title = '';
 	userParam.column = 'Gr1';
+	userParam.printcolumn = false;
+	userParam.printpreviousyear = true;
 	userParam.compattastampa = false;
 
 	var reportStructure = createReportStructureStatoPatrimoniale();
@@ -199,6 +207,7 @@ ReportModATest.prototype.testBananaExtension = function() {
 	userParam.title = '';
 	userParam.column = 'Gr1';
 	userParam.printcolumn = true;
+	userParam.printpreviousyear = true;
 	userParam.compattastampa = false;
 
 	var reportStructure = createReportStructureStatoPatrimoniale();

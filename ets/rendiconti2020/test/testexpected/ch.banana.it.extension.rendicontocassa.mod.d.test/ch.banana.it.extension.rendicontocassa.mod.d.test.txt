@@ -107,6 +107,8 @@ Costi figurativi  & 31.12.2022  & 31.12.2021  &  & Proventi figurativi  & 31.12.
 2) da attività diverse  & 2.00  & 2.00  &  & 2) da attività diverse  & 2.00  & 4.00 \\
 Totale  & 3.00  & 5.00  &  & Totale  & 3.00  & 9.00 \\
 \end{longtable}
+  \\
+Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <273.00> non corrisponde alla 'somma della liquidità anno corrente' <6.00> \\
 \end{reportvalue}
 \begin{reportvalue}{Test GR1 'rendiconto cassa (MOD. D)'}
   \\
@@ -193,6 +195,8 @@ Costi figurativi  & 31.12.2022  & 31.12.2021  &  & Proventi figurativi  & 31.12.
 2) da attività diverse  & 2.00  & 2.00  &  & 2) da attività diverse  & 2.00  & 4.00 \\
 Totale  & 3.00  & 5.00  &  & Totale  & 3.00  & 9.00 \\
 \end{longtable}
+  \\
+Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <273.00> non corrisponde alla 'somma della liquidità anno corrente' <6.00> \\
 \end{reportvalue}
 \begin{reportvalue}{Test GR1 'rendiconto cassa (MOD. D)'}
   \\
@@ -279,6 +283,8 @@ Costi figurativi  & 31.12.2020  & 31.12.2019  &  & Proventi figurativi  & 31.12.
 2) da attività diverse  & 0.00  & 0.00  &  & 2) da attività diverse  & 0.00  & 0.00 \\
 Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
 \end{longtable}
+  \\
+Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <19'299.00> non corrisponde alla 'somma della liquidità anno corrente' <33'299.00> \\
 \end{reportvalue}
 \begin{reportvalue}{Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento}
   \\
@@ -365,6 +371,8 @@ CG1  & 1) da attività di interesse generale  & 0.00  & 0.00  &  & RG1  & 1) da 
 CG2  & 2) da attività diverse  & 0.00  & 0.00  &  & RG2  & 2) da attività diverse  & 0.00  & 0.00 \\
  & Totale  & 0.00  & 0.00  &  &  & Totale  & 0.00  & 0.00 \\
 \end{longtable}
+  \\
+Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <19'299.00> non corrisponde alla 'somma della liquidità anno corrente' <33'299.00> \\
 \end{reportvalue}
 \begin{reportvalue}{Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento senza costi/ricavi figurativi}
   \\
@@ -444,6 +452,8 @@ GR1  & \multicolumn{6}{l}{Cassa e banca } & 31.12.2020  & 31.12.2019 \\
 ACIV3  & \multicolumn{6}{l}{Cassa } & 6'429.00  & 0.00 \\
 ACIV1  & \multicolumn{6}{l}{Depositi bancari e postali } & 26'870.00  & 0.00 \\
 \end{longtable}
+  \\
+Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <19'299.00> non corrisponde alla 'somma della liquidità anno corrente' <33'299.00> \\
 \end{reportvalue}
 \begin{reportvalue}{Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento senza costi/ricavi figurativi}
   \\
@@ -530,6 +540,8 @@ CG1  & 1) da attività di interesse generale  & 0.00  & 0.00  &  & RG1  & 1) da 
 CG2  & 2) da attività diverse  & 0.00  & 0.00  &  & RG2  & 2) da attività diverse  & 0.00  & 0.00 \\
  & Totale  & 0.00  & 0.00  &  &  & Totale  & 0.00  & 0.00 \\
 \end{longtable}
+  \\
+Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <1'000.00> non corrisponde alla 'somma della liquidità anno corrente' <0.00> \\
 \end{reportvalue}
 \begin{reportvalue}{Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento senza costi/ricavi figurativi}
   \\
@@ -616,6 +628,8 @@ CG1  & 1) da attività di interesse generale  & 0.00  & 0.00  &  & RG1  & 1) da 
 CG2  & 2) da attività diverse  & 0.00  & 0.00  &  & RG2  & 2) da attività diverse  & 0.00  & 0.00 \\
  & Totale  & 0.00  & 0.00  &  &  & Totale  & 0.00  & 0.00 \\
 \end{longtable}
+  \\
+Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <1'000.00> non corrisponde alla 'somma della liquidità anno corrente' <0.00> \\
 \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}

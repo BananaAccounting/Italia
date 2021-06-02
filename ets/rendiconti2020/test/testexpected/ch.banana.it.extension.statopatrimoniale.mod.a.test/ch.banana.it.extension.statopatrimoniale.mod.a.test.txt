@@ -30,8 +30,8 @@ Associazione APS - STATO PATRIMONIALE ANNO 2022 \\
  & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{ATTIVO }\\
 A) Quote associative o apporti ancora dovuti  & 1.00  & 2.00 \\
-B) Immobilizzazioni \\
-I - Immobilizzazioni immateriali \\
+B) Immobilizzazioni  &  & \\
+I - Immobilizzazioni immateriali  &  & \\
 1) costi di impianto e di ampliamento  & 3.00  & 4.00 \\
 2) costi di sviluppo  & 5.00  & 6.00 \\
 3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno  & 16.00  & 18.00 \\
@@ -40,70 +40,86 @@ I - Immobilizzazioni immateriali \\
 6) immobilizzazioni in corso e acconti  & 15.00  & 16.00 \\
 7) altre Immobilizzazioni immateriali  & 17.00  & 18.00 \\
 Totale immobilizzazioni immateriali  & 80.00  & 88.00 \\
-II - Immobilizzazioni materiali \\
+II - Immobilizzazioni materiali  &  & \\
 1) terreni e fabbricati  & 19.00  & 20.00 \\
 2) impianti e macchinari  & 21.00  & 22.00 \\
 3) attrezzature  & 48.00  & 50.00 \\
 4) altri beni  & 27.00  & 28.00 \\
 5) immobilizzazioni in corso e acconti  & 29.00  & 30.00 \\
 Totale immobilizzazioni materiali  & 144.00  & 150.00 \\
-III - Immobilizzazioni finanziarie \\
-1) Partecipazioni \\
+III - Immobilizzazioni finanziarie  &  & \\
+1) Partecipazioni  &  & \\
 a) partecipazioni in imprese controllate  & 1.00  & 2.00 \\
 b) partecipazioni in imprese collegate  & 3.00  & 4.00 \\
 c) partecipazioni in altre imprese  & 5.00  & 6.00 \\
-2) Crediti \\
-a) crediti verso imprese controllate  & 3.00  & 15.00 \\
-(di cui esigibili oltre l'anno successivo: 1.00 ; anno precedente 8.00) \\
-b) crediti verso imprese collegate  & 7.00  & 11.00 \\
-(di cui esigibili oltre l'anno successivo: 3.00 ; anno precedente 6.00) \\
-c) crediti verso altri enti del Terzo settore  & 11.00  & 7.00 \\
-(di cui esigibili oltre l'anno successivo: 5.00 ; anno precedente 4.00) \\
-d) crediti verso altri  & 15.00  & 3.00 \\
-(di cui esigibili oltre l'anno successivo: 7.00 ; anno precedente 2.00) \\
+2) Crediti  &  & \\
+a) crediti verso imprese controllate  &  & \\
+esigibili entro l'anno successivo  & 2.00  & 7.00 \\
+esigibili oltre l'anno successivo  & 1.00  & 8.00 \\
+b) crediti verso imprese collegate  &  & \\
+esigibili entro l'anno successivo  & 4.00  & 5.00 \\
+esigibili oltre l'anno successivo  & 3.00  & 6.00 \\
+c) crediti verso altri enti del Terzo settore  &  & \\
+esigibili entro l'anno successivo  & 6.00  & 3.00 \\
+esigibili oltre l'anno successivo  & 5.00  & 4.00 \\
+d) crediti verso altri  &  & \\
+esigibili entro l'anno successivo  & 8.00  & 1.00 \\
+esigibili oltre l'anno successivo  & 7.00  & 2.00 \\
 3) Altri titoli  & 1.00  & 2.00 \\
 Totale immobilizzazioni finanziarie  & 46.00  & 50.00 \\
 Totale immobilizzazioni B)  & 270.00  & 288.00 \\
-C) Attivo circolante \\
-I - Rimanenze \\
+C) Attivo circolante  &  & \\
+I - Rimanenze  &  & \\
 1) Rimanenze materie prime, sussidiarie e di consumo  & 1.00  & 2.00 \\
 2) Rimanenze prodotti in corso di lavorazione e semilavorati  & 2.00  & 4.00 \\
 3) Rimanenze lavori in corso su ordinazione  & 3.00  & 6.00 \\
 4) Rimanenze prodotti finiti e merci  & 4.00  & 8.00 \\
 5) Rimanenze acconti  & 5.00  & 10.00 \\
 Totale rimanenze  & 15.00  & 30.00 \\
-II - Crediti \\
-1) Crediti verso utenti e clienti  & 2.00  & 10.00 \\
-(di cui esigibili entro l'anno successivo: 1.00 ; anno precedente 5.00) \\
-2) Crediti verso associati e fondatori  & 4.00  & 8.00 \\
-(di cui esigibili entro l'anno successivo: 2.00 ; anno precedente 4.00) \\
-3) Crediti verso enti pubblici  & 6.00  & 6.00 \\
-(di cui esigibili entro l'anno successivo: 3.00 ; anno precedente 3.00) \\
-4) Crediti verso soggetti privati per contributi  & 8.00  & 4.00 \\
-(di cui esigibili entro l'anno successivo: 4.00 ; anno precedente 2.00) \\
-5) Crediti verso enti della stessa rete associativa  & 10.00  & 2.00 \\
-(di cui esigibili entro l'anno successivo: 5.00 ; anno precedente 1.00) \\
-6) Crediti verso altri enti del Terzo settore  & 2.00  & 10.00 \\
-(di cui esigibili entro l'anno successivo: 1.00 ; anno precedente 5.00) \\
-7) Crediti verso imprese controllate  & 4.00  & 8.00 \\
-(di cui esigibili entro l'anno successivo: 2.00 ; anno precedente 4.00) \\
-8) Crediti verso imprese collegate  & 6.00  & 6.00 \\
-(di cui esigibili entro l'anno successivo: 3.00 ; anno precedente 3.00) \\
-9) Crediti tributari  & 8.00  & 4.00 \\
-(di cui esigibili entro l'anno successivo: 4.00 ; anno precedente 2.00) \\
-10) Crediti da 5 per mille  & 10.00  & 2.00 \\
-(di cui esigibili entro l'anno successivo: 5.00 ; anno precedente 1.00) \\
-11) Crediti per imposte anticipate  & 2.00  & 10.00 \\
-(di cui esigibili entro l'anno successivo: 1.00 ; anno precedente 5.00) \\
-12) Crediti verso altri  & 4.00  & 8.00 \\
-(di cui esigibili entro l'anno successivo: 2.00 ; anno precedente 4.00) \\
+II - Crediti  &  & \\
+1) Crediti verso utenti e clienti  &  & \\
+esigibili entro l'anno successivo  & 1.00  & 5.00 \\
+esigibili oltre l'anno successivo  & 1.00  & 5.00 \\
+2) Crediti verso associati e fondatori  &  & \\
+esigibili entro l'anno successivo  & 2.00  & 4.00 \\
+esigibili oltre l'anno successivo  & 2.00  & 4.00 \\
+3) Crediti verso enti pubblici  &  & \\
+esigibili entro l'anno successivo  & 3.00  & 3.00 \\
+esigibili oltre l'anno successivo  & 3.00  & 3.00 \\
+4) Crediti verso soggetti privati per contributi  &  & \\
+esigibili entro l'anno successivo  & 4.00  & 2.00 \\
+esigibili oltre l'anno successivo  & 4.00  & 2.00 \\
+5) Crediti verso enti della stessa rete associativa  &  & \\
+esigibili entro l'anno successivo  & 5.00  & 1.00 \\
+esigibili oltre l'anno successivo  & 5.00  & 1.00 \\
+6) Crediti verso altri enti del Terzo settore  &  & \\
+esigibili entro l'anno successivo  & 1.00  & 5.00 \\
+esigibili oltre l'anno successivo  & 1.00  & 5.00 \\
+7) Crediti verso imprese controllate  &  & \\
+esigibili entro l'anno successivo  & 2.00  & 4.00 \\
+esigibili oltre l'anno successivo  & 2.00  & 4.00 \\
+8) Crediti verso imprese collegate  &  & \\
+esigibili entro l'anno successivo  & 3.00  & 3.00 \\
+esigibili oltre l'anno successivo  & 3.00  & 3.00 \\
+9) Crediti tributari  &  & \\
+esigibili entro l'anno successivo  & 4.00  & 2.00 \\
+esigibili oltre l'anno successivo  & 4.00  & 2.00 \\
+10) Crediti da 5 per mille  &  & \\
+esigibili entro l'anno successivo  & 5.00  & 1.00 \\
+esigibili oltre l'anno successivo  & 5.00  & 1.00 \\
+11) Crediti per imposte anticipate  &  & \\
+esigibili entro l'anno successivo  & 1.00  & 5.00 \\
+esigibili oltre l'anno successivo  & 1.00  & 5.00 \\
+12) Crediti verso altri  &  & \\
+esigibili entro l'anno successivo  & 2.00  & 4.00 \\
+esigibili oltre l'anno successivo  & 2.00  & 4.00 \\
 Totale crediti  & 66.00  & 78.00 \\
-III - Attività finanziarie che non costituiscono immobilizzazioni \\
+III - Attività finanziarie che non costituiscono immobilizzazioni  &  & \\
 1) Partecipazioni in imprese controllate  & 1.00  & 4.00 \\
 2) Partecipazioni in imprese collegate  & 2.00  & 5.00 \\
 3) Altri titoli  & 3.00  & 6.00 \\
 Totale attività finanziarie che non costituiscono immobilizzazioni  & 6.00  & 15.00 \\
-IV - Disponibilità liquide \\
+IV - Disponibilità liquide  &  & \\
 1) Depositi bancari e postali  & 4.00  & 7.00 \\
 2) Assegni  & 5.00  & 8.00 \\
 3) Danaro e valori in cassa  & 6.00  & 9.00 \\
@@ -117,54 +133,69 @@ TOTALE ATTIVO  & 374.00  & 439.00 \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{PASSIVO }\\
-A) Patrimonio netto \\
+A) Patrimonio netto  &  & \\
 I - Fondo di dotazione dell'ente  & 1.00  & 2.00 \\
-II - Patrimonio vincolato \\
+II - Patrimonio vincolato  &  & \\
 1) Riserve statutarie  & 2.00  & 1.00 \\
 2) Riserve vincolate per decisione degli organi istituzionali  & 3.00  & 2.00 \\
 3) Riserve vincolate destinate da terzi  & 4.00  & 3.00 \\
 Totale patrimonio vincolato  & 9.00  & 6.00 \\
-III - Patrimonio libero \\
+III - Patrimonio libero  &  & \\
 1) Riserve di utili o avanzi di gestione  & 5.00  & 1.00 \\
 2) Altre riserve  & 6.00  & 2.00 \\
 Totale patrimonio libero  & 11.00  & 3.00 \\
 IV - Avanzo/disavanzo d'esercizio  & 183.00  & -97.00 \\
 Totale patrimonio netto A)  & 204.00  & -86.00 \\
-B) Fondi per rischi e oneri \\
+B) Fondi per rischi e oneri  &  & \\
 1) Fondi per trattamento di quiescenza e obblighi simili  & 1.00  & 4.00 \\
 2) Fondi per imposte, anche differite  & 2.00  & 5.00 \\
 3) Fondi altri  & 3.00  & 6.00 \\
 Totale fondi per rischi e oneri B)  & 6.00  & 15.00 \\
 C) Fondi trattamento di fine rapporto di lavoro subordinato  & 0.00  & 0.00 \\
-D) Debiti \\
-1) Debiti verso banche  & 3.00  & 19.00 \\
-(di cui esigibili entro l'anno successivo: 1.00 ; anno precedente 10.00) \\
-2) Debiti verso altri finanziatori  & 7.00  & 15.00 \\
-(di cui esigibili entro l'anno successivo: 3.00 ; anno precedente 8.00) \\
-3) Debiti verso associati e fondatori per finanziamenti  & 11.00  & 11.00 \\
-(di cui esigibili entro l'anno successivo: 5.00 ; anno precedente 6.00) \\
-4) Debiti verso enti della stessa rete associativa  & 15.00  & 7.00 \\
-(di cui esigibili entro l'anno successivo: 7.00 ; anno precedente 4.00) \\
-5) Debiti per erogazioni liberali condizionate  & 3.00  & 3.00 \\
-(di cui esigibili entro l'anno successivo: 1.00 ; anno precedente 2.00) \\
-6) Acconti (Debiti)  & 4.00  & 19.00 \\
-(di cui esigibili entro l'anno successivo: 3.00 ; anno precedente 10.00) \\
-7) Debiti verso fornitori  & 5.00  & 15.00 \\
-(di cui esigibili entro l'anno successivo: 2.00 ; anno precedente 8.00) \\
-8) Debiti verso imprese controllate e collegate  & 9.00  & 11.00 \\
-(di cui esigibili entro l'anno successivo: 4.00 ; anno precedente 6.00) \\
-9) Debiti tributari  & 13.00  & 7.00 \\
-(di cui esigibili entro l'anno successivo: 6.00 ; anno precedente 4.00) \\
-10) Debiti verso istituti di previdenza e di sicurezza sociale  & 9.00  & 3.00 \\
-(di cui esigibili entro l'anno successivo: 8.00 ; anno precedente 2.00) \\
-11) Debiti verso dipendenti e collaboratori  & 5.00  & 19.00 \\
-(di cui esigibili entro l'anno successivo: 2.00 ; anno precedente 10.00) \\
-12) Altri debiti  & 3.00  & 15.00 \\
-(di cui esigibili entro l'anno successivo: 1.00 ; anno precedente 8.00) \\
+D) Debiti  &  & \\
+1) Debiti verso banche  &  & \\
+esigibili entro l'anno successivo  & 1.00  & 10.00 \\
+esigibili oltre l'anno successivo  & 2.00  & 9.00 \\
+2) Debiti verso altri finanziatori  &  & \\
+esigibili entro l'anno successivo  & 3.00  & 8.00 \\
+esigibili oltre l'anno successivo  & 4.00  & 7.00 \\
+3) Debiti verso associati e fondatori per finanziamenti  &  & \\
+esigibili entro l'anno successivo  & 5.00  & 6.00 \\
+esigibili oltre l'anno successivo  & 6.00  & 5.00 \\
+4) Debiti verso enti della stessa rete associativa  &  & \\
+esigibili entro l'anno successivo  & 7.00  & 4.00 \\
+esigibili oltre l'anno successivo  & 8.00  & 3.00 \\
+5) Debiti per erogazioni liberali condizionate  &  & \\
+esigibili entro l'anno successivo  & 1.00  & 2.00 \\
+esigibili oltre l'anno successivo  & 2.00  & 1.00 \\
+6) Acconti (Debiti)  &  & \\
+esigibili entro l'anno successivo  & 3.00  & 10.00 \\
+esigibili oltre l'anno successivo  & 1.00  & 9.00 \\
+7) Debiti verso fornitori  &  & \\
+esigibili entro l'anno successivo  & 2.00  & 8.00 \\
+esigibili oltre l'anno successivo  & 3.00  & 7.00 \\
+8) Debiti verso imprese controllate e collegate  &  & \\
+esigibili entro l'anno successivo  & 4.00  & 6.00 \\
+esigibili oltre l'anno successivo  & 5.00  & 5.00 \\
+9) Debiti tributari  &  & \\
+esigibili entro l'anno successivo  & 6.00  & 4.00 \\
+esigibili oltre l'anno successivo  & 7.00  & 3.00 \\
+10) Debiti verso istituti di previdenza e di sicurezza sociale  &  & \\
+esigibili entro l'anno successivo  & 8.00  & 2.00 \\
+esigibili oltre l'anno successivo  & 1.00  & 1.00 \\
+11) Debiti verso dipendenti e collaboratori  &  & \\
+esigibili entro l'anno successivo  & 2.00  & 10.00 \\
+esigibili oltre l'anno successivo  & 3.00  & 9.00 \\
+12) Altri debiti  &  & \\
+esigibili entro l'anno successivo  & 1.00  & 8.00 \\
+esigibili oltre l'anno successivo  & 2.00  & 7.00 \\
 Totale debiti D)  & 87.00  & 144.00 \\
 E) Ratei e risconti passivi  & 1.00  & 2.00 \\
 TOTALE PASSIVO  & 298.00  & 75.00 \\
 \end{longtable}
+  \\
+  \\
+Attenzione: differenza tra totale Attivo <374.00> e totale Passivo <298.00> \\
 -  \#page-nr  - \\
 \end{reportvalue}
 \begin{reportvalue}{Test 2: rendiconto 'Stato Patrimoniale (MOD. A)'}
@@ -175,22 +206,22 @@ Associazione APS - STATO PATRIMONIALE ANNO 2022 \\
  & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{ATTIVO }\\
 A) Quote associative o apporti ancora dovuti  & 1.00  & 2.00 \\
-B) Immobilizzazioni \\
-I - Immobilizzazioni immateriali \\
+B) Immobilizzazioni  &  & \\
+I - Immobilizzazioni immateriali  &  & \\
 Totale immobilizzazioni immateriali  & 0.00  & 0.00 \\
-II - Immobilizzazioni materiali \\
+II - Immobilizzazioni materiali  &  & \\
 Totale immobilizzazioni materiali  & 0.00  & 0.00 \\
-III - Immobilizzazioni finanziarie \\
+III - Immobilizzazioni finanziarie  &  & \\
 Totale immobilizzazioni finanziarie  & 0.00  & 0.00 \\
 Totale immobilizzazioni B)  & 0.00  & 0.00 \\
-C) Attivo circolante \\
-I - Rimanenze \\
+C) Attivo circolante  &  & \\
+I - Rimanenze  &  & \\
 Totale rimanenze  & 0.00  & 0.00 \\
-II - Crediti \\
+II - Crediti  &  & \\
 Totale crediti  & 0.00  & 0.00 \\
-III - Attività finanziarie che non costituiscono immobilizzazioni \\
+III - Attività finanziarie che non costituiscono immobilizzazioni  &  & \\
 Totale attività finanziarie che non costituiscono immobilizzazioni  & 0.00  & 0.00 \\
-IV - Disponibilità liquide \\
+IV - Disponibilità liquide  &  & \\
 Totale disponibilità liquide  & 0.00  & 0.00 \\
 Totale attivo circolante C)  & 0.00  & 0.00 \\
 D) Ratei e risconti attivi  & 1.00  & 2.00 \\
@@ -201,22 +232,25 @@ TOTALE ATTIVO  & 2.00  & 4.00 \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{PASSIVO }\\
-A) Patrimonio netto \\
+A) Patrimonio netto  &  & \\
 I - Fondo di dotazione dell'ente  & 1.00  & 2.00 \\
-II - Patrimonio vincolato \\
+II - Patrimonio vincolato  &  & \\
 Totale patrimonio vincolato  & 0.00  & 0.00 \\
-III - Patrimonio libero \\
+III - Patrimonio libero  &  & \\
 Totale patrimonio libero  & 0.00  & 0.00 \\
 IV - Avanzo/disavanzo d'esercizio  & -189.00  & -97.00 \\
 Totale patrimonio netto A)  & -188.00  & -95.00 \\
-B) Fondi per rischi e oneri \\
+B) Fondi per rischi e oneri  &  & \\
 Totale fondi per rischi e oneri B)  & 0.00  & 0.00 \\
 C) Fondi trattamento di fine rapporto di lavoro subordinato  & 0.00  & 0.00 \\
-D) Debiti \\
+D) Debiti  &  & \\
 Totale debiti D)  & 0.00  & 0.00 \\
 E) Ratei e risconti passivi  & 1.00  & 2.00 \\
 TOTALE PASSIVO  & -187.00  & -93.00 \\
 \end{longtable}
+  \\
+  \\
+Attenzione: differenza tra totale Attivo <2.00> e totale Passivo <-187.00> \\
 -  \#page-nr  - \\
 \end{reportvalue}
 \begin{reportvalue}{Test 3: rendiconto 'Stato Patrimoniale (MOD. A)', colonna Gr1}
@@ -227,8 +261,8 @@ Associazione APS - STATO PATRIMONIALE ANNO 2022 \\
  & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{ATTIVO }\\
 A) Quote associative o apporti ancora dovuti  & 1.00  & 2.00 \\
-B) Immobilizzazioni \\
-I - Immobilizzazioni immateriali \\
+B) Immobilizzazioni  &  & \\
+I - Immobilizzazioni immateriali  &  & \\
 1) costi di impianto e di ampliamento  & 3.00  & 4.00 \\
 2) costi di sviluppo  & 5.00  & 6.00 \\
 3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno  & 16.00  & 18.00 \\
@@ -237,70 +271,86 @@ I - Immobilizzazioni immateriali \\
 6) immobilizzazioni in corso e acconti  & 15.00  & 16.00 \\
 7) altre Immobilizzazioni immateriali  & 17.00  & 18.00 \\
 Totale immobilizzazioni immateriali  & 80.00  & 88.00 \\
-II - Immobilizzazioni materiali \\
+II - Immobilizzazioni materiali  &  & \\
 1) terreni e fabbricati  & 19.00  & 20.00 \\
 2) impianti e macchinari  & 21.00  & 22.00 \\
 3) attrezzature  & 48.00  & 50.00 \\
 4) altri beni  & 27.00  & 28.00 \\
 5) immobilizzazioni in corso e acconti  & 29.00  & 30.00 \\
 Totale immobilizzazioni materiali  & 144.00  & 150.00 \\
-III - Immobilizzazioni finanziarie \\
-1) Partecipazioni \\
+III - Immobilizzazioni finanziarie  &  & \\
+1) Partecipazioni  &  & \\
 a) partecipazioni in imprese controllate  & 1.00  & 2.00 \\
 b) partecipazioni in imprese collegate  & 3.00  & 4.00 \\
 c) partecipazioni in altre imprese  & 5.00  & 6.00 \\
-2) Crediti \\
-a) crediti verso imprese controllate  & 3.00  & 15.00 \\
-(di cui esigibili oltre l'anno successivo: 1.00 ; anno precedente 8.00) \\
-b) crediti verso imprese collegate  & 7.00  & 11.00 \\
-(di cui esigibili oltre l'anno successivo: 3.00 ; anno precedente 6.00) \\
-c) crediti verso altri enti del Terzo settore  & 11.00  & 7.00 \\
-(di cui esigibili oltre l'anno successivo: 5.00 ; anno precedente 4.00) \\
-d) crediti verso altri  & 15.00  & 3.00 \\
-(di cui esigibili oltre l'anno successivo: 7.00 ; anno precedente 2.00) \\
+2) Crediti  &  & \\
+a) crediti verso imprese controllate  &  & \\
+esigibili entro l'anno successivo  & 2.00  & 7.00 \\
+esigibili oltre l'anno successivo  & 1.00  & 8.00 \\
+b) crediti verso imprese collegate  &  & \\
+esigibili entro l'anno successivo  & 4.00  & 5.00 \\
+esigibili oltre l'anno successivo  & 3.00  & 6.00 \\
+c) crediti verso altri enti del Terzo settore  &  & \\
+esigibili entro l'anno successivo  & 6.00  & 3.00 \\
+esigibili oltre l'anno successivo  & 5.00  & 4.00 \\
+d) crediti verso altri  &  & \\
+esigibili entro l'anno successivo  & 8.00  & 1.00 \\
+esigibili oltre l'anno successivo  & 7.00  & 2.00 \\
 3) Altri titoli  & 1.00  & 2.00 \\
 Totale immobilizzazioni finanziarie  & 46.00  & 50.00 \\
 Totale immobilizzazioni B)  & 270.00  & 288.00 \\
-C) Attivo circolante \\
-I - Rimanenze \\
+C) Attivo circolante  &  & \\
+I - Rimanenze  &  & \\
 1) Rimanenze materie prime, sussidiarie e di consumo  & 1.00  & 2.00 \\
 2) Rimanenze prodotti in corso di lavorazione e semilavorati  & 2.00  & 4.00 \\
 3) Rimanenze lavori in corso su ordinazione  & 3.00  & 6.00 \\
 4) Rimanenze prodotti finiti e merci  & 4.00  & 8.00 \\
 5) Rimanenze acconti  & 5.00  & 10.00 \\
 Totale rimanenze  & 15.00  & 30.00 \\
-II - Crediti \\
-1) Crediti verso utenti e clienti  & 2.00  & 12.00 \\
-(di cui esigibili entro l'anno successivo: 1.00 ; anno precedente 5.00) \\
-2) Crediti verso associati e fondatori  & 4.00  & 8.00 \\
-(di cui esigibili entro l'anno successivo: 2.00 ; anno precedente 4.00) \\
-3) Crediti verso enti pubblici  & 6.00  & 6.00 \\
-(di cui esigibili entro l'anno successivo: 3.00 ; anno precedente 3.00) \\
-4) Crediti verso soggetti privati per contributi  & 8.00  & 4.00 \\
-(di cui esigibili entro l'anno successivo: 4.00 ; anno precedente 2.00) \\
-5) Crediti verso enti della stessa rete associativa  & 10.00  & 2.00 \\
-(di cui esigibili entro l'anno successivo: 5.00 ; anno precedente 1.00) \\
-6) Crediti verso altri enti del Terzo settore  & 2.00  & 10.00 \\
-(di cui esigibili entro l'anno successivo: 1.00 ; anno precedente 5.00) \\
-7) Crediti verso imprese controllate  & 4.00  & 8.00 \\
-(di cui esigibili entro l'anno successivo: 2.00 ; anno precedente 4.00) \\
-8) Crediti verso imprese collegate  & 6.00  & 6.00 \\
-(di cui esigibili entro l'anno successivo: 3.00 ; anno precedente 3.00) \\
-9) Crediti tributari  & 8.00  & 4.00 \\
-(di cui esigibili entro l'anno successivo: 4.00 ; anno precedente 2.00) \\
-10) Crediti da 5 per mille  & 10.00  & 2.00 \\
-(di cui esigibili entro l'anno successivo: 5.00 ; anno precedente 1.00) \\
-11) Crediti per imposte anticipate  & 2.00  & 10.00 \\
-(di cui esigibili entro l'anno successivo: 1.00 ; anno precedente 5.00) \\
-12) Crediti verso altri  & 4.00  & 8.00 \\
-(di cui esigibili entro l'anno successivo: 2.00 ; anno precedente 4.00) \\
+II - Crediti  &  & \\
+1) Crediti verso utenti e clienti  &  & \\
+esigibili entro l'anno successivo  & 1.00  & 5.00 \\
+esigibili oltre l'anno successivo  & 1.00  & 5.00 \\
+2) Crediti verso associati e fondatori  &  & \\
+esigibili entro l'anno successivo  & 2.00  & 4.00 \\
+esigibili oltre l'anno successivo  & 2.00  & 4.00 \\
+3) Crediti verso enti pubblici  &  & \\
+esigibili entro l'anno successivo  & 3.00  & 3.00 \\
+esigibili oltre l'anno successivo  & 3.00  & 3.00 \\
+4) Crediti verso soggetti privati per contributi  &  & \\
+esigibili entro l'anno successivo  & 4.00  & 2.00 \\
+esigibili oltre l'anno successivo  & 4.00  & 2.00 \\
+5) Crediti verso enti della stessa rete associativa  &  & \\
+esigibili entro l'anno successivo  & 5.00  & 1.00 \\
+esigibili oltre l'anno successivo  & 5.00  & 1.00 \\
+6) Crediti verso altri enti del Terzo settore  &  & \\
+esigibili entro l'anno successivo  & 1.00  & 5.00 \\
+esigibili oltre l'anno successivo  & 1.00  & 5.00 \\
+7) Crediti verso imprese controllate  &  & \\
+esigibili entro l'anno successivo  & 2.00  & 4.00 \\
+esigibili oltre l'anno successivo  & 2.00  & 4.00 \\
+8) Crediti verso imprese collegate  &  & \\
+esigibili entro l'anno successivo  & 3.00  & 3.00 \\
+esigibili oltre l'anno successivo  & 3.00  & 3.00 \\
+9) Crediti tributari  &  & \\
+esigibili entro l'anno successivo  & 4.00  & 2.00 \\
+esigibili oltre l'anno successivo  & 4.00  & 2.00 \\
+10) Crediti da 5 per mille  &  & \\
+esigibili entro l'anno successivo  & 5.00  & 1.00 \\
+esigibili oltre l'anno successivo  & 5.00  & 1.00 \\
+11) Crediti per imposte anticipate  &  & \\
+esigibili entro l'anno successivo  & 1.00  & 5.00 \\
+esigibili oltre l'anno successivo  & 1.00  & 5.00 \\
+12) Crediti verso altri  &  & \\
+esigibili entro l'anno successivo  & 2.00  & 4.00 \\
+esigibili oltre l'anno successivo  & 2.00  & 4.00 \\
 Totale crediti  & 66.00  & 80.00 \\
-III - Attività finanziarie che non costituiscono immobilizzazioni \\
+III - Attività finanziarie che non costituiscono immobilizzazioni  &  & \\
 1) Partecipazioni in imprese controllate  & 1.00  & 4.00 \\
 2) Partecipazioni in imprese collegate  & 2.00  & 5.00 \\
 3) Altri titoli  & 3.00  & 6.00 \\
 Totale attività finanziarie che non costituiscono immobilizzazioni  & 6.00  & 15.00 \\
-IV - Disponibilità liquide \\
+IV - Disponibilità liquide  &  & \\
 1) Depositi bancari e postali  & 4.00  & 7.00 \\
 2) Assegni  & 5.00  & 8.00 \\
 3) Danaro e valori in cassa  & 6.00  & 9.00 \\
@@ -314,54 +364,69 @@ TOTALE ATTIVO  & 374.00  & 441.00 \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{PASSIVO }\\
-A) Patrimonio netto \\
+A) Patrimonio netto  &  & \\
 I - Fondo di dotazione dell'ente  & 1.00  & 2.00 \\
-II - Patrimonio vincolato \\
+II - Patrimonio vincolato  &  & \\
 1) Riserve statutarie  & 2.00  & 1.00 \\
 2) Riserve vincolate per decisione degli organi istituzionali  & 3.00  & 2.00 \\
 3) Riserve vincolate destinate da terzi  & 4.00  & 3.00 \\
 Totale patrimonio vincolato  & 9.00  & 6.00 \\
-III - Patrimonio libero \\
+III - Patrimonio libero  &  & \\
 1) Riserve di utili o avanzi di gestione  & 5.00  & 1.00 \\
 2) Altre riserve  & 6.00  & 2.00 \\
 Totale patrimonio libero  & 11.00  & 3.00 \\
 IV - Avanzo/disavanzo d'esercizio  & 183.00  & -97.00 \\
 Totale patrimonio netto A)  & 204.00  & -86.00 \\
-B) Fondi per rischi e oneri \\
+B) Fondi per rischi e oneri  &  & \\
 1) Fondi per trattamento di quiescenza e obblighi simili  & 1.00  & 4.00 \\
 2) Fondi per imposte, anche differite  & 2.00  & 5.00 \\
 3) Fondi altri  & 3.00  & 6.00 \\
 Totale fondi per rischi e oneri B)  & 6.00  & 15.00 \\
 C) Fondi trattamento di fine rapporto di lavoro subordinato  & 0.00  & 0.00 \\
-D) Debiti \\
-1) Debiti verso banche  & 3.00  & 19.00 \\
-(di cui esigibili entro l'anno successivo: 1.00 ; anno precedente 10.00) \\
-2) Debiti verso altri finanziatori  & 7.00  & 15.00 \\
-(di cui esigibili entro l'anno successivo: 3.00 ; anno precedente 8.00) \\
-3) Debiti verso associati e fondatori per finanziamenti  & 11.00  & 11.00 \\
-(di cui esigibili entro l'anno successivo: 5.00 ; anno precedente 6.00) \\
-4) Debiti verso enti della stessa rete associativa  & 15.00  & 7.00 \\
-(di cui esigibili entro l'anno successivo: 7.00 ; anno precedente 4.00) \\
-5) Debiti per erogazioni liberali condizionate  & 3.00  & 3.00 \\
-(di cui esigibili entro l'anno successivo: 1.00 ; anno precedente 2.00) \\
-6) Acconti (Debiti)  & 4.00  & 19.00 \\
-(di cui esigibili entro l'anno successivo: 3.00 ; anno precedente 10.00) \\
-7) Debiti verso fornitori  & 5.00  & 17.00 \\
-(di cui esigibili entro l'anno successivo: 2.00 ; anno precedente 8.00) \\
-8) Debiti verso imprese controllate e collegate  & 9.00  & 11.00 \\
-(di cui esigibili entro l'anno successivo: 4.00 ; anno precedente 6.00) \\
-9) Debiti tributari  & 13.00  & 7.00 \\
-(di cui esigibili entro l'anno successivo: 6.00 ; anno precedente 4.00) \\
-10) Debiti verso istituti di previdenza e di sicurezza sociale  & 9.00  & 3.00 \\
-(di cui esigibili entro l'anno successivo: 8.00 ; anno precedente 2.00) \\
-11) Debiti verso dipendenti e collaboratori  & 5.00  & 19.00 \\
-(di cui esigibili entro l'anno successivo: 2.00 ; anno precedente 10.00) \\
-12) Altri debiti  & 3.00  & 15.00 \\
-(di cui esigibili entro l'anno successivo: 1.00 ; anno precedente 8.00) \\
+D) Debiti  &  & \\
+1) Debiti verso banche  &  & \\
+esigibili entro l'anno successivo  & 1.00  & 10.00 \\
+esigibili oltre l'anno successivo  & 2.00  & 9.00 \\
+2) Debiti verso altri finanziatori  &  & \\
+esigibili entro l'anno successivo  & 3.00  & 8.00 \\
+esigibili oltre l'anno successivo  & 4.00  & 7.00 \\
+3) Debiti verso associati e fondatori per finanziamenti  &  & \\
+esigibili entro l'anno successivo  & 5.00  & 6.00 \\
+esigibili oltre l'anno successivo  & 6.00  & 5.00 \\
+4) Debiti verso enti della stessa rete associativa  &  & \\
+esigibili entro l'anno successivo  & 7.00  & 4.00 \\
+esigibili oltre l'anno successivo  & 8.00  & 3.00 \\
+5) Debiti per erogazioni liberali condizionate  &  & \\
+esigibili entro l'anno successivo  & 1.00  & 2.00 \\
+esigibili oltre l'anno successivo  & 2.00  & 1.00 \\
+6) Acconti (Debiti)  &  & \\
+esigibili entro l'anno successivo  & 3.00  & 10.00 \\
+esigibili oltre l'anno successivo  & 1.00  & 9.00 \\
+7) Debiti verso fornitori  &  & \\
+esigibili entro l'anno successivo  & 2.00  & 8.00 \\
+esigibili oltre l'anno successivo  & 3.00  & 7.00 \\
+8) Debiti verso imprese controllate e collegate  &  & \\
+esigibili entro l'anno successivo  & 4.00  & 6.00 \\
+esigibili oltre l'anno successivo  & 5.00  & 5.00 \\
+9) Debiti tributari  &  & \\
+esigibili entro l'anno successivo  & 6.00  & 4.00 \\
+esigibili oltre l'anno successivo  & 7.00  & 3.00 \\
+10) Debiti verso istituti di previdenza e di sicurezza sociale  &  & \\
+esigibili entro l'anno successivo  & 8.00  & 2.00 \\
+esigibili oltre l'anno successivo  & 1.00  & 1.00 \\
+11) Debiti verso dipendenti e collaboratori  &  & \\
+esigibili entro l'anno successivo  & 2.00  & 10.00 \\
+esigibili oltre l'anno successivo  & 3.00  & 9.00 \\
+12) Altri debiti  &  & \\
+esigibili entro l'anno successivo  & 1.00  & 8.00 \\
+esigibili oltre l'anno successivo  & 2.00  & 7.00 \\
 Totale debiti D)  & 87.00  & 146.00 \\
 E) Ratei e risconti passivi  & 1.00  & 2.00 \\
 TOTALE PASSIVO  & 298.00  & 77.00 \\
 \end{longtable}
+  \\
+  \\
+Attenzione: differenza tra totale Attivo <374.00> e totale Passivo <298.00> \\
 -  \#page-nr  - \\
 \end{reportvalue}
 \begin{reportvalue}{Test 4: rendiconto 'Stato Patrimoniale (MOD. A)', colonna Gr1}
@@ -372,8 +437,8 @@ Associazione Aiuto agli Anziani - STATO PATRIMONIALE ANNO 2020 \\
  & 31.12.2020  & 31.12.2019 \\
 \multicolumn{3}{l}{ATTIVO }\\
 A) Quote associative o apporti ancora dovuti  & 220.00  & 0.00 \\
-B) Immobilizzazioni \\
-I - Immobilizzazioni immateriali \\
+B) Immobilizzazioni  &  & \\
+I - Immobilizzazioni immateriali  &  & \\
 1) costi di impianto e di ampliamento  & 0.00  & 0.00 \\
 2) costi di sviluppo  & 0.00  & 0.00 \\
 3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno  & 650.00  & 0.00 \\
@@ -382,70 +447,86 @@ I - Immobilizzazioni immateriali \\
 6) immobilizzazioni in corso e acconti  & 0.00  & 0.00 \\
 7) altre Immobilizzazioni immateriali  & 0.00  & 0.00 \\
 Totale immobilizzazioni immateriali  & 650.00  & 0.00 \\
-II - Immobilizzazioni materiali \\
+II - Immobilizzazioni materiali  &  & \\
 1) terreni e fabbricati  & 0.00  & 0.00 \\
 2) impianti e macchinari  & 0.00  & 0.00 \\
 3) attrezzature  & 7'550.00  & 0.00 \\
 4) altri beni  & 0.00  & 0.00 \\
 5) immobilizzazioni in corso e acconti  & 0.00  & 0.00 \\
 Totale immobilizzazioni materiali  & 7'550.00  & 0.00 \\
-III - Immobilizzazioni finanziarie \\
-1) Partecipazioni \\
+III - Immobilizzazioni finanziarie  &  & \\
+1) Partecipazioni  &  & \\
 a) partecipazioni in imprese controllate  & 0.00  & 0.00 \\
 b) partecipazioni in imprese collegate  & 0.00  & 0.00 \\
 c) partecipazioni in altre imprese  & 0.00  & 0.00 \\
-2) Crediti \\
-a) crediti verso imprese controllate  & 0.00  & 0.00 \\
-(di cui esigibili oltre l'anno successivo: 0.00 ; anno precedente 0.00) \\
-b) crediti verso imprese collegate  & 0.00  & 0.00 \\
-(di cui esigibili oltre l'anno successivo: 0.00 ; anno precedente 0.00) \\
-c) crediti verso altri enti del Terzo settore  & 0.00  & 0.00 \\
-(di cui esigibili oltre l'anno successivo: 0.00 ; anno precedente 0.00) \\
-d) crediti verso altri  & 0.00  & 0.00 \\
-(di cui esigibili oltre l'anno successivo: 0.00 ; anno precedente 0.00) \\
+2) Crediti  &  & \\
+a) crediti verso imprese controllate  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+b) crediti verso imprese collegate  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+c) crediti verso altri enti del Terzo settore  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+d) crediti verso altri  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 3) Altri titoli  & 0.00  & 0.00 \\
 Totale immobilizzazioni finanziarie  & 0.00  & 0.00 \\
 Totale immobilizzazioni B)  & 8'200.00  & 0.00 \\
-C) Attivo circolante \\
-I - Rimanenze \\
+C) Attivo circolante  &  & \\
+I - Rimanenze  &  & \\
 1) Rimanenze materie prime, sussidiarie e di consumo  & 0.00  & 0.00 \\
 2) Rimanenze prodotti in corso di lavorazione e semilavorati  & 0.00  & 0.00 \\
 3) Rimanenze lavori in corso su ordinazione  & 0.00  & 0.00 \\
 4) Rimanenze prodotti finiti e merci  & 0.00  & 0.00 \\
 5) Rimanenze acconti  & 0.00  & 0.00 \\
 Totale rimanenze  & 0.00  & 0.00 \\
-II - Crediti \\
-1) Crediti verso utenti e clienti  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-2) Crediti verso associati e fondatori  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-3) Crediti verso enti pubblici  & 4'200.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 4'200.00 ; anno precedente 0.00) \\
-4) Crediti verso soggetti privati per contributi  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-5) Crediti verso enti della stessa rete associativa  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-6) Crediti verso altri enti del Terzo settore  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-7) Crediti verso imprese controllate  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-8) Crediti verso imprese collegate  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-9) Crediti tributari  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-10) Crediti da 5 per mille  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-11) Crediti per imposte anticipate  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-12) Crediti verso altri  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
+II - Crediti  &  & \\
+1) Crediti verso utenti e clienti  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+2) Crediti verso associati e fondatori  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+3) Crediti verso enti pubblici  &  & \\
+esigibili entro l'anno successivo  & 4'200.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+4) Crediti verso soggetti privati per contributi  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+5) Crediti verso enti della stessa rete associativa  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+6) Crediti verso altri enti del Terzo settore  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+7) Crediti verso imprese controllate  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+8) Crediti verso imprese collegate  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+9) Crediti tributari  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+10) Crediti da 5 per mille  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+11) Crediti per imposte anticipate  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+12) Crediti verso altri  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 Totale crediti  & 4'200.00  & 0.00 \\
-III - Attività finanziarie che non costituiscono immobilizzazioni \\
+III - Attività finanziarie che non costituiscono immobilizzazioni  &  & \\
 1) Partecipazioni in imprese controllate  & 0.00  & 0.00 \\
 2) Partecipazioni in imprese collegate  & 0.00  & 0.00 \\
 3) Altri titoli  & 0.00  & 0.00 \\
 Totale attività finanziarie che non costituiscono immobilizzazioni  & 0.00  & 0.00 \\
-IV - Disponibilità liquide \\
+IV - Disponibilità liquide  &  & \\
 1) Depositi bancari e postali  & 26'870.00  & 0.00 \\
 2) Assegni  & 0.00  & 0.00 \\
 3) Danaro e valori in cassa  & 6'429.00  & 0.00 \\
@@ -459,54 +540,69 @@ TOTALE ATTIVO  & 45'919.00  & 0.00 \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2020  & 31.12.2019 \\
 \multicolumn{3}{l}{PASSIVO }\\
-A) Patrimonio netto \\
+A) Patrimonio netto  &  & \\
 I - Fondo di dotazione dell'ente  & 15'000.00  & 0.00 \\
-II - Patrimonio vincolato \\
+II - Patrimonio vincolato  &  & \\
 1) Riserve statutarie  & 3'500.00  & 0.00 \\
 2) Riserve vincolate per decisione degli organi istituzionali  & 0.00  & 0.00 \\
 3) Riserve vincolate destinate da terzi  & 0.00  & 0.00 \\
 Totale patrimonio vincolato  & 3'500.00  & 0.00 \\
-III - Patrimonio libero \\
+III - Patrimonio libero  &  & \\
 1) Riserve di utili o avanzi di gestione  & 0.00  & 0.00 \\
 2) Altre riserve  & 0.00  & 0.00 \\
 Totale patrimonio libero  & 0.00  & 0.00 \\
 IV - Avanzo/disavanzo d'esercizio  & 8'849.00  & 0.00 \\
 Totale patrimonio netto A)  & 27'349.00  & 0.00 \\
-B) Fondi per rischi e oneri \\
+B) Fondi per rischi e oneri  &  & \\
 1) Fondi per trattamento di quiescenza e obblighi simili  & 0.00  & 0.00 \\
 2) Fondi per imposte, anche differite  & 0.00  & 0.00 \\
 3) Fondi altri  & 0.00  & 0.00 \\
 Totale fondi per rischi e oneri B)  & 0.00  & 0.00 \\
 C) Fondi trattamento di fine rapporto di lavoro subordinato  & 0.00  & 0.00 \\
-D) Debiti \\
-1) Debiti verso banche  & 10'200.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-2) Debiti verso altri finanziatori  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-3) Debiti verso associati e fondatori per finanziamenti  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-4) Debiti verso enti della stessa rete associativa  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-5) Debiti per erogazioni liberali condizionate  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-6) Acconti (Debiti)  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-7) Debiti verso fornitori  & 100.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 100.00 ; anno precedente 0.00) \\
-8) Debiti verso imprese controllate e collegate  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-9) Debiti tributari  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-10) Debiti verso istituti di previdenza e di sicurezza sociale  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-11) Debiti verso dipendenti e collaboratori  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-12) Altri debiti  & 0.00  & 0.00 \\
-(di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
+D) Debiti  &  & \\
+1) Debiti verso banche  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 10'200.00  & 0.00 \\
+2) Debiti verso altri finanziatori  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+3) Debiti verso associati e fondatori per finanziamenti  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+4) Debiti verso enti della stessa rete associativa  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+5) Debiti per erogazioni liberali condizionate  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+6) Acconti (Debiti)  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+7) Debiti verso fornitori  &  & \\
+esigibili entro l'anno successivo  & 100.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+8) Debiti verso imprese controllate e collegate  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+9) Debiti tributari  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+10) Debiti verso istituti di previdenza e di sicurezza sociale  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+11) Debiti verso dipendenti e collaboratori  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+12) Altri debiti  &  & \\
+esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 Totale debiti D)  & 10'300.00  & 0.00 \\
 E) Ratei e risconti passivi  & 0.00  & 0.00 \\
 TOTALE PASSIVO  & 37'649.00  & 0.00 \\
 \end{longtable}
+  \\
+  \\
+Attenzione: differenza tra totale Attivo <45'919.00> e totale Passivo <37'649.00> \\
 -  \#page-nr  - \\
 \end{reportvalue}
 \begin{reportvalue}{Test 5: rendiconto 'Stato Patrimoniale (MOD. A)', stampa colonna raggruppamento}
@@ -517,8 +613,8 @@ Associazione Aiuto agli Anziani - STATO PATRIMONIALE ANNO 2020 \\
  &  & 31.12.2020  & 31.12.2019 \\
 Gr1  & \multicolumn{3}{l}{ATTIVO }\\
 AA  & A) Quote associative o apporti ancora dovuti  & 220.00  & 0.00 \\
- & B) Immobilizzazioni \\
- & I - Immobilizzazioni immateriali \\
+ & B) Immobilizzazioni  &  & \\
+ & I - Immobilizzazioni immateriali  &  & \\
 ABI1  & 1) costi di impianto e di ampliamento  & 0.00  & 0.00 \\
 ABI2  & 2) costi di sviluppo  & 0.00  & 0.00 \\
 ABI3  & 3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno  & 650.00  & 0.00 \\
@@ -527,70 +623,86 @@ ABI5  & 5) avviamento  & 0.00  & 0.00 \\
 ABI6  & 6) immobilizzazioni in corso e acconti  & 0.00  & 0.00 \\
 ABI7  & 7) altre Immobilizzazioni immateriali  & 0.00  & 0.00 \\
 ABI  & Totale immobilizzazioni immateriali  & 650.00  & 0.00 \\
- & II - Immobilizzazioni materiali \\
+ & II - Immobilizzazioni materiali  &  & \\
 ABII1  & 1) terreni e fabbricati  & 0.00  & 0.00 \\
 ABII2  & 2) impianti e macchinari  & 0.00  & 0.00 \\
 ABII3  & 3) attrezzature  & 7'550.00  & 0.00 \\
 ABII4  & 4) altri beni  & 0.00  & 0.00 \\
 ABII5  & 5) immobilizzazioni in corso e acconti  & 0.00  & 0.00 \\
 ABII  & Totale immobilizzazioni materiali  & 7'550.00  & 0.00 \\
- & III - Immobilizzazioni finanziarie \\
-ABIII1  & 1) Partecipazioni \\
+ & III - Immobilizzazioni finanziarie  &  & \\
+ABIII1  & 1) Partecipazioni  &  & \\
 ABIII1a  & a) partecipazioni in imprese controllate  & 0.00  & 0.00 \\
 ABIII1b  & b) partecipazioni in imprese collegate  & 0.00  & 0.00 \\
 ABIII1c  & c) partecipazioni in altre imprese  & 0.00  & 0.00 \\
-ABIII2  & 2) Crediti \\
-ABIII2a  & a) crediti verso imprese controllate  & 0.00  & 0.00 \\
-ABIII2ao  & (di cui esigibili oltre l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ABIII2b  & b) crediti verso imprese collegate  & 0.00  & 0.00 \\
-ABIII2bo  & (di cui esigibili oltre l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ABIII2c  & c) crediti verso altri enti del Terzo settore  & 0.00  & 0.00 \\
-ABIII2co  & (di cui esigibili oltre l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ABIII2d  & d) crediti verso altri  & 0.00  & 0.00 \\
-ABIII2do  & (di cui esigibili oltre l'anno successivo: 0.00 ; anno precedente 0.00) \\
+ABIII2  & 2) Crediti  &  & \\
+ABIII2a  & a) crediti verso imprese controllate  &  & \\
+ABIII2ae  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ABIII2ao  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ABIII2b  & b) crediti verso imprese collegate  &  & \\
+ABIII2be  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ABIII2bo  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ABIII2c  & c) crediti verso altri enti del Terzo settore  &  & \\
+ABIII2ce  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ABIII2co  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ABIII2d  & d) crediti verso altri  &  & \\
+ABIII2de  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ABIII2do  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 ABIII3  & 3) Altri titoli  & 0.00  & 0.00 \\
 ABIII  & Totale immobilizzazioni finanziarie  & 0.00  & 0.00 \\
 AB  & Totale immobilizzazioni B)  & 8'200.00  & 0.00 \\
- & C) Attivo circolante \\
- & I - Rimanenze \\
+ & C) Attivo circolante  &  & \\
+ & I - Rimanenze  &  & \\
 ACI1  & 1) Rimanenze materie prime, sussidiarie e di consumo  & 0.00  & 0.00 \\
 ACI2  & 2) Rimanenze prodotti in corso di lavorazione e semilavorati  & 0.00  & 0.00 \\
 ACI3  & 3) Rimanenze lavori in corso su ordinazione  & 0.00  & 0.00 \\
 ACI4  & 4) Rimanenze prodotti finiti e merci  & 0.00  & 0.00 \\
 ACI5  & 5) Rimanenze acconti  & 0.00  & 0.00 \\
 ACI  & Totale rimanenze  & 0.00  & 0.00 \\
- & II - Crediti \\
-ACII1  & 1) Crediti verso utenti e clienti  & 0.00  & 0.00 \\
-ACII1e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ACII2  & 2) Crediti verso associati e fondatori  & 0.00  & 0.00 \\
-ACII2e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ACII3  & 3) Crediti verso enti pubblici  & 4'200.00  & 0.00 \\
-ACII3e  & (di cui esigibili entro l'anno successivo: 4'200.00 ; anno precedente 0.00) \\
-ACII4  & 4) Crediti verso soggetti privati per contributi  & 0.00  & 0.00 \\
-ACII4e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ACII5  & 5) Crediti verso enti della stessa rete associativa  & 0.00  & 0.00 \\
-ACII5e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ACII6  & 6) Crediti verso altri enti del Terzo settore  & 0.00  & 0.00 \\
-ACII6e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ACII7  & 7) Crediti verso imprese controllate  & 0.00  & 0.00 \\
-ACII7e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ACII8  & 8) Crediti verso imprese collegate  & 0.00  & 0.00 \\
-ACII8e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ACII9  & 9) Crediti tributari  & 0.00  & 0.00 \\
-ACII9e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ACII10  & 10) Crediti da 5 per mille  & 0.00  & 0.00 \\
-ACII10e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ACII11  & 11) Crediti per imposte anticipate  & 0.00  & 0.00 \\
-ACII11e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-ACII12  & 12) Crediti verso altri  & 0.00  & 0.00 \\
-ACII12e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
+ & II - Crediti  &  & \\
+ACII1  & 1) Crediti verso utenti e clienti  &  & \\
+ACII1e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ACII1o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ACII2  & 2) Crediti verso associati e fondatori  &  & \\
+ACII2e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ACII2o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ACII3  & 3) Crediti verso enti pubblici  &  & \\
+ACII3e  & esigibili entro l'anno successivo  & 4'200.00  & 0.00 \\
+ACII3o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ACII4  & 4) Crediti verso soggetti privati per contributi  &  & \\
+ACII4e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ACII4o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ACII5  & 5) Crediti verso enti della stessa rete associativa  &  & \\
+ACII5e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ACII5o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ACII6  & 6) Crediti verso altri enti del Terzo settore  &  & \\
+ACII6e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ACII6o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ACII7  & 7) Crediti verso imprese controllate  &  & \\
+ACII7e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ACII7o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ACII8  & 8) Crediti verso imprese collegate  &  & \\
+ACII8e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ACII8o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ACII9  & 9) Crediti tributari  &  & \\
+ACII9e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ACII9o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ACII10  & 10) Crediti da 5 per mille  &  & \\
+ACII10e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ACII10o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ACII11  & 11) Crediti per imposte anticipate  &  & \\
+ACII11e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ACII11o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+ACII12  & 12) Crediti verso altri  &  & \\
+ACII12e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+ACII12o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 ACII  & Totale crediti  & 4'200.00  & 0.00 \\
- & III - Attività finanziarie che non costituiscono immobilizzazioni \\
+ & III - Attività finanziarie che non costituiscono immobilizzazioni  &  & \\
 ACIII1  & 1) Partecipazioni in imprese controllate  & 0.00  & 0.00 \\
 ACIII2  & 2) Partecipazioni in imprese collegate  & 0.00  & 0.00 \\
 ACIII3  & 3) Altri titoli  & 0.00  & 0.00 \\
 ACIII  & Totale attività finanziarie che non costituiscono immobilizzazioni  & 0.00  & 0.00 \\
- & IV - Disponibilità liquide \\
+ & IV - Disponibilità liquide  &  & \\
 ACIV1  & 1) Depositi bancari e postali  & 26'870.00  & 0.00 \\
 ACIV2  & 2) Assegni  & 0.00  & 0.00 \\
 ACIV3  & 3) Danaro e valori in cassa  & 6'429.00  & 0.00 \\
@@ -604,54 +716,69 @@ A  & TOTALE ATTIVO  & 45'919.00  & 0.00 \\
 \begin{longtable}[l]{ l  l  l  l }
  &  & 31.12.2020  & 31.12.2019 \\
 Gr1  & \multicolumn{3}{l}{PASSIVO }\\
- & A) Patrimonio netto \\
+ & A) Patrimonio netto  &  & \\
 PAI  & I - Fondo di dotazione dell'ente  & 15'000.00  & 0.00 \\
- & II - Patrimonio vincolato \\
+ & II - Patrimonio vincolato  &  & \\
 PAII1  & 1) Riserve statutarie  & 3'500.00  & 0.00 \\
 PAII2  & 2) Riserve vincolate per decisione degli organi istituzionali  & 0.00  & 0.00 \\
 PAII3  & 3) Riserve vincolate destinate da terzi  & 0.00  & 0.00 \\
 PAII  & Totale patrimonio vincolato  & 3'500.00  & 0.00 \\
- & III - Patrimonio libero \\
+ & III - Patrimonio libero  &  & \\
 PAIII1  & 1) Riserve di utili o avanzi di gestione  & 0.00  & 0.00 \\
 PAIII2  & 2) Altre riserve  & 0.00  & 0.00 \\
 PAIII  & Totale patrimonio libero  & 0.00  & 0.00 \\
 PAIV  & IV - Avanzo/disavanzo d'esercizio  & 8'849.00  & 0.00 \\
 PA  & Totale patrimonio netto A)  & 27'349.00  & 0.00 \\
- & B) Fondi per rischi e oneri \\
+ & B) Fondi per rischi e oneri  &  & \\
 PB1  & 1) Fondi per trattamento di quiescenza e obblighi simili  & 0.00  & 0.00 \\
 PB2  & 2) Fondi per imposte, anche differite  & 0.00  & 0.00 \\
 PB3  & 3) Fondi altri  & 0.00  & 0.00 \\
 PB  & Totale fondi per rischi e oneri B)  & 0.00  & 0.00 \\
 PC  & C) Fondi trattamento di fine rapporto di lavoro subordinato  & 0.00  & 0.00 \\
- & D) Debiti \\
-PD1  & 1) Debiti verso banche  & 10'200.00  & 0.00 \\
-PD1e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-PD2  & 2) Debiti verso altri finanziatori  & 0.00  & 0.00 \\
-PD2e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-PD3  & 3) Debiti verso associati e fondatori per finanziamenti  & 0.00  & 0.00 \\
-PD3e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-PD4  & 4) Debiti verso enti della stessa rete associativa  & 0.00  & 0.00 \\
-PD4e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-PD5  & 5) Debiti per erogazioni liberali condizionate  & 0.00  & 0.00 \\
-PD5e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-PD6  & 6) Acconti (Debiti)  & 0.00  & 0.00 \\
-PD6e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-PD7  & 7) Debiti verso fornitori  & 100.00  & 0.00 \\
-PD7e  & (di cui esigibili entro l'anno successivo: 100.00 ; anno precedente 0.00) \\
-PD8  & 8) Debiti verso imprese controllate e collegate  & 0.00  & 0.00 \\
-PD8e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-PD9  & 9) Debiti tributari  & 0.00  & 0.00 \\
-PD9e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-PD10  & 10) Debiti verso istituti di previdenza e di sicurezza sociale  & 0.00  & 0.00 \\
-PD10e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-PD11  & 11) Debiti verso dipendenti e collaboratori  & 0.00  & 0.00 \\
-PD11e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
-PD12  & 12) Altri debiti  & 0.00  & 0.00 \\
-PD12e  & (di cui esigibili entro l'anno successivo: 0.00 ; anno precedente 0.00) \\
+ & D) Debiti  &  & \\
+PD1  & 1) Debiti verso banche  &  & \\
+PD1e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+PD1o  & esigibili oltre l'anno successivo  & 10'200.00  & 0.00 \\
+PD2  & 2) Debiti verso altri finanziatori  &  & \\
+PD2e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+PD2o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+PD3  & 3) Debiti verso associati e fondatori per finanziamenti  &  & \\
+PD3e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+PD3o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+PD4  & 4) Debiti verso enti della stessa rete associativa  &  & \\
+PD4e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+PD4o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+PD5  & 5) Debiti per erogazioni liberali condizionate  &  & \\
+PD5e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+PD5o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+PD6  & 6) Acconti (Debiti)  &  & \\
+PD6e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+PD6o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+PD7  & 7) Debiti verso fornitori  &  & \\
+PD7e  & esigibili entro l'anno successivo  & 100.00  & 0.00 \\
+PD7o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+PD8  & 8) Debiti verso imprese controllate e collegate  &  & \\
+PD8e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+PD8o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+PD9  & 9) Debiti tributari  &  & \\
+PD9e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+PD9o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+PD10  & 10) Debiti verso istituti di previdenza e di sicurezza sociale  &  & \\
+PD10e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+PD10o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+PD11  & 11) Debiti verso dipendenti e collaboratori  &  & \\
+PD11e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+PD11o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
+PD12  & 12) Altri debiti  &  & \\
+PD12e  & esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+PD12o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 PD  & Totale debiti D)  & 10'300.00  & 0.00 \\
 PE  & E) Ratei e risconti passivi  & 0.00  & 0.00 \\
 P  & TOTALE PASSIVO  & 37'649.00  & 0.00 \\
 \end{longtable}
+  \\
+  \\
+Attenzione: differenza tra totale Attivo <45'919.00> e totale Passivo <37'649.00> \\
 -  \#page-nr  - \\
 \end{reportvalue}
 \keyvalue{Result}{Passed}

@@ -1,4 +1,4 @@
-// Copyright [2020] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2021-02-19
+// @pubdate = 2021-06-02
 // @publisher = Banana.ch SA
 // @description = 1. Stato patrimoniale
 // @task = app.command
@@ -118,9 +118,20 @@ function printRow(userParam, bReport, table, gr, styleColumnDescription, styleCo
             }
          }
          tableRow.addCell(bReport.getObjectDescription(gr), styleColumnDescription + " " + styleIndentLevel, 1);
-         if (bReport.getObjectType(gr) === 'group' || bReport.getObjectType(gr) === 'total') { //do not print amounts for title types
-            tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
-            tableRow.addCell(bReport.getObjectPreviousAmountFormatted(gr), styleColumnAmount, 1);   
+         
+         // print amounts only for type 'group', 'total' and when 'excludeamount'=false
+         if (bReport.getObjectType(gr) !== 'title' && !bReport.getObjectValue(gr, "excludeamount")) {
+            if (userParam.printpreviousyear) {
+               tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
+               tableRow.addCell(bReport.getObjectPreviousAmountFormatted(gr), styleColumnAmount, 1);
+            } else {
+               tableRow.addCell("", "", 1);
+               tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
+            }
+         }
+         else {
+            tableRow.addCell("", "" ,1);
+            tableRow.addCell("", "" ,1);
          }
       }
    }
@@ -135,9 +146,20 @@ function printRow(userParam, bReport, table, gr, styleColumnDescription, styleCo
          }
       }
       tableRow.addCell(bReport.getObjectDescription(gr), styleColumnDescription + " " + styleIndentLevel, 1);
-      if (bReport.getObjectType(gr) === 'group' || bReport.getObjectType(gr) === 'total') { //do not print amounts for title types
-         tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
-         tableRow.addCell(bReport.getObjectPreviousAmountFormatted(gr), styleColumnAmount, 1);   
+      
+      // print amounts only for type 'group', 'total' and when 'excludeamount'=false
+      if (bReport.getObjectType(gr) !== 'title' && !bReport.getObjectValue(gr, "excludeamount")) {
+         if (userParam.printpreviousyear) {
+            tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
+            tableRow.addCell(bReport.getObjectPreviousAmountFormatted(gr), styleColumnAmount, 1);
+         } else {
+            tableRow.addCell("", "", 1);
+            tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
+         }
+      }
+      else {
+         tableRow.addCell("", "" ,1);
+         tableRow.addCell("", "" ,1);
       }
    }
 }
@@ -159,7 +181,16 @@ function printSubRow(userParam, bReport, table, gr, styleColumnDescription, styl
                tableRow.addCell("", "", 1);
             }
          }
-         tableRow.addCell("("+bReport.getObjectDescription(gr) + ": " + bReport.getObjectCurrentAmountFormatted(gr) + " ; anno precedente " + bReport.getObjectPreviousAmountFormatted(gr) + ")", styleColumnDescription + " " + styleIndentLevel, 1);  
+         if (userParam.printpreviousyear) {
+            tableRow.addCell(bReport.getObjectDescription(gr), styleColumnDescription + " " + styleIndentLevel, 1);
+            tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
+            tableRow.addCell(bReport.getObjectPreviousAmountFormatted(gr), styleColumnAmount, 1);
+         }
+         else {
+            tableRow.addCell(bReport.getObjectDescription(gr), styleColumnDescription + " " + styleIndentLevel, 1);
+            tableRow.addCell("", "", 1);
+            tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
+         }
       }
    }
    else {
@@ -172,17 +203,34 @@ function printSubRow(userParam, bReport, table, gr, styleColumnDescription, styl
             tableRow.addCell("", "", 1);
          }
       }
-      tableRow.addCell("("+bReport.getObjectDescription(gr) + ": " + bReport.getObjectCurrentAmountFormatted(gr) + " ; anno precedente " + bReport.getObjectPreviousAmountFormatted(gr) + ")", styleColumnDescription + " " + styleIndentLevel, 1);
+
+      if (userParam.printpreviousyear) {
+         tableRow.addCell(bReport.getObjectDescription(gr), styleColumnDescription + " " + styleIndentLevel, 1);
+         tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
+         tableRow.addCell(bReport.getObjectPreviousAmountFormatted(gr), styleColumnAmount, 1);
+      }
+      else {
+         tableRow.addCell(bReport.getObjectDescription(gr), styleColumnDescription + " " + styleIndentLevel, 1);
+         tableRow.addCell("", "", 1);
+         tableRow.addCell(bReport.getObjectCurrentAmountFormatted(gr), styleColumnAmount, 1);
+      }
    }
 }
 
 function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
-
+   
    var report = Banana.Report.newReport("Stato patrimoniale");
-   var startDate = userParam.selectionStartDate;
-   var endDate = userParam.selectionEndDate;
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
-   var previousYear = currentYear - 1;
+
+   printRendicontoModA_Header(banDoc, report, userParam, stylesheet);
+   printRendicontoModA_Attivo(banDoc, report, userParam, bReport);
+   printRendicontoModA_Passivo(banDoc, report, userParam, bReport);
+   printRendicontoModA_Footer(report);
+   checkResults(banDoc, report, bReport);
+
+   return report;
+}
+
+function printRendicontoModA_Header(banDoc, report, userParam, stylesheet) {
 
    // Logo
    var headerParagraph = report.getHeader().addSection();
@@ -236,6 +284,13 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
          }
       }
    }
+}
+
+function printRendicontoModA_Attivo(banDoc, report, userParam, bReport) {
+
+   var endDate = userParam.selectionEndDate;
+   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var previousYear = currentYear - 1;
 
    var title = "";
    if (userParam.title) {
@@ -248,12 +303,8 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
       report.addParagraph(title, "heading2");
       report.addParagraph(" ", "");
    }
- 
 
-   /**************************************************************************************
-   * ATTIVO
-   **************************************************************************************/
-
+   // Tabella Attivo
    var table = report.addTable("table");
    if (userParam.printcolumn) {
       var column1 = table.addColumn("column01");
@@ -274,8 +325,13 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
       tableRow.addCell("", "", 1);
    }
    tableRow.addCell("", "", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
-   tableRow.addCell("31.12." + previousYear, "table-header", 1);
+   if (userParam.printpreviousyear) {
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
+      tableRow.addCell("31.12." + previousYear, "table-header", 1);
+   } else {
+      tableRow.addCell("", "", 1);
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
+   }
 
    tableRow = table.addRow();
    if (userParam.printcolumn) {
@@ -334,21 +390,25 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
    /* ABIII2a */
    printRow(userParam, bReport, table, "ABIII2a", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ABIII2a") || bReport.getObjectPreviousAmountFormatted("ABIII2a")) {
+      printSubRow(userParam, bReport, table, "ABIII2ae", "description-groups", "amount-groups");
       printSubRow(userParam, bReport, table, "ABIII2ao", "description-groups", "amount-groups");
    }
    /* ABIII2b */
    printRow(userParam, bReport, table, "ABIII2b", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ABIII2b") || bReport.getObjectPreviousAmountFormatted("ABIII2b")) {
+      printSubRow(userParam, bReport, table, "ABIII2be", "description-groups", "amount-groups");
       printSubRow(userParam, bReport, table, "ABIII2bo", "description-groups", "amount-groups");
    }
    /* ABIII2c */
    printRow(userParam, bReport, table, "ABIII2c", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ABIII2c") || bReport.getObjectPreviousAmountFormatted("ABIII2c")) {
+      printSubRow(userParam, bReport, table, "ABIII2ce", "description-groups", "amount-groups");
       printSubRow(userParam, bReport, table, "ABIII2co", "description-groups", "amount-groups");
    }
    /* ABIII2d */
    printRow(userParam, bReport, table, "ABIII2d", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ABIII2d") || bReport.getObjectPreviousAmountFormatted("ABIII2d")) {
+      printSubRow(userParam, bReport, table, "ABIII2de", "description-groups", "amount-groups");
       printSubRow(userParam, bReport, table, "ABIII2do", "description-groups", "amount-groups");
    }
    /* ABIII3 */
@@ -379,61 +439,73 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
    printRow(userParam, bReport, table, "ACII1", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ACII1") || bReport.getObjectPreviousAmountFormatted("ACII1")) {
       printSubRow(userParam, bReport, table, "ACII1e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "ACII1o", "description-groups", "amount-groups");
    }
    /* ACII2 */
    printRow(userParam, bReport, table, "ACII2", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ACII2") || bReport.getObjectPreviousAmountFormatted("ACII2")) {
       printSubRow(userParam, bReport, table, "ACII2e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "ACII2o", "description-groups", "amount-groups");
    }
    /* ACII3 */
    printRow(userParam, bReport, table, "ACII3", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ACII3") || bReport.getObjectPreviousAmountFormatted("ACII3")) {
       printSubRow(userParam, bReport, table, "ACII3e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "ACII3o", "description-groups", "amount-groups");
    }
    /* ACII4 */
    printRow(userParam, bReport, table, "ACII4", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ACII4") || bReport.getObjectPreviousAmountFormatted("ACII4")) {
       printSubRow(userParam, bReport, table, "ACII4e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "ACII4o", "description-groups", "amount-groups");
    }
    /* ACII5 */
    printRow(userParam, bReport, table, "ACII5", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ACII5") || bReport.getObjectPreviousAmountFormatted("ACII5")) {
       printSubRow(userParam, bReport, table, "ACII5e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "ACII5o", "description-groups", "amount-groups");
    }
    /* ACII6 */
    printRow(userParam, bReport, table, "ACII6", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ACII6") || bReport.getObjectPreviousAmountFormatted("ACII6")) {
       printSubRow(userParam, bReport, table, "ACII6e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "ACII6o", "description-groups", "amount-groups");
    }
    /* ACII7 */
    printRow(userParam, bReport, table, "ACII7", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ACII7") || bReport.getObjectPreviousAmountFormatted("ACII7")) {
       printSubRow(userParam, bReport, table, "ACII7e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "ACII7o", "description-groups", "amount-groups");
    }
    /* ACII8 */
    printRow(userParam, bReport, table, "ACII8", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ACII8") || bReport.getObjectPreviousAmountFormatted("ACII8")) {
       printSubRow(userParam, bReport, table, "ACII8e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "ACII8o", "description-groups", "amount-groups");
    }
    /* ACII9 */
    printRow(userParam, bReport, table, "ACII9", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ACII9") || bReport.getObjectPreviousAmountFormatted("ACII9")) {
       printSubRow(userParam, bReport, table, "ACII9e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "ACII9o", "description-groups", "amount-groups");
    }
    /* ACII10 */
    printRow(userParam, bReport, table, "ACII10", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ACII10") || bReport.getObjectPreviousAmountFormatted("ACII10")) {
       printSubRow(userParam, bReport, table, "ACII10e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "ACII10o", "description-groups", "amount-groups");
    }
    /* ACII11 */
    printRow(userParam, bReport, table, "ACII11", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ACII11") || bReport.getObjectPreviousAmountFormatted("ACII11")) {
       printSubRow(userParam, bReport, table, "ACII11e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "ACII11o", "description-groups", "amount-groups");
    }
    /* ACII12 */
    printRow(userParam, bReport, table, "ACII12", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("ACII12") || bReport.getObjectPreviousAmountFormatted("ACII12")) {
       printSubRow(userParam, bReport, table, "ACII12e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "ACII12o", "description-groups", "amount-groups");
    }
    /* tot ACII */
    printRow(userParam, bReport, table, "ACII", "description-groups", "amount-groups-totals");
@@ -464,7 +536,6 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
    /* tot A */
    printRow(userParam, bReport, table, "A", "description-groups", "amount-groups-totals");
 
-
    if (userParam.stampa) {
       report.addPageBreak();
 
@@ -477,10 +548,15 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
       report.addParagraph(" ", "");
       report.addParagraph(" ", "");      
    }
+}
 
-   /**************************************************************************************
-   * PASSIVO
-   **************************************************************************************/
+function printRendicontoModA_Passivo(banDoc, report, userParam, bReport) {
+
+   var endDate = userParam.selectionEndDate;
+   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var previousYear = currentYear - 1;
+
+   // tabella Passivo
    var table = report.addTable("table");
    if (userParam.printcolumn) {
       var column1 = table.addColumn("column01");
@@ -500,8 +576,13 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
       tableRow.addCell("", "", 1);
    }
    tableRow.addCell("", "", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
-   tableRow.addCell("31.12." + previousYear, "table-header", 1);
+   if (userParam.printpreviousyear) {
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
+      tableRow.addCell("31.12." + previousYear, "table-header", 1);
+   } else {
+      tableRow.addCell("", "", 1);
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
+   }
 
    tableRow = table.addRow();
    if (userParam.printcolumn) {
@@ -553,61 +634,73 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
    printRow(userParam, bReport, table, "PD1", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("PD1") || bReport.getObjectPreviousAmountFormatted("PD1")) {
       printSubRow(userParam, bReport, table, "PD1e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "PD1o", "description-groups", "amount-groups");
    }
    /* PD2 */
    printRow(userParam, bReport, table, "PD2", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("PD2") || bReport.getObjectPreviousAmountFormatted("PD2")) {
       printSubRow(userParam, bReport, table, "PD2e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "PD2o", "description-groups", "amount-groups");
    }
    /* PD3 */
    printRow(userParam, bReport, table, "PD3", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("PD3") || bReport.getObjectPreviousAmountFormatted("PD1")) {
       printSubRow(userParam, bReport, table, "PD3e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "PD3o", "description-groups", "amount-groups");
    }
    /* PD4 */
    printRow(userParam, bReport, table, "PD4", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("PD4") || bReport.getObjectPreviousAmountFormatted("PD4")) {
       printSubRow(userParam, bReport, table, "PD4e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "PD4o", "description-groups", "amount-groups");
    }
    /* PD5 */
    printRow(userParam, bReport, table, "PD5", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("PD5") || bReport.getObjectPreviousAmountFormatted("PD5")) {
       printSubRow(userParam, bReport, table, "PD5e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "PD5o", "description-groups", "amount-groups");
    }
    /* PD6 */
    printRow(userParam, bReport, table, "PD6", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("PD6") || bReport.getObjectPreviousAmountFormatted("PD6")) {
       printSubRow(userParam, bReport, table, "PD6e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "PD6o", "description-groups", "amount-groups");
    }
    /* PD7 */
    printRow(userParam, bReport, table, "PD7", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("PD7") || bReport.getObjectPreviousAmountFormatted("PD7")) {
       printSubRow(userParam, bReport, table, "PD7e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "PD7o", "description-groups", "amount-groups");
    }
    /* PD8 */
    printRow(userParam, bReport, table, "PD8", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("PD8") || bReport.getObjectPreviousAmountFormatted("PD8")) {
       printSubRow(userParam, bReport, table, "PD8e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "PD8o", "description-groups", "amount-groups");
    }
    /* PD9 */
    printRow(userParam, bReport, table, "PD9", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("PD9") || bReport.getObjectPreviousAmountFormatted("PD9")) {
       printSubRow(userParam, bReport, table, "PD9e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "PD9o", "description-groups", "amount-groups");
    }
    /* PD10 */
    printRow(userParam, bReport, table, "PD10", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("PD10") || bReport.getObjectPreviousAmountFormatted("PD10")) {
       printSubRow(userParam, bReport, table, "PD10e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "PD10o", "description-groups", "amount-groups");
    }
    /* PD11 */
    printRow(userParam, bReport, table, "PD11", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("PD11") || bReport.getObjectPreviousAmountFormatted("PD11")) {
       printSubRow(userParam, bReport, table, "PD11e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "PD11o", "description-groups", "amount-groups");
    }
    /* PD12 */
    printRow(userParam, bReport, table, "PD12", "description-groups", "amount-groups");
    if (bReport.getObjectCurrentAmountFormatted("PD12") || bReport.getObjectPreviousAmountFormatted("PD12")) {
       printSubRow(userParam, bReport, table, "PD12e", "description-groups", "amount-groups");
+      printSubRow(userParam, bReport, table, "PD12o", "description-groups", "amount-groups");
    }
    /* tot PD */
    printRow(userParam, bReport, table, "PD", "description-groups", "amount-totals");
@@ -615,37 +708,30 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
    printRow(userParam, bReport, table, "PE", "description-groups", "amount-groups");
    /* tot P */
    printRow(userParam, bReport, table, "P", "description-groups", "amount-groups-totals");
-
-
-   //checkResults(banDoc, startDate, endDate);
-
-
-
-   addFooter(report);
-   return report;
 }
 
-function checkResults(banDoc, startDate, endDate) {
-
-   /* tot A */
-   var objA = banDoc.currentBalance("Gr=A", startDate, endDate);
-   currentA = objA.balance;
-
-   /* tot P */
-   var objP = banDoc.currentBalance("Gr=P", startDate, endDate);
-   currentP = objP.balance;
-
-   var res0 = Banana.SDecimal.add(currentA, currentP);
-   if (res0 !== "0") {
-      Banana.document.addMessage("Differenza Attivo e Passivo.");
-   }
-}
-
-function addFooter(report) {
+function printRendicontoModA_Footer(report) {
    report.getFooter().addClass("footer");
    report.getFooter().addText("- ", "");
    report.getFooter().addFieldPageNr();
    report.getFooter().addText(" -", "");
+}
+
+function checkResults(banDoc, report, bReport) {
+
+   /* totale Attivo */
+   var currentA_report = bReport.getObjectValue("A","currentAmount");
+
+   /* totale Passivo */
+   var currentP_report = bReport.getObjectValue("P","currentAmount");
+
+   //Banana.console.log("REPORT: " + currentA_report + "  ?=  " + currentP_report);
+   if (currentA_report !== currentP_report) {
+      // banDoc.addMessage("Differenza tra Attivo <"+Banana.Converter.toLocaleNumberFormat(currentA_report)+"> e Passivo <"+Banana.Converter.toLocaleNumberFormat(currentP_report)+"> da report");
+      report.addParagraph(" ", "");
+      report.addParagraph(" ", "");
+      report.addParagraph("Attenzione: differenza tra totale Attivo <"+Banana.Converter.toLocaleNumberFormat(currentA_report)+"> e totale Passivo <"+Banana.Converter.toLocaleNumberFormat(currentP_report)+">", "alert-message");
+   }
 }
 
 function setCss(banDoc, repStyleObj, userParam) {
@@ -805,6 +891,18 @@ function convertParam(userParam) {
    convertedParam.data.push(currentParam);
 
    var currentParam = {};
+   currentParam.name = 'printpreviousyear';
+   currentParam.parentObject = 'report_group';
+   currentParam.title = 'Stampa colonna anno precedente';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.printpreviousyear ? true : false;
+   currentParam.defaultvalue = true;
+   currentParam.readValue = function() {
+      userParam.printpreviousyear = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
    currentParam.name = 'compattastampa';
    currentParam.parentObject = 'report_group';
    currentParam.title = 'Escludi voci con importi nulli per due esercizi consecutivi';
@@ -841,6 +939,7 @@ function initUserParam() {
    userParam.title = '';
    userParam.column = 'Gr1';
    userParam.printcolumn = true;
+   userParam.printpreviousyear = true;
    userParam.compattastampa = false;
    userParam.stampa = true;
    return userParam;
