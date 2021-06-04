@@ -71,28 +71,30 @@ function exec(inData, options) {
       var xmlDocument = Banana.Xml.newDocument("root");
       eFattura.clearErrorList();
       var xmlContent = eFattura.createXml(jsonInvoices, xmlDocument, true);
-      if (xmlContent != "@Cancel") {
-         // add stylesheet xslt
-         if (eFattura.param.xml.xslt_filename) {
-            var escapedString = xml_escapeString(eFattura.param.xml.xslt_filename);
-            var xslt = "<?xml-stylesheet type='text/xsl' href='" + escapedString + "'?>";
-            xmlContent = xmlContent.slice(0, 39) + xslt + xmlContent.slice(39);
-         }
-         // validate data
-         if (eFattura.param.xml.validate_file && eFattura.param.xml.xsd_filename) {
-            if (typeof(progressBar.setText) !== 'undefined')
-               progressBar.setText("validazione file XML in corso..." + i.toString());
-            var escapedString = xml_escapeString(eFattura.param.xml.xsd_filename);
-            var result = Banana.Xml.validate(Banana.Xml.parse(xmlContent), escapedString);
-            if (!result) {
-               var msg = eFattura.getErrorMessage(eFattura.ID_ERR_XML_FILE_NONVALIDO);
-               msg = msg.replace("%1", Banana.Xml.errorString);
-               Banana.document.addMessage(msg, eFattura.ID_ERR_XML_FILE_NONVALIDO);
-            }
-         }
-         // save data
-         eFattura.saveFile(xmlContent, "xml");
+      if (xmlContent == "@Cancel")
+         break;
+
+      // add stylesheet xslt
+      if (eFattura.param.xml.xslt_filename) {
+         var escapedString = xml_escapeString(eFattura.param.xml.xslt_filename);
+         var xslt = "<?xml-stylesheet type='text/xsl' href='" + escapedString + "'?>";
+         xmlContent = xmlContent.slice(0, 39) + xslt + xmlContent.slice(39);
       }
+      // validate data
+      if (eFattura.param.xml.validate_file && eFattura.param.xml.xsd_filename) {
+         if (typeof (progressBar.setText) !== 'undefined')
+            progressBar.setText("validazione file XML in corso..." + i.toString());
+         var escapedString = xml_escapeString(eFattura.param.xml.xsd_filename);
+         var result = Banana.Xml.validate(Banana.Xml.parse(xmlContent), escapedString);
+         if (!result) {
+            var msg = eFattura.getErrorMessage(eFattura.ID_ERR_XML_FILE_NONVALIDO);
+            msg = msg.replace("%1", Banana.Xml.errorString);
+            Banana.document.addMessage(msg, eFattura.ID_ERR_XML_FILE_NONVALIDO);
+         }
+      }
+      // save data
+      if (!eFattura.saveFile(xmlContent, "xml"))
+         break;
    }
 
    progressBar.finish();
@@ -562,7 +564,6 @@ EFattura.prototype.createXml = function (jsonInvoiceList, xmlDocument, indent) {
    for (var i = 0; i < jsonInvoiceList.length; i++) {
       this.createXmlBody(jsonInvoiceList[i], nodeRoot);
    }
-
    return Banana.Xml.save(xmlDocument, indent);
 }
 /*
@@ -1287,9 +1288,16 @@ EFattura.prototype.loadData = function () {
       this.journalInvoices = this.banDocument.invoicesCustomers();
    }
 
-   var period = this.param.period;
-   var startDate = this.param.periodStartDate;
-   var endDate = this.param.periodEndDate;
+   var isPeriodSelected = this.param.period;
+   var startDate = new Date();
+   if (this.param.periodStartDate.length > 0)
+      startDate = Banana.Converter.stringToDate(this.param.periodStartDate, "DD.MM.YYYY");
+   var endDate = new Date();
+   if (this.param.periodEndDate.length > 0)
+      endDate = Banana.Converter.stringToDate(this.param.periodEndDate, "DD.MM.YYYY");
+   var filterData = this.param.selection;
+   if (this.param.selection_invoice.length <= 0 && this.param.selection_customer.length <= 0)
+      filterData = false;
 
    var jsonInvoiceList = [];
    for (var i = 0; i < this.journalInvoices.rowCount; i++) {
@@ -1297,19 +1305,22 @@ EFattura.prototype.loadData = function () {
       if (tRow.value('ObjectJSonData') && tRow.value('ObjectType') === 'InvoiceDocument') {
          var jsonData = {};
          jsonData = JSON.parse(tRow.value('ObjectJSonData'));
-         var addInvoice = true;
-         if (this.param.selection) {
-            if (this.param.selection_invoice && jsonData.InvoiceDocument.document_info.number !== this.param.selection_invoice)
-               addInvoice = false;
-            if (this.param.selection_customer && jsonData.InvoiceDocument.customer_info.number !== this.param.selection_customer)
-               addInvoice = false;
-         }
-         if (addInvoice && period) {
-            if (jsonData.InvoiceDocument.document_info.date < startDate || jsonData.InvoiceDocument.document_info.date > endDate) {
-               addInvoice = false;
+         if (isPeriodSelected) {
+            var valueDate = Banana.Converter.stringToDate(jsonData.InvoiceDocument.document_info.date, "YYYY-MM-DD");
+            if (valueDate < startDate || valueDate > endDate) {
+               continue;
             }
          }
-         if (addInvoice) {
+         if (filterData) {
+            if (this.param.selection_invoice && jsonData.InvoiceDocument.document_info.number === this.param.selection_invoice) {
+               jsonInvoiceList.push(jsonData.InvoiceDocument);
+               break;
+            }
+            else if (this.param.selection_customer && jsonData.InvoiceDocument.customer_info.number === this.param.selection_customer) {
+               jsonInvoiceList.push(jsonData.InvoiceDocument);
+            }
+         }
+         else {
             jsonInvoiceList.push(jsonData.InvoiceDocument);
          }
       }
@@ -1433,15 +1444,17 @@ EFattura.prototype.saveFile = function (output, fileExtension) {
       file.write(output);
       if (file.errorString) {
          Banana.Ui.showInformation("Write error", file.errorString);
+         return false;
       }
       else {
          if (this.param.xml.open_file)
             Banana.IO.openUrl(fileName);
          this.param.xml.progressive++;
          this.banDocument.setScriptSettings("efatturaXMLItalia", JSON.stringify(this.param))
+         return true;
       }
    }
-
+   return false;
 }
 
 EFattura.prototype.setParam = function (param) {
