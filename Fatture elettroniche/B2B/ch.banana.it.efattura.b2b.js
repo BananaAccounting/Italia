@@ -1434,8 +1434,13 @@ EFattura.prototype.saveFile = function (output, fileExtension) {
    // estensione xml o hmtl
    fileName += "." + fileExtension;
 
-   if (this.param.xml.destination_folder.length > 0)
-      fileName = this.param.xml.destination_folder + fileName;
+   if (this.param.xml.destination_folder.length > 0) {
+      var destination_folder = this.param.xml.destination_folder;
+      var lastIndex = destination_folder.lastIndexOf("/");
+      if (lastIndex === -1 || lastIndex < destination_folder.length - 1)
+         destination_folder += "/";
+      fileName = destination_folder + fileName;
+   }
 
    fileName = Banana.IO.getSaveFileName("Save as", fileName, fileExtension.toUpperCase() + " file (*." + fileExtension + ");;All files (*)");
    if (fileName.length) {
