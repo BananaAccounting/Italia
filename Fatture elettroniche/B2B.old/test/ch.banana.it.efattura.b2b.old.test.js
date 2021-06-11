@@ -14,11 +14,11 @@
 //
 
 
-// @id = ch.banana.it.efattura.b2b.test
+// @id = ch.banana.it.efattura.b2b.old.test
 // @api = 1.0
 // @pubdate = 2019-04-25
 // @publisher = Banana.ch SA
-// @description = <TEST ch.banana.it.efattura.b2b.test>
+// @description = <TEST ch.banana.it.efattura.b2b.old.test>
 // @task = app.command
 // @doctype = *.*
 // @docproperties = 
