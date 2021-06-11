@@ -84,12 +84,17 @@ function exec(inData, options) {
       if (eFattura.param.xml.validate_file && eFattura.param.xml.xsd_filename) {
          if (typeof (progressBar.setText) !== 'undefined')
             progressBar.setText("validazione file XML in corso..." + i.toString());
-         var escapedString = xml_escapeString(eFattura.param.xml.xsd_filename);
-         var result = Banana.Xml.validate(Banana.Xml.parse(xmlContent), escapedString);
-         if (!result) {
-            var msg = eFattura.getErrorMessage(eFattura.ID_ERR_XML_FILE_NONVALIDO);
-            msg = msg.replace("%1", Banana.Xml.errorString);
-            Banana.document.addMessage(msg, eFattura.ID_ERR_XML_FILE_NONVALIDO);
+         var xsdFileName = eFattura.getXsdFileName();
+         if (xsdFileName.length) {
+            var result = Banana.Xml.validate(Banana.Xml.parse(xmlContent), xsdFileName);
+            if (!result) {
+               var msg = eFattura.getErrorMessage(eFattura.ID_ERR_XML_FILE_NONVALIDO);
+               msg = msg.replace("%1", Banana.Xml.errorString);
+               Banana.document.addMessage(msg, eFattura.ID_ERR_XML_FILE_NONVALIDO);
+            }
+            else {
+               Banana.console.info("Validazione file XML eseguita con successo.");
+            }
          }
       }
       // save data
@@ -1210,6 +1215,37 @@ EFattura.prototype.getProgressiveNumber = function () {
       stringaNumeroInvio += '0'
    stringaNumeroInvio += numeroInvio;
    return stringaNumeroInvio;
+}
+
+EFattura.prototype.getXsdFileName = function () {
+   
+   var xsdFileName = "";
+   if (this.banDocument && this.param && this.param.xml.xsd_filename.length) {
+      xsdFileName = xml_escapeString(this.param.xml.xsd_filename);
+   }
+
+   if (!xsdFileName.length) {
+      Banana.console.info("Impossible to open Schema file for validation");
+      return xsdFileName;
+   }
+
+   //se il nome del file xsd non contiene il percorso, aggiunge il percorso dove è salvato il file contabile
+   if (xsdFileName.indexOf("/") < 0) {
+      var filePath = this.banDocument.info("Base", "FileName");
+      var pos = filePath.lastIndexOf("/");
+      if (filePath.length - 1 == pos)
+         pos = filePath.lastIndexOf("/", filePath.length - 1);
+      filePath = filePath.substr(0, pos + 1);
+      xsdFileName = filePath + xsdFileName;
+   }
+
+   var xsdFile = Banana.IO.getLocalFile(xsdFileName);
+   if (xsdFile.errorString) {
+      Banana.console.info(xsdFile.errorString);
+      return "";
+   }
+
+   return xsdFileName;
 }
 
 EFattura.prototype.initNamespaces = function () {
