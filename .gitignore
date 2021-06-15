@@ -3,6 +3,5 @@
 **/test/testresults
 *.bak
 *.autosave
-*.xml
 _*.*
 ~*

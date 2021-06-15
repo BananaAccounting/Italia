@@ -126,7 +126,7 @@ EFatturaImport.prototype.convertParam = function (param) {
     currentParam.name = 'default_vatrates';
     currentParam.title = 'Default VAT Rates';
     currentParam.type = 'string';
-    currentParam.tooltip = 'Format: VatRate=VatCode Example: 10%=A10;20%=A20;';
+    currentParam.tooltip = 'Format: VatRate=VatCode Example: 10%=AUTO_10;22%=AUTO_22;';
     currentParam.value = param['default_vatrates'] ? param['default_vatrates'] : '';
     currentParam.readValue = function () {
         param['default_vatrates'] = this.value;
@@ -461,6 +461,7 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
 			if (signTaxableAmount <0)
 				vatCode = "-"+vatCode;
             row.fields["VatCode"] = vatCode;
+            row.fields["VatAmountType"] = "1";
 
             var rowLists = jsonDoc.document.dataUnits["1"].data.rowLists[0];
             var index = parseInt(rowLists.rows.length);
@@ -725,7 +726,7 @@ EFatturaImport.prototype.getVatCode = function (accountId, vatRate, codiceNatura
 
 EFatturaImport.prototype.initParam = function () {
     this.param = {};
-    this.param.default_vatrates = '10%=B10-BN;22%=B22-BN;0%=A-NI1;';
+    this.param.default_vatrates = '0%=AUTO_0;4%=AUTO_4;5%=AUTO_5;10%=AUTO_10;22%=AUTO_22;';
     this.param.show_dialog_commit = true;
 }
 
@@ -802,6 +803,7 @@ EFatturaImport.prototype.loadVatCodes = function () {
 	//riprende i codici iva dai parametri dello script
 	//se non esistono nel file ac2 crea i codici nella tabella codici IVA
 	var default_vatrates = this.param.default_vatrates.split(";");
+    Banana.console.debug(default_vatrates);
 	this.vatRates = {};
 	for (var i in default_vatrates) {
 		var string = default_vatrates[i];
@@ -885,6 +887,7 @@ EFatturaImport.prototype.loadVatCodes = function () {
 			row.fields = {};
 			row.fields["VatCode"] = vatCode;
 			row.fields["VatRate"] = key;
+			row.fields["AmountType"] = "1"; //amount without vat/sales tax
 			row.fields["VatAccount"] = this.accountingInfo.vatAccount;
 			row.fields["Description"] = vatCode + " " + key;
 			row.operation = {};
