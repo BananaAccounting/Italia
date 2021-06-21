@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.rendicontocassa.mod.d.test
 // @api = 1.0
-// @pubdate = 2021-04-26
+// @pubdate = 2021-06-15
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.rendicontocassa.mod.d.js>
 // @task = app.command
@@ -278,5 +278,40 @@ ReportModDTest.prototype.testBananaExtension = function() {
  
 	 var report = printReport(banDoc, userParam, bReport6, "");
 	 Test.logger.addReport("Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento senza costi/ricavi figurativi", report);
+
+
+	/**
+	 *	Test with current and previous year amounts using Balance_YYYY custom columns
+	 */
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets-test-cassa-colonne-saldi-specifiche.ac2");
+	Test.assert(banDoc);
+
+	var userParam = {};
+  	userParam.selectionStartDate = "2021-01-01";
+  	userParam.selectionEndDate = "2021-12-31";
+  	userParam.title = "RENDICONTO CASSA (MOD. D) ANNO 2021";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr1';
+	userParam.printcolumn = true;
+	userParam.printcostifigurativi = true;
+	userParam.balancecolumns = true;
+	userParam.currentbalancecolumn = 'Balance_2021';
+	userParam.previousbalancecolumn = 'Balance_2020';
+
+	var reportStructure = createReportStructureRendicontoCassa();
+
+	const bReport7 = new BReport(banDoc, userParam, reportStructure);
+	bReport7.validateGroups(userParam.column);
+	bReport7.loadBalances();
+	bReport7.calculateTotals(["currentAmount", "previousAmount"]);
+	bReport7.formatValues(["currentAmount", "previousAmount"]);
+	bReport7.excludeEntries();
+
+	var report = printReport(banDoc, userParam, bReport7, "");
+	Test.logger.addReport("Test 'rendiconto cassa (MOD. D)' con colonne saldo specifiche", report);
 
 }

@@ -51,6 +51,10 @@ body {
 	padding: 6px;
 }
 
+.borderTop {
+	/*border-top: thin solid black;*/
+}
+
 .img {
 	height: 45;
 }
@@ -63,8 +67,24 @@ caption {
 	text-align: left;
 }
 
+.col1Table {
+	width: 3%;
+}
+
+.col2Table {
+
+}
+
+.col3Table {
+	
+}
+
+.col4Table {
+	
+}
+
 table.table td {
-	border-top-style: solid;
+/*	border-top-style: solid;
 	border-top-color: black;
 	border-top-width: thin;
 	border-bottom-style: solid;
@@ -75,7 +95,7 @@ table.table td {
 	border-left-width: thin;
 	border-right-style: solid;
 	border-right-color: black;
-	border-right-width: thin;
+	border-right-width: thin;*/
 }
 
 .tableAnagrafica {
@@ -103,4 +123,19 @@ table.tableAnagrafica td {
 	border-right-style: solid;
 	border-right-color: black;
 	border-right-width: thin;
+}
+
+.details {
+	font-family: Courier New;
+	font-size: 7pt;
+	border-bottom: thin solid black;
+}
+
+.footer {
+	font-size: 7pt;
+	text-align: center;
+}
+
+.total {
+	/*background-color: #eeeeee;*/
 }

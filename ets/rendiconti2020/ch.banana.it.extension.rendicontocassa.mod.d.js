@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2021-06-02
+// @pubdate = 2021-06-21
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -165,7 +165,8 @@ function printReport_Intestazione(report, banDoc, userParam, stylesheet) {
       }
    }
    // Title
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var currentYear = Banana.Converter.toDate(userParam.selectionStartDate).getFullYear(); 
+   //Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
    var title = "";
    if (userParam.title) {
       title = userParam.title;
@@ -184,8 +185,7 @@ function printReport_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bRepor
 
    // SEZIONE "USCITE E ENTRATE"
 
-   var endDate = userParam.selectionEndDate;
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var currentYear = Banana.Converter.toDate(userParam.selectionStartDate).getFullYear();
    var previousYear = currentYear - 1;
 
 
@@ -216,14 +216,14 @@ function printReport_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bRepor
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
    }
    tableRow.addCell("USCITE", "table-header", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-right", 1);
+   tableRow.addCell("31.12." + currentYear, "table-header align-right", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-right", 1);
    tableRow.addCell("", "", 1);
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
    }
    tableRow.addCell("ENTRATE", "table-header", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-right", 1);
+   tableRow.addCell("31.12." + currentYear, "table-header align-right", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-right", 1);
 
    /* Row 1 */   
@@ -956,8 +956,7 @@ function printReport_Rendiconto_Investimenti_Disinvestimenti(report, banDoc, use
     */
 
    var startDate = userParam.selectionStartDate;
-   var endDate = userParam.selectionEndDate;
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var currentYear = Banana.Converter.toDate(startDate).getFullYear();
    var previousYear = currentYear - 1;
 
 
@@ -990,14 +989,14 @@ function printReport_Rendiconto_Investimenti_Disinvestimenti(report, banDoc, use
       tableRow.addCell(userParam.column.toUpperCase(),"table-header", 1);
    }
    tableRow.addCell("Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi", "table-header", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+   tableRow.addCell("31.12." + currentYear, "table-header align-center", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
    tableRow.addCell("", "", 1);
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(),"table-header", 1);
    }
    tableRow.addCell("Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi", "table-header", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+   tableRow.addCell("31.12." + currentYear, "table-header align-center", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
    /* Row 1 */
@@ -1108,8 +1107,8 @@ function printReport_Rendiconto_Avanzo_Disavanzo(report, banDoc, userParam, bRep
 
    // SEZIONE "AVANZO E DISAVANZO"
 
-   var endDate = userParam.selectionEndDate;
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var startDate = userParam.selectionStartDate;
+   var currentYear = Banana.Converter.toDate(startDate).getFullYear();
    var previousYear = currentYear - 1;
 
    report.addParagraph(" ", "");
@@ -1142,7 +1141,7 @@ function printReport_Rendiconto_Avanzo_Disavanzo(report, banDoc, userParam, bRep
    } else {
       tableRow.addCell("", "table-header", 5);
    }
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+   tableRow.addCell("31.12." + currentYear, "table-header align-center", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
    /* Row 1 */
@@ -1182,8 +1181,8 @@ function printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport) 
 
    // SEZIONE "CASSA E BANCA"
 
-   var endDate = userParam.selectionEndDate;
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var startDate = userParam.selectionStartDate;
+   var currentYear = Banana.Converter.toDate(startDate).getFullYear();
    var previousYear = currentYear - 1;
 
    report.addParagraph(" ", "");
@@ -1217,7 +1216,7 @@ function printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport) 
    } else {
       tableRow.addCell("Cassa e banca", "table-header", 5);
    }
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+   tableRow.addCell("31.12." + currentYear, "table-header align-center", 1);
    tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
    /* Row 1 */
@@ -1249,8 +1248,8 @@ function printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport) {
 
    // SEZIONE "COSTI E PROVENTI FIGURATIVI"
 
-   var endDate = userParam.selectionEndDate;
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var startDate = userParam.selectionStartDate;
+   var currentYear = Banana.Converter.toDate(startDate).getFullYear();
    var previousYear = currentYear - 1;
 
    if (userParam.printcostifigurativi) {
@@ -1284,14 +1283,14 @@ function printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport) {
          tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
       }
       tableRow.addCell("Costi figurativi", "table-header", 1);
-      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+      tableRow.addCell("31.12." + currentYear, "table-header align-center", 1);
       tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
       tableRow.addCell("", "", 1);
       if (userParam.printcolumn) {
          tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
       }
       tableRow.addCell("Proventi figurativi", "table-header", 1);
-      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
+      tableRow.addCell("31.12." + currentYear, "table-header align-center", 1);
       tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
 
       /* Row 1 */
@@ -1350,6 +1349,31 @@ function printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport) {
 /**************************************************************************************
  * Functionalities
  **************************************************************************************/
+function findBalanceColumns() {
+
+   var accTable = Banana.document.table("Accounts");
+   var tAccColumnNames = accTable.columnNames;
+   var strAccColumnNames = tAccColumnNames.toString();
+
+   if (Banana.document.table("Categories")) {
+
+      var catTable = Banana.document.table("Categories");
+      var tCatColumnNames = catTable.columnNames;
+      var strCatColumnNames = tCatColumnNames.toString();
+
+      if (strAccColumnNames.indexOf("Balance_") >= 0 && strCatColumnNames.indexOf("Balance_") >= 0) {
+         return true;
+      }
+   }
+   else {
+      if (strAccColumnNames.indexOf("Balance_") >= 0) {
+         return true;
+      }
+   }
+
+   return false;
+}
+
 function formatValue(value) {
    if (!value || value === "0" || value == null) {
       value = "0";
@@ -1565,6 +1589,51 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   // Show custom balance columns parameters only when in Accounts/Categories tables there are 'Balance_YYYY' columns.
+   // If not, the parameters are not visible
+   var isColumnBalance = findBalanceColumns();
+   if (isColumnBalance) {
+
+      var currentParam = {};
+      currentParam.name = 'balancecolumns';
+      currentParam.title = 'Usa colonne importi inserimento manuale';
+      currentParam.type = 'bool';
+      currentParam.value = userParam.balancecolumns ? true : false;
+      currentParam.editable = false;
+      currentParam.readValue = function() {
+         userParam.balancecolumns = this.value;
+      }
+      convertedParam.data.push(currentParam);
+
+      var currentParam = {};
+      currentParam.name = 'currentbalancecolumn';
+      currentParam.parentObject = 'balancecolumns';
+      currentParam.title = 'Colonna anno corrente (nome XML colonna)';
+      currentParam.type = 'string';
+      currentParam.value = userParam.currentbalancecolumn ? userParam.currentbalancecolumn : '';
+      currentParam.defaultvalue = '';
+      currentParam.readValue = function() {
+        userParam.currentbalancecolumn = this.value;
+      }
+      convertedParam.data.push(currentParam);
+
+      var currentParam = {};
+      currentParam.name = 'previousbalancecolumn';
+      currentParam.parentObject = 'balancecolumns';
+      currentParam.title = 'Colonna anno precedente (nome XML colonna)';
+      currentParam.type = 'string';
+      currentParam.value = userParam.previousbalancecolumn ? userParam.previousbalancecolumn : '';
+      currentParam.defaultvalue = '';
+      currentParam.readValue = function() {
+        userParam.previousbalancecolumn = this.value;
+      }
+      convertedParam.data.push(currentParam);
+   }
+   else {
+      //reset to false in case the parmeter is not visible to avoid custom columns are still used
+      userParam.balancecolumns = false;
+   }
+
    return convertedParam;
 }
 
@@ -1579,6 +1648,9 @@ function initUserParam() {
    userParam.column = 'Gr1';
    userParam.printcolumn = true;
    userParam.printcostifigurativi = false;
+   userParam.balancecolumns = false;
+   userParam.currentbalancecolumn = '';
+   userParam.previousbalancecolumn = '';
    return userParam;
 }
 
@@ -1598,6 +1670,34 @@ function parametersDialog(userParam) {
       userParam.useDefaultTexts = false;
    }
 
+   // Ask for period only when user wants to use default banana balances.
+   // When using specific columns for balances the period is not asked.
+   if (!userParam.balancecolumns) {
+
+      //We take the accounting "starting date" and "ending date" from the document. These will be used as default dates
+      var docStartDate = Banana.document.startPeriod();
+      var docEndDate = Banana.document.endPeriod();
+
+      //A dialog window is opened asking the user to insert the desired period. By default is the accounting period
+      var selectedDates = Banana.Ui.getPeriod('', docStartDate, docEndDate, userParam.selectionStartDate, userParam.selectionEndDate, userParam.selectionChecked);
+
+      //We take the values entered by the user and save them as "new default" values.
+      //This because the next time the script will be executed, the dialog window will contains the new values.
+      if (selectedDates) {
+         userParam.selectionStartDate = selectedDates.startDate;
+         userParam.selectionEndDate = selectedDates.endDate;
+         userParam.selectionChecked = selectedDates.hasSelection;
+      } else {
+         //User clicked cancel
+         return null;
+      }
+   }
+   // Otherwise take the year from the column names (ex. "Balance_2021") and build the period
+   else {
+      userParam.selectionStartDate = userParam.currentbalancecolumn.substr(-4)+"-01-01";
+      userParam.selectionEndDate = userParam.previousbalancecolumn.substr(-4)+"12-31";
+   }
+
    return userParam;
 }
 
@@ -1607,26 +1707,6 @@ function settingsDialog() {
    if (savedParam && savedParam.length > 0) {
       userParam = JSON.parse(savedParam);
    }
-
-   //We take the accounting "starting date" and "ending date" from the document. These will be used as default dates
-   var docStartDate = Banana.document.startPeriod();
-   var docEndDate = Banana.document.endPeriod();
-
-   //A dialog window is opened asking the user to insert the desired period. By default is the accounting period
-   var selectedDates = Banana.Ui.getPeriod('', docStartDate, docEndDate,
-      userParam.selectionStartDate, userParam.selectionEndDate, userParam.selectionChecked);
-
-   //We take the values entered by the user and save them as "new default" values.
-   //This because the next time the script will be executed, the dialog window will contains the new values.
-   if (selectedDates) {
-      userParam["selectionStartDate"] = selectedDates.startDate;
-      userParam["selectionEndDate"] = selectedDates.endDate;
-      userParam["selectionChecked"] = selectedDates.hasSelection;
-   } else {
-      //User clicked cancel
-      return null;
-   }
-
    userParam = parametersDialog(userParam); // From propertiess
    if (userParam) {
       var paramToString = JSON.stringify(userParam);

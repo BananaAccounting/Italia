@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2021-04-26 */
+/* Update: 2021-06-18 */
 
 
 
@@ -64,8 +64,17 @@ var BReport = class JsClass {
       for (var i in this.reportStructure) {
          if (this.reportStructure[i]["bclass"]) {
             if (this.reportStructure[i]["id"]) {
-               this.reportStructure[i]["currentAmount"] = this.calculateCurrentBalances(this.reportStructure[i]["id"], this.reportStructure[i]["bclass"], this.userParam.column, this.userParam.selectionStartDate, this.userParam.selectionEndDate);
-               this.reportStructure[i]["previousAmount"] = this.calculatePreviousBalances(this.reportStructure[i]["id"], this.reportStructure[i]["bclass"], this.userParam.column);
+
+              // Load balances using custom columns "Balance_2021", "Balance_2022", ...
+              if (this.userParam.balancecolumns) {
+                this.reportStructure[i]["currentAmount"] = this.calculateColumnBalances(this.reportStructure[i]["id"], this.reportStructure[i]["bclass"], this.userParam.column, this.userParam.currentbalancecolumn);
+                this.reportStructure[i]["previousAmount"] = this.calculateColumnBalances(this.reportStructure[i]["id"], this.reportStructure[i]["bclass"], this.userParam.column, this.userParam.previousbalancecolumn);
+              }
+              else {
+                this.reportStructure[i]["currentAmount"] = this.calculateCurrentBalances(this.reportStructure[i]["id"], this.reportStructure[i]["bclass"], this.userParam.column, this.userParam.selectionStartDate, this.userParam.selectionEndDate);
+                this.reportStructure[i]["previousAmount"] = this.calculatePreviousBalances(this.reportStructure[i]["id"], this.reportStructure[i]["bclass"], this.userParam.column);
+              }
+
             }
          }
       }

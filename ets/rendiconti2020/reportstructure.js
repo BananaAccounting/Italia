@@ -538,7 +538,7 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"RF-CF", "type":"total", "indent":"", "description":"Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-)", "sum":"RF;-CF"});
 	reportStructure.push({"id":"TADPI", "type":"total", "indent":"", "description":"Avanzo/disavanzo d’esercizio prima delle imposte (+/-)", "sum":"RA-CA;RB-CB;RC-CC;RD-CD;RE-CE"});
 	reportStructure.push({"id":"TADES", "type":"total", "indent":"", "description":"Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-)", "sum":"TADPI;IM"});
-	reportStructure.push({"id":"TADRC", "type":"total", "indent":"", "description":"Avanzo/disavanzo complessivo (+/-)", "sum":"IMRC;TADES;RF;-CF"}); // prima solo "IMRC"
+	reportStructure.push({"id":"TADRC", "type":"total", "indent":"", "description":"Avanzo/disavanzo complessivo (+/-)", "sum":"-IMRC;TADES;RF;-CF"}); // prima solo "IMRC"
 	reportStructure.push({"id":"PAIV", "type":"total", "indent":"", "description":"Avanzo/disavanzo d'esercizio", "sum":"TADES"}); //not used
 
 	/* COSTI / PROVENTI FIGURATIVI */

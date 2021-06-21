@@ -183,7 +183,8 @@ function printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap)
 
 	printReport_Header(report, banDoc, userParam);
 	printReport_Rendiconto(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap);
-	printReport_Finale(report, banDoc, userParam)
+	printReport_Finale(report, banDoc, userParam);
+	printReport_Footer(report);
 
 	return report;
 }
@@ -281,23 +282,31 @@ function printReport_Rendiconto(report, banDoc, fileLastYear, userParam, reportG
 		lastYear = Banana.Converter.toDate(fileLastYear.info("AccountingDataBase","OpeningDate")).getFullYear();
 	}
 
-	let table = report.addTable("table");
-	
 	let annofinanziario = "";
 	if (fileLastYear) {
 		annofinanziario = lastYear + "-" + thisYear;
 	} else {
 		annofinanziario = thisYear;
 	}
-	table.getCaption().addText("RENDICONTO ANNO FINANZIARIO " + annofinanziario, "description bold");
+	report.addParagraph("RENDICONTO ANNO FINANZIARIO " + annofinanziario, "description bold");
+
+	let table = report.addTable("table");
+	let col1Table = table.addColumn("col1Table");
+	let col2Table = table.addColumn("col2Table");
+	let col3Table = table.addColumn("col3Table");
+	let col4Table = table.addColumn("col4Table");
+	
 	tableRow = table.addRow();
-	tableRow.addCell(getDescription(banDoc, userParam.segment5XM), "alignRight bold", 2);
-	tableRow.addCell(userParam.segment5XM, "alignCenter bold", 1);
+	tableRow.addCell(getDescription(banDoc, userParam.segment5XM), "", 3);
+	tableRow.addCell(userParam.segment5XM, "alignRight bold", 1);
 
 	tableRow = table.addRow();
-	tableRow.addCell("Data di percezione del contributo", "alignRight bold", 2);
-	tableRow.addCell(userParam.dataPercezione, "alignCenter bold", 1);
-	
+	tableRow.addCell("Data di percezione del contributo", "", 3);
+	tableRow.addCell(userParam.dataPercezione, "alignRight bold", 1);
+
+	tableRow = table.addRow();
+	tableRow.addCell(" ", "", 4);
+
 	tableRow = table.addRow();
 
 	//Creation and print of the INCOME groups with all the details
@@ -309,10 +318,10 @@ function printReport_Rendiconto(report, banDoc, fileLastYear, userParam, reportG
 	}
 
 	tableRow = table.addRow();
-	tableRow.addCell("IMPORTO PERCEPITO", "alignRight bold", 2);
-	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(totalIncome), "alignRight bold", 1);
-	tableRow = table.addRow();
-	tableRow.addCell(" ", "", 3);
+	tableRow.addCell("IMPORTO PERCEPITO", "alignRight bold total", 3);
+	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(totalIncome), "alignRight bold total", 1);
+	// tableRow = table.addRow();
+	// tableRow.addCell(" ", "", 4);
 
 
 	//Creation and print of the six EXPENSES groups with all the details
@@ -325,8 +334,8 @@ function printReport_Rendiconto(report, banDoc, fileLastYear, userParam, reportG
 	
 	//Add the final total
 	tableRow = table.addRow();
-	tableRow.addCell("TOTALE SPESE", "alignRight bold", 2);
-	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold", 1);
+	tableRow.addCell("TOTALE SPESE", "alignRight bold total", 3);
+	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold total", 1);
 }
 
 // Funzione che stampa la parte finale del report.
@@ -337,11 +346,16 @@ function printReport_Finale(report, banDoc, userParam) {
 	report.addParagraph("I soggetti beneficiari sono tenuti a redigere, oltre al presente rendiconto, una relazione che dettagli i costi inseriti e sostenuti ed illustri in maniera analitica ed esaustiva l’utilizzo del contributo percepito.", "bold alignJustify border");
 	report.addParagraph(" ");
 
-	//Add the current date (DD-MM-YYYY)
-	var date = new Date();
+	var date = "";
+	if (userParam.dataDocumento) {
+		date = userParam.dataDocumento;
+	} else {
+		date = Banana.Converter.toLocaleDateFormat(new Date()); // current date (DD-MM-YYYY)
+	}
 	report.addParagraph(" ");
-	var dataPara = report.addParagraph("Data: " + Banana.Converter.toLocaleDateFormat(date));
+	var dataPara = report.addParagraph("Data: " + date);
 	dataPara.excludeFromTest();
+
 
 	//Add signature
 	report.addParagraph(" ");
@@ -364,7 +378,14 @@ function printReport_Finale(report, banDoc, userParam) {
 	report.addParagraph("Firma del rappresentante legale", "alignCenter");
 
 }
- 
+
+function printReport_Footer(report) {
+	report.getFooter().addClass("footer");
+	report.getFooter().addText("-", "");
+	report.getFooter().addFieldPageNr();
+	report.getFooter().addText("-", "");
+}
+
 // Funzione che crea e stampa il gruppo e tutte le categorie/conti che appartengono al gruppo.
 function printReport_Rendiconto_createGroup(banDoc, groupObj, table, accountsMap) {
 	
@@ -383,15 +404,13 @@ function printReport_Rendiconto_createGroup(banDoc, groupObj, table, accountsMap
 	//Print group name and description
 	if (groupObj.income) {
 		tableRow = table.addRow();
-		tableRow.addCell(_group + ". " + "Entrate", "bold", 3);
+		tableRow.addCell(_group + ". " + "Entrate", "bold borderTop", 4);
 	} else {
 		tableRow = table.addRow();
-		//tableRow.addCell(_group + ". " + _title, "bold", 3);
-
-		var descriptionCell = tableRow.addCell("", "", 2);
+		var descriptionCell = tableRow.addCell("", "borderTop", 3);
 		descriptionCell.addParagraph(_group + ". " + _title, "bold");
 		descriptionCell.addParagraph(_text);
-		tableRow.addCell("","",1);
+		tableRow.addCell("","borderTop",1);
 	}
 
 	//Check that the accountsMap is not empty, then use it to create the report
@@ -434,16 +453,17 @@ function printReport_Rendiconto_createGroup(banDoc, groupObj, table, accountsMap
 			total = Banana.SDecimal.add(total, tmpAmount);
 
 			tableRow = table.addRow();
-			tableRow.addCell(arrAcc[i], "alignCenter", 1);
-			tableRow.addCell(arrDesc[i], "", 1);
-			tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(tmpAmount), "alignRight", 1);
+			tableRow.addCell(" ","",1);
+			tableRow.addCell(arrAcc[i], "details", 1);
+			tableRow.addCell(arrDesc[i], "details", 1);
+			tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(tmpAmount), "alignRight details", 1);
 		}
 
 		/**
 			Calculate and print the final total of a group using the values of the File1 and File2
 		**/	
 		tableRow = table.addRow();
-		tableRow.addCell("Totale gruppo " + _group, "bold alignRight italic", 2);
+		tableRow.addCell("Totale gruppo " + _group, "bold alignRight italic", 3);
 		tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(total), "bold alignRight italic", 1);
 	}
 
@@ -455,7 +475,7 @@ function printReport_Rendiconto_createGroup(banDoc, groupObj, table, accountsMap
 			tmpTotal = Banana.SDecimal.invert(tmpTotal);
 		}
 		tableRow = table.addRow();
-		tableRow.addCell("", "", 1);
+		tableRow.addCell("", "", 2);
 		tableRow.addCell("                                          Totale gruppo " + _group, "bold alignRight italic", 1);
 		tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(tmpTotal), "bold alignRight italic", 1);
 	}
@@ -763,6 +783,18 @@ function convertParam(userParam, segment5XMList) {
 	}
 	convertedParam.data.push(currentParam);
 
+	var currentParam = {};
+	currentParam.name = 'dataDocumento';
+	currentParam.parentObject = 'rendiconto';
+	currentParam.title = 'Data documento';
+	currentParam.type = 'string';
+	currentParam.value = userParam.dataDocumento ? userParam.dataDocumento : '';
+	currentParam.defaultvalue = '';
+	currentParam.readValue = function() {
+	  userParam.dataDocumento = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
 	return convertedParam;
 }
 
@@ -778,6 +810,7 @@ function initUserParam(segment5XMList) {
    userParam.colonnaRaggruppamento = "Gr1";
    userParam.fileAnnoPrecedente = false;
    userParam.segment5XM = segment5XMList;
+   userParam.dataDocumento = "";
    return userParam;
 }
 
