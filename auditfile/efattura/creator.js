@@ -1,4 +1,4 @@
-// Copyright [2019] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = creator
 // @api = 1.0
-// @pubdate = 2021-05-18
+// @pubdate = 2021-06-22
 // @publisher = Banana.ch SA
 // @description = Converter script
 // @task = none
@@ -34,11 +34,11 @@ var jsonData = {
 	},
 	"scriptImport": {
 		"function": "exec",
-		"uri": "ch.banana.it.audit.fattura.pa.v12.sbaa/ch.banana.it.audit.fattura.pa.v12"
+		"uri": "ch.banana.it.efattura.ordinaria.v12.sbaa/ch.banana.it.efattura.ordinaria.v12"
 	},		
 	"scriptSetup": {
 		"function": "setup",
-		"uri": "ch.banana.it.audit.fattura.pa.v12.sbaa/ch.banana.it.audit.fattura.pa.v12"
+		"uri": "ch.banana.it.efattura.ordinaria.v12.sbaa/ch.banana.it.efattura.ordinaria.v12"
 	},		
 };
 	

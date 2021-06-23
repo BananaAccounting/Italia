@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// @id = ch.banana.it.audit.fattura.pa.v12
+// @id = ch.banana.it.auditfile.efattura.ordinaria.v12
 // @api = 1.0
-// @pubdate = 2021-05-27
+// @pubdate = 2021-06-22
 // @publisher = Banana.ch SA
-// @description = Importazione fattura elettronica pa v1.2(*.xml)
+// @description = Importa e-fatture ordinarie v1.2 (*.xml)...
 // @task = import.file
 // @doctype = *
 // @docproperties =
-// @inputdatasource = opendirdialog
+// @inputdatasource = openfiledialog
 // @inputfilefilter = *.xml
 // @timeout = -1
 
@@ -378,6 +378,8 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
 		if (description.length<=0)
 			description = "fatt. " + this.suppliers[accountId].Description;
 
+        var divisa = datiGeneraliDocumento.firstChildElement('Divisa').text;
+
         var row = {};
         row.operation = {};
         row.operation.name = "add";
@@ -390,13 +392,21 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
 		if (datiGeneraliDocumento.firstChildElement('ImportoTotaleDocumento'))
 			totalAmount = datiGeneraliDocumento.firstChildElement('ImportoTotaleDocumento').text.trim();
 		var signTotalAmount = Banana.SDecimal.sign(totalAmount);
-        if (signTotalAmount >=0 && this.accountingInfo.isDoubleEntry) {
-            row.fields["AccountCredit"] = accountId;
-            row.fields["Amount"] = totalAmount;
-        }
-        else if (signTotalAmount <0 && this.accountingInfo.isDoubleEntry) {
-            row.fields["AccountDebit"] = accountId;
-            row.fields["Amount"] = Banana.SDecimal.invert(totalAmount);
+        if (this.accountingInfo.isDoubleEntry) {
+            if (signTotalAmount >= 0) {
+                row.fields["AccountCredit"] = accountId;
+            }
+            else {
+                row.fields["AccountDebit"] = accountId;
+                totalAmount = Banana.SDecimal.invert(totalAmount);
+            }
+            if (this.accountingInfo.multiCurrency) {
+                row.fields["AmountCurrency"] = totalAmount;
+                row.fields["ExchangeCurrency"] = divisa;
+            }
+            else {
+                row.fields["Amount"] = totalAmount;
+            }
         }
         else {
 			if (signTotalAmount >=0) {
@@ -434,23 +444,31 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
            */
 			var taxableAmount = datiRiepilogoNode.firstChildElement('ImponibileImporto').text.trim();
 			var signTaxableAmount = Banana.SDecimal.sign(taxableAmount);
-            if (signTaxableAmount >=0 && this.accountingInfo.isDoubleEntry) {
-                row.fields["AccountDebit"] = "[CTRACCOUNT]";
-                row.fields["Amount"] = taxableAmount;
-            }
-            else if (signTaxableAmount <0 && this.accountingInfo.isDoubleEntry) {
-                row.fields["AccountCredit"] = "[CTRACCOUNT]";
-                row.fields["Amount"] = Banana.SDecimal.invert(taxableAmount);
+            if (this.accountingInfo.isDoubleEntry) {
+                if (signTaxableAmount >= 0) {
+                    row.fields["AccountDebit"] = "[CTRACCOUNT]";
+                }
+                else {
+                    row.fields["AccountCredit"] = "[CTRACCOUNT]";
+                    taxableAmount = Banana.SDecimal.invert(taxableAmount);
+                }
+                if (this.accountingInfo.multiCurrency) {
+                    row.fields["ExchangeCurrency"] = divisa;
+                    row.fields["AmountCurrency"] = taxableAmount;
+                }
+                else {
+                    row.fields["Amount"] = taxableAmount;
+                }
             }
             else {
-				if (signTaxableAmount >=0) {
-					row.fields["Account"] = "[CTRACCOUNT]";
-					row.fields["Expenses"] = taxableAmount;
-				}
-				else  {
-					row.fields["Account"] = "[CTRACCOUNT]";
-					row.fields["Income"] = Banana.SDecimal.invert(taxableAmount);
-				}
+                if (signTaxableAmount >= 0) {
+                    row.fields["Account"] = "[CTRACCOUNT]";
+                    row.fields["Expenses"] = taxableAmount;
+                }
+                else {
+                    row.fields["Account"] = "[CTRACCOUNT]";
+                    row.fields["Income"] = Banana.SDecimal.invert(taxableAmount);
+                }
             }
 
             var vatRate = Banana.SDecimal.round(datiRiepilogoNode.firstChildElement('AliquotaIVA').text, {'decimals':2});
@@ -458,8 +476,8 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
 			if (datiRiepilogoNode.firstChildElement('Natura'))
 				codiceNatura = datiRiepilogoNode.firstChildElement('Natura').text;
 			var vatCode = this.getVatCode(accountId, vatRate, codiceNatura);
-			if (signTaxableAmount <0)
-				vatCode = "-"+vatCode;
+            if (signTaxableAmount < 0)
+                vatCode = "-"+vatCode;
             row.fields["VatCode"] = vatCode;
             row.fields["VatAmountType"] = "1";
 
