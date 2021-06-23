@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// @id = ch.banana.it.efattura
+// @id = ch.banana.it.efattura.b2b
 // @api = 1.0
-// @pubdate = 2021-02-12
+// @pubdate = 2021-06-22
 // @publisher = Banana.ch SA
-// @description = Esporta e-fattura XML...
-// @description.it = Esporta e-fattura XML...
+// @description = Esporta e-fatture ordinarie v1.2 (*.xml)...
+// @description.it = Esporta e-fatture ordinarie v1.2 (*.xml)...
 // @doctype = *
 // @task = app.command
 // @inputdatasource = none
@@ -1331,35 +1331,52 @@ EFattura.prototype.loadData = function () {
    var endDate = new Date();
    if (this.param.periodEndDate.length > 0)
       endDate = Banana.Converter.stringToDate(this.param.periodEndDate, "DD.MM.YYYY");
-   var filterData = this.param.selection;
-   if (this.param.selection_invoice.length <= 0 && this.param.selection_customer.length <= 0)
-      filterData = false;
+   if (this.param.periodStartDate.length <= 0 && this.param.periodEndDate.length <= 0)
+      isPeriodSelected = false;
+
+   var isFilterSelected = this.param.selection;
+   var invoiceIdList = [];
+   var customerIdList = [];
+   if (this.param.selection_invoice.length > 0) {
+      var tmpList = this.param.selection_invoice.split(";");
+      for (var i in tmpList) {
+         if (tmpList[i].trim().length > 0)
+            invoiceIdList.push(tmpList[i].trim());
+      }
+   }
+   if (this.param.selection_customer.length > 0) {
+      var tmpList = this.param.selection_customer.split(";");
+      for (var i in tmpList) {
+         if (tmpList[i].trim().length > 0)
+            customerIdList.push(tmpList[i].trim());
+      }
+   }
+   if (invoiceIdList.length < 0 && customerIdList.length < 0)
+      isFilterSelected = false;
 
    var jsonInvoiceList = [];
+   // var rows = this.journalInvoices.findRows(this.loadDataFilterInvoiceDocument);
    for (var i = 0; i < this.journalInvoices.rowCount; i++) {
-      var tRow = this.journalInvoices.row(i);
-      if (tRow.value('ObjectJSonData') && tRow.value('ObjectType') === 'InvoiceDocument') {
-         var jsonData = {};
-         jsonData = JSON.parse(tRow.value('ObjectJSonData'));
-         if (isPeriodSelected) {
-            var valueDate = Banana.Converter.stringToDate(jsonData.InvoiceDocument.document_info.date, "YYYY-MM-DD");
-            if (valueDate < startDate || valueDate > endDate) {
-               continue;
-            }
-         }
-         if (filterData) {
-            if (this.param.selection_invoice && jsonData.InvoiceDocument.document_info.number === this.param.selection_invoice) {
-               jsonInvoiceList.push(jsonData.InvoiceDocument);
-               break;
-            }
-            else if (this.param.selection_customer && jsonData.InvoiceDocument.customer_info.number === this.param.selection_customer) {
-               jsonInvoiceList.push(jsonData.InvoiceDocument);
-            }
-         }
-         else {
-            jsonInvoiceList.push(jsonData.InvoiceDocument);
+      if (this.journalInvoices.row(i).value("ObjectType") !== "InvoiceDocument")
+        continue;
+      if (isFilterSelected && invoiceIdList.length > 0) {
+         var invoiceId = this.journalInvoices.row(i).value("Invoice");
+         if (invoiceIdList.indexOf(invoiceId) < 0)
+            continue;
+      }
+      if (isFilterSelected && customerIdList.length > 0) {
+         var customerId = this.journalInvoices.row(i).value("CounterpartyId");
+         if (customerIdList.indexOf(customerId) < 0)
+            continue;
+      }
+      if (isPeriodSelected) {
+         var valueDate = Banana.Converter.stringToDate(this.journalInvoices.row(i).value("Date"), "YYYY-MM-DD");
+         if (valueDate < startDate || valueDate > endDate) {
+            continue;
          }
       }
+      var jsonData = JSON.parse(this.journalInvoices.row(i).value("ObjectJSonData"));
+      jsonInvoiceList.push(jsonData.InvoiceDocument);
    }
 
    if (jsonInvoiceList.length <= 0) {
@@ -1381,6 +1398,10 @@ EFattura.prototype.loadData = function () {
    }
 
    return jsonCustomerList;
+}
+
+EFattura.prototype.loadDataFilterInvoiceDocument = function(rowObj,rowNr,table) {
+   return rowObj.value('ObjectType') === "InvoiceDocument";
 }
 
 EFattura.prototype.readAccountingData = function (param) {
