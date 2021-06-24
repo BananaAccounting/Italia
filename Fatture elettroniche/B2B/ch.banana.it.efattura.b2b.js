@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.efattura.b2b
 // @api = 1.0
-// @pubdate = 2021-06-22
+// @pubdate = 2021-06-24
 // @publisher = Banana.ch SA
 // @description = Esporta e-fatture ordinarie v1.2 (*.xml)...
 // @description.it = Esporta e-fatture ordinarie v1.2 (*.xml)...
@@ -1240,7 +1240,7 @@ EFattura.prototype.getXsdFileName = function () {
    }
 
    var xsdFile = Banana.IO.getLocalFile(xsdFileName);
-   if (xsdFile.errorString) {
+   if (xsdFile && xsdFile.errorString) {
       Banana.console.info(xsdFile.errorString);
       return "";
    }

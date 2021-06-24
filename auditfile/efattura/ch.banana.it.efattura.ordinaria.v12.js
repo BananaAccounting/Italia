@@ -20,7 +20,7 @@
 // @task = import.file
 // @doctype = *
 // @docproperties =
-// @inputdatasource = openfiledialog
+// @inputdatasource = opendirdialog
 // @inputfilefilter = *.xml
 // @timeout = -1
 
@@ -821,7 +821,6 @@ EFatturaImport.prototype.loadVatCodes = function () {
 	//riprende i codici iva dai parametri dello script
 	//se non esistono nel file ac2 crea i codici nella tabella codici IVA
 	var default_vatrates = this.param.default_vatrates.split(";");
-    Banana.console.debug(default_vatrates);
 	this.vatRates = {};
 	for (var i in default_vatrates) {
 		var string = default_vatrates[i];
