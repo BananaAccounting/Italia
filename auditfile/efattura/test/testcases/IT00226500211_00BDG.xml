@@ -59,7 +59,7 @@
 			<DatiGeneraliDocumento>
 				<TipoDocumento>TD01</TipoDocumento>
 				<Divisa>EUR</Divisa>
-				<Data>2019-05-31</Data>
+				<Data>2021-05-31</Data>
 				<Numero>195/FN</Numero>
 				<ImportoTotaleDocumento>3782.22</ImportoTotaleDocumento>
 				<Causale>FATTURA VENDITA LIBRI</Causale>
@@ -74,7 +74,7 @@
 				<NumeroLinea>10</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 600 /11 - Del 02-05-2019</Descrizione>
+Protocollo N.: 600 /11 - Del 02-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -270,7 +270,7 @@ Protocollo N.: 600 /11 - Del 02-05-2019</Descrizione>
 				<NumeroLinea>160</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 602 /11 - Del 03-05-2019</Descrizione>
+Protocollo N.: 602 /11 - Del 03-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -401,7 +401,7 @@ Protocollo N.: 602 /11 - Del 03-05-2019</Descrizione>
 				<NumeroLinea>260</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 604 /11 - Del 06-05-2019</Descrizione>
+Protocollo N.: 604 /11 - Del 06-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -740,7 +740,7 @@ Protocollo N.: 604 /11 - Del 06-05-2019</Descrizione>
 				<NumeroLinea>520</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 606 /11 - Del 07-05-2019</Descrizione>
+Protocollo N.: 606 /11 - Del 07-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -871,7 +871,7 @@ Protocollo N.: 606 /11 - Del 07-05-2019</Descrizione>
 				<NumeroLinea>620</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 612 /11 - Del 08-05-2019</Descrizione>
+Protocollo N.: 612 /11 - Del 08-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -1028,7 +1028,7 @@ Protocollo N.: 612 /11 - Del 08-05-2019</Descrizione>
 				<NumeroLinea>740</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 624 /11 - Del 09-05-2019</Descrizione>
+Protocollo N.: 624 /11 - Del 09-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -1224,7 +1224,7 @@ Protocollo N.: 624 /11 - Del 09-05-2019</Descrizione>
 				<NumeroLinea>890</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 638 /11 - Del 10-05-2019</Descrizione>
+Protocollo N.: 638 /11 - Del 10-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -1494,7 +1494,7 @@ Protocollo N.: 638 /11 - Del 10-05-2019</Descrizione>
 				<NumeroLinea>1100</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 647 /11 - Del 13-05-2019</Descrizione>
+Protocollo N.: 647 /11 - Del 13-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -1729,7 +1729,7 @@ Protocollo N.: 647 /11 - Del 13-05-2019</Descrizione>
 				<NumeroLinea>1280</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 650 /11 - Del 14-05-2019</Descrizione>
+Protocollo N.: 650 /11 - Del 14-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -1899,7 +1899,7 @@ Protocollo N.: 650 /11 - Del 14-05-2019</Descrizione>
 				<NumeroLinea>1410</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 662 /11 - Del 15-05-2019</Descrizione>
+Protocollo N.: 662 /11 - Del 15-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -1991,7 +1991,7 @@ Protocollo N.: 662 /11 - Del 15-05-2019</Descrizione>
 				<NumeroLinea>1480</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 667 /11 - Del 16-05-2019</Descrizione>
+Protocollo N.: 667 /11 - Del 16-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -2122,7 +2122,7 @@ Protocollo N.: 667 /11 - Del 16-05-2019</Descrizione>
 				<NumeroLinea>1580</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 670 /11 - Del 17-05-2019</Descrizione>
+Protocollo N.: 670 /11 - Del 17-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -2240,7 +2240,7 @@ Protocollo N.: 670 /11 - Del 17-05-2019</Descrizione>
 				<NumeroLinea>1670</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 678 /11 - Del 20-05-2019</Descrizione>
+Protocollo N.: 678 /11 - Del 20-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -2566,7 +2566,7 @@ Protocollo N.: 678 /11 - Del 20-05-2019</Descrizione>
 				<NumeroLinea>1920</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 689 /11 - Del 21-05-2019</Descrizione>
+Protocollo N.: 689 /11 - Del 21-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -2645,7 +2645,7 @@ Protocollo N.: 689 /11 - Del 21-05-2019</Descrizione>
 				<NumeroLinea>1980</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 696 /11 - Del 22-05-2019</Descrizione>
+Protocollo N.: 696 /11 - Del 22-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -2776,7 +2776,7 @@ Protocollo N.: 696 /11 - Del 22-05-2019</Descrizione>
 				<NumeroLinea>2080</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 701 /11 - Del 23-05-2019</Descrizione>
+Protocollo N.: 701 /11 - Del 23-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -2894,7 +2894,7 @@ Protocollo N.: 701 /11 - Del 23-05-2019</Descrizione>
 				<NumeroLinea>2170</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 715 /11 - Del 24-05-2019</Descrizione>
+Protocollo N.: 715 /11 - Del 24-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -2960,7 +2960,7 @@ Protocollo N.: 715 /11 - Del 24-05-2019</Descrizione>
 				<NumeroLinea>2220</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 719 /11 - Del 27-05-2019</Descrizione>
+Protocollo N.: 719 /11 - Del 27-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -3117,7 +3117,7 @@ Protocollo N.: 719 /11 - Del 27-05-2019</Descrizione>
 				<NumeroLinea>2340</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 724 /11 - Del 28-05-2019</Descrizione>
+Protocollo N.: 724 /11 - Del 28-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -3391,7 +3391,7 @@ Protocollo N.: 724 /11 - Del 28-05-2019</Descrizione>
 				<NumeroLinea>2550</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 732 /11 - Del 29-05-2019</Descrizione>
+Protocollo N.: 732 /11 - Del 29-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -3600,7 +3600,7 @@ Protocollo N.: 732 /11 - Del 29-05-2019</Descrizione>
 				<NumeroLinea>2710</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 747 /11 - Del 30-05-2019</Descrizione>
+Protocollo N.: 747 /11 - Del 30-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -3770,7 +3770,7 @@ Protocollo N.: 747 /11 - Del 30-05-2019</Descrizione>
 				<NumeroLinea>2840</NumeroLinea>
 				<Descrizione>. - .
 Causale: DV030 - DDT VENDITA LIBRI CON DIRITTI AUTORE
-Protocollo N.: 754 /11 - Del 31-05-2019</Descrizione>
+Protocollo N.: 754 /11 - Del 31-05-2021</Descrizione>
 				<PrezzoUnitario>0.00000000</PrezzoUnitario>
 				<PrezzoTotale>0.00000000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>

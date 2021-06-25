@@ -45,7 +45,7 @@ function exec(inData) {
     if (!jsonData)
         return "@Cancel";
 
-    var savedParam = Banana.document.getScriptSettings();
+    var savedParam = Banana.document.getScriptSettings("audit_efatturaordinaria_v12");
     if (savedParam.length > 0) {
         eFatturaImport.setParam(JSON.parse(savedParam));
     }
@@ -74,7 +74,7 @@ function settingsDialog() {
     if (typeof (Banana.Ui.openPropertyEditor) === 'undefined')
         return false;
 
-    var savedParam = Banana.document.getScriptSettings();
+    var savedParam = Banana.document.getScriptSettings("audit_efatturaordinaria_v12");
     if (savedParam.length > 0) {
         eFatturaImport.setParam(JSON.parse(savedParam));
     }
@@ -90,7 +90,7 @@ function settingsDialog() {
     }
 
     var paramToString = JSON.stringify(eFatturaImport.param);
-    var value = Banana.document.setScriptSettings(paramToString);
+    var value = Banana.document.setScriptSettings("audit_efatturaordinaria_v12", paramToString);
     return true;
 }
 
@@ -225,6 +225,12 @@ EFatturaImport.prototype.createJsonDocument_AddAccount = function (jsonDoc, xmlR
     if (supplierNode.firstChildElement('DatiAnagrafici').firstChildElement('CodiceFiscale'))
         codiceFiscale = supplierNode.firstChildElement('DatiAnagrafici').firstChildElement('CodiceFiscale').text;
 
+    var divisa = "";
+    var datiGeneraliDocNode = xmlRoot.firstChildElement('FatturaElettronicaBody').firstChildElement('DatiGenerali').firstChildElement('DatiGeneraliDocumento');
+    if (datiGeneraliDocNode) {
+        divisa = datiGeneraliDocNode.firstChildElement('Divisa').text;
+    }
+            
     var row = {};
     row.fields = {};
     if (nome.length > 0) {
@@ -297,6 +303,13 @@ EFatturaImport.prototype.createJsonDocument_AddAccount = function (jsonDoc, xmlR
     if (codiceFiscale.length > 0) {
         if (operationName == "add" || this.suppliers[accountId].FiscalNumber != codiceFiscale) {
             row.fields["FiscalNumber"] = codiceFiscale;
+            if (operationName.length <= 0)
+                operationName = "modify";
+        }
+    }
+    if (divisa.length > 0) {
+        if (operationName == "add" || this.suppliers[accountId].Currency != divisa) {
+            row.fields["Currency"] = divisa;
             if (operationName.length <= 0)
                 operationName = "modify";
         }
@@ -594,6 +607,8 @@ EFatturaImport.prototype.getAccountingInfo = function () {
     this.accountingInfo.vatAccount = "";
     this.accountingInfo.customersGroup = "";
     this.accountingInfo.suppliersGroup = "";
+    this.accountingInfo.vatNumber = "";
+    this.accountingInfo.fiscalNumber = "";
 
     if (this.banDocument) {
         var fileGroup = this.banDocument.info("Base", "FileTypeGroup");
@@ -625,6 +640,12 @@ EFatturaImport.prototype.getAccountingInfo = function () {
             this.accountingInfo.customersGroup = this.banDocument.info("AccountingDataBase", "CustomersGroup");
         if (this.banDocument.info("AccountingDataBase", "SuppliersGroup"))
             this.accountingInfo.suppliersGroup = this.banDocument.info("AccountingDataBase", "SuppliersGroup");
+
+        if (this.banDocument.info("AccountingDataBase", "VatNumber"))
+            this.accountingInfo.vatNumber = this.banDocument.info("AccountingDataBase", "VatNumber");
+        if (this.banDocument.info("AccountingDataBase", "FiscalNumber"))
+            this.accountingInfo.fiscalNumber = this.banDocument.info("AccountingDataBase", "FiscalNumber");
+
     }
 }
 

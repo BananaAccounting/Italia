@@ -73,7 +73,7 @@
       <DatiGeneraliDocumento>
         <TipoDocumento>TD01</TipoDocumento>
         <Divisa>EUR</Divisa>
-        <Data>2019-04-30</Data>
+        <Data>2021-04-30</Data>
         <Numero>19V601556</Numero>
         <ImportoTotaleDocumento>19820.31</ImportoTotaleDocumento>
         <Art73>SI</Art73>
@@ -1457,7 +1457,7 @@
       </DatiOrdineAcquisto>
       <DatiDDT>
         <NumeroDDT>496753</NumeroDDT>
-        <DataDDT>2019-04-01+02:00</DataDDT>
+        <DataDDT>2021-04-01+02:00</DataDDT>
         <RiferimentoNumeroLinea>1</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>2</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>3</RiferimentoNumeroLinea>
@@ -1672,7 +1672,7 @@
       </DatiDDT>
       <DatiDDT>
         <NumeroDDT>497271</NumeroDDT>
-        <DataDDT>2019-04-03+02:00</DataDDT>
+        <DataDDT>2021-04-03+02:00</DataDDT>
         <RiferimentoNumeroLinea>197</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>198</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>199</RiferimentoNumeroLinea>
@@ -1839,7 +1839,7 @@
       </DatiDDT>
       <DatiDDT>
         <NumeroDDT>497921</NumeroDDT>
-        <DataDDT>2019-04-05+02:00</DataDDT>
+        <DataDDT>2021-04-05+02:00</DataDDT>
         <RiferimentoNumeroLinea>349</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>350</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>351</RiferimentoNumeroLinea>
@@ -2125,7 +2125,7 @@
       </DatiDDT>
       <DatiDDT>
         <NumeroDDT>498554</NumeroDDT>
-        <DataDDT>2019-04-10+02:00</DataDDT>
+        <DataDDT>2021-04-10+02:00</DataDDT>
         <RiferimentoNumeroLinea>624</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>625</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>626</RiferimentoNumeroLinea>
@@ -2452,7 +2452,7 @@
       </DatiDDT>
       <DatiDDT>
         <NumeroDDT>499455</NumeroDDT>
-        <DataDDT>2019-04-15+02:00</DataDDT>
+        <DataDDT>2021-04-15+02:00</DataDDT>
         <RiferimentoNumeroLinea>944</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>945</RiferimentoNumeroLinea>
       </DatiDDT>
@@ -2636,7 +2636,7 @@
       </DatiDDT>
       <DatiDDT>
         <NumeroDDT>500489</NumeroDDT>
-        <DataDDT>2019-04-19+02:00</DataDDT>
+        <DataDDT>2021-04-19+02:00</DataDDT>
         <RiferimentoNumeroLinea>1111</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>1112</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>1113</RiferimentoNumeroLinea>
@@ -2867,7 +2867,7 @@
       </DatiDDT>
       <DatiDDT>
         <NumeroDDT>501033</NumeroDDT>
-        <DataDDT>2019-04-26+02:00</DataDDT>
+        <DataDDT>2021-04-26+02:00</DataDDT>
         <RiferimentoNumeroLinea>1326</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>1327</RiferimentoNumeroLinea>
         <RiferimentoNumeroLinea>1328</RiferimentoNumeroLinea>
@@ -3153,7 +3153,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217249</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - APRILE 2019</Descrizione>
+        <Descrizione>AMEN - APRILE 2021</Descrizione>
         <Quantita>1.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -3171,7 +3171,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217249</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - APRILE 2019</Descrizione>
+        <Descrizione>AMEN - APRILE 2021</Descrizione>
         <Quantita>1.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -3197,7 +3197,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217249</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - APRILE 2019</Descrizione>
+        <Descrizione>AMEN - APRILE 2021</Descrizione>
         <Quantita>7.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -3223,7 +3223,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217249</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - APRILE 2019</Descrizione>
+        <Descrizione>AMEN - APRILE 2021</Descrizione>
         <Quantita>3.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -5279,7 +5279,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217249</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - APRILE 2019</Descrizione>
+        <Descrizione>AMEN - APRILE 2021</Descrizione>
         <Quantita>4.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -5297,7 +5297,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217256</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - MAGGIO 2019</Descrizione>
+        <Descrizione>AMEN - MAGGIO 2021</Descrizione>
         <Quantita>19.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -6801,7 +6801,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217256</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - MAGGIO 2019</Descrizione>
+        <Descrizione>AMEN - MAGGIO 2021</Descrizione>
         <Quantita>1.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -10924,7 +10924,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788801064704</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>MESSALE DELLE DOMENICHE E FESTE 2019</Descrizione>
+        <Descrizione>MESSALE DELLE DOMENICHE E FESTE 2021</Descrizione>
         <Quantita>2.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>6.90</PrezzoUnitario>
@@ -14996,7 +14996,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788868943134</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>IN CHE SENSO? 100 GIORNI CRESIMANDI 2019</Descrizione>
+        <Descrizione>IN CHE SENSO? 100 GIORNI CRESIMANDI 2021</Descrizione>
         <Quantita>1.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>5.00</PrezzoUnitario>
@@ -19882,7 +19882,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788598065908</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>CATALOGO BUK BUK 2019</Descrizione>
+        <Descrizione>CATALOGO BUK BUK 2021</Descrizione>
         <Quantita>5.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>0.08</PrezzoUnitario>
@@ -19900,7 +19900,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788567570907</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>CATALOGO IL SICOMORO 2019</Descrizione>
+        <Descrizione>CATALOGO IL SICOMORO 2021</Descrizione>
         <Quantita>5.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>0.08</PrezzoUnitario>
@@ -19918,7 +19918,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788561240905</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>CATALOGO POZZO DI GIACOBBE 2019</Descrizione>
+        <Descrizione>CATALOGO POZZO DI GIACOBBE 2021</Descrizione>
         <Quantita>5.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>0.08</PrezzoUnitario>
@@ -19988,7 +19988,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217270</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - LUGLIO 2019</Descrizione>
+        <Descrizione>AMEN - LUGLIO 2021</Descrizione>
         <Quantita>64.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -20158,7 +20158,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8023392105032</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>PAGINE APERTE COMUNICAZIONE SOCIALE 2019</Descrizione>
+        <Descrizione>PAGINE APERTE COMUNICAZIONE SOCIALE 2021</Descrizione>
         <Quantita>50.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>0.15</PrezzoUnitario>
@@ -20176,7 +20176,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8058093664410</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>"MI SALVERAI" 2019 - OP.+CD</Descrizione>
+        <Descrizione>"MI SALVERAI" 2021 - OP.+CD</Descrizione>
         <Quantita>30.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>15.00</PrezzoUnitario>
@@ -20194,7 +20194,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8058093664434</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>B.M. CD - "MI SALVERAI" 2019</Descrizione>
+        <Descrizione>B.M. CD - "MI SALVERAI" 2021</Descrizione>
         <Quantita>20.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>6.55</PrezzoUnitario>
@@ -20228,7 +20228,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8058093664458</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AGG. SPARTITO 2019 - "MI SALVERAI"</Descrizione>
+        <Descrizione>AGG. SPARTITO 2021 - "MI SALVERAI"</Descrizione>
         <Quantita>30.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>5.28</PrezzoUnitario>
@@ -20263,7 +20263,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8058093664472</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>DIO DELLA MIA LODE 2019</Descrizione>
+        <Descrizione>DIO DELLA MIA LODE 2021</Descrizione>
         <Quantita>10.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>8.50</PrezzoUnitario>
@@ -20306,7 +20306,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8023392105049</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>PAGINE APERTE MAGGIO 2019</Descrizione>
+        <Descrizione>PAGINE APERTE MAGGIO 2021</Descrizione>
         <Quantita>100.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>0.15</PrezzoUnitario>
@@ -22172,7 +22172,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8058093664434</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>B.M. CD - "MI SALVERAI" 2019</Descrizione>
+        <Descrizione>B.M. CD - "MI SALVERAI" 2021</Descrizione>
         <Quantita>1.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>6.55</PrezzoUnitario>
@@ -22189,7 +22189,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8058093664410</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>"MI SALVERAI" 2019 - OP.+CD</Descrizione>
+        <Descrizione>"MI SALVERAI" 2021 - OP.+CD</Descrizione>
         <Quantita>2.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>15.00</PrezzoUnitario>
@@ -22438,7 +22438,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8058093664465</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>DIO DELLA MIA LODE. ANELLI 2019 L. CANTI</Descrizione>
+        <Descrizione>DIO DELLA MIA LODE. ANELLI 2021 L. CANTI</Descrizione>
         <Quantita>10.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>14.50</PrezzoUnitario>
@@ -22551,7 +22551,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8058093664410</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>"MI SALVERAI" 2019 - OP.+CD</Descrizione>
+        <Descrizione>"MI SALVERAI" 2021 - OP.+CD</Descrizione>
         <Quantita>1.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>15.00</PrezzoUnitario>
@@ -23941,7 +23941,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8058093664458</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AGG. SPARTITO 2019 - "MI SALVERAI"</Descrizione>
+        <Descrizione>AGG. SPARTITO 2021 - "MI SALVERAI"</Descrizione>
         <Quantita>1.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>5.28</PrezzoUnitario>
@@ -23958,7 +23958,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8058093664434</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>B.M. CD - "MI SALVERAI" 2019</Descrizione>
+        <Descrizione>B.M. CD - "MI SALVERAI" 2021</Descrizione>
         <Quantita>2.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>6.55</PrezzoUnitario>
@@ -23975,7 +23975,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8058093664410</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>"MI SALVERAI" 2019 - OP.+CD</Descrizione>
+        <Descrizione>"MI SALVERAI" 2021 - OP.+CD</Descrizione>
         <Quantita>6.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>15.00</PrezzoUnitario>
@@ -24046,7 +24046,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217256</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - MAGGIO 2019</Descrizione>
+        <Descrizione>AMEN - MAGGIO 2021</Descrizione>
         <Quantita>24.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -24928,7 +24928,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>8058093664410</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>"MI SALVERAI" 2019 - OP.+CD</Descrizione>
+        <Descrizione>"MI SALVERAI" 2021 - OP.+CD</Descrizione>
         <Quantita>2.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>15.00</PrezzoUnitario>
@@ -24946,7 +24946,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217256</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - MAGGIO 2019</Descrizione>
+        <Descrizione>AMEN - MAGGIO 2021</Descrizione>
         <Quantita>1.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -27532,7 +27532,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217263</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - GIUGNO 2019</Descrizione>
+        <Descrizione>AMEN - GIUGNO 2021</Descrizione>
         <Quantita>2.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -27550,7 +27550,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217256</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - MAGGIO 2019</Descrizione>
+        <Descrizione>AMEN - MAGGIO 2021</Descrizione>
         <Quantita>3.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -28645,7 +28645,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217263</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - GIUGNO 2019</Descrizione>
+        <Descrizione>AMEN - GIUGNO 2021</Descrizione>
         <Quantita>2.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -28663,7 +28663,7 @@
           <CodiceTipo>EAN</CodiceTipo>
           <CodiceValore>9788892217256</CodiceValore>
         </CodiceArticolo>
-        <Descrizione>AMEN - MAGGIO 2019</Descrizione>
+        <Descrizione>AMEN - MAGGIO 2021</Descrizione>
         <Quantita>3.00</Quantita>
         <UnitaMisura>NR</UnitaMisura>
         <PrezzoUnitario>3.90</PrezzoUnitario>
@@ -29181,7 +29181,7 @@
       <CondizioniPagamento>TP02</CondizioniPagamento>
       <DettaglioPagamento>
         <ModalitaPagamento>MP12</ModalitaPagamento>
-        <DataScadenzaPagamento>2019-07-31</DataScadenzaPagamento>
+        <DataScadenzaPagamento>2021-07-31</DataScadenzaPagamento>
         <ImportoPagamento>19820.31</ImportoPagamento>
         <IstitutoFinanziario>BANCA MONTE DEI PASCHI DI SIENA S.P.A. VIA CESAROTTI 23 PADOVA</IstitutoFinanziario>
         <ABI>01030</ABI>
