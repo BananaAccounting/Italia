@@ -262,6 +262,7 @@ EFattura.prototype.convertParam = function (param, includiOpzioniStampa) {
       currentParam.title = 'Filtra';
       currentParam.type = 'bool';
       currentParam.value = param.selection ? param.selection : false;
+      currentParam.defaultvalue = false;
       currentParam.readValue = function () {
          param.selection = this.value;
       }
@@ -273,6 +274,7 @@ EFattura.prototype.convertParam = function (param, includiOpzioniStampa) {
       currentParam.type = 'string';
       currentParam.parentObject = 'selection';
       currentParam.value = param.selection_invoice ? param.selection_invoice : '';
+      currentParam.defaultvalue = '';
       currentParam.readValue = function () {
          param.selection_invoice = this.value;
       }
@@ -284,6 +286,7 @@ EFattura.prototype.convertParam = function (param, includiOpzioniStampa) {
       currentParam.type = 'string';
       currentParam.parentObject = 'selection';
       currentParam.value = param.selection_customer ? param.selection_customer : '';
+      currentParam.defaultvalue = '';
       currentParam.readValue = function () {
          param.selection_customer = this.value;
       }
@@ -294,6 +297,7 @@ EFattura.prototype.convertParam = function (param, includiOpzioniStampa) {
       currentParam.title = 'Periodo';
       currentParam.type = 'bool';
       currentParam.value = param.period ? param.period : false;
+      currentParam.defaultvalue = false;
       currentParam.readValue = function () {
          param.period = this.value;
       }
@@ -305,8 +309,11 @@ EFattura.prototype.convertParam = function (param, includiOpzioniStampa) {
       currentParam.type = 'date';
       currentParam.parentObject = 'period';
       currentParam.value = param.periodStartDate ? param.periodStartDate : '';
+      currentParam.defaultvalue = '';
       currentParam.readValue = function () {
-         param.periodStartDate = this.value;
+         var startDate = Banana.Converter.toInternalDateFormat(this.value, "dd.mm.yyyy");
+         startDate = startDate.replace(new RegExp("-", 'g'), "");
+         param.periodStartDate = startDate;
       }
       convertedParam.data.push(currentParam);
 
@@ -316,8 +323,11 @@ EFattura.prototype.convertParam = function (param, includiOpzioniStampa) {
       currentParam.type = 'date';
       currentParam.parentObject = 'period';
       currentParam.value = param.periodEndDate ? param.periodEndDate : '';
+      currentParam.defaultvalue = '';
       currentParam.readValue = function () {
-         param.periodEndDate = this.value;
+         var endDate = Banana.Converter.toInternalDateFormat(this.value, "dd.mm.yyyy");
+         endDate = endDate.replace(new RegExp("-", 'g'), "");
+         param.periodEndDate = endDate;
       }
       convertedParam.data.push(currentParam);
    }
@@ -1327,10 +1337,10 @@ EFattura.prototype.loadData = function () {
    var isPeriodSelected = this.param.period;
    var startDate = new Date();
    if (this.param.periodStartDate.length > 0)
-      startDate = Banana.Converter.stringToDate(this.param.periodStartDate, "DD.MM.YYYY");
+      startDate = Banana.Converter.stringToDate(this.param.periodStartDate, "YYYYMMDD");
    var endDate = new Date();
    if (this.param.periodEndDate.length > 0)
-      endDate = Banana.Converter.stringToDate(this.param.periodEndDate, "DD.MM.YYYY");
+      endDate = Banana.Converter.stringToDate(this.param.periodEndDate, "YYYYMMDD");
    if (this.param.periodStartDate.length <= 0 && this.param.periodEndDate.length <= 0)
       isPeriodSelected = false;
 
@@ -1370,7 +1380,9 @@ EFattura.prototype.loadData = function () {
             continue;
       }
       if (isPeriodSelected) {
-         var valueDate = Banana.Converter.stringToDate(this.journalInvoices.row(i).value("Date"), "YYYY-MM-DD");
+         var valueDate = Banana.Converter.stringToDate(this.journalInvoices.row(i).value("TransactionDate"), "YYYY-MM-DD");
+         if (!valueDate)
+            valueDate = Banana.Converter.stringToDate(this.journalInvoices.row(i).value("Date"), "YYYY-MM-DD");
          if (valueDate < startDate || valueDate > endDate) {
             continue;
          }
@@ -1587,7 +1599,10 @@ EFattura.prototype.verifyParam = function () {
       this.param.periodStartDate = '';
    if (!this.param.periodEndDate)
       this.param.periodEndDate = '';
-
+   if (!this.param.period) {
+      this.param.periodStartDate = '';
+      this.param.periodEndDate = '';
+   }
    if (!this.param.contribuente)
       this.param.contribuente = {};
    if (!this.param.contribuente.tipoContribuente)
