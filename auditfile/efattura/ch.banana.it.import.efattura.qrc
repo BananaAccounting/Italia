@@ -1,0 +1,11 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+    <file>ch.banana.it.import.efattura.js</file>
+    <file>ch.banana.it.import.efattura.rules.js</file>
+    <file>ch.banana.it.import.efattura.settings.js</file>
+    <file>ch.banana.it.import.efattura.qrc</file>
+    <file>converter.json</file>
+    <file>creator.js</file>
+    <file>manifest.json</file>
+ </qresource>
+</RCC>

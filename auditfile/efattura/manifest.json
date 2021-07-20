@@ -3,7 +3,7 @@
     "country":"italy",
     "countryCode":"it",
     "description": "[BETA] Importazione fatture elettroniche Italia (XML)",
-    "id": "ch.banana.it.efattura.ordinaria.v12",
+    "id": "ch.banana.it.import.efattura",
     "language":"it",
     "publisher": "Banana.ch",
     "title": "[BETA] Importazione fatture elettroniche Italia (XML)",

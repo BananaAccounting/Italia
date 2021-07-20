@@ -1,13 +1,13 @@
 {
 	"country":"italy",
 	"countryCode":"it",
-	"description": "Importazione fattura elettronica ordinaria v1.2",
+	"description": "Importazione e-fatture ordinarie v1.2 (xml)",
 	"docUri": "",
 	"fileExtension": "xml",
 	"mimeType": "text/xml",
 	"script": {
 		"function": "exec",
-		"uri": "ch.banana.it.efattura.ordinaria.v12.sbaa/creator.js"
+		"uri": "ch.banana.it.import.efattura.sbaa/creator.js"
 	},
 	"xml": {
 		"namespace": "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2",

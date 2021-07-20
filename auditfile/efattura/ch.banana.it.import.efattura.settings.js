@@ -12,36 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// @id = creator
+// @id = ch.banana.it.import.efattura.settings
 // @api = 1.0
-// @pubdate = 2021-06-22
+// @pubdate = 2021-02-10
 // @publisher = Banana.ch SA
-// @description = Converter script
-// @task = none
+// @description = Impostazioni...
+// @description.it = Impostazioni...
 // @doctype = *
+// @task = app.command
+// @inputdatasource = none
+// @timeout = -1
+// @includejs = ch.banana.it.import.efattura.js
 
-function exec(inData) {
-
-var jsonData = {
-	"fileType": {
-		"accountingType" : {
-			"docGroup" : "100",
-			"docApp" : "110",
-			"decimals" : "2"
-			
-		},
-		"template" : "",
-	},
-	"scriptImport": {
-		"function": "exec",
-		"uri": "ch.banana.it.import.efattura.sbaa/ch.banana.it.import.efattura"
-	},		
-	"scriptSetup": {
-		"function": "setup",
-		"uri": "ch.banana.it.import.efattura.sbaa/ch.banana.it.import.efattura"
-	},		
-};
-	
-return jsonData;
-
+function exec(inData, options) {
+    if (Banana.document) {
+        settingsDialog();
+    }
 }
