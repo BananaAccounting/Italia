@@ -66,12 +66,12 @@ ImportRules.prototype.loadRules = function (filename) {
     Banana.console.debug("-----" + filename);
     var file = Banana.IO.getLocalFile(filename);
     if (file && file.errorString) {
-        Banana.console.info(file.errorString);
+        Banana.console.debug(file.errorString);
         return '';
     }
     let fileContent = file.read();
     if (file && file.errorString) {
-        Banana.console.info(file.errorString);
+        Banana.console.debug(file.errorString);
         return '';
     }
     Banana.console.debug("fileContent: " + fileContent);

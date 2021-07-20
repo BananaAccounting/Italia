@@ -59,7 +59,7 @@ function exec(inData) {
     documentChange["data"] = eFatturaImport.jsonDocArray;
 
     //TO DEBUG SHOW THE INTERMEDIARY TEXT
-    Banana.Ui.showText(JSON.stringify(documentChange, null, 3));
+    //Banana.Ui.showText(JSON.stringify(documentChange, null, 3));
 
     //si può ritornare l'oggetto json oppure la stringa
     //return JSON.stringify(documentChange, null, 3);
