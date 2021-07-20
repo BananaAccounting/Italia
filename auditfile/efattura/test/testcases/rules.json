@@ -1,0 +1,26 @@
+[
+{
+    "ruleName": "V0_N21",
+    "ruleDescription": "Codice IVA V0 codice natura N2.1",
+    "ruleConditions": [
+        { "column": "vatRate", "condition": "equal", "value": "0" },
+        { "column": "vatExtraInfo", "condition": "equal", "value": "N2.1" }
+    ],
+    "isAndRule": true,
+    "ruleActions": [
+        { "action": "set", "column": "vatCode", "value": "V0" }
+    ]
+},
+{
+    "ruleName": "V22",
+    "ruleDescription": "Codice IVA V22",
+    "ruleConditions": [
+        { "column": "vatRate", "condition": "equal", "value": "22" },
+        { "column": "description", "condition": "contains", "value": "Bianchetti" }
+    ],
+    "isAndRule": true,
+    "ruleActions": [
+        { "action": "set", "column": "vatCode", "value": "V22" }
+    ]
+}
+]
