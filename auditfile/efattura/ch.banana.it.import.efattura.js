@@ -14,9 +14,9 @@
 //
 // @id = ch.banana.it.import.efattura
 // @api = 1.0
-// @pubdate = 2021-06-22
+// @pubdate = 2021-07-26
 // @publisher = Banana.ch SA
-// @description = Importa...
+// @description = Importa e-fatture (*.xml)...
 // @task = import.file
 // @doctype = *
 // @docproperties =
@@ -37,26 +37,28 @@ function exec(inData) {
         return "@Cancel";
 
     //inData contiene i dati delle fatture in formato XML
-    var jsonData = {};
+    var xmlData = {};
     try {
-        jsonData = JSON.parse(inData);
+        xmlData = JSON.parse(inData);
     }
     catch (e) {
-        jsonData[0] = inData;
+        xmlData[0] = inData;
     }
 
-    if (!jsonData)
+    if (!xmlData)
         return "@Cancel";
 
     var savedParam = Banana.document.getScriptSettings("import_efattura");
     if (savedParam.length > 0) {
         eFatturaImport.setParam(JSON.parse(savedParam));
     }
-    eFatturaImport.load();
-    eFatturaImport.createJsonDocument(jsonData);
+
+    var jsonData = eFatturaImport.createJsonDocument(xmlData);
+    if (eFatturaImport.param.applyRules)
+        jsonData = eFatturaImport.applyRules(jsonData);
 
     var documentChange = { "format": "documentChange", "error": "" };
-    documentChange["data"] = eFatturaImport.jsonDocArray;
+    documentChange["data"] = jsonData;
 
     //TO DEBUG SHOW THE INTERMEDIARY TEXT
     //Banana.Ui.showText(JSON.stringify(documentChange, null, 3));
@@ -64,7 +66,6 @@ function exec(inData) {
     //si può ritornare l'oggetto json oppure la stringa
     //return JSON.stringify(documentChange, null, 3);
     return documentChange;
-
 }
 
 /*Update script's parameters*/
@@ -121,9 +122,11 @@ function EFatturaImport(banDocument) {
     //parametri che l'utente può modificare tramite dialogo
     this.initParam();
 }
-EFatturaImport.prototype.applyFilter = function () {
+
+EFatturaImport.prototype.applyRules = function (jsonData) {
     var importRules = new ImportRules(this.banDocument);
-    importRules.loadRules(this.param.filenameRules);
+    importRules.load(this.param.filenameRules);
+    return importRules.apply(jsonData);
 }
 
 EFatturaImport.prototype.convertParam = function (param) {
@@ -132,17 +135,6 @@ EFatturaImport.prototype.convertParam = function (param) {
     convertedParam.version = '1.0';
     /*array dei parametri dello script*/
     convertedParam.data = [];
-
-    /*var currentParam = {};
-    currentParam.name = 'default_vatrates';
-    currentParam.title = 'Default VAT Rates';
-    currentParam.type = 'string';
-    currentParam.tooltip = 'Format: VatRate=VatCode Example: 10%=AUTO_10;22%=AUTO_22;';
-    currentParam.value = param['default_vatrates'] ? param['default_vatrates'] : '';
-    currentParam.readValue = function () {
-        param['default_vatrates'] = this.value;
-    }
-    convertedParam.data.push(currentParam);*/
 
     var currentParam = {};
     currentParam.name = 'applyRules';
@@ -164,16 +156,6 @@ EFatturaImport.prototype.convertParam = function (param) {
     }
     convertedParam.data.push(currentParam);
 
-    currentParam = {};
-    currentParam.name = 'show_dialog_commit';
-    currentParam.title = 'show commit dialog';
-    currentParam.type = 'bool';
-    currentParam.value = param.show_dialog_commit ? true : false;
-    currentParam.readValue = function () {
-        param.show_dialog_commit = this.value;
-    }
-    convertedParam.data.push(currentParam);
-
     return convertedParam;
 }
 
@@ -181,7 +163,7 @@ EFatturaImport.prototype.convertParam = function (param) {
   e li trasforma in formato json per essere importati nella tabella Registrazioni
 */
 EFatturaImport.prototype.createJsonDocument = function (inData) {
-    this.applyFilter();
+    this.load();
     for (var srcFileName in inData) {
         //seleziona singolo file xml
         var xmlFile = Banana.Xml.parse(inData[srcFileName]);
@@ -192,7 +174,7 @@ EFatturaImport.prototype.createJsonDocument = function (inData) {
             continue;
 
         var jsonDoc = this.createJsonDocument_Init();
-        //aggiunge/aggiorna i clienti nella tabella conti
+        //aggiunge/aggiorna i clienti/fornitori nella tabella conti
         var accountId = this.createJsonDocument_AddAccount(jsonDoc, xmlRoot, srcFileName);
         if (accountId.length <= 0)
             continue;
@@ -203,6 +185,7 @@ EFatturaImport.prototype.createJsonDocument = function (inData) {
         //Banana.console.debug(JSON.stringify(jsonDoc, null, 3));
         this.jsonDocArray.push(jsonDoc);
     }
+    return this.jsonDocArray;
 }
 
 
@@ -262,7 +245,6 @@ EFatturaImport.prototype.createJsonDocument_AddAccount = function (jsonDoc, xmlR
         partitaIva = accountNode.firstChildElement('DatiAnagrafici').firstChildElement('IdFiscaleIVA').firstChildElement('IdCodice').text.trim();
     if (accountNode.firstChildElement('DatiAnagrafici').firstChildElement('CodiceFiscale'))
         codiceFiscale = accountNode.firstChildElement('DatiAnagrafici').firstChildElement('CodiceFiscale').text.trim();
-
     var divisa = "";
     var datiGeneraliDocNode = xmlRoot.firstChildElement('FatturaElettronicaBody').firstChildElement('DatiGenerali').firstChildElement('DatiGeneraliDocumento');
     if (datiGeneraliDocNode) {
@@ -345,7 +327,7 @@ EFatturaImport.prototype.createJsonDocument_AddAccount = function (jsonDoc, xmlR
                 operationName = "modify";
         }
     }
-    if (divisa.length > 0) {
+    if (divisa.length > 0 && this.accountingInfo.multiCurrency) {
         if (operationName == "add" || this.accounts[accountId].Currency != divisa) {
             row.fields["Currency"] = divisa;
             if (operationName.length <= 0)
@@ -511,15 +493,15 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
             if (this.accountingInfo.isDoubleEntry) {
                 if (signTaxableAmount >= 0) {
                     if (isCustomer)
-                        row.fields["AccountCredit"] = "[CTRACCOUNT]";
+                        row.fields["AccountCredit"] = "[CTRPCLIENTE]";
                     else
-                        row.fields["AccountDebit"] = "[CTRACCOUNT]";
+                        row.fields["AccountDebit"] = "[CTRPFORNITORE]";
                 }
                 else {
                     if (isCustomer)
-                        row.fields["AccountDebit"] = "[CTRACCOUNT]";
+                        row.fields["AccountDebit"] = "[CTRPLIENTE]";
                     else
-                        row.fields["AccountCredit"] = "[CTRACCOUNT]";
+                        row.fields["AccountCredit"] = "[CTRPFORNITORE]";
                     taxableAmount = Banana.SDecimal.invert(taxableAmount);
                 }
                 if (this.accountingInfo.multiCurrency) {
@@ -541,15 +523,17 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
                 }
             }
 
-            var vatRate = Banana.SDecimal.round(datiRiepilogoNode.firstChildElement('AliquotaIVA').text, { 'decimals': 2 });
+            var vatRate = "";
             var codiceNatura = "";
+            if (datiRiepilogoNode.firstChildElement('AliquotaIVA'))
+                vatRate = datiRiepilogoNode.firstChildElement('AliquotaIVA').text;
             if (datiRiepilogoNode.firstChildElement('Natura'))
                 codiceNatura = datiRiepilogoNode.firstChildElement('Natura').text;
             var vatCode = this.getVatCode(accountId, vatRate, codiceNatura);
             if (signTaxableAmount < 0)
                 vatCode = "-" + vatCode;
             row.fields["VatCode"] = vatCode;
-            row.fields["VatAmountType"] = "1";
+            // row.fields["VatAmountType"] = "";
 
             var rowLists = jsonDoc.document.dataUnits["1"].data.rowLists[0];
             var index = parseInt(rowLists.rows.length);
@@ -620,7 +604,7 @@ EFatturaImport.prototype.createJsonDocument_Init = function () {
     return jsonDoc;
 }
 
-/*cerca in this.accounts se esiste il cliente in base al codice fiscale o partita iva)*/
+/*cerca in this.accounts se esiste il cliente in base alla partita iva o codice fiscale)*/
 EFatturaImport.prototype.getAccountId = function (xmlNode) {
     if (!xmlNode || !xmlNode.firstChildElement('DatiAnagrafici'))
         return "";
@@ -636,16 +620,16 @@ EFatturaImport.prototype.getAccountId = function (xmlNode) {
         nazione = xmlNode.firstChildElement('DatiAnagrafici').firstChildElement('IdFiscaleIVA').firstChildElement('IdPaese').text;
 
     for (var accountId in this.accounts) {
-        if (partitaIva.length > 0 && this.accounts[accountId].VatNumber == partitaIva) {
+        if (partitaIva.length > 0 && this.accounts[accountId].VatNumber === partitaIva) {
             return accountId;
         }
-        if (codiceFiscale.length > 0 && this.accounts[accountId].FiscalNumber == codiceFiscale) {
+        if (codiceFiscale.length > 0 && this.accounts[accountId].FiscalNumber === codiceFiscale) {
             return accountId;
         }
     }
 
     //se non trova con partita iva e codice fiscale cerca con nome, cognome e paese
-    var nome = "", cognome = "", denominazione = "", comune = "";
+    /*var nome = "", cognome = "", denominazione = "", comune = "";
     if (xmlNode.firstChildElement('DatiAnagrafici').firstChildElement('Anagrafica').firstChildElement('Nome'))
         nome = xmlNode.firstChildElement('DatiAnagrafici').firstChildElement('Anagrafica').firstChildElement('Nome').text.trim().toLowerCase();
     if (xmlNode.firstChildElement('DatiAnagrafici').firstChildElement('Anagrafica').firstChildElement('Cognome'))
@@ -659,33 +643,40 @@ EFatturaImport.prototype.getAccountId = function (xmlNode) {
         if (nome == this.accounts[accountId].FirstName.trim().toLowerCase() && cognome == this.accounts[accountId].FamilyName.trim().toLowerCase() &&
             denominazione == this.accounts[accountId].OrganisationName.trim().toLowerCase() && comune == this.accounts[accountId].Locality.trim().toLowerCase())
             return accountId;
-    }
+    }*/
 
     return "";
 }
 
 EFatturaImport.prototype.getAccountIdNew = function (isCustomer) {
 
-    var lastCustomerId = this.customerIdCounter;
-    var lastSupplierId = this.supplierIdCounter;
+    var accountIdNew = "";
     var gr = "";
     var sequence = "";
     for (var accountId in this.accounts) {
-        if (parseInt(accountId) > lastCustomerId && this.accounts[accountId].isCustomer) {
-            lastCustomerId = parseInt(accountId);
+        if (parseInt(accountId) > accountIdNew && this.accounts[accountId].isCustomer) {
+            accountIdNew = parseInt(accountId);
             gr = this.accounts[accountId].Gr;
             sequence = this.accounts[accountId].sequence;
         }
-        else if (parseInt(accountId) > lastSupplierId && !this.accounts[accountId].isCustomer) {
-            lastSupplierId = parseInt(accountId);
+        else if (parseInt(accountId) > accountIdNew && !this.accounts[accountId].isCustomer) {
+            accountIdNew = parseInt(accountId);
             gr = this.accounts[accountId].Gr;
             sequence = this.accounts[accountId].sequence;
         }
     }
 
-    var accountId = lastSupplierId;
-    if (isCustomer) {
-        accountId = lastCustomerId;
+    if (parseInt(accountIdNew) > 0) {
+        accountIdNew = parseInt(accountIdNew) + 1;
+
+    }
+    if (accountIdNew.length <= 0 && isCustomer) {
+        accountIdNew = this.customerIdCounter;
+        this.customerIdCounter = parseInt(this.customerIdCounter) + 1;
+    }
+    else if (accountIdNew.length <= 0 && !isCustomer) {
+        accountIdNew = this.supplierIdCounter;
+        this.supplierIdCounter = parseInt(this.supplierIdCounter + 1);
     }
 
     if (gr.length <= 0) {
@@ -697,7 +688,7 @@ EFatturaImport.prototype.getAccountIdNew = function (isCustomer) {
         }
         else {
             //crea il gruppo clienti/fornitori se non esiste
-            var tableAccounts = this.banDocument.table('Accounts');
+            /*var tableAccounts = this.banDocument.table('Accounts');
             if (tableAccounts)
                 sequence = tableAccounts.rowCount;
             gr = "FOR";
@@ -733,17 +724,17 @@ EFatturaImport.prototype.getAccountIdNew = function (isCustomer) {
             var rowLists = jsonDoc.document.dataUnits["3"].data.rowLists[0];
             var index = parseInt(rowLists.rows.length);
             rowLists.rows[index.toString()] = row;
-            this.jsonDocArray.unshift(jsonDoc);
+            this.jsonDocArray.unshift(jsonDoc);*/
         }
     }
 
-    accountId = accountId.toString();
-    this.accounts[accountId] = {};
-    this.accounts[accountId].Gr = gr;
-    this.accounts[accountId].sequence = sequence + ".1";
-    this.accounts[accountId].isCustomer = isCustomer;
-    this.accounts[accountId].isSupplier = !isCustomer;
-    return accountId;
+    accountIdNew = accountIdNew.toString();
+    this.accounts[accountIdNew] = {};
+    this.accounts[accountIdNew].Gr = gr;
+    this.accounts[accountIdNew].sequence = sequence + ".1";
+    this.accounts[accountIdNew].isCustomer = isCustomer;
+    this.accounts[accountIdNew].isSupplier = !isCustomer;
+    return accountIdNew;
 }
 
 EFatturaImport.prototype.getErrorMessage = function (errorId) {
@@ -770,30 +761,28 @@ EFatturaImport.prototype.getErrorMessage = function (errorId) {
 }
 
 EFatturaImport.prototype.getVatCode = function (accountId, vatRate, codiceNatura) {
-    if (!this.vatRates)
-        return "";
 
-    //cerca il codice iva associato all'aliquota iva
-    //Banana.console.debug(accountId + " " + vatRate + " " + codiceNatura);
+    //crea un codice IVA fittizio che può essere aggiornato tramite rules.json
+    //il codice IVA è composto dall'aliquota e dal codice natura, ad esempio [A0_N2] per acquisti 0% codice natura N2
+    //è incluso tra parentesi quadre, in modo che non dia errore nel caso non venga sostituito da rules.json
+    let isCustomer = this.accounts[accountId].isCustomer;
+    let vatCode = Banana.SDecimal.round(vatRate, { 'decimals': 2 });
     if (codiceNatura.length > 0) {
-        if (this.vatRates.hasOwnProperty(codiceNatura.toLowerCase()))
-            //Banana.console.debug("found codicenatura " + codiceNatura + " returned " + this.vatRates[codiceNatura.toLowerCase()]);
-            return this.vatRates[codiceNatura.toLowerCase()];
+        vatCode += "_" + codiceNatura;
     }
-
-    if (this.vatRates.hasOwnProperty(vatRate))
-        return this.vatRates[vatRate];
-
-    return "";
+    //V=IVA sulle vendite, A=IVA sugli acquisti
+    if (isCustomer)
+        vatCode = "[V" + vatCode + "]";
+    else
+        vatCode = "[A" + vatCode + "]";
+    return vatCode;
 }
 
 EFatturaImport.prototype.initParam = function () {
     this.param = {};
     this.param.version = "1.0";
-    this.param.applyRules = false;
+    this.param.applyRules = true;
     this.param.filenameRules = 'rules.json';
-    // this.param.default_vatrates = '0%=AUTO_0;4%=AUTO_4;5%=AUTO_5;10%=AUTO_10;22%=AUTO_22;';
-    this.param.show_dialog_commit = true;
 }
 
 /*
@@ -825,7 +814,6 @@ EFatturaImport.prototype.isCustomer = function (invoiceNode) {
 EFatturaImport.prototype.load = function () {
     this.loadAccountingInfo();
     this.loadAccounts();
-    this.loadVatCodes();
     /*Banana.console.log("---------------- accounts ---------------- ");
     Banana.console.log(JSON.stringify(this.accounts));*/
 
@@ -900,12 +888,12 @@ EFatturaImport.prototype.loadAccounts = function () {
         var accountId = tRow.value('Account');
         if (!accountId)
             continue;
-        var groupId = tRow.value('Group');
+        // var groupId = tRow.value('Group');
         var grId = tRow.value('Gr');
         var vatNumber = tRow.value('VatNumber');
-
-        //commentato perché chiamata ad accountIsSupplier rallenta troppo lo script
-        //e l'elenco dei fornitori non è aggiornato perché il giornale non viene ricalcolato tra l'esecuzione di più scripts
+        var fiscalNumber = tRow.value('FiscalNumber');
+        //commentato perché il metodo accountIsSupplier() rallenta troppo lo script
+        //inoltre l'elenco dei fornitori non è aggiornato perché il giornale non viene ricalcolato tra l'esecuzione di più scripts
         /*var grSupplier = this.banDocument.accountIsSupplier(accountId);
         if (grSupplier.length <= 0)
             continue;*/
@@ -924,17 +912,13 @@ EFatturaImport.prototype.loadAccounts = function () {
         jsonObj.sequence = i;
         jsonObj.isCustomer = addAsCustomer;
         jsonObj.isSupplier = addAsSupplier;
-        /*for (var key in jsonObj) {
-           if (jsonObj[key].length > 0)
-              jsonObj[key] = xml_escapeString(jsonObj[key]);
-        }*/
         this.accounts[accountId] = jsonObj;
     }
 }
 
-EFatturaImport.prototype.loadVatCodes = function () {
-    //riprende i codici iva dai parametri dello script
-    //se non esistono nel file ac2 crea i codici nella tabella codici IVA
+/*EFatturaImport.prototype.loadVatCodes = function () {
+    //imposta dei codici IVA predefiniti
+    //se non esistono li aggiunge nella tabella codici IVA
     let default_vatrates = '0%=AUTO_0;4%=AUTO_4;5%=AUTO_5;10%=AUTO_10;22%=AUTO_22;';
     default_vatrates = default_vatrates.split(";");
 
@@ -1033,8 +1017,7 @@ EFatturaImport.prototype.loadVatCodes = function () {
 
     if (changedJsonDoc)
         this.jsonDocArray.unshift(jsonDoc);
-
-}
+}*/
 
 EFatturaImport.prototype.setParam = function (param) {
     if (param && typeof (param) === 'object') {
@@ -1082,7 +1065,5 @@ EFatturaImport.prototype.verifyParam = function () {
     if (!this.param.filenameRules)
         this.param.filenameRules = '';
 
-    if (this.param.show_dialog_commit === undefined)
-        this.param.show_dialog_commit = true;
 }
 
