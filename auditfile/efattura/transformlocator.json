@@ -7,10 +7,12 @@
 	"mimeType": "text/xml",
 	"script": {
 		"function": "exec",
-		"uri": "ch.banana.it.import.efattura.sbaa/creator.js"
+		"uri": "ch.banana.it.import.efattura.sbaa/transforminitiator.js"
 	},
 	"xml": {
 		"namespace": "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2",
 		"rootItem": "FatturaElettronica"
-	}
+	},
+	"type": "text/json",
+	"version": "1.0"
 }

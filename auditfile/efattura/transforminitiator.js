@@ -14,10 +14,10 @@
 //
 // @id = creator
 // @api = 1.0
-// @pubdate = 2021-06-22
+// @pubdate = 2021-07-28
 // @publisher = Banana.ch SA
-// @description = Converter script
-// @task = none
+// @description = Transform initiator
+// @task = transform.initiator
 // @doctype = *
 
 function exec(inData) {

@@ -98,20 +98,20 @@ ImportRules.prototype.applyConditions = function (rule, row) {
 ImportRules.prototype.load = function (filename) {
     //carica il file contenente le regole per aggiornare i dati da importare
     this.jsonRules = '';
-    if (!filename)
-        return '';
 
     var file = Banana.IO.getLocalFile(filename);
-    if (file && file.errorString) {
-        Banana.console.info(file.errorString);
-        return '';
+    if (file) {
+        let fileContent = file.read();
+        if (!file.errorString) {
+            this.jsonRules = JSON.parse(fileContent);
+        }
+        else {
+            Banana.console.log(file.errorString);
+        }
     }
-    let fileContent = file.read();
-    if (file && file.errorString) {
-        Banana.console.info(file.errorString);
-        return '';
+    else {
+        Banana.console.log("Error opening local file " + filename);
     }
-    this.jsonRules = JSON.parse(fileContent);
 }
 
 /*let rule = {

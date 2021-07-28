@@ -125,7 +125,9 @@ function EFatturaImport(banDocument) {
 
 EFatturaImport.prototype.applyRules = function (jsonData) {
     var importRules = new ImportRules(this.banDocument);
-    importRules.load(this.param.filenameRules);
+    let filename = "documents:" + this.param.filenameRules;
+    Banana.console.debug(filename);
+    importRules.load(filename);
     return importRules.apply(jsonData);
 }
 
