@@ -86,14 +86,18 @@ function exec(inData, options) {
             progressBar.setText("validazione file XML in corso..." + i.toString());
          var xsdFileName = eFattura.getXsdFileName();
          if (xsdFileName.length) {
+            let noFattura = eFattura.readNoFattura(xmlContent);
             var result = Banana.Xml.validate(Banana.Xml.parse(xmlContent), xsdFileName);
             if (!result) {
                var msg = eFattura.getErrorMessage(eFattura.ID_ERR_XML_FILE_NONVALIDO);
-               msg = msg.replace("%1", Banana.Xml.errorString);
+               msg = msg.replace("%1", noFattura);
+               msg = msg.replace("%2", Banana.Xml.errorString);
                Banana.document.addMessage(msg, eFattura.ID_ERR_XML_FILE_NONVALIDO);
             }
             else {
-               Banana.console.info("Validazione file XML eseguita con successo.");
+               var msg = eFattura.getErrorMessage(eFattura.ID_ERR_XML_FILE_VALIDO);
+               msg = msg.replace("%1", noFattura);
+               Banana.console.log(msg);
             }
          }
       }
@@ -166,6 +170,7 @@ function EFattura(banDocument) {
    this.ID_ERR_VERSION = "ID_ERR_VERSION";
    this.ID_ERR_VERSION_NOTSUPPORTED = "ID_ERR_VERSION_NOTSUPPORTED";
    this.ID_ERR_XML_FILE_NONVALIDO = "ID_ERR_XML_FILE_NONVALIDO";
+   this.ID_ERR_XML_FILE_VALIDO = "ID_ERR_XML_FILE_VALIDO";
    this.ID_ERR_XML_FORMATO_NONVALIDO = "ID_ERR_XML_FORMATO_NONVALIDO";
    this.ID_ERR_XML_LUNGHEZZA_NONVALIDA = "ID_ERR_XML_LUNGHEZZA_NONVALIDA";
    this.ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA = "ID_ERR_XML_LUNGHEZZAMIN_NONVALIDA";
@@ -1168,9 +1173,15 @@ EFattura.prototype.getErrorMessage = function (errorId) {
    }
    else if (errorId == this.ID_ERR_XML_FILE_NONVALIDO) {
       if (lang == 'it')
-         rtnMsg = "File trasmissione non valido: %1";
+         rtnMsg = "Errore nella validazione della fattura numero %1.\n%2";
       else
-         rtnMsg = "Not valid transmission file: %1";
+         rtnMsg = "Error validating invoice number %1.\n%2";
+   }
+   else if (errorId == this.ID_ERR_XML_FILE_VALIDO) {
+      if (lang == 'it')
+         rtnMsg = "Validazione fattura numero %1 eseguita con successo";
+      else
+         rtnMsg = "Validation of invoice number %1 was successful";
    }
    else if (errorId == this.ID_ERR_XML_FORMATO_NONVALIDO) {
       if (lang == 'it')
@@ -1311,7 +1322,7 @@ EFattura.prototype.initParam = function () {
    this.param.xml.open_file = false;
    this.param.xml.validate_file = false;
    this.param.xml.xslt_filename = '';
-   this.param.xml.xsd_filename = '';
+   this.param.xml.xsd_filename = 'Schema_del_file_xml_FatturaPA_versione_1.2.1.xsd';
 }
 
 EFattura.prototype.initSchemarefs = function () {
@@ -1487,6 +1498,23 @@ EFattura.prototype.readAccountingData = function (param) {
       param.closureYear = param.accountingClosureDate.substring(0, 4);
 
    return param;
+}
+
+EFattura.prototype.readNoFattura = function (xmlSource) {
+   let noFattura = '';
+   let xml = Banana.Xml.parse(xmlSource);
+   if (!xml)
+      return noFattura;
+   let xmlRoot = xml.firstChildElement();
+   if (!xmlRoot)
+      return noFattura;
+   let invoiceNode = xmlRoot.firstChildElement('FatturaElettronicaBody');
+   if (invoiceNode) {
+      let datiGeneraliDocumento = invoiceNode.firstChildElement('DatiGenerali').firstChildElement('DatiGeneraliDocumento');
+      if (datiGeneraliDocumento)
+         noFattura = datiGeneraliDocumento.firstChildElement('Numero').text;
+   }
+   return noFattura;
 }
 
 EFattura.prototype.saveFile = function (output, fileExtension) {

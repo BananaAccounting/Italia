@@ -4,5 +4,6 @@
 		<file>ch.banana.it.efattura.b2b.js</file>
         <file>ch.banana.it.efattura.b2b.contribuente.js</file>
         <file>ch.banana.it.efattura.b2b.xml.js</file>
+        <file>Schema_del_file_xml_FatturaPA_versione_1.2.1.xsd</file>
 	</qresource>
 </RCC>
