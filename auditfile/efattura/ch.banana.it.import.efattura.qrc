@@ -4,8 +4,8 @@
     <file>ch.banana.it.import.efattura.rules.js</file>
     <file>ch.banana.it.import.efattura.settings.js</file>
     <file>ch.banana.it.import.efattura.qrc</file>
-    <file>transformlocator.json</file>
-    <file>transforminitiator.js</file>
+    <file>createinit.js</file>
+    <file>createlocate.json</file>
     <file>manifest.json</file>
  </qresource>
 </RCC>

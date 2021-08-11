@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// @id = creator
+// @id = createinit
 // @api = 1.0
 // @pubdate = 2021-07-28
 // @publisher = Banana.ch SA
-// @description = Transform initiator
-// @task = transform.initiator
+// @description = Create Init for importing Italy's XML Invoices
+// @task = create.init
 // @doctype = *
 
 function exec(inData) {
