@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.import.efattura
 // @api = 1.0
-// @pubdate = 2021-07-26
+// @pubdate = 2021-09-08
 // @publisher = Banana.ch SA
 // @description = Importa e-fatture (*.xml)...
 // @task = import.file
@@ -125,10 +125,10 @@ function EFatturaImport(banDocument) {
 
 EFatturaImport.prototype.applyRules = function (jsonData) {
     var importRules = new ImportRules(this.banDocument);
-    let filename = "documents:" + this.param.filenameRules;
-    Banana.console.debug(filename);
-    importRules.load(filename);
-    return importRules.apply(jsonData);
+    let documentName = this.param.filenameRules;
+    if (importRules.loadDocument(documentName))
+        return importRules.apply(jsonData);
+    return jsonData;
 }
 
 EFatturaImport.prototype.convertParam = function (param) {
@@ -1035,7 +1035,7 @@ EFatturaImport.prototype.verifyBananaVersion = function () {
         return false;
 
     //Banana+ is required
-    var requiredVersion = "10.0.9";
+    var requiredVersion = "10.0.10";
     if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
         var msg = this.getErrorMessage(this.ID_ERR_VERSION_NOTSUPPORTED);
         msg = msg.replace("%1", requiredVersion);

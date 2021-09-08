@@ -95,6 +95,26 @@ ImportRules.prototype.applyConditions = function (rule, row) {
     return acceptRow;
 }
 
+ImportRules.prototype.loadDocument = function (documentName) {
+    //carica il documento con le regole dalla tabella documents
+    if (documentName.length <= 0)
+        return false;
+    var documentsTable = Banana.document.table("Documents");
+    if (documentsTable) {
+        var fileContent = documentsTable.findRowByValue("RowId", documentName).value("Attachments");
+        if (fileContent) {
+            try {
+                this.jsonRules = JSON.parse(fileContent);
+                return true;
+            }
+            catch (e) {
+                Banana.console.info("Error parsing document " + documentName + ": " + e);
+            }
+        }
+    }
+    return false;
+}
+
 ImportRules.prototype.load = function (filename) {
     //carica il file contenente le regole per aggiornare i dati da importare
     this.jsonRules = '';
