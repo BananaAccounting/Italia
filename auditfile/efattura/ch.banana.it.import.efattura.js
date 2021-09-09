@@ -818,24 +818,22 @@ EFatturaImport.prototype.initParam = function () {
  * (cod.fiscale del cessionario/committente corrisponde al cod.fiscale dei dati base della contabilità)
 */
 EFatturaImport.prototype.isCustomer = function (invoiceNode) {
-    return true;
     if (!this.accountingInfo)
         return false;
 
-    let fiscalNumberAccounting = this.accountingInfo.fiscalNumber;
-    if (!fiscalNumberAccounting)
+    let vatNumberAccounting = this.accountingInfo.vatNumber;
+    if (!vatNumberAccounting)
         return false;
 
     var accountNode = invoiceNode.firstChildElement('CedentePrestatore');
     if (!accountNode || !accountNode.firstChildElement('DatiAnagrafici'))
         return false;
 
-    if (accountNode.firstChildElement('DatiAnagrafici').firstChildElement('CodiceFiscale')) {
-        let fiscalNumber = accountNode.firstChildElement('DatiAnagrafici').firstChildElement('CodiceFiscale').text;
-        Banana.console.debug("fiscalNumberAccounting " + fiscalNumberAccounting);
-        Banana.console.debug("fiscalNumber " + fiscalNumber);
-        if (fiscalNumberAccounting === fiscalNumber)
+    if (accountNode.firstChildElement('DatiAnagrafici').firstChildElement('IdFiscaleIVA').firstChildElement('IdCodice')) {
+        let vatNumber = accountNode.firstChildElement('DatiAnagrafici').firstChildElement('IdFiscaleIVA').firstChildElement('IdCodice').text;
+    if (vatNumberAccounting === vatNumber) {
             return true;
+        }
     }
     return false;
 }
