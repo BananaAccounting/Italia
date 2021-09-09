@@ -86,7 +86,7 @@ function settingsDialog() {
 
     var dialogTitle = 'Settings';
     var convertedParam = eFatturaImport.convertParam(eFatturaImport.param);
-    var pageAnchor = 'dlgSettings';
+    var pageAnchor = 'ch.banana.it.import.efattura';
     if (!Banana.Ui.openPropertyEditor(dialogTitle, convertedParam, pageAnchor))
         return false;
     for (var i = 0; i < convertedParam.data.length; i++) {
@@ -119,6 +119,8 @@ function EFatturaImport(banDocument) {
     this.customerIdCounter = 10000;
     //numerazione iniziale conti fornitori
     this.supplierIdCounter = 20000;
+    // elenco numeri fatture già registrate per controllare i duplicati
+    this.docInvoices = [];
     //parametri che l'utente può modificare tramite dialogo
     this.initParam();
 }
@@ -150,11 +152,21 @@ EFatturaImport.prototype.convertParam = function (param) {
 
     currentParam = {};
     currentParam.name = 'filenameRules';
-    currentParam.title = 'File con regole';
+    currentParam.title = 'Documento con le regole';
     currentParam.type = 'string';
     currentParam.value = param.filenameRules ? param.filenameRules : '';
     currentParam.readValue = function () {
         param.filenameRules = this.value;
+    }
+    convertedParam.data.push(currentParam);
+
+    currentParam = {};
+    currentParam.name = 'checkDuplicated';
+    currentParam.title = 'Controlla fatture già importate';
+    currentParam.type = 'bool';
+    currentParam.value = param.checkDuplicated ? param.checkDuplicated : '';
+    currentParam.readValue = function () {
+        param.checkDuplicated = this.value;
     }
     convertedParam.data.push(currentParam);
 
@@ -395,8 +407,9 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
     var i = 0;
     while (invoiceNode) {
         var datiGeneraliDocumento = invoiceNode.firstChildElement('DatiGenerali').firstChildElement('DatiGeneraliDocumento');
-        if (!datiGeneraliDocumento)
-            continue;
+        if (!datiGeneraliDocumento) {
+            break;
+        }
         var dataFattura = datiGeneraliDocumento.firstChildElement('Data').text;
         dataFattura = dataFattura.replace(new RegExp('-', 'g'), '');
         //dataFattura = Banana.Converter.toInternalDateFormat(dataFattura, "yyyy-mm-dd");
@@ -414,6 +427,15 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
 
         var divisa = datiGeneraliDocumento.firstChildElement('Divisa').text;
         var noFattura = datiGeneraliDocumento.firstChildElement('Numero').text;
+
+        // controlla se la fattura è già stata importata
+        if (this.param.checkDuplicated) {
+            var key = noFattura + "_" + dataFattura;
+            if (this.docInvoices.indexOf(key) >= 0) {
+                Banana.console.info("fattura già importata " + noFattura + " " + dataFattura);
+                break;
+            }
+        }
 
         var d = new Date();
         var dataOggi = d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2);
@@ -785,6 +807,8 @@ EFatturaImport.prototype.initParam = function () {
     this.param.version = "1.0";
     this.param.applyRules = true;
     this.param.filenameRules = 'rules.json';
+    // controlla se i numeri fattura sono già stati importati
+    this.param.checkDuplicated = true;
 }
 
 /*
@@ -816,6 +840,7 @@ EFatturaImport.prototype.isCustomer = function (invoiceNode) {
 EFatturaImport.prototype.load = function () {
     this.loadAccountingInfo();
     this.loadAccounts();
+    this.loadExistingInvoices();
     /*Banana.console.log("---------------- accounts ---------------- ");
     Banana.console.log(JSON.stringify(this.accounts));*/
 
@@ -915,6 +940,31 @@ EFatturaImport.prototype.loadAccounts = function () {
         jsonObj.isCustomer = addAsCustomer;
         jsonObj.isSupplier = addAsSupplier;
         this.accounts[accountId] = jsonObj;
+    }
+}
+
+/*
+ * Ritorna i numeri fattura salvati nella tabella registrazione, per evitare di importare in doppio le fatture
+*/
+EFatturaImport.prototype.loadExistingInvoices = function () {
+    if (!this.banDocument)
+        return;
+
+    var tableTransactions = this.banDocument.table('Transactions');
+    if (!tableTransactions)
+        return;
+
+    this.docInvoices = [];
+    for (i = 0; i < tableTransactions.rowCount; i++) {
+        var tRow = tableTransactions.row(i);
+        var docInvoice = tRow.value('DocInvoice');
+        var date = tRow.value('DateDocument');
+        if (!docInvoice || !date)
+            continue;
+        date = date.replace(new RegExp('-', 'g'), '');
+        var key = docInvoice + "_" + date;
+        if (this.docInvoices.indexOf(key) <= 0)
+            this.docInvoices.push(key);
     }
 }
 
@@ -1066,6 +1116,9 @@ EFatturaImport.prototype.verifyParam = function () {
 
     if (!this.param.filenameRules)
         this.param.filenameRules = '';
+
+    if (!this.param.checkDuplicated)
+        this.param.checkDuplicated = false;
 
 }
 
