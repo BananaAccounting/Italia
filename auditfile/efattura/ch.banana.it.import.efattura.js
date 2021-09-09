@@ -831,6 +831,8 @@ EFatturaImport.prototype.isCustomer = function (invoiceNode) {
 
     if (accountNode.firstChildElement('DatiAnagrafici').firstChildElement('CodiceFiscale')) {
         let fiscalNumber = accountNode.firstChildElement('DatiAnagrafici').firstChildElement('CodiceFiscale').text;
+        Banana.console.debug("fiscalNumberAccounting " + fiscalNumberAccounting);
+        Banana.console.debug("fiscalNumber " + fiscalNumber);
         if (fiscalNumberAccounting === fiscalNumber)
             return true;
     }
