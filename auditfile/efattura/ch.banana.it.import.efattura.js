@@ -818,6 +818,7 @@ EFatturaImport.prototype.initParam = function () {
  * (cod.fiscale del cessionario/committente corrisponde al cod.fiscale dei dati base della contabilità)
 */
 EFatturaImport.prototype.isCustomer = function (invoiceNode) {
+    return true;
     if (!this.accountingInfo)
         return false;
 
