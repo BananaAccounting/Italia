@@ -212,9 +212,9 @@ EFatturaImport.prototype.createJsonDocument_AddAccount = function (jsonDoc, xmlR
 
     var accountNode = null;
     if (isCustomer)
-        accountNode = invoiceNode.firstChildElement('CedentePrestatore');
-    else
         accountNode = invoiceNode.firstChildElement('CessionarioCommittente');
+    else
+        accountNode = invoiceNode.firstChildElement('CedentePrestatore');
 
     if (!accountNode
         || !accountNode.firstChildElement('Sede')
