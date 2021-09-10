@@ -152,7 +152,7 @@ EFatturaImport.prototype.convertParam = function (param) {
 
     currentParam = {};
     currentParam.name = 'filenameRules';
-    currentParam.title = 'Documento con le regole';
+    currentParam.title = 'Documento regole';
     currentParam.type = 'string';
     currentParam.value = param.filenameRules ? param.filenameRules : '';
     currentParam.readValue = function () {
