@@ -162,7 +162,7 @@ EFatturaImport.prototype.convertParam = function (param) {
 
     currentParam = {};
     currentParam.name = 'checkDuplicated';
-    currentParam.title = 'Controlla fatture già importate';
+    currentParam.title = 'Controlla fatture duplicate';
     currentParam.type = 'bool';
     currentParam.value = param.checkDuplicated ? param.checkDuplicated : '';
     currentParam.readValue = function () {
