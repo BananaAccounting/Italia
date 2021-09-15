@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontogestionale.mod.b
 // @api = 1.0
-// @pubdate = 2021-06-02
+// @pubdate = 2021-09-14
 // @publisher = Banana.ch SA
 // @description = 2. Rendiconto gestionale
 // @task = app.command
@@ -100,6 +100,7 @@ function printRendicontoModB(banDoc, userParam, bReport, stylesheet) {
    printRendicontoModB_Title(report, banDoc, userParam);
    printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport);
    printRendicontoModB_Costi_Proventi_Figurativi(report, banDoc, userParam, bReport);
+   printRendicontoModB_Note_Finali(report, userParam);
 
    return report;
 }
@@ -1153,6 +1154,13 @@ function printRendicontoModB_Costi_Proventi_Figurativi(report, banDoc, userParam
    return report;
 }
 
+function printRendicontoModB_Note_Finali(report, userParam) {
+   if (userParam.finalnotes) {
+      report.addParagraph(" ", "");
+      report.addParagraph(userParam.finalnotes, "text-notes");
+   }
+}
+
 
 /**************************************************************************************
  * Styles
@@ -1323,6 +1331,18 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   var currentParam = {};
+   currentParam.name = 'finalnotes';
+   currentParam.parentObject = 'report_group';
+   currentParam.title = 'Note finali';
+   currentParam.type = 'multilinestring';
+   currentParam.value = userParam.finalnotes ? userParam.finalnotes : '';
+   currentParam.defaultvalue = '';
+   currentParam.readValue = function() {
+      userParam.finalnotes = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
@@ -1337,6 +1357,7 @@ function initUserParam() {
    userParam.column = 'Gr1';
    userParam.printcolumn = true;
    userParam.printcostifigurativi = false;
+   userParam.finalnotes = '';
    return userParam;
 }
 

@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2021-06-02
+// @pubdate = 2021-09-14
 // @publisher = Banana.ch SA
 // @description = 1. Stato patrimoniale
 // @task = app.command
@@ -226,6 +226,7 @@ function printRendicontoModA(banDoc, userParam, bReport, stylesheet) {
    printRendicontoModA_Passivo(banDoc, report, userParam, bReport);
    printRendicontoModA_Footer(report);
    checkResults(banDoc, report, bReport);
+   printRendicontoModA_Note_Finali(report, userParam);
 
    return report;
 }
@@ -710,6 +711,13 @@ function printRendicontoModA_Passivo(banDoc, report, userParam, bReport) {
    printRow(userParam, bReport, table, "P", "description-groups", "amount-groups-totals");
 }
 
+function printRendicontoModA_Note_Finali(report, userParam) {
+   if (userParam.finalnotes) {
+      report.addParagraph(" ", "");
+      report.addParagraph(userParam.finalnotes, "text-notes");
+   }
+}
+
 function printRendicontoModA_Footer(report) {
    report.getFooter().addClass("footer");
    report.getFooter().addText("- ", "");
@@ -926,6 +934,18 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   var currentParam = {};
+   currentParam.name = 'finalnotes';
+   currentParam.parentObject = 'report_group';
+   currentParam.title = 'Note finali';
+   currentParam.type = 'multilinestring';
+   currentParam.value = userParam.finalnotes ? userParam.finalnotes : '';
+   currentParam.defaultvalue = '';
+   currentParam.readValue = function() {
+      userParam.finalnotes = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
@@ -942,6 +962,7 @@ function initUserParam() {
    userParam.printpreviousyear = true;
    userParam.compattastampa = false;
    userParam.stampa = true;
+   userParam.finalnotes = '';
    return userParam;
 }
 

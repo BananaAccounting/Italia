@@ -1,5 +1,5 @@
 
-/* CSS update: 2021-02-10  */
+/* CSS update: 2021-09-14  */
 
 td {
   vertical-align: top;
@@ -178,4 +178,8 @@ table {
 .alert-message {
   font-size: 12pt;
   color: red;
+}
+
+.text-notes {
+  font-size: 8px;
 }

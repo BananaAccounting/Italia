@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.reportcinquepermille.test
 // @api = 1.0
-// @pubdate = 2021-02-28
+// @pubdate = 2021-09-14
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.reportcinquepermille.js>
 // @task = app.command
@@ -177,3 +177,122 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente = function(
 	Test.logger.addReport("Test report 5 per mille - contabilità doppia - 5X2022 anno precedente", report);
 }
 
+// Test#5: contabilità semplice, anno corrente con colonna Segmento
+Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoCorrente_colonnaSegmento = function() {
+
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/2022-contabilita-entrate-uscite-colonna-segmento.ac2");
+	Test.assert(banDoc);
+
+	var fileLastYear = Banana.application.openDocument("file:script/../test/testcases/2021-contabilita-entrate-uscite-colonna-segmento.ac2");
+	Test.assert(fileLastYear);
+
+	var userParam = {};
+	userParam.scopoAttivita = "Sostenere e qualificare l'attività di volontariato";
+	userParam.rappresentanteLegale = "Sig. Mario Rossi";
+	userParam.cfRappresentanteLegale = "123456789";
+	userParam.dataPercezione = "31.12.2022";
+	userParam.colonnaRaggruppamento = "Gr1";
+	userParam.fileAnnoPrecedente = false;
+	userParam.segment5XM = ":5X2022";
+
+	let reportGroups = loadReportGroups();
+	
+	let accountsMap = {};
+	loadAccountsMap(banDoc, userParam, accountsMap);
+	if (fileLastYear) {
+		loadAccountsMap(fileLastYear, userParam, accountsMap);
+	}
+
+	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
+	Test.logger.addReport("Test report 5 per mille - contabilità entrate/uscite - 5X2022 anno corrente", report);
+}
+
+// Test#6: contabilità semplice, anno precedente con colonna Segmento
+Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoPrecedente_colonnaSegmento = function() {
+
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/2022-contabilita-entrate-uscite-colonna-segmento.ac2");
+	Test.assert(banDoc);
+
+	var fileLastYear = Banana.application.openDocument("file:script/../test/testcases/2021-contabilita-entrate-uscite-colonna-segmento.ac2");
+	Test.assert(fileLastYear);
+
+	var userParam = {};
+	userParam.scopoAttivita = "Sostenere e qualificare l'attività di volontariato";
+	userParam.rappresentanteLegale = "Sig. Mario Rossi";
+	userParam.cfRappresentanteLegale = "123456789";
+	userParam.dataPercezione = "31.12.2022";
+	userParam.colonnaRaggruppamento = "Gr1";
+	userParam.fileAnnoPrecedente = true;
+	userParam.segment5XM = ":5X2021";
+
+	let reportGroups = loadReportGroups();
+	
+	let accountsMap = {};
+	loadAccountsMap(banDoc, userParam, accountsMap);
+	if (fileLastYear) {
+		loadAccountsMap(fileLastYear, userParam, accountsMap);
+	}
+
+	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
+	Test.logger.addReport("Test report 5 per mille - contabilità entrate/uscite - 5X2021 anno precedente", report);
+}
+
+// Test#7: contabilità doppia, anno corrente con colonna Segmento
+Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoCorrente_colonnaSegmento = function() {
+
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/2022-contabilita-doppia-colonna-segmento.ac2");
+	Test.assert(banDoc);
+
+	var fileLastYear = Banana.application.openDocument("file:script/../test/testcases/2021-contabilita-doppia-colonna-segmento.ac2");
+	Test.assert(fileLastYear);
+
+	var userParam = {};
+	userParam.scopoAttivita = "Sostenere e qualificare l'attività di volontariato";
+	userParam.rappresentanteLegale = "Sig. Mario Rossi";
+	userParam.cfRappresentanteLegale = "123456789";
+	userParam.dataPercezione = "31.12.2022";
+	userParam.colonnaRaggruppamento = "Gr1";
+	userParam.fileAnnoPrecedente = false;
+	userParam.segment5XM = ":5X2022";
+
+	let reportGroups = loadReportGroups();
+	
+	let accountsMap = {};
+	loadAccountsMap(banDoc, userParam, accountsMap);
+	if (fileLastYear) {
+		loadAccountsMap(fileLastYear, userParam, accountsMap);
+	}
+
+	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
+	Test.logger.addReport("Test report 5 per mille - contabilità doppia - 5X2022 anno corrente", report);
+}
+
+// Test#8: contabilità doppia, anno precedente con colonna Segmento
+Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente_colonnaSegmento = function() {
+
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/2022-contabilita-doppia-colonna-segmento.ac2");
+	Test.assert(banDoc);
+
+	var fileLastYear = Banana.application.openDocument("file:script/../test/testcases/2021-contabilita-doppia-colonna-segmento.ac2");
+	Test.assert(fileLastYear);
+
+	var userParam = {};
+	userParam.scopoAttivita = "Sostenere e qualificare l'attività di volontariato";
+	userParam.rappresentanteLegale = "Sig. Mario Rossi";
+	userParam.cfRappresentanteLegale = "123456789";
+	userParam.dataPercezione = "31.12.2022";
+	userParam.colonnaRaggruppamento = "Gr1";
+	userParam.fileAnnoPrecedente = true;
+	userParam.segment5XM = ":5X2021";
+
+	let reportGroups = loadReportGroups();
+	
+	let accountsMap = {};
+	loadAccountsMap(banDoc, userParam, accountsMap);
+	if (fileLastYear) {
+		loadAccountsMap(fileLastYear, userParam, accountsMap);
+	}
+
+	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
+	Test.logger.addReport("Test report 5 per mille - contabilità doppia - 5X2022 anno precedente", report);
+}

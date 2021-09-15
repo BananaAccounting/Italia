@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2021-06-21
+// @pubdate = 2021-09-14
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -104,6 +104,8 @@ function printReport(banDoc, userParam, bReport, stylesheet) {
    printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport);
 
    checkLiquidity(bReport, report);
+
+   printReport_Note_Finali(report, userParam);
 
 	return report;
 }
@@ -1345,6 +1347,12 @@ function printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport) {
    return report;
 }
 
+function printReport_Note_Finali(report, userParam) {
+   if (userParam.finalnotes) {
+      report.addParagraph(" ", "");
+      report.addParagraph(userParam.finalnotes, "text-notes");
+   }
+}
 
 /**************************************************************************************
  * Functionalities
@@ -1634,6 +1642,18 @@ function convertParam(userParam) {
       userParam.balancecolumns = false;
    }
 
+   var currentParam = {};
+   currentParam.name = 'finalnotes';
+   currentParam.parentObject = 'report_group';
+   currentParam.title = 'Note finali';
+   currentParam.type = 'multilinestring';
+   currentParam.value = userParam.finalnotes ? userParam.finalnotes : '';
+   currentParam.defaultvalue = '';
+   currentParam.readValue = function() {
+      userParam.finalnotes = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
@@ -1651,6 +1671,7 @@ function initUserParam() {
    userParam.balancecolumns = false;
    userParam.currentbalancecolumn = '';
    userParam.previousbalancecolumn = '';
+   userParam.finalnotes = '';
    return userParam;
 }
 

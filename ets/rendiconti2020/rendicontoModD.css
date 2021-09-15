@@ -1,5 +1,5 @@
 
-/* CSS update: 2021-02-16  */
+/* CSS update: 2021-09-14  */
 
 td {
   vertical-align: top;
@@ -142,4 +142,8 @@ table.table td {
 
 .text-color-red {
   color: red;
+}
+
+.text-notes {
+  font-size: 8px;
 }
