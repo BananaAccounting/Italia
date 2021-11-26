@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontogestionale.mod.b
 // @api = 1.0
-// @pubdate = 2021-09-14
+// @pubdate = 2021-11-26
 // @publisher = Banana.ch SA
 // @description = 2. Rendiconto gestionale
 // @task = app.command
@@ -83,11 +83,18 @@ function exec(string) {
    //Banana.console.log(JSON.stringify(reportStructure, "", " "));
 
    /**
-    * 3. Creates the report
+    * 3. Set variables used for the CSS
+    * Variables start with $
+    */
+   var variables = {};
+   setVariables(variables, userParam);
+
+   /**
+    * 4. Creates the report
     */
    var stylesheet = Banana.Report.newStyleSheet();
    var report = printRendicontoModB(Banana.document, userParam, bReport, stylesheet);
-   setCss(Banana.document, stylesheet, userParam);
+   setCss(Banana.document, stylesheet, variables, userParam);
 
    Banana.Report.preview(report, stylesheet);
 }
@@ -166,7 +173,7 @@ function printRendicontoModB_Header(report, banDoc, userParam, stylesheet) {
 
 function printRendicontoModB_Title(report, banDoc, userParam) {
 
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var currentYear = Banana.Converter.toDate(userParam.selectionEndDate).getFullYear();
 
    var title = "";
    if (userParam.title) {
@@ -188,10 +195,12 @@ function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) 
 
    // Costi e Proventi
 
-   var startDate = userParam.selectionStartDate;
-   var endDate = userParam.selectionEndDate;
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
-   var previousYear = currentYear - 1;
+   var dateCurrent = Banana.Converter.toLocaleDateFormat(userParam.selectionEndDate);
+
+   //Calculate date previous: start period - 1 day
+   var datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+   datePrevious.setDate(datePrevious.getDate() - 1);
+   datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
    
    var table = report.addTable("table");
    if (userParam.printcolumn) {
@@ -220,15 +229,15 @@ function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) 
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
    }
    tableRow.addCell("ONERI E COSTI", "table-header", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-right", 1);
-   tableRow.addCell("31.12." + previousYear, "table-header align-right", 1);
+   tableRow.addCell(dateCurrent, "table-header align-right", 1);
+   tableRow.addCell(datePrevious, "table-header align-right", 1);
    tableRow.addCell("", "", 1);
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
    }
    tableRow.addCell("PROVENTI E RICAVI", "table-header", 1);
-   tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-right", 1);
-   tableRow.addCell("31.12." + previousYear, "table-header align-right", 1);
+   tableRow.addCell(dateCurrent, "table-header align-right", 1);
+   tableRow.addCell(datePrevious, "table-header align-right", 1);
 
    /* Row 1 */   
    tableRow = table.addRow();
@@ -1056,11 +1065,14 @@ function printRendicontoModB_Costi_Proventi_Figurativi(report, banDoc, userParam
 
    // Costi e Proventi figurativi
 
-   var endDate = userParam.selectionEndDate;
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
-   var previousYear = currentYear - 1;
+   if (userParam.printcostifigurativi) {
 
-    if (userParam.printcostifigurativi) {
+      var dateCurrent = Banana.Converter.toLocaleDateFormat(userParam.selectionEndDate);
+      
+      //Calculate date previous: start period - 1 day
+      var datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+      datePrevious.setDate(datePrevious.getDate() - 1);
+      datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
 
       report.addParagraph(" ", "");
       report.addParagraph(" ", "");
@@ -1092,15 +1104,15 @@ function printRendicontoModB_Costi_Proventi_Figurativi(report, banDoc, userParam
          tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
       }
       tableRow.addCell("Costi figurativi", "table-header align-center", 1);
-      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
-      tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
+      tableRow.addCell(dateCurrent, "table-header align-center", 1);
+      tableRow.addCell(datePrevious, "table-header align-center", 1);
       tableRow.addCell("", "", 1);
       if (userParam.printcolumn) {
          tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
       }
       tableRow.addCell("Proventi figurativi", "table-header align-center", 1);
-      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header align-center", 1);
-      tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
+      tableRow.addCell(dateCurrent, "table-header align-center", 1);
+      tableRow.addCell(datePrevious, "table-header align-center", 1);
 
       /* Row 1 */
       tableRow = table.addRow();
@@ -1165,7 +1177,7 @@ function printRendicontoModB_Note_Finali(report, userParam) {
 /**************************************************************************************
  * Styles
  **************************************************************************************/
-function setCss(banDoc, repStyleObj, userParam) {
+function setCss(banDoc, repStyleObj, variables, userParam) {
    var textCSS = "";
    var file = Banana.IO.getLocalFile("file:script/rendicontoModB.css");
    var fileContent = file.read();
@@ -1176,6 +1188,8 @@ function setCss(banDoc, repStyleObj, userParam) {
    } else {
       Banana.console.log(file.errorString);
    }
+   // Replace all the "$xxx" variables with the real value
+   textCSS = replaceVariables(textCSS, variables);
    // Parse the CSS text
    repStyleObj.parse(textCSS);
 }
@@ -1343,6 +1357,29 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   var currentParam = {};
+   currentParam.name = 'styles';
+   currentParam.title = 'Stili';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+    userParam.param_styles = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
+   currentParam.name = 'colorheadertable';
+   currentParam.parentObject = 'styles';
+   currentParam.title = 'Colore intestazioni tabelle';
+   currentParam.type = 'string';
+   currentParam.value = userParam.colorheadertable ? userParam.colorheadertable : '#337ab7';
+   currentParam.defaultvalue = '#337ab7';
+   currentParam.readValue = function() {
+   userParam.colorheadertable = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
@@ -1358,6 +1395,7 @@ function initUserParam() {
    userParam.printcolumn = true;
    userParam.printcostifigurativi = false;
    userParam.finalnotes = '';
+   userParam.colorheadertable = '#337ab7';
    return userParam;
 }
 
@@ -1413,6 +1451,101 @@ function settingsDialog() {
    }
 
    return userParam;
+}
+
+
+/**************************************************************************************
+ * Manage variables for the CSS
+ **************************************************************************************/
+function setVariables(variables, userParam) {
+   
+   if (!userParam.colorheadertable) {
+      userParam.colorheadertable = '#337ab7';
+   }
+
+   //background color of header table
+   variables.$colorheadertable = userParam.colorheadertable;
+
+   //text color of header table.
+   //black (#000000) or white (#FFFFFF) depending of the background color contrast
+   //works only if the user enter an HEX color
+   variables.$colortextheadertable = getContrast(userParam.colorheadertable);
+}
+
+function replaceVariables(cssText, variables) {
+
+  /* 
+    Function that replaces all the css variables inside of the given cssText with their values.
+    All the css variables start with "$" (i.e. $colorheadertable)
+  */
+
+  var result = "";
+  var varName = "";
+  var insideVariable = false;
+  var variablesNotFound = [];
+
+  for (var i = 0; i < cssText.length; i++) {
+    var currentChar = cssText[i];
+    if (currentChar === "$") {
+      insideVariable = true;
+      varName = currentChar;
+    }
+    else if (insideVariable) {
+      if (currentChar.match(/^[0-9a-z]+$/) || currentChar === "_" || currentChar === "-") {
+        // still a variable name
+        varName += currentChar;
+      } 
+      else {
+        // end variable, any other charcter
+        if (!(varName in variables)) {
+          variablesNotFound.push(varName);
+          result += varName;
+        }
+        else {
+          result += variables[varName];
+        }
+        result += currentChar;
+        insideVariable = false;
+        varName = "";
+      }
+    }
+    else {
+      result += currentChar;
+    }
+  }
+
+  if (insideVariable) {
+    // end of text, end of variable
+    if (!(varName in variables)) {
+      variablesNotFound.push(varName);
+      result += varName;
+    }
+    else {
+      result += variables[varName];
+    }
+    insideVariable = false;
+  }
+
+  if (variablesNotFound.length > 0) {
+    //Banana.console.log(">>Variables not found: " + variablesNotFound);
+  }
+  return result;
+}
+
+function getContrast(hexcolor) {
+   /**
+    * https://24ways.org/2010/calculating-color-contrast
+    *
+    * In base al contrasto del colore dello sfondo dell'intestazione tabella,
+    * determina se impostare il colore del testo bianco o nero.
+    * Questo per migliorare la leggibilità.
+    */
+    hexcolor = hexcolor.replace("#", "");
+    var r = parseInt(hexcolor.substr(0,2),16);
+    var g = parseInt(hexcolor.substr(2,2),16);
+    var b = parseInt(hexcolor.substr(4,2),16);
+    var yiq = ((r*299)+(g*587)+(b*114))/1000;
+    return (yiq >= 128) ? '#000000' : '#FFFFFF';
 }
 
 

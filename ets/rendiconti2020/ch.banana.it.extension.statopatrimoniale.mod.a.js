@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2021-09-14
+// @pubdate = 2021-11-26
 // @publisher = Banana.ch SA
 // @description = 1. Stato patrimoniale
 // @task = app.command
@@ -289,9 +289,12 @@ function printRendicontoModA_Header(banDoc, report, userParam, stylesheet) {
 
 function printRendicontoModA_Attivo(banDoc, report, userParam, bReport) {
 
-   var endDate = userParam.selectionEndDate;
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
-   var previousYear = currentYear - 1;
+   var dateCurrent = userParam.selectionEndDate;
+   var currentYear = Banana.Converter.toDate(userParam.selectionEndDate).getFullYear();
+
+   //Calculate date previous: start period - 1 day
+   var datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+   datePrevious.setDate(datePrevious.getDate() - 1);
 
    var title = "";
    if (userParam.title) {
@@ -327,11 +330,11 @@ function printRendicontoModA_Attivo(banDoc, report, userParam, bReport) {
    }
    tableRow.addCell("", "", 1);
    if (userParam.printpreviousyear) {
-      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
-      tableRow.addCell("31.12." + previousYear, "table-header", 1);
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(dateCurrent), "table-header", 1);
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(datePrevious), "table-header", 1);
    } else {
       tableRow.addCell("", "", 1);
-      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(dateCurrent), "table-header", 1);
    }
 
    tableRow = table.addRow();
@@ -553,9 +556,11 @@ function printRendicontoModA_Attivo(banDoc, report, userParam, bReport) {
 
 function printRendicontoModA_Passivo(banDoc, report, userParam, bReport) {
 
-   var endDate = userParam.selectionEndDate;
-   var currentYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
-   var previousYear = currentYear - 1;
+   var dateCurrent = userParam.selectionEndDate;
+
+   //Calculate date previous: start period - 1 day
+   var datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+   datePrevious.setDate(datePrevious.getDate() - 1);
 
    // tabella Passivo
    var table = report.addTable("table");
@@ -578,11 +583,11 @@ function printRendicontoModA_Passivo(banDoc, report, userParam, bReport) {
    }
    tableRow.addCell("", "", 1);
    if (userParam.printpreviousyear) {
-      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
-      tableRow.addCell("31.12." + previousYear, "table-header", 1);
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(dateCurrent), "table-header", 1);
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(datePrevious), "table-header", 1);
    } else {
       tableRow.addCell("", "", 1);
-      tableRow.addCell(Banana.Converter.toLocaleDateFormat(endDate), "table-header", 1);
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(dateCurrent), "table-header", 1);
    }
 
    tableRow = table.addRow();

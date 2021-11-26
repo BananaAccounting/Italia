@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2021-09-14
+// @pubdate = 2021-11-26
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -83,11 +83,18 @@ function exec(string) {
    //Banana.console.log(JSON.stringify(reportStructure, "", " "));
 
    /**
-    * 3. Creates the report
+    * 3. Set variables used for the CSS
+    * Variables start with $
+    */
+   var variables = {};
+   setVariables(variables, userParam);
+
+   /**
+    * 4. Creates the report
     */
    var stylesheet = Banana.Report.newStyleSheet();
    var report = printReport(Banana.document, userParam, bReport, stylesheet);
-   setCss(Banana.document, stylesheet, userParam);
+   setCss(Banana.document, stylesheet, variables, userParam);
    Banana.Report.preview(report, stylesheet);
 }
 
@@ -186,10 +193,23 @@ function printReport_Intestazione(report, banDoc, userParam, stylesheet) {
 function printReport_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bReport) {
 
    // SEZIONE "USCITE E ENTRATE"
+   var dateCurrent = '';
+   var datePrevious = '';
 
-   var currentYear = Banana.Converter.toDate(userParam.selectionStartDate).getFullYear();
-   var previousYear = currentYear - 1;
-
+   var isColumnBalance = findBalanceColumns(banDoc);
+   if (isColumnBalance) {
+      //"Balance_2020", "Balance_2021"
+      dateCurrent = "31.12." + userParam.currentbalancecolumn.slice(8, 12); 
+      datePrevious = "31.12." + userParam.previousbalancecolumn.slice(8, 12);
+   } 
+   else {
+      dateCurrent = Banana.Converter.toLocaleDateFormat(userParam.selectionEndDate);
+      
+      //Calculate date previous: start period - 1 day
+      datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+      datePrevious.setDate(datePrevious.getDate() - 1);
+      datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
+   }
 
    var table = report.addTable("table");
    if (userParam.printcolumn) {
@@ -212,21 +232,21 @@ function printReport_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bRepor
       var column6 = table.addColumn("column6");
       var column7 = table.addColumn("column7");
    }
-   
+
    tableRow = table.addRow();
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
    }
    tableRow.addCell("USCITE", "table-header", 1);
-   tableRow.addCell("31.12." + currentYear, "table-header align-right", 1);
-   tableRow.addCell("31.12." + previousYear, "table-header align-right", 1);
+   tableRow.addCell(dateCurrent, "table-header align-right", 1);
+   tableRow.addCell(datePrevious, "table-header align-right", 1);
    tableRow.addCell("", "", 1);
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
    }
    tableRow.addCell("ENTRATE", "table-header", 1);
-   tableRow.addCell("31.12." + currentYear, "table-header align-right", 1);
-   tableRow.addCell("31.12." + previousYear, "table-header align-right", 1);
+   tableRow.addCell(dateCurrent, "table-header align-right", 1);
+   tableRow.addCell(datePrevious, "table-header align-right", 1);
 
    /* Row 1 */   
    tableRow = table.addRow();
@@ -957,12 +977,29 @@ function printReport_Rendiconto_Investimenti_Disinvestimenti(report, banDoc, use
     *  e le uscite con il segno -.
     */
 
-   var startDate = userParam.selectionStartDate;
-   var currentYear = Banana.Converter.toDate(startDate).getFullYear();
-   var previousYear = currentYear - 1;
+   var dateCurrent = '';
+   var datePrevious = '';
 
+   var isColumnBalance = findBalanceColumns(banDoc);
+   if (isColumnBalance) {
+      //"Balance_2020", "Balance_2021"
+      dateCurrent = "31.12." + userParam.currentbalancecolumn.slice(8, 12); 
+      datePrevious = "31.12." + userParam.previousbalancecolumn.slice(8, 12);
+   } 
+   else {
+      dateCurrent = Banana.Converter.toLocaleDateFormat(userParam.selectionEndDate);
+      
+      //Calculate date previous: start period - 1 day
+      datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+      datePrevious.setDate(datePrevious.getDate() - 1);
+      datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
+   }
 
-   report.addParagraph(" ", "");
+   if (userParam.insertpagebreak) {
+      report.addPageBreak();
+   } else {
+      report.addParagraph(" ", "");
+   }
 
    var table = report.addTable("table");
    if (userParam.printcolumn) {
@@ -991,15 +1028,15 @@ function printReport_Rendiconto_Investimenti_Disinvestimenti(report, banDoc, use
       tableRow.addCell(userParam.column.toUpperCase(),"table-header", 1);
    }
    tableRow.addCell("Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi", "table-header", 1);
-   tableRow.addCell("31.12." + currentYear, "table-header align-center", 1);
-   tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
+   tableRow.addCell(dateCurrent, "table-header align-center", 1);
+   tableRow.addCell(datePrevious, "table-header align-center", 1);
    tableRow.addCell("", "", 1);
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(),"table-header", 1);
    }
    tableRow.addCell("Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi", "table-header", 1);
-   tableRow.addCell("31.12." + currentYear, "table-header align-center", 1);
-   tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
+   tableRow.addCell(dateCurrent, "table-header align-center", 1);
+   tableRow.addCell(datePrevious, "table-header align-center", 1);
 
    /* Row 1 */
    tableRow = table.addRow();
@@ -1109,9 +1146,23 @@ function printReport_Rendiconto_Avanzo_Disavanzo(report, banDoc, userParam, bRep
 
    // SEZIONE "AVANZO E DISAVANZO"
 
-   var startDate = userParam.selectionStartDate;
-   var currentYear = Banana.Converter.toDate(startDate).getFullYear();
-   var previousYear = currentYear - 1;
+   var dateCurrent = '';
+   var datePrevious = '';
+
+   var isColumnBalance = findBalanceColumns(banDoc);
+   if (isColumnBalance) {
+      //"Balance_2020", "Balance_2021"
+      dateCurrent = "31.12." + userParam.currentbalancecolumn.slice(8, 12); 
+      datePrevious = "31.12." + userParam.previousbalancecolumn.slice(8, 12);
+   } 
+   else {
+      dateCurrent = Banana.Converter.toLocaleDateFormat(userParam.selectionEndDate);
+      
+      //Calculate date previous: start period - 1 day
+      datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+      datePrevious.setDate(datePrevious.getDate() - 1);
+      datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
+   }
 
    report.addParagraph(" ", "");
 
@@ -1143,8 +1194,8 @@ function printReport_Rendiconto_Avanzo_Disavanzo(report, banDoc, userParam, bRep
    } else {
       tableRow.addCell("", "table-header", 5);
    }
-   tableRow.addCell("31.12." + currentYear, "table-header align-center", 1);
-   tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
+   tableRow.addCell(dateCurrent, "table-header align-center", 1);
+   tableRow.addCell(datePrevious, "table-header align-center", 1);
 
    /* Row 1 */
    tableRow = table.addRow();
@@ -1183,9 +1234,23 @@ function printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport) 
 
    // SEZIONE "CASSA E BANCA"
 
-   var startDate = userParam.selectionStartDate;
-   var currentYear = Banana.Converter.toDate(startDate).getFullYear();
-   var previousYear = currentYear - 1;
+   var dateCurrent = '';
+   var datePrevious = '';
+
+   var isColumnBalance = findBalanceColumns(banDoc);
+   if (isColumnBalance) {
+      //"Balance_2020", "Balance_2021"
+      dateCurrent = "31.12." + userParam.currentbalancecolumn.slice(8, 12); 
+      datePrevious = "31.12." + userParam.previousbalancecolumn.slice(8, 12);
+   } 
+   else {
+      dateCurrent = Banana.Converter.toLocaleDateFormat(userParam.selectionEndDate);
+      
+      //Calculate date previous: start period - 1 day
+      datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+      datePrevious.setDate(datePrevious.getDate() - 1);
+      datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
+   }
 
    report.addParagraph(" ", "");
 
@@ -1218,8 +1283,8 @@ function printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport) 
    } else {
       tableRow.addCell("Cassa e banca", "table-header", 5);
    }
-   tableRow.addCell("31.12." + currentYear, "table-header align-center", 1);
-   tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
+   tableRow.addCell(dateCurrent, "table-header align-center", 1);
+   tableRow.addCell(datePrevious, "table-header align-center", 1);
 
    /* Row 1 */
    tableRow = table.addRow();
@@ -1250,9 +1315,23 @@ function printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport) {
 
    // SEZIONE "COSTI E PROVENTI FIGURATIVI"
 
-   var startDate = userParam.selectionStartDate;
-   var currentYear = Banana.Converter.toDate(startDate).getFullYear();
-   var previousYear = currentYear - 1;
+   var dateCurrent = '';
+   var datePrevious = '';
+
+   var isColumnBalance = findBalanceColumns(banDoc);
+   if (isColumnBalance) {
+      //"Balance_2020", "Balance_2021"
+      dateCurrent = "31.12." + userParam.currentbalancecolumn.slice(8, 12); 
+      datePrevious = "31.12." + userParam.previousbalancecolumn.slice(8, 12);
+   } 
+   else {
+      dateCurrent = Banana.Converter.toLocaleDateFormat(userParam.selectionEndDate);
+      
+      //Calculate date previous: start period - 1 day
+      datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+      datePrevious.setDate(datePrevious.getDate() - 1);
+      datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
+   }
 
    if (userParam.printcostifigurativi) {
 
@@ -1285,15 +1364,15 @@ function printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport) {
          tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
       }
       tableRow.addCell("Costi figurativi", "table-header", 1);
-      tableRow.addCell("31.12." + currentYear, "table-header align-center", 1);
-      tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
+      tableRow.addCell(dateCurrent, "table-header align-center", 1);
+      tableRow.addCell(datePrevious, "table-header align-center", 1);
       tableRow.addCell("", "", 1);
       if (userParam.printcolumn) {
          tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
       }
       tableRow.addCell("Proventi figurativi", "table-header", 1);
-      tableRow.addCell("31.12." + currentYear, "table-header align-center", 1);
-      tableRow.addCell("31.12." + previousYear, "table-header align-center", 1);
+      tableRow.addCell(dateCurrent, "table-header align-center", 1);
+      tableRow.addCell(datePrevious, "table-header align-center", 1);
 
       /* Row 1 */
       tableRow = table.addRow();
@@ -1357,15 +1436,15 @@ function printReport_Note_Finali(report, userParam) {
 /**************************************************************************************
  * Functionalities
  **************************************************************************************/
-function findBalanceColumns() {
+function findBalanceColumns(banDoc) {
 
-   var accTable = Banana.document.table("Accounts");
+   var accTable = banDoc.table("Accounts");
    var tAccColumnNames = accTable.columnNames;
    var strAccColumnNames = tAccColumnNames.toString();
 
-   if (Banana.document.table("Categories")) {
+   if (banDoc.table("Categories")) {
 
-      var catTable = Banana.document.table("Categories");
+      var catTable = banDoc.table("Categories");
       var tCatColumnNames = catTable.columnNames;
       var strCatColumnNames = tCatColumnNames.toString();
 
@@ -1431,7 +1510,7 @@ function addFooter(report) {
 /**************************************************************************************
  * Styles
  **************************************************************************************/
-function setCss(banDoc, repStyleObj, userParam) {
+function setCss(banDoc, repStyleObj, variables, userParam) {
    var textCSS = "";
    var file = Banana.IO.getLocalFile("file:script/rendicontoModD.css");
    var fileContent = file.read();
@@ -1442,6 +1521,10 @@ function setCss(banDoc, repStyleObj, userParam) {
    } else {
       Banana.console.log(file.errorString);
    }
+
+   // Replace all the "$xxx" variables with the real value
+   textCSS = replaceVariables(textCSS, variables);
+
    // Parse the CSS text
    repStyleObj.parse(textCSS);
 }
@@ -1586,6 +1669,18 @@ function convertParam(userParam) {
    convertedParam.data.push(currentParam);
 
    var currentParam = {};
+   currentParam.name = 'insertpagebreak';
+   currentParam.parentObject = 'report_group';
+   currentParam.title = 'Inserisci fine pagina prima di investimenti/disinvestimenti';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.insertpagebreak ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+    userParam.insertpagebreak = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
    currentParam.name = 'printcostifigurativi';
    currentParam.parentObject = 'report_group';
    currentParam.title = 'Stampa sezione costi e proventi figurativi';
@@ -1599,7 +1694,7 @@ function convertParam(userParam) {
 
    // Show custom balance columns parameters only when in Accounts/Categories tables there are 'Balance_YYYY' columns.
    // If not, the parameters are not visible
-   var isColumnBalance = findBalanceColumns();
+   var isColumnBalance = findBalanceColumns(Banana.document);
    if (isColumnBalance) {
 
       var currentParam = {};
@@ -1654,6 +1749,29 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   var currentParam = {};
+   currentParam.name = 'styles';
+   currentParam.title = 'Stili';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+    userParam.param_styles = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
+   currentParam.name = 'colorheadertable';
+   currentParam.parentObject = 'styles';
+   currentParam.title = 'Colore intestazioni tabelle';
+   currentParam.type = 'string';
+   currentParam.value = userParam.colorheadertable ? userParam.colorheadertable : '#337ab7';
+   currentParam.defaultvalue = '#337ab7';
+   currentParam.readValue = function() {
+   userParam.colorheadertable = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
@@ -1671,7 +1789,9 @@ function initUserParam() {
    userParam.balancecolumns = false;
    userParam.currentbalancecolumn = '';
    userParam.previousbalancecolumn = '';
+   userParam.insertpagebreak = '';
    userParam.finalnotes = '';
+   userParam.colorheadertable = '#337ab7';
    return userParam;
 }
 
@@ -1735,6 +1855,101 @@ function settingsDialog() {
    }
 
    return userParam;
+}
+
+
+/**************************************************************************************
+ * Manage variables for the CSS
+ **************************************************************************************/
+function setVariables(variables, userParam) {
+   
+   if (!userParam.colorheadertable) {
+      userParam.colorheadertable = '#337ab7';
+   }
+
+   //background color of header table
+   variables.$colorheadertable = userParam.colorheadertable;
+
+   //text color of header table.
+   //black (#000000) or white (#FFFFFF) depending of the background color contrast
+   //works only if the user enter an HEX color
+   variables.$colortextheadertable = getContrast(userParam.colorheadertable);
+}
+
+function replaceVariables(cssText, variables) {
+
+  /* 
+    Function that replaces all the css variables inside of the given cssText with their values.
+    All the css variables start with "$" (i.e. $colorheadertable)
+  */
+
+  var result = "";
+  var varName = "";
+  var insideVariable = false;
+  var variablesNotFound = [];
+
+  for (var i = 0; i < cssText.length; i++) {
+    var currentChar = cssText[i];
+    if (currentChar === "$") {
+      insideVariable = true;
+      varName = currentChar;
+    }
+    else if (insideVariable) {
+      if (currentChar.match(/^[0-9a-z]+$/) || currentChar === "_" || currentChar === "-") {
+        // still a variable name
+        varName += currentChar;
+      } 
+      else {
+        // end variable, any other charcter
+        if (!(varName in variables)) {
+          variablesNotFound.push(varName);
+          result += varName;
+        }
+        else {
+          result += variables[varName];
+        }
+        result += currentChar;
+        insideVariable = false;
+        varName = "";
+      }
+    }
+    else {
+      result += currentChar;
+    }
+  }
+
+  if (insideVariable) {
+    // end of text, end of variable
+    if (!(varName in variables)) {
+      variablesNotFound.push(varName);
+      result += varName;
+    }
+    else {
+      result += variables[varName];
+    }
+    insideVariable = false;
+  }
+
+  if (variablesNotFound.length > 0) {
+    //Banana.console.log(">>Variables not found: " + variablesNotFound);
+  }
+  return result;
+}
+
+function getContrast(hexcolor) {
+   /**
+    * https://24ways.org/2010/calculating-color-contrast
+    *
+    * In base al contrasto del colore dello sfondo dell'intestazione tabella,
+    * determina se impostare il colore del testo bianco o nero.
+    * Questo per migliorare la leggibilità.
+    */
+    hexcolor = hexcolor.replace("#", "");
+    var r = parseInt(hexcolor.substr(0,2),16);
+    var g = parseInt(hexcolor.substr(2,2),16);
+    var b = parseInt(hexcolor.substr(4,2),16);
+    var yiq = ((r*299)+(g*587)+(b*114))/1000;
+    return (yiq >= 128) ? '#000000' : '#FFFFFF';
 }
 
 /**************************************************************************************

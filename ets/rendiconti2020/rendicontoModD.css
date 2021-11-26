@@ -1,5 +1,5 @@
 
-/* CSS update: 2021-09-14  */
+/* CSS update: 2021-11-26  */
 
 td {
   vertical-align: top;
@@ -95,8 +95,8 @@ table {
 }
 
 .table-header {
-  color: #ffffff;
-  background-color: #337ab7;
+  color: $colortextheadertable;
+  background-color: $colorheadertable;
   border-bottom-style: solid;
   border-bottom-color: black;
   border-bottom-width: thin;
