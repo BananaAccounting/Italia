@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2021-11-26
+// @pubdate = 2021-11-30
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -110,7 +110,7 @@ function printReport(banDoc, userParam, bReport, stylesheet) {
    printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport);
    printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport);
 
-   checkLiquidity(bReport, report);
+   checkLiquidity(report, banDoc, bReport);
 
    printReport_Note_Finali(report, userParam);
 
@@ -1468,7 +1468,7 @@ function formatValue(value) {
    return Banana.Converter.toLocaleNumberFormat(value);
 }
 
-function checkLiquidity(bReport, report) {
+function checkLiquidity(report, banDoc, bReport) {
    /**
     * previous(ACIV1 + ACIV3) + current(Avanzo/Disavanzo complessivo) == current(ACIV1 + ACIV3)
     */
@@ -1496,6 +1496,8 @@ function checkLiquidity(bReport, report) {
    if (Banana.SDecimal.compare(totLiqPrecAvanzo,totLiqCurr) != 0) {
       report.addParagraph(" ", "");
       report.addParagraph("Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <" + formatValue(totLiqPrecAvanzo) + "> non corrisponde alla 'somma della liquidità anno corrente' <"+ formatValue(totLiqCurr) +">", "text-color-red");
+   
+      banDoc.addMessage("Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <" + formatValue(totLiqPrecAvanzo) + "> non corrisponde alla 'somma della liquidità anno corrente' <"+ formatValue(totLiqCurr) +">");
    }
 }
 
