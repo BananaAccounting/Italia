@@ -1,0 +1,30 @@
+ 						
+Conto Corrente: 0000						
+Intestazione Conto Corrente: FILIPPO						
+Periodo Dal: 01/09/2021 Al: 30/11/2021						
+ 						
+Risultati Ricerca						
+						
+Data	Entrate	Uscite	Descrizione	Descrizione Completa	Stato	Moneymap
+30/11/2021		-59	Pagamento MAV-RAV	Addebito MAV nr. 05387	Contabilizzato	
+29/11/2021		-22,99	SEPA Direct Debit	SERVIZIO ELETTRICO NAZIONALE	Contabilizzato	
+29/11/2021		-474	Bonifico SEPA Italia	Ben: CONDOMINIO 	Contabilizzato	
+29/11/2021	1650		Bonifico SEPA Italia	Ord:  ELISA 	Contabilizzato	
+29/11/2021	2000		Bonifico SEPA Italia	Ord: MARIAInfo-Cli: girofondi	Contabilizzato	
+28/11/2021		-4,11	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	WWW	Autorizzato	
+27/11/2021		-13,8	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	BURGER KING	Autorizzato	
+27/11/2021		-42,27	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	EUROSPAR	Autorizzato	
+27/11/2021	1,92		MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	EXPRESS	Contabilizzato	
+26/11/2021		-12,99	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	NETFLIX.COM            Milan         ITA	Contabilizzato	
+26/11/2021		-19,95	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	CC ZARA 3456      	Contabilizzato	
+26/11/2021		-23,95	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	CC ZARA 3456 	Contabilizzato	
+25/11/2021		-499	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	SPAZIO CONAD 	Contabilizzato	
+24/11/2021		-5,99	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	ILIAD                  Roma          ITA	Contabilizzato	
+24/11/2021		-40,04	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	SPAZIO CONAD           	Contabilizzato	
+24/11/2021		-250	Prelievo Bancomat	Prelevamento Carta N° *****        253	Contabilizzato	Prelievo Contante
+23/11/2021		-88,97	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	ESSELUNGA ON LINE	Autorizzato	
+23/11/2021		-4,6	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	BURGER KING     	Contabilizzato	
+23/11/2021		-23,68	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	COOP.SAN L	Contabilizzato	
+23/11/2021		-80,73	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	113528641 ESSELUNGA 	Contabilizzato	
+22/11/2021		-5,76	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	HAPPY CASA STORE    	Contabilizzato	
+22/11/2021		-14,75	MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534	FARMACIA MURA 	Contabilizzato	

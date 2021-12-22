@@ -1,0 +1,16 @@
+Conto Corrente: 01******					
+Intestazione Conto Corrente:  FILIPPO					
+Periodo Dal: 01/09/2021 Al: 30/11/2021					
+Risultati Ricerca					
+					
+Data Operazione	Data Valuta	Entrate	Uscite	Descrizione	Descrizione Completa
+30.11.2021	30.11.2021		59	Pagamento MAV-RAV	Addebito MAV nr. 05437017823780599 
+29.11.2021	29.11.2021		22,99	SEPA Direct Debit	SERVIZIO ELETTRICO NAZIONALE Addebito SDD fattura a Vs carico      
+29.11.2021	29.11.2021	1650		Bonifico SEPA Italia	Ord: *****
+29.11.2021	29.11.2021	2000		Bonifico SEPA Italia	Ord: MARIA
+29.11.2021	29.11.2021		474	Bonifico SEPA Italia	Ben: CONDOMINIO 
+24.11.2021	23.11.2021		250	Prelievo Bancomat	Prelevamento Carta N° *****        253  Data operazione: 23/11/2021 Ora: 11:40  
+22.11.2021	22.11.2021		25,99	SEPA Direct Debit	Wind-Tre Addebito SDD fattura a Vs carico         
+11.11.2021	11.11.2021	10,98		Bonifico SEPA Italia	Ord: HERA S P A Ben: LILIANA 
+11.11.2021	11.11.2021	2,23		Bonifico SEPA Italia	Ord: HERA S P A Ben: CLAUDIO 
+10.11.2021	10.11.2021		1658,96	Utilizzo carta di credito	ESTRATTO CONTO AL  29/10/21             CARTA DI CREDITO
