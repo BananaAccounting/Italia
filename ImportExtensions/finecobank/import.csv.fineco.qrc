@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+	<qresource>
+		<file alias="manifest.json">import.csv.fineco.manifest.json</file>
+		<file>import.csv.fineco.js</file>
+        <file>../import.utilities.js</file>
+	</qresource>
+</RCC>
