@@ -24,7 +24,7 @@
 // @inputdatasource = openfiledialog
 // @timeout = -1
 // @inputfilefilter = Text files (*.txt *.csv);;All files (*.*)
-// @includejs = ../import.utilities.js
+// @includejs = import.utilities.js
 
 
 /** CSV file example
@@ -77,7 +77,7 @@ function defineConversionParam() {
 
    /** SPECIFY THE COLUMN TO USE FOR SORTING
    If sortColums is empty the data are not sorted */
-   convertionParam.sortColums = ["Date", "ExternalReference"];
+   convertionParam.sortColums = ["Date", "Description"];
    convertionParam.sortDescending = false;
 	/** END */
 
@@ -99,19 +99,14 @@ function defineConversionParam() {
 		/*   Field that start with the underscore "_" will not be exported 
 		*    Create this fields so that you can use-it in the postprocessing function */
 		
-		convertedRow["Date"] = inputRow["交易日期"];
-		convertedRow["ExternalReference"] = inputRow["流水号"];
-		convertedRow["Description"] = inputRow["摘要"];
+		convertedRow["Date"] = inputRow["Data"];
+		convertedRow["Description"] = inputRow["Descrizione Completa"];
 
 		/* use the Banana.Converter.toInternalNumberFormat to convert to the appropriate number format */
-		convertedRow["Income"] = Banana.Converter.toInternalNumberFormat(inputRow["交易金额"]);
-
-		//Balances values only to check
-		convertedRow["Notes"] = inputRow["账户余额"];
-
+		convertedRow["Income"] = Banana.Converter.toInternalNumberFormat(inputRow["Entrate"]);
+		convertedRow["Expenses"] = Banana.Converter.toInternalNumberFormat(inputRow["Uscite"]);
 
 		/** END */
-
 
 		return convertedRow;
 	};
@@ -121,21 +116,27 @@ function defineConversionParam() {
 
 
 function preProcessInData(inData) {
-	return inData;
+	//Remove header rows
+	let cleanedData = '';
+	let firstRow = 0;
+	for (var i = 0; i < inData.length; i++) {
+		if (inData[i].substr(0, 4) == 'Data') {
+			firstRow = i;
+			break;
+		}
+	}
+	for (var i = firstRow; i < inData.length; i++) {
+		if (inData[i].substr(0, 4) == 'Data') {
+			cleanedData.push(inData[i]);
+		}
+	}
+	return cleanedData;
 }
 
 
 
 //The purpose of this function is to let the user specify how to convert the categories
 function postProcessIntermediaryData(intermediaryData) {
-
-	/** INSERT HERE ALL THE DESCRIPTIONS OF THE VALUES THAT GOES ON THE "Account Credit" COLUMN
-	*	If the Amount value has one of these descriptions, then we invert that value.
-	*	When inverted the value goes on the "Account Credit" column */
-	var negatives = [
-		"快捷",
-		"取款"
-	];
 
 	/** INSERT HERE THE LIST OF ACCOUNTS NAME AND THE CONVERSION NUMBER 
 	*   If the content of "Account" is the same of the text 
@@ -159,12 +160,8 @@ function postProcessIntermediaryData(intermediaryData) {
 		var convertedData = intermediaryData[i];
 
 		//Invert values
-		for (var j = 0; j < negatives.length; j++) {
-			if (convertedData["Description"] && convertedData["Income"]) {
-				if (convertedData["Description"] === negatives[j]) {
-					convertedData["Income"] = Banana.SDecimal.invert(convertedData["Income"]);
-				}
-			}
+		if (convertedData["Expenses"]) {
+			convertedData["Expenses"] = Banana.SDecimal.invert(convertedData["Expenses"]);
 		}
 	}
 }
