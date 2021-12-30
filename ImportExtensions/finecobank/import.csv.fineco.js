@@ -29,6 +29,34 @@
 /** CSV file example
 */
 
+//Main function
+function exec(inData) {
+
+	var importFinecoBank = new ImportFinecoBank(Banana.document);
+    if (!importFinecoBank.verifyBananaVersion())
+        return "@Cancel";
+
+	//1. Function call to define the conversion parameters
+	var convertionParam = importFinecoBank.defineConversionParam(inData);
+
+	//2. we can eventually process the input text
+	inData = importFinecoBank.preProcessInData(inData);
+
+	//3. intermediaryData is an array of objects where the property is the banana column name
+	var intermediaryData = importFinecoBank.convertToIntermediaryData(inData, convertionParam);
+
+	//4. translate categories and Description 
+	// can define as much postProcessIntermediaryData function as needed
+	importFinecoBank.postProcessIntermediaryData(intermediaryData);
+
+	//5. sort data
+	intermediaryData = importFinecoBank.sortData(intermediaryData, convertionParam);
+
+	//6. convert to banana format
+	//column that start with "_" are not converted
+	return importFinecoBank.convertToBananaFormat(intermediaryData);
+}
+
 //The purpose of this function is to let the users define:
 // - the parameters for the conversion of the CSV file;
 // - the fields of the csv/table
@@ -139,30 +167,4 @@ var ImportFinecoBank = class ImportFinecoBank extends ImportUtilities {
 			}
 		}
 	}
-}
-
-//Main function
-function exec(inData) {
-
-	var importFinecoBank = new ImportFinecoBank(Banana.document);
-
-	//1. Function call to define the conversion parameters
-	var convertionParam = importFinecoBank.defineConversionParam(inData);
-
-	//2. we can eventually process the input text
-	inData = importFinecoBank.preProcessInData(inData);
-
-	//3. intermediaryData is an array of objects where the property is the banana column name
-	var intermediaryData = importFinecoBank.convertToIntermediaryData(inData, convertionParam);
-
-	//4. translate categories and Description 
-	// can define as much postProcessIntermediaryData function as needed
-	importFinecoBank.postProcessIntermediaryData(intermediaryData);
-
-	//5. sort data
-	intermediaryData = importFinecoBank.sortData(intermediaryData, convertionParam);
-
-	//6. convert to banana format
-	//column that start with "_" are not converted
-	return importFinecoBank.convertToBananaFormat(intermediaryData);
 }
