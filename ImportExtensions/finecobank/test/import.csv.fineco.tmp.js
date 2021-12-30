@@ -16,7 +16,7 @@
 
 // @id = import.csv.fineco.test
 // @api = 1.0
-// @pubdate = 2021-12-27
+// @pubdate = 2021-12-29
 // @publisher = Banana.ch SA
 // @description = <TEST import.csv.fineco.test>
 // @task = app.command
@@ -24,7 +24,8 @@
 // @docproperties = 
 // @outputformat = none
 // @inputdataform = none
-// @includejs = ../import.csv.fineco.js
+// @includejs = ../import.csv.fineco.sbaa/import.csv.fineco.js
+// @includejs = ../import.csv.fineco.sbaa/import.utilities.js
 // @timeout = -1
 
 // Register test case to be executed
@@ -58,11 +59,9 @@ TestImportFinecoBank.prototype.cleanup = function() {
 TestImportFinecoBank.prototype.testImport = function() {
    var fileNameList = [];
 
-   fileNameList.push("file:script/../test/testcases/ch.banana.filter.import.paypal.#cash20140529.csv");
-   fileNameList.push("file:script/../test/testcases/ch.banana.filter.import.paypal.#claudia20140526.csv");
-   fileNameList.push("file:script/../test/testcases/download.csv");
-   fileNameList.push("file:script/../test/testcases/download2.csv");
-
+   fileNameList.push("file:script/../test/testcases/ch.banana.filter.import.finecobank#example_01.csv");
+   fileNameList.push("file:script/../test/testcases/ch.banana.filter.import.finecobank#example_02.csv");
+   
    var parentLogger = this.testLogger;
    this.progressBar.start(fileNameList.length);
 
@@ -74,9 +73,7 @@ TestImportFinecoBank.prototype.testImport = function() {
       Test.assert(file);
       var fileContent = file.read();
       Test.assert(fileContent);
-
       var transactions = exec(fileContent);
-
       this.testLogger.addCsv('', transactions);
 
       if (!this.progressBar.step())
