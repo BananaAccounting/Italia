@@ -14,7 +14,7 @@
 //
 // @id = import.csv.fineco
 // @api = 1.0
-// @pubdate = 2021-12-21
+// @pubdate = 2021-12-30
 // @publisher = Banana.ch SA
 // @description = Fineco Bank - Import CSV
 // @task = import.transactions
@@ -24,146 +24,146 @@
 // @inputdatasource = openfiledialog
 // @timeout = -1
 // @inputfilefilter = Text files (*.txt *.csv);;All files (*.*)
-// @includejs = ../import.utilities.js
-
+// @includejs = import.utilities.js
 
 /** CSV file example
-
 */
-
 
 //Main function
 function exec(inData) {
-	
+
+	var importFinecoBank = new ImportFinecoBank(Banana.document);
+    if (!importFinecoBank.verifyBananaVersion())
+        return "@Cancel";
+
 	//1. Function call to define the conversion parameters
-	var convertionParam = defineConversionParam();
+	var convertionParam = importFinecoBank.defineConversionParam(inData);
 
 	//2. we can eventually process the input text
-	inData = preProcessInData(inData);
+	inData = importFinecoBank.preProcessInData(inData);
 
 	//3. intermediaryData is an array of objects where the property is the banana column name
-   	var intermediaryData = convertToIntermediaryData(inData, convertionParam);
+	var intermediaryData = importFinecoBank.convertToIntermediaryData(inData, convertionParam);
 
 	//4. translate categories and Description 
 	// can define as much postProcessIntermediaryData function as needed
-	postProcessIntermediaryData(intermediaryData);
+	importFinecoBank.postProcessIntermediaryData(intermediaryData);
 
-   	//5. sort data
-   	intermediaryData = sortData(intermediaryData, convertionParam);
+	//5. sort data
+	intermediaryData = importFinecoBank.sortData(intermediaryData, convertionParam);
 
-   	//6. convert to banana format
+	//6. convert to banana format
 	//column that start with "_" are not converted
-	return convertToBananaFormat(intermediaryData);	
+	return importFinecoBank.convertToBananaFormat(intermediaryData);
 }
-
 
 //The purpose of this function is to let the users define:
 // - the parameters for the conversion of the CSV file;
 // - the fields of the csv/table
-function defineConversionParam() {
+var ImportFinecoBank = class ImportFinecoBank extends ImportUtilities {
+	constructor(banDocument) {
+		super(banDocument);
+	}
 
-	var convertionParam = {};
+	defineConversionParam(inData) {
+		var convertionParam = {};
 
-	/** SPECIFY THE SEPARATOR AND THE TEXT DELIMITER USED IN THE CSV FILE */
-   convertionParam.format = "csv"; // available formats are "csv", "html"
-   convertionParam.separator = '\t';
-   convertionParam.textDelim = '';
+		/** SPECIFY THE SEPARATOR AND THE TEXT DELIMITER USED IN THE CSV FILE */
+		convertionParam.format = "csv"; // available formats are "csv", "html"
+		convertionParam.separator = '\t';
+		convertionParam.textDelim = '';
 
-	/** SPECIFY AT WHICH ROW OF THE CSV FILE IS THE HEADER (COLUMN TITLES)
-	We suppose the data will always begin right away after the header line */
-	convertionParam.headerLineStart = 0;
-	convertionParam.dataLineStart = 1;
+		/** SPECIFY AT WHICH ROW OF THE CSV FILE IS THE HEADER (COLUMN TITLES)
+		We suppose the data will always begin right away after the header line */
+		convertionParam.headerLineStart = 0;
+		convertionParam.dataLineStart = 1;
+		var csvFile = Banana.Converter.csvToArray(inData, convertionParam.separator, convertionParam.textDelim);
+		for (var i = 0; i < csvFile.length; i++) {
+			if (csvFile[i].join().length > 4 && csvFile[i].join().substr(0, 4) === 'Data') {
+				convertionParam.headerLineStart = i;
+				convertionParam.dataLineStart = i + 1;
+				break;
+			}
+		}
 
-
-   /** SPECIFY THE COLUMN TO USE FOR SORTING
-   If sortColums is empty the data are not sorted */
-   convertionParam.sortColums = ["Date", "ExternalReference"];
-   convertionParam.sortDescending = false;
-	/** END */
-
-	/* rowConvert is a function that convert the inputRow (passed as parameter)
-	*  to a convertedRow object 
-	* - inputRow is an object where the properties is the column name found in the CSV file
-	* - convertedRow is an  object where the properties are the column name to be exported in Banana 
-	* For each column that you need to export in Banana create a line that create convertedRow column 
-	* The right part can be any fuction or value 
-	* Remember that in Banana
-	* - Date must be in the format "yyyy-mm-dd"
-	* - Number decimal separator must be "." and there should be no thousand separator */
-	convertionParam.rowConverter = function(inputRow) {
-		var convertedRow = {};
-
-		/** MODIFY THE FIELDS NAME AND THE CONVERTION HERE 
-		*   The right part is a statements that is then executed for each inputRow
-		
-		/*   Field that start with the underscore "_" will not be exported 
-		*    Create this fields so that you can use-it in the postprocessing function */
-		
-		convertedRow["Date"] = inputRow["交易日期"];
-		convertedRow["ExternalReference"] = inputRow["流水号"];
-		convertedRow["Description"] = inputRow["摘要"];
-
-		/* use the Banana.Converter.toInternalNumberFormat to convert to the appropriate number format */
-		convertedRow["Income"] = Banana.Converter.toInternalNumberFormat(inputRow["交易金额"]);
-
-		//Balances values only to check
-		convertedRow["Notes"] = inputRow["账户余额"];
-
-
+		/** SPECIFY THE COLUMN TO USE FOR SORTING
+		If sortColums is empty the data are not sorted */
+		convertionParam.sortColums = ["Date", "Description"];
+		convertionParam.sortDescending = false;
 		/** END */
 
+		/* rowConvert is a function that convert the inputRow (passed as parameter)
+		*  to a convertedRow object 
+		* - inputRow is an object where the properties is the column name found in the CSV file
+		* - convertedRow is an  object where the properties are the column name to be exported in Banana 
+		* For each column that you need to export in Banana create a line that create convertedRow column 
+		* The right part can be any fuction or value 
+		* Remember that in Banana
+		* - Date must be in the format "yyyy-mm-dd"
+		* - Number decimal separator must be "." and there should be no thousand separator */
+		convertionParam.rowConverter = function (inputRow) {
+			var convertedRow = {};
 
-		return convertedRow;
-	};
-	return convertionParam;
-}
+			/** MODIFY THE FIELDS NAME AND THE CONVERTION HERE 
+			*   The right part is a statements that is then executed for each inputRow
+			
+			/*   Field that start with the underscore "_" will not be exported
+			*    Create this fields so that you can use-it in the postprocessing function */
+			if (inputRow["Data Operazione"] && inputRow["Data Operazione"].indexOf(".") > 0) {
+				convertedRow["Date"] = Banana.Converter.toInternalDateFormat(inputRow["Data Operazione"], "dd.mm.yyyy");
+				convertedRow["DateValue"] = Banana.Converter.toInternalDateFormat(inputRow["Data Valuta"], "dd.mm.yyyy");
+			}
+			else {
+				convertedRow["Date"] = Banana.Converter.toInternalDateFormat(inputRow["Data"], "dd/mm/yyyy");
+			}
 
+			var description = inputRow["Descrizione Completa"];
+			if (description && inputRow["Descrizione"])
+				description += " ";
+			description += inputRow["Descrizione"];
+			convertedRow["Description"] = description;
 
+			/* use the Banana.Converter.toInternalNumberFormat to convert to the appropriate number format */
+			convertedRow["Income"] = Banana.Converter.toInternalNumberFormat(inputRow["Entrate"]);
+			convertedRow["Expenses"] = Banana.Converter.toInternalNumberFormat(inputRow["Uscite"]);
 
-function preProcessInData(inData) {
-	return inData;
-}
+			/** END */
 
-
-
-//The purpose of this function is to let the user specify how to convert the categories
-function postProcessIntermediaryData(intermediaryData) {
-
-	/** INSERT HERE ALL THE DESCRIPTIONS OF THE VALUES THAT GOES ON THE "Account Credit" COLUMN
-	*	If the Amount value has one of these descriptions, then we invert that value.
-	*	When inverted the value goes on the "Account Credit" column */
-	var negatives = [
-		"快捷",
-		"取款"
-	];
-
-	/** INSERT HERE THE LIST OF ACCOUNTS NAME AND THE CONVERSION NUMBER 
-	*   If the content of "Account" is the same of the text 
-	*   it will be replaced by the account number given */
-	//Accounts conversion
-	var accounts = {
-		//...
+			return convertedRow;
+		};
+		return convertionParam;
 	}
 
-	/** INSERT HERE THE LIST OF CATEGORIES NAME AND THE CONVERSION NUMBER 
-	*   If the content of "ContraAccount" is the same of the text 
-	*   it will be replaced by the account number given */
-
-	//Categories conversion
-	var categories = {
-		//...
+	preProcessInData(inData) {
+		return inData;
 	}
 
-	//Apply the conversions
-	for (var i = 0; i < intermediaryData.length; i++) {
-		var convertedData = intermediaryData[i];
+	//The purpose of this function is to let the user specify how to convert the categories
+	postProcessIntermediaryData(intermediaryData) {
+		/** INSERT HERE THE LIST OF ACCOUNTS NAME AND THE CONVERSION NUMBER 
+		*   If the content of "Account" is the same of the text 
+		*   it will be replaced by the account number given */
+		//Accounts conversion
+		var accounts = {
+			//...
+		}
 
-		//Invert values
-		for (var j = 0; j < negatives.length; j++) {
-			if (convertedData["Description"] && convertedData["Income"]) {
-				if (convertedData["Description"] === negatives[j]) {
-					convertedData["Income"] = Banana.SDecimal.invert(convertedData["Income"]);
-				}
+		/** INSERT HERE THE LIST OF CATEGORIES NAME AND THE CONVERSION NUMBER 
+		*   If the content of "ContraAccount" is the same of the text 
+		*   it will be replaced by the account number given */
+
+		//Categories conversion
+		var categories = {
+			//...
+		}
+
+		//Apply the conversions
+		for (var i = 0; i < intermediaryData.length; i++) {
+			var convertedData = intermediaryData[i];
+
+			//Invert values
+			if (convertedData["Expenses"]) {
+				convertedData["Expenses"] = Banana.SDecimal.invert(convertedData["Expenses"]);
 			}
 		}
 	}

@@ -1,0 +1,11 @@
+{
+    "category": "productivity",
+    "country": "italia",
+    "countryCode": "it",
+    "description": "FINECO Bank import filter",
+    "id": "import.csv.fineco",
+    "language": "it",
+    "publisher": "Banana.ch",
+    "title": "FINECO Bank import filter",
+    "version": "1.0"
+}
