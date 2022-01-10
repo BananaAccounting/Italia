@@ -1,4 +1,4 @@
-// Copyright [2020] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2020-10-23 */
+/* Update: 2021-12-29 */
 
 
 var ID_ERR_VERSIONE = "ID_ERR_VERSIONE";
@@ -21,6 +21,7 @@ var ID_ERR_LICENZA_ADVANCED = "ID_ERR_LICENZA_ADVANCED";
 var ID_ERR_LICENZA_PROFESSIONAL = "ID_ERR_LICENZA_PROFESSIONAL";
 var ID_ERR_GRUPPO_MANCANTE = "ID_ERR_GRUPPO_MANCANTE";
 var ID_ERR_GRUPPO_ERRATO = "ID_ERR_GRUPPO_ERRATO";
+var ID_ERR_GRUPPO_ERRATO_CATEGORIA = "ID_ERR_GRUPPO_ERRATO_CATEGORIA";
 
 /**
  * return the text error message according to error id
@@ -38,6 +39,9 @@ function getErrorMessage(errorId, column, value) {
         case ID_ERR_GRUPPO_ERRATO:
             //grColumn, riga, valore
             return "colonna <" + column + ">, valore <"+ value +"> Codice gruppo inserito errato. Modificare il codice gruppo nella tabella Conti.";
+
+        case ID_ERR_GRUPPO_ERRATO_CATEGORIA:
+            return "colonna <" + column + ">, valore <"+ value +"> Codice gruppo inserito errato. Modificare il codice gruppo nella tabella Categorie.";    
     
         case ID_ERR_LICENZA_ADVANCED:
             return "L'estensione richiede il piano Advanced.";

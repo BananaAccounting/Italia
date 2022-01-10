@@ -1,4 +1,4 @@
-// Copyright [2020] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2021-06-18 */
+/* Update: 2021-12-29 */
 
 
 
@@ -268,21 +268,21 @@ var BReport = class JsClass {
       //Get valid groups from each data structure type
       var groupsModA = createReportStructureStatoPatrimoniale();
       for (var i in groupsModA) {
-         if (groupsModA[i]["id"] && !groupsModA[i]["id"].startsWith('d')) {
+         if (groupsModA[i]["id"] && groupsModA[i]["type"] === "group") {
             columnList.add(groupsModA[i]["id"]);
          }
       }
 
       var groupsModB = createReportStructureRendicontoGestionale();
       for (var i in groupsModB) {
-         if (groupsModB[i]["id"] && !groupsModB[i]["id"].startsWith('d')) {
+         if (groupsModB[i]["id"] && groupsModB[i]["type"] === "group") {
             columnList.add(groupsModB[i]["id"]);
          }
       }
 
       var groupsModD = createReportStructureRendicontoCassa();
       for (var i in groupsModD) {
-         if (groupsModD[i]["id"] && !groupsModD[i]["id"].startsWith('d')) {
+         if (groupsModD[i]["id"] && groupsModD[i]["type"] === "group") {
             columnList.add(groupsModD[i]["id"]);
          }
       }
@@ -310,6 +310,29 @@ var BReport = class JsClass {
             if (group) {
                if (!dataGroups.includes(group)) {
                   tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, group));
+               }
+            }
+         }
+      }
+      
+      //Check if groups in Categories table are valid
+      if (this.banDoc.table("Categories")) {
+         for (var i = 0; i < this.banDoc.table('Categories').rowCount; i++) {
+            var tRow = this.banDoc.table('Categories').row(i);
+            var category = tRow.value('Category');
+            var group = tRow.value(grColumn);
+
+            if (grColumn === "Gr") {
+               if (group && category.indexOf(":") < 0 && category.indexOf(".") < 0 && category.indexOf(";") < 0) {
+                  if (!dataGroups.includes(group)) {
+                     tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO_CATEGORIA, grColumn, group));
+                  }
+               }
+            } else {
+               if (group) {
+                  if (!dataGroups.includes(group)) {
+                     tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO_CATEGORIA, grColumn, group));
+                  }
                }
             }
          }
