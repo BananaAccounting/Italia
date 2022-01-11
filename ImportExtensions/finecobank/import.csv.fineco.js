@@ -32,6 +32,9 @@
 //Main function
 function exec(inData, isTest) {
 
+	if (!inData)
+		return "@Cancel";
+
 	var importFinecoBank = new ImportFinecoBank(Banana.document);
 	// The extensions runs only with advanced Version of Banana Accounting
     if (!isTest && !importFinecoBank.verifyBananaAdvancedVersion())
