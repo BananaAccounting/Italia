@@ -225,7 +225,7 @@ var ImportUtilities = class ImportUtilities {
     verifyBananaAdvancedVersion() {
         if (!this.banDocument)
             return false;
-
+Banana.console.debug(Banana.application.license.licenseType);
         if (!Banana.application.license || Banana.application.license.licenseType !== "advanced") {
             var lang = this.getLang();
             var msg = "This extension requires Banana Accounting+ Advanced";
