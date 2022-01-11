@@ -16,7 +16,7 @@
 // @api = 1.0
 // @pubdate = 2022-01-11
 // @publisher = Banana.ch SA
-// @description = Fineco Bank - Import CSV
+// @description = Fineco Bank - Importazione estratto
 // @task = import.transactions
 // @doctype = 100.*; 110.*; 130.*
 // @docproperties = 

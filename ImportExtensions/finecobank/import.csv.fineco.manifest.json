@@ -2,10 +2,10 @@
     "category": "productivity",
     "country": "italia",
     "countryCode": "it",
-    "description": "FINECO Bank import filter",
+    "description": "FINECO Bank importazione estratto",
     "id": "import.csv.fineco",
     "language": "it",
     "publisher": "Banana.ch",
-    "title": "FINECO Bank import filter",
+    "title": "FINECO Bank importazione estratto",
     "version": "1.0"
 }
