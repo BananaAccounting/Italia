@@ -1,0 +1,35 @@
+%%info_test_name{ch.banana.filter.import.finecobank#example_02}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+\begin{tablevalue}{}{ l  l  l  l  l }
+Date & DateValue & Description & Income & Expenses\\
+2021-11-10 & 2021-11-10 & ESTRATTO CONTO AL  29/10/21             CARTA DI CREDITO Utilizzo carta di credito &  & -1658.96\\
+2021-11-11 & 2021-11-11 & Ord: HERA S P A Ben: CLAUDIO  Bonifico SEPA Italia & 2.23 & \\
+2021-11-11 & 2021-11-11 & Ord: HERA S P A Ben: LILIANA  Bonifico SEPA Italia & 10.98 & \\
+2021-11-22 & 2021-11-22 & Wind-Tre Addebito SDD fattura a Vs carico          SEPA Direct Debit &  & -25.99\\
+2021-11-24 & 2021-11-23 & Prelevamento Carta N° *****        253  Data operazione: 23/11/2021 Ora: 11:40   Prelievo Bancomat &  & -250\\
+2021-11-29 & 2021-11-29 & Ben: CONDOMINIO  Bonifico SEPA Italia &  & -474\\
+2021-11-29 & 2021-11-29 & Ord: ***** Bonifico SEPA Italia & 1650 & \\
+2021-11-29 & 2021-11-29 & Ord: MARIA Bonifico SEPA Italia & 2000 & \\
+2021-11-29 & 2021-11-29 & SERVIZIO ELETTRICO NAZIONALE Addebito SDD fattura a Vs carico       SEPA Direct Debit &  & -22.99\\
+2021-11-30 & 2021-11-30 & Addebito MAV nr. 05437017823780599  Pagamento MAV-RAV &  & -59\\
+\\
+\end{tablevalue}
+\end{document}

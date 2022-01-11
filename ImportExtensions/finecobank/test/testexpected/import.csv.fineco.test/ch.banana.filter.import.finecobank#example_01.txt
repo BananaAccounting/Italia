@@ -1,0 +1,47 @@
+%%info_test_name{ch.banana.filter.import.finecobank#example_01}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+\begin{tablevalue}{}{ l  l  l  l }
+Date & Description & Income & Expenses\\
+2021-11-22 & FARMACIA MURA  MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 14.75\\
+2021-11-22 & HAPPY CASA STORE     MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 5.76\\
+2021-11-23 & 113528641 ESSELUNGA  MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 80.73\\
+2021-11-23 & BURGER KING      MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 4.6\\
+2021-11-23 & COOP.SAN L MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 23.68\\
+2021-11-23 & ESSELUNGA ON LINE MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 88.97\\
+2021-11-24 & ILIAD                  Roma          ITA MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 5.99\\
+2021-11-24 & Prelevamento Carta N° *****        253 Prelievo Bancomat &  & 250\\
+2021-11-24 & SPAZIO CONAD            MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 40.04\\
+2021-11-25 & SPAZIO CONAD  MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 499\\
+2021-11-26 & CC ZARA 3456       MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 19.95\\
+2021-11-26 & CC ZARA 3456  MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 23.95\\
+2021-11-26 & NETFLIX.COM            Milan         ITA MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 12.99\\
+2021-11-27 & BURGER KING MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 13.8\\
+2021-11-27 & EUROSPAR MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 42.27\\
+2021-11-27 & EXPRESS MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 & 1.92 & \\
+2021-11-28 & WWW MULTIFUNZIONE CONTACTLESS CHIP 5100 **** **** 2534 &  & 4.11\\
+2021-11-29 & Ben: CONDOMINIO  Bonifico SEPA Italia &  & 474\\
+2021-11-29 & Ord:  ELISA  Bonifico SEPA Italia & 1650 & \\
+2021-11-29 & Ord: MARIAInfo-Cli: girofondi Bonifico SEPA Italia & 2000 & \\
+2021-11-29 & SERVIZIO ELETTRICO NAZIONALE SEPA Direct Debit &  & 22.99\\
+2021-11-30 & Addebito MAV nr. 05387 Pagamento MAV-RAV &  & 59\\
+\\
+\end{tablevalue}
+\end{document}

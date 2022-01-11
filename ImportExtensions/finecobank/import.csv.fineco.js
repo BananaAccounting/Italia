@@ -14,7 +14,7 @@
 //
 // @id = import.csv.fineco
 // @api = 1.0
-// @pubdate = 2021-12-30
+// @pubdate = 2022-01-11
 // @publisher = Banana.ch SA
 // @description = Fineco Bank - Import CSV
 // @task = import.transactions
@@ -30,10 +30,11 @@
 */
 
 //Main function
-function exec(inData) {
+function exec(inData, isTest) {
 
 	var importFinecoBank = new ImportFinecoBank(Banana.document);
-    if (!importFinecoBank.verifyBananaVersion())
+	// The extensions runs only with advanced Version of Banana Accounting
+    if (!isTest && !importFinecoBank.verifyBananaAdvancedVersion())
         return "@Cancel";
 
 	//1. Function call to define the conversion parameters

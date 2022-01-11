@@ -222,7 +222,7 @@ var ImportUtilities = class ImportUtilities {
     }
 
     //Check if the version of Banana Accounting is compatible with this class
-    verifyBananaVersion() {
+    verifyBananaAdvancedVersion() {
         if (!this.banDocument)
             return false;
 

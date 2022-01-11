@@ -24,8 +24,8 @@
 // @docproperties = 
 // @outputformat = none
 // @inputdataform = none
-// @includejs = ../import.csv.fineco.sbaa/import.csv.fineco.js
 // @includejs = ../import.csv.fineco.sbaa/import.utilities.js
+// @includejs = ../import.csv.fineco.sbaa/import.csv.fineco.js
 // @timeout = -1
 
 // Register test case to be executed
@@ -73,9 +73,9 @@ TestImportFinecoBank.prototype.testImport = function() {
       Test.assert(file);
       var fileContent = file.read();
       Test.assert(fileContent);
-      var transactions = exec(fileContent);
+      var transactions = exec(fileContent, true);
       this.testLogger.addCsv('', transactions);
-
+      
       if (!this.progressBar.step())
          break;
    }
