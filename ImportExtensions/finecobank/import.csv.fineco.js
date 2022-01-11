@@ -36,8 +36,9 @@ function exec(inData, isTest) {
 		return "@Cancel";
 
 	var importFinecoBank = new ImportFinecoBank(Banana.document);
+
 	// The extensions runs only with advanced Version of Banana Accounting
-    if (!isTest && !importFinecoBank.verifyBananaAdvancedVersion())
+    if (isTest !== true && !importFinecoBank.verifyBananaAdvancedVersion())
         return "@Cancel";
 
 	//1. Function call to define the conversion parameters
