@@ -1,4 +1,4 @@
-// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2021-12-29 */
+/* Update: 2022-02-11 */
 
 
 
@@ -259,31 +259,18 @@ var BReport = class JsClass {
    /**
     * Checks that user defined groups in the given grColumn are valid.
     * User can olny use groups ID defined in the data structure.
+    * Checks Assets/Liabilties and Income/Expenses.
+    * Used for "Rendiconto Patrimoniale"
     */
    validateGroups(grColumn) {
       
       var dataGroups = [];
       var columnList = new Set();
 
-      //Get valid groups from each data structure type
-      var groupsModA = createReportStructureStatoPatrimoniale();
-      for (var i in groupsModA) {
-         if (groupsModA[i]["id"] && groupsModA[i]["type"] === "group") {
-            columnList.add(groupsModA[i]["id"]);
-         }
-      }
-
-      var groupsModB = createReportStructureRendicontoGestionale();
-      for (var i in groupsModB) {
-         if (groupsModB[i]["id"] && groupsModB[i]["type"] === "group") {
-            columnList.add(groupsModB[i]["id"]);
-         }
-      }
-
-      var groupsModD = createReportStructureRendicontoCassa();
-      for (var i in groupsModD) {
-         if (groupsModD[i]["id"] && groupsModD[i]["type"] === "group") {
-            columnList.add(groupsModD[i]["id"]);
+      var reportStructure = createReportStructureStatoPatrimoniale();
+      for (var i in reportStructure) {
+         if (reportStructure[i]["id"] && reportStructure[i]["type"] === "group") {
+            columnList.add(reportStructure[i]["id"]);
          }
       }
 
@@ -292,47 +279,90 @@ var BReport = class JsClass {
          dataGroups.push(i);
       }
 
-      //Banana.console.log(dataGroups);
-
-      //Check if groups in Accounts table are valid
-      for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
-         var tRow = this.banDoc.table('Accounts').row(i);
-         var account = tRow.value('Account');
-         var group = tRow.value(grColumn);
-
-         if (grColumn === "Gr") {
-            if (group && group !== "00" && account.indexOf(":") < 0 && account.indexOf(".") < 0 && account.indexOf(";") < 0) {
-               if (!dataGroups.includes(group)) {
-                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, group));
+      //Check if groups in Categories table are valid
+      if (this.banDoc.table("Categories")) {
+         for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
+            var tRow = this.banDoc.table('Accounts').row(i);
+            var account = tRow.value('Account');
+            var gr = tRow.value(grColumn);
+            if (gr && account && account.indexOf(":") < 0 && account.indexOf(".") < 0 && account.indexOf(",") < 0 && account.indexOf(";") < 0) {
+               if (!dataGroups.includes(gr)) {
+                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, gr));
                }
             }
-         } else {
-            if (group) {
-               if (!dataGroups.includes(group)) {
-                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, group));
+         }
+         for (var i = 0; i < this.banDoc.table('Categories').rowCount; i++) {
+            var tRow = this.banDoc.table('Categories').row(i);
+            var category = tRow.value('Category');
+            var gr = tRow.value(grColumn);
+            if (gr && category && category.indexOf(":") < 0 && category.indexOf(".") < 0 && category.indexOf(",") < 0 && category.indexOf(";") < 0) {
+               if (!dataGroups.includes(gr)) {
+                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO_CATEGORIA, grColumn, gr));
                }
             }
          }
       }
+      else {
+         //Check if groups in Accounts table are valid
+         for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
+            var tRow = this.banDoc.table('Accounts').row(i);
+            var account = tRow.value('Account');
+            var gr = tRow.value(grColumn);
+            var bclass = tRow.value('BClass');
+            if (gr && account && bclass && (bclass === '1' || bclass === '2' || bclass === '3' || bclass === '4') && account.indexOf(":") < 0 && account.indexOf(".") < 0 && account.indexOf(",") < 0 && account.indexOf(";") < 0) {
+               if (!dataGroups.includes(gr)) {
+                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, gr));
+               }
+            }
+         } 
+      }
+   }
+
+   /**
+    * Checks that user defined groups in the given grColumn are valid.
+    * User can olny use groups ID defined in the data structure.
+    * Checks only Income and Expenses.
+    * Used for "Rendiconto Cassa" e "Rendiconto Gestionale"
+    */ 
+   validateGroups_IncomeExpenses(grColumn, reportStructure) {
       
+      var dataGroups = [];
+      var columnList = new Set();
+
+      for (var i in reportStructure) {
+         if (reportStructure[i]["id"] && reportStructure[i]["type"] === "group") {
+            columnList.add(reportStructure[i]["id"]);
+         }
+      }
+
+      //Convert Set object to array
+      for (var i of columnList) {
+         dataGroups.push(i);
+      }
+
       //Check if groups in Categories table are valid
       if (this.banDoc.table("Categories")) {
          for (var i = 0; i < this.banDoc.table('Categories').rowCount; i++) {
             var tRow = this.banDoc.table('Categories').row(i);
             var category = tRow.value('Category');
-            var group = tRow.value(grColumn);
-
-            if (grColumn === "Gr") {
-               if (group && category.indexOf(":") < 0 && category.indexOf(".") < 0 && category.indexOf(";") < 0) {
-                  if (!dataGroups.includes(group)) {
-                     tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO_CATEGORIA, grColumn, group));
-                  }
+            var gr = tRow.value(grColumn);
+            if (gr && category && category.indexOf(":") < 0 && category.indexOf(".") < 0 && category.indexOf(",") < 0 && category.indexOf(";") < 0) {
+               if (!dataGroups.includes(gr)) {
+                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO_CATEGORIA, grColumn, gr));
                }
-            } else {
-               if (group) {
-                  if (!dataGroups.includes(group)) {
-                     tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO_CATEGORIA, grColumn, group));
-                  }
+            }
+         }
+      }
+      else {
+         //Check if groups in Accounts table are valid
+         for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
+            var tRow = this.banDoc.table('Accounts').row(i);
+            var account = tRow.value('Account');
+            var gr = tRow.value(grColumn);
+            var bclass = tRow.value('BClass');
+            if (gr && account && bclass && (bclass === '3' || bclass === '4') && account.indexOf(":") < 0 && account.indexOf(".") < 0 && account.indexOf(",") < 0 && account.indexOf(";") < 0) {
+               if (!dataGroups.includes(gr)) {
+                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, gr));
                }
             }
          }

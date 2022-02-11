@@ -1,4 +1,4 @@
-// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2021-12-29 */
+/* Update: 2022-02-11 */
 
 
 var ID_ERR_VERSIONE = "ID_ERR_VERSIONE";
@@ -22,6 +22,12 @@ var ID_ERR_LICENZA_PROFESSIONAL = "ID_ERR_LICENZA_PROFESSIONAL";
 var ID_ERR_GRUPPO_MANCANTE = "ID_ERR_GRUPPO_MANCANTE";
 var ID_ERR_GRUPPO_ERRATO = "ID_ERR_GRUPPO_ERRATO";
 var ID_ERR_GRUPPO_ERRATO_CATEGORIA = "ID_ERR_GRUPPO_ERRATO_CATEGORIA";
+var ID_ERR_ERRORE_QUADRATURA = "ID_ERR_ERRORE_QUADRATURA";
+var ID_ERR_SALDO_APERTURA_SENZA_PRECEDENTE = "ID_ERR_SALDO_APERTURA_SENZA_PRECEDENTE";
+var ID_ERR_SALDI_APERTURA_PRECEDENTE_DIFFERENTI = "ID_ERR_SALDI_APERTURA_PRECEDENTE_DIFFERENTI";
+var ID_ERR_SALDI_LIQUIDITA = "ID_ERR_SALDI_LIQUIDITA";
+var ID_ERR_REGISTRAZIONE_NON_CORRETTA = "ID_ERR_REGISTRAZIONE_NON_CORRETTA";
+var ID_ERR_ACCANTONAMENTO_5XMILLE = "ID_ERR_ACCANTONAMENTO_5XMILLE";
 
 /**
  * return the text error message according to error id
@@ -34,7 +40,6 @@ function getErrorMessage(errorId, column, value) {
             }
             else {
                 return "L'estensione richiede come versione minima Banana Contabilità Plus " + BAN_VERSION;
-                //return "L'estensione non funziona con questa versione di Banana Contabilità. Aggiornare alla versione " + BAN_VERSION + " o successiva.";
             }
         case ID_ERR_GRUPPO_ERRATO:
             //grColumn, riga, valore
@@ -48,6 +53,24 @@ function getErrorMessage(errorId, column, value) {
 
         case ID_ERR_LICENZA_PROFESSIONAL:
             return "L'estensione richiede il piano Professional.";
+
+        case ID_ERR_ERRORE_QUADRATURA:
+            return "La somma della liquidità iniziale + avanzo/disavanzo non è uguale alla liquidità finale. Importo differenza = ";
+
+        case ID_ERR_SALDO_APERTURA_SENZA_PRECEDENTE:
+            return "Saldo colonna Precedente mancante. Il saldo della colona Apertura deve essere riportato anche nella colonna Precedente";
+
+        case ID_ERR_SALDI_APERTURA_PRECEDENTE_DIFFERENTI:
+            return "Saldi colonne Apertura e Precedente differenti. I saldi della colone Apertura e Precedente devono essere uguali";
+
+        case ID_ERR_SALDI_LIQUIDITA:
+            return "Il saldo finale di Cassa e Banca anno precedente deve essere uguale al saldo iniziale di Cassa e Banca anno corrente";
+
+        case ID_ERR_REGISTRAZIONE_NON_CORRETTA:
+            return "Sono ammesse solo registrazioni con conti della Liquidità";
+
+        case ID_ERR_ACCANTONAMENTO_5XMILLE:
+            return "L'accantonamento è maggiore della differenza 'Importo percepito - Totale spese'";
     }
     return "";
 }

@@ -1,4 +1,4 @@
-// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.reportcinquepermille.test
 // @api = 1.0
-// @pubdate = 2021-09-14
+// @pubdate = 2022-02-11
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.reportcinquepermille.js>
 // @task = app.command
@@ -75,7 +75,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoCorrente = function(
 	userParam.fileAnnoPrecedente = false;
 	userParam.segment5XM = ":5X2022";
 
-	let reportGroups = loadReportGroups();
+	let reportGroups = createReportStructure5xMilleModA();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -105,7 +105,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoPrecedente = functio
 	userParam.fileAnnoPrecedente = true;
 	userParam.segment5XM = ":5X2021";
 
-	let reportGroups = loadReportGroups();
+	let reportGroups = createReportStructure5xMilleModA();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -135,7 +135,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoCorrente = function() 
 	userParam.fileAnnoPrecedente = false;
 	userParam.segment5XM = ":5X2022";
 
-	let reportGroups = loadReportGroups();
+	let reportGroups = createReportStructure5xMilleModA();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -165,7 +165,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente = function(
 	userParam.fileAnnoPrecedente = true;
 	userParam.segment5XM = ":5X2021";
 
-	let reportGroups = loadReportGroups();
+	let reportGroups = createReportStructure5xMilleModA();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -195,7 +195,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoCorrente_colonnaSegm
 	userParam.fileAnnoPrecedente = false;
 	userParam.segment5XM = ":5X2022";
 
-	let reportGroups = loadReportGroups();
+	let reportGroups = createReportStructure5xMilleModA();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -225,7 +225,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoPrecedente_colonnaSe
 	userParam.fileAnnoPrecedente = true;
 	userParam.segment5XM = ":5X2021";
 
-	let reportGroups = loadReportGroups();
+	let reportGroups = createReportStructure5xMilleModA();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -255,7 +255,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoCorrente_colonnaSegmen
 	userParam.fileAnnoPrecedente = false;
 	userParam.segment5XM = ":5X2022";
 
-	let reportGroups = loadReportGroups();
+	let reportGroups = createReportStructure5xMilleModA();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -285,7 +285,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente_colonnaSegm
 	userParam.fileAnnoPrecedente = true;
 	userParam.segment5XM = ":5X2021";
 
-	let reportGroups = loadReportGroups();
+	let reportGroups = createReportStructure5xMilleModA();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
