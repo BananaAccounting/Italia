@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2022-02-11
+// @pubdate = 2022-02-14
 // @publisher = Banana.ch SA
 // @description = 1. Stato patrimoniale
 // @task = app.command

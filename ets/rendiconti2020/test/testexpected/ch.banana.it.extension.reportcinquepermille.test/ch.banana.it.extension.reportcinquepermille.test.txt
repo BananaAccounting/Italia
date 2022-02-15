@@ -70,7 +70,7 @@ Rendiconto anno finanziario 2021-2022 \\
 I soggetti beneficiari sono tenuti a redigere, oltre al presente modello di rendiconto, una relazione che illustri in maniera esaustiva l’utilizzo del contributo percepito e un elenco dei giustificativi di spesa. Si rammenta che i giustificativi di spesa non dovranno essere trasmessi, bensì conservati presso la sede dell’ente ed esibiti qualora il Ministero ne faccia richiesta. \\
   \\
   \\
-\excltest{Data: 11.02.2022} \\
+\excltest{Data: 15.02.2022} \\
   \\
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
@@ -141,7 +141,7 @@ Rendiconto anno finanziario 2021-2022 \\
 I soggetti beneficiari sono tenuti a redigere, oltre al presente modello di rendiconto, una relazione che illustri in maniera esaustiva l’utilizzo del contributo percepito e un elenco dei giustificativi di spesa. Si rammenta che i giustificativi di spesa non dovranno essere trasmessi, bensì conservati presso la sede dell’ente ed esibiti qualora il Ministero ne faccia richiesta. \\
   \\
   \\
-\excltest{Data: 11.02.2022} \\
+\excltest{Data: 15.02.2022} \\
   \\
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
@@ -212,7 +212,7 @@ Rendiconto anno finanziario 2021-2022 \\
 I soggetti beneficiari sono tenuti a redigere, oltre al presente modello di rendiconto, una relazione che illustri in maniera esaustiva l’utilizzo del contributo percepito e un elenco dei giustificativi di spesa. Si rammenta che i giustificativi di spesa non dovranno essere trasmessi, bensì conservati presso la sede dell’ente ed esibiti qualora il Ministero ne faccia richiesta. \\
   \\
   \\
-\excltest{Data: 11.02.2022} \\
+\excltest{Data: 15.02.2022} \\
   \\
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
@@ -283,7 +283,7 @@ Rendiconto anno finanziario 2021-2022 \\
 I soggetti beneficiari sono tenuti a redigere, oltre al presente modello di rendiconto, una relazione che illustri in maniera esaustiva l’utilizzo del contributo percepito e un elenco dei giustificativi di spesa. Si rammenta che i giustificativi di spesa non dovranno essere trasmessi, bensì conservati presso la sede dell’ente ed esibiti qualora il Ministero ne faccia richiesta. \\
   \\
   \\
-\excltest{Data: 11.02.2022} \\
+\excltest{Data: 15.02.2022} \\
   \\
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
@@ -354,7 +354,7 @@ Rendiconto anno finanziario 2021-2022 \\
 I soggetti beneficiari sono tenuti a redigere, oltre al presente modello di rendiconto, una relazione che illustri in maniera esaustiva l’utilizzo del contributo percepito e un elenco dei giustificativi di spesa. Si rammenta che i giustificativi di spesa non dovranno essere trasmessi, bensì conservati presso la sede dell’ente ed esibiti qualora il Ministero ne faccia richiesta. \\
   \\
   \\
-\excltest{Data: 11.02.2022} \\
+\excltest{Data: 15.02.2022} \\
   \\
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
@@ -425,7 +425,7 @@ Rendiconto anno finanziario 2021-2022 \\
 I soggetti beneficiari sono tenuti a redigere, oltre al presente modello di rendiconto, una relazione che illustri in maniera esaustiva l’utilizzo del contributo percepito e un elenco dei giustificativi di spesa. Si rammenta che i giustificativi di spesa non dovranno essere trasmessi, bensì conservati presso la sede dell’ente ed esibiti qualora il Ministero ne faccia richiesta. \\
   \\
   \\
-\excltest{Data: 11.02.2022} \\
+\excltest{Data: 15.02.2022} \\
   \\
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
@@ -496,7 +496,7 @@ Rendiconto anno finanziario 2021-2022 \\
 I soggetti beneficiari sono tenuti a redigere, oltre al presente modello di rendiconto, una relazione che illustri in maniera esaustiva l’utilizzo del contributo percepito e un elenco dei giustificativi di spesa. Si rammenta che i giustificativi di spesa non dovranno essere trasmessi, bensì conservati presso la sede dell’ente ed esibiti qualora il Ministero ne faccia richiesta. \\
   \\
   \\
-\excltest{Data: 11.02.2022} \\
+\excltest{Data: 15.02.2022} \\
   \\
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\
@@ -567,7 +567,217 @@ Rendiconto anno finanziario 2021-2022 \\
 I soggetti beneficiari sono tenuti a redigere, oltre al presente modello di rendiconto, una relazione che illustri in maniera esaustiva l’utilizzo del contributo percepito e un elenco dei giustificativi di spesa. Si rammenta che i giustificativi di spesa non dovranno essere trasmessi, bensì conservati presso la sede dell’ente ed esibiti qualora il Ministero ne faccia richiesta. \\
   \\
   \\
-\excltest{Data: 11.02.2022} \\
+\excltest{Data: 15.02.2022} \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
+Firma del rappresentante legale \\
+  \\
+  \\
+  \\
+  \\
+Il rappresentante legale, con la sottoscrizione del presente rendiconto: \\
+● Dichiara che le spese inserite non siano già state imputate ad altri contributi pubblici o privati (c.d. divieto di doppio finanziamento a valere sulla stessa spesa), se non per la parte residua; \\
+● Attesta l’autenticità delle informazioni contenute nel presente documento e la loro integrale rispondenza con quanto riportato nelle scritture contabili dell’organizzazione, consapevole che, ai sensi degli articoli 47 e 76 del d.P.R. n. 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi ovvero ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. \\
+  \\
+Il presente rendiconto, inoltre, ai sensi dell’articolo 46 del citato d.P.R. n. 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del soggetto che lo abbia sottoscritto. \\
+  \\
+  \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
+Firma del rappresentante legale \\
+- \#page-nr - \\
+\end{reportvalue}
+\keyvalue{Result}{Passed}
+\end{test}
+\begin{test}{testContabilitaSemplice\_Accantonamento\_con\_registrazione}
+\begin{reportvalue}{Test report 5 per mille - contabilità semplice - 5X-2022 - accantonamento con registrazione (Mod. A)}
+  \\
+  \\
+MODELLO DI RENDICONTO RELATIVO AL CONTRIBUTO 5 PER MILLE DESTINATO AGLI ENTI DEL TERZO SETTORE (Mod. A) \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l }
+ANAGRAFICA Denominazione sociale  & \multicolumn{4}{l}{Associazione Aiuto agli Anziani }\\
+C.F. dell'Ente  & 1234567890  &  & Telefono  & 0498686849 \\
+Comune  & Padova  &  & Email  & info@example.com \\
+Provincia  & PD  &  & PEC  & xyz@pec.it \\
+CAP  & 35131  &  & Nome rappresentante legale  & Mario Rossi \\
+Via  & Gradenigo 10  &  & C.F. rappresentante legale  & 1234567890 \\
+\end{longtable}
+  \\
+Rendiconto anno finanziario 2022 \\
+\begin{longtable}[l]{ l  l  l  l }
+\multicolumn{2}{l}{Finanziamento cinque per mille Anno 2022 } & \multicolumn{2}{l}{:5X-2022 }\\
+\multicolumn{2}{l}{Data di percezione del contributo } & \multicolumn{2}{l}{31.12.2022 }\\
+\\
+\multicolumn{2}{l}{IMPORTO PERCEPITO } & 2'500.00  & EUR \\
+\multicolumn{4}{l}{  }\\
+1.  & Risorse umane  & 120.00  & EUR \\
+\multicolumn{2}{l}{(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). }\\
+\multicolumn{4}{l}{  }\\
+2.  & Spese di funzionamento  & 120.00  & EUR \\
+\multicolumn{2}{l}{(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc.) }\\
+\multicolumn{4}{l}{  }\\
+3.  & Spese per acquisto beni e servizi  & 0.00  & EUR \\
+\multicolumn{2}{l}{(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc.) }\\
+\multicolumn{4}{l}{  }\\
+4.  & Spese per attività di interesse generale dell’ente  &  & \\
+\multicolumn{2}{l}{(rappresentare le spese nella relazione illustrativa a seconda della causale) }\\
+\multicolumn{4}{l}{  }\\
+ & 4.1 Acquisto di beni o servizi strumentali oggetto di donazione  & 700.00  & EUR \\
+ & 4.2 Erogazioni a proprie articolazioni territoriali e a soggetti collegati o affiliati  & 0.00  & EUR \\
+ & 4.3 Erogazioni ad enti terzi  & 0.00  & EUR \\
+ & 4.4 Erogazioni a persone fisiche  & 0.00  & EUR \\
+ & 4.5 Altre spese per attività di interesse generale  & 0.00  & EUR \\
+\multicolumn{4}{l}{  }\\
+5.  & Accantonamento  & 1'560.00  & EUR \\
+\multicolumn{2}{l}{(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando per il soggetto beneficiario l’obbligo di specificare nella relazione allegata al presente documento le finalità dell’accantonamento. Il soggetto beneficiario è tenuto ad utilizzare le somme accantonate e ad inviare il modello relativo all’accantonamento entro 36 mesi dalla percezione del contributo) }\\
+\multicolumn{4}{l}{  }\\
+\multicolumn{2}{l}{TOTALE } & 2'500.00  & EUR \\
+\end{longtable}
+  \\
+I soggetti beneficiari sono tenuti a redigere, oltre al presente modello di rendiconto, una relazione che illustri in maniera esaustiva l’utilizzo del contributo percepito e un elenco dei giustificativi di spesa. Si rammenta che i giustificativi di spesa non dovranno essere trasmessi, bensì conservati presso la sede dell’ente ed esibiti qualora il Ministero ne faccia richiesta. \\
+  \\
+  \\
+\excltest{Data: 01.01.2023} \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
+Firma del rappresentante legale \\
+  \\
+  \\
+  \\
+  \\
+Il rappresentante legale, con la sottoscrizione del presente rendiconto: \\
+● Dichiara che le spese inserite non siano già state imputate ad altri contributi pubblici o privati (c.d. divieto di doppio finanziamento a valere sulla stessa spesa), se non per la parte residua; \\
+● Attesta l’autenticità delle informazioni contenute nel presente documento e la loro integrale rispondenza con quanto riportato nelle scritture contabili dell’organizzazione, consapevole che, ai sensi degli articoli 47 e 76 del d.P.R. n. 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi ovvero ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. \\
+  \\
+Il presente rendiconto, inoltre, ai sensi dell’articolo 46 del citato d.P.R. n. 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del soggetto che lo abbia sottoscritto. \\
+  \\
+  \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
+Firma del rappresentante legale \\
+- \#page-nr - \\
+\end{reportvalue}
+\keyvalue{Result}{Passed}
+\end{test}
+\begin{test}{testContabilitaSemplice\_Calcolo\_automatico\_accantonamento}
+\begin{reportvalue}{Test report 5 per mille - contabilità semplice - 5X-2022 - calcolo automatico accantonamento (Mod. A)}
+  \\
+  \\
+MODELLO DI RENDICONTO RELATIVO AL CONTRIBUTO 5 PER MILLE DESTINATO AGLI ENTI DEL TERZO SETTORE (Mod. A) \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l }
+ANAGRAFICA Denominazione sociale  & \multicolumn{4}{l}{Associazione Aiuto agli Anziani }\\
+C.F. dell'Ente  & 1234567890  &  & Telefono  & 0498686849 \\
+Comune  & Padova  &  & Email  & info@example.com \\
+Provincia  & PD  &  & PEC  & xyz@pec.it \\
+CAP  & 35131  &  & Nome rappresentante legale  & Mario Rossi \\
+Via  & Gradenigo 10  &  & C.F. rappresentante legale  & 1234567890 \\
+\end{longtable}
+  \\
+Rendiconto anno finanziario 2022 \\
+\begin{longtable}[l]{ l  l  l  l }
+\multicolumn{2}{l}{Finanziamento cinque per mille Anno 2022 } & \multicolumn{2}{l}{:5X-2022 }\\
+\multicolumn{2}{l}{Data di percezione del contributo } & \multicolumn{2}{l}{31.12.2022 }\\
+\\
+\multicolumn{2}{l}{IMPORTO PERCEPITO } & 2'500.00  & EUR \\
+\multicolumn{4}{l}{  }\\
+1.  & Risorse umane  & 120.00  & EUR \\
+\multicolumn{2}{l}{(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). }\\
+\multicolumn{4}{l}{  }\\
+2.  & Spese di funzionamento  & 120.00  & EUR \\
+\multicolumn{2}{l}{(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc.) }\\
+\multicolumn{4}{l}{  }\\
+3.  & Spese per acquisto beni e servizi  & 0.00  & EUR \\
+\multicolumn{2}{l}{(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc.) }\\
+\multicolumn{4}{l}{  }\\
+4.  & Spese per attività di interesse generale dell’ente  &  & \\
+\multicolumn{2}{l}{(rappresentare le spese nella relazione illustrativa a seconda della causale) }\\
+\multicolumn{4}{l}{  }\\
+ & 4.1 Acquisto di beni o servizi strumentali oggetto di donazione  & 700.00  & EUR \\
+ & 4.2 Erogazioni a proprie articolazioni territoriali e a soggetti collegati o affiliati  & 0.00  & EUR \\
+ & 4.3 Erogazioni ad enti terzi  & 0.00  & EUR \\
+ & 4.4 Erogazioni a persone fisiche  & 0.00  & EUR \\
+ & 4.5 Altre spese per attività di interesse generale  & 0.00  & EUR \\
+\multicolumn{4}{l}{  }\\
+5.  & Accantonamento  & 1'560.00  & EUR \\
+\multicolumn{2}{l}{(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando per il soggetto beneficiario l’obbligo di specificare nella relazione allegata al presente documento le finalità dell’accantonamento. Il soggetto beneficiario è tenuto ad utilizzare le somme accantonate e ad inviare il modello relativo all’accantonamento entro 36 mesi dalla percezione del contributo) }\\
+\multicolumn{4}{l}{  }\\
+\multicolumn{2}{l}{TOTALE } & 2'500.00  & EUR \\
+\end{longtable}
+  \\
+I soggetti beneficiari sono tenuti a redigere, oltre al presente modello di rendiconto, una relazione che illustri in maniera esaustiva l’utilizzo del contributo percepito e un elenco dei giustificativi di spesa. Si rammenta che i giustificativi di spesa non dovranno essere trasmessi, bensì conservati presso la sede dell’ente ed esibiti qualora il Ministero ne faccia richiesta. \\
+  \\
+  \\
+\excltest{Data: 01.01.2023} \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
+Firma del rappresentante legale \\
+  \\
+  \\
+  \\
+  \\
+Il rappresentante legale, con la sottoscrizione del presente rendiconto: \\
+● Dichiara che le spese inserite non siano già state imputate ad altri contributi pubblici o privati (c.d. divieto di doppio finanziamento a valere sulla stessa spesa), se non per la parte residua; \\
+● Attesta l’autenticità delle informazioni contenute nel presente documento e la loro integrale rispondenza con quanto riportato nelle scritture contabili dell’organizzazione, consapevole che, ai sensi degli articoli 47 e 76 del d.P.R. n. 445/2000, chiunque rilasci dichiarazioni mendaci, formi atti falsi ovvero ne faccia uso è punito ai sensi del codice penale e dalle leggi speciali in materia. \\
+  \\
+Il presente rendiconto, inoltre, ai sensi dell’articolo 46 del citato d.P.R. n. 445/2000, deve essere corredato da copia semplice di un documento di identità in corso di validità del soggetto che lo abbia sottoscritto. \\
+  \\
+  \\
+  \\
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
+Firma del rappresentante legale \\
+- \#page-nr - \\
+\end{reportvalue}
+\keyvalue{Result}{Passed}
+\end{test}
+\begin{test}{testContabilitaSemplice\_rendiconto\_accantonamento\_ModB}
+\begin{reportvalue}{Test report 5 per mille - contabilità semplice - 5X-2021A - rendiconto accantonamento Mod.B}
+  \\
+  \\
+MODELLO DI RENDICONTO DELL'ACCANTONAMENTO RELATIVO AL CONTRIBUTO 5 PER MILLE DESTINATO AGLI ENTI DEL TERZO SETTORE (Mod. B) \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l }
+ANAGRAFICA Denominazione sociale  & \multicolumn{4}{l}{Associazione Aiuto agli Anziani }\\
+C.F. dell'Ente  & 1234567890  &  & Telefono  & 0498686849 \\
+Comune  & Padova  &  & Email  & info@example.com \\
+Provincia  & PD  &  & PEC  & xyz@pec.it \\
+CAP  & 35131  &  & Nome rappresentante legale  & Mario Rossi \\
+Via  & Gradenigo 10  &  & C.F. rappresentante legale  & 1234567890 \\
+\end{longtable}
+  \\
+Rendiconto dell'accantonamento anno finanziario 2022 \\
+\begin{longtable}[l]{ l  l  l  l }
+\multicolumn{2}{l}{Accantonamento cinque per mille Anno 2021 } & \multicolumn{2}{l}{:5X-2021A }\\
+\multicolumn{2}{l}{IMPORTO ACCANTONATO } & 2'000.00  & EUR \\
+\multicolumn{4}{l}{  }\\
+1.  & Risorse umane  & 700.00  & EUR \\
+\multicolumn{2}{l}{(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale). }\\
+\multicolumn{4}{l}{  }\\
+2.  & Spese di funzionamento  & 100.00  & EUR \\
+\multicolumn{2}{l}{(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc.) }\\
+\multicolumn{4}{l}{  }\\
+3.  & Spese per acquisto beni e servizi  & 200.00  & EUR \\
+\multicolumn{2}{l}{(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc.) }\\
+\multicolumn{4}{l}{  }\\
+4.  & Spese per attività di interesse generale dell’ente  &  & \\
+\multicolumn{2}{l}{(rappresentare le spese nella relazione illustrativa a seconda della causale) }\\
+\multicolumn{4}{l}{  }\\
+ & 4.1 Acquisto di beni o servizi strumentali oggetto di donazione  & 700.00  & EUR \\
+ & 4.2 Erogazioni a proprie articolazioni territoriali e a soggetti collegati o affiliati  & 50.00  & EUR \\
+ & 4.3 Erogazioni ad enti terzi  & 0.00  & EUR \\
+ & 4.4 Erogazioni a persone fisiche  & 0.00  & EUR \\
+ & 4.5 Altre spese per attività di interesse generale  & 250.00  & EUR \\
+\multicolumn{4}{l}{  }\\
+\multicolumn{2}{l}{TOTALE } & 2'000.00  & EUR \\
+\end{longtable}
+  \\
+  \\
+  \\
+I soggetti beneficiari sono tenuti a redigere, oltre al presente modello di rendiconto, una relazione che illustri in maniera esaustiva l’utilizzo del contributo percepito e un elenco dei giustificativi di spesa. Si rammenta che i giustificativi di spesa non dovranno essere trasmessi, bensì conservati presso la sede dell’ente ed esibiti qualora il Ministero ne faccia richiesta. \\
+  \\
+  \\
+\excltest{Data: 01.01.2022} \\
   \\
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
 Firma del rappresentante legale \\

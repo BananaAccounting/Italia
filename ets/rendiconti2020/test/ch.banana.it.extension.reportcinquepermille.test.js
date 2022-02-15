@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.reportcinquepermille.test
 // @api = 1.0
-// @pubdate = 2022-02-11
+// @pubdate = 2022-02-15
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.reportcinquepermille.js>
 // @task = app.command
@@ -75,7 +75,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoCorrente = function(
 	userParam.fileAnnoPrecedente = false;
 	userParam.segment5XM = ":5X2022";
 
-	let reportGroups = createReportStructure5xMilleModA();
+	let reportGroups = createReportStructure5xMille();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -105,7 +105,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoPrecedente = functio
 	userParam.fileAnnoPrecedente = true;
 	userParam.segment5XM = ":5X2021";
 
-	let reportGroups = createReportStructure5xMilleModA();
+	let reportGroups = createReportStructure5xMille();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -135,7 +135,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoCorrente = function() 
 	userParam.fileAnnoPrecedente = false;
 	userParam.segment5XM = ":5X2022";
 
-	let reportGroups = createReportStructure5xMilleModA();
+	let reportGroups = createReportStructure5xMille();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -165,7 +165,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente = function(
 	userParam.fileAnnoPrecedente = true;
 	userParam.segment5XM = ":5X2021";
 
-	let reportGroups = createReportStructure5xMilleModA();
+	let reportGroups = createReportStructure5xMille();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -195,7 +195,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoCorrente_colonnaSegm
 	userParam.fileAnnoPrecedente = false;
 	userParam.segment5XM = ":5X2022";
 
-	let reportGroups = createReportStructure5xMilleModA();
+	let reportGroups = createReportStructure5xMille();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -225,7 +225,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoPrecedente_colonnaSe
 	userParam.fileAnnoPrecedente = true;
 	userParam.segment5XM = ":5X2021";
 
-	let reportGroups = createReportStructure5xMilleModA();
+	let reportGroups = createReportStructure5xMille();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -255,7 +255,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoCorrente_colonnaSegmen
 	userParam.fileAnnoPrecedente = false;
 	userParam.segment5XM = ":5X2022";
 
-	let reportGroups = createReportStructure5xMilleModA();
+	let reportGroups = createReportStructure5xMille();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -285,7 +285,7 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente_colonnaSegm
 	userParam.fileAnnoPrecedente = true;
 	userParam.segment5XM = ":5X2021";
 
-	let reportGroups = createReportStructure5xMilleModA();
+	let reportGroups = createReportStructure5xMille();
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -296,3 +296,107 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente_colonnaSegm
 	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	Test.logger.addReport("Test report 5 per mille - contabilità doppia - 5X2022 anno precedente", report);
 }
+
+// Test#9: contabilità semplice, accantonamento con registrazione (Mod. A)
+Rendiconto5XMilleTest.prototype.testContabilitaSemplice_Accantonamento_con_registrazione = function() {
+
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/5XM-entrate-uscite-accantonamento-con-registrazione.ac2");
+	Test.assert(banDoc);
+
+	var fileLastYear = "";
+
+	var userParam = {};
+	userParam.provincia = "PD";
+	userParam.pec = "xyz@pec.it";
+	userParam.rappresentanteLegale = "Mario Rossi";
+	userParam.cfRappresentanteLegale = "1234567890";
+	userParam.dataPercezione = "31.12.2022";
+	userParam.colonnaRaggruppamento = "Gr1";
+	userParam.fileAnnoPrecedente = false;
+	userParam.segment5XM = ":5X-2022";
+	userParam.dataDocumento = "01.01.2023";
+	userParam.calcolaAccantonamento = false;
+	userParam.tipoRendicontoModB = false;
+	userParam.importoAccantonamento = "";
+
+
+	let reportGroups = createReportStructure5xMille();
+	
+	let accountsMap = {};
+	loadAccountsMap(banDoc, userParam, accountsMap);
+	if (fileLastYear) {
+		loadAccountsMap(fileLastYear, userParam, accountsMap);
+	}
+
+	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
+	Test.logger.addReport("Test report 5 per mille - contabilità semplice - 5X-2022 - accantonamento con registrazione (Mod. A)", report);
+}
+
+// Test#10: contabilità semplice, calcolo automatico accantonamento (Mod. A)
+Rendiconto5XMilleTest.prototype.testContabilitaSemplice_Calcolo_automatico_accantonamento = function() {
+
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/5XM-entrate-uscite-accantonamento-calcolo-automatico.ac2");
+	Test.assert(banDoc);
+
+	var fileLastYear = "";
+
+	var userParam = {};
+	userParam.provincia = "PD";
+	userParam.pec = "xyz@pec.it";
+	userParam.rappresentanteLegale = "Mario Rossi";
+	userParam.cfRappresentanteLegale = "1234567890";
+	userParam.dataPercezione = "31.12.2022";
+	userParam.colonnaRaggruppamento = "Gr1";
+	userParam.fileAnnoPrecedente = false;
+	userParam.segment5XM = ":5X-2022";
+	userParam.dataDocumento = "01.01.2023";
+	userParam.calcolaAccantonamento = true;
+	userParam.tipoRendicontoModB = false;
+	userParam.importoAccantonamento = "";
+
+	let reportGroups = createReportStructure5xMille();
+	
+	let accountsMap = {};
+	loadAccountsMap(banDoc, userParam, accountsMap);
+	if (fileLastYear) {
+		loadAccountsMap(fileLastYear, userParam, accountsMap);
+	}
+
+	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
+	Test.logger.addReport("Test report 5 per mille - contabilità semplice - 5X-2022 - calcolo automatico accantonamento (Mod. A)", report);
+}
+
+// Test#11: contabilità semplice, rendiconto Mod.B, inserimento accantonamento manuale
+Rendiconto5XMilleTest.prototype.testContabilitaSemplice_rendiconto_accantonamento_ModB = function() {
+
+	var banDoc = Banana.application.openDocument("file:script/../test/testcases/5XM-entrate-uscite-accantonamento-mod-b.ac2");
+	Test.assert(banDoc);
+
+	var fileLastYear = "";
+
+	var userParam = {};
+	userParam.provincia = "PD";
+	userParam.pec = "xyz@pec.it";
+	userParam.rappresentanteLegale = "Mario Rossi";
+	userParam.cfRappresentanteLegale = "1234567890";
+	userParam.dataPercezione = "31.12.2022";
+	userParam.colonnaRaggruppamento = "Gr1";
+	userParam.fileAnnoPrecedente = false;
+	userParam.segment5XM = ":5X-2021A";
+	userParam.dataDocumento = "01.01.2022";
+	userParam.calcolaAccantonamento = false;
+	userParam.tipoRendicontoModB = true;
+	userParam.importoAccantonamento = "2000.00";
+
+	let reportGroups = createReportStructure5xMille();
+	
+	let accountsMap = {};
+	loadAccountsMap(banDoc, userParam, accountsMap);
+	if (fileLastYear) {
+		loadAccountsMap(fileLastYear, userParam, accountsMap);
+	}
+
+	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
+	Test.logger.addReport("Test report 5 per mille - contabilità semplice - 5X-2021A - rendiconto accantonamento Mod.B", report);
+}
+

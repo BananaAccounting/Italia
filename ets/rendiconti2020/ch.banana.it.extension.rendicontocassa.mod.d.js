@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2022-02-11
+// @pubdate = 2022-02-14
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -1544,7 +1544,7 @@ function checkLiquidity(report, banDoc, bReport) {
 function controlloSaldiAperturaPrecedente(report, banDoc, userParam, bReport) {
 
    /**
-    *  Se un conto ha un saldo iniziale nella colonna Apertura deve avere lo stesso saldo anche nella colonna Precedente:
+    *  Se un conto della liquidità ha un saldo iniziale nella colonna Apertura deve avere lo stesso saldo anche nella colonna Precedente:
     * - se manca saldo nella colonna Precedente segnala errore
     * - se saldi colonne Apertura e Precedente sono diversi segnala errore.
     */
@@ -1554,14 +1554,18 @@ function controlloSaldiAperturaPrecedente(report, banDoc, userParam, bReport) {
       var account = tRow.value('Account');
       var opening = tRow.value('Opening');
       var prior = tRow.value('Prior');
+      var gr = tRow.value(userParam.column);
 
       if (account && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
 
-         if (opening && !prior) {
-            tRow.addMessage(getErrorMessage(ID_ERR_SALDO_APERTURA_SENZA_PRECEDENTE));
-         }
-         else if (opening && prior && opening !== prior) {
-            tRow.addMessage(getErrorMessage(ID_ERR_SALDI_APERTURA_PRECEDENTE_DIFFERENTI));
+         if (gr === 'ACIV1' || gr === 'ACIV3') {
+
+            if (opening && !prior) {
+               tRow.addMessage(getErrorMessage(ID_ERR_SALDO_APERTURA_SENZA_PRECEDENTE));
+            }
+            else if (opening && prior && opening !== prior) {
+               tRow.addMessage(getErrorMessage(ID_ERR_SALDI_APERTURA_PRECEDENTE_DIFFERENTI));
+            }
          }
       }
    }

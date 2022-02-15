@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2022-02-11 */
+/* Update: 2022-02-15 */
 
 
 /**
@@ -557,11 +557,11 @@ function createReportStructureRendicontoCassa() {
 }
 
 //5x1000
-function createReportStructure5xMilleModA() {
+function createReportStructure5xMille() {
 	
 	/**	
-	 *	NEW CODES (new template)
-	 *	=========
+	 *  Gruppi modello vecchio:
+	 * 
 	 *	gruppo 0, Entrate da 5xmille		: RA5
 	 *	gruppo 1, Risorse umane				: CA4, CB4, CE4
 	 *	gruppo 2, Costi di funzionamento   	: CA1, CA3, CA7, CA8, CD1, CD2, CD3, CD4, CD6, IM, CG1
@@ -570,9 +570,6 @@ function createReportStructure5xMilleModA() {
 	 *	gruppo 5, Altre voci di spesa 	   	: CB7, CB8, CE1, CE7, CG2
 	 *	gruppo 6, Accantonamento           	: CA6, CB6, CD5, CE6
 	 * 
-     *
-	 *	Info:
-	 * 	https://www.lavoro.gov.it/temi-e-priorita/Terzo-settore-e-responsabilita-sociale-imprese/focus-on/Cinque-per-mille/Documents/Modello-rendiconto-5x1000-Mod-A.pdf
 	 */
 	
 	let reportStructure = [];
@@ -599,7 +596,7 @@ function createReportStructure5xMilleModA() {
 	reportStructure.push({
 		"group":"3",
 		"income":false,
-		"gr1":"CA2;CA5;CB2;CB3;CB5;CE3;CE5;CC1;CC2;CC3",
+		"gr1":"CA2;CA5;CB3;CB5;CE3;CE5;CC1;CC2;CC3",
 		"title":"Spese per acquisto beni e servizi",
 		"text":"(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc.)"
 	});
@@ -613,14 +610,14 @@ function createReportStructure5xMilleModA() {
 	reportStructure.push({
 		"group":"4.1",
 		"income":false,
-		"gr1":"CE1;CE2",
+		"gr1":"CB1;CE1;CE2",
 		"title":"Acquisto di beni o servizi strumentali oggetto di donazione",
 		"text":""
 	});
 	reportStructure.push({
 		"group":"4.2",
 		"income":false,
-		"gr1":"CB1",
+		"gr1":"CB2",
 		"title":"Erogazioni a proprie articolazioni territoriali e a soggetti collegati o affiliati",
 		"text":""
 	});

@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.reportcinquepermille
 // @api = 1.0
-// @pubdate = 2022-02-11
+// @pubdate = 2022-02-15
 // @publisher = Banana.ch SA
 // @description = 4. Report cinque per mille
 // @task = app.command
@@ -27,6 +27,18 @@
 // @includejs = errors.js
 
 
+
+/**
+ *
+ * Mod. A
+ *  - MODELLO DI RENDICONTO RELATIVO AL CONTRIBUTO 5 PER MILLE DESTINATO AGLI ENTI DEL TERZO SETTORE (Mod. A)
+ *  - https://www.lavoro.gov.it/temi-e-priorita/Terzo-settore-e-responsabilita-sociale-imprese/focus-on/Cinque-per-mille/Documents/Modello-rendiconto-5x1000-Mod-A.pdf
+ * 
+ * Mod. B
+ * - MODELLO DI RENDICONTO DELL’ACCANTONAMENTO RELATIVO AL CONTRIBUTO 5 PER MILLE DESTINATO AGLI ENTI DEL TERZO SETTORE (Mod. B)
+ * - https://www.lavoro.gov.it/temi-e-priorita/Terzo-settore-e-responsabilita-sociale-imprese/focus-on/Cinque-per-mille/Documents/Modello-rendiconto-accantonamento-5x1000-Mod-B.pdf
+ * 
+ */
 
 let BAN_VERSION = "10.0.1";
 let BAN_EXPM_VERSION = "";
@@ -101,7 +113,7 @@ function exec(string) {
 	if (userParam.segment5XM) {
 
 		//Load the report gorups with gr1 codes and texts.
-		let reportGroups = createReportStructure5xMilleModA();
+		let reportGroups = createReportStructure5xMille();
 
 		//Create all the accounts objects for current year and last year.
 		let accountsMap = {};
@@ -829,7 +841,7 @@ function getDescription(banDoc, segment) {
 // Funzione che crea imposta lo stile css per la stampa del report.
 function setCss(banDoc, repStyleObj) {
    let textCSS = "";
-   let file = Banana.IO.getLocalFile("file:script/rendiconto5xMilleModA.css");
+   let file = Banana.IO.getLocalFile("file:script/rendiconto5xMille.css");
    let fileContent = file.read();
    if (!file.errorString) {
       Banana.IO.openPath(fileContent);
@@ -990,7 +1002,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam = {};
 	currentParam.name = 'dataPercezione';
 	currentParam.parentObject = 'rendiconto';
-	currentParam.title = 'Data di percezione (rendiconto Mod. A)';
+	currentParam.title = 'Data di percezione (Mod.A)';
 	currentParam.type = 'string';
 	currentParam.value = userParam.dataPercezione ? userParam.dataPercezione : '';
 	currentParam.defaultvalue = '31.12.2021';
@@ -1002,7 +1014,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam = {};
 	currentParam.name = 'calcolaAccantonamento';
 	currentParam.parentObject = 'rendiconto';
-	currentParam.title = 'Calcolo automatico accantonamento (Mod. A)';
+	currentParam.title = 'Calcolo automatico accantonamento (Mod.A)';
 	currentParam.type = 'bool';
 	currentParam.value = userParam.calcolaAccantonamento ? true : false;
 	currentParam.defaultvalue = false;
@@ -1063,6 +1075,7 @@ function initUserParam(segment5XMList) {
    userParam.fileAnnoPrecedente = false;
    userParam.segment5XM = segment5XMList;
    userParam.dataDocumento = "";
+   userParam.calcolaAccantonamento = false;
    userParam.tipoRendicontoModB = false;
    userParam.importoAccantonamento = "";
    return userParam;
