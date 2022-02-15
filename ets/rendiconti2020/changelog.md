@@ -7,7 +7,7 @@
  * Modifica messaggio di errore a fine report per il controllo quadratura.  
  * Aggiunta tabella riassuntiva per il controllo quadratura.  
  * Aggiunto controllo delle registrazioni.
- * Le registrazioni senza un conto liquidità (Cassa, Banca) vengono segnalate come errore.  
+ 	* Le registrazioni senza un conto liquidità (Cassa, Banca) vengono segnalate come errore.  
  * Aggiunto controllo colonne Apertura e Precedente dei conti liquidità (Cassa, Banca).  
  	* Se esiste un saldo in Apertura, lo stesso deve anche essere inserito nella colonna Precedente, altrimenti viene segnalato un errore. 
  	* Se i saldi nelle colonna Apertura e Precedente sono diversi viene segnalato un errore.  
