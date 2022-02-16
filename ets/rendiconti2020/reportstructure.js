@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2022-02-15 */
+/* Update: 2022-02-16 */
 
 
 /**
@@ -610,7 +610,7 @@ function createReportStructure5xMille() {
 	reportStructure.push({
 		"group":"4.1",
 		"income":false,
-		"gr1":"CB1;CE1;CE2",
+		"gr1":"CB1;CE1",
 		"title":"Acquisto di beni o servizi strumentali oggetto di donazione",
 		"text":""
 	});
@@ -624,21 +624,21 @@ function createReportStructure5xMille() {
 	reportStructure.push({
 		"group":"4.3",
 		"income":false,
-		"gr1":"",
+		"gr1":"CE2",
 		"title":"Erogazioni ad enti terzi",
 		"text":""
 	});
 	reportStructure.push({
 		"group":"4.4",
 		"income":false,
-		"gr1":"",
+		"gr1":"CB7",
 		"title":"Erogazioni a persone fisiche",
 		"text":""
 	});
 	reportStructure.push({
 		"group":"4.5",
 		"income":false,
-		"gr1":"CB7;CE7;CG1;CG2",
+		"gr1":"CE7;CG1;CG2",
 		"title":"Altre spese per attività di interesse generale",
 		"text":""
 	});
