@@ -18,7 +18,7 @@
 \newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
 \newenvironment{test}[1]{\section*{Test case: #1}}{}
 %Begin test data
-%%SCRIPT{/Users/ivan/Documents/GitHub/Italia/ets/rendiconti2020/test/ch.banana.it.extension.rendicontocassa.mod.d.test.js}
+%%SCRIPT{/Users/ivan/Documents/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.rendicontocassa.mod.d.test.js}
 %
 \begin{testcase}{ReportModDTest}
 \begin{test}{testBananaExtension}
@@ -108,7 +108,19 @@ Costi figurativi  & 31.12.2022  & 31.12.2021  &  & Proventi figurativi  & 31.12.
 Totale  & 3.00  & 5.00  &  & Totale  & 3.00  & 9.00 \\
 \end{longtable}
   \\
-Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <267.00> non corrisponde alla 'somma della liquidità anno corrente' <6.00> \\
+La somma della liquidità iniziale + avanzo/disavanzo non è uguale alla liquidità finale. Importo differenza = 261.00 \\
+  \\
+\begin{longtable}[l]{ l  l }
+\multicolumn{2}{l}{CONTROLLO QUADRATURA }\\
+Totale Cassa e Banca anno precedente  & 16.00 \\
+Avanzo/Disavanzo anno corrente  & 251.00 \\
+Totale Cassa e Banca finale  & 6.00 \\
+\multicolumn{2}{l}{  }\\
+> Importo differenza  & 261.00 \\
+> Esito controllo  & Errore quadratura \\
+\end{longtable}
+  \\
+Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corrente = Cassa e Banca finale \\
 \end{reportvalue}
 \begin{reportvalue}{Test GR1 'rendiconto cassa (MOD. D)'}
   \\
@@ -196,7 +208,19 @@ Costi figurativi  & 31.12.2022  & 31.12.2021  &  & Proventi figurativi  & 31.12.
 Totale  & 3.00  & 5.00  &  & Totale  & 3.00  & 9.00 \\
 \end{longtable}
   \\
-Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <267.00> non corrisponde alla 'somma della liquidità anno corrente' <6.00> \\
+La somma della liquidità iniziale + avanzo/disavanzo non è uguale alla liquidità finale. Importo differenza = 261.00 \\
+  \\
+\begin{longtable}[l]{ l  l }
+\multicolumn{2}{l}{CONTROLLO QUADRATURA }\\
+Totale Cassa e Banca anno precedente  & 16.00 \\
+Avanzo/Disavanzo anno corrente  & 251.00 \\
+Totale Cassa e Banca finale  & 6.00 \\
+\multicolumn{2}{l}{  }\\
+> Importo differenza  & 261.00 \\
+> Esito controllo  & Errore quadratura \\
+\end{longtable}
+  \\
+Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corrente = Cassa e Banca finale \\
 \end{reportvalue}
 \begin{reportvalue}{Test GR1 'rendiconto cassa (MOD. D)'}
   \\
@@ -284,7 +308,19 @@ Costi figurativi  & 31.12.2020  & 31.12.2019  &  & Proventi figurativi  & 31.12.
 Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
 \end{longtable}
   \\
-Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <19'299.00> non corrisponde alla 'somma della liquidità anno corrente' <33'299.00> \\
+La somma della liquidità iniziale + avanzo/disavanzo non è uguale alla liquidità finale. Importo differenza = 14'000.00 \\
+  \\
+\begin{longtable}[l]{ l  l }
+\multicolumn{2}{l}{CONTROLLO QUADRATURA }\\
+Totale Cassa e Banca anno precedente  & 0.00 \\
+Avanzo/Disavanzo anno corrente  & 19'299.00 \\
+Totale Cassa e Banca finale  & 33'299.00 \\
+\multicolumn{2}{l}{  }\\
+> Importo differenza  & 14'000.00 \\
+> Esito controllo  & Errore quadratura \\
+\end{longtable}
+  \\
+Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corrente = Cassa e Banca finale \\
 \end{reportvalue}
 \begin{reportvalue}{Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento}
   \\
@@ -372,7 +408,19 @@ CG2  & 2) da attività diverse  & 0.00  & 0.00  &  & RG2  & 2) da attività dive
  & Totale  & 0.00  & 0.00  &  &  & Totale  & 0.00  & 0.00 \\
 \end{longtable}
   \\
-Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <19'299.00> non corrisponde alla 'somma della liquidità anno corrente' <33'299.00> \\
+La somma della liquidità iniziale + avanzo/disavanzo non è uguale alla liquidità finale. Importo differenza = 14'000.00 \\
+  \\
+\begin{longtable}[l]{ l  l }
+\multicolumn{2}{l}{CONTROLLO QUADRATURA }\\
+Totale Cassa e Banca anno precedente  & 0.00 \\
+Avanzo/Disavanzo anno corrente  & 19'299.00 \\
+Totale Cassa e Banca finale  & 33'299.00 \\
+\multicolumn{2}{l}{  }\\
+> Importo differenza  & 14'000.00 \\
+> Esito controllo  & Errore quadratura \\
+\end{longtable}
+  \\
+Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corrente = Cassa e Banca finale \\
 \end{reportvalue}
 \begin{reportvalue}{Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento senza costi/ricavi figurativi}
   \\
@@ -453,7 +501,19 @@ ACIV3  & \multicolumn{6}{l}{Cassa } & 6'429.00  & 0.00 \\
 ACIV1  & \multicolumn{6}{l}{Depositi bancari e postali } & 26'870.00  & 0.00 \\
 \end{longtable}
   \\
-Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <19'299.00> non corrisponde alla 'somma della liquidità anno corrente' <33'299.00> \\
+La somma della liquidità iniziale + avanzo/disavanzo non è uguale alla liquidità finale. Importo differenza = 14'000.00 \\
+  \\
+\begin{longtable}[l]{ l  l }
+\multicolumn{2}{l}{CONTROLLO QUADRATURA }\\
+Totale Cassa e Banca anno precedente  & 0.00 \\
+Avanzo/Disavanzo anno corrente  & 19'299.00 \\
+Totale Cassa e Banca finale  & 33'299.00 \\
+\multicolumn{2}{l}{  }\\
+> Importo differenza  & 14'000.00 \\
+> Esito controllo  & Errore quadratura \\
+\end{longtable}
+  \\
+Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corrente = Cassa e Banca finale \\
 \end{reportvalue}
 \begin{reportvalue}{Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento senza costi/ricavi figurativi}
   \\
@@ -541,7 +601,19 @@ CG2  & 2) da attività diverse  & 0.00  & 0.00  &  & RG2  & 2) da attività dive
  & Totale  & 0.00  & 0.00  &  &  & Totale  & 0.00  & 0.00 \\
 \end{longtable}
   \\
-Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <1'000.00> non corrisponde alla 'somma della liquidità anno corrente' <0.00> \\
+La somma della liquidità iniziale + avanzo/disavanzo non è uguale alla liquidità finale. Importo differenza = 1'000.00 \\
+  \\
+\begin{longtable}[l]{ l  l }
+\multicolumn{2}{l}{CONTROLLO QUADRATURA }\\
+Totale Cassa e Banca anno precedente  & 1'000.00 \\
+Avanzo/Disavanzo anno corrente  & 0.00 \\
+Totale Cassa e Banca finale  & 0.00 \\
+\multicolumn{2}{l}{  }\\
+> Importo differenza  & 1'000.00 \\
+> Esito controllo  & Errore quadratura \\
+\end{longtable}
+  \\
+Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corrente = Cassa e Banca finale \\
 \end{reportvalue}
 \begin{reportvalue}{Test 'rendiconto cassa (MOD. D)' con stampa colonna raggruppamento senza costi/ricavi figurativi}
   \\
@@ -629,7 +701,19 @@ CG2  & 2) da attività diverse  & 0.00  & 0.00  &  & RG2  & 2) da attività dive
  & Totale  & 0.00  & 0.00  &  &  & Totale  & 0.00  & 0.00 \\
 \end{longtable}
   \\
-Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <1'000.00> non corrisponde alla 'somma della liquidità anno corrente' <0.00> \\
+La somma della liquidità iniziale + avanzo/disavanzo non è uguale alla liquidità finale. Importo differenza = 1'000.00 \\
+  \\
+\begin{longtable}[l]{ l  l }
+\multicolumn{2}{l}{CONTROLLO QUADRATURA }\\
+Totale Cassa e Banca anno precedente  & 1'000.00 \\
+Avanzo/Disavanzo anno corrente  & 0.00 \\
+Totale Cassa e Banca finale  & 0.00 \\
+\multicolumn{2}{l}{  }\\
+> Importo differenza  & 1'000.00 \\
+> Esito controllo  & Errore quadratura \\
+\end{longtable}
+  \\
+Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corrente = Cassa e Banca finale \\
 \end{reportvalue}
 \begin{reportvalue}{Test 'rendiconto cassa (MOD. D)' con colonne saldo specifiche}
   \\
@@ -717,7 +801,19 @@ CG2  & 2) da attività diverse  & 0.00  & 0.00  &  & RG2  & 2) da attività dive
  & Totale  & 0.00  & 0.00  &  &  & Totale  & 0.00  & 0.00 \\
 \end{longtable}
   \\
-Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <36'299.00> non corrisponde alla 'somma della liquidità anno corrente' <33'299.00> \\
+La somma della liquidità iniziale + avanzo/disavanzo non è uguale alla liquidità finale. Importo differenza = 3'000.00 \\
+  \\
+\begin{longtable}[l]{ l  l }
+\multicolumn{2}{l}{CONTROLLO QUADRATURA }\\
+Totale Cassa e Banca anno precedente  & 17'000.00 \\
+Avanzo/Disavanzo anno corrente  & 19'299.00 \\
+Totale Cassa e Banca finale  & 33'299.00 \\
+\multicolumn{2}{l}{  }\\
+> Importo differenza  & 3'000.00 \\
+> Esito controllo  & Errore quadratura \\
+\end{longtable}
+  \\
+Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corrente = Cassa e Banca finale \\
 \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}

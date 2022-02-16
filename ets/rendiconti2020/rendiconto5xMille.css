@@ -1,4 +1,4 @@
-/* Update 2020-06-02 */
+/* Update 2022-02-14 */
 
 @page {
 	margin-top: 10mm;
@@ -72,19 +72,19 @@ caption {
 }
 
 .col2Table {
-
+	width: 77%;
 }
 
 .col3Table {
-	
+	width: 15%;
 }
 
 .col4Table {
-	
+	width: 5%;
 }
 
 table.table td {
-/*	border-top-style: solid;
+	/*border-top-style: solid;
 	border-top-color: black;
 	border-top-width: thin;
 	border-bottom-style: solid;
@@ -103,11 +103,23 @@ table.table td {
 }
 
 .col1Anagrafica {
-	width: 30%;
+	width: 24%;
 }
 
 .col2Anagrafica {
-	width: 70%;
+	width: 25%;
+}
+
+.col3Anagrafica {
+	width: 1%;
+}
+
+.col4Anagrafica {
+	width: 24%;
+}
+
+.col5Anagrafica {
+	width: 25%;
 }
 
 table.tableAnagrafica td {

@@ -1,4 +1,4 @@
-// Copyright [2020] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2020-11-11 */
+/* Update: 2022-02-16 */
 
 
 /**
@@ -420,6 +420,7 @@ function createReportStructureRendicontoGestionale() {
 	return reportStructure;
 }
 
+//Rendiconto cassa
 function createReportStructureRendicontoCassa() {
 
 	var reportStructure = [];
@@ -435,9 +436,9 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"CA3", "type":"group", "indent":"", "bclass":"3", "description":"3) Godimento beni di terzi"});
 	reportStructure.push({"id":"CA4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
 	reportStructure.push({"id":"CA7", "type":"group", "indent":"", "bclass":"3", "description":"5) Uscite diverse di gestione"});
-	reportStructure.push({"id":"CA5", "type":"group", "indent":"", "bclass":"3", "description":"A) Ammortamenti"});
-	reportStructure.push({"id":"CA6", "type":"group", "indent":"", "bclass":"3", "description":"A) Accantonamenti per rischi ed oneri"});
-	reportStructure.push({"id":"CA8", "type":"group", "indent":"", "bclass":"3", "description":"A) Rimanenze iniziali"});
+	reportStructure.push({"id":"CA5", "type":"group", "indent":"", "bclass":"3", "description":"A) Ammortamenti"}); //non usato nel rendiconto cassa
+	reportStructure.push({"id":"CA6", "type":"group", "indent":"", "bclass":"3", "description":"A) Accantonamenti per rischi ed oneri"}); //non usato nel rendiconto cassa
+	reportStructure.push({"id":"CA8", "type":"group", "indent":"", "bclass":"3", "description":"A) Rimanenze iniziali"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CA", "type":"total", "indent":"", "description":"Totale", "sum":"CA1;CA2;CA3;CA4;CA7"});
 	reportStructure.push({"id":"dCB", "type":"title", "indent":"", "description":"B) Uscite da attività diverse"});
 	reportStructure.push({"id":"CB1", "type":"group", "indent":"", "bclass":"3", "description":"1) Materie prime, sussidiarie, di consumo e di merci"});
@@ -445,9 +446,9 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"CB3", "type":"group", "indent":"", "bclass":"3", "description":"3) Godimento beni di terzi"});
 	reportStructure.push({"id":"CB4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
 	reportStructure.push({"id":"CB7", "type":"group", "indent":"", "bclass":"3", "description":"5) Uscite diverse di gestione"});
-	reportStructure.push({"id":"CB5", "type":"group", "indent":"", "bclass":"3", "description":"B) Ammortamenti"});
-	reportStructure.push({"id":"CB6", "type":"group", "indent":"", "bclass":"3", "description":"B) Accantonamenti per rischi ed oneri"});
-	reportStructure.push({"id":"CB8", "type":"group", "indent":"", "bclass":"3", "description":"B) Rimanenze iniziali"});
+	reportStructure.push({"id":"CB5", "type":"group", "indent":"", "bclass":"3", "description":"B) Ammortamenti"}); //non usato nel rendiconto cassa
+	reportStructure.push({"id":"CB6", "type":"group", "indent":"", "bclass":"3", "description":"B) Accantonamenti per rischi ed oneri"}); //non usato nel rendiconto cassa
+	reportStructure.push({"id":"CB8", "type":"group", "indent":"", "bclass":"3", "description":"B) Rimanenze iniziali"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CB", "type":"total", "indent":"", "description":"Totale", "sum":"CB1;CB2;CB3;CB4;CB7"});
 	reportStructure.push({"id":"dCC", "type":"title", "indent":"", "description":"C) Uscite da attività di raccolta fondi"});
 	reportStructure.push({"id":"CC1", "type":"group", "indent":"", "bclass":"3", "description":"1) Uscite per raccolte fondi abituali"});
@@ -460,7 +461,7 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"CD3", "type":"group", "indent":"", "bclass":"3", "description":"3) Su patrimonio edilizio"});
 	reportStructure.push({"id":"CD4", "type":"group", "indent":"", "bclass":"3", "description":"4) Su altri beni patrimoniali"});
 	reportStructure.push({"id":"CD6", "type":"group", "indent":"", "bclass":"3", "description":"5) Altre uscite"});
-	reportStructure.push({"id":"CD5", "type":"group", "indent":"", "bclass":"3", "description":"C) Accantonamenti per rischi ed oneri"});
+	reportStructure.push({"id":"CD5", "type":"group", "indent":"", "bclass":"3", "description":"C) Accantonamenti per rischi ed oneri"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CD", "type":"total", "indent":"", "description":"Totale", "sum":"CD1;CD2;CD3;CD4;CD6"});
 	reportStructure.push({"id":"dCE", "type":"title", "indent":"", "description":"E) Uscite di supporto generale"});
 	reportStructure.push({"id":"CE1", "type":"group", "indent":"", "bclass":"3", "description":"1) Materie prime, sussidiarie, di consumo e di merci"});
@@ -468,8 +469,8 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"CE3", "type":"group", "indent":"", "bclass":"3", "description":"3) Godimento beni di terzi"});
 	reportStructure.push({"id":"CE4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
 	reportStructure.push({"id":"CE7", "type":"group", "indent":"", "bclass":"3", "description":"5) Altre uscite"});
-	reportStructure.push({"id":"CE5", "type":"group", "indent":"", "bclass":"3", "description":"E) Ammortamenti"});
-	reportStructure.push({"id":"CE6", "type":"group", "indent":"", "bclass":"3", "description":"E) Accantonamenti per rischi ed oneri"});
+	reportStructure.push({"id":"CE5", "type":"group", "indent":"", "bclass":"3", "description":"E) Ammortamenti"}); //non usato nel rendiconto cassa
+	reportStructure.push({"id":"CE6", "type":"group", "indent":"", "bclass":"3", "description":"E) Accantonamenti per rischi ed oneri"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CE", "type":"total", "indent":"", "description":"Totale", "sum":"CE1;CE2;CE3;CE4;CE7"});
 	reportStructure.push({"id":"C", "type":"total", "indent":"", "description":"TOTALE ONERI E COSTI", "sum":"CA;CB;CC;CD;CE"});
 
@@ -485,6 +486,7 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"RA8", "type":"group", "indent":"", "bclass":"4", "description":"8) Contributi da enti pubblici"});
 	reportStructure.push({"id":"RA9", "type":"group", "indent":"", "bclass":"4", "description":"9) Entrate da contratti con enti pubblici"});
 	reportStructure.push({"id":"RA10", "type":"group", "indent":"", "bclass":"4", "description":"10) Altre entrate"});
+	reportStructure.push({"id":"RA11", "type":"group", "indent":"", "bclass":"4", "description":"A) Rimanenze finali"}); //non usato nel rendiconto cassa 
 	reportStructure.push({"id":"RA", "type":"total", "indent":"", "description":"Totale", "sum":"RA1;RA2;RA3;RA4;RA5;RA6;RA7;RA8;RA9;RA10"});
 	reportStructure.push({"id":"dRB", "type":"title", "indent":"", "description":"B) Entrate da attività diverse"});
 	reportStructure.push({"id":"RB1", "type":"group", "indent":"", "bclass":"4", "description":"1) Entrate per prestazioni e cessioni ad associati e fondatori"});
@@ -493,6 +495,7 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"RB4", "type":"group", "indent":"", "bclass":"4", "description":"4) Contributi da enti pubblici"});
 	reportStructure.push({"id":"RB5", "type":"group", "indent":"", "bclass":"4", "description":"5) Entrate da contratti con enti pubblici"});
 	reportStructure.push({"id":"RB6", "type":"group", "indent":"", "bclass":"4", "description":"6) Altre entrate"});
+	reportStructure.push({"id":"RB7", "type":"group", "indent":"", "bclass":"4", "description":"B) Rimanenze finali"}); //non usato nel rendiconto cassa 
 	reportStructure.push({"id":"RB", "type":"total", "indent":"", "description":"Totale", "sum":"RB1;RB2;RB3;RB4;RB5;RB6"});
 	reportStructure.push({"id":"dRC", "type":"title", "indent":"", "description":"C) Entrate da attività di raccolta fondi"});
 	reportStructure.push({"id":"RC1", "type":"group", "indent":"", "bclass":"4", "description":"1) Entrate da raccolte fondi abituali"});
@@ -549,6 +552,103 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"RG2", "type":"group", "indent":"", "bclass":"4", "description":"2) da attività diverse"});
 	reportStructure.push({"id":"RG", "type":"total", "indent":"", "description":"Totale", "sum":"RG1;RG2"});
 	reportStructure.push({"id":"RG-CG", "type":"total", "indent":"", "description":"Totale", "sum":"RG;-CG"}); //not used
+
+	return reportStructure;
+}
+
+//5x1000
+function createReportStructure5xMille() {
+	
+	/**	
+	 *  Gruppi modello vecchio:
+	 * 
+	 *	gruppo 0, Entrate da 5xmille		: RA5
+	 *	gruppo 1, Risorse umane				: CA4, CB4, CE4
+	 *	gruppo 2, Costi di funzionamento   	: CA1, CA3, CA7, CA8, CD1, CD2, CD3, CD4, CD6, IM, CG1
+	 *	gruppo 3, Acquisto beni e servizi  	: CA2, CA5, CB2, CB3, CB5, CE2, CE3, CE5, CC1, CC2, CC3
+	 *	gruppo 4, Erogazioni 			   	: CB1
+	 *	gruppo 5, Altre voci di spesa 	   	: CB7, CB8, CE1, CE7, CG2
+	 *	gruppo 6, Accantonamento           	: CA6, CB6, CD5, CE6
+	 * 
+	 */
+	
+	let reportStructure = [];
+	
+	reportStructure.push({
+		"group":"0",
+		"income":true,
+		"gr1":"RA5"
+	});
+	reportStructure.push({
+		"group":"1",
+		"income":false,
+		"gr1":"CA4;CB4;CE4",
+		"title":"Risorse umane",
+		"text":"(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale)."
+	});
+	reportStructure.push({
+		"group":"2",
+		"income":false,
+		"gr1":"CA1;CA3;CA7;CD1;CD2;CD3;CD4;CD6;IM",
+		"title":"Spese di funzionamento",
+		"text":"(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc.)"
+	});
+	reportStructure.push({
+		"group":"3",
+		"income":false,
+		"gr1":"CA2;CA5;CB3;CB5;CE3;CE5;CC1;CC2;CC3",
+		"title":"Spese per acquisto beni e servizi",
+		"text":"(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc.)"
+	});
+	reportStructure.push({
+		"group":"4",
+		"income":false,
+		"gr1":"", //CB1;CB7;CB8;CE1;CE7;CG2 => nel gruppo 4 non viene più indicato l'importo totale, bensì un importo per ogni suo sottogruppo
+		"title":"Spese per attività di interesse generale dell’ente",
+		"text":"(rappresentare le spese nella relazione illustrativa a seconda della causale)"
+	});
+	reportStructure.push({
+		"group":"4.1",
+		"income":false,
+		"gr1":"CB1;CE1",
+		"title":"Acquisto di beni o servizi strumentali oggetto di donazione",
+		"text":""
+	});
+	reportStructure.push({
+		"group":"4.2",
+		"income":false,
+		"gr1":"CB2",
+		"title":"Erogazioni a proprie articolazioni territoriali e a soggetti collegati o affiliati",
+		"text":""
+	});
+	reportStructure.push({
+		"group":"4.3",
+		"income":false,
+		"gr1":"CE2",
+		"title":"Erogazioni ad enti terzi",
+		"text":""
+	});
+	reportStructure.push({
+		"group":"4.4",
+		"income":false,
+		"gr1":"CB7",
+		"title":"Erogazioni a persone fisiche",
+		"text":""
+	});
+	reportStructure.push({
+		"group":"4.5",
+		"income":false,
+		"gr1":"CE7;CG1;CG2",
+		"title":"Altre spese per attività di interesse generale",
+		"text":""
+	});
+	reportStructure.push({
+		"group":"5",
+		"income":false,
+		"gr1":"CA6;CB6;CD5;CE6",
+		"title":"Accantonamento",
+		"text":"(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando per il soggetto beneficiario l’obbligo di specificare nella relazione allegata al presente documento le finalità dell’accantonamento. Il soggetto beneficiario è tenuto ad utilizzare le somme accantonate e ad inviare il modello relativo all’accantonamento entro 36 mesi dalla percezione del contributo)"
+	});
 
 	return reportStructure;
 }

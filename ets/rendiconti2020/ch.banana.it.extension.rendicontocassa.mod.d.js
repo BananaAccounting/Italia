@@ -1,4 +1,4 @@
-// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2021-11-30
+// @pubdate = 2022-02-14
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -76,7 +76,7 @@ function exec(string) {
     * and check entries that can be excluded
     */
    const bReport = new BReport(Banana.document, userParam, reportStructure);
-   bReport.validateGroups(userParam.column);
+   bReport.validateGroups_IncomeExpenses(userParam.column, reportStructure);
    bReport.loadBalances();
    bReport.calculateTotals(["currentAmount", "previousAmount"]);
    bReport.formatValues(["currentAmount", "previousAmount"]);
@@ -109,10 +109,11 @@ function printReport(banDoc, userParam, bReport, stylesheet) {
    printReport_Rendiconto_Avanzo_Disavanzo(report, banDoc, userParam, bReport);
    printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport);
    printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport);
+   printReport_Note_Finali(report, userParam);
 
    checkLiquidity(report, banDoc, bReport);
-
-   printReport_Note_Finali(report, userParam);
+   controlloSaldiAperturaPrecedente(report, banDoc, userParam, bReport);
+   controlloRegistrazioni(report, banDoc, userParam, bReport);
 
 	return report;
 }
@@ -1495,10 +1496,156 @@ function checkLiquidity(report, banDoc, bReport) {
 
    if (Banana.SDecimal.compare(totLiqPrecAvanzo,totLiqCurr) != 0) {
       report.addParagraph(" ", "");
-      report.addParagraph("Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <" + formatValue(totLiqPrecAvanzo) + "> non corrisponde alla 'somma della liquidità anno corrente' <"+ formatValue(totLiqCurr) +">", "text-color-red");
-   
-      banDoc.addMessage("Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <" + formatValue(totLiqPrecAvanzo) + "> non corrisponde alla 'somma della liquidità anno corrente' <"+ formatValue(totLiqCurr) +">");
+      //Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <" + formatValue(totLiqPrecAvanzo) + "> non corrisponde alla 'somma della liquidità anno corrente' <"+ formatValue(totLiqCurr) +">"
+
+      //Liquidità finale non è uguale dalla liquidità iniziale + avanzo/disavanzo
+      //La liquidità iniziale + avanzo/disavanzo non è uguale alla liquidità finale
+      var totDiff = Banana.SDecimal.abs(Banana.SDecimal.subtract(totLiqPrecAvanzo,totLiqCurr));
+      banDoc.addMessage(getErrorMessage(ID_ERR_ERRORE_QUADRATURA) + formatValue(totDiff));
+      report.addParagraph(getErrorMessage(ID_ERR_ERRORE_QUADRATURA) + formatValue(totDiff), "text-color-red");
+      
+      report.addPageBreak();
+      report.addParagraph(" ","");
+
+      var table = report.addTable("table-quadratura");
+      tableRow = table.addRow();
+      tableRow.addCell("CONTROLLO QUADRATURA", "bold", 2);
+      
+      tableRow = table.addRow();
+      tableRow.addCell("Totale Cassa e Banca anno precedente", "", 1);
+      tableRow.addCell(formatValue(totLiqPrec), "align-right", 1);
+      
+      tableRow = table.addRow();
+      tableRow.addCell("Avanzo/Disavanzo anno corrente", "", 1);
+      tableRow.addCell(formatValue(curTADRC), "align-right", 1);
+      
+      tableRow = table.addRow();
+      tableRow.addCell("Totale Cassa e Banca finale", "", 1);
+      tableRow.addCell(formatValue(totLiqCurr), "align-right", 1);
+      
+      tableRow = table.addRow();
+      tableRow.addCell(" ", "", 2);
+
+      tableRow = table.addRow();
+      tableRow.addCell("> Importo differenza", "", 1);
+      tableRow.addCell(formatValue(totDiff), "align-right", 1);
+
+      tableRow = table.addRow();
+      tableRow.addCell("> Esito controllo", "", 1);
+      tableRow.addCell("Errore quadratura", "align-right", 1);
+
+      report.addParagraph(" ","");
+      var p = report.addParagraph();
+      p.addText("Formula di controllo:","");
+      p.addText("Cassa e Banca anno precedente + Avanzo/Disavanzo anno corrente = Cassa e Banca finale", "bold");
    }
+}
+
+function controlloSaldiAperturaPrecedente(report, banDoc, userParam, bReport) {
+
+   /**
+    *  Se un conto della liquidità ha un saldo iniziale nella colonna Apertura deve avere lo stesso saldo anche nella colonna Precedente:
+    * - se manca saldo nella colonna Precedente segnala errore
+    * - se saldi colonne Apertura e Precedente sono diversi segnala errore.
+    */
+
+   for (var i = 0; i < banDoc.table('Accounts').rowCount; i++) {
+      var tRow = banDoc.table('Accounts').row(i);
+      var account = tRow.value('Account');
+      var opening = tRow.value('Opening');
+      var prior = tRow.value('Prior');
+      var gr = tRow.value(userParam.column);
+
+      if (account && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
+
+         if (gr === 'ACIV1' || gr === 'ACIV3') {
+
+            if (opening && !prior) {
+               tRow.addMessage(getErrorMessage(ID_ERR_SALDO_APERTURA_SENZA_PRECEDENTE));
+            }
+            else if (opening && prior && opening !== prior) {
+               tRow.addMessage(getErrorMessage(ID_ERR_SALDI_APERTURA_PRECEDENTE_DIFFERENTI));
+            }
+         }
+      }
+   }
+}
+
+function controlloRegistrazioni(report, banDoc, userParam, bReport) {
+
+   /**
+    * Controlla che ci siano conti liquidità nelle registrazioni.
+    * Se si registra senza conti liqudità, segnala errore.
+    *
+    * - crea una lista dei conti liquidità
+    * - con il journal passa le registrazioni
+    * - se le registrazioni non contengono un conto liquditià, salva la riga della registrazione in un array.
+    * - per ogni riga segnala messaggio errore
+    */
+
+   // Lista conti liquidità (con Gr1 "ACIV1" o "ACIV3")
+   var accountsLiquidity = getAccountsLiquidity(banDoc, userParam);
+   
+   var journal = banDoc.journal(banDoc.ORIGINTYPE_CURRENT, banDoc.ACCOUNTTYPE_NORMAL);
+   var rowsError = [];
+   
+   for (var i = 0; i < journal.rowCount; i++) {
+
+      var tRow = journal.row(i);
+
+      // take only transactions rows
+      if (tRow.value('JOperationType') == banDoc.OPERATIONTYPE_TRANSACTION) {
+
+         var jContraAccountGroup = tRow.value('JContraAccountGroup');
+         var rowOrigin = tRow.value('JRowOrigin');
+         var account = tRow.value('JAccount');
+         var contraAccount = tRow.value('JContraAccount');
+         //Banana.console.log(jContraAccountGroup + " ... " + account + " ... " + contraAccount);
+
+
+         // controlla se nella registrazione sono usati conti liquidità
+         // - se il conto non è un conto liquditità, controlla il contraaccount.
+         // - se anche il contraaccount non è un conto liqudità => è un errore, salva la riga della registrazione
+         if (accountsLiquidity.indexOf(account) < 0) {
+            if (accountsLiquidity.indexOf(contraAccount) < 0) {
+               rowsError.push(rowOrigin);
+            }
+         }
+      }
+   }
+
+   // Se ho righe di registrazioni con errori, visualizzo messaggio di errore
+   if (rowsError.length > 0) {
+
+      // Rimuove doppioni, in modo da segnalare l'errore solo una volta per riga
+      for (var i = 0; i < rowsError.length; i++) {
+         for (var x = i+1; x < rowsError.length; x++) {
+            if (rowsError[x] === rowsError[i]) {
+               rowsError.splice(x,1);
+               --x;
+            }
+         }
+      }
+
+      // Per ogni registrazione senza conto liqudità segnalo un messaggio di errore
+      for (var i = 0; i < rowsError.length; i++) {
+         var tRow = rowsError[i];
+         banDoc.table('Transactions').row(tRow).addMessage(getErrorMessage(ID_ERR_REGISTRAZIONE_NON_CORRETTA));
+      }
+   }
+}
+
+function getAccountsLiquidity(banDoc, userParam) {
+   var accounts = [];
+   for (var i = 0; i < banDoc.table('Accounts').rowCount; i++) {
+      var tRow = banDoc.table('Accounts').row(i);
+      var account = tRow.value('Account');
+      var gr = tRow.value(userParam.column);
+      if (gr === 'ACIV1' || gr === 'ACIV3') {
+         accounts.push(account);
+      }
+   }
+   return accounts;
 }
 
 function addFooter(report) {
