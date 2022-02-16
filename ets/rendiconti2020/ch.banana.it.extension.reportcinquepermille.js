@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.reportcinquepermille
 // @api = 1.0
-// @pubdate = 2022-02-15
+// @pubdate = 2022-02-16
 // @publisher = Banana.ch SA
 // @description = 4. Report cinque per mille
 // @task = app.command
@@ -778,7 +778,7 @@ function loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts, accountsMap
 // Funzione che controlla l'importo dell'accantonamento
 function controlloAccantonamento(banDoc, accantonamento, entrate, uscite) {
 	
-	// Se 'Accantonamento > (Entrate - Uscite)' => segnala errore
+	// Se 'Accantonamento > (Entrate - Uscite (1,2,3,4) )' => segnala errore
 	
 	var diffEntrateUscite = Banana.SDecimal.subtract(entrate,uscite);
 	if (Banana.SDecimal.compare(accantonamento,diffEntrateUscite) == 1) {
