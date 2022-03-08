@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2022-02-14 */
+/* Update: 2022-03-08 */
 
 
 
@@ -285,7 +285,7 @@ var BReport = class JsClass {
             var tRow = this.banDoc.table('Accounts').row(i);
             var account = tRow.value('Account');
             var gr = tRow.value(grColumn);
-            if (gr && account && account.indexOf(":") < 0 && account.indexOf(".") < 0 && account.indexOf(",") < 0 && account.indexOf(";") < 0) {
+            if (gr && account && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
                if (!dataGroups.includes(gr)) {
                   tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, gr));
                }
@@ -295,7 +295,7 @@ var BReport = class JsClass {
             var tRow = this.banDoc.table('Categories').row(i);
             var category = tRow.value('Category');
             var gr = tRow.value(grColumn);
-            if (gr && category && category.indexOf(":") < 0 && category.indexOf(".") < 0 && category.indexOf(",") < 0 && category.indexOf(";") < 0) {
+            if (gr && category && !category.startsWith(":") && !category.startsWith(".") && !category.startsWith(",") && !category.startsWith(";")) {
                if (!dataGroups.includes(gr)) {
                   tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO_CATEGORIA, grColumn, gr));
                }
@@ -309,7 +309,7 @@ var BReport = class JsClass {
             var account = tRow.value('Account');
             var gr = tRow.value(grColumn);
             var bclass = tRow.value('BClass');
-            if (gr && account && bclass && (bclass === '1' || bclass === '2' || bclass === '3' || bclass === '4') && account.indexOf(":") < 0 && account.indexOf(".") < 0 && account.indexOf(",") < 0 && account.indexOf(";") < 0) {
+            if (gr && account && bclass && (bclass === '1' || bclass === '2' || bclass === '3' || bclass === '4') && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
                if (!dataGroups.includes(gr)) {
                   tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, gr));
                }
@@ -346,7 +346,7 @@ var BReport = class JsClass {
             var tRow = this.banDoc.table('Categories').row(i);
             var category = tRow.value('Category');
             var gr = tRow.value(grColumn);
-            if (gr && category && category.indexOf(":") < 0 && category.indexOf(".") < 0 && category.indexOf(",") < 0 && category.indexOf(";") < 0) {
+            if (gr && category && !category.startsWith(":") && !category.startsWith(".") && !category.startsWith(",") && !category.startsWith(";")) {
                if (!dataGroups.includes(gr)) {
                   tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO_CATEGORIA, grColumn, gr));
                }
@@ -360,7 +360,7 @@ var BReport = class JsClass {
             var account = tRow.value('Account');
             var gr = tRow.value(grColumn);
             var bclass = tRow.value('BClass');
-            if (gr && account && bclass && (bclass === '3' || bclass === '4') && account.indexOf(":") < 0 && account.indexOf(".") < 0 && account.indexOf(",") < 0 && account.indexOf(";") < 0) {
+            if (gr && account && bclass && (bclass === '3' || bclass === '4') && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
                if (!dataGroups.includes(gr)) {
                   tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, gr));
                }
