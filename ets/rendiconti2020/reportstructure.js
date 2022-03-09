@@ -302,6 +302,18 @@ function createReportStructureStatoPatrimoniale() {
 	reportStructure.push({"id":"RG", "type":"total", "indent":"", "description":"Totale", "sum":"RG1;RG2"});
 	reportStructure.push({"id":"RG-CG", "type":"total", "indent":"", "description":"Totale", "sum":"RG;-CG"}); //not used
 
+	/* USTI SOLO PER IL CONTROLLO CODICI */
+	reportStructure.push({"id":"CF1", "type":"group", "description":""});
+	reportStructure.push({"id":"CF2", "type":"group", "description":""});
+	reportStructure.push({"id":"CF3", "type":"group", "description":""});
+	reportStructure.push({"id":"CF4", "type":"group", "description":""});
+	reportStructure.push({"id":"IMRC", "type":"group", "description":""});
+	reportStructure.push({"id":"RF1", "type":"group", "description":""});
+	reportStructure.push({"id":"RF2", "type":"group", "description":""});
+	reportStructure.push({"id":"RF3", "type":"group", "description":""});
+	reportStructure.push({"id":"RF4", "type":"group", "description":""});
+
+
 	return reportStructure;
 }
 
@@ -416,6 +428,17 @@ function createReportStructureRendicontoGestionale() {
 	reportStructure.push({"id":"RG2", "type":"group", "indent":"", "bclass":"4", "description":"2) da attività diverse"});
 	reportStructure.push({"id":"RG", "type":"total", "indent":"", "description":"Totale", "sum":"RG1;RG2"});
 	reportStructure.push({"id":"RG-CG", "type":"total", "indent":"", "description":"Totale", "sum":"RG;-CG"}); //not used
+
+	/* USTI SOLO PER IL CONTROLLO CODICI */
+	reportStructure.push({"id":"CF1", "type":"group", "description":""});
+	reportStructure.push({"id":"CF2", "type":"group", "description":""});
+	reportStructure.push({"id":"CF3", "type":"group", "description":""});
+	reportStructure.push({"id":"CF4", "type":"group", "description":""});
+	reportStructure.push({"id":"IMRC", "type":"group", "description":""});
+	reportStructure.push({"id":"RF1", "type":"group", "description":""});
+	reportStructure.push({"id":"RF2", "type":"group", "description":""});
+	reportStructure.push({"id":"RF3", "type":"group", "description":""});
+	reportStructure.push({"id":"RF4", "type":"group", "description":""});
 
 	return reportStructure;
 }
