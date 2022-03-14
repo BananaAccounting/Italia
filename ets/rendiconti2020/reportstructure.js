@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2022-02-16 */
+/* Update: 2022-03-14 */
 
 
 /**
@@ -451,6 +451,7 @@ function createReportStructureRendicontoCassa() {
 	/* CASSA E BANCA */
 	reportStructure.push({"id":"ACIV1", "type":"group", "indent":"", "bclass":"1", "description":"Depositi bancari e postali"});	
 	reportStructure.push({"id":"ACIV3", "type":"group", "indent":"", "bclass":"1", "description":"Cassa"});
+	reportStructure.push({"id":"ACIV", "type":"total", "indent":"", "description":"Cassa e banca", "sum":"ACIV1;ACIV3"});
 	
 	/* USCITE */
 	reportStructure.push({"id":"dCA", "type":"title", "indent":"", "description":"A) Uscite da attività di interesse generale"});

@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2022-02-14
+// @pubdate = 2022-03-14
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -1280,14 +1280,25 @@ function printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport) 
    tableRow = table.addRow();
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
-      tableRow.addCell("Cassa e banca", "table-header", 6);
+      tableRow.addCell("", "table-header", 6);
    } else {
-      tableRow.addCell("Cassa e banca", "table-header", 5);
+      tableRow.addCell("", "table-header", 5);
    }
    tableRow.addCell(dateCurrent, "table-header align-center", 1);
    tableRow.addCell(datePrevious, "table-header align-center", 1);
 
    /* Row 1 */
+   tableRow = table.addRow();
+   if (userParam.printcolumn) {
+      tableRow.addCell(bReport.getObjectId("ACIV"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectDescription("ACIV"), "align-left bold", 6);
+   } else {
+      tableRow.addCell(bReport.getObjectDescription("ACIV"), "align-left bold", 5);
+   }
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("ACIV"), "align-right bold", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("ACIV"), "align-right bold", 1);
+
+   /* Row 2 */
    tableRow = table.addRow();
    if (userParam.printcolumn) {
       tableRow.addCell(bReport.getObjectId("ACIV3"), "align-left", 1);
@@ -1298,7 +1309,7 @@ function printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport) 
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("ACIV3"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("ACIV3"), "align-right", 1);
 
-   /* Row 2 */
+   /* Row 3 */
    tableRow = table.addRow();
    if (userParam.printcolumn) {
       tableRow.addCell(bReport.getObjectId("ACIV1"), "align-left", 1);

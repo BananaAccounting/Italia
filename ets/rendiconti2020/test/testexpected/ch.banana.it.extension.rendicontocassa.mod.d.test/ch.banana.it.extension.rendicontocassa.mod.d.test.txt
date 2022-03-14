@@ -96,7 +96,8 @@ Totale  & 8.00  & 7.00  &  & Totale  & 7.00  & 9.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-\multicolumn{5}{l}{Cassa e banca } & 31.12.2022  & 31.12.2021 \\
+\multicolumn{5}{l}{} & 31.12.2022  & 31.12.2021 \\
+\multicolumn{5}{l}{Cassa e banca } & 6.00  & 16.00 \\
 \multicolumn{5}{l}{Cassa } & 2.00  & 9.00 \\
 \multicolumn{5}{l}{Depositi bancari e postali } & 4.00  & 7.00 \\
 \end{longtable}
@@ -196,7 +197,8 @@ Totale  & 8.00  & 7.00  &  & Totale  & 7.00  & 9.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-\multicolumn{5}{l}{Cassa e banca } & 31.12.2022  & 31.12.2021 \\
+\multicolumn{5}{l}{} & 31.12.2022  & 31.12.2021 \\
+\multicolumn{5}{l}{Cassa e banca } & 6.00  & 16.00 \\
 \multicolumn{5}{l}{Cassa } & 2.00  & 9.00 \\
 \multicolumn{5}{l}{Depositi bancari e postali } & 4.00  & 7.00 \\
 \end{longtable}
@@ -296,7 +298,8 @@ Totale  & 2'050.00  & 0.00  &  & Totale  & 12'500.00  & 0.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-\multicolumn{5}{l}{Cassa e banca } & 31.12.2020  & 31.12.2019 \\
+\multicolumn{5}{l}{} & 31.12.2020  & 31.12.2019 \\
+\multicolumn{5}{l}{Cassa e banca } & 33'299.00  & 0.00 \\
 \multicolumn{5}{l}{Cassa } & 6'429.00  & 0.00 \\
 \multicolumn{5}{l}{Depositi bancari e postali } & 26'870.00  & 0.00 \\
 \end{longtable}
@@ -396,7 +399,8 @@ IMRC  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-GR1  & \multicolumn{6}{l}{Cassa e banca } & 31.12.2020  & 31.12.2019 \\
+GR1  & \multicolumn{6}{l}{} & 31.12.2020  & 31.12.2019 \\
+ACIV  & \multicolumn{6}{l}{Cassa e banca } & 33'299.00  & 0.00 \\
 ACIV3  & \multicolumn{6}{l}{Cassa } & 6'429.00  & 0.00 \\
 ACIV1  & \multicolumn{6}{l}{Depositi bancari e postali } & 26'870.00  & 0.00 \\
 \end{longtable}
@@ -496,7 +500,8 @@ IMRC  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-GR1  & \multicolumn{6}{l}{Cassa e banca } & 31.12.2020  & 31.12.2019 \\
+GR1  & \multicolumn{6}{l}{} & 31.12.2020  & 31.12.2019 \\
+ACIV  & \multicolumn{6}{l}{Cassa e banca } & 33'299.00  & 0.00 \\
 ACIV3  & \multicolumn{6}{l}{Cassa } & 6'429.00  & 0.00 \\
 ACIV1  & \multicolumn{6}{l}{Depositi bancari e postali } & 26'870.00  & 0.00 \\
 \end{longtable}
@@ -589,7 +594,8 @@ IMRC  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-GR1  & \multicolumn{6}{l}{Cassa e banca } & 31.12.2020  & 31.12.2019 \\
+GR1  & \multicolumn{6}{l}{} & 31.12.2020  & 31.12.2019 \\
+ACIV  & \multicolumn{6}{l}{Cassa e banca } & 0.00  & 1'000.00 \\
 ACIV3  & \multicolumn{6}{l}{Cassa } & 0.00  & 1'000.00 \\
 ACIV1  & \multicolumn{6}{l}{Depositi bancari e postali } & 0.00  & 0.00 \\
 \end{longtable}
@@ -689,7 +695,8 @@ IMRC  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-GR1  & \multicolumn{6}{l}{Cassa e banca } & 31.12.2020  & 31.12.2019 \\
+GR1  & \multicolumn{6}{l}{} & 31.12.2020  & 31.12.2019 \\
+ACIV  & \multicolumn{6}{l}{Cassa e banca } & 0.00  & 1'000.00 \\
 ACIV3  & \multicolumn{6}{l}{Cassa } & 0.00  & 1'000.00 \\
 ACIV1  & \multicolumn{6}{l}{Depositi bancari e postali } & 0.00  & 0.00 \\
 \end{longtable}
@@ -789,7 +796,8 @@ IMRC  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-GR1  & \multicolumn{6}{l}{Cassa e banca } & 31.12.2021  & 31.12.2020 \\
+GR1  & \multicolumn{6}{l}{} & 31.12.2021  & 31.12.2020 \\
+ACIV  & \multicolumn{6}{l}{Cassa e banca } & 33'299.00  & 17'000.00 \\
 ACIV3  & \multicolumn{6}{l}{Cassa } & 6'429.00  & 5'000.00 \\
 ACIV1  & \multicolumn{6}{l}{Depositi bancari e postali } & 26'870.00  & 12'000.00 \\
 \end{longtable}
