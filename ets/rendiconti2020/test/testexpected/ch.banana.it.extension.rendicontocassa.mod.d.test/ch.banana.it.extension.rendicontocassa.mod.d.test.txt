@@ -71,7 +71,7 @@ E) Uscite di supporto generale  &  &  &  & E) Entrate di supporto generale  &  &
 4) Personale  & 4.00  & 6.00  &  &  &  & \\
 5) Altre uscite  & 7.00  & 3.00  &  &  &  & \\
 Totale  & 17.00  & 33.00  &  & Totale  & 3.00  & 5.00 \\
-TOTALE ONERI E COSTI  & 211.00  & 196.00  &  & Totale entrate della gestione  & 474.00  & 127.00 \\
+Totale uscite della gestione  & 211.00  & 196.00  &  & Totale entrate della gestione  & 474.00  & 127.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 263.00  & -69.00 \\
 \multicolumn{5}{l}{Imposte } & -8.00  & -2.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 255.00  & -71.00 \\
@@ -172,7 +172,7 @@ E) Uscite di supporto generale  &  &  &  & E) Entrate di supporto generale  &  &
 4) Personale  & 4.00  & 6.00  &  &  &  & \\
 5) Altre uscite  & 7.00  & 3.00  &  &  &  & \\
 Totale  & 17.00  & 33.00  &  & Totale  & 3.00  & 5.00 \\
-TOTALE ONERI E COSTI  & 211.00  & 196.00  &  & Totale entrate della gestione  & 474.00  & 127.00 \\
+Totale uscite della gestione  & 211.00  & 196.00  &  & Totale entrate della gestione  & 474.00  & 127.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 263.00  & -69.00 \\
 \multicolumn{5}{l}{Imposte } & -8.00  & -2.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 255.00  & -71.00 \\
@@ -273,7 +273,7 @@ E) Uscite di supporto generale  &  &  &  & E) Entrate di supporto generale  &  &
 4) Personale  & 0.00  & 0.00  &  &  &  & \\
 5) Altre uscite  & 0.00  & 0.00  &  &  &  & \\
 Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
-TOTALE ONERI E COSTI  & 86'151.00  & 0.00  &  & Totale entrate della gestione  & 95'000.00  & 0.00 \\
+Totale uscite della gestione  & 86'151.00  & 0.00  &  & Totale entrate della gestione  & 95'000.00  & 0.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 8'849.00  & 0.00 \\
 \multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 8'849.00  & 0.00 \\
@@ -374,7 +374,7 @@ CE3  & 3) Godimento beni di terzi  & 0.00  & 0.00  &  &  &  &  & \\
 CE4  & 4) Personale  & 0.00  & 0.00  &  &  &  &  & \\
 CE7  & 5) Altre uscite  & 0.00  & 0.00  &  &  &  &  & \\
  & Totale  & 0.00  & 0.00  &  &  & Totale  & 0.00  & 0.00 \\
- & TOTALE ONERI E COSTI  & 86'151.00  & 0.00  &  &  & Totale entrate della gestione  & 95'000.00  & 0.00 \\
+ & Totale uscite della gestione  & 86'151.00  & 0.00  &  &  & Totale entrate della gestione  & 95'000.00  & 0.00 \\
 \multicolumn{7}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 8'849.00  & 0.00 \\
 IM  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \multicolumn{7}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 8'849.00  & 0.00 \\
@@ -475,7 +475,7 @@ CE3  & 3) Godimento beni di terzi  & 0.00  & 0.00  &  &  &  &  & \\
 CE4  & 4) Personale  & 0.00  & 0.00  &  &  &  &  & \\
 CE7  & 5) Altre uscite  & 0.00  & 0.00  &  &  &  &  & \\
  & Totale  & 0.00  & 0.00  &  &  & Totale  & 0.00  & 0.00 \\
- & TOTALE ONERI E COSTI  & 86'151.00  & 0.00  &  &  & Totale entrate della gestione  & 95'000.00  & 0.00 \\
+ & Totale uscite della gestione  & 86'151.00  & 0.00  &  &  & Totale entrate della gestione  & 95'000.00  & 0.00 \\
 \multicolumn{7}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 8'849.00  & 0.00 \\
 IM  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \multicolumn{7}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 8'849.00  & 0.00 \\
@@ -569,7 +569,7 @@ CE3  & 3) Godimento beni di terzi  & 0.00  & 0.00  &  &  &  &  & \\
 CE4  & 4) Personale  & 0.00  & 0.00  &  &  &  &  & \\
 CE7  & 5) Altre uscite  & 0.00  & 0.00  &  &  &  &  & \\
  & Totale  & 0.00  & 0.00  &  &  & Totale  & 0.00  & 0.00 \\
- & TOTALE ONERI E COSTI  & 0.00  & 50.00  &  &  & Totale entrate della gestione  & 0.00  & 110.00 \\
+ & Totale uscite della gestione  & 0.00  & 50.00  &  &  & Totale entrate della gestione  & 0.00  & 110.00 \\
 \multicolumn{7}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 0.00  & 60.00 \\
 IM  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \multicolumn{7}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 0.00  & 60.00 \\
@@ -670,7 +670,7 @@ CE3  & 3) Godimento beni di terzi  & 0.00  & 0.00  &  &  &  &  & \\
 CE4  & 4) Personale  & 0.00  & 0.00  &  &  &  &  & \\
 CE7  & 5) Altre uscite  & 0.00  & 0.00  &  &  &  &  & \\
  & Totale  & 0.00  & 0.00  &  &  & Totale  & 0.00  & 0.00 \\
- & TOTALE ONERI E COSTI  & 0.00  & 50.00  &  &  & Totale entrate della gestione  & 0.00  & 110.00 \\
+ & Totale uscite della gestione  & 0.00  & 50.00  &  &  & Totale entrate della gestione  & 0.00  & 110.00 \\
 \multicolumn{7}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 0.00  & 60.00 \\
 IM  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \multicolumn{7}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 0.00  & 60.00 \\
@@ -771,7 +771,7 @@ CE3  & 3) Godimento beni di terzi  & 0.00  & 0.00  &  &  &  &  & \\
 CE4  & 4) Personale  & 0.00  & 0.00  &  &  &  &  & \\
 CE7  & 5) Altre uscite  & 0.00  & 0.00  &  &  &  &  & \\
  & Totale  & 0.00  & 0.00  &  &  & Totale  & 0.00  & 0.00 \\
- & TOTALE ONERI E COSTI  & 86'151.00  & 8'615.10  &  &  & Totale entrate della gestione  & 95'000.00  & 9'500.00 \\
+ & Totale uscite della gestione  & 86'151.00  & 8'615.10  &  &  & Totale entrate della gestione  & 95'000.00  & 9'500.00 \\
 \multicolumn{7}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 8'849.00  & 884.90 \\
 IM  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \multicolumn{7}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 8'849.00  & 884.90 \\

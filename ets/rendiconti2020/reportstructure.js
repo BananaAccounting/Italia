@@ -496,7 +496,7 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"CE5", "type":"group", "indent":"", "bclass":"3", "description":"E) Ammortamenti"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CE6", "type":"group", "indent":"", "bclass":"3", "description":"E) Accantonamenti per rischi ed oneri"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CE", "type":"total", "indent":"", "description":"Totale", "sum":"CE1;CE2;CE3;CE4;CE7"});
-	reportStructure.push({"id":"C", "type":"total", "indent":"", "description":"TOTALE ONERI E COSTI", "sum":"CA;CB;CC;CD;CE"});
+	reportStructure.push({"id":"C", "type":"total", "indent":"", "description":"Totale uscite della gestione", "sum":"CA;CB;CC;CD;CE"});
 
 	/* ENTRATE */
 	reportStructure.push({"id":"dRA", "type":"title", "indent":"", "description":"A) Entrate da attività di interesse generale"});
