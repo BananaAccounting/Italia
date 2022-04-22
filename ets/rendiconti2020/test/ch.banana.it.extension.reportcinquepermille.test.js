@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.reportcinquepermille.test
 // @api = 1.0
-// @pubdate = 2022-02-15
+// @pubdate = 2022-04-20
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.reportcinquepermille.js>
 // @task = app.command
@@ -74,8 +74,13 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoCorrente = function(
 	userParam.colonnaRaggruppamento = "Gr1";
 	userParam.fileAnnoPrecedente = false;
 	userParam.segment5XM = ":5X2022";
+	userParam.gruppo41 = "CB1;CE1";
+	userParam.gruppo42 = "CB2";
+	userParam.gruppo43 = "CE2";
+	userParam.gruppo44 = "CB7";
+	userParam.gruppo45 = "CE7;CG1;CG2";
 
-	let reportGroups = createReportStructure5xMille();
+	let reportGroups = createReportStructure5xMille(userParam);
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -104,8 +109,13 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoPrecedente = functio
 	userParam.colonnaRaggruppamento = "Gr1";
 	userParam.fileAnnoPrecedente = true;
 	userParam.segment5XM = ":5X2021";
+	userParam.gruppo41 = "CB1;CE1";
+	userParam.gruppo42 = "CB2";
+	userParam.gruppo43 = "CE2";
+	userParam.gruppo44 = "CB7";
+	userParam.gruppo45 = "CE7;CG1;CG2";
 
-	let reportGroups = createReportStructure5xMille();
+	let reportGroups = createReportStructure5xMille(userParam);
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -134,8 +144,13 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoCorrente = function() 
 	userParam.colonnaRaggruppamento = "Gr1";
 	userParam.fileAnnoPrecedente = false;
 	userParam.segment5XM = ":5X2022";
+	userParam.gruppo41 = "CB1;CE1";
+	userParam.gruppo42 = "CB2";
+	userParam.gruppo43 = "CE2";
+	userParam.gruppo44 = "CB7";
+	userParam.gruppo45 = "CE7;CG1;CG2";
 
-	let reportGroups = createReportStructure5xMille();
+	let reportGroups = createReportStructure5xMille(userParam);
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -164,8 +179,13 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente = function(
 	userParam.colonnaRaggruppamento = "Gr1";
 	userParam.fileAnnoPrecedente = true;
 	userParam.segment5XM = ":5X2021";
+	userParam.gruppo41 = "CB1;CE1";
+	userParam.gruppo42 = "CB2";
+	userParam.gruppo43 = "CE2";
+	userParam.gruppo44 = "CB7";
+	userParam.gruppo45 = "CE7;CG1;CG2";
 
-	let reportGroups = createReportStructure5xMille();
+	let reportGroups = createReportStructure5xMille(userParam);
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -194,8 +214,13 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoCorrente_colonnaSegm
 	userParam.colonnaRaggruppamento = "Gr1";
 	userParam.fileAnnoPrecedente = false;
 	userParam.segment5XM = ":5X2022";
+	userParam.gruppo41 = "CB1;CE1";
+	userParam.gruppo42 = "CB2";
+	userParam.gruppo43 = "CE2";
+	userParam.gruppo44 = "CB7";
+	userParam.gruppo45 = "CE7;CG1;CG2";
 
-	let reportGroups = createReportStructure5xMille();
+	let reportGroups = createReportStructure5xMille(userParam);
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -224,8 +249,13 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoPrecedente_colonnaSe
 	userParam.colonnaRaggruppamento = "Gr1";
 	userParam.fileAnnoPrecedente = true;
 	userParam.segment5XM = ":5X2021";
+	userParam.gruppo41 = "CB1;CE1";
+	userParam.gruppo42 = "CB2";
+	userParam.gruppo43 = "CE2";
+	userParam.gruppo44 = "CB7";
+	userParam.gruppo45 = "CE7;CG1;CG2";
 
-	let reportGroups = createReportStructure5xMille();
+	let reportGroups = createReportStructure5xMille(userParam);
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -254,8 +284,13 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoCorrente_colonnaSegmen
 	userParam.colonnaRaggruppamento = "Gr1";
 	userParam.fileAnnoPrecedente = false;
 	userParam.segment5XM = ":5X2022";
+	userParam.gruppo41 = "CB1;CE1";
+	userParam.gruppo42 = "CB2";
+	userParam.gruppo43 = "CE2";
+	userParam.gruppo44 = "CB7";
+	userParam.gruppo45 = "CE7;CG1;CG2";
 
-	let reportGroups = createReportStructure5xMille();
+	let reportGroups = createReportStructure5xMille(userParam);
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -284,8 +319,13 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente_colonnaSegm
 	userParam.colonnaRaggruppamento = "Gr1";
 	userParam.fileAnnoPrecedente = true;
 	userParam.segment5XM = ":5X2021";
+	userParam.gruppo41 = "CB1;CE1";
+	userParam.gruppo42 = "CB2";
+	userParam.gruppo43 = "CE2";
+	userParam.gruppo44 = "CB7";
+	userParam.gruppo45 = "CE7;CG1;CG2";
 
-	let reportGroups = createReportStructure5xMille();
+	let reportGroups = createReportStructure5xMille(userParam);
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -318,9 +358,13 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_Accantonamento_con_regis
 	userParam.calcolaAccantonamento = false;
 	userParam.tipoRendicontoModB = false;
 	userParam.importoAccantonamento = "";
+	userParam.gruppo41 = "CB1;CE1";
+	userParam.gruppo42 = "CB2";
+	userParam.gruppo43 = "CE2";
+	userParam.gruppo44 = "CB7";
+	userParam.gruppo45 = "CE7;CG1;CG2";
 
-
-	let reportGroups = createReportStructure5xMille();
+	let reportGroups = createReportStructure5xMille(userParam);
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -353,8 +397,13 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_Calcolo_automatico_accan
 	userParam.calcolaAccantonamento = true;
 	userParam.tipoRendicontoModB = false;
 	userParam.importoAccantonamento = "";
+	userParam.gruppo41 = "CB1;CE1";
+	userParam.gruppo42 = "CB2";
+	userParam.gruppo43 = "CE2";
+	userParam.gruppo44 = "CB7";
+	userParam.gruppo45 = "CE7;CG1;CG2";
 
-	let reportGroups = createReportStructure5xMille();
+	let reportGroups = createReportStructure5xMille(userParam);
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);
@@ -387,8 +436,13 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_rendiconto_accantonament
 	userParam.calcolaAccantonamento = false;
 	userParam.tipoRendicontoModB = true;
 	userParam.importoAccantonamento = "2000.00";
+	userParam.gruppo41 = "CB1;CE1";
+	userParam.gruppo42 = "CB2";
+	userParam.gruppo43 = "CE2";
+	userParam.gruppo44 = "CB7";
+	userParam.gruppo45 = "CE7;CG1;CG2";
 
-	let reportGroups = createReportStructure5xMille();
+	let reportGroups = createReportStructure5xMille(userParam);
 	
 	let accountsMap = {};
 	loadAccountsMap(banDoc, userParam, accountsMap);

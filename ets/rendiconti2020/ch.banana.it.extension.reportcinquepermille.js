@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.reportcinquepermille
 // @api = 1.0
-// @pubdate = 2022-02-16
+// @pubdate = 2022-04-20
 // @publisher = Banana.ch SA
 // @description = 4. Report cinque per mille
 // @task = app.command
@@ -113,7 +113,7 @@ function exec(string) {
 	if (userParam.segment5XM) {
 
 		//Load the report gorups with gr1 codes and texts.
-		let reportGroups = createReportStructure5xMille();
+		let reportGroups = createReportStructure5xMille(userParam);
 
 		//Create all the accounts objects for current year and last year.
 		let accountsMap = {};
@@ -123,7 +123,7 @@ function exec(string) {
 		}
 
 		//Banana.console.log(JSON.stringify(accountsMap, "", " "));
-				
+
 		//Create the report
 		let report = printReport(Banana.document, fileLastYear, userParam, reportGroups, accountsMap);
 		
@@ -138,6 +138,11 @@ function exec(string) {
 
 // Funzione che stampa il report.
 function printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap) {
+	
+	//Controlla i codici GR1 inseriti nei parametri 
+	checkCodesGroup4(banDoc, userParam, reportGroups);
+
+	//Crea il report
 	let report = Banana.Report.newReport("Rendiconto 5 per mille");
 
 	printReport_Header(report, banDoc, userParam);
@@ -559,6 +564,7 @@ function printReport_Finale(report, banDoc, userParam) {
 	report.addParagraph("Firma del rappresentante legale", "alignCenter");
 }
 
+// Funzione che stampa il numero di pagina come piè di pagina
 function printReport_Footer(report) {
 	report.getFooter().addClass("footer");
 	report.getFooter().addText("-", "");
@@ -775,6 +781,143 @@ function loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts, accountsMap
  * Functionalities
  **************************************************************************************/
 
+// Funzione che ritorna i codici di raggruppamento GR1 del gruppo indicato
+function getObjectGr1CodesByGroup(reportStructure, group) {
+	var searchGroup = group.trim();
+	for (var i = 0; i < reportStructure.length; i++) {
+		if (reportStructure[i].group === searchGroup) {
+			//Banana.console.log("GET => Group: " + group + " ... codes: " + reportStructure[i].gr1);
+			return reportStructure[i].gr1;
+		}
+	}
+}
+
+// Funzione che imposta i codici di raggruppamento GR1 del gruppo indicato
+function setObjectGr1CodesByGroup(reportStructure, group, newCodes) {
+	var searchGroup = group.trim();
+	for (var i = 0; i < reportStructure.length; i++) {
+		if (reportStructure[i].group === searchGroup) {
+			reportStructure[i].gr1 = newCodes;
+			//Banana.console.log("SET => Group: " + group + " ... codes: " + reportStructure[i].gr1);
+		}
+	}
+}
+
+// Funzione che controlla i codici GR1 inseriti nei parametri
+function checkCodesGroup4(banDoc, userParam, reportGroups) {
+
+	// Controlla i codici GR1 inseriti nei gruppi 4.1, 4.2, 4.3, 4.4, 4.5
+	// Se ci sono codici già presenti nei gruppi 1,2,3,5 allora li rimuove da questi ultimi per evitare di averli in doppio
+
+	let codesSection1 = getObjectGr1CodesByGroup(reportGroups, "1").split(";");
+	let codesSection2 = getObjectGr1CodesByGroup(reportGroups, "2").split(";");
+	let codesSection3 = getObjectGr1CodesByGroup(reportGroups, "3").split(";");
+	let codesSection41 = userParam.gruppo41.split(";");
+	let codesSection42 = userParam.gruppo42.split(";");
+	let codesSection43 = userParam.gruppo43.split(";");
+	let codesSection44 = userParam.gruppo44.split(";");
+	let codesSection45 = userParam.gruppo45.split(";");
+	let codesSection5 = getObjectGr1CodesByGroup(reportGroups, "5").split(";");
+
+	// Crea un array con tutti i codici GR1 inseriti dall'utente
+	let userCodes = [];
+
+	for (let i = 0; i < codesSection41.length; i++) {
+		userCodes.push(codesSection41[i]);
+	}
+	for (let i = 0; i < codesSection42.length; i++) {
+		userCodes.push(codesSection42[i]);
+	}
+	for (let i = 0; i < codesSection43.length; i++) {
+		userCodes.push(codesSection43[i]);
+	}
+	for (let i = 0; i < codesSection44.length; i++) {
+		userCodes.push(codesSection44[i]);
+	}
+	for (let i = 0; i < codesSection45.length; i++) {
+		userCodes.push(codesSection45[i]);
+	}
+
+    //Remove duplicates from array
+    for (let i = 0; i < userCodes.length; i++) {
+      for (let x = i+1; x < userCodes.length; x++) {
+        if (userCodes[x] === userCodes[i]) {
+          userCodes.splice(x,1);
+          --x;
+        }
+      }
+    }
+
+    //Sort the array
+    userCodes.sort();
+	// Banana.console.log(userCodes);
+
+	// Rimuove dai gruppi 1,2,3,5 i codici inseriti dall'utente nei gruppi 4.1, 4.2, 4.3, 4.4, 4.5
+	// Per evitare che vengono conteggiati due volte
+	for (let i = 0; i < userCodes.length; i++) {
+		
+		let groups = [];
+		let index;
+
+		if (codesSection1.includes(userCodes[i])) {
+			index = codesSection1.indexOf(userCodes[i]);
+			if (index !== -1) {
+			  codesSection1.splice(index, 1);
+			}
+			//userParam.gruppo1 = codesSection1.join().replace(/,/g, ";");
+			setObjectGr1CodesByGroup(reportGroups, "1", codesSection1.join().replace(/,/g, ";"));
+		}
+		if (codesSection2.includes(userCodes[i])) {
+			index = codesSection2.indexOf(userCodes[i]);
+			if (index !== -1) {
+			  codesSection2.splice(index, 1);
+			}
+			// userParam.gruppo2 = codesSection2.join().replace(/,/g, ";");
+			setObjectGr1CodesByGroup(reportGroups, "2", codesSection2.join().replace(/,/g, ";"));
+		}
+		if (codesSection3.includes(userCodes[i])) {
+			index = codesSection3.indexOf(userCodes[i]);
+			if (index !== -1) {
+			  codesSection3.splice(index, 1);
+			}
+			// userParam.gruppo3 = codesSection3.join().replace(/,/g, ";");
+			setObjectGr1CodesByGroup(reportGroups, "3", codesSection3.join().replace(/,/g, ";"));
+		}
+		if (codesSection5.includes(userCodes[i])) {
+			index = codesSection5.indexOf(userCodes[i]);
+			if (index !== -1) {
+			  codesSection5.splice(index, 1);
+			}
+			// userParam.gruppo5 = codesSection5.join().replace(/,/g, ";");
+			setObjectGr1CodesByGroup(reportGroups, "5", codesSection5.join().replace(/,/g, ";"));
+		}
+
+		if (codesSection41.includes(userCodes[i])) {
+			groups.push("4.1");
+		}
+		if (codesSection42.includes(userCodes[i])) {
+			groups.push("4.2");
+		}
+		if (codesSection43.includes(userCodes[i])) {
+			groups.push("4.3");
+		}
+		if (codesSection44.includes(userCodes[i])) {
+			groups.push("4.4");
+		}
+		if (codesSection45.includes(userCodes[i])) {
+			groups.push("4.5");
+		}
+
+		// Mostra messaggio errore se il codice compare in più di un gruppo
+		if (groups.length > 1) {
+			let msg = getErrorMessage(ID_ERR_CODICI_GR1_5XMILLE);
+			msg = msg.replace("%CODEGR1", userCodes[i]);
+			msg = msg.replace("%GROUPS", groups);
+			banDoc.addMessage(msg);
+		}
+	}
+}
+
 // Funzione che controlla l'importo dell'accantonamento
 function controlloAccantonamento(banDoc, accantonamento, entrate, uscite) {
 	
@@ -879,18 +1022,6 @@ function convertParam(userParam, segment5XMList) {
 	}
 	convertedParam.data.push(currentParam);
 
-	// currentParam = {};
-	// currentParam.name = 'scopoAttivita';
-	// currentParam.parentObject = 'anagrafica';
-	// currentParam.title = "Scopo dell'attività sociale";
-	// currentParam.type = 'string';
-	// currentParam.value = userParam.scopoAttivita ? userParam.scopoAttivita : '';
-	// currentParam.defaultvalue = "Sostenere e qualificare l'attività di volontariato";
-	// currentParam.readValue = function() {
-	//   userParam.scopoAttivita = this.value;
-	// }
-	// convertedParam.data.push(currentParam);
-
 	currentParam = {};
 	currentParam.name = 'provincia';
 	currentParam.parentObject = 'anagrafica';
@@ -902,18 +1033,6 @@ function convertParam(userParam, segment5XMList) {
 	  userParam.provincia = this.value;
 	}
 	convertedParam.data.push(currentParam);	
-
-	// currentParam = {};
-	// currentParam.name = 'fax';
-	// currentParam.parentObject = 'anagrafica';
-	// currentParam.title = "Fax";
-	// currentParam.type = 'string';
-	// currentParam.value = userParam.fax ? userParam.fax : '';
-	// currentParam.defaultvalue = "";
-	// currentParam.readValue = function() {
-	//   userParam.fax = this.value;
-	// }
-	// convertedParam.data.push(currentParam);	
 
 	currentParam = {};
 	currentParam.name = 'pec';
@@ -1059,14 +1178,84 @@ function convertParam(userParam, segment5XMList) {
 	}
 	convertedParam.data.push(currentParam);
 
+	currentParam = {};
+	currentParam.name = 'sezioniGruppi';
+	currentParam.parentObject = '';
+	currentParam.title = 'Raggruppamenti codici Gr1 del Gruppo 4';
+	currentParam.type = 'string';
+	currentParam.value = '';
+	currentParam.editable = false;
+	currentParam.readValue = function() {
+		userParam.sezioniGruppi = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
+	currentParam = {};
+	currentParam.name = 'gruppo41';
+	currentParam.parentObject = 'sezioniGruppi';
+	currentParam.title = '4.1 (predefiniti: CB1;CE1)';
+	currentParam.type = 'string';
+	currentParam.value = userParam.gruppo41 ? userParam.gruppo41 : '';
+	currentParam.defaultvalue = 'CB1;CE1';
+	currentParam.readValue = function() {
+	  userParam.gruppo41 = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
+	currentParam = {};
+	currentParam.name = 'gruppo42';
+	currentParam.parentObject = 'sezioniGruppi';
+	currentParam.title = '4.2 (predefiniti: CB2)';
+	currentParam.type = 'string';
+	currentParam.value = userParam.gruppo42 ? userParam.gruppo42 : '';
+	currentParam.defaultvalue = 'CB2';
+	currentParam.readValue = function() {
+	  userParam.gruppo42 = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
+	currentParam = {};
+	currentParam.name = 'gruppo43';
+	currentParam.parentObject = 'sezioniGruppi';
+	currentParam.title = '4.3 (predefiniti: CE2)';
+	currentParam.type = 'string';
+	currentParam.value = userParam.gruppo43 ? userParam.gruppo43 : '';
+	currentParam.defaultvalue = 'CE2';
+	currentParam.readValue = function() {
+	  userParam.gruppo43 = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
+	currentParam = {};
+	currentParam.name = 'gruppo44';
+	currentParam.parentObject = 'sezioniGruppi';
+	currentParam.title = '4.4 (predefiniti: CB7)';
+	currentParam.type = 'string';
+	currentParam.value = userParam.gruppo44 ? userParam.gruppo44 : '';
+	currentParam.defaultvalue = 'CB7';
+	currentParam.readValue = function() {
+	  userParam.gruppo44 = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
+	currentParam = {};
+	currentParam.name = 'gruppo45';
+	currentParam.parentObject = 'sezioniGruppi';
+	currentParam.title = '4.5 (predefiniti: CE7;CG1;CG2)';
+	currentParam.type = 'string';
+	currentParam.value = userParam.gruppo45 ? userParam.gruppo45 : '';
+	currentParam.defaultvalue = 'CE7;CG1;CG2';
+	currentParam.readValue = function() {
+	  userParam.gruppo45 = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
 	return convertedParam;
 }
 
 function initUserParam(segment5XMList) {
    let userParam = {};
-   //userParam.scopoAttivita = "Sostenere e qualificare l'attività di volontariato";
    userParam.provincia = "";
-   //userParam.fax = "";
    userParam.pec = "";
    userParam.rappresentanteLegale = "Mario Rossi";
    userParam.cfRappresentanteLegale = "1234567890";
@@ -1078,6 +1267,11 @@ function initUserParam(segment5XMList) {
    userParam.calcolaAccantonamento = false;
    userParam.tipoRendicontoModB = false;
    userParam.importoAccantonamento = "";
+   userParam.gruppo41 = "CB1;CE1";
+   userParam.gruppo42 = "CB2";
+   userParam.gruppo43 = "CE2";
+   userParam.gruppo44 = "CB7";
+   userParam.gruppo45 = "CE7;CG1;CG2";
    return userParam;
 }
 

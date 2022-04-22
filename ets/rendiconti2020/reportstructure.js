@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2022-03-14 */
+/* Update: 2022-04-20 */
 
 
 /**
@@ -581,7 +581,7 @@ function createReportStructureRendicontoCassa() {
 }
 
 //5x1000
-function createReportStructure5xMille() {
+function createReportStructure5xMille(userParam) {
 	
 	/**	
 	 *  Gruppi modello vecchio:
@@ -634,35 +634,35 @@ function createReportStructure5xMille() {
 	reportStructure.push({
 		"group":"4.1",
 		"income":false,
-		"gr1":"CB1;CE1",
+		"gr1": userParam.gruppo41, //"CB1;CE1",
 		"title":"Acquisto di beni o servizi strumentali oggetto di donazione",
 		"text":""
 	});
 	reportStructure.push({
 		"group":"4.2",
 		"income":false,
-		"gr1":"CB2",
+		"gr1": userParam.gruppo42, //"CB2",
 		"title":"Erogazioni a proprie articolazioni territoriali e a soggetti collegati o affiliati",
 		"text":""
 	});
 	reportStructure.push({
 		"group":"4.3",
 		"income":false,
-		"gr1":"CE2",
+		"gr1": userParam.gruppo43, //"CE2",
 		"title":"Erogazioni ad enti terzi",
 		"text":""
 	});
 	reportStructure.push({
 		"group":"4.4",
 		"income":false,
-		"gr1":"CB7",
+		"gr1": userParam.gruppo44, //"CB7",
 		"title":"Erogazioni a persone fisiche",
 		"text":""
 	});
 	reportStructure.push({
 		"group":"4.5",
 		"income":false,
-		"gr1":"CE7;CG1;CG2",
+		"gr1": userParam.gruppo45, //"CE7;CG1;CG2",
 		"title":"Altre spese per attività di interesse generale",
 		"text":""
 	});

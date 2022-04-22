@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2022-03-08 */
+/* Update: 2022-04-20 */
 
 
 
@@ -287,7 +287,10 @@ var BReport = class JsClass {
             var gr = tRow.value(grColumn);
             if (gr && account && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
                if (!dataGroups.includes(gr)) {
-                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, gr));
+                  var msg = getErrorMessage(ID_ERR_GRUPPO_ERRATO);
+                  msg = msg.replace("%GRCOLUMN", grColumn);
+                  msg = msg.replace("%GR", gr);
+                  tRow.addMessage(msg);
                }
             }
          }
@@ -297,7 +300,10 @@ var BReport = class JsClass {
             var gr = tRow.value(grColumn);
             if (gr && category && !category.startsWith(":") && !category.startsWith(".") && !category.startsWith(",") && !category.startsWith(";")) {
                if (!dataGroups.includes(gr)) {
-                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO_CATEGORIA, grColumn, gr));
+                  var msg = getErrorMessage(ID_ERR_GRUPPO_ERRATO_CATEGORIA);
+                  msg = msg.replace("%GRCOLUMN", grColumn);
+                  msg = msg.replace("%GR", gr);
+                  tRow.addMessage(msg);
                }
             }
          }
@@ -311,7 +317,10 @@ var BReport = class JsClass {
             var bclass = tRow.value('BClass');
             if (gr && account && bclass && (bclass === '1' || bclass === '2' || bclass === '3' || bclass === '4') && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
                if (!dataGroups.includes(gr)) {
-                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, gr));
+                  var msg = getErrorMessage(ID_ERR_GRUPPO_ERRATO);
+                  msg = msg.replace("%GRCOLUMN", grColumn);
+                  msg = msg.replace("%GR", gr);
+                  tRow.addMessage(msg);
                }
             }
          } 
@@ -348,7 +357,10 @@ var BReport = class JsClass {
             var gr = tRow.value(grColumn);
             if (gr && category && !category.startsWith(":") && !category.startsWith(".") && !category.startsWith(",") && !category.startsWith(";")) {
                if (!dataGroups.includes(gr)) {
-                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO_CATEGORIA, grColumn, gr));
+                  var msg = getErrorMessage(ID_ERR_GRUPPO_ERRATO_CATEGORIA);
+                  msg = msg.replace("%GRCOLUMN", grColumn);
+                  msg = msg.replace("%GR", gr);
+                  tRow.addMessage(msg);
                }
             }
          }
@@ -362,7 +374,10 @@ var BReport = class JsClass {
             var bclass = tRow.value('BClass');
             if (gr && account && bclass && (bclass === '3' || bclass === '4') && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
                if (!dataGroups.includes(gr)) {
-                  tRow.addMessage(getErrorMessage(ID_ERR_GRUPPO_ERRATO, grColumn, gr));
+                  var msg = getErrorMessage(ID_ERR_GRUPPO_ERRATO);
+                  msg = msg.replace("%GRCOLUMN", grColumn);
+                  msg = msg.replace("%GR", gr);
+                  tRow.addMessage(msg);
                }
             }
          }

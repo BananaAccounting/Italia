@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2022-02-16 */
+/* Update: 2022-04-20 */
 
 
 var ID_ERR_VERSIONE = "ID_ERR_VERSIONE";
@@ -27,11 +27,12 @@ var ID_ERR_SALDO_APERTURA_SENZA_PRECEDENTE = "ID_ERR_SALDO_APERTURA_SENZA_PRECED
 var ID_ERR_SALDI_APERTURA_PRECEDENTE_DIFFERENTI = "ID_ERR_SALDI_APERTURA_PRECEDENTE_DIFFERENTI";
 var ID_ERR_REGISTRAZIONE_NON_CORRETTA = "ID_ERR_REGISTRAZIONE_NON_CORRETTA";
 var ID_ERR_ACCANTONAMENTO_5XMILLE = "ID_ERR_ACCANTONAMENTO_5XMILLE";
+var ID_ERR_CODICI_GR1_5XMILLE = "ID_ERR_CODICI_GR1_5XMILLE";
 
 /**
  * return the text error message according to error id
  */
-function getErrorMessage(errorId, column, value) {
+function getErrorMessage(errorId) {
     switch (errorId) {
         case ID_ERR_VERSIONE:
             if (BAN_EXPM_VERSION) {
@@ -41,11 +42,10 @@ function getErrorMessage(errorId, column, value) {
                 return "L'estensione richiede come versione minima Banana Contabilità Plus " + BAN_VERSION;
             }
         case ID_ERR_GRUPPO_ERRATO:
-            //grColumn, riga, valore
-            return "colonna <" + column + ">, valore <"+ value +"> Codice gruppo inserito errato. Modificare il codice gruppo nella tabella Conti.";
+            return "colonna <%GRCOLUMN>, valore <%GR> Codice gruppo inserito errato. Modificare il codice gruppo nella tabella Conti.";
 
         case ID_ERR_GRUPPO_ERRATO_CATEGORIA:
-            return "colonna <" + column + ">, valore <"+ value +"> Codice gruppo inserito errato. Modificare il codice gruppo nella tabella Categorie.";    
+            return "colonna <%GRCOLUMN>, valore <%GR> Codice gruppo inserito errato. Modificare il codice gruppo nella tabella Categorie.";    
     
         case ID_ERR_LICENZA_ADVANCED:
             return "L'estensione richiede il piano Advanced.";
@@ -67,6 +67,9 @@ function getErrorMessage(errorId, column, value) {
 
         case ID_ERR_ACCANTONAMENTO_5XMILLE:
             return "L'accantonamento registrato è maggiore della differenza 'Importo percepito - Totale spese gruppi 1,2,3,4'";
+
+        case ID_ERR_CODICI_GR1_5XMILLE:
+            return "Il codice %CODEGR1 è stato inserito in più gruppi: %GROUPS. Nelle impostazioni ogni codice deve essere presente in un solo gruppo.";
     }
     return "";
 }
