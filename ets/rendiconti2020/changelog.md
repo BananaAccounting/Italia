@@ -1,4 +1,7 @@
 # Cronologia modifiche
+### 2022-04-22
+* Rendiconto 5 per mille
+  * Aggiunto parametri per personalizzare il gruppo 4.  
 ### 2022-02-16
 * Rendiconto cassa
   * Aggiunto controllo quadratura con tabella riassuntiva.
