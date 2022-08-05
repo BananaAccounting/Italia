@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontogestionale.mod.b
 // @api = 1.0
-// @pubdate = 2022-02-14
+// @pubdate = 2022-08-05
 // @publisher = Banana.ch SA
 // @description = 2. Rendiconto gestionale
 // @task = app.command
@@ -335,6 +335,24 @@ function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) 
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA5"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA5"), "align-right", 1);
 
+
+   /* Row CA5 bis*/
+   tableRow = table.addRow();
+   if (userParam.printcolumn) {
+      tableRow.addCell(bReport.getObjectId("CA5b"), "align-left", 1);
+   }
+   tableRow.addCell(bReport.getObjectDescription("CA5b"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA5b"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA5b"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   if (userParam.printcolumn) {
+      tableRow.addCell("", "align-left", 1);
+   }
+   tableRow.addCell("", "align-left", 1);
+   tableRow.addCell("", "align-right", 1);
+   tableRow.addCell("", "align-right", 1);
+
+
    /* Row 7 */
    tableRow = table.addRow();
    if (userParam.printcolumn) {
@@ -386,11 +404,11 @@ function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) 
    /* Row 10 */
    tableRow = table.addRow();
    if (userParam.printcolumn) {
-      tableRow.addCell("", "", 1);
+      tableRow.addCell(bReport.getObjectId("CA9"), "align-left", 1);
    }
-   tableRow.addCell("", "", 1);
-   tableRow.addCell("", "", 1);
-   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA9"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA9"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA9"), "align-right", 1);
    tableRow.addCell("", "", 1);
    if (userParam.printcolumn) {
       tableRow.addCell(bReport.getObjectId("RA9"), "align-left", 1);
@@ -402,11 +420,11 @@ function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) 
    /* Row 11 */
    tableRow = table.addRow();
    if (userParam.printcolumn) {
-      tableRow.addCell("", "", 1);
+      tableRow.addCell(bReport.getObjectId("CA10"), "align-left", 1);
    }
-   tableRow.addCell("", "", 1);
-   tableRow.addCell("", "", 1);
-   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("CA10"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA10"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA10"), "align-right", 1);
    tableRow.addCell("", "", 1);
    if (userParam.printcolumn) {
       tableRow.addCell(bReport.getObjectId("RA10"), "align-left", 1);
@@ -554,6 +572,22 @@ function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) 
    tableRow.addCell(bReport.getObjectDescription("RB5"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB5"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB5"), "align-right", 1);
+
+   /* Row CB5 bis */
+   tableRow = table.addRow();
+   if (userParam.printcolumn) {
+      tableRow.addCell(bReport.getObjectId("CB5b"), "align-left", 1);
+   }
+   tableRow.addCell(bReport.getObjectDescription("CB5b"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB5b"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB5b"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   if (userParam.printcolumn) {
+      tableRow.addCell("", "align-left", 1);
+   }
+   tableRow.addCell("", "align-left", 1);
+   tableRow.addCell("", "align-right", 1);
+   tableRow.addCell("", "align-right", 1);
 
    /* Row 21 */
    tableRow = table.addRow();
@@ -958,6 +992,22 @@ function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) 
    tableRow.addCell("", "", 1);
    tableRow.addCell("", "", 1);
 
+   /* Row CE5 bis */
+   tableRow = table.addRow();
+   if (userParam.printcolumn) {
+      tableRow.addCell(bReport.getObjectId("CE5b"), "align-left", 1);
+   }
+   tableRow.addCell(bReport.getObjectDescription("CE5b"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE5b"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE5b"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   if (userParam.printcolumn) {
+      tableRow.addCell("", "", 1);
+   }
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("", "", 1);
+
    /* Row 47 */
    tableRow = table.addRow();
    if (userParam.printcolumn) {
@@ -982,6 +1032,38 @@ function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) 
    tableRow.addCell(bReport.getObjectDescription("CE7"), "align-left", 1);
    tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE7"), "align-right", 1);
    tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE7"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   if (userParam.printcolumn) {
+      tableRow.addCell("", "", 1);
+   }
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("", "", 1);
+
+   /* Row CE8 */
+   tableRow = table.addRow();
+   if (userParam.printcolumn) {
+      tableRow.addCell(bReport.getObjectId("CE8"), "align-left", 1);
+   }
+   tableRow.addCell(bReport.getObjectDescription("CE8"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE8"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE8"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   if (userParam.printcolumn) {
+      tableRow.addCell("", "", 1);
+   }
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell("", "", 1);
+
+   /* Row CE9 */
+   tableRow = table.addRow();
+   if (userParam.printcolumn) {
+      tableRow.addCell(bReport.getObjectId("CE9"), "align-left", 1);
+   }
+   tableRow.addCell(bReport.getObjectDescription("CE9"), "align-left", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE9"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE9"), "align-right", 1);
    tableRow.addCell("", "", 1);
    if (userParam.printcolumn) {
       tableRow.addCell("", "", 1);
@@ -1074,7 +1156,7 @@ function printRendicontoModB_Costi_Proventi_Figurativi(report, banDoc, userParam
       datePrevious.setDate(datePrevious.getDate() - 1);
       datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
 
-      report.addParagraph(" ", "");
+      //report.addParagraph(" ", "");
       report.addParagraph(" ", "");
 
       var table = report.addTable("table");

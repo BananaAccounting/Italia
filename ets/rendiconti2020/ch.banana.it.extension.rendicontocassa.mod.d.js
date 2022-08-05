@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2022-03-14
+// @pubdate = 2022-08-05
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -1641,7 +1641,9 @@ function controlloRegistrazioni(report, banDoc, userParam, bReport) {
       // Per ogni registrazione senza conto liqudità segnalo un messaggio di errore
       for (var i = 0; i < rowsError.length; i++) {
          var tRow = rowsError[i];
-         banDoc.table('Transactions').row(tRow).addMessage(getErrorMessage(ID_ERR_REGISTRAZIONE_NON_CORRETTA));
+         if (banDoc.table('Transactions').row(tRow)) {
+            banDoc.table('Transactions').row(tRow).addMessage(getErrorMessage(ID_ERR_REGISTRAZIONE_NON_CORRETTA));
+         }
       }
    }
 }

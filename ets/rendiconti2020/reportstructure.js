@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2022-04-20 */
+/* Update: 2022-08-05 */
 
 
 /**
@@ -202,9 +202,12 @@ function createReportStructureStatoPatrimoniale() {
 	reportStructure.push({"id":"CA3", "type":"group", "indent":"", "bclass":"3", "description":"3) Godimento beni di terzi"});
 	reportStructure.push({"id":"CA4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
 	reportStructure.push({"id":"CA5", "type":"group", "indent":"", "bclass":"3", "description":"5) Ammortamenti"});
+	reportStructure.push({"id":"CA5b", "type":"group", "indent":"", "bclass":"3", "description":"5 bis) svalutazioni delle immobilizzazioni materiali ed immateriali"}); //non usato
 	reportStructure.push({"id":"CA6", "type":"group", "indent":"", "bclass":"3", "description":"6) Accantonamenti per rischi ed oneri"});
 	reportStructure.push({"id":"CA7", "type":"group", "indent":"", "bclass":"3", "description":"7) Oneri diversi di gestione"});
 	reportStructure.push({"id":"CA8", "type":"group", "indent":"", "bclass":"3", "description":"8) Rimanenze iniziali"});
+	reportStructure.push({"id":"CA9", "type":"group", "indent":"", "bclass":"3", "description":"9) Accantonamento a riserva vincolata per decisione degli organi istituzionali"});  //non usato
+	reportStructure.push({"id":"CA10", "type":"group", "indent":"", "bclass":"3", "description":"10) Utilizzo riserva vincolata per decisione degli organi istituzionali"});  //non usato
 	reportStructure.push({"id":"CA", "type":"total", "indent":"", "description":"Totale", "sum":"CA1;CA2;CA3;CA4;CA5;CA6;CA7;CA8"});
 	reportStructure.push({"id":"dCB", "type":"title", "indent":"", "description":"B) Costi e oneri da attività diverse"});
 	reportStructure.push({"id":"CB1", "type":"group", "indent":"", "bclass":"3", "description":"1) Materie prime, sussidiarie, di consumo e di merci"});
@@ -212,6 +215,7 @@ function createReportStructureStatoPatrimoniale() {
 	reportStructure.push({"id":"CB3", "type":"group", "indent":"", "bclass":"3", "description":"3) Godimento beni di terzi"});
 	reportStructure.push({"id":"CB4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
 	reportStructure.push({"id":"CB5", "type":"group", "indent":"", "bclass":"3", "description":"5) Ammortamenti"});
+	reportStructure.push({"id":"CB5b", "type":"group", "indent":"", "bclass":"3", "description":"5 bis) svalutazioni delle immobilizzazioni materiali ed immateriali"});  //non usato
 	reportStructure.push({"id":"CB6", "type":"group", "indent":"", "bclass":"3", "description":"6) Accantonamenti per rischi ed oneri"});
 	reportStructure.push({"id":"CB7", "type":"group", "indent":"", "bclass":"3", "description":"7) Oneri diversi di gestione"});
 	reportStructure.push({"id":"CB8", "type":"group", "indent":"", "bclass":"3", "description":"8) Rimanenze iniziali"});
@@ -235,8 +239,11 @@ function createReportStructureStatoPatrimoniale() {
 	reportStructure.push({"id":"CE3", "type":"group", "indent":"", "bclass":"3", "description":"3) Godimento beni di terzi"});
 	reportStructure.push({"id":"CE4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
 	reportStructure.push({"id":"CE5", "type":"group", "indent":"", "bclass":"3", "description":"5) Ammortamenti"});
+	reportStructure.push({"id":"CE5b", "type":"group", "indent":"", "bclass":"3", "description":"5 bis) svalutazioni delle immobilizzazioni materiali ed immateriali"});  //non usato
 	reportStructure.push({"id":"CE6", "type":"group", "indent":"", "bclass":"3", "description":"6) Accantonamenti per rischi ed oneri"});
 	reportStructure.push({"id":"CE7", "type":"group", "indent":"", "bclass":"3", "description":"7) Altri oneri"});
+	reportStructure.push({"id":"CE8", "type":"group", "indent":"", "bclass":"3", "description":"8) Accantonamento a riserva vincolata per decisione degli organi istituzionali"});  //non usato
+	reportStructure.push({"id":"CE9", "type":"group", "indent":"", "bclass":"3", "description":"9) Utilizzo riserva vincolata per decisione degli organi istituzionali"});  //non usato
 	reportStructure.push({"id":"CE", "type":"total", "indent":"", "description":"Totale", "sum":"CE1;CE2;CE3;CE4;CE5;CE6;CE7"});
 	reportStructure.push({"id":"C", "type":"total", "indent":"", "description":"TOTALE ONERI E COSTI", "sum":"CA;CB;CC;CD;CE"});
 
@@ -329,20 +336,24 @@ function createReportStructureRendicontoGestionale() {
 	reportStructure.push({"id":"CA3", "type":"group", "indent":"", "bclass":"3", "description":"3) Godimento beni di terzi"});
 	reportStructure.push({"id":"CA4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
 	reportStructure.push({"id":"CA5", "type":"group", "indent":"", "bclass":"3", "description":"5) Ammortamenti"});
+	reportStructure.push({"id":"CA5b", "type":"group", "indent":"", "bclass":"3", "description":"5 bis) svalutazioni delle immobilizzazioni materiali ed immateriali"});
 	reportStructure.push({"id":"CA6", "type":"group", "indent":"", "bclass":"3", "description":"6) Accantonamenti per rischi ed oneri"});
 	reportStructure.push({"id":"CA7", "type":"group", "indent":"", "bclass":"3", "description":"7) Oneri diversi di gestione"});
 	reportStructure.push({"id":"CA8", "type":"group", "indent":"", "bclass":"3", "description":"8) Rimanenze iniziali"});
-	reportStructure.push({"id":"CA", "type":"total", "indent":"", "description":"Totale", "sum":"CA1;CA2;CA3;CA4;CA5;CA6;CA7;CA8"});
+	reportStructure.push({"id":"CA9", "type":"group", "indent":"", "bclass":"3", "description":"9) Accantonamento a riserva vincolata per decisione degli organi istituzionali"});
+	reportStructure.push({"id":"CA10", "type":"group", "indent":"", "bclass":"3", "description":"10) Utilizzo riserva vincolata per decisione degli organi istituzionali"});
+	reportStructure.push({"id":"CA", "type":"total", "indent":"", "description":"Totale", "sum":"CA1;CA2;CA3;CA4;CA5;CA5b;CA6;CA7;CA8;CA9;CA10"});
 	reportStructure.push({"id":"dCB", "type":"title", "indent":"", "description":"B) Costi e oneri da attività diverse"});
 	reportStructure.push({"id":"CB1", "type":"group", "indent":"", "bclass":"3", "description":"1) Materie prime, sussidiarie, di consumo e di merci"});
 	reportStructure.push({"id":"CB2", "type":"group", "indent":"", "bclass":"3", "description":"2) Servizi"});
 	reportStructure.push({"id":"CB3", "type":"group", "indent":"", "bclass":"3", "description":"3) Godimento beni di terzi"});
 	reportStructure.push({"id":"CB4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
 	reportStructure.push({"id":"CB5", "type":"group", "indent":"", "bclass":"3", "description":"5) Ammortamenti"});
+	reportStructure.push({"id":"CB5b", "type":"group", "indent":"", "bclass":"3", "description":"5 bis) svalutazioni delle immobilizzazioni materiali ed immateriali"});
 	reportStructure.push({"id":"CB6", "type":"group", "indent":"", "bclass":"3", "description":"6) Accantonamenti per rischi ed oneri"});
 	reportStructure.push({"id":"CB7", "type":"group", "indent":"", "bclass":"3", "description":"7) Oneri diversi di gestione"});
 	reportStructure.push({"id":"CB8", "type":"group", "indent":"", "bclass":"3", "description":"8) Rimanenze iniziali"});
-	reportStructure.push({"id":"CB", "type":"total", "indent":"", "description":"Totale", "sum":"CB1;CB2;CB3;CB4;CB5;CB6;CB7;CB8"});
+	reportStructure.push({"id":"CB", "type":"total", "indent":"", "description":"Totale", "sum":"CB1;CB2;CB3;CB4;CB5;CB5b;CB6;CB7;CB8"});
 	reportStructure.push({"id":"dCC", "type":"title", "indent":"", "description":"C) Costi e oneri da attività di raccolta fondi"});
 	reportStructure.push({"id":"CC1", "type":"group", "indent":"", "bclass":"3", "description":"1) Oneri per raccolte fondi abituali"});
 	reportStructure.push({"id":"CC2", "type":"group", "indent":"", "bclass":"3", "description":"2) Oneri per raccolte fondi occasionali"});
@@ -362,9 +373,12 @@ function createReportStructureRendicontoGestionale() {
 	reportStructure.push({"id":"CE3", "type":"group", "indent":"", "bclass":"3", "description":"3) Godimento beni di terzi"});
 	reportStructure.push({"id":"CE4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
 	reportStructure.push({"id":"CE5", "type":"group", "indent":"", "bclass":"3", "description":"5) Ammortamenti"});
+	reportStructure.push({"id":"CE5b", "type":"group", "indent":"", "bclass":"3", "description":"5 bis) svalutazioni delle immobilizzazioni materiali ed immateriali"});
 	reportStructure.push({"id":"CE6", "type":"group", "indent":"", "bclass":"3", "description":"6) Accantonamenti per rischi ed oneri"});
 	reportStructure.push({"id":"CE7", "type":"group", "indent":"", "bclass":"3", "description":"7) Altri oneri"});
-	reportStructure.push({"id":"CE", "type":"total", "indent":"", "description":"Totale", "sum":"CE1;CE2;CE3;CE4;CE5;CE6;CE7"});
+	reportStructure.push({"id":"CE8", "type":"group", "indent":"", "bclass":"3", "description":"8) Accantonamento a riserva vincolata per decisione degli organi istituzionali"});
+	reportStructure.push({"id":"CE9", "type":"group", "indent":"", "bclass":"3", "description":"9) Utilizzo riserva vincolata per decisione degli organi istituzionali"});
+	reportStructure.push({"id":"CE", "type":"total", "indent":"", "description":"Totale", "sum":"CE1;CE2;CE3;CE4;CE5;CE5b;CE6;CE7;CE8;CE9"});
 	reportStructure.push({"id":"C", "type":"total", "indent":"", "description":"TOTALE ONERI E COSTI", "sum":"CA;CB;CC;CD;CE"});
 
 	/* PROVENTI */
@@ -461,8 +475,11 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"CA4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
 	reportStructure.push({"id":"CA7", "type":"group", "indent":"", "bclass":"3", "description":"5) Uscite diverse di gestione"});
 	reportStructure.push({"id":"CA5", "type":"group", "indent":"", "bclass":"3", "description":"A) Ammortamenti"}); //non usato nel rendiconto cassa
+	reportStructure.push({"id":"CA5b", "type":"group", "indent":"", "bclass":"3", "description":"5 bis) svalutazioni delle immobilizzazioni materiali ed immateriali"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CA6", "type":"group", "indent":"", "bclass":"3", "description":"A) Accantonamenti per rischi ed oneri"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CA8", "type":"group", "indent":"", "bclass":"3", "description":"A) Rimanenze iniziali"}); //non usato nel rendiconto cassa
+	reportStructure.push({"id":"CA9", "type":"group", "indent":"", "bclass":"3", "description":"9) Accantonamento a riserva vincolata per decisione degli organi istituzionali"}); //non usato nel rendiconto cassa
+	reportStructure.push({"id":"CA10", "type":"group", "indent":"", "bclass":"3", "description":"10) Utilizzo riserva vincolata per decisione degli organi istituzionali"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CA", "type":"total", "indent":"", "description":"Totale", "sum":"CA1;CA2;CA3;CA4;CA7"});
 	reportStructure.push({"id":"dCB", "type":"title", "indent":"", "description":"B) Uscite da attività diverse"});
 	reportStructure.push({"id":"CB1", "type":"group", "indent":"", "bclass":"3", "description":"1) Materie prime, sussidiarie, di consumo e di merci"});
@@ -471,6 +488,7 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"CB4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
 	reportStructure.push({"id":"CB7", "type":"group", "indent":"", "bclass":"3", "description":"5) Uscite diverse di gestione"});
 	reportStructure.push({"id":"CB5", "type":"group", "indent":"", "bclass":"3", "description":"B) Ammortamenti"}); //non usato nel rendiconto cassa
+	reportStructure.push({"id":"CB5b", "type":"group", "indent":"", "bclass":"3", "description":"5 bis) svalutazioni delle immobilizzazioni materiali ed immateriali"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CB6", "type":"group", "indent":"", "bclass":"3", "description":"B) Accantonamenti per rischi ed oneri"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CB8", "type":"group", "indent":"", "bclass":"3", "description":"B) Rimanenze iniziali"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CB", "type":"total", "indent":"", "description":"Totale", "sum":"CB1;CB2;CB3;CB4;CB7"});
@@ -494,7 +512,10 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"CE4", "type":"group", "indent":"", "bclass":"3", "description":"4) Personale"});
 	reportStructure.push({"id":"CE7", "type":"group", "indent":"", "bclass":"3", "description":"5) Altre uscite"});
 	reportStructure.push({"id":"CE5", "type":"group", "indent":"", "bclass":"3", "description":"E) Ammortamenti"}); //non usato nel rendiconto cassa
+	reportStructure.push({"id":"CE5b", "type":"group", "indent":"", "bclass":"3", "description":"5 bis) svalutazioni delle immobilizzazioni materiali ed immateriali"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CE6", "type":"group", "indent":"", "bclass":"3", "description":"E) Accantonamenti per rischi ed oneri"}); //non usato nel rendiconto cassa
+	reportStructure.push({"id":"CE8", "type":"group", "indent":"", "bclass":"3", "description":"8) Accantonamento a riserva vincolata per decisione degli organi istituzionali"}); //non usato nel rendiconto cassa
+	reportStructure.push({"id":"CE9", "type":"group", "indent":"", "bclass":"3", "description":"9) Utilizzo riserva vincolata per decisione degli organi istituzionali"}); //non usato nel rendiconto cassa
 	reportStructure.push({"id":"CE", "type":"total", "indent":"", "description":"Totale", "sum":"CE1;CE2;CE3;CE4;CE7"});
 	reportStructure.push({"id":"C", "type":"total", "indent":"", "description":"Totale uscite della gestione", "sum":"CA;CB;CC;CD;CE"});
 
