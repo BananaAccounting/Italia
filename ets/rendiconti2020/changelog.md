@@ -1,4 +1,7 @@
 # Cronologia modifiche
+### 2022-08-05
+* Rendiconto gestionale
+  * Aggiunte nuove voci nei gruppi oneri e costi A, B, E (CA5b, CA9, CA10, CB5b, CE5b, CE8, CE9)  
 ### 2022-04-22
 * Rendiconto 5 per mille
   * Aggiunto parametri per personalizzare il gruppo 4.  
