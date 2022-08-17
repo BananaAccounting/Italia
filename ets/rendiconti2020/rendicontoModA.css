@@ -183,3 +183,30 @@ table {
 .text-notes {
   font-size: 8px;
 }
+
+.details {
+  font-family: Courier New;
+  font-size: 6pt;
+  color: black;
+  border: thin solid black;
+}
+
+.tableReportControllo {
+  width: 100%;
+}
+
+/*table.tableReportControllo td {
+  border-top-style: solid;
+  border-top-color: black;
+  border-top-width: thin;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+  border-bottom-width: thin;
+  border-left-style: solid;
+  border-left-color: black;
+  border-left-width: thin;
+  border-right-style: solid;
+  border-right-color: black;
+  border-right-width: thin;
+}*/
+

@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.reportcinquepermille.test
 // @api = 1.0
-// @pubdate = 2022-04-20
+// @pubdate = 2022-08-09
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.reportcinquepermille.js>
 // @task = app.command
@@ -88,6 +88,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoCorrente = function(
 		loadAccountsMap(fileLastYear, userParam, accountsMap);
 	}
 
+	loadBalances(banDoc, userParam, reportGroups, accountsMap);
+
 	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	Test.logger.addReport("Test report 5 per mille - contabilità entrate/uscite - 5X2022 anno corrente", report);
 }
@@ -122,6 +124,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoPrecedente = functio
 	if (fileLastYear) {
 		loadAccountsMap(fileLastYear, userParam, accountsMap);
 	}
+
+	loadBalances(banDoc, userParam, reportGroups, accountsMap);
 
 	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	Test.logger.addReport("Test report 5 per mille - contabilità entrate/uscite - 5X2021 anno precedente", report);
@@ -158,6 +162,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoCorrente = function() 
 		loadAccountsMap(fileLastYear, userParam, accountsMap);
 	}
 
+	loadBalances(banDoc, userParam, reportGroups, accountsMap);
+
 	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	Test.logger.addReport("Test report 5 per mille - contabilità doppia - 5X2022 anno corrente", report);
 }
@@ -192,6 +198,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente = function(
 	if (fileLastYear) {
 		loadAccountsMap(fileLastYear, userParam, accountsMap);
 	}
+
+	loadBalances(banDoc, userParam, reportGroups, accountsMap);
 
 	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	Test.logger.addReport("Test report 5 per mille - contabilità doppia - 5X2022 anno precedente", report);
@@ -228,6 +236,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoCorrente_colonnaSegm
 		loadAccountsMap(fileLastYear, userParam, accountsMap);
 	}
 
+	loadBalances(banDoc, userParam, reportGroups, accountsMap);
+
 	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	Test.logger.addReport("Test report 5 per mille - contabilità entrate/uscite - 5X2022 anno corrente", report);
 }
@@ -262,6 +272,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoPrecedente_colonnaSe
 	if (fileLastYear) {
 		loadAccountsMap(fileLastYear, userParam, accountsMap);
 	}
+
+	loadBalances(banDoc, userParam, reportGroups, accountsMap);
 
 	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	Test.logger.addReport("Test report 5 per mille - contabilità entrate/uscite - 5X2021 anno precedente", report);
@@ -298,6 +310,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoCorrente_colonnaSegmen
 		loadAccountsMap(fileLastYear, userParam, accountsMap);
 	}
 
+	loadBalances(banDoc, userParam, reportGroups, accountsMap);
+
 	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	Test.logger.addReport("Test report 5 per mille - contabilità doppia - 5X2022 anno corrente", report);
 }
@@ -332,6 +346,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente_colonnaSegm
 	if (fileLastYear) {
 		loadAccountsMap(fileLastYear, userParam, accountsMap);
 	}
+
+	loadBalances(banDoc, userParam, reportGroups, accountsMap);
 
 	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	Test.logger.addReport("Test report 5 per mille - contabilità doppia - 5X2022 anno precedente", report);
@@ -372,6 +388,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_Accantonamento_con_regis
 		loadAccountsMap(fileLastYear, userParam, accountsMap);
 	}
 
+	loadBalances(banDoc, userParam, reportGroups, accountsMap);
+
 	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	Test.logger.addReport("Test report 5 per mille - contabilità semplice - 5X-2022 - accantonamento con registrazione (Mod. A)", report);
 }
@@ -411,6 +429,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_Calcolo_automatico_accan
 		loadAccountsMap(fileLastYear, userParam, accountsMap);
 	}
 
+	loadBalances(banDoc, userParam, reportGroups, accountsMap);
+
 	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	Test.logger.addReport("Test report 5 per mille - contabilità semplice - 5X-2022 - calcolo automatico accantonamento (Mod. A)", report);
 }
@@ -449,6 +469,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_rendiconto_accantonament
 	if (fileLastYear) {
 		loadAccountsMap(fileLastYear, userParam, accountsMap);
 	}
+
+	loadBalances(banDoc, userParam, reportGroups, accountsMap);
 
 	var report = printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	Test.logger.addReport("Test report 5 per mille - contabilità semplice - 5X-2021A - rendiconto accantonamento Mod.B", report);

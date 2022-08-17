@@ -25,6 +25,7 @@
 // @timeout = -1
 // @includejs = reportstructure.js
 // @includejs = breport.js
+// @includejs = breportcontrollo.js
 // @includejs = errors.js
 
 
@@ -70,16 +71,41 @@ function exec(string) {
     * 1. Loads the report structure
     */
    var reportStructure = createReportStructureRendicontoGestionale();
+   if (userParam.stampareportcontrollo) {
+      //Struttura per la stampa con la sequenza in cui devono essere stampate le voci del report
+      var printStructure = createPrintStructureRendicontoGestionale();    
+   }
 
    /**
     * 2. Calls methods to load balances, calculate totals, format amounts
     * and check entries that can be excluded
     */
-   const bReport = new BReport(Banana.document, userParam, reportStructure);
-   bReport.validateGroups_IncomeExpenses(userParam.column, reportStructure);
-   bReport.loadBalances();
-   bReport.calculateTotals(["currentAmount", "previousAmount"]);
-   bReport.formatValues(["currentAmount", "previousAmount"]);
+   if (userParam.stampareportcontrollo) {
+      
+      //Array per i campi/colonne della scheda conto
+      let currentCardFields = ["JDate","Doc","JDescription","JAccount","JDebitAmount","JCreditAmount","JBalance"];
+      
+      //Array per le intestazioni della la scheda conto
+      let currentCardTitles = [];
+      if (Banana.document.table("Categories")) {
+         currentCardTitles = ["Data","Doc","Descrizione","Conto","Entrate","Uscite","Saldo"];
+      } else {
+         currentCardTitles = ["Data","Doc","Descrizione","Conto","Dare","Avere","Saldo"];
+      }
+
+      var bReportControllo = new BReportControllo(Banana.document, userParam, reportStructure, printStructure, currentCardFields, currentCardTitles);
+      bReportControllo.validateGroups_IncomeExpenses(userParam.column, reportStructure);
+      bReportControllo.loadBalances();
+      bReportControllo.calculateTotals(["currentAmount", "previousAmount"]);
+      bReportControllo.formatValues(["currentAmount", "previousAmount"]);
+   }
+   else {
+      var bReport = new BReport(Banana.document, userParam, reportStructure);
+      bReport.validateGroups_IncomeExpenses(userParam.column, reportStructure);
+      bReport.loadBalances();
+      bReport.calculateTotals(["currentAmount", "previousAmount"]);
+      bReport.formatValues(["currentAmount", "previousAmount"]);
+   }
    //Banana.console.log(JSON.stringify(reportStructure, "", " "));
 
    /**
@@ -93,7 +119,13 @@ function exec(string) {
     * 4. Creates the report
     */
    var stylesheet = Banana.Report.newStyleSheet();
-   var report = printRendicontoModB(Banana.document, userParam, bReport, stylesheet);
+
+   if (userParam.stampareportcontrollo) {
+      var report = bReportControllo.printReportControllo();
+   }
+   else {
+      var report = printRendicontoModB(Banana.document, userParam, bReport, stylesheet);
+   }
    setCss(Banana.document, stylesheet, variables, userParam);
 
    Banana.Report.preview(report, stylesheet);
@@ -1462,6 +1494,29 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   var currentParam = {};
+   currentParam.name = 'reportcontrollo';
+   currentParam.title = 'Report controllo';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+      userParam.reportcontrollo = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
+   currentParam.name = 'stampareportcontrollo';
+   currentParam.parentObject = 'reportcontrollo';
+   currentParam.title = 'Stampa report di controllo (anno corrente)';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.stampareportcontrollo ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+      userParam.stampareportcontrollo = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
@@ -1478,6 +1533,7 @@ function initUserParam() {
    userParam.printcostifigurativi = false;
    userParam.finalnotes = '';
    userParam.colorheadertable = '#337ab7';
+   userParam.stampareportcontrollo = false;
    return userParam;
 }
 

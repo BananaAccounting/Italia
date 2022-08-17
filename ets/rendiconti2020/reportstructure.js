@@ -27,11 +27,182 @@
  */
 
 //Balance sheet
+function createPrintStructureStatoPatrimoniale() {
+
+	var printStructure = [];
+
+	printStructure.push({"dialogText":"STATO PATRIMONIALE -- REPORT DI CONTROLLO --", "titleText":"REPORT DI CONTROLLO - STATO PATRIMONIALE ANNO %1"});
+
+	printStructure.push({"id":"dA", "excludeId":true, "excludeAmount":true, "newpage":false, "stylecss":""});
+	printStructure.push({"id":"AA", "stylecss":"amount-groups"});
+	printStructure.push({"id":"dAB", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"dABI", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABI1", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABI2", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABI3", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABI4", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABI5", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABI6", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABI7", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABI", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"dABII", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABII1", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABII2", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABII3", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABII4", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABII5", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABII", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"dABIII", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII1a", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII1b", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII1c", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII1", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2ao", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2ae", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2a", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2bo", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2be", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2b", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2co", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2ce", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2c", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2do", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2de", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2d", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII2", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII3", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ABIII", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"AB", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"dAC", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"dACI", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACI1", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACI2", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACI3", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACI4", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACI5", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACI", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"dACII", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII1", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII1e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII1o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII2", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII2e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII2o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII3", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII3e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII3o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII4", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII4e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII4o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII5", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII5e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII5o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII6", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII6e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII6o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII7", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII7e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII7o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII8", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII8e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII8o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII9", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII9e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII9o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII10", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII10e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII10o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII11", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII11e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII11o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII12", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII12e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII12o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACII", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"dACIII", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACIII1", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACIII2", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACIII3", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACIII", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"dACIV", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACIV1", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACIV2", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACIV3", "stylecss":"amount-groups"});
+	printStructure.push({"id":"ACIV", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"AC", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"AD", "stylecss":"amount-groups"});
+	printStructure.push({"id":"A", "stylecss":"amount-groups-totals"});
+
+	printStructure.push({"id":"dP", "excludeId":true, "excludeAmount":true, "newpage":true, "stylecss":""});
+	printStructure.push({"id":"dPA", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"PAI", "stylecss":"amount-groups"});
+	printStructure.push({"id":"dPAII", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"PAII1", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PAII2", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PAII3", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PAII", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"dPAIII", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"PAIII1", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PAIII2", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PAIII", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"PAIV", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PA", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"dPB", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"PB1", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PB2", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PB3", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PB", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"PC", "stylecss":"amount-groups"});
+	printStructure.push({"id":"dPD", "excludeId":true, "excludeAmount":true, "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD1", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD1e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD1o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD2", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD2e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD2o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD3", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD3e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD3o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD4", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD4e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD4o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD5", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD5e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD5o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD6", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD6e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD6o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD7", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD7e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD7o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD8", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD8e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD8o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD9", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD9e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD9o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD10", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD10e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD10o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD11", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD11e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD11o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD12", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD12e", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD12o", "stylecss":"amount-groups"});
+	printStructure.push({"id":"PD", "stylecss":"amount-groups-totals"});
+	printStructure.push({"id":"PE", "stylecss":"amount-groups"});
+	printStructure.push({"id":"P", "stylecss":"amount-groups-totals"});
+
+	return printStructure;
+}
+
 function createReportStructureStatoPatrimoniale() {
 
 	var reportStructure = [];
 
 	/* ATTIVO */
+	reportStructure.push({"id":"dA", "description":"ATTIVO"});
 	reportStructure.push({"id":"AA", "type":"group", "indent":"0", "bclass":"1", "description":"A) Quote associative o apporti ancora dovuti"});
 	reportStructure.push({"id":"dAB", "type":"title", "indent":"0", "description":"B) Immobilizzazioni"});
 	reportStructure.push({"id":"dABI", "type":"title", "indent":"1", "description":"I - Immobilizzazioni immateriali"});
@@ -134,6 +305,7 @@ function createReportStructureStatoPatrimoniale() {
 	reportStructure.push({"id":"A", "type":"total", "indent":"0", "description":"TOTALE ATTIVO", "sum":"AA;AB;AC;AD"});
 
 	/* PASSIVO */
+	reportStructure.push({"id":"dP", "description":"PASSIVO"});
 	reportStructure.push({"id":"dPA", "type":"title", "indent":"0", "description":"A) Patrimonio netto"});
 	reportStructure.push({"id":"PAI", "type":"group", "indent":"1", "bclass":"2", "description":"I - Fondo di dotazione dell'ente"});
 	reportStructure.push({"id":"dPAII", "type":"title", "indent":"1", "description":"II - Patrimonio vincolato"});
@@ -298,7 +470,7 @@ function createReportStructureStatoPatrimoniale() {
 	reportStructure.push({"id":"RE-CE", "type":"total", "indent":"", "description":"Avanzo/disavanzo supporto generale (+/-)", "sum":"RE;-CE"});   
 	reportStructure.push({"id":"TADPI", "type":"total", "indent":"", "description":"Avanzo/disavanzo d’esercizio prima delle imposte (+/-)", "sum":"RA-CA;RB-CB;RC-CC;RD-CD;RE-CE"});
 	reportStructure.push({"id":"TADES", "type":"total", "indent":"", "description":"Avanzo/disavanzo d’esercizio (+/-)", "sum":"TADPI;IM"});
-	reportStructure.push({"id":"PAIV", "type":"total", "indent":"", "description":"IV - Avanzo/disavanzo d'esercizio", "sum":"TADES"});
+	reportStructure.push({"id":"PAIV", "type":"total", "indent":"0", "description":"IV - Avanzo/disavanzo d'esercizio", "sum":"TADES"});
 
 	/* COSTI / PROVENTI FIGURATIVI */
 	reportStructure.push({"id":"CG1", "type":"group", "indent":"", "bclass":"3", "description":"1) da attività di interesse generale"});
@@ -325,11 +497,117 @@ function createReportStructureStatoPatrimoniale() {
 }
 
 //Profit & Loss statement
+function createPrintStructureRendicontoGestionale() {
+
+	var printStructure = [];
+
+	printStructure.push({"dialogText":"RENDICONTO GESTIONALE -- REPORT DI CONTROLLO --", "titleText":"REPORT DI CONTROLLO - RENDICONTO GESTIONALE ANNO %1"});
+
+	printStructure.push({"id":"dC", "excludeId":true, "excludeAmount":true, "newpage":false, "stylecss":""});
+	printStructure.push({"id":"dCA", "excludeId":true, "excludeAmount":true,"stylecss":""});
+	printStructure.push({"id":"CA1", "stylecss":"align-right"});
+	printStructure.push({"id":"CA2", "stylecss":"align-right"});
+	printStructure.push({"id":"CA3", "stylecss":"align-right"});
+	printStructure.push({"id":"CA4", "stylecss":"align-right"});
+	printStructure.push({"id":"CA5", "stylecss":"align-right"});
+	printStructure.push({"id":"CA5b", "stylecss":"align-right"});
+	printStructure.push({"id":"CA6", "stylecss":"align-right"});
+	printStructure.push({"id":"CA7", "stylecss":"align-right"});
+	printStructure.push({"id":"CA8", "stylecss":"align-right"});
+	printStructure.push({"id":"CA9", "stylecss":"align-right"});
+	printStructure.push({"id":"CA10", "stylecss":"align-right"});
+	printStructure.push({"id":"CA", "stylecss":"align-right"});
+	printStructure.push({"id":"dCB", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"CB1", "stylecss":"align-right"});
+	printStructure.push({"id":"CB2", "stylecss":"align-right"});
+	printStructure.push({"id":"CB3", "stylecss":"align-right"});
+	printStructure.push({"id":"CB4", "stylecss":"align-right"});
+	printStructure.push({"id":"CB5", "stylecss":"align-right"});
+	printStructure.push({"id":"CB5b", "stylecss":"align-right"});
+	printStructure.push({"id":"CB6", "stylecss":"align-right"});
+	printStructure.push({"id":"CB7", "stylecss":"align-right"});
+	printStructure.push({"id":"CB8", "stylecss":"align-right"});
+	printStructure.push({"id":"CB", "stylecss":"align-right"});
+	printStructure.push({"id":"dCC", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"CC1", "stylecss":"align-right"});
+	printStructure.push({"id":"CC2", "stylecss":"align-right"});
+	printStructure.push({"id":"CC3", "stylecss":"align-right"});
+	printStructure.push({"id":"CC", "stylecss":"align-right"});
+	printStructure.push({"id":"dCD", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"CD1", "stylecss":"align-right"});
+	printStructure.push({"id":"CD2", "stylecss":"align-right"});
+	printStructure.push({"id":"CD3", "stylecss":"align-right"});
+	printStructure.push({"id":"CD4", "stylecss":"align-right"});
+	printStructure.push({"id":"CD5", "stylecss":"align-right"});
+	printStructure.push({"id":"CD6", "stylecss":"align-right"});
+	printStructure.push({"id":"CD", "stylecss":"align-right"});
+	printStructure.push({"id":"dCE", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"CE1", "stylecss":"align-right"});
+	printStructure.push({"id":"CE2", "stylecss":"align-right"});
+	printStructure.push({"id":"CE3", "stylecss":"align-right"});
+	printStructure.push({"id":"CE4", "stylecss":"align-right"});
+	printStructure.push({"id":"CE5", "stylecss":"align-right"});
+	printStructure.push({"id":"CE5b", "stylecss":"align-right"});
+	printStructure.push({"id":"CE6", "stylecss":"align-right"});
+	printStructure.push({"id":"CE7", "stylecss":"align-right"});
+	printStructure.push({"id":"CE8", "stylecss":"align-right"});
+	printStructure.push({"id":"CE9", "stylecss":"align-right"});
+	printStructure.push({"id":"CE", "stylecss":"align-right"});
+	printStructure.push({"id":"CG1", "stylecss":"align-right"});
+	printStructure.push({"id":"CG2", "stylecss":"align-right"});
+	printStructure.push({"id":"CG", "stylecss":"align-right"});
+	printStructure.push({"id":"C", "stylecss":"align-right"});
+
+	printStructure.push({"id":"dR", "excludeId":true, "excludeAmount":true, "newpage":true, "stylecss":""});
+	printStructure.push({"id":"dRA", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"RA1", "stylecss":"align-right"});
+	printStructure.push({"id":"RA2", "stylecss":"align-right"});
+	printStructure.push({"id":"RA3", "stylecss":"align-right"});
+	printStructure.push({"id":"RA4", "stylecss":"align-right"});
+	printStructure.push({"id":"RA5", "stylecss":"align-right"});
+	printStructure.push({"id":"RA6", "stylecss":"align-right"});
+	printStructure.push({"id":"RA7", "stylecss":"align-right"});
+	printStructure.push({"id":"RA8", "stylecss":"align-right"});
+	printStructure.push({"id":"RA9", "stylecss":"align-right"});
+	printStructure.push({"id":"RA10", "stylecss":"align-right"});
+	printStructure.push({"id":"RA11", "stylecss":"align-right"});
+	printStructure.push({"id":"RA", "stylecss":"align-right"});
+	printStructure.push({"id":"dRB", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"RB1", "stylecss":"align-right"});
+	printStructure.push({"id":"RB2", "stylecss":"align-right"});
+	printStructure.push({"id":"RB4", "stylecss":"align-right"});
+	printStructure.push({"id":"RB5", "stylecss":"align-right"});
+	printStructure.push({"id":"RB6", "stylecss":"align-right"});
+	printStructure.push({"id":"RB7", "stylecss":"align-right"});
+	printStructure.push({"id":"RB", "stylecss":"align-right"});
+	printStructure.push({"id":"dRC", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"RC1", "stylecss":"align-right"});
+	printStructure.push({"id":"RC2", "stylecss":"align-right"});
+	printStructure.push({"id":"RC3", "stylecss":"align-right"});
+	printStructure.push({"id":"RC", "stylecss":"align-right"});
+	printStructure.push({"id":"dRD", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"RD1", "stylecss":"align-right"});
+	printStructure.push({"id":"RD2", "stylecss":"align-right"});
+	printStructure.push({"id":"RD3", "stylecss":"align-right"});
+	printStructure.push({"id":"RD4", "stylecss":"align-right"});
+	printStructure.push({"id":"RD5", "stylecss":"align-right"});
+	printStructure.push({"id":"RD", "stylecss":"align-right"});
+	printStructure.push({"id":"dRE", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"RE1", "stylecss":"align-right"});
+	printStructure.push({"id":"RE2", "stylecss":"align-right"});
+	printStructure.push({"id":"RE", "stylecss":"align-right"});
+	printStructure.push({"id":"R", "stylecss":"align-right"});
+
+
+	return printStructure;
+}
+
 function createReportStructureRendicontoGestionale() {
 
 	var reportStructure = [];
 
 	/* COSTI */
+	reportStructure.push({"id":"dC", "description":"COSTI"});
 	reportStructure.push({"id":"dCA", "type":"title", "indent":"", "description":"A) Costi e oneri da attività di interesse generale"});
 	reportStructure.push({"id":"CA1", "type":"group", "indent":"", "bclass":"3", "description":"1) Materie prime, sussidiarie, di consumo e di merci"});
 	reportStructure.push({"id":"CA2", "type":"group", "indent":"", "bclass":"3", "description":"2) Servizi"});
@@ -382,6 +660,7 @@ function createReportStructureRendicontoGestionale() {
 	reportStructure.push({"id":"C", "type":"total", "indent":"", "description":"TOTALE ONERI E COSTI", "sum":"CA;CB;CC;CD;CE"});
 
 	/* PROVENTI */
+	reportStructure.push({"id":"dR", "description":"PROVENTI E RICAVI"});
 	reportStructure.push({"id":"dRA", "type":"title", "indent":"", "description":"A) Ricavi, rendite e proventi da attività di interesse generale"});
 	reportStructure.push({"id":"RA1", "type":"group", "indent":"", "bclass":"4", "description":"1) Proventi da quote associative e apporti dei fondatori"});
 	reportStructure.push({"id":"RA2", "type":"group", "indent":"", "bclass":"4", "description":"2) Proventi dagli associati per attività mutuali"});
@@ -458,16 +737,133 @@ function createReportStructureRendicontoGestionale() {
 }
 
 //Rendiconto cassa
+function createPrintStructureRendicontoCassa() {
+
+	var printStructure = [];
+
+	printStructure.push({"dialogText":"RENDICONTO PER CASSA -- REPORT DI CONTROLLO --", "titleText":"REPORT DI CONTROLLO - RENDICONTO PER CASSA ANNO %1"});
+
+	printStructure.push({"id":"dC", "excludeId":true, "excludeAmount":true, "newpage":false, "stylecss":""});
+	printStructure.push({"id":"dCA", "excludeId":true, "excludeAmount":true,"stylecss":""});
+	printStructure.push({"id":"CA1", "stylecss":"align-right"});
+	printStructure.push({"id":"CA2", "stylecss":"align-right"});
+	printStructure.push({"id":"CA3", "stylecss":"align-right"});
+	printStructure.push({"id":"CA4", "stylecss":"align-right"});
+	printStructure.push({"id":"CA7", "stylecss":"align-right"});
+	printStructure.push({"id":"CA", "stylecss":"align-right"});
+	printStructure.push({"id":"dCB", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"CB1", "stylecss":"align-right"});
+	printStructure.push({"id":"CB2", "stylecss":"align-right"});
+	printStructure.push({"id":"CB3", "stylecss":"align-right"});
+	printStructure.push({"id":"CB4", "stylecss":"align-right"});
+	printStructure.push({"id":"CB7", "stylecss":"align-right"});
+	printStructure.push({"id":"CB", "stylecss":"align-right"});
+	printStructure.push({"id":"dCC", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"CC1", "stylecss":"align-right"});
+	printStructure.push({"id":"CC2", "stylecss":"align-right"});
+	printStructure.push({"id":"CC3", "stylecss":"align-right"});
+	printStructure.push({"id":"CC", "stylecss":"align-right"});
+	printStructure.push({"id":"dCD", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"CD1", "stylecss":"align-right"});
+	printStructure.push({"id":"CD2", "stylecss":"align-right"});
+	printStructure.push({"id":"CD3", "stylecss":"align-right"});
+	printStructure.push({"id":"CD4", "stylecss":"align-right"});
+	printStructure.push({"id":"CD6", "stylecss":"align-right"});
+	printStructure.push({"id":"CD", "stylecss":"align-right"});
+	printStructure.push({"id":"dCE", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"CE1", "stylecss":"align-right"});
+	printStructure.push({"id":"CE2", "stylecss":"align-right"});
+	printStructure.push({"id":"CE3", "stylecss":"align-right"});
+	printStructure.push({"id":"CE4", "stylecss":"align-right"});
+	printStructure.push({"id":"CE7", "stylecss":"align-right"});
+	printStructure.push({"id":"CE", "stylecss":"align-right"});
+	printStructure.push({"id":"C", "stylecss":"align-right"});
+
+	printStructure.push({"id":"dR", "excludeId":true, "excludeAmount":true, "newpage":true, "stylecss":""});
+	printStructure.push({"id":"dRA", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"RA1", "stylecss":"align-right"});
+	printStructure.push({"id":"RA2", "stylecss":"align-right"});
+	printStructure.push({"id":"RA3", "stylecss":"align-right"});
+	printStructure.push({"id":"RA4", "stylecss":"align-right"});
+	printStructure.push({"id":"RA5", "stylecss":"align-right"});
+	printStructure.push({"id":"RA6", "stylecss":"align-right"});
+	printStructure.push({"id":"RA7", "stylecss":"align-right"});
+	printStructure.push({"id":"RA8", "stylecss":"align-right"});
+	printStructure.push({"id":"RA9", "stylecss":"align-right"});
+	printStructure.push({"id":"RA10", "stylecss":"align-right"});
+	printStructure.push({"id":"RA", "stylecss":"align-right"});
+	printStructure.push({"id":"dRB", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"RB1", "stylecss":"align-right"});
+	printStructure.push({"id":"RB2", "stylecss":"align-right"});
+	printStructure.push({"id":"RB4", "stylecss":"align-right"});
+	printStructure.push({"id":"RB5", "stylecss":"align-right"});
+	printStructure.push({"id":"RB6", "stylecss":"align-right"});
+	printStructure.push({"id":"RB", "stylecss":"align-right"});
+	printStructure.push({"id":"dRC", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"RC1", "stylecss":"align-right"});
+	printStructure.push({"id":"RC2", "stylecss":"align-right"});
+	printStructure.push({"id":"RC3", "stylecss":"align-right"});
+	printStructure.push({"id":"RC", "stylecss":"align-right"});
+	printStructure.push({"id":"dRD", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"RD1", "stylecss":"align-right"});
+	printStructure.push({"id":"RD2", "stylecss":"align-right"});
+	printStructure.push({"id":"RD3", "stylecss":"align-right"});
+	printStructure.push({"id":"RD4", "stylecss":"align-right"});
+	printStructure.push({"id":"RD5", "stylecss":"align-right"});
+	printStructure.push({"id":"RD", "stylecss":"align-right"});
+	printStructure.push({"id":"dRE", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"RE1", "stylecss":"align-right"});
+	printStructure.push({"id":"RE2", "stylecss":"align-right"});
+	printStructure.push({"id":"RE", "stylecss":"align-right"});
+	printStructure.push({"id":"R", "stylecss":"align-right"});
+
+	printStructure.push({"id":"IM", "stylecss":"align-right"});
+
+	printStructure.push({"id":"dCF", "excludeId":true, "excludeAmount":true, "newpage":true, "stylecss":""});
+	printStructure.push({"id":"CF1", "stylecss":"align-right"});
+	printStructure.push({"id":"CF2", "stylecss":"align-right"});
+	printStructure.push({"id":"CF3", "stylecss":"align-right"});
+	printStructure.push({"id":"CF4", "stylecss":"align-right"});
+	printStructure.push({"id":"CF", "stylecss":"align-right"});
+	printStructure.push({"id":"dRF", "excludeId":true, "excludeAmount":true, "stylecss":""});
+	printStructure.push({"id":"RF1", "stylecss":"align-right"});
+	printStructure.push({"id":"RF2", "stylecss":"align-right"});
+	printStructure.push({"id":"RF3", "stylecss":"align-right"});
+	printStructure.push({"id":"RF4", "stylecss":"align-right"});
+	printStructure.push({"id":"RF", "stylecss":"align-right"});
+	printStructure.push({"id":"IMRC", "stylecss":"align-right"});
+
+	printStructure.push({"id":"dACIV", "excludeId":true, "excludeAmount":true, "newpage":true, "stylecss":""});
+	printStructure.push({"id":"ACIV", "stylecss":"align-right"});
+	printStructure.push({"id":"ACIV3", "stylecss":"align-right"});
+	printStructure.push({"id":"ACIV1", "stylecss":"align-right"});
+
+	printStructure.push({"id":"dCG", "newpage":true, "stylecss":"align-right"});
+	printStructure.push({"id":"RC1", "stylecss":"align-right"});
+	printStructure.push({"id":"RC2", "stylecss":"align-right"});
+	printStructure.push({"id":"RC", "stylecss":"align-right"});
+	printStructure.push({"id":"dRG", "stylecss":"align-right"});
+	printStructure.push({"id":"RG1", "stylecss":"align-right"});
+	printStructure.push({"id":"RG2", "stylecss":"align-right"});
+	printStructure.push({"id":"RG", "stylecss":"align-right"});
+
+
+
+	return printStructure;
+}
+
 function createReportStructureRendicontoCassa() {
 
 	var reportStructure = [];
 	
 	/* CASSA E BANCA */
+	reportStructure.push({"id":"dACIV", "description":"CASSA E BANCA"});
 	reportStructure.push({"id":"ACIV1", "type":"group", "indent":"", "bclass":"1", "description":"Depositi bancari e postali"});	
 	reportStructure.push({"id":"ACIV3", "type":"group", "indent":"", "bclass":"1", "description":"Cassa"});
 	reportStructure.push({"id":"ACIV", "type":"total", "indent":"", "description":"Cassa e banca", "sum":"ACIV1;ACIV3"});
 	
 	/* USCITE */
+	reportStructure.push({"id":"dC", "description":"USCITE"});
 	reportStructure.push({"id":"dCA", "type":"title", "indent":"", "description":"A) Uscite da attività di interesse generale"});
 	reportStructure.push({"id":"CA1", "type":"group", "indent":"", "bclass":"3", "description":"1) Materie prime, sussidiarie, di consumo e di merci"});
 	reportStructure.push({"id":"CA2", "type":"group", "indent":"", "bclass":"3", "description":"2) Servizi"});
@@ -520,6 +916,7 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"C", "type":"total", "indent":"", "description":"Totale uscite della gestione", "sum":"CA;CB;CC;CD;CE"});
 
 	/* ENTRATE */
+	reportStructure.push({"id":"dR", "description":"ENTRATE"});
 	reportStructure.push({"id":"dRA", "type":"title", "indent":"", "description":"A) Entrate da attività di interesse generale"});
 	reportStructure.push({"id":"RA1", "type":"group", "indent":"", "bclass":"4", "description":"1) Entrate da quote associative e apporti dei fondatori"});
 	reportStructure.push({"id":"RA2", "type":"group", "indent":"", "bclass":"4", "description":"2) Entrate dagli associati per attività mutuali"});
@@ -562,6 +959,7 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"IM", "type":"group", "indent":"", "bclass":"4", "description":"Imposte"});
 
 	/* USCITE DA INVESTIMENTI */
+	reportStructure.push({"id":"dCF", "description":"USCITE DA INVESTIMENTI"});
 	reportStructure.push({"id":"CF1", "type":"group", "indent":"", "bclass":"3", "description":"1) Investimenti in immobilizzazioni inerenti alle attività di interesse generale"});
 	reportStructure.push({"id":"CF2", "type":"group", "indent":"", "bclass":"3", "description":"2) Investimenti in immobilizzazioni inerenti alle attività diverse"});
 	reportStructure.push({"id":"CF3", "type":"group", "indent":"", "bclass":"3", "description":"3) Investimenti in attività finanziarie e patrimoniali"});
@@ -570,6 +968,7 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"IMRC", "type":"group", "indent":"", "bclass":"3", "description":"Imposte"});
 
 	/* ENTRATE DA DISINVESTIMENTI */
+	reportStructure.push({"id":"dRF", "description":"ENTRATE DA DISINVESTIMENTI"});
 	reportStructure.push({"id":"RF1", "type":"group", "indent":"", "bclass":"4", "description":"1) Disinvestimenti di immobilizzazioni inerenti alle attività di interesse generale"});
 	reportStructure.push({"id":"RF2", "type":"group", "indent":"", "bclass":"4", "description":"2) Disinvestimenti di immobilizzazioni inerenti alle attività diverse"});
 	reportStructure.push({"id":"RF3", "type":"group", "indent":"", "bclass":"4", "description":"3) Disinvestimenti di attività finanziarie e patrimoniali"});
@@ -590,9 +989,11 @@ function createReportStructureRendicontoCassa() {
 	reportStructure.push({"id":"PAIV", "type":"total", "indent":"", "description":"Avanzo/disavanzo d'esercizio", "sum":"TADES"}); //not used
 
 	/* COSTI / PROVENTI FIGURATIVI */
+	reportStructure.push({"id":"dCG", "description":"COSTI FIGURATIVI"});
 	reportStructure.push({"id":"CG1", "type":"group", "indent":"", "bclass":"3", "description":"1) da attività di interesse generale"});
 	reportStructure.push({"id":"CG2", "type":"group", "indent":"", "bclass":"3", "description":"2) da attività diverse"});
 	reportStructure.push({"id":"CG", "type":"total", "indent":"", "description":"Totale", "sum":"CG1;CG2"});
+	reportStructure.push({"id":"dRG", "description":"PROVENTI FIGURATIVI"});
 	reportStructure.push({"id":"RG1", "type":"group", "indent":"", "bclass":"4", "description":"1) da attività di interesse generale"});
 	reportStructure.push({"id":"RG2", "type":"group", "indent":"", "bclass":"4", "description":"2) da attività diverse"});
 	reportStructure.push({"id":"RG", "type":"total", "indent":"", "description":"Totale", "sum":"RG1;RG2"});
@@ -622,7 +1023,9 @@ function createReportStructure5xMille(userParam) {
 	reportStructure.push({
 		"group":"0",
 		"income":true,
-		"gr1":"RA5"
+		"gr1":"RA5",
+		"title":"Importo percepito",
+		"text":""
 	});
 	reportStructure.push({
 		"group":"1",

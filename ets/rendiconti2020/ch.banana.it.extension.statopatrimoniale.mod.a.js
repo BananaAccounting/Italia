@@ -25,6 +25,7 @@
 // @timeout = -1
 // @includejs = reportstructure.js
 // @includejs = breport.js
+// @includejs = breportcontrollo.js
 // @includejs = errors.js
 
 
@@ -78,24 +79,57 @@ function exec(string) {
     * 1. Loads the report structure
     */
    var reportStructure = createReportStructureStatoPatrimoniale();
+   if (userParam.stampareportcontrollo) {
+      //Struttura per la stampa con la sequenza in cui devono essere stampate le voci del report
+      var printStructure = createPrintStructureStatoPatrimoniale();
+   }
 
    /**
     * 2. Calls methods to load balances, calculate totals, format amounts
     * and check entries that can be excluded
     */
-   const bReport = new BReport(Banana.document, userParam, reportStructure);
-   bReport.validateGroups(userParam.column);
-   bReport.loadBalances();
-   bReport.calculateTotals(["currentAmount", "previousAmount"]);
-   bReport.formatValues(["currentAmount", "previousAmount"]);
-   bReport.excludeEntries();
-   //Banana.console.log(JSON.stringify(reportStructure, "", " "));
+   if (userParam.stampareportcontrollo) {
+
+      //Array per i campi/colonne della scheda conto
+      let currentCardFields = ["JDate","Doc","JDescription","JAccount","JDebitAmount","JCreditAmount","JBalance"];
+      
+      //Array per le intestazioni della la scheda conto
+      let currentCardTitles = [];
+      if (Banana.document.table("Categories")) {
+         currentCardTitles = ["Data","Doc","Descrizione","Conto","Entrate","Uscite","Saldo"];
+      } else {
+         currentCardTitles = ["Data","Doc","Descrizione","Conto","Dare","Avere","Saldo"];
+      }
+      
+      var bReportControllo = new BReportControllo(Banana.document, userParam, reportStructure, printStructure, currentCardFields, currentCardTitles);
+      bReportControllo.validateGroups(userParam.column);
+      bReportControllo.loadBalances();
+      bReportControllo.calculateTotals(["currentAmount", "previousAmount"]);
+      bReportControllo.formatValues(["currentAmount", "previousAmount"]);
+   }
+   else {
+      var bReport = new BReport(Banana.document, userParam, reportStructure);
+      bReport.validateGroups(userParam.column);
+      bReport.loadBalances();
+      bReport.calculateTotals(["currentAmount", "previousAmount"]);
+      bReport.formatValues(["currentAmount", "previousAmount"]);
+      bReport.excludeEntries();
+   }
+    // Banana.console.log(JSON.stringify(reportStructure, "", " "));
 
    /**
     * 3. Creates the report
     */
    var stylesheet = Banana.Report.newStyleSheet();
-   var report = printRendicontoModA(Banana.document, userParam, bReport, stylesheet);
+
+   if (userParam.stampareportcontrollo) {
+      var report = bReportControllo.printReportControllo();
+      checkResults(Banana.document, report, bReportControllo); //controlli specifici del rendiconto
+   } 
+   else {
+      var report = printRendicontoModA(Banana.document, userParam, bReport, stylesheet);
+   }
+   
    setCss(Banana.document, stylesheet, userParam);
    Banana.Report.preview(report, stylesheet);
 }
@@ -764,6 +798,169 @@ function setCss(banDoc, repStyleObj, userParam) {
 
 
 
+/**************************************************************************************
+ * Functions to print the control report
+ *
+ * - prints only current year amounts column (previous year column is not printed)
+ * - prints all the rows of the report, even if with zero amounts
+ * - prints account cards with transactions details:
+ *   - for each GR1 group that appears in the report, prints an account card with
+ *     the transactions details of all the accounts that belongs to this GR1 group
+ *   - if there aren't transactions or opening balance, the account card isn't printed
+ * 
+ **************************************************************************************/
+// function printReportControllo(banDoc, userParam, bReportControllo, reportStructure, printStructure) {
+
+//    //Banana.console.log(JSON.stringify(reportStructure, "", " "));
+
+//    let report = Banana.Report.newReport("Stato patrimoniale -- REPORT DI CONTROLLO --");
+//    let dateCurrent = userParam.selectionEndDate;
+//    let currentYear = Banana.Converter.toDate(userParam.selectionEndDate).getFullYear();
+   
+//    report.addParagraph("REPORT DI CONTROLLO - STATO PATRIMONIALE ANNO " + currentYear,"bold");
+//    report.addParagraph(" ", "");
+
+//    let table = report.addTable("tableReportControllo");
+//    tableRow = table.addRow();
+//    tableRow.addCell("GR1", "bold", 1);
+//    tableRow.addCell("DESCRIZIONE", "bold", 5);
+//    tableRow.addCell(Banana.Converter.toLocaleDateFormat(dateCurrent), "bold align-right", 1);
+
+
+
+//    /**
+//     * Use the printStructure to print the data in the correct sequence
+//     * and also use additional printing setup like css styles etc.
+//     */
+//    for (let j = 0; j < printStructure.length; j++) {
+
+//       let id = printStructure[j].id; // id=gr1
+//       let excludeId = printStructure[j].excludeId; //exclude the ID (GR1) for all descriptions
+//       let excludeAmount = printStructure[j].excludeAmount; //exclude the amount for all descriptions
+
+//       let obj = bReportControllo.getObject(id); //take the whole object from the structure data
+
+//       //user the indent property to format the print
+//       let stylecss = printStructure[j].stylecss;
+
+
+//       //Add the content on a new page
+//       if (printStructure[j].newpage) {
+         
+//          tableRow = table.addRow();
+//          tableRow.addCell().addPageBreak();
+
+//          tableRow = table.addRow();
+//          tableRow.addCell("GR1", "bold", 1);
+//          tableRow.addCell("DESCRIZIONE", "bold", 5);
+//          tableRow.addCell(Banana.Converter.toLocaleDateFormat(dateCurrent), "bold align-right", 1);
+//       }
+
+
+//       tableRow = table.addRow();
+
+//       // ID (GR1) column
+//       // do not print ID (GR1) for descriptions
+//       if (excludeId) {
+//          tableRow.addCell("", "", 1);
+//       } else {
+//          tableRow.addCell(obj.id, "", 1);
+//       }
+
+//       // Description column
+//       let indent = ""; //"lvl" + obj.indent;
+//       tableRow.addCell(obj.description, indent, 5);
+
+//       // Current amount column
+//       // do not print the formatted amount for descriptions to avoid "0.00" when empty
+//       if (excludeAmount) {
+//          tableRow.addCell("", "", 1);
+//       } else {
+//          tableRow.addCell(obj.currentAmountFormatted, stylecss, 1);
+//       }
+
+
+
+//       /**
+//        * Prints the current card details 
+//        */
+
+//       //Adds the currentCard if not empty
+//       let currentCard = obj.currentCard;
+
+//       let currentCardFields = []; //Array with columns/json fields
+//       let currentCardTitles = []; //Array with columns headers
+//       let currentCardStyles = []; //Array with align/css style
+
+//       currentCardFields = ["JDate","Doc","JDescription","JAccount","JDebitAmount","JCreditAmount","JBalance"];
+      
+//       if (banDoc.table("Categories")) {
+//          currentCardTitles = ["Data","Doc","Descrizione","Conto","Entrate","Uscite","Saldo"];
+//       } else {
+//          currentCardTitles = ["Data","Doc","Descrizione","Conto","Dare","Avere","Saldo"];
+//       }
+
+//       currentCardStyles = ["","","","","align-right","align-right","align-right"];
+      
+//       printReportControllo_CurrentCard(banDoc, table, currentCard, currentCardFields, currentCardTitles, currentCardStyles);
+//       // Banana.console.log(JSON.stringify(obj, "", " "));
+
+//    }
+
+//    report.getFooter().addClass("footer");
+//    report.getFooter().addText("- ", "");
+//    report.getFooter().addFieldPageNr();
+//    report.getFooter().addText(" -", "");
+
+//    // Also check results
+//    checkResults(banDoc, report, bReportControllo);
+
+//    return report;
+// }
+
+// function printReportControllo_CurrentCard(banDoc, table, currentCard, currentCardFields, currentCardTitles, currentCardStyles) {
+
+//    let headerIsPrinted = false;
+
+//    if (currentCard && currentCard.length > 0) {
+
+//       //Banana.console.log(JSON.stringify(currentCard, "", " "));
+
+//       for (let j = 0; j < currentCard.length; j++) {
+
+//          //solo se ci sono movimenti e se Opening
+//          //esclude totali "Totali movimenti"
+//          if ( (currentCard[j].JDebitAmount || currentCard[j].JCreditAmount || currentCard[j].SysCod == "Opening") && currentCard[j].SysCod != "Totals" ) {
+
+//             // "SysCod": "Opening" => opening balance
+//             // "SysCod": "Totals"  => total line
+
+//             // Prints the currentCard header columns, defined in the array currentCardTitles
+//             if (!headerIsPrinted) {
+
+//                tableRow = table.addRow();
+//                for (let k = 0; k < currentCardTitles.length; k++) {
+//                   tableRow.addCell(currentCardTitles[k],"bold details "+currentCardStyles[k], 1);
+//                }
+
+//                headerIsPrinted = true; //not print anymore the first row with columns headers
+//             }
+
+//             // Prints the currentCard data using the fields defined in the array currentCardFields
+//             // For each fields adds the css style defined in the array currentCardStyles
+//             tableRow = table.addRow();
+//             for (let k = 0; k < currentCardFields.length; k++) {
+//                tableRow.addCell(currentCard[j][currentCardFields[k]],"details "+currentCardStyles[k], 1);
+//             }
+//          }
+//       }
+//    }
+// }
+
+
+
+
+
 
 /**************************************************************************************
  * Functions to manage the parameters
@@ -951,6 +1148,29 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   var currentParam = {};
+   currentParam.name = 'reportcontrollo';
+   currentParam.title = 'Report controllo';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+      userParam.reportcontrollo = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   var currentParam = {};
+   currentParam.name = 'stampareportcontrollo';
+   currentParam.parentObject = 'reportcontrollo';
+   currentParam.title = 'Stampa report di controllo (anno corrente)';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.stampareportcontrollo ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+      userParam.stampareportcontrollo = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
@@ -968,6 +1188,7 @@ function initUserParam() {
    userParam.compattastampa = false;
    userParam.stampa = true;
    userParam.finalnotes = '';
+   userParam.stampareportcontrollo = false;
    return userParam;
 }
 
