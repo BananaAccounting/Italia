@@ -13,19 +13,27 @@
 // limitations under the License.
 
 
-/* Update: 2022-08-09 */
+/* Update: 2022-08-19 */
 
 
 var BReportControllo = class JsClass {
    
-   constructor(banDoc, userParam, reportStructure, printStructure, currentCardFields, currentCardTitles) {
+   constructor(banDoc, paramReportControllo) {
       this.banDoc = banDoc;
-      this.userParam = userParam;
-      this.reportStructure = reportStructure;
-      this.printStructure = printStructure;
-      this.currentCardFields = currentCardFields;
-      this.currentCardTitles = currentCardTitles;
+      this.paramReportControllo = paramReportControllo;
+      this.userParam = this.paramReportControllo.userParam;
+      this.reportStructure = this.paramReportControllo.reportStructure;
+      this.printStructure = this.paramReportControllo.printStructure;
+      this.currentCardFields = this.paramReportControllo.currentCardFields;
+      this.currentCardTitles = this.paramReportControllo.currentCardTitles;
       this.version = '1.0';
+
+      // Banana.console.log(JSON.stringify(this.paramReportControllo, "", " "));
+      // Banana.console.log(JSON.stringify(this.userParam, "", " "));
+      // Banana.console.log(JSON.stringify(this.reportStructure, "", " "));
+      // Banana.console.log(JSON.stringify(this.printStructure, "", " "));
+      // Banana.console.log(JSON.stringify(this.currentCardFields, "", " "));
+      // Banana.console.log(JSON.stringify(this.currentCardTitles, "", " "));
    }
 
    /**
@@ -605,7 +613,7 @@ var BReportControllo = class JsClass {
     **************************************************************************************/
    printReportControllo() {
 
-      var bReportControllo = new BReportControllo(this.banDoc, this.userParam, this.reportStructure, this.printStructure, this.currentCardFields, this.currentCardTitles);
+      var bReportControllo = new BReportControllo(this.banDoc, this.paramReportControllo);
 
       let dialog = "";
       let title = "";
@@ -647,14 +655,8 @@ var BReportControllo = class JsClass {
 
          if (id) { // exclude the "texts" objects
 
-            let excludeId = this.printStructure[j].excludeId; //exclude the ID (GR1) for all descriptions
-            let excludeAmount = this.printStructure[j].excludeAmount; //exclude the amount for all descriptions
-
+            let isTitle = this.printStructure[j].isTitle; //exclude id (gr1) and amount for the title/description texts
             let obj = bReportControllo.getObject(id); //take the single object by ID from the reportStructure
-
-            //user the indent property to format the print
-            let stylecss = this.printStructure[j].stylecss;
-
 
             //Add the content on a new page
             if (this.printStructure[j].newpage) {
@@ -672,8 +674,8 @@ var BReportControllo = class JsClass {
             tableRow = table.addRow();
 
             // ID (GR1) column
-            // do not print ID (GR1) for descriptions
-            if (excludeId) {
+            // do not print ID (GR1) for title/descriptions
+            if (isTitle) {
                tableRow.addCell("", "", 1);
             } else {
                tableRow.addCell(obj.id, "", 1);
@@ -685,10 +687,10 @@ var BReportControllo = class JsClass {
 
             // Current amount column
             // do not print the formatted amount for descriptions to avoid "0.00" when empty
-            if (excludeAmount) {
+            if (isTitle) {
                tableRow.addCell("", "", 1);
             } else {
-               tableRow.addCell(obj.currentAmountFormatted, stylecss, 1);
+               tableRow.addCell(obj.currentAmountFormatted, "align-right", 1);
             }
 
 

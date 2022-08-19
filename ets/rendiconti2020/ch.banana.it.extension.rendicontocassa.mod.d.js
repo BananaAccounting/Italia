@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2022-08-05
+// @pubdate = 2022-08-19
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -71,42 +71,16 @@ function exec(string) {
     * 1. Loads the report structure
     */
    var reportStructure = createReportStructureRendicontoCassa();
-   if (userParam.stampareportcontrollo) {
-      //Struttura per la stampa con la sequenza in cui devono essere stampate le voci del report
-      var printStructure = createPrintStructureRendicontoCassa();
-   }
 
    /**
     * 2. Calls methods to load balances, calculate totals, format amounts
     * and check entries that can be excluded
     */
-   if (userParam.stampareportcontrollo) {
-      
-      //Array per i campi/colonne della scheda conto
-      let currentCardFields = ["JDate","Doc","JDescription","JAccount","JDebitAmount","JCreditAmount","JBalance"];
-      
-      //Array per le intestazioni della la scheda conto
-      let currentCardTitles = [];
-      if (Banana.document.table("Categories")) {
-         currentCardTitles = ["Data","Doc","Descrizione","Conto","Entrate","Uscite","Saldo"];
-      } else {
-         currentCardTitles = ["Data","Doc","Descrizione","Conto","Dare","Avere","Saldo"];
-      }
-
-      var bReportControllo = new BReportControllo(Banana.document, userParam, reportStructure, printStructure, currentCardFields, currentCardTitles);
-      bReportControllo.validateGroups_IncomeExpenses(userParam.column, reportStructure);
-      bReportControllo.loadBalances();
-      bReportControllo.calculateTotals(["currentAmount", "previousAmount"]);
-      bReportControllo.formatValues(["currentAmount", "previousAmount"]);
-   }
-   else {
-      var bReport = new BReport(Banana.document, userParam, reportStructure);
-      bReport.validateGroups_IncomeExpenses(userParam.column, reportStructure);
-      bReport.loadBalances();
-      bReport.calculateTotals(["currentAmount", "previousAmount"]);
-      bReport.formatValues(["currentAmount", "previousAmount"]);
-   }
-   //Banana.console.log(JSON.stringify(reportStructure, "", " "));
+   var bReport = new BReport(Banana.document, userParam, reportStructure);
+   bReport.validateGroups_IncomeExpenses(userParam.column, reportStructure);
+   bReport.loadBalances();
+   bReport.calculateTotals(["currentAmount", "previousAmount"]);
+   bReport.formatValues(["currentAmount", "previousAmount"]);
 
    /**
     * 3. Set variables used for the CSS
@@ -121,7 +95,8 @@ function exec(string) {
    var stylesheet = Banana.Report.newStyleSheet();
 
    if (userParam.stampareportcontrollo) {
-      var report = bReportControllo.printReportControllo();
+      var paramReportControllo = setParamReportControllo(Banana.document, userParam);
+      var report = printReportControllo(Banana.document, paramReportControllo);
    }
    else {
       var report = printReport(Banana.document, userParam, bReport, stylesheet);
@@ -129,6 +104,69 @@ function exec(string) {
    setCss(Banana.document, stylesheet, variables, userParam);
    Banana.Report.preview(report, stylesheet);
 }
+
+function setParamReportControllo(banDoc, userParam) {
+
+   var paramReportControllo = {};
+   paramReportControllo.userParam;
+   paramReportControllo.reportStructure;
+   paramReportControllo.printStructure;
+   paramReportControllo.currentCardFields;
+   paramReportControllo.currentCardTitles;
+   
+   // User parameters from script settings
+   paramReportControllo.userParam = userParam;
+
+   // Report structure
+   var reportStructure = createReportStructureRendicontoCassa();
+   paramReportControllo.reportStructure = reportStructure;
+
+   // Print report structure
+   var printStructure = createPrintStructureRendicontoCassa();
+   paramReportControllo.printStructure = printStructure;
+
+   // CurrentCard fields names
+   let currentCardFields = ["JDate","Doc","JDescription","JAccount","JDebitAmount","JCreditAmount","JBalance"];
+   paramReportControllo.currentCardFields = currentCardFields;
+   
+   // CurrentCard columns headers texts
+   let currentCardTitles = [];
+   if (banDoc.table("Categories")) {
+      currentCardTitles = ["Data","Doc","Descrizione","Conto","Entrate","Uscite","Saldo"];
+   } else {
+      currentCardTitles = ["Data","Doc","Descrizione","Conto","Dare","Avere","Saldo"];
+   }
+   paramReportControllo.currentCardTitles = currentCardTitles;
+   
+   return paramReportControllo;
+}
+
+function printReportControllo(banDoc, paramReportControllo) {
+   
+   var bReportControllo = new BReportControllo(banDoc, paramReportControllo);
+   bReportControllo.validateGroups_IncomeExpenses(paramReportControllo.userParam.column, paramReportControllo.reportStructure);
+   bReportControllo.loadBalances();
+   bReportControllo.calculateTotals(["currentAmount", "previousAmount"]);
+   bReportControllo.formatValues(["currentAmount", "previousAmount"]);
+
+   var report = bReportControllo.printReportControllo();
+   
+   checkLiquidity(report, banDoc, bReportControllo);
+   controlloSaldiAperturaPrecedente(report, banDoc, paramReportControllo.userParam, bReportControllo);
+   controlloRegistrazioni(report, banDoc, paramReportControllo.userParam, bReportControllo);
+
+   Banana.console.log(JSON.stringify(paramReportControllo, "", " "));
+
+   return report;
+}
+
+
+
+
+
+
+
+
 
 // Funzione che stampa il report
 function printReport(banDoc, userParam, bReport, stylesheet) {
@@ -1706,7 +1744,12 @@ function addFooter(report) {
  **************************************************************************************/
 function setCss(banDoc, repStyleObj, variables, userParam) {
    var textCSS = "";
-   var file = Banana.IO.getLocalFile("file:script/rendicontoModD.css");
+   var file = "";
+   if (userParam.stampareportcontrollo) {
+      file = Banana.IO.getLocalFile("file:script/reportControllo.css");
+   } else {
+      file = Banana.IO.getLocalFile("file:script/rendicontoModD.css");
+   }
    var fileContent = file.read();
    if (!file.errorString) {
       Banana.IO.openPath(fileContent);
