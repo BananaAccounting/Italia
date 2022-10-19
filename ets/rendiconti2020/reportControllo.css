@@ -1,5 +1,5 @@
 
-/* CSS update: 2022-08-19  */
+/* CSS update: 2022-10-19  */
 
 td {
   vertical-align: top;
@@ -179,6 +179,7 @@ table {
   font-family: Courier New;
   font-size: 6pt;
   color: black;
+  background-color: #f4faff;
   border: thin solid black;
 }
 
@@ -201,4 +202,19 @@ table {
   border-right-width: thin;
 }*/
 
+.alert-message {
+  font-size: 12pt;
+  color: red;
+}
 
+.text-color-red {
+  color: red;
+}
+
+.table-quadratura {
+  color: #000000;
+  background-color: #ffcccc;
+  /*border: 1px solid red;*/
+  width: 50%;
+  font-size: 10pt;
+}

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2022-08-19 */
+/* Update: 2022-10-19 */
 
 
 /**
@@ -1034,88 +1034,35 @@ function createReportStructure5xMille(userParam) {
 	 *	gruppo 4, Erogazioni 			   	: CB1
 	 *	gruppo 5, Altre voci di spesa 	   	: CB7, CB8, CE1, CE7, CG2
 	 *	gruppo 6, Accantonamento           	: CA6, CB6, CD5, CE6
-	 * 
 	 */
+
+    /**
+     * Gruppi modello nuovo:
+     *
+     * gruppo 0    : RA5
+     * gruppo 1    : CA4;CB4;CE4
+     * gruppo 2    : CA1;CA3;CA7;CD1;CD2;CD3;CD4;CD6;IM
+     * gruppo 3    : CA2;CA5;CB3;CB5;CE3;CE5;CC1;CC2;CC3
+     * gruppo 4.1  : CB1;CE1
+     * gruppo 4.2  : CB2
+     * gruppo 4.3  : CE2
+     * gruppo 4.4  : CB7
+     * gruppo 4.5  : CE7;CG1;CG2
+     * gruppo 5    : CA6;CB6;CD5;CE6
+     */
 	
 	let reportStructure = [];
-	
-	reportStructure.push({
-		"group":"0",
-		"income":true,
-		"gr1":"RA5",
-		"title":"Importo percepito",
-		"text":""
-	});
-	reportStructure.push({
-		"group":"1",
-		"income":false,
-		"gr1":"CA4;CB4;CE4",
-		"title":"Risorse umane",
-		"text":"(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale)."
-	});
-	reportStructure.push({
-		"group":"2",
-		"income":false,
-		"gr1":"CA1;CA3;CA7;CD1;CD2;CD3;CD4;CD6;IM",
-		"title":"Spese di funzionamento",
-		"text":"(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc.)"
-	});
-	reportStructure.push({
-		"group":"3",
-		"income":false,
-		"gr1":"CA2;CA5;CB3;CB5;CE3;CE5;CC1;CC2;CC3",
-		"title":"Spese per acquisto beni e servizi",
-		"text":"(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc.)"
-	});
-	reportStructure.push({
-		"group":"4",
-		"income":false,
-		"gr1":"", //CB1;CB7;CB8;CE1;CE7;CG2 => nel gruppo 4 non viene più indicato l'importo totale, bensì un importo per ogni suo sottogruppo
-		"title":"Spese per attività di interesse generale dell’ente",
-		"text":"(rappresentare le spese nella relazione illustrativa a seconda della causale)"
-	});
-	reportStructure.push({
-		"group":"4.1",
-		"income":false,
-		"gr1": userParam.gruppo41, //"CB1;CE1",
-		"title":"Acquisto di beni o servizi strumentali oggetto di donazione",
-		"text":""
-	});
-	reportStructure.push({
-		"group":"4.2",
-		"income":false,
-		"gr1": userParam.gruppo42, //"CB2",
-		"title":"Erogazioni a proprie articolazioni territoriali e a soggetti collegati o affiliati",
-		"text":""
-	});
-	reportStructure.push({
-		"group":"4.3",
-		"income":false,
-		"gr1": userParam.gruppo43, //"CE2",
-		"title":"Erogazioni ad enti terzi",
-		"text":""
-	});
-	reportStructure.push({
-		"group":"4.4",
-		"income":false,
-		"gr1": userParam.gruppo44, //"CB7",
-		"title":"Erogazioni a persone fisiche",
-		"text":""
-	});
-	reportStructure.push({
-		"group":"4.5",
-		"income":false,
-		"gr1": userParam.gruppo45, //"CE7;CG1;CG2",
-		"title":"Altre spese per attività di interesse generale",
-		"text":""
-	});
-	reportStructure.push({
-		"group":"5",
-		"income":false,
-		"gr1":"CA6;CB6;CD5;CE6",
-		"title":"Accantonamento",
-		"text":"(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando per il soggetto beneficiario l’obbligo di specificare nella relazione allegata al presente documento le finalità dell’accantonamento. Il soggetto beneficiario è tenuto ad utilizzare le somme accantonate e ad inviare il modello relativo all’accantonamento entro 36 mesi dalla percezione del contributo)"
-	});
+	reportStructure.push({"group":"0", "income":true, "gr1":"RA5", "title":"Importo percepito", "text":""});
+	reportStructure.push({"group":"1", "income":false, "gr1":"CA4;CB4;CE4", "title":"Risorse umane", "text":"(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: compensi per personale; rimborsi spesa a favore di volontari e/o del personale)."});
+	reportStructure.push({"group":"2", "income":false, "gr1":"CA1;CA3;CA7;CD1;CD2;CD3;CD4;CD6;IM", "title":"Spese di funzionamento", "text":"(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: spese di acqua, gas, elettricità, pulizia; materiale di cancelleria; spese per affitto delle sedi; ecc.)"});
+	reportStructure.push({"group":"3", "income":false, "gr1":"CA2;CA5;CB3;CB5;CE3;CE5;CC1;CC2;CC3", "title":"Spese per acquisto beni e servizi", "text":"(rappresentare le spese nella relazione illustrativa a seconda della causale, per esempio: acquisto e/o noleggio apparecchiature informatiche; acquisto beni immobili; prestazioni eseguite da soggetti esterni all’ente; affitto locali per eventi; ecc.)"});
+    reportStructure.push({"group":"4", "income":false, "gr1":"", "title":"Spese per attività di interesse generale dell’ente", "text":"(rappresentare le spese nella relazione illustrativa a seconda della causale)"});
+    reportStructure.push({"group":"4.1", "income":false, "gr1": userParam.gruppo41, "title":"Acquisto di beni o servizi strumentali oggetto di donazione", "text":""});
+    reportStructure.push({"group":"4.2", "income":false, "gr1": userParam.gruppo42, "title":"Erogazioni a proprie articolazioni territoriali e a soggetti collegati o affiliati", "text":""});
+    reportStructure.push({"group":"4.3", "income":false, "gr1": userParam.gruppo43, "title":"Erogazioni ad enti terzi", "text":""});
+    reportStructure.push({"group":"4.4", "income":false, "gr1": userParam.gruppo44, "title":"Erogazioni a persone fisiche", "text":""});
+    reportStructure.push({"group":"4.5", "income":false, "gr1": userParam.gruppo45, "title":"Altre spese per attività di interesse generale", "text":""});
+    reportStructure.push({"group":"5", "income":false, "gr1":"CA6;CB6;CD5;CE6", "title":"Accantonamento", "text":"(è possibile accantonare in tutto o in parte l’importo percepito, fermo restando per il soggetto beneficiario l’obbligo di specificare nella relazione allegata al presente documento le finalità dell’accantonamento. Il soggetto beneficiario è tenuto ad utilizzare le somme accantonate e ad inviare il modello relativo all’accantonamento entro 36 mesi dalla percezione del contributo)"});
 
 	return reportStructure;
 }

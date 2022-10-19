@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2022-08-19
+// @pubdate = 2022-10-19
 // @publisher = Banana.ch SA
 // @description = 1. Stato patrimoniale
 // @task = app.command
@@ -75,80 +75,46 @@ function exec(string) {
       return "@Cancel";
    }
 
-   /**
-    * 1. Loads the report structure
-    */
-   var reportStructure = createReportStructureStatoPatrimoniale();
-
-   /**
-    * 2. Calls methods to load balances, calculate totals, format amounts
-    * and check entries that can be excluded
-    */
-   var bReport = new BReport(Banana.document, userParam, reportStructure);
-   bReport.validateGroups(userParam.column);
-   bReport.loadBalances();
-   bReport.calculateTotals(["currentAmount", "previousAmount"]);
-   bReport.formatValues(["currentAmount", "previousAmount"]);
-   bReport.excludeEntries();
-   // Banana.console.log(JSON.stringify(reportStructure, "", " "));
-
-   /**
-    * 3. Creates the report
-    */
+   // Creates the report stylesheet
    var stylesheet = Banana.Report.newStyleSheet();
 
+   // Create the param report object
+   var paramReport = setParamReport(Banana.document, userParam);
+
+   // Print the report (normal or with transactions movements)
+   var report;
    if (userParam.stampareportcontrollo) {
-      var paramReportControllo = setParamReportControllo(Banana.document, userParam);
-      var report = printReportControllo(Banana.document, paramReportControllo);
-   } 
-   else {
-      var report = printRendicontoModA(Banana.document, userParam, bReport, stylesheet);
+      report = stampaReportControllo(Banana.document, paramReport);
+   } else {
+      report = stampaReportNormale(Banana.document, paramReport, stylesheet);
    }
    
    setCss(Banana.document, stylesheet, userParam);
    Banana.Report.preview(report, stylesheet);
 }
 
-function setParamReportControllo(banDoc, userParam) {
+function stampaReportNormale(banDoc, paramReport, stylesheet) {
 
-   var paramReportControllo = {};
-   paramReportControllo.userParam;
-   paramReportControllo.reportStructure;
-   paramReportControllo.printStructure;
-   paramReportControllo.currentCardFields;
-   paramReportControllo.currentCardTitles;
-   
-   // User parameters from script settings
-   paramReportControllo.userParam = userParam;
+   // Prints the normal report
 
-   // Report structure
-   var reportStructure = createReportStructureStatoPatrimoniale();
-   paramReportControllo.reportStructure = reportStructure;
+   var bReport = new BReport(banDoc, paramReport);
+   bReport.validateGroups(paramReport.userParam.column);
+   bReport.loadBalances();
+   bReport.calculateTotals(["currentAmount", "previousAmount"]);
+   bReport.formatValues(["currentAmount", "previousAmount"]);
+   bReport.excludeEntries();
 
-   // Print report structure
-   var printStructure = createPrintStructureStatoPatrimoniale();
-   paramReportControllo.printStructure = printStructure;
+   var report = printRendicontoModA(banDoc, paramReport.userParam, bReport, stylesheet);
 
-   // CurrentCard fields names
-   let currentCardFields = ["JDate","Doc","JDescription","JAccount","JDebitAmount","JCreditAmount","JBalance"];
-   paramReportControllo.currentCardFields = currentCardFields;
-   
-   // CurrentCard columns headers texts
-   let currentCardTitles = [];
-   if (banDoc.table("Categories")) {
-      currentCardTitles = ["Data","Doc","Descrizione","Conto","Entrate","Uscite","Saldo"];
-   } else {
-      currentCardTitles = ["Data","Doc","Descrizione","Conto","Dare","Avere","Saldo"];
-   }
-   paramReportControllo.currentCardTitles = currentCardTitles;
-   
-   return paramReportControllo;
+   return report;
 }
 
-function printReportControllo(banDoc, paramReportControllo) {
+function stampaReportControllo(banDoc, paramReport) {
    
-   var bReportControllo = new BReportControllo(banDoc, paramReportControllo);
-   bReportControllo.validateGroups(paramReportControllo.userParam.column);
+   // Print the report with transactions movements
+   
+   var bReportControllo = new BReportControllo(banDoc, paramReport);
+   bReportControllo.validateGroups(paramReport.userParam.column);
    bReportControllo.loadBalances();
    bReportControllo.calculateTotals(["currentAmount", "previousAmount"]);
    bReportControllo.formatValues(["currentAmount", "previousAmount"]);
@@ -157,10 +123,47 @@ function printReportControllo(banDoc, paramReportControllo) {
    var report = bReportControllo.printReportControllo();
    checkResults(banDoc, report, bReportControllo); //controlli specifici del rendiconto
 
-   Banana.console.log(JSON.stringify(paramReportControllo, "", " "));
-
    return report;
 }
+
+
+function setParamReport(banDoc, userParam) {
+
+   let paramReport = {};
+   // paramReport.userParam;
+   // paramReport.reportStructure;
+   // paramReport.printStructure;
+   // paramReport.currentCardFields;
+   // paramReport.currentCardTitles;
+   
+   // User parameters from script settings
+   paramReport.userParam = userParam;
+
+   // Report structure
+   let reportStructure = createReportStructureStatoPatrimoniale();
+   paramReport.reportStructure = reportStructure;
+
+   // Print report structure
+   let printStructure = createPrintStructureStatoPatrimoniale();
+   paramReport.printStructure = printStructure;
+
+   // CurrentCard fields names
+   let currentCardFields = ["JDate","Doc","JDescription","JAccount","JDebitAmount","JCreditAmount","JBalance"];
+   paramReport.currentCardFields = currentCardFields;
+   
+   // CurrentCard columns headers texts
+   let currentCardTitles = [];
+   if (banDoc.table("Categories")) {
+      currentCardTitles = ["Data","Doc","Descrizione","Conto","Entrate","Uscite","Saldo"];
+   } else {
+      currentCardTitles = ["Data","Doc","Descrizione","Conto","Dare","Avere","Saldo"];
+   }
+   paramReport.currentCardTitles = currentCardTitles;
+   
+   return paramReport;
+}
+
+
 
 
 
@@ -379,16 +382,17 @@ function printRendicontoModA_Attivo(banDoc, report, userParam, bReport) {
 
    // Tabella Attivo
    var table = report.addTable("table");
+   var column1,column2,column3,column4;
    if (userParam.printcolumn) {
-      var column1 = table.addColumn("column01");
-      var column2 = table.addColumn("column02");
-      var column3 = table.addColumn("column03");
-      var column4 = table.addColumn("column04");
+      column1 = table.addColumn("column01");
+      column2 = table.addColumn("column02");
+      column3 = table.addColumn("column03");
+      column4 = table.addColumn("column04");
    }
    else {
-      var column1 = table.addColumn("column1");
-      var column2 = table.addColumn("column2");
-      var column3 = table.addColumn("column3");
+      column1 = table.addColumn("column1");
+      column2 = table.addColumn("column2");
+      column3 = table.addColumn("column3");
    }
 
 
@@ -633,16 +637,17 @@ function printRendicontoModA_Passivo(banDoc, report, userParam, bReport) {
 
    // tabella Passivo
    var table = report.addTable("table");
+   var column1,column2,column3,column4;
    if (userParam.printcolumn) {
-      var column1 = table.addColumn("column01");
-      var column2 = table.addColumn("column02");
-      var column3 = table.addColumn("column03");
-      var column4 = table.addColumn("column04");
+      column1 = table.addColumn("column01");
+      column2 = table.addColumn("column02");
+      column3 = table.addColumn("column03");
+      column4 = table.addColumn("column04");
    }
    else {
-      var column1 = table.addColumn("column1");
-      var column2 = table.addColumn("column2");
-      var column3 = table.addColumn("column3");
+      column1 = table.addColumn("column1");
+      column2 = table.addColumn("column2");
+      column3 = table.addColumn("column3");
    }
 
    var tableIntestazione = table.getHeader();
@@ -858,7 +863,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'logo';
    currentParam.parentObject = 'header_group';
    currentParam.title = 'Stampa logo';
@@ -870,7 +875,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'logoname';
    currentParam.parentObject = 'header_group';
    currentParam.title = 'Nome logo (Imposta Logo -> Personalizzazione)';
@@ -894,7 +899,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'headertext';
    currentParam.parentObject = 'header_group';
    currentParam.title = 'Testo indirizzo alternativo (su più righe)';
@@ -906,7 +911,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'title_group';
    currentParam.title = 'Titolo';
    currentParam.type = 'string';
@@ -929,7 +934,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'title';
    currentParam.parentObject = 'title_group';
    currentParam.title = 'Testo titolo alternativo (vuoto = testo predefinito)';
@@ -941,7 +946,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'report_group';
    currentParam.title = 'Dettagli stato patrimoniale';
    currentParam.type = 'string';
@@ -952,7 +957,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'column';
    currentParam.parentObject = 'report_group';
    currentParam.title = "Colonna raggruppamento (nome XML colonna)";
@@ -964,7 +969,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'printcolumn';
    currentParam.parentObject = 'report_group';
    currentParam.title = 'Stampa colonna raggruppamento';
@@ -976,7 +981,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'printpreviousyear';
    currentParam.parentObject = 'report_group';
    currentParam.title = 'Stampa colonna anno precedente';
@@ -988,7 +993,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'compattastampa';
    currentParam.parentObject = 'report_group';
    currentParam.title = 'Escludi voci con importi nulli per due esercizi consecutivi';
@@ -1000,7 +1005,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'stampa';
    currentParam.parentObject = 'report_group';
    currentParam.title = 'Stampa Attivi e Passivi su pagine separate';
@@ -1012,7 +1017,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'finalnotes';
    currentParam.parentObject = 'report_group';
    currentParam.title = 'Note finali';
@@ -1024,9 +1029,9 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'reportcontrollo';
-   currentParam.title = 'Report controllo';
+   currentParam.title = 'Dettagli movimenti';
    currentParam.type = 'string';
    currentParam.value = '';
    currentParam.editable = false;
@@ -1035,10 +1040,10 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'stampareportcontrollo';
    currentParam.parentObject = 'reportcontrollo';
-   currentParam.title = 'Stampa report di controllo (anno corrente)';
+   currentParam.title = 'Stampa report con dettagli movimenti anno corrente';
    currentParam.type = 'bool';
    currentParam.value = userParam.stampareportcontrollo ? true : false;
    currentParam.defaultvalue = false;
@@ -1046,6 +1051,18 @@ function convertParam(userParam) {
       userParam.stampareportcontrollo = this.value;
    }
    convertedParam.data.push(currentParam);
+
+   // currentParam = {};
+   // currentParam.name = 'excludezeroamounts';
+   // currentParam.parentObject = 'reportcontrollo';
+   // currentParam.title = 'Escludi dettagli per i gruppi con saldo zero';
+   // currentParam.type = 'bool';
+   // currentParam.value = userParam.excludezeroamounts ? true : false;
+   // currentParam.defaultvalue = false;
+   // currentParam.readValue = function() {
+   //    userParam.excludezeroamounts = this.value;
+   // }
+   // convertedParam.data.push(currentParam);   
 
    return convertedParam;
 }
@@ -1065,6 +1082,7 @@ function initUserParam() {
    userParam.stampa = true;
    userParam.finalnotes = '';
    userParam.stampareportcontrollo = false;
+   // userParam.excludezeroamounts = false;
    return userParam;
 }
 

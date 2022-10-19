@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2022-04-20 */
+/* Update: 2022-10-19 */
 
 
 
@@ -50,10 +50,14 @@
 
 var BReport = class JsClass {
    
-   constructor(banDoc, userParam, reportStructure) {
+   constructor(banDoc, paramReport) {
       this.banDoc = banDoc;
-      this.userParam = userParam;
-      this.reportStructure = reportStructure;
+      this.paramReport = paramReport;
+      this.userParam = paramReport.userParam;
+      this.reportStructure = paramReport.reportStructure;
+      this.printStructure = paramReport.printStructure;
+      this.currentCardFields = paramReport.currentCardFields;
+      this.currentCardTitles = paramReport.currentCardTitles;
       this.version = '1.0';
    }
 

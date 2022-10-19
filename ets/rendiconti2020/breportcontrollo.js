@@ -13,22 +13,22 @@
 // limitations under the License.
 
 
-/* Update: 2022-08-19 */
+/* Update: 2022-10-19 */
 
 
 var BReportControllo = class JsClass {
    
-   constructor(banDoc, paramReportControllo) {
+   constructor(banDoc, paramReport) {
       this.banDoc = banDoc;
-      this.paramReportControllo = paramReportControllo;
-      this.userParam = this.paramReportControllo.userParam;
-      this.reportStructure = this.paramReportControllo.reportStructure;
-      this.printStructure = this.paramReportControllo.printStructure;
-      this.currentCardFields = this.paramReportControllo.currentCardFields;
-      this.currentCardTitles = this.paramReportControllo.currentCardTitles;
+      this.paramReport = paramReport;
+      this.userParam = paramReport.userParam;
+      this.reportStructure = paramReport.reportStructure;
+      this.printStructure = paramReport.printStructure;
+      this.currentCardFields = paramReport.currentCardFields;
+      this.currentCardTitles = paramReport.currentCardTitles;
       this.version = '1.0';
 
-      // Banana.console.log(JSON.stringify(this.paramReportControllo, "", " "));
+      // Banana.console.log(JSON.stringify(this.paramReport, "", " "));
       // Banana.console.log(JSON.stringify(this.userParam, "", " "));
       // Banana.console.log(JSON.stringify(this.reportStructure, "", " "));
       // Banana.console.log(JSON.stringify(this.printStructure, "", " "));
@@ -613,7 +613,7 @@ var BReportControllo = class JsClass {
     **************************************************************************************/
    printReportControllo() {
 
-      var bReportControllo = new BReportControllo(this.banDoc, this.paramReportControllo);
+      var bReportControllo = new BReportControllo(this.banDoc, this.paramReport);
 
       let dialog = "";
       let title = "";
@@ -693,8 +693,6 @@ var BReportControllo = class JsClass {
                tableRow.addCell(obj.currentAmountFormatted, "align-right", 1);
             }
 
-
-
             /**
              * Prints the current card details 
              */
@@ -737,7 +735,7 @@ var BReportControllo = class JsClass {
 
             //solo se ci sono movimenti e se Opening
             //esclude totali "Totali movimenti"
-            if ( (currentCard[j].JDebitAmount || currentCard[j].JCreditAmount || currentCard[j].SysCod == "Opening") && currentCard[j].SysCod != "Totals" ) {
+            if ( (currentCard[j].JDebitAmount || currentCard[j].JCreditAmount || currentCard[j].SysCod === "Opening") && currentCard[j].SysCod !== "Totals" ) {
 
                // "SysCod": "Opening" => opening balance, first row
                // "SysCod": "Totals"  => total line, last row

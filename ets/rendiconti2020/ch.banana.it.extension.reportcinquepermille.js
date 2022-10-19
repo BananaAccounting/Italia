@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.reportcinquepermille
 // @api = 1.0
-// @pubdate = 2022-08-09
+// @pubdate = 2022-10-19
 // @publisher = Banana.ch SA
 // @description = 4. Report cinque per mille
 // @task = app.command
@@ -123,7 +123,7 @@ function exec(string) {
 		loadBalances(Banana.document, userParam, reportGroups, accountsMap);
 
 		//4. Create the report
-		let report = printReport(Banana.document, fileLastYear, userParam, reportGroups, accountsMap);
+        let report = printReport(Banana.document, fileLastYear, userParam, reportGroups, accountsMap);
 		let stylesheet = Banana.Report.newStyleSheet();
 		setCss(Banana.document, stylesheet);
 		Banana.Report.preview(report, stylesheet);
@@ -142,9 +142,9 @@ function printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap)
 	printReport_Header(report, banDoc, userParam);
 
 	if (userParam.tipoRendicontoModB) {
-		printReport_RendicontoModB(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap);
+        printReport_RendicontoModB(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	} else {
-		printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap);
+        printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	}
 
 	printReport_Finale(report, banDoc, userParam);
@@ -284,9 +284,9 @@ function printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, rep
 	 * - gruppo 4.5, Altre spese per attività di interesse generale
 	 * - gruppo 5, Accantonamento
 	 */
-	for (let i = 0; i < reportGroups.length; i++) {
+    for (let i = 0; i < reportGroups.length; i++) {
 		
-		let groupObj = getObject(reportGroups, reportGroups[i]["group"]);
+        let groupObj = getObject(reportGroups, reportGroups[i]["group"]);
 
 		//ENTRATE
 		if (groupObj.income) {
@@ -296,7 +296,7 @@ function printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, rep
 			tableRow.addCell("EUR", "alignRight",1);
 
 			// Per il calcolo automatico dell'accantonamento
-			incomeAcc = groupObj.total;
+            incomeAcc = groupObj.total;
 		}
 
 		//USCITE
@@ -367,7 +367,7 @@ function printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, rep
 				// importo calcolato come differenza
 				// "Importo percepito" - "Totale costi (gruppi 1,2,3,4)"
 				else {
-					var totAccantonamento = Banana.SDecimal.subtract(incomeAcc,expensesAcc);
+                    var totAccantonamento = Banana.SDecimal.subtract(incomeAcc,expensesAcc);
 					tableRow = table.addRow();
 					tableRow.addCell(" ", "", 4);
 					tableRow = table.addRow();
@@ -453,9 +453,9 @@ function printReport_RendicontoModB(report, banDoc, fileLastYear, userParam, rep
 	 * - gruppo 4.4, Erogazioni a persone fisiche
 	 * - gruppo 4.5, Altre spese per attività di interesse generale
 	 */
-	for (let i = 0; i < reportGroups.length; i++) {
+    for (let i = 0; i < reportGroups.length; i++) {
 		
-		let groupObj = getObject(reportGroups, reportGroups[i]["group"]);
+        let groupObj = getObject(reportGroups, reportGroups[i]["group"]);
 	
 		// gruppi 1, 2, 3
 		if (groupObj.group === "1" || groupObj.group === "2" || groupObj.group === "3") {
@@ -758,11 +758,11 @@ function loadAccountsMap_IncomeAndExpenses(banDoc, userParam, tabCategories, acc
 			let total = currentBal.total;
 
 
-			//sarebbe da calcolare il accountCard e aggiungerlo alla mappa 
+            //sarebbe da calcolare il accountCard e aggiungerlo alla mappa
 
 
-			if (total) {
-				if (!accountsMap[account]) {
+            if (total) {
+                if (!accountsMap[account]) {
 					//Se non c'è lo aggiunge la prima volta
 
 					// //Split Gr groups
@@ -773,8 +773,8 @@ function loadAccountsMap_IncomeAndExpenses(banDoc, userParam, tabCategories, acc
 					accountsMap[account] = {
 						"description":tRow.value("Description"), 
 						"gr1":gr, 
-						"total" : total
-					};
+                        "total" : total
+                    };
 				}
 				else {
 					//c'è già e quindi somma l'importo
@@ -782,7 +782,7 @@ function loadAccountsMap_IncomeAndExpenses(banDoc, userParam, tabCategories, acc
 				}				
 			}
 		}
-	}
+    }
 }
 
 // Funzione che crea l'oggetto per ogni conto della tabella Conti (contabilità doppia).
@@ -838,8 +838,8 @@ function loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts, accountsMap
 
 // Funzione che ritorna i codici di raggruppamento GR1 del gruppo indicato
 function getObjectGr1CodesByGroup(reportStructure, group) {
-	var searchGroup = group.trim();
-	for (var i = 0; i < reportStructure.length; i++) {
+    var searchGroup = group.trim();
+    for (var i = 0; i < reportStructure.length; i++) {
 		if (reportStructure[i].group === searchGroup) {
 			//Banana.console.log("GET => Group: " + group + " ... codes: " + reportStructure[i].gr1);
 			return reportStructure[i].gr1;
@@ -849,8 +849,8 @@ function getObjectGr1CodesByGroup(reportStructure, group) {
 
 // Funzione che imposta i codici di raggruppamento GR1 del gruppo indicato
 function setObjectGr1CodesByGroup(reportStructure, group, newCodes) {
-	var searchGroup = group.trim();
-	for (var i = 0; i < reportStructure.length; i++) {
+    var searchGroup = group.trim();
+    for (var i = 0; i < reportStructure.length; i++) {
 		if (reportStructure[i].group === searchGroup) {
 			reportStructure[i].gr1 = newCodes;
 			//Banana.console.log("SET => Group: " + group + " ... codes: " + reportStructure[i].gr1);
@@ -875,21 +875,21 @@ function checkCodesGroup4(banDoc, userParam, reportGroups) {
 	let codesSection5 = getObjectGr1CodesByGroup(reportGroups, "5").split(";");
 
 	// Crea un array con tutti i codici GR1 inseriti dall'utente
-	let userCodes = [];
+    let userCodes = [];
 
-	for (let i = 0; i < codesSection41.length; i++) {
+    for (let i = 0; i < codesSection41.length; i++) {
 		userCodes.push(codesSection41[i]);
 	}
-	for (let i = 0; i < codesSection42.length; i++) {
+    for (let i = 0; i < codesSection42.length; i++) {
 		userCodes.push(codesSection42[i]);
 	}
-	for (let i = 0; i < codesSection43.length; i++) {
+    for (let i = 0; i < codesSection43.length; i++) {
 		userCodes.push(codesSection43[i]);
 	}
-	for (let i = 0; i < codesSection44.length; i++) {
+    for (let i = 0; i < codesSection44.length; i++) {
 		userCodes.push(codesSection44[i]);
 	}
-	for (let i = 0; i < codesSection45.length; i++) {
+    for (let i = 0; i < codesSection45.length; i++) {
 		userCodes.push(codesSection45[i]);
 	}
 
@@ -978,7 +978,7 @@ function controlloAccantonamento(banDoc, accantonamento, entrate, uscite) {
 	
 	// Se 'Accantonamento > (Entrate - Uscite (1,2,3,4) )' => segnala errore
 	
-	var diffEntrateUscite = Banana.SDecimal.subtract(entrate,uscite);
+    var diffEntrateUscite = Banana.SDecimal.subtract(entrate,uscite);
 	if (Banana.SDecimal.compare(accantonamento,diffEntrateUscite) == 1) {
 		banDoc.addMessage(getErrorMessage(ID_ERR_ACCANTONAMENTO_5XMILLE));
 	}
