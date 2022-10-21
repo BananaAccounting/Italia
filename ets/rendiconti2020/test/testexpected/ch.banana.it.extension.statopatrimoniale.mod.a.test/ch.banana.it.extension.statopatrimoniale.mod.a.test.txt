@@ -18,7 +18,7 @@
 \newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
 \newenvironment{test}[1]{\section*{Test case: #1}}{}
 %Begin test data
-%%SCRIPT{/Users/ivan/Documents/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.statopatrimoniale.mod.a.test.js}
+%%SCRIPT{/Users/ivan/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.statopatrimoniale.mod.a.test.js}
 %
 \begin{testcase}{ReportModATest}
 \begin{test}{testBananaExtension}
@@ -816,23 +816,23 @@ Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
 ABII5  & \multicolumn{5}{l}{5) immobilizzazioni in corso e acconti } & 0.00 \\
 ABII  & \multicolumn{5}{l}{Totale immobilizzazioni materiali } & 7'550.00 \\
  & \multicolumn{5}{l}{III - Immobilizzazioni finanziarie } & \\
+ & \multicolumn{5}{l}{1) Partecipazioni } & \\
 ABIII1a  & \multicolumn{5}{l}{a) partecipazioni in imprese controllate } & 0.00 \\
 ABIII1b  & \multicolumn{5}{l}{b) partecipazioni in imprese collegate } & 0.00 \\
 ABIII1c  & \multicolumn{5}{l}{c) partecipazioni in altre imprese } & 0.00 \\
-ABIII1  & \multicolumn{5}{l}{1) Partecipazioni } & 0.00 \\
-ABIII2ao  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{2) Crediti } & \\
+ & \multicolumn{5}{l}{a) crediti verso imprese controllate } & \\
 ABIII2ae  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
-ABIII2a  & \multicolumn{5}{l}{a) crediti verso imprese controllate } & 0.00 \\
-ABIII2bo  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ABIII2ao  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{b) crediti verso imprese collegate } & \\
 ABIII2be  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
-ABIII2b  & \multicolumn{5}{l}{b) crediti verso imprese collegate } & 0.00 \\
-ABIII2co  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ABIII2bo  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{c) crediti verso altri enti del Terzo settore } & \\
 ABIII2ce  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
-ABIII2c  & \multicolumn{5}{l}{c) crediti verso altri enti del Terzo settore } & 0.00 \\
-ABIII2do  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ABIII2co  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{d) crediti verso altri } & \\
 ABIII2de  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
-ABIII2d  & \multicolumn{5}{l}{d) crediti verso altri } & 0.00 \\
-ABIII2  & \multicolumn{5}{l}{2) Crediti } & 0.00 \\
+ABIII2do  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
 ABIII3  & \multicolumn{5}{l}{3) Altri titoli } & 0.00 \\
 ABIII  & \multicolumn{5}{l}{Totale immobilizzazioni finanziarie } & 0.00 \\
 AB  & \multicolumn{5}{l}{Totale immobilizzazioni B) } & 8'200.00 \\
@@ -845,43 +845,43 @@ ACI4  & \multicolumn{5}{l}{4) Rimanenze prodotti finiti e merci } & 0.00 \\
 ACI5  & \multicolumn{5}{l}{5) Rimanenze acconti } & 0.00 \\
 ACI  & \multicolumn{5}{l}{Totale rimanenze } & 0.00 \\
  & \multicolumn{5}{l}{II - Crediti } & \\
-ACII1  & \multicolumn{5}{l}{1) Crediti verso utenti e clienti } & 0.00 \\
+ & \multicolumn{5}{l}{1) Crediti verso utenti e clienti } & \\
 ACII1e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 ACII1o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-ACII2  & \multicolumn{5}{l}{2) Crediti verso associati e fondatori } & 0.00 \\
+ & \multicolumn{5}{l}{2) Crediti verso associati e fondatori } & \\
 ACII2e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 ACII2o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-ACII3  & \multicolumn{5}{l}{3) Crediti verso enti pubblici } & 4'200.00 \\
+ & \multicolumn{5}{l}{3) Crediti verso enti pubblici } & \\
 ACII3e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 4'200.00 \\
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
 01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 1'200.00 \\
 08.02.2020  & 10  & Incasso contributi da ente pubblico XXXX, Entrata Progetto 1  & Crediti enti  & 3'000.00  & 0.00  & 4'200.00 \\
 ACII3o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-ACII4  & \multicolumn{5}{l}{4) Crediti verso soggetti privati per contributi } & 0.00 \\
+ & \multicolumn{5}{l}{4) Crediti verso soggetti privati per contributi } & \\
 ACII4e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 ACII4o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-ACII5  & \multicolumn{5}{l}{5) Crediti verso enti della stessa rete associativa } & 0.00 \\
+ & \multicolumn{5}{l}{5) Crediti verso enti della stessa rete associativa } & \\
 ACII5e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 ACII5o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-ACII6  & \multicolumn{5}{l}{6) Crediti verso altri enti del Terzo settore } & 0.00 \\
+ & \multicolumn{5}{l}{6) Crediti verso altri enti del Terzo settore } & \\
 ACII6e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 ACII6o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-ACII7  & \multicolumn{5}{l}{7) Crediti verso imprese controllate } & 0.00 \\
+ & \multicolumn{5}{l}{7) Crediti verso imprese controllate } & \\
 ACII7e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 ACII7o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-ACII8  & \multicolumn{5}{l}{8) Crediti verso imprese collegate } & 0.00 \\
+ & \multicolumn{5}{l}{8) Crediti verso imprese collegate } & \\
 ACII8e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 ACII8o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-ACII9  & \multicolumn{5}{l}{9) Crediti tributari } & 0.00 \\
+ & \multicolumn{5}{l}{9) Crediti tributari } & \\
 ACII9e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 ACII9o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-ACII10  & \multicolumn{5}{l}{10) Crediti da 5 per mille } & 0.00 \\
+ & \multicolumn{5}{l}{10) Crediti da 5 per mille } & \\
 ACII10e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 ACII10o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-ACII11  & \multicolumn{5}{l}{11) Crediti per imposte anticipate } & 0.00 \\
+ & \multicolumn{5}{l}{11) Crediti per imposte anticipate } & \\
 ACII11e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 ACII11o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-ACII12  & \multicolumn{5}{l}{12) Crediti verso altri } & 0.00 \\
+ & \multicolumn{5}{l}{12) Crediti verso altri } & \\
 ACII12e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 ACII12o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
 ACII  & \multicolumn{5}{l}{Totale crediti } & 4'200.00 \\
@@ -965,46 +965,46 @@ PB3  & \multicolumn{5}{l}{3) Fondi altri } & 0.00 \\
 PB  & \multicolumn{5}{l}{Totale fondi per rischi e oneri B) } & 0.00 \\
 PC  & \multicolumn{5}{l}{C) Fondi trattamento di fine rapporto di lavoro subordinato } & 0.00 \\
  & \multicolumn{5}{l}{D) Debiti } & \\
-PD1  & \multicolumn{5}{l}{1) Debiti verso banche } & 10'200.00 \\
+ & \multicolumn{5}{l}{1) Debiti verso banche } & \\
 PD1e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 PD1o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 10'200.00 \\
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
 01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & -1'200.00 \\
 23.09.2020  & 25  & Ricevimento di un prestito dalla banca  & Debiti banche  & 0.00  & 10'500.00  & -11'700.00 \\
 24.09.2020  & 26  & Rimborso del prestito alla banca  & Debiti banche  & 1'500.00  & 0.00  & -10'200.00 \\
-PD2  & \multicolumn{5}{l}{2) Debiti verso altri finanziatori } & 0.00 \\
+ & \multicolumn{5}{l}{2) Debiti verso altri finanziatori } & \\
 PD2e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 PD2o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-PD3  & \multicolumn{5}{l}{3) Debiti verso associati e fondatori per finanziamenti } & 0.00 \\
+ & \multicolumn{5}{l}{3) Debiti verso associati e fondatori per finanziamenti } & \\
 PD3e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 PD3o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-PD4  & \multicolumn{5}{l}{4) Debiti verso enti della stessa rete associativa } & 0.00 \\
+ & \multicolumn{5}{l}{4) Debiti verso enti della stessa rete associativa } & \\
 PD4e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 PD4o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-PD5  & \multicolumn{5}{l}{5) Debiti per erogazioni liberali condizionate } & 0.00 \\
+ & \multicolumn{5}{l}{5) Debiti per erogazioni liberali condizionate } & \\
 PD5e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 PD5o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-PD6  & \multicolumn{5}{l}{6) Acconti (Debiti) } & 0.00 \\
+ & \multicolumn{5}{l}{6) Acconti (Debiti) } & \\
 PD6e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 PD6o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-PD7  & \multicolumn{5}{l}{7) Debiti verso fornitori } & 100.00 \\
+ & \multicolumn{5}{l}{7) Debiti verso fornitori } & \\
 PD7e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 100.00 \\
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
 01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & -100.00 \\
 PD7o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-PD8  & \multicolumn{5}{l}{8) Debiti verso imprese controllate e collegate } & 0.00 \\
+ & \multicolumn{5}{l}{8) Debiti verso imprese controllate e collegate } & \\
 PD8e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 PD8o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-PD9  & \multicolumn{5}{l}{9) Debiti tributari } & 0.00 \\
+ & \multicolumn{5}{l}{9) Debiti tributari } & \\
 PD9e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 PD9o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-PD10  & \multicolumn{5}{l}{10) Debiti verso istituti di previdenza e di sicurezza sociale } & 0.00 \\
+ & \multicolumn{5}{l}{10) Debiti verso istituti di previdenza e di sicurezza sociale } & \\
 PD10e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 PD10o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-PD11  & \multicolumn{5}{l}{11) Debiti verso dipendenti e collaboratori } & 0.00 \\
+ & \multicolumn{5}{l}{11) Debiti verso dipendenti e collaboratori } & \\
 PD11e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 PD11o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
-PD12  & \multicolumn{5}{l}{12) Altri debiti } & 0.00 \\
+ & \multicolumn{5}{l}{12) Altri debiti } & \\
 PD12e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 PD12o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
 PD  & \multicolumn{5}{l}{Totale debiti D) } & 10'300.00 \\

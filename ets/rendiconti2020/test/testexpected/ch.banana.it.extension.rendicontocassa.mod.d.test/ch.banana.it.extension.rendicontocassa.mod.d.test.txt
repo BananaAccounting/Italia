@@ -18,7 +18,7 @@
 \newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
 \newenvironment{test}[1]{\section*{Test case: #1}}{}
 %Begin test data
-%%SCRIPT{/Users/ivan/Documents/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.rendicontocassa.mod.d.test.js}
+%%SCRIPT{/Users/ivan/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.rendicontocassa.mod.d.test.js}
 %
 \begin{testcase}{ReportModDTest}
 \begin{test}{testBananaExtension}
@@ -947,10 +947,9 @@ RE1  & \multicolumn{5}{l}{1) Entrate da distacco del personale } & 0.00 \\
 RE2  & \multicolumn{5}{l}{2) Altre entrate di supporto generale } & 0.00 \\
 RE  & \multicolumn{5}{l}{Totale } & 0.00 \\
 R  & \multicolumn{5}{l}{Totale entrate della gestione } & 95'000.00 \\
-IM  & \multicolumn{5}{l}{Imposte } & 0.00 \\
 \\
 GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
- & \multicolumn{5}{l}{USCITE DA INVESTIMENTI } & \\
+ & \multicolumn{5}{l}{Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi } & \\
 CF1  & \multicolumn{5}{l}{1) Investimenti in immobilizzazioni inerenti alle attività di interesse generale } & 550.00 \\
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
 21.09.2020  & 23  & Acquisto di mobili per l’ufficio dell’associazione  & ,CF1  & 0.00  & 550.00  & -550.00 \\
@@ -960,7 +959,7 @@ CF4  & \multicolumn{5}{l}{4) Rimborso di finanziamenti per quota capitale e di p
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
 24.09.2020  & 26  & Rimborso del prestito alla banca  & ,CF4  & 0.00  & 1'500.00  & -1'500.00 \\
 CF  & \multicolumn{5}{l}{Totale } & 2'050.00 \\
- & \multicolumn{5}{l}{ENTRATE DA DISINVESTIMENTI } & \\
+ & \multicolumn{5}{l}{Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi } & \\
 RF1  & \multicolumn{5}{l}{1) Disinvestimenti di immobilizzazioni inerenti alle attività di interesse generale } & 2'000.00 \\
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
 22.09.2020  & 24  & Vendita di attrezzature dell'ufficio inutilizzate  & ,RF1  & 2'000.00  & 0.00  & 2'000.00 \\
@@ -970,7 +969,6 @@ RF4  & \multicolumn{5}{l}{4) Ricevimento di finanziamenti e di prestiti } & 10'5
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
 23.09.2020  & 25  & Ricevimento di un prestito dalla banca  & ,RF4  & 10'500.00  & 0.00  & 10'500.00 \\
 RF  & \multicolumn{5}{l}{Totale } & 12'500.00 \\
-IMRC  & \multicolumn{5}{l}{Imposte } & 0.00 \\
 \\
 GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
  & \multicolumn{5}{l}{CASSA E BANCA } & \\
@@ -1019,7 +1017,7 @@ Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
 22.12.2020  &  & Entrate Raccolta fondi Natale  & Banca  & 5'400.00  & 0.00  & 26'870.00 \\
 \\
 GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
-dCG  & \multicolumn{5}{l}{COSTI FIGURATIVI } & 0.00 \\
+ & \multicolumn{5}{l}{Costi figurativi } & \\
 RC1  & \multicolumn{5}{l}{1) Entrate da raccolte fondi abituali } & 2'400.00 \\
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
 15.12.2020  &  & Entrate Raccolta fondi Natale  & Entrate raccolte abituali  & 2'400.00  & 0.00  & 2'400.00 \\
@@ -1027,7 +1025,7 @@ RC2  & \multicolumn{5}{l}{2) Entrate da raccolte fondi occasionali } & 8'900.00 
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
 10.04.2020  & 16  & Donazioni da privati  & Entrate raccolte occasionali  & 8'900.00  & 0.00  & 8'900.00 \\
 RC  & \multicolumn{5}{l}{Totale } & 11'300.00 \\
-dRG  & \multicolumn{5}{l}{PROVENTI FIGURATIVI } & 0.00 \\
+ & \multicolumn{5}{l}{Proventi figurativi } & \\
 RG1  & \multicolumn{5}{l}{1) da attività di interesse generale } & 0.00 \\
 RG2  & \multicolumn{5}{l}{2) da attività diverse } & 0.00 \\
 RG  & \multicolumn{5}{l}{Totale } & 0.00 \\

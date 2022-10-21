@@ -414,7 +414,7 @@ function printRendicontoModA_Attivo(banDoc, report, userParam, bReport) {
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column, "assets-title lvl0", 1);
    }
-   tableRow.addCell("ATTIVO", "assets-title lvl0", 3);
+   tableRow.addCell(bReport.getObjectDescription("dA"), "assets-title lvl0", 3);
 
    /* AA */
    printRow(userParam, bReport, table, "AA", "description-groups", "amount-groups");
@@ -668,7 +668,7 @@ function printRendicontoModA_Passivo(banDoc, report, userParam, bReport) {
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column, "liabilties-title lvl0", 1);
    }
-   tableRow.addCell("PASSIVO", "liabilties-title lvl0", 3);
+   tableRow.addCell(bReport.getObjectDescription("dP"), "liabilties-title lvl0", 3);
 
    /* dPA */
    printRow(userParam, bReport, table, "dPA", "description-groups", "amount-groups");

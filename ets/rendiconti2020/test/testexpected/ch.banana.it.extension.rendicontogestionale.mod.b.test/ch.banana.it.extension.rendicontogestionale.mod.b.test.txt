@@ -18,7 +18,7 @@
 \newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
 \newenvironment{test}[1]{\section*{Test case: #1}}{}
 %Begin test data
-%%SCRIPT{/Users/ivan/Documents/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.rendicontogestionale.mod.b.test.js}
+%%SCRIPT{/Users/ivan/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.rendicontogestionale.mod.b.test.js}
 %
 \begin{testcase}{ReportModBTest}
 \begin{test}{testBananaExtension}
@@ -319,7 +319,7 @@ RENDICONTO GESTIONALE ANNO 2020 DETTAGLIO MOVIMENTI \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
 GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
- & \multicolumn{5}{l}{COSTI } & \\
+ & \multicolumn{5}{l}{ONERI E COSTI } & \\
  & \multicolumn{5}{l}{A) Costi e oneri da attività di interesse generale } & \\
 CA1  & \multicolumn{5}{l}{1) Materie prime, sussidiarie, di consumo e di merci } & 0.00 \\
 CA2  & \multicolumn{5}{l}{2) Servizi } & 3'700.00 \\
@@ -397,9 +397,6 @@ CE7  & \multicolumn{5}{l}{7) Altri oneri } & 0.00 \\
 CE8  & \multicolumn{5}{l}{8) Accantonamento a riserva vincolata per decisione degli organi istituzionali } & 0.00 \\
 CE9  & \multicolumn{5}{l}{9) Utilizzo riserva vincolata per decisione degli organi istituzionali } & 0.00 \\
 CE  & \multicolumn{5}{l}{Totale } & 0.00 \\
-CG1  & \multicolumn{5}{l}{1) da attività di interesse generale } & 0.00 \\
-CG2  & \multicolumn{5}{l}{2) da attività diverse } & 0.00 \\
-CG  & \multicolumn{5}{l}{Totale } & 0.00 \\
 C  & \multicolumn{5}{l}{TOTALE ONERI E COSTI } & 86'151.00 \\
 \\
 GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
@@ -461,15 +458,11 @@ RE  & \multicolumn{5}{l}{Totale } & 0.00 \\
 R  & \multicolumn{5}{l}{TOTALE PROVENTI E RICAVI } & 95'000.00 \\
 \\
 GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
-dCG  & \multicolumn{5}{l}{COSTI FIGURATIVI } & 0.00 \\
-RC1  & \multicolumn{5}{l}{1) Proventi da raccolte fondi abituali } & 2'400.00 \\
-Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
-15.12.2020  &  & Entrate Raccolta fondi Natale  & Entrate raccolte abituali  & 2'400.00  & 0.00  & 2'400.00 \\
-RC2  & \multicolumn{5}{l}{2) Proventi da raccolte fondi occasionali } & 8'900.00 \\
-Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
-10.04.2020  & 16  & Donazioni da privati  & Entrate raccolte occasionali  & 8'900.00  & 0.00  & 8'900.00 \\
-RC  & \multicolumn{5}{l}{Totale } & 11'300.00 \\
-dRG  & \multicolumn{5}{l}{PROVENTI FIGURATIVI } & 0.00 \\
+ & \multicolumn{5}{l}{Costi figurativi } & \\
+CG1  & \multicolumn{5}{l}{1) da attività di interesse generale } & 0.00 \\
+CG2  & \multicolumn{5}{l}{2) da attività diverse } & 0.00 \\
+CG  & \multicolumn{5}{l}{Totale } & 0.00 \\
+ & \multicolumn{5}{l}{Proventi figurativi } & \\
 RG1  & \multicolumn{5}{l}{1) da attività di interesse generale } & 0.00 \\
 RG2  & \multicolumn{5}{l}{2) da attività diverse } & 0.00 \\
 RG  & \multicolumn{5}{l}{Totale } & 0.00 \\

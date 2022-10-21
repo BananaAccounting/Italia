@@ -307,14 +307,14 @@ function printReport_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bRepor
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
    }
-   tableRow.addCell("USCITE", "table-header", 1);
+   tableRow.addCell(bReport.getObjectDescription("dC"), "table-header", 1);
    tableRow.addCell(dateCurrent, "table-header align-right", 1);
    tableRow.addCell(datePrevious, "table-header align-right", 1);
    tableRow.addCell("", "", 1);
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
    }
-   tableRow.addCell("ENTRATE", "table-header", 1);
+   tableRow.addCell(bReport.getObjectDescription("dR"), "table-header", 1);
    tableRow.addCell(dateCurrent, "table-header align-right", 1);
    tableRow.addCell(datePrevious, "table-header align-right", 1);
 
@@ -1098,14 +1098,14 @@ function printReport_Rendiconto_Investimenti_Disinvestimenti(report, banDoc, use
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(),"table-header", 1);
    }
-   tableRow.addCell("Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi", "table-header", 1);
+   tableRow.addCell(bReport.getObjectDescription("dCF"), "table-header", 1);
    tableRow.addCell(dateCurrent, "table-header align-center", 1);
    tableRow.addCell(datePrevious, "table-header align-center", 1);
    tableRow.addCell("", "", 1);
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(),"table-header", 1);
    }
-   tableRow.addCell("Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi", "table-header", 1);
+   tableRow.addCell(bReport.getObjectDescription("dRF"), "table-header", 1);
    tableRow.addCell(dateCurrent, "table-header align-center", 1);
    tableRow.addCell(datePrevious, "table-header align-center", 1);
 
@@ -1448,14 +1448,14 @@ function printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport) {
       if (userParam.printcolumn) {
          tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
       }
-      tableRow.addCell("Costi figurativi", "table-header", 1);
+      tableRow.addCell(bReport.getObjectDescription("dCG"), "table-header", 1);
       tableRow.addCell(dateCurrent, "table-header align-center", 1);
       tableRow.addCell(datePrevious, "table-header align-center", 1);
       tableRow.addCell("", "", 1);
       if (userParam.printcolumn) {
          tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
       }
-      tableRow.addCell("Proventi figurativi", "table-header", 1);
+      tableRow.addCell(bReport.getObjectDescription("dRG"), "table-header", 1);
       tableRow.addCell(dateCurrent, "table-header align-center", 1);
       tableRow.addCell(datePrevious, "table-header align-center", 1);
 

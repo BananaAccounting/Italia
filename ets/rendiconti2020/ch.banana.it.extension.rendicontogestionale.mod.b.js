@@ -294,14 +294,14 @@ function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) 
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
    }
-   tableRow.addCell("ONERI E COSTI", "table-header", 1);
+   tableRow.addCell(bReport.getObjectDescription("dC"), "table-header", 1);
    tableRow.addCell(dateCurrent, "table-header align-right", 1);
    tableRow.addCell(datePrevious, "table-header align-right", 1);
    tableRow.addCell("", "", 1);
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
    }
-   tableRow.addCell("PROVENTI E RICAVI", "table-header", 1);
+   tableRow.addCell(bReport.getObjectDescription("dR"), "table-header", 1);
    tableRow.addCell(dateCurrent, "table-header align-right", 1);
    tableRow.addCell(datePrevious, "table-header align-right", 1);
 
@@ -1252,14 +1252,14 @@ function printRendicontoModB_Costi_Proventi_Figurativi(report, banDoc, userParam
       if (userParam.printcolumn) {
          tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
       }
-      tableRow.addCell("Costi figurativi", "table-header align-center", 1);
+      tableRow.addCell(bReport.getObjectDescription("dCG"), "table-header align-center", 1);
       tableRow.addCell(dateCurrent, "table-header align-center", 1);
       tableRow.addCell(datePrevious, "table-header align-center", 1);
       tableRow.addCell("", "", 1);
       if (userParam.printcolumn) {
          tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
       }
-      tableRow.addCell("Proventi figurativi", "table-header align-center", 1);
+      tableRow.addCell(bReport.getObjectDescription("dRG"), "table-header align-center", 1);
       tableRow.addCell(dateCurrent, "table-header align-center", 1);
       tableRow.addCell(datePrevious, "table-header align-center", 1);
 
