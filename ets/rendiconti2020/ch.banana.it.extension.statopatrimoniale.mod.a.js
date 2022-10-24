@@ -1052,18 +1052,6 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   // currentParam = {};
-   // currentParam.name = 'excludezeroamounts';
-   // currentParam.parentObject = 'reportcontrollo';
-   // currentParam.title = 'Escludi dettagli per i gruppi con saldo zero';
-   // currentParam.type = 'bool';
-   // currentParam.value = userParam.excludezeroamounts ? true : false;
-   // currentParam.defaultvalue = false;
-   // currentParam.readValue = function() {
-   //    userParam.excludezeroamounts = this.value;
-   // }
-   // convertedParam.data.push(currentParam);   
-
    return convertedParam;
 }
 
@@ -1082,7 +1070,6 @@ function initUserParam() {
    userParam.stampa = true;
    userParam.finalnotes = '';
    userParam.stampareportcontrollo = false;
-   // userParam.excludezeroamounts = false;
    return userParam;
 }
 

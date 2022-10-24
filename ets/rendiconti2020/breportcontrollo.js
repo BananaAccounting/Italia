@@ -673,6 +673,13 @@ var BReportControllo = class JsClass {
 
             tableRow = table.addRow();
 
+            // ONLY FOR "Rendiconto Stato Patrimoniale"
+            // Do not prints elements that can be excluded, when the "compattastampa" parameter in settings is TRUE.
+            // Elements that can be excluded have the "exclude" property in "reportStructure" obj set to TRUE. All the other are set to FALSE.
+            if (this.userParam.compattastampa && obj.exclude) {
+               continue; // go directly to the next element of the object
+            }
+
             // ID (GR1) column
             // do not print ID (GR1) for title/descriptions
             if (isTitle) {
