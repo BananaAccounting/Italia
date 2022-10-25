@@ -1547,7 +1547,7 @@ function findBalanceColumns(banDoc) {
 }
 
 function formatValue(value) {
-   if (!value || value === "0" || value === null) {
+   if (!value || value === "0" || value == null) {
       value = "0";
    }
    return Banana.Converter.toLocaleNumberFormat(value);
@@ -1578,7 +1578,7 @@ function checkLiquidity(report, banDoc, bReport) {
    // Banana.console.log("->tot liquidità corrente: " + totLiqCurr);
    // Banana.console.log(">>>> " + totLiqPrecAvanzo + " ?= " + totLiqCurr);
 
-   if (Banana.SDecimal.compare(totLiqPrecAvanzo,totLiqCurr) !== 0) {
+   if (Banana.SDecimal.compare(totLiqPrecAvanzo,totLiqCurr) != 0) {
       report.addParagraph(" ", "");
       //Somma tra 'Avanzo/Disavanzo complessivo e liquidità anno precedente' <" + formatValue(totLiqPrecAvanzo) + "> non corrisponde alla 'somma della liquidità anno corrente' <"+ formatValue(totLiqCurr) +">"
 
@@ -1678,7 +1678,7 @@ function controlloRegistrazioni(report, banDoc, userParam, bReport) {
       var tRow = journal.row(i);
 
       // take only transactions rows
-      if (tRow.value('JOperationType') === banDoc.OPERATIONTYPE_TRANSACTION) {
+      if (tRow.value('JOperationType') == banDoc.OPERATIONTYPE_TRANSACTION) {
 
          var jContraAccountGroup = tRow.value('JContraAccountGroup');
          var rowOrigin = tRow.value('JRowOrigin');
