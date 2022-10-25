@@ -214,5 +214,33 @@ ReportModATest.prototype.testBananaExtension = function() {
     report = stampaReportControllo(banDoc, paramReport);
 	
 	Test.logger.addReport("Test 6: report di controllo - Stato Patrimoniale", report);
+
+
+	/**
+	 * Test 7: report di controllo con compattastampa
+	*/
+    banDoc = Banana.application.openDocument("file:script/../test/testcases/11094-entrate-uscite-ets-rendiconto-cassa-tutorial.ac2");
+	Test.assert(banDoc);
+
+    userParam = {};
+  	userParam.selectionStartDate = "2020-01-01";
+  	userParam.selectionEndDate = "2020-12-31";
+  	userParam.title = "XXX";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr1';
+	userParam.printcolumn = true;
+	userParam.printpreviousyear = true;
+	userParam.compattastampa = true;
+	userParam.stampareportcontrollo = true;
+
+    paramReport = setParamReport(banDoc, userParam);
+    report = stampaReportControllo(banDoc, paramReport);
+	
+	Test.logger.addReport("Test 6: report di controllo - Stato Patrimoniale", report);
+
 }
 
