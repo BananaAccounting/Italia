@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontogestionale.mod.b
 // @api = 1.0
-// @pubdate = 2022-08-05
+// @pubdate = 2022-10-19
 // @publisher = Banana.ch SA
 // @description = 2. Rendiconto gestionale
 // @task = app.command
@@ -25,6 +25,7 @@
 // @timeout = -1
 // @includejs = reportstructure.js
 // @includejs = breport.js
+// @includejs = breportcontrollo.js
 // @includejs = errors.js
 
 
@@ -66,38 +67,102 @@ function exec(string) {
       return "@Cancel";
    }
 
-   /**
-    * 1. Loads the report structure
-    */
-   var reportStructure = createReportStructureRendicontoGestionale();
-
-   /**
-    * 2. Calls methods to load balances, calculate totals, format amounts
-    * and check entries that can be excluded
-    */
-   const bReport = new BReport(Banana.document, userParam, reportStructure);
-   bReport.validateGroups_IncomeExpenses(userParam.column, reportStructure);
-   bReport.loadBalances();
-   bReport.calculateTotals(["currentAmount", "previousAmount"]);
-   bReport.formatValues(["currentAmount", "previousAmount"]);
-   //Banana.console.log(JSON.stringify(reportStructure, "", " "));
-
-   /**
-    * 3. Set variables used for the CSS
-    * Variables start with $
-    */
+   // Set variables used for the CSS. Variables start with $
    var variables = {};
    setVariables(variables, userParam);
 
-   /**
-    * 4. Creates the report
-    */
+   // Creates the report stylesheet
    var stylesheet = Banana.Report.newStyleSheet();
-   var report = printRendicontoModB(Banana.document, userParam, bReport, stylesheet);
-   setCss(Banana.document, stylesheet, variables, userParam);
 
+   // Create the param report object
+   var paramReport = setParamReport(Banana.document, userParam);
+
+   // Print the report (normal or with transactions movements)
+   var report;
+   if (userParam.stampareportcontrollo) {
+      report = stampaReportControllo(Banana.document, paramReport);
+   } else {
+      report = stampaReportNormale(Banana.document, paramReport, stylesheet);
+   }
+
+   setCss(Banana.document, stylesheet, variables, userParam);
    Banana.Report.preview(report, stylesheet);
 }
+
+
+function stampaReportNormale(banDoc, paramReport, stylesheet) {
+
+   // Prints the normal report
+
+   var bReport = new BReport(banDoc, paramReport);
+   bReport.validateGroups_IncomeExpenses(paramReport.userParam.column, paramReport.reportStructure);
+   bReport.loadBalances();
+   bReport.calculateTotals(["currentAmount", "previousAmount"]);
+   bReport.formatValues(["currentAmount", "previousAmount"]);
+
+   var report = printRendicontoModB(banDoc, paramReport.userParam, bReport, stylesheet);
+
+   return report;
+}
+
+function stampaReportControllo(banDoc, paramReport) {
+   
+   // Print the report with transactions movements
+   
+   var bReportControllo = new BReportControllo(banDoc, paramReport);
+   bReportControllo.validateGroups_IncomeExpenses(paramReport.userParam.column, paramReport.reportStructure);
+   bReportControllo.loadBalances();
+   bReportControllo.calculateTotals(["currentAmount", "previousAmount"]);
+   bReportControllo.formatValues(["currentAmount", "previousAmount"]);
+
+   var report = bReportControllo.printReportControllo();
+
+   return report;
+}
+
+function setParamReport(banDoc, userParam) {
+
+   let paramReport = {};
+   // paramReport.userParam;
+   // paramReport.reportStructure;
+   // paramReport.printStructure;
+   // paramReport.currentCardFields;
+   // paramReport.currentCardTitles;
+   
+   // User parameters from script settings
+   paramReport.userParam = userParam;
+
+   // Report structure
+   let reportStructure = createReportStructureRendicontoGestionale();
+   paramReport.reportStructure = reportStructure;
+
+   // Print report structure
+   let printStructure = createPrintStructureRendicontoGestionale();
+   paramReport.printStructure = printStructure;
+
+   // CurrentCard fields names
+   let currentCardFields = ["JDate","Doc","JDescription","JAccount","JDebitAmount","JCreditAmount","JBalance"];
+   paramReport.currentCardFields = currentCardFields;
+   
+   // CurrentCard columns headers texts
+   let currentCardTitles = [];
+   if (banDoc.table("Categories")) {
+      currentCardTitles = ["Data","Doc","Descrizione","Conto","Entrate","Uscite","Saldo"];
+   } else {
+      currentCardTitles = ["Data","Doc","Descrizione","Conto","Dare","Avere","Saldo"];
+   }
+   paramReport.currentCardTitles = currentCardTitles;
+   
+   return paramReport;
+}
+
+
+
+
+
+
+
+
 
 function printRendicontoModB(banDoc, userParam, bReport, stylesheet) {
 
@@ -203,39 +268,40 @@ function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) 
    datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
    
    var table = report.addTable("table");
+   var column0,column1,column2,column3,column4,column5,column6,column7,column8;
    if (userParam.printcolumn) {
-      var column0 = table.addColumn("column00");
-      var column1 = table.addColumn("column01");
-      var column2 = table.addColumn("column02");
-      var column3 = table.addColumn("column03");
-      var column4 = table.addColumn("column04");
-      var column5 = table.addColumn("column05");
-      var column6 = table.addColumn("column06");
-      var column7 = table.addColumn("column07");
-      var column8 = table.addColumn("column08");
+      column0 = table.addColumn("column00");
+      column1 = table.addColumn("column01");
+      column2 = table.addColumn("column02");
+      column3 = table.addColumn("column03");
+      column4 = table.addColumn("column04");
+      column5 = table.addColumn("column05");
+      column6 = table.addColumn("column06");
+      column7 = table.addColumn("column07");
+      column8 = table.addColumn("column08");
    }
    else {
-      var column1 = table.addColumn("column1");
-      var column2 = table.addColumn("column2");
-      var column3 = table.addColumn("column3");
-      var column4 = table.addColumn("column4");
-      var column5 = table.addColumn("column5");
-      var column6 = table.addColumn("column6");
-      var column7 = table.addColumn("column7");
+      column1 = table.addColumn("column1");
+      column2 = table.addColumn("column2");
+      column3 = table.addColumn("column3");
+      column4 = table.addColumn("column4");
+      column5 = table.addColumn("column5");
+      column6 = table.addColumn("column6");
+      column7 = table.addColumn("column7");
    }
 
    tableRow = table.addRow();
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
    }
-   tableRow.addCell("ONERI E COSTI", "table-header", 1);
+   tableRow.addCell(bReport.getObjectDescription("dC"), "table-header", 1);
    tableRow.addCell(dateCurrent, "table-header align-right", 1);
    tableRow.addCell(datePrevious, "table-header align-right", 1);
    tableRow.addCell("", "", 1);
    if (userParam.printcolumn) {
       tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
    }
-   tableRow.addCell("PROVENTI E RICAVI", "table-header", 1);
+   tableRow.addCell(bReport.getObjectDescription("dR"), "table-header", 1);
    tableRow.addCell(dateCurrent, "table-header align-right", 1);
    tableRow.addCell(datePrevious, "table-header align-right", 1);
 
@@ -1160,39 +1226,40 @@ function printRendicontoModB_Costi_Proventi_Figurativi(report, banDoc, userParam
       report.addParagraph(" ", "");
 
       var table = report.addTable("table");
+      var column0,column1,column2,column3,column4,column5,column6,column7,column8;
       if (userParam.printcolumn) {
-         var column0 = table.addColumn("column00");
-         var column1 = table.addColumn("column01");
-         var column2 = table.addColumn("column02");
-         var column3 = table.addColumn("column03");
-         var column4 = table.addColumn("column04");
-         var column5 = table.addColumn("column05");
-         var column6 = table.addColumn("column06");
-         var column7 = table.addColumn("column07");
-         var column8 = table.addColumn("column08");
+         column0 = table.addColumn("column00");
+         column1 = table.addColumn("column01");
+         column2 = table.addColumn("column02");
+         column3 = table.addColumn("column03");
+         column4 = table.addColumn("column04");
+         column5 = table.addColumn("column05");
+         column6 = table.addColumn("column06");
+         column7 = table.addColumn("column07");
+         column8 = table.addColumn("column08");
       }
       else {
-         var column1 = table.addColumn("column1");
-         var column2 = table.addColumn("column2");
-         var column3 = table.addColumn("column3");
-         var column4 = table.addColumn("column4");
-         var column5 = table.addColumn("column5");
-         var column6 = table.addColumn("column6");
-         var column7 = table.addColumn("column7");
+         column1 = table.addColumn("column1");
+         column2 = table.addColumn("column2");
+         column3 = table.addColumn("column3");
+         column4 = table.addColumn("column4");
+         column5 = table.addColumn("column5");
+         column6 = table.addColumn("column6");
+         column7 = table.addColumn("column7");
       }
       
       tableRow = table.addRow();
       if (userParam.printcolumn) {
          tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
       }
-      tableRow.addCell("Costi figurativi", "table-header align-center", 1);
+      tableRow.addCell(bReport.getObjectDescription("dCG"), "table-header align-center", 1);
       tableRow.addCell(dateCurrent, "table-header align-center", 1);
       tableRow.addCell(datePrevious, "table-header align-center", 1);
       tableRow.addCell("", "", 1);
       if (userParam.printcolumn) {
          tableRow.addCell(userParam.column.toUpperCase(), "table-header", 1);
       }
-      tableRow.addCell("Proventi figurativi", "table-header align-center", 1);
+      tableRow.addCell(bReport.getObjectDescription("dRG"), "table-header align-center", 1);
       tableRow.addCell(dateCurrent, "table-header align-center", 1);
       tableRow.addCell(datePrevious, "table-header align-center", 1);
 
@@ -1261,7 +1328,12 @@ function printRendicontoModB_Note_Finali(report, userParam) {
  **************************************************************************************/
 function setCss(banDoc, repStyleObj, variables, userParam) {
    var textCSS = "";
-   var file = Banana.IO.getLocalFile("file:script/rendicontoModB.css");
+   var file = "";
+   if (userParam.stampareportcontrollo) {
+      file = Banana.IO.getLocalFile("file:script/reportControllo.css");
+   } else {
+      file = Banana.IO.getLocalFile("file:script/rendicontoModB.css");
+   }
    var fileContent = file.read();
    if (!file.errorString) {
       Banana.IO.openPath(fileContent);
@@ -1297,7 +1369,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'logo';
    currentParam.parentObject = 'header_group';
    currentParam.title = 'Stampa logo';
@@ -1309,7 +1381,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'logoname';
    currentParam.parentObject = 'header_group';
    currentParam.title = 'Nome logo (Imposta Logo -> Personalizzazione)';
@@ -1333,7 +1405,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'headertext';
    currentParam.parentObject = 'header_group';
    currentParam.title = 'Testo indirizzo alternativo (su più righe)';
@@ -1345,7 +1417,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'title_group';
    currentParam.title = 'Titolo';
    currentParam.type = 'string';
@@ -1368,7 +1440,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'title';
    currentParam.parentObject = 'title_group';
    currentParam.title = 'Testo titolo alternativo (vuoto = testo predefinito)';
@@ -1380,7 +1452,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'report_group';
    currentParam.title = 'Dettagli gestionale';
    currentParam.type = 'string';
@@ -1391,7 +1463,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'column';
    currentParam.parentObject = 'report_group';
    currentParam.title = "Colonna raggruppamento (nome XML colonna)";
@@ -1403,7 +1475,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'printcolumn';
    currentParam.parentObject = 'report_group';
    currentParam.title = 'Stampa colonna raggruppamento';
@@ -1415,7 +1487,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'printcostifigurativi';
    currentParam.parentObject = 'report_group';
    currentParam.title = 'Stampa sezione costi e proventi figurativi';
@@ -1427,7 +1499,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'finalnotes';
    currentParam.parentObject = 'report_group';
    currentParam.title = 'Note finali';
@@ -1439,7 +1511,7 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'styles';
    currentParam.title = 'Stili';
    currentParam.type = 'string';
@@ -1450,15 +1522,38 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
-   var currentParam = {};
+   currentParam = {};
    currentParam.name = 'colorheadertable';
    currentParam.parentObject = 'styles';
    currentParam.title = 'Colore intestazioni tabelle';
-   currentParam.type = 'string';
+   currentParam.type = 'color';
    currentParam.value = userParam.colorheadertable ? userParam.colorheadertable : '#337ab7';
    currentParam.defaultvalue = '#337ab7';
    currentParam.readValue = function() {
    userParam.colorheadertable = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'reportcontrollo';
+   currentParam.title = 'Dettagli movimenti';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+      userParam.reportcontrollo = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'stampareportcontrollo';
+   currentParam.parentObject = 'reportcontrollo';
+   currentParam.title = 'Stampa report con dettagli movimenti anno corrente';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.stampareportcontrollo ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+      userParam.stampareportcontrollo = this.value;
    }
    convertedParam.data.push(currentParam);
 
@@ -1478,6 +1573,7 @@ function initUserParam() {
    userParam.printcostifigurativi = false;
    userParam.finalnotes = '';
    userParam.colorheadertable = '#337ab7';
+   userParam.stampareportcontrollo = false;
    return userParam;
 }
 

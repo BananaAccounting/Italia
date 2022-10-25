@@ -16,39 +16,7 @@
 /* Update: 2022-10-19 */
 
 
-
-
-/**
- * Report structure:
- * - "id" used as GR/GR1 and to identify the object
- * - "type" used to define the type of data ("title", "group" and "total")
- *     - title:
- *        - Normally used when a title or a description text without amount must be displayed.
- *        - The "id" group starts with a "d" (description).
- *        - Example:
- *          {"id":"dABI", "type":"title", "indent":"1", "description":"I - Immobilizzazioni immateriali"}
- *     - group:
- *        - Used when a group with text and amount must be displayed.
- *        - Examples:
- *          {"id":"ABI1", "type":"group", "indent":"2", "bclass":"1", "description":"1) costi di impianto e di ampliamento"}
- *          {"id":"ABI2", "type":"group", "indent":"2", "bclass":"1", "description":"2) costi di sviluppo"}
- *     - total:
- *        - Used for the total of a group with and amount.
- *        - The amount is the sum groups amounts.
- *        - Use the property "sum" to indicate the list of all "id" groups that must be summed together, separated by a semicolon ";".
- *        - To subtract amounts use the minus sign "-" before the group "id".
- *        - Examples:
- *          {"id":"ABI", "type":"total", "indent":"1", "description":"Totale immobilizzazioni immateriali", "sum":"ABI1;ABI2"}      => sum = ABI1 + ABI2
- *          {"id":"ABI", "type":"total", "indent":"1", "description":"Totale immobilizzazioni immateriali", "sum":"ABI1;-ABI2"}     => sum = ABI1 - ABI2
- *
- * - "indent" used to define the indent level for the print
- * - "bclass" used to define the bclass of the group
- * - "description" used to define the description text used for the print
- * - "sum" used to define how to calculate the total
- */
-
-
-var BReport = class JsClass {
+var BReportControllo = class JsClass {
    
    constructor(banDoc, paramReport) {
       this.banDoc = banDoc;
@@ -59,6 +27,13 @@ var BReport = class JsClass {
       this.currentCardFields = paramReport.currentCardFields;
       this.currentCardTitles = paramReport.currentCardTitles;
       this.version = '1.0';
+
+      // Banana.console.log(JSON.stringify(this.paramReport, "", " "));
+      // Banana.console.log(JSON.stringify(this.userParam, "", " "));
+      // Banana.console.log(JSON.stringify(this.reportStructure, "", " "));
+      // Banana.console.log(JSON.stringify(this.printStructure, "", " "));
+      // Banana.console.log(JSON.stringify(this.currentCardFields, "", " "));
+      // Banana.console.log(JSON.stringify(this.currentCardTitles, "", " "));
    }
 
    /**
@@ -76,12 +51,43 @@ var BReport = class JsClass {
               }
               else {
                 this.reportStructure[i]["currentAmount"] = this.calculateCurrentBalances(this.reportStructure[i]["id"], this.reportStructure[i]["bclass"], this.userParam.column, this.userParam.selectionStartDate, this.userParam.selectionEndDate);
+                this.reportStructure[i]["currentCard"] = this.calculateCurrentCards(this.reportStructure[i]["id"], this.reportStructure[i]["bclass"], this.userParam.column, this.userParam.selectionStartDate, this.userParam.selectionEndDate);
                 this.reportStructure[i]["previousAmount"] = this.calculatePreviousBalances(this.reportStructure[i]["id"], this.reportStructure[i]["bclass"], this.userParam.column);
               }
 
             }
          }
       }
+   }
+
+   /**
+    * Calculate current account card of the accounts belonging to the same group (grText)
+    */
+   calculateCurrentCards(grText, bClass, grColumn, startDate, endDate) {
+
+      // grText => testo nel campo "id" struttura dati
+      // grColumn => Gr1 o Gr scelto nei parametri
+      
+      var accounts = [];
+
+      if (this.banDoc.table("Categories") && (bClass === "3" || bClass === "4")) {
+        var categoryNumbers = this.getColumnListForGr(this.banDoc.table("Categories"), grText, "Category", grColumn);
+        categoryNumbers = categoryNumbers.join("|");
+        accounts.push(categoryNumbers);
+      }
+      else {
+        var accountNumbers = this.getColumnListForGr(this.banDoc.table("Accounts"), grText, "Account", grColumn);
+        accountNumbers = accountNumbers.join("|");
+        accounts.push(accountNumbers);
+      }
+
+      // Banana.console.log(accounts); // es. Banca|Banca2
+
+      // get the account card table
+      let accountCard = this.banDoc.currentCard(accounts, startDate, endDate);
+
+      // convert the table to JSON string and parse it
+      return JSON.parse(accountCard.toJSON());
    }
 
    /**
@@ -583,5 +589,195 @@ var BReport = class JsClass {
          //Already calculated in loadBalances()
       }
    }
+
+
+
+
+
+
+
+
+
+
+
+   /**************************************************************************************
+    * Functions to print the control report
+    *
+    * - prints only current year amounts column (previous year column is not printed)
+    * - prints all the rows of the report, even if with zero amounts
+    * - for each GR1 prints an account card:
+    *   - with opening balace when exists
+    *   - with transactions details of all the accounts that belongs to the GR1 group
+    *   - in case of transactions or opening balance doesn't exist, the account card is not printed
+    * 
+    **************************************************************************************/
+   printReportControllo() {
+
+      var bReportControllo = new BReportControllo(this.banDoc, this.paramReport);
+
+      let dialog = "";
+      let title = "";
+      for (let i = 0; i < this.printStructure.length; i++) {
+         if (this.printStructure[i].dialogText) {
+            dialog = this.printStructure[i].dialogText;
+         }
+         if (this.printStructure[i].titleText) {
+            title = this.printStructure[i].titleText;
+         }
+      }
+
+      //Banana.console.log(JSON.stringify(reportStructure, "", " "));
+
+      let report = Banana.Report.newReport(dialog);
+      let dateCurrent = this.userParam.selectionEndDate;
+      let currentYear = Banana.Converter.toDate(this.userParam.selectionEndDate).getFullYear();
+      
+      report.addParagraph(title.replace("%1", currentYear),"bold");
+      report.addParagraph(" ", "");
+
+      let table = report.addTable("tableReportControllo");
+      let tableRow;
+
+      tableRow = table.addRow();
+      tableRow.addCell("GR1", "bold", 1);
+      tableRow.addCell("DESCRIZIONE", "bold", 5);
+      tableRow.addCell(Banana.Converter.toLocaleDateFormat(dateCurrent), "bold align-right", 1);
+
+
+
+      /**
+       * Use the printStructure to print the data in the correct sequence
+       * and also use additional printing setup like css styles etc.
+       */
+      for (let j = 0; j < this.printStructure.length; j++) {
+
+         let id = this.printStructure[j].id; // id=gr1
+
+         if (id) { // exclude the "texts" objects
+
+            let isTitle = this.printStructure[j].isTitle; //exclude id (gr1) and amount for the title/description texts
+            let obj = bReportControllo.getObject(id); //take the single object by ID from the reportStructure
+
+            //Add the content on a new page
+            if (this.printStructure[j].newpage) {
+               
+               tableRow = table.addRow();
+               tableRow.addCell().addPageBreak();
+
+               tableRow = table.addRow();
+               tableRow.addCell("GR1", "bold", 1);
+               tableRow.addCell("DESCRIZIONE", "bold", 5);
+               tableRow.addCell(Banana.Converter.toLocaleDateFormat(dateCurrent), "bold align-right", 1);
+            }
+
+            // ONLY FOR "Rendiconto Stato Patrimoniale"
+            // Do not prints elements that can be excluded, when the "compattastampa" parameter in settings is TRUE.
+            // Elements that can be excluded have the "exclude" property in "reportStructure" obj set to TRUE. All the other are set to FALSE.
+            if (this.userParam.compattastampa && obj.exclude) {
+               continue; // go directly to the next element of the object
+            }
+
+            tableRow = table.addRow();
+
+            // ID (GR1) column
+            // do not print ID (GR1) for title/descriptions
+            if (isTitle) {
+               tableRow.addCell("", "", 1);
+            } else {
+               tableRow.addCell(obj.id, "", 1);
+            }
+
+            // Description column
+            let indent = ""; //"lvl" + obj.indent;
+            tableRow.addCell(obj.description, indent, 5);
+
+            // Current amount column
+            // do not print the formatted amount for descriptions to avoid "0.00" when empty
+            if (isTitle) {
+               tableRow.addCell("", "", 1);
+            } else {
+               tableRow.addCell(obj.currentAmountFormatted, "align-right", 1);
+            }
+
+            /**
+             * Prints the current card details 
+             */
+
+            //Adds the currentCard if not empty
+            // Banana.console.log(JSON.stringify(obj, "", " "));
+            let currentCard = obj.currentCard;
+            
+            //Function call that adds the account card
+            this.printReportControllo_CurrentCard(table, currentCard, this.currentCardFields, this.currentCardTitles);
+         }
+      }
+
+      report.getFooter().addClass("footer");
+      report.getFooter().addText("- ", "");
+      report.getFooter().addFieldPageNr();
+      report.getFooter().addText(" -", "");
+
+      return report;
+   }
+
+   /**
+    * Function that prints the account card
+    * 
+    * table: the table of the report where to add the account card
+    * currentCard: the object that contains the data of the account card for the GR1
+    * currentCardFields: array with the name of the fields of the object currentCard that will be added to the report
+    * currentCardTitles: array with the headers names of the account card
+    */
+   printReportControllo_CurrentCard(table, currentCard, currentCardFields, currentCardTitles) {
+
+      let headerIsPrinted = false;
+      let tableRow;
+
+      if (currentCard && currentCard.length > 0) {
+
+         //Banana.console.log(JSON.stringify(currentCard, "", " "));
+
+         for (let j = 0; j < currentCard.length; j++) {
+
+            //solo se ci sono movimenti e se Opening
+            //esclude totali "Totali movimenti"
+            if ( (currentCard[j].JDebitAmount || currentCard[j].JCreditAmount || currentCard[j].SysCod == "Opening") && currentCard[j].SysCod !== "Totals" ) {
+
+               // "SysCod": "Opening" => opening balance, first row
+               // "SysCod": "Totals"  => total line, last row
+
+               // Prints the currentCard header columns, defined in the array currentCardTitles
+               if (!headerIsPrinted) {
+
+                  tableRow = table.addRow();
+                  for (let k = 0; k < currentCardTitles.length; k++) {
+                     tableRow.addCell(currentCardTitles[k],"bold details align-center", 1);
+                  }
+
+                  headerIsPrinted = true; //header printed the first time, so do not print columns headers anymore
+               }
+
+               // Prints the currentCard data using the fields defined in the array currentCardFields
+               tableRow = table.addRow();
+               for (let k = 0; k < currentCardFields.length; k++) {
+
+                  if (currentCardFields[k] === "JDate") {
+                     //format dates
+                     tableRow.addCell(Banana.Converter.toLocaleDateFormat(currentCard[j][currentCardFields[k]]),"details", 1);
+                  }
+                  else if (currentCardFields[k].startsWith("JAmount") || currentCardFields[k].startsWith("JBalance") || currentCardFields[k].startsWith("JDebitAmount") || currentCardFields[k].startsWith("JCreditAmount")) {
+                     //format amounts
+                     //JAmount, JAmountAccountCurrency, JAmountTransactionCurrency, JDebitAmount, JCreditAmount, JDebitAmountAccountCurrency, JCreditAmountAccountCurrency, JBalance, JBalanceAccountCurrency
+                     tableRow.addCell(Banana.Converter.toLocaleNumberFormat(currentCard[j][currentCardFields[k]]),"details align-right", 1);
+                  }
+                  else {
+                     tableRow.addCell(currentCard[j][currentCardFields[k]],"details", 1);
+                  }
+               }
+            }
+         }
+      }
+   }
+
 
 }

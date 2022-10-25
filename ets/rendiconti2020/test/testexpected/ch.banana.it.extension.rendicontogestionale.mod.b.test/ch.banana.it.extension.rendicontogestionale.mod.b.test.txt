@@ -18,7 +18,7 @@
 \newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
 \newenvironment{test}[1]{\section*{Test case: #1}}{}
 %Begin test data
-%%SCRIPT{/Users/ivan/Documents/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.rendicontogestionale.mod.b.test.js}
+%%SCRIPT{/Users/ivan/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.rendicontogestionale.mod.b.test.js}
 %
 \begin{testcase}{ReportModBTest}
 \begin{test}{testBananaExtension}
@@ -313,6 +313,161 @@ CG1  & 1) da attività di interesse generale  & 0.00  & 0.00  &  & RG1  & 1) da 
 CG2  & 2) da attività diverse  & 0.00  & 0.00  &  & RG2  & 2) da attività diverse  & 0.00  & 0.00 \\
 CG  & Totale  & 0.00  & 0.00  &  & RG  & Totale  & 0.00  & 0.00 \\
 \end{longtable}
+\end{reportvalue}
+\begin{reportvalue}{Test 4: report di controllo - Rendiconto Gestionale}
+RENDICONTO GESTIONALE ANNO 2020 DETTAGLIO MOVIMENTI \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+ & \multicolumn{5}{l}{ONERI E COSTI } & \\
+ & \multicolumn{5}{l}{A) Costi e oneri da attività di interesse generale } & \\
+CA1  & \multicolumn{5}{l}{1) Materie prime, sussidiarie, di consumo e di merci } & 0.00 \\
+CA2  & \multicolumn{5}{l}{2) Servizi } & 3'700.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+13.01.2020  & 7  & Pagata fattura per pulizia locali  & Pulizie  & 0.00  & 700.00  & -700.00 \\
+12.04.2020  & 17  & Consulenze fiscali  & Consulenze fiscali  & 0.00  & 1'600.00  & -2'300.00 \\
+20.04.2020  & 18  & Pagata fattura per pulizia locali  & Pulizie  & 0.00  & 700.00  & -3'000.00 \\
+15.09.2020  & 22  & Pagata fattura per pulizia locali  & Pulizie  & 0.00  & 700.00  & -3'700.00 \\
+CA3  & \multicolumn{5}{l}{3) Godimento beni di terzi } & 3'100.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+02.01.2020  & 1  & Pagamento affitto mese di gennaio  & Affitto  & 0.00  & 600.00  & -600.00 \\
+07.12.2020  & 31  & Noleggiate attrezzature per mercatino  & Noleggio attrezzature  & 0.00  & 2'500.00  & -3'100.00 \\
+CA4  & \multicolumn{5}{l}{4) Personale } & 67'960.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+10.01.2020  & 5  & Rimborsate spese ai volontari   & Rimborsi spese  & 0.00  & 5'600.00  & -5'600.00 \\
+16.01.2020  & 9  & Rimborsate spese ai volontari - 5x Mille Anno precedente  & Rimborsi spese  & 0.00  & 2'500.00  & -8'100.00 \\
+23.02.2020  & 12  & Stipendi netti personale dipendente  & Personale dipendente  & 0.00  & 16'900.00  & -25'000.00 \\
+26.02.2020  & 13  & Pagati contributi previdenziali  & Previdenziali  & 0.00  & 7'900.00  & -32'900.00 \\
+29.02.2020  & 14  & Onorari pagati al personale occasionale - 5x Mille Anno corrente  & Previdenziali occasionali  & 0.00  & 3'500.00  & -36'400.00 \\
+23.05.2020  & 19  & Stipendi netti personale dipendente  & Personale dipendente  & 0.00  & 15'400.00  & -51'800.00 \\
+11.10.2020  & 27  & Pagati contributi per personale occasionale  & Previdenziali occasionali  & 0.00  & 960.00  & -52'760.00 \\
+23.11.2020  & 30  & Stipendi netti personale dipendente  & Personale dipendente  & 0.00  & 15'200.00  & -67'960.00 \\
+CA5  & \multicolumn{5}{l}{5) Ammortamenti } & 0.00 \\
+CA5b  & \multicolumn{5}{l}{5 bis) svalutazioni delle immobilizzazioni materiali ed immateriali } & 0.00 \\
+CA6  & \multicolumn{5}{l}{6) Accantonamenti per rischi ed oneri } & 0.00 \\
+CA7  & \multicolumn{5}{l}{7) Oneri diversi di gestione } & 9'941.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+02.01.2020  & 1  & Pagamento pubblicità  & Pubblicità  & 0.00  & 400.00  & -400.00 \\
+08.01.2020  & 4  & Pagato premio per assicurazione malattia, infortuni del personale volontario  & Assicurazioni volontari  & 0.00  & 1'260.00  & -1'660.00 \\
+12.01.2020  & 6  & Acquistati francobolli - Uscita Progetto 1  & Postali  & 0.00  & 250.00  & -1'910.00 \\
+15.01.2020  & 8  & Pagata fattura dal fornitore A per Progetto 3  & Uscite varie  & 0.00  & 6'321.00  & -8'231.00 \\
+03.06.2020  & 20  & Pagamento pubblicità  & Pubblicità  & 0.00  & 750.00  & -8'981.00 \\
+12.10.2020  & 28  & Pagate spese di pubblicità per progetto A - 5x Mille Anno corrente  & Pubblicità  & 0.00  & 960.00  & -9'941.00 \\
+CA8  & \multicolumn{5}{l}{8) Rimanenze iniziali } & 0.00 \\
+CA9  & \multicolumn{5}{l}{9) Accantonamento a riserva vincolata per decisione degli organi istituzionali } & 0.00 \\
+CA10  & \multicolumn{5}{l}{10) Utilizzo riserva vincolata per decisione degli organi istituzionali } & 0.00 \\
+CA  & \multicolumn{5}{l}{Totale } & 84'701.00 \\
+ & \multicolumn{5}{l}{B) Costi e oneri da attività diverse } & \\
+CB1  & \multicolumn{5}{l}{1) Materie prime, sussidiarie, di consumo e di merci } & 1'000.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.08.2020  & 21  & Fondi 5 per mille erogati ad altra associazione - 5x Mille Anno corrente  & Materie prime Diverse  & 0.00  & 1'000.00  & -1'000.00 \\
+CB2  & \multicolumn{5}{l}{2) Servizi } & 0.00 \\
+CB3  & \multicolumn{5}{l}{3) Godimento beni di terzi } & 0.00 \\
+CB4  & \multicolumn{5}{l}{4) Personale } & 0.00 \\
+CB5  & \multicolumn{5}{l}{5) Ammortamenti } & 0.00 \\
+CB5b  & \multicolumn{5}{l}{5 bis) svalutazioni delle immobilizzazioni materiali ed immateriali } & 0.00 \\
+CB6  & \multicolumn{5}{l}{6) Accantonamenti per rischi ed oneri } & 0.00 \\
+CB7  & \multicolumn{5}{l}{7) Oneri diversi di gestione } & 0.00 \\
+CB8  & \multicolumn{5}{l}{8) Rimanenze iniziali } & 0.00 \\
+CB  & \multicolumn{5}{l}{Totale } & 1'000.00 \\
+ & \multicolumn{5}{l}{C) Costi e oneri da attività di raccolta fondi } & \\
+CC1  & \multicolumn{5}{l}{1) Oneri per raccolte fondi abituali } & 0.00 \\
+CC2  & \multicolumn{5}{l}{2) Oneri per raccolte fondi occasionali } & 0.00 \\
+CC3  & \multicolumn{5}{l}{3) Altri oneri } & 0.00 \\
+CC  & \multicolumn{5}{l}{Totale } & 0.00 \\
+ & \multicolumn{5}{l}{D) Costi e oneri da attività finanziarie e patrimoniali } & \\
+CD1  & \multicolumn{5}{l}{1) Su rapporti bancari } & 0.00 \\
+CD2  & \multicolumn{5}{l}{2) Su prestiti } & 0.00 \\
+CD3  & \multicolumn{5}{l}{3) Da patrimonio edilizio } & 0.00 \\
+CD4  & \multicolumn{5}{l}{4) Da altri beni patrimoniali } & 0.00 \\
+CD5  & \multicolumn{5}{l}{5) Accantonamenti per rischi ed oneri } & 0.00 \\
+CD6  & \multicolumn{5}{l}{6) Altri oneri } & 450.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+18.12.2020  &  & Uscite Raccolta fondi Natale  & Uscite altre finanziarie  & 0.00  & 450.00  & -450.00 \\
+CD  & \multicolumn{5}{l}{Totale } & 450.00 \\
+ & \multicolumn{5}{l}{E) Costi e oneri di supporto generale } & \\
+CE1  & \multicolumn{5}{l}{1) Materie prime, sussidiarie, di consumo e di merci } & 0.00 \\
+CE2  & \multicolumn{5}{l}{2) Servizi } & 0.00 \\
+CE3  & \multicolumn{5}{l}{3) Godimento beni di terzi } & 0.00 \\
+CE4  & \multicolumn{5}{l}{4) Personale } & 0.00 \\
+CE5  & \multicolumn{5}{l}{5) Ammortamenti } & 0.00 \\
+CE5b  & \multicolumn{5}{l}{5 bis) svalutazioni delle immobilizzazioni materiali ed immateriali } & 0.00 \\
+CE6  & \multicolumn{5}{l}{6) Accantonamenti per rischi ed oneri } & 0.00 \\
+CE7  & \multicolumn{5}{l}{7) Altri oneri } & 0.00 \\
+CE8  & \multicolumn{5}{l}{8) Accantonamento a riserva vincolata per decisione degli organi istituzionali } & 0.00 \\
+CE9  & \multicolumn{5}{l}{9) Utilizzo riserva vincolata per decisione degli organi istituzionali } & 0.00 \\
+CE  & \multicolumn{5}{l}{Totale } & 0.00 \\
+C  & \multicolumn{5}{l}{TOTALE ONERI E COSTI } & 86'151.00 \\
+\\
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+ & \multicolumn{5}{l}{PROVENTI E RICAVI } & \\
+ & \multicolumn{5}{l}{A) Ricavi, rendite e proventi da attività di interesse generale } & \\
+RA1  & \multicolumn{5}{l}{1) Proventi da quote associative e apporti dei fondatori } & 11'500.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+03.01.2020  & 2  & Incasso quote sociali  & Entrate quote  & 11'500.00  & 0.00  & 11'500.00 \\
+RA2  & \multicolumn{5}{l}{2) Proventi dagli associati per attività mutuali } & 0.00 \\
+RA3  & \multicolumn{5}{l}{3) Ricavi per prestazioni e cessioni ad associati e fondatori } & 0.00 \\
+RA4  & \multicolumn{5}{l}{4) Erogazioni liberali } & 3'500.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+25.10.2020  & 29  & Donazione da parte di un privato  & Erogazioni liberali  & 3'500.00  & 0.00  & 3'500.00 \\
+RA5  & \multicolumn{5}{l}{5) Proventi del 5 per mille } & 34'100.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+19.02.2020  & 11  & Incasso contributi 5 per mille - 5x Mille Anno corrente  & Entrate 5 mille  & 25'000.00  & 0.00  & 25'000.00 \\
+06.03.2020  & 15  & Incasso contributi per Progetto 2  - 5x Mille Anno precedente  & Entrate 5 mille  & 9'100.00  & 0.00  & 34'100.00 \\
+RA6  & \multicolumn{5}{l}{6) Contributi da soggetti privati } & 31'600.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+04.01.2020  & 3  & Incasso contributi per Progetto 1  & Contributi privati  & 24'500.00  & 0.00  & 24'500.00 \\
+20.02.2020  &  & Entrate Raccolta fondi Carnevale  & Contributi privati  & 1'700.00  & 0.00  & 26'200.00 \\
+22.12.2020  &  & Entrate Raccolta fondi Natale  & Contributi privati  & 5'400.00  & 0.00  & 31'600.00 \\
+RA7  & \multicolumn{5}{l}{7) Ricavi per prestazioni e cessioni a terzi } & 0.00 \\
+RA8  & \multicolumn{5}{l}{8) Contributi da enti pubblici } & 3'000.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+08.02.2020  & 10  & Incasso contributi da ente pubblico XXXX, Entrata Progetto 1  & Contributi enti  & 3'000.00  & 0.00  & 3'000.00 \\
+RA9  & \multicolumn{5}{l}{9) Proventi da contratti con enti pubblici } & 0.00 \\
+RA10  & \multicolumn{5}{l}{10) Altri ricavi, rendite e proventi } & 0.00 \\
+RA11  & \multicolumn{5}{l}{11) Rimanenze finali } & 0.00 \\
+RA  & \multicolumn{5}{l}{Totale } & 83'700.00 \\
+ & \multicolumn{5}{l}{B) Ricavi, rendite e proventi da attività diverse } & \\
+RB1  & \multicolumn{5}{l}{1) Ricavi per prestazioni e cessioni ad associati e fondatori } & 0.00 \\
+RB2  & \multicolumn{5}{l}{2) Contributi da soggetti privati } & 0.00 \\
+RB4  & \multicolumn{5}{l}{4) Contributi da enti pubblici } & 0.00 \\
+RB5  & \multicolumn{5}{l}{5) Proventi da contratti con enti pubblici } & 0.00 \\
+RB6  & \multicolumn{5}{l}{6) Altri ricavi, rendite e proventi } & 0.00 \\
+RB7  & \multicolumn{5}{l}{7) Rimanenze finali } & 0.00 \\
+RB  & \multicolumn{5}{l}{Totale } & 0.00 \\
+ & \multicolumn{5}{l}{C) Ricavi, rendite e proventi da attività di raccolta fondi } & \\
+RC1  & \multicolumn{5}{l}{1) Proventi da raccolte fondi abituali } & 2'400.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+15.12.2020  &  & Entrate Raccolta fondi Natale  & Entrate raccolte abituali  & 2'400.00  & 0.00  & 2'400.00 \\
+RC2  & \multicolumn{5}{l}{2) Proventi da raccolte fondi occasionali } & 8'900.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+10.04.2020  & 16  & Donazioni da privati  & Entrate raccolte occasionali  & 8'900.00  & 0.00  & 8'900.00 \\
+RC3  & \multicolumn{5}{l}{3) Altri proventi } & 0.00 \\
+RC  & \multicolumn{5}{l}{Totale } & 11'300.00 \\
+ & \multicolumn{5}{l}{D) Ricavi, rendite e proventi da attività finanziarie e patrimoniali } & \\
+RD1  & \multicolumn{5}{l}{1) Da rapporti bancari } & 0.00 \\
+RD2  & \multicolumn{5}{l}{2) Da altri investimenti finanziari } & 0.00 \\
+RD3  & \multicolumn{5}{l}{3) Da patrimonio edilizio } & 0.00 \\
+RD4  & \multicolumn{5}{l}{4) Da altri beni patrimoniali } & 0.00 \\
+RD5  & \multicolumn{5}{l}{5) Altri proventi } & 0.00 \\
+RD  & \multicolumn{5}{l}{Totale } & 0.00 \\
+ & \multicolumn{5}{l}{E) Proventi di supporto generale } & \\
+RE1  & \multicolumn{5}{l}{1) Proventi da distacco del personale } & 0.00 \\
+RE2  & \multicolumn{5}{l}{2) Altri proventi di supporto generale } & 0.00 \\
+RE  & \multicolumn{5}{l}{Totale } & 0.00 \\
+R  & \multicolumn{5}{l}{TOTALE PROVENTI E RICAVI } & 95'000.00 \\
+\\
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+ & \multicolumn{5}{l}{Costi figurativi } & \\
+CG1  & \multicolumn{5}{l}{1) da attività di interesse generale } & 0.00 \\
+CG2  & \multicolumn{5}{l}{2) da attività diverse } & 0.00 \\
+CG  & \multicolumn{5}{l}{Totale } & 0.00 \\
+ & \multicolumn{5}{l}{Proventi figurativi } & \\
+RG1  & \multicolumn{5}{l}{1) da attività di interesse generale } & 0.00 \\
+RG2  & \multicolumn{5}{l}{2) da attività diverse } & 0.00 \\
+RG  & \multicolumn{5}{l}{Totale } & 0.00 \\
+\end{longtable}
+-  \#page-nr  - \\
 \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}

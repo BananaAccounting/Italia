@@ -1,4 +1,7 @@
 # Cronologia modifiche
+### 2022-10-25
+* Rendiconto patrimoniale, rendiconto gestionale, rendiconto cassa
+  * Aggiunta la stampa del report di controllo con i dettagli dei movimenti per ogni voce dei rendiconti.
 ### 2022-08-05
 * Rendiconto gestionale
   * Aggiunte nuove voci nei gruppi oneri e costi A, B, E (CA5b, CA9, CA10, CB5b, CE5b, CE8, CE9)  

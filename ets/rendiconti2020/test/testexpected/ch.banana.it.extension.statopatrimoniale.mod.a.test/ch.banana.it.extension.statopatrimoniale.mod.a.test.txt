@@ -18,7 +18,7 @@
 \newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
 \newenvironment{test}[1]{\section*{Test case: #1}}{}
 %Begin test data
-%%SCRIPT{/Users/ivan/Documents/GitHub/Italia/ets/rendiconti2020/test/ch.banana.it.extension.statopatrimoniale.mod.a.test.js}
+%%SCRIPT{/Users/ivan/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.statopatrimoniale.mod.a.test.js}
 %
 \begin{testcase}{ReportModATest}
 \begin{test}{testBananaExtension}
@@ -775,6 +775,363 @@ PD12o  & esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 PD  & Totale debiti D)  & 10'300.00  & 0.00 \\
 PE  & E) Ratei e risconti passivi  & 0.00  & 0.00 \\
 P  & TOTALE PASSIVO  & 37'649.00  & 0.00 \\
+\end{longtable}
+  \\
+  \\
+Attenzione: differenza tra totale Attivo <45'919.00> e totale Passivo <37'649.00> \\
+-  \#page-nr  - \\
+\end{reportvalue}
+\begin{reportvalue}{Test 6: report di controllo - Stato Patrimoniale}
+RENDICONTO STATO PATRIMONIALE ANNO 2020 DETTAGLIO MOVIMENTI \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+ & \multicolumn{5}{l}{ATTIVO } & \\
+AA  & \multicolumn{5}{l}{A) Quote associative o apporti ancora dovuti } & 220.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 220.00 \\
+ & \multicolumn{5}{l}{B) Immobilizzazioni } & \\
+ & \multicolumn{5}{l}{I - Immobilizzazioni immateriali } & \\
+ABI1  & \multicolumn{5}{l}{1) costi di impianto e di ampliamento } & 0.00 \\
+ABI2  & \multicolumn{5}{l}{2) costi di sviluppo } & 0.00 \\
+ABI3  & \multicolumn{5}{l}{3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno } & 650.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 650.00 \\
+ABI4  & \multicolumn{5}{l}{4) concessioni, licenze, marchi e diritti simili } & 0.00 \\
+ABI5  & \multicolumn{5}{l}{5) avviamento } & 0.00 \\
+ABI6  & \multicolumn{5}{l}{6) immobilizzazioni in corso e acconti } & 0.00 \\
+ABI7  & \multicolumn{5}{l}{7) altre Immobilizzazioni immateriali } & 0.00 \\
+ABI  & \multicolumn{5}{l}{Totale immobilizzazioni immateriali } & 650.00 \\
+ & \multicolumn{5}{l}{II - Immobilizzazioni materiali } & \\
+ABII1  & \multicolumn{5}{l}{1) terreni e fabbricati } & 0.00 \\
+ABII2  & \multicolumn{5}{l}{2) impianti e macchinari } & 0.00 \\
+ABII3  & \multicolumn{5}{l}{3) attrezzature } & 7'550.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 7'000.00 \\
+21.09.2020  & 23  & Acquisto di mobili per l’ufficio dell’associazione  & Mobili  & 550.00  & 0.00  & 7'550.00 \\
+ABII4  & \multicolumn{5}{l}{4) altri beni } & 0.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 2'000.00 \\
+22.09.2020  & 24  & Vendita di attrezzature dell'ufficio inutilizzate  & Strumentali  & 0.00  & 2'000.00  & 0.00 \\
+ABII5  & \multicolumn{5}{l}{5) immobilizzazioni in corso e acconti } & 0.00 \\
+ABII  & \multicolumn{5}{l}{Totale immobilizzazioni materiali } & 7'550.00 \\
+ & \multicolumn{5}{l}{III - Immobilizzazioni finanziarie } & \\
+ & \multicolumn{5}{l}{1) Partecipazioni } & \\
+ABIII1a  & \multicolumn{5}{l}{a) partecipazioni in imprese controllate } & 0.00 \\
+ABIII1b  & \multicolumn{5}{l}{b) partecipazioni in imprese collegate } & 0.00 \\
+ABIII1c  & \multicolumn{5}{l}{c) partecipazioni in altre imprese } & 0.00 \\
+ & \multicolumn{5}{l}{2) Crediti } & \\
+ & \multicolumn{5}{l}{a) crediti verso imprese controllate } & \\
+ABIII2ae  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ABIII2ao  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{b) crediti verso imprese collegate } & \\
+ABIII2be  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ABIII2bo  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{c) crediti verso altri enti del Terzo settore } & \\
+ABIII2ce  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ABIII2co  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{d) crediti verso altri } & \\
+ABIII2de  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ABIII2do  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ABIII3  & \multicolumn{5}{l}{3) Altri titoli } & 0.00 \\
+ABIII  & \multicolumn{5}{l}{Totale immobilizzazioni finanziarie } & 0.00 \\
+AB  & \multicolumn{5}{l}{Totale immobilizzazioni B) } & 8'200.00 \\
+ & \multicolumn{5}{l}{C) Attivo circolante } & \\
+ & \multicolumn{5}{l}{I - Rimanenze } & \\
+ACI1  & \multicolumn{5}{l}{1) Rimanenze materie prime, sussidiarie e di consumo } & 0.00 \\
+ACI2  & \multicolumn{5}{l}{2) Rimanenze prodotti in corso di lavorazione e semilavorati } & 0.00 \\
+ACI3  & \multicolumn{5}{l}{3) Rimanenze lavori in corso su ordinazione } & 0.00 \\
+ACI4  & \multicolumn{5}{l}{4) Rimanenze prodotti finiti e merci } & 0.00 \\
+ACI5  & \multicolumn{5}{l}{5) Rimanenze acconti } & 0.00 \\
+ACI  & \multicolumn{5}{l}{Totale rimanenze } & 0.00 \\
+ & \multicolumn{5}{l}{II - Crediti } & \\
+ & \multicolumn{5}{l}{1) Crediti verso utenti e clienti } & \\
+ACII1e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ACII1o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{2) Crediti verso associati e fondatori } & \\
+ACII2e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ACII2o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{3) Crediti verso enti pubblici } & \\
+ACII3e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 4'200.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 1'200.00 \\
+08.02.2020  & 10  & Incasso contributi da ente pubblico XXXX, Entrata Progetto 1  & Crediti enti  & 3'000.00  & 0.00  & 4'200.00 \\
+ACII3o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{4) Crediti verso soggetti privati per contributi } & \\
+ACII4e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ACII4o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{5) Crediti verso enti della stessa rete associativa } & \\
+ACII5e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ACII5o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{6) Crediti verso altri enti del Terzo settore } & \\
+ACII6e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ACII6o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{7) Crediti verso imprese controllate } & \\
+ACII7e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ACII7o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{8) Crediti verso imprese collegate } & \\
+ACII8e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ACII8o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{9) Crediti tributari } & \\
+ACII9e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ACII9o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{10) Crediti da 5 per mille } & \\
+ACII10e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ACII10o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{11) Crediti per imposte anticipate } & \\
+ACII11e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ACII11o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{12) Crediti verso altri } & \\
+ACII12e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+ACII12o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ACII  & \multicolumn{5}{l}{Totale crediti } & 4'200.00 \\
+ & \multicolumn{5}{l}{III - Attività finanziarie che non costituiscono immobilizzazioni } & \\
+ACIII1  & \multicolumn{5}{l}{1) Partecipazioni in imprese controllate } & 0.00 \\
+ACIII2  & \multicolumn{5}{l}{2) Partecipazioni in imprese collegate } & 0.00 \\
+ACIII3  & \multicolumn{5}{l}{3) Altri titoli } & 0.00 \\
+ACIII  & \multicolumn{5}{l}{Totale attività finanziarie che non costituiscono immobilizzazioni } & 0.00 \\
+ & \multicolumn{5}{l}{IV - Disponibilità liquide } & \\
+ACIV1  & \multicolumn{5}{l}{1) Depositi bancari e postali } & 26'870.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 12'000.00 \\
+02.01.2020  & 1  & Pagamenti diversi [esempio registrazione su più righe]  & Banca  & 0.00  & 1'000.00  & 11'000.00 \\
+03.01.2020  & 2  & Incasso quote sociali  & Banca  & 11'500.00  & 0.00  & 22'500.00 \\
+08.01.2020  & 4  & Pagato premio per assicurazione malattia, infortuni del personale volontario  & Banca  & 0.00  & 1'260.00  & 21'240.00 \\
+13.01.2020  & 7  & Pagata fattura per pulizia locali  & Banca  & 0.00  & 700.00  & 20'540.00 \\
+19.02.2020  & 11  & Incasso contributi 5 per mille - 5x Mille Anno corrente  & Banca  & 25'000.00  & 0.00  & 45'540.00 \\
+23.02.2020  & 12  & Stipendi netti personale dipendente  & Banca  & 0.00  & 16'900.00  & 28'640.00 \\
+26.02.2020  & 13  & Pagati contributi previdenziali  & Banca  & 0.00  & 7'900.00  & 20'740.00 \\
+29.02.2020  & 14  & Onorari pagati al personale occasionale - 5x Mille Anno corrente  & Banca  & 0.00  & 3'500.00  & 17'240.00 \\
+06.03.2020  & 15  & Incasso contributi per Progetto 2  - 5x Mille Anno precedente  & Banca  & 9'100.00  & 0.00  & 26'340.00 \\
+10.04.2020  & 16  & Donazioni da privati  & Banca  & 8'900.00  & 0.00  & 35'240.00 \\
+12.04.2020  & 17  & Consulenze fiscali  & Banca  & 0.00  & 1'600.00  & 33'640.00 \\
+20.04.2020  & 18  & Pagata fattura per pulizia locali  & Banca  & 0.00  & 700.00  & 32'940.00 \\
+23.05.2020  & 19  & Stipendi netti personale dipendente  & Banca  & 0.00  & 15'400.00  & 17'540.00 \\
+03.06.2020  & 20  & Pagamento pubblicità  & Banca  & 0.00  & 750.00  & 16'790.00 \\
+01.08.2020  & 21  & Fondi 5 per mille erogati ad altra associazione - 5x Mille Anno corrente  & Banca  & 0.00  & 1'000.00  & 15'790.00 \\
+15.09.2020  & 22  & Pagata fattura per pulizia locali  & Banca  & 0.00  & 700.00  & 15'090.00 \\
+21.09.2020  & 23  & Acquisto di mobili per l’ufficio dell’associazione  & Banca  & 0.00  & 550.00  & 14'540.00 \\
+22.09.2020  & 24  & Vendita di attrezzature dell'ufficio inutilizzate  & Banca  & 2'000.00  & 0.00  & 16'540.00 \\
+23.09.2020  & 25  & Ricevimento di un prestito dalla banca  & Banca  & 10'500.00  & 0.00  & 27'040.00 \\
+24.09.2020  & 26  & Rimborso del prestito alla banca  & Banca  & 0.00  & 1'500.00  & 25'540.00 \\
+11.10.2020  & 27  & Pagati contributi per personale occasionale  & Banca  & 0.00  & 960.00  & 24'580.00 \\
+12.10.2020  & 28  & Pagate spese di pubblicità per progetto A - 5x Mille Anno corrente  & Banca  & 0.00  & 960.00  & 23'620.00 \\
+25.10.2020  & 29  & Donazione da parte di un privato  & Banca  & 3'500.00  & 0.00  & 27'120.00 \\
+23.11.2020  & 30  & Stipendi netti personale dipendente  & Banca  & 0.00  & 15'200.00  & 11'920.00 \\
+10.12.2020  & 32  & Versamento soldi in cassa sul conto bancario  & Banca  & 10'000.00  & 0.00  & 21'920.00 \\
+18.12.2020  &  & Uscite Raccolta fondi Natale  & Banca  & 0.00  & 450.00  & 21'470.00 \\
+22.12.2020  &  & Entrate Raccolta fondi Natale  & Banca  & 5'400.00  & 0.00  & 26'870.00 \\
+ACIV2  & \multicolumn{5}{l}{2) Assegni } & 0.00 \\
+ACIV3  & \multicolumn{5}{l}{3) Danaro e valori in cassa } & 6'429.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 5'000.00 \\
+04.01.2020  & 3  & Incasso contributi per Progetto 1  & Cassa  & 24'500.00  & 0.00  & 29'500.00 \\
+10.01.2020  & 5  & Rimborsate spese ai volontari   & Cassa  & 0.00  & 5'600.00  & 23'900.00 \\
+12.01.2020  & 6  & Acquistati francobolli - Uscita Progetto 1  & Cassa  & 0.00  & 250.00  & 23'650.00 \\
+15.01.2020  & 8  & Pagata fattura dal fornitore A per Progetto 3  & Cassa  & 0.00  & 6'321.00  & 17'329.00 \\
+16.01.2020  & 9  & Rimborsate spese ai volontari - 5x Mille Anno precedente  & Cassa  & 0.00  & 2'500.00  & 14'829.00 \\
+20.02.2020  &  & Entrate Raccolta fondi Carnevale  & Cassa  & 1'700.00  & 0.00  & 16'529.00 \\
+07.12.2020  & 31  & Noleggiate attrezzature per mercatino  & Cassa  & 0.00  & 2'500.00  & 14'029.00 \\
+10.12.2020  & 32  & Versamento soldi in cassa sul conto bancario  & Cassa  & 0.00  & 10'000.00  & 4'029.00 \\
+15.12.2020  &  & Entrate Raccolta fondi Natale  & Cassa  & 2'400.00  & 0.00  & 6'429.00 \\
+ACIV  & \multicolumn{5}{l}{Totale disponibilità liquide } & 33'299.00 \\
+AC  & \multicolumn{5}{l}{Totale attivo circolante C) } & 37'499.00 \\
+AD  & \multicolumn{5}{l}{D) Ratei e risconti attivi } & 0.00 \\
+A  & \multicolumn{5}{l}{TOTALE ATTIVO } & 45'919.00 \\
+\\
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+ & \multicolumn{5}{l}{PASSIVO } & \\
+ & \multicolumn{5}{l}{A) Patrimonio netto } & \\
+PAI  & \multicolumn{5}{l}{I - Fondo di dotazione dell'ente } & 15'000.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & -15'000.00 \\
+ & \multicolumn{5}{l}{II - Patrimonio vincolato } & \\
+PAII1  & \multicolumn{5}{l}{1) Riserve statutarie } & 3'500.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & -3'500.00 \\
+PAII2  & \multicolumn{5}{l}{2) Riserve vincolate per decisione degli organi istituzionali } & 0.00 \\
+PAII3  & \multicolumn{5}{l}{3) Riserve vincolate destinate da terzi } & 0.00 \\
+PAII  & \multicolumn{5}{l}{Totale patrimonio vincolato } & 3'500.00 \\
+ & \multicolumn{5}{l}{III - Patrimonio libero } & \\
+PAIII1  & \multicolumn{5}{l}{1) Riserve di utili o avanzi di gestione } & 0.00 \\
+PAIII2  & \multicolumn{5}{l}{2) Altre riserve } & 0.00 \\
+PAIII  & \multicolumn{5}{l}{Totale patrimonio libero } & 0.00 \\
+PAIV  & \multicolumn{5}{l}{IV - Avanzo/disavanzo d'esercizio } & 8'849.00 \\
+PA  & \multicolumn{5}{l}{Totale patrimonio netto A) } & 27'349.00 \\
+ & \multicolumn{5}{l}{B) Fondi per rischi e oneri } & \\
+PB1  & \multicolumn{5}{l}{1) Fondi per trattamento di quiescenza e obblighi simili } & 0.00 \\
+PB2  & \multicolumn{5}{l}{2) Fondi per imposte, anche differite } & 0.00 \\
+PB3  & \multicolumn{5}{l}{3) Fondi altri } & 0.00 \\
+PB  & \multicolumn{5}{l}{Totale fondi per rischi e oneri B) } & 0.00 \\
+PC  & \multicolumn{5}{l}{C) Fondi trattamento di fine rapporto di lavoro subordinato } & 0.00 \\
+ & \multicolumn{5}{l}{D) Debiti } & \\
+ & \multicolumn{5}{l}{1) Debiti verso banche } & \\
+PD1e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+PD1o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 10'200.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & -1'200.00 \\
+23.09.2020  & 25  & Ricevimento di un prestito dalla banca  & Debiti banche  & 0.00  & 10'500.00  & -11'700.00 \\
+24.09.2020  & 26  & Rimborso del prestito alla banca  & Debiti banche  & 1'500.00  & 0.00  & -10'200.00 \\
+ & \multicolumn{5}{l}{2) Debiti verso altri finanziatori } & \\
+PD2e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+PD2o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{3) Debiti verso associati e fondatori per finanziamenti } & \\
+PD3e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+PD3o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{4) Debiti verso enti della stessa rete associativa } & \\
+PD4e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+PD4o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{5) Debiti per erogazioni liberali condizionate } & \\
+PD5e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+PD5o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{6) Acconti (Debiti) } & \\
+PD6e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+PD6o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{7) Debiti verso fornitori } & \\
+PD7e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 100.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & -100.00 \\
+PD7o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{8) Debiti verso imprese controllate e collegate } & \\
+PD8e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+PD8o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{9) Debiti tributari } & \\
+PD9e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+PD9o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{10) Debiti verso istituti di previdenza e di sicurezza sociale } & \\
+PD10e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+PD10o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{11) Debiti verso dipendenti e collaboratori } & \\
+PD11e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+PD11o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+ & \multicolumn{5}{l}{12) Altri debiti } & \\
+PD12e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
+PD12o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
+PD  & \multicolumn{5}{l}{Totale debiti D) } & 10'300.00 \\
+PE  & \multicolumn{5}{l}{E) Ratei e risconti passivi } & 0.00 \\
+P  & \multicolumn{5}{l}{TOTALE PASSIVO } & 37'649.00 \\
+\end{longtable}
+  \\
+  \\
+Attenzione: differenza tra totale Attivo <45'919.00> e totale Passivo <37'649.00> \\
+-  \#page-nr  - \\
+\end{reportvalue}
+\begin{reportvalue}{Test 6: report di controllo - Stato Patrimoniale}
+RENDICONTO STATO PATRIMONIALE ANNO 2020 DETTAGLIO MOVIMENTI \\
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+ & \multicolumn{5}{l}{ATTIVO } & \\
+AA  & \multicolumn{5}{l}{A) Quote associative o apporti ancora dovuti } & 220.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 220.00 \\
+ & \multicolumn{5}{l}{B) Immobilizzazioni } & \\
+ & \multicolumn{5}{l}{I - Immobilizzazioni immateriali } & \\
+ABI3  & \multicolumn{5}{l}{3) diritti di brevetto industriale e diritti di utilizzazione delle opere dell'ingegno } & 650.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 650.00 \\
+ABI  & \multicolumn{5}{l}{Totale immobilizzazioni immateriali } & 650.00 \\
+ & \multicolumn{5}{l}{II - Immobilizzazioni materiali } & \\
+ABII3  & \multicolumn{5}{l}{3) attrezzature } & 7'550.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 7'000.00 \\
+21.09.2020  & 23  & Acquisto di mobili per l’ufficio dell’associazione  & Mobili  & 550.00  & 0.00  & 7'550.00 \\
+ABII  & \multicolumn{5}{l}{Totale immobilizzazioni materiali } & 7'550.00 \\
+ & \multicolumn{5}{l}{III - Immobilizzazioni finanziarie } & \\
+ABIII  & \multicolumn{5}{l}{Totale immobilizzazioni finanziarie } & 0.00 \\
+AB  & \multicolumn{5}{l}{Totale immobilizzazioni B) } & 8'200.00 \\
+ & \multicolumn{5}{l}{C) Attivo circolante } & \\
+ & \multicolumn{5}{l}{I - Rimanenze } & \\
+ACI  & \multicolumn{5}{l}{Totale rimanenze } & 0.00 \\
+ & \multicolumn{5}{l}{II - Crediti } & \\
+ & \multicolumn{5}{l}{3) Crediti verso enti pubblici } & \\
+ACII3e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 4'200.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 1'200.00 \\
+08.02.2020  & 10  & Incasso contributi da ente pubblico XXXX, Entrata Progetto 1  & Crediti enti  & 3'000.00  & 0.00  & 4'200.00 \\
+ACII  & \multicolumn{5}{l}{Totale crediti } & 4'200.00 \\
+ & \multicolumn{5}{l}{III - Attività finanziarie che non costituiscono immobilizzazioni } & \\
+ACIII  & \multicolumn{5}{l}{Totale attività finanziarie che non costituiscono immobilizzazioni } & 0.00 \\
+ & \multicolumn{5}{l}{IV - Disponibilità liquide } & \\
+ACIV1  & \multicolumn{5}{l}{1) Depositi bancari e postali } & 26'870.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 12'000.00 \\
+02.01.2020  & 1  & Pagamenti diversi [esempio registrazione su più righe]  & Banca  & 0.00  & 1'000.00  & 11'000.00 \\
+03.01.2020  & 2  & Incasso quote sociali  & Banca  & 11'500.00  & 0.00  & 22'500.00 \\
+08.01.2020  & 4  & Pagato premio per assicurazione malattia, infortuni del personale volontario  & Banca  & 0.00  & 1'260.00  & 21'240.00 \\
+13.01.2020  & 7  & Pagata fattura per pulizia locali  & Banca  & 0.00  & 700.00  & 20'540.00 \\
+19.02.2020  & 11  & Incasso contributi 5 per mille - 5x Mille Anno corrente  & Banca  & 25'000.00  & 0.00  & 45'540.00 \\
+23.02.2020  & 12  & Stipendi netti personale dipendente  & Banca  & 0.00  & 16'900.00  & 28'640.00 \\
+26.02.2020  & 13  & Pagati contributi previdenziali  & Banca  & 0.00  & 7'900.00  & 20'740.00 \\
+29.02.2020  & 14  & Onorari pagati al personale occasionale - 5x Mille Anno corrente  & Banca  & 0.00  & 3'500.00  & 17'240.00 \\
+06.03.2020  & 15  & Incasso contributi per Progetto 2  - 5x Mille Anno precedente  & Banca  & 9'100.00  & 0.00  & 26'340.00 \\
+10.04.2020  & 16  & Donazioni da privati  & Banca  & 8'900.00  & 0.00  & 35'240.00 \\
+12.04.2020  & 17  & Consulenze fiscali  & Banca  & 0.00  & 1'600.00  & 33'640.00 \\
+20.04.2020  & 18  & Pagata fattura per pulizia locali  & Banca  & 0.00  & 700.00  & 32'940.00 \\
+23.05.2020  & 19  & Stipendi netti personale dipendente  & Banca  & 0.00  & 15'400.00  & 17'540.00 \\
+03.06.2020  & 20  & Pagamento pubblicità  & Banca  & 0.00  & 750.00  & 16'790.00 \\
+01.08.2020  & 21  & Fondi 5 per mille erogati ad altra associazione - 5x Mille Anno corrente  & Banca  & 0.00  & 1'000.00  & 15'790.00 \\
+15.09.2020  & 22  & Pagata fattura per pulizia locali  & Banca  & 0.00  & 700.00  & 15'090.00 \\
+21.09.2020  & 23  & Acquisto di mobili per l’ufficio dell’associazione  & Banca  & 0.00  & 550.00  & 14'540.00 \\
+22.09.2020  & 24  & Vendita di attrezzature dell'ufficio inutilizzate  & Banca  & 2'000.00  & 0.00  & 16'540.00 \\
+23.09.2020  & 25  & Ricevimento di un prestito dalla banca  & Banca  & 10'500.00  & 0.00  & 27'040.00 \\
+24.09.2020  & 26  & Rimborso del prestito alla banca  & Banca  & 0.00  & 1'500.00  & 25'540.00 \\
+11.10.2020  & 27  & Pagati contributi per personale occasionale  & Banca  & 0.00  & 960.00  & 24'580.00 \\
+12.10.2020  & 28  & Pagate spese di pubblicità per progetto A - 5x Mille Anno corrente  & Banca  & 0.00  & 960.00  & 23'620.00 \\
+25.10.2020  & 29  & Donazione da parte di un privato  & Banca  & 3'500.00  & 0.00  & 27'120.00 \\
+23.11.2020  & 30  & Stipendi netti personale dipendente  & Banca  & 0.00  & 15'200.00  & 11'920.00 \\
+10.12.2020  & 32  & Versamento soldi in cassa sul conto bancario  & Banca  & 10'000.00  & 0.00  & 21'920.00 \\
+18.12.2020  &  & Uscite Raccolta fondi Natale  & Banca  & 0.00  & 450.00  & 21'470.00 \\
+22.12.2020  &  & Entrate Raccolta fondi Natale  & Banca  & 5'400.00  & 0.00  & 26'870.00 \\
+ACIV3  & \multicolumn{5}{l}{3) Danaro e valori in cassa } & 6'429.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 5'000.00 \\
+04.01.2020  & 3  & Incasso contributi per Progetto 1  & Cassa  & 24'500.00  & 0.00  & 29'500.00 \\
+10.01.2020  & 5  & Rimborsate spese ai volontari   & Cassa  & 0.00  & 5'600.00  & 23'900.00 \\
+12.01.2020  & 6  & Acquistati francobolli - Uscita Progetto 1  & Cassa  & 0.00  & 250.00  & 23'650.00 \\
+15.01.2020  & 8  & Pagata fattura dal fornitore A per Progetto 3  & Cassa  & 0.00  & 6'321.00  & 17'329.00 \\
+16.01.2020  & 9  & Rimborsate spese ai volontari - 5x Mille Anno precedente  & Cassa  & 0.00  & 2'500.00  & 14'829.00 \\
+20.02.2020  &  & Entrate Raccolta fondi Carnevale  & Cassa  & 1'700.00  & 0.00  & 16'529.00 \\
+07.12.2020  & 31  & Noleggiate attrezzature per mercatino  & Cassa  & 0.00  & 2'500.00  & 14'029.00 \\
+10.12.2020  & 32  & Versamento soldi in cassa sul conto bancario  & Cassa  & 0.00  & 10'000.00  & 4'029.00 \\
+15.12.2020  &  & Entrate Raccolta fondi Natale  & Cassa  & 2'400.00  & 0.00  & 6'429.00 \\
+ACIV  & \multicolumn{5}{l}{Totale disponibilità liquide } & 33'299.00 \\
+AC  & \multicolumn{5}{l}{Totale attivo circolante C) } & 37'499.00 \\
+AD  & \multicolumn{5}{l}{D) Ratei e risconti attivi } & 0.00 \\
+A  & \multicolumn{5}{l}{TOTALE ATTIVO } & 45'919.00 \\
+\\
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+ & \multicolumn{5}{l}{PASSIVO } & \\
+ & \multicolumn{5}{l}{A) Patrimonio netto } & \\
+PAI  & \multicolumn{5}{l}{I - Fondo di dotazione dell'ente } & 15'000.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & -15'000.00 \\
+ & \multicolumn{5}{l}{II - Patrimonio vincolato } & \\
+PAII1  & \multicolumn{5}{l}{1) Riserve statutarie } & 3'500.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & -3'500.00 \\
+PAII  & \multicolumn{5}{l}{Totale patrimonio vincolato } & 3'500.00 \\
+ & \multicolumn{5}{l}{III - Patrimonio libero } & \\
+PAIII  & \multicolumn{5}{l}{Totale patrimonio libero } & 0.00 \\
+PAIV  & \multicolumn{5}{l}{IV - Avanzo/disavanzo d'esercizio } & 8'849.00 \\
+PA  & \multicolumn{5}{l}{Totale patrimonio netto A) } & 27'349.00 \\
+ & \multicolumn{5}{l}{B) Fondi per rischi e oneri } & \\
+PB  & \multicolumn{5}{l}{Totale fondi per rischi e oneri B) } & 0.00 \\
+PC  & \multicolumn{5}{l}{C) Fondi trattamento di fine rapporto di lavoro subordinato } & 0.00 \\
+ & \multicolumn{5}{l}{D) Debiti } & \\
+ & \multicolumn{5}{l}{1) Debiti verso banche } & \\
+PD1o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 10'200.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & -1'200.00 \\
+23.09.2020  & 25  & Ricevimento di un prestito dalla banca  & Debiti banche  & 0.00  & 10'500.00  & -11'700.00 \\
+24.09.2020  & 26  & Rimborso del prestito alla banca  & Debiti banche  & 1'500.00  & 0.00  & -10'200.00 \\
+ & \multicolumn{5}{l}{7) Debiti verso fornitori } & \\
+PD7e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 100.00 \\
+Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & -100.00 \\
+PD  & \multicolumn{5}{l}{Totale debiti D) } & 10'300.00 \\
+PE  & \multicolumn{5}{l}{E) Ratei e risconti passivi } & 0.00 \\
+P  & \multicolumn{5}{l}{TOTALE PASSIVO } & 37'649.00 \\
 \end{longtable}
   \\
   \\

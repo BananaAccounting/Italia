@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.reportcinquepermille
 // @api = 1.0
-// @pubdate = 2022-04-20
+// @pubdate = 2022-10-19
 // @publisher = Banana.ch SA
 // @description = 4. Report cinque per mille
 // @task = app.command
@@ -42,10 +42,6 @@
 
 let BAN_VERSION = "10.0.1";
 let BAN_EXPM_VERSION = "";
-
-let totalIncome = "";
-let totalExpenses = "";
-let total = "";
 
 
 //Main function
@@ -112,26 +108,24 @@ function exec(string) {
 	 */
 	if (userParam.segment5XM) {
 
-		//Load the report gorups with gr1 codes and texts.
-		let reportGroups = createReportStructure5xMille(userParam);
-
-		//Create all the accounts objects for current year and last year.
+		// 1. Create all the accounts objects for current year and last year.
 		let accountsMap = {};
 		loadAccountsMap(Banana.document, userParam, accountsMap);
 		if (fileLastYear) {
 			loadAccountsMap(fileLastYear, userParam, accountsMap);
 		}
-
 		//Banana.console.log(JSON.stringify(accountsMap, "", " "));
 
-		//Create the report
-		let report = printReport(Banana.document, fileLastYear, userParam, reportGroups, accountsMap);
+		//2. Load the report gorups with gr1 codes and texts.
+		let reportGroups = createReportStructure5xMille(userParam);
 		
-		//Create the stylesheet using the css file
+		//3. Calculate all the balances and load them in the reportGroups
+		loadBalances(Banana.document, userParam, reportGroups, accountsMap);
+
+		//4. Create the report
+        let report = printReport(Banana.document, fileLastYear, userParam, reportGroups, accountsMap);
 		let stylesheet = Banana.Report.newStyleSheet();
 		setCss(Banana.document, stylesheet);
-
-		//Create the report preview
 		Banana.Report.preview(report, stylesheet);
 	}
 }
@@ -148,10 +142,9 @@ function printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap)
 	printReport_Header(report, banDoc, userParam);
 
 	if (userParam.tipoRendicontoModB) {
-		printReport_RendicontoModB(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap);
-	}
-	else {
-		printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap);
+        printReport_RendicontoModB(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap);
+	} else {
+        printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap);
 	}
 
 	printReport_Finale(report, banDoc, userParam);
@@ -236,10 +229,6 @@ function printReport_Header(report, banDoc, userParam) {
 // Funzione che stampa la parte delle entrate e delle uscite del rendiconto.
 function printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap) {
 
-	totalIncome = "";
-	totalExpenses = "";
-	total = "";
-
 	// Calcolo automatico accantonamento
 	incomeAcc = "";
 	expensesAcc = "";
@@ -295,21 +284,19 @@ function printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, rep
 	 * - gruppo 4.5, Altre spese per attività di interesse generale
 	 * - gruppo 5, Accantonamento
 	 */
-	for (let i = 0; i < reportGroups.length; i++) {
+    for (let i = 0; i < reportGroups.length; i++) {
 		
-		let groupObj = getObject(reportGroups, reportGroups[i]["group"]);
-
-		calc_group_balances_modA(banDoc, groupObj, table, accountsMap);
+        let groupObj = getObject(reportGroups, reportGroups[i]["group"]);
 
 		//ENTRATE
 		if (groupObj.income) {
 			tableRow = table.addRow();
 			tableRow.addCell("IMPORTO PERCEPITO", "", 2);
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totalIncome), "alignRight total", 1);
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(groupObj.total), "alignRight total", 1);
 			tableRow.addCell("EUR", "alignRight",1);
 
 			// Per il calcolo automatico dell'accantonamento
-			incomeAcc = totalIncome;
+            incomeAcc = groupObj.total;
 		}
 
 		//USCITE
@@ -322,13 +309,13 @@ function printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, rep
 				tableRow = table.addRow();
 				tableRow.addCell(groupObj.group +".", "bold", 1);
 				tableRow.addCell(groupObj.title, "bold", 1);
-				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(total), "alignRight total", 1);
+				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(groupObj.total), "alignRight total", 1);
 				tableRow.addCell("EUR", "alignRight",1);
 				tableRow = table.addRow();
 				tableRow.addCell(groupObj.text, "", 2);
 
 				// Per il calcolo automatico dell'accantonamento
-				expensesAcc = Banana.SDecimal.add(expensesAcc,total);
+				expensesAcc = Banana.SDecimal.add(expensesAcc,groupObj.total);
 			}
 
 			// gruppo 4
@@ -351,11 +338,11 @@ function printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, rep
 				tableRow = table.addRow();
 				tableRow.addCell("", "", 1);
 				tableRow.addCell(groupObj.group + " " + groupObj.title, "", 1);
-				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(total), "alignRight total", 1);
+				tableRow.addCell(Banana.Converter.toLocaleNumberFormat(groupObj.total), "alignRight total", 1);
 				tableRow.addCell("EUR", "alignRight",1);
 
 				// Per il calcolo automatico dell'accantonamento
-				expensesAcc = Banana.SDecimal.add(expensesAcc,total);
+				expensesAcc = Banana.SDecimal.add(expensesAcc,groupObj.total);
 			}
 
 			// gruppo 5
@@ -368,19 +355,19 @@ function printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, rep
 					tableRow = table.addRow();
 					tableRow.addCell(groupObj.group +".", "bold", 1);
 					tableRow.addCell(groupObj.title, "bold", 1);
-					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(total), "alignRight total", 1);
+					tableRow.addCell(Banana.Converter.toLocaleNumberFormat(groupObj.total), "alignRight total", 1);
 					tableRow.addCell("EUR", "alignRight",1);
 					tableRow = table.addRow();
 					tableRow.addCell(groupObj.text, "", 2);
 
 					//controlla importo totale gruppo accantonamento
-					controlloAccantonamento(banDoc, total, incomeAcc, expensesAcc);
+					controlloAccantonamento(banDoc, groupObj.total, incomeAcc, expensesAcc);
 				}
 
 				// importo calcolato come differenza
 				// "Importo percepito" - "Totale costi (gruppi 1,2,3,4)"
 				else {
-					var totAccantonamento = Banana.SDecimal.subtract(incomeAcc,expensesAcc);
+                    var totAccantonamento = Banana.SDecimal.subtract(incomeAcc,expensesAcc);
 					tableRow = table.addRow();
 					tableRow.addCell(" ", "", 4);
 					tableRow = table.addRow();
@@ -398,25 +385,29 @@ function printReport_RendicontoModA(report, banDoc, fileLastYear, userParam, rep
 	/**
 	 * Final total
 	 */
+	for (let i = 0; i < reportGroups.length; i++) {
 
-	// quando l'accantonamento è calcolato come differenza, aggiunge l'importo calcolato al totale
-	if (userParam.calcolaAccantonamento) {
-		totalExpenses = Banana.SDecimal.add(totalExpenses,totAccantonamento);
+		let groupObj = getObject(reportGroups, reportGroups[i]["group"]);
+
+		if (groupObj.group === "total") {
+			
+			// quando l'accantonamento è calcolato come differenza, aggiunge l'importo calcolato al totale
+			if (userParam.calcolaAccantonamento) {
+				groupObj.totalExpenses = Banana.SDecimal.add(groupObj.totalExpenses,totAccantonamento);
+			}
+
+			tableRow = table.addRow();
+			tableRow.addCell(" ", "", 4);
+			tableRow = table.addRow();
+			tableRow.addCell("TOTALE", "bold", 2);
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(groupObj.totalExpenses), "alignRight bold total", 1);
+			tableRow.addCell("EUR", "bold alignRight",1);
+		}
 	}
-
-	tableRow = table.addRow();
-	tableRow.addCell(" ", "", 4);
-	tableRow = table.addRow();
-	tableRow.addCell("TOTALE", "bold", 2);
-	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold total", 1);
-	tableRow.addCell("EUR", "bold alignRight",1);
 }
 
 // Funzione che stampa la parte dell'accantonamento e delle uscite del rendiconto.
 function printReport_RendicontoModB(report, banDoc, fileLastYear, userParam, reportGroups, accountsMap) {
-
-	totalExpenses = "";
-	total = "";
 
 	let thisYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase","OpeningDate")).getFullYear();
 	let lastYear = "";
@@ -462,12 +453,10 @@ function printReport_RendicontoModB(report, banDoc, fileLastYear, userParam, rep
 	 * - gruppo 4.4, Erogazioni a persone fisiche
 	 * - gruppo 4.5, Altre spese per attività di interesse generale
 	 */
-	for (let i = 0; i < reportGroups.length; i++) {
+    for (let i = 0; i < reportGroups.length; i++) {
 		
-		let groupObj = getObject(reportGroups, reportGroups[i]["group"]);
-
-		calc_group_balances_modB(banDoc, groupObj, table, accountsMap);
-		
+        let groupObj = getObject(reportGroups, reportGroups[i]["group"]);
+	
 		// gruppi 1, 2, 3
 		if (groupObj.group === "1" || groupObj.group === "2" || groupObj.group === "3") {
 			tableRow = table.addRow();
@@ -475,7 +464,7 @@ function printReport_RendicontoModB(report, banDoc, fileLastYear, userParam, rep
 			tableRow = table.addRow();
 			tableRow.addCell(groupObj.group +".", "bold", 1);
 			tableRow.addCell(groupObj.title, "bold", 1);
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(total), "alignRight total", 1);
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(groupObj.total), "alignRight total", 1);
 			tableRow.addCell("EUR", "alignRight",1);
 			tableRow = table.addRow();
 			tableRow.addCell(groupObj.text, "", 2);
@@ -501,7 +490,7 @@ function printReport_RendicontoModB(report, banDoc, fileLastYear, userParam, rep
 			tableRow = table.addRow();
 			tableRow.addCell("", "", 1);
 			tableRow.addCell(groupObj.group + " " + groupObj.title, "", 1);
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(total), "alignRight total", 1);
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(groupObj.total), "alignRight total", 1);
 			tableRow.addCell("EUR", "alignRight",1);
 		}
 	}
@@ -509,12 +498,20 @@ function printReport_RendicontoModB(report, banDoc, fileLastYear, userParam, rep
 	/**
 	 * Final total
 	 */
-	tableRow = table.addRow();
-	tableRow.addCell(" ", "", 4);
-	tableRow = table.addRow();
-	tableRow.addCell("TOTALE", "bold", 2);
-	tableRow.addCell(Banana.Converter.toLocaleNumberFormat(totalExpenses), "alignRight bold total", 1);
-	tableRow.addCell("EUR", "bold alignRight",1);
+	for (let i = 0; i < reportGroups.length; i++) {
+
+		let groupObj = getObject(reportGroups, reportGroups[i]["group"]);
+
+		if (groupObj.group === "total") {
+
+			tableRow = table.addRow();
+			tableRow.addCell(" ", "", 4);
+			tableRow = table.addRow();
+			tableRow.addCell("TOTALE", "bold", 2);
+			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(groupObj.totalExpenses), "alignRight bold total", 1);
+			tableRow.addCell("EUR", "bold alignRight",1);
+		}
+	}
 }
 
 // Funzione che stampa la parte finale del report.
@@ -577,112 +574,150 @@ function printReport_Footer(report) {
  * Calculation of balances
  **************************************************************************************/
 
-// Funzione che calcola gli importi dei gruppi
-function calc_group_balances_modA(banDoc, groupObj, table, accountsMap) {
+// Funzione che carica i saldi dei gruppi
+function loadBalances(banDoc, userParam, reportGroups, accountsMap) {
 
-	let arrGr = groupObj.gr1.split(";");
-	
-	let arrAcc = [];
-	let arrDesc = [];
-	let arrTot = [];
-	total = "";
-
-	//Check that the accountsMap is not empty, then use it to create the report
-	if (Object.keys(accountsMap).length !== 0) {
-		
-		//We take the gr1 list of the principal group and, for each element, we check if it equals the gr1 of the account detalis
-		//To do that we need to pass all the "Accounts" table to get the account numbers and use them as key for the accountsMap
-		//In the case the two gr1 are the same, we save the details values into the respective array
-
-		for (let i = 0; i < arrGr.length; i++) {
-			for (const account in accountsMap) {
-				if (accountsMap[account].gr1 === arrGr[i]) {
-					arrAcc.push(account);
-					arrDesc.push(accountsMap[account].description);
-					arrTot.push(accountsMap[account].total);
-				}
-			}
-		}
-
-		//Print account details
-		for (let i = 0; i < arrAcc.length; i++) { //arrAcc, arrDesc, arrTot have the same length
-			
-			let tmpAmount = arrTot[i];
-			if (groupObj.income) {
-				if (!banDoc.table("Categories")) {
-					tmpAmount = Banana.SDecimal.invert(tmpAmount);
-				}
-				totalIncome = Banana.SDecimal.add(totalIncome, tmpAmount);
-			}
-			else {
-				if (banDoc.table("Categories")) {
-					tmpAmount = Banana.SDecimal.invert(tmpAmount);
-				}
-				totalExpenses = Banana.SDecimal.add(totalExpenses, tmpAmount);
-			}
-
-			total = Banana.SDecimal.add(total, tmpAmount);
-		}
-	}
-
-	//If the accountsMap is empty
+	if (userParam.tipoRendicontoModB) {
+		calc_group_balances_modB(banDoc, reportGroups, accountsMap);
+	} 
 	else {
-		let tmpTotal = total;
-		if (banDoc.table("Categories")) {
-			tmpTotal = Banana.SDecimal.invert(tmpTotal);
-		}
+		calc_group_balances_modA(banDoc, reportGroups, accountsMap);
 	}
+
+	//Banana.console.log(JSON.stringify(reportGroups, "", " "));
 }
 
 // Funzione che calcola gli importi dei gruppi
-function calc_group_balances_modB(banDoc, groupObj, table, accountsMap) {
+function calc_group_balances_modA(banDoc, reportGroups, accountsMap) {
 
-	let arrGr = groupObj.gr1.split(";");
-	
-	let arrAcc = [];
-	let arrDesc = [];
-	let arrTot = [];
-	total = "";
+	//Controlla che accountsMap non sia vuoto
+	//Fa passare la struttra dati
+	//Per ogni gruppo della struttura dati prende la lista dei codici GR1 e crea un array
+	//Fa passare l'array e per ogni elemento controlla se il GR1 esiste nel accountsMap
+	//Se esiste prende l'importo del conto dal accountsMap e costruisce i saldi
 
-	//Check that the accountsMap is not empty, then use it to create the report
-	if (Object.keys(accountsMap).length !== 0) {
-		
-		//We take the gr1 list of the principal group and, for each element, we check if it equals the gr1 of the account detalis
-		//To do that we need to pass all the "Accounts" table to get the account numbers and use them as key for the accountsMap
-		//In the case the two gr1 are the same, we save the details values into the respective array
+	let finalIncome = "";
+	let finalExpenses = "";
 
-		for (let i = 0; i < arrGr.length; i++) {
-			for (const account in accountsMap) {
-				if (accountsMap[account].gr1 === arrGr[i]) {
-					arrAcc.push(account);
-					arrDesc.push(accountsMap[account].description);
-					arrTot.push(accountsMap[account].total);
-				}
-			}
-		}
-
-		//Print account details
-		for (let i = 0; i < arrAcc.length; i++) { //arrAcc, arrDesc, arrTot have the same length
+	for (let i = 0; i < reportGroups.length; i++) {
 			
-			let tmpAmount = arrTot[i];
-			if (!groupObj.income && groupObj.group !== "5") { //escluso gruppo 5 accantonamenti
-				if (banDoc.table("Categories")) {
-					tmpAmount = Banana.SDecimal.invert(tmpAmount);
+		let groupObj = getObject(reportGroups, reportGroups[i]["group"]);
+		let arrGr = groupObj.gr1.split(";");
+		let totalIncome = "";
+		let totalExpenses = "";
+		let total = "";
+
+		if (Object.keys(accountsMap).length !== 0) {
+			//accountsMap non è vuoto
+
+			for (let j = 0; j < arrGr.length; j++) {
+
+				for (const account in accountsMap) {
+
+					if (accountsMap[account].gr1 === arrGr[j]) {
+
+						let tmpAmount = accountsMap[account].total;
+						
+						if (groupObj.income) {
+							//Inverte importo entrata se contabilità entrate/uscite
+							if (!banDoc.table("Categories")) {
+								tmpAmount = Banana.SDecimal.invert(tmpAmount);
+							}
+							totalIncome = Banana.SDecimal.add(totalIncome, tmpAmount);
+						}
+						else {
+							//Inverte importo uscita se contabilità entrate/uscite
+							if (banDoc.table("Categories")) {
+								tmpAmount = Banana.SDecimal.invert(tmpAmount);
+							}
+							totalExpenses = Banana.SDecimal.add(totalExpenses, tmpAmount);
+						}
+
+						//importo totale del gruppo
+						total = Banana.SDecimal.add(total, tmpAmount);
+					}
 				}
-				totalExpenses = Banana.SDecimal.add(totalExpenses, tmpAmount);
 			}
-
-			total = Banana.SDecimal.add(total, tmpAmount);
 		}
+		else {
+			//accountsMap è vuoto
+			let tmpTotal = total;
+			if (banDoc.table("Categories")) {
+				tmpTotal = Banana.SDecimal.invert(tmpTotal);
+			}
+		}
+
+		//aggiunge l'importo del gruppo nell'oggetto struttura dati
+		//e costuisce totali finali di entrate e uscite
+		groupObj.total = total;
+		finalIncome = Banana.SDecimal.add(finalIncome, totalIncome);
+		finalExpenses = Banana.SDecimal.add(finalExpenses, totalExpenses);
 	}
 
-	//If the accountsMap is empty
-	else {
-		let tmpTotal = total;
-		if (banDoc.table("Categories")) {
-			tmpTotal = Banana.SDecimal.invert(tmpTotal);
+	//aggiunge nella struttra datu un oggetto con i totali finali
+	reportGroups.push({"group":"total", "totalIncome":finalIncome, "totalExpenses":finalExpenses});
+}
+
+// Funzione che calcola gli importi dei gruppi
+function calc_group_balances_modB(banDoc, reportGroups, accountsMap) {
+
+	//Controlla che accountsMap non sia vuoto
+	//Fa passare la struttra dati
+	//Per ogni gruppo della struttura dati prende la lista dei codici GR1 e crea un array
+	//Fa passare l'array e per ogni elemento controlla se il GR1 esiste nel accountsMap
+	//Se esiste prende l'importo del conto dal accountsMap e costruisce i saldi
+
+	let finalExpenses = "";
+
+	for (let i = 0; i < reportGroups.length; i++) {
+		
+		let groupObj = getObject(reportGroups, reportGroups[i]["group"]);
+		let arrGr = groupObj.gr1.split(";");
+		let totalExpenses = "";
+		let total = "";
+
+		if (Object.keys(accountsMap).length !== 0) {
+			//accountsMap non è vuoto
+
+			for (let j = 0; j < arrGr.length; j++) {
+
+				for (const account in accountsMap) {
+
+					if (accountsMap[account].gr1 === arrGr[j]) {
+
+						let tmpAmount = accountsMap[account].total;
+
+						if (!groupObj.income && groupObj.group !== "5") {
+							//solo uscite, escluso gruppo 5 accantonamenti
+							//Inverte importo se contabilità entrate/uscite
+							if (banDoc.table("Categories")) {
+								tmpAmount = Banana.SDecimal.invert(tmpAmount);
+							}
+							totalExpenses = Banana.SDecimal.add(totalExpenses, tmpAmount);
+						}
+
+						//importo totale del gruppo
+						total = Banana.SDecimal.add(total, tmpAmount);
+					}
+				}
+			}
 		}
+		else {
+			//accountsMap è vuoto
+			let tmpTotal = total;
+			if (banDoc.table("Categories")) {
+				tmpTotal = Banana.SDecimal.invert(tmpTotal);
+			}
+		}
+
+		//aggiunge l'importo del gruppo nell'oggetto struttura dati
+		//e costuisce totali finali di entrate e uscite
+		groupObj.total = total;
+		finalExpenses = Banana.SDecimal.add(finalExpenses, totalExpenses);
 	}
+
+	//aggiunge nella struttra datu un oggetto con i totali finali
+	reportGroups.push({"group":"total", "totalExpenses":finalExpenses});
 }
 
 // Funzione che crea l'oggetto del conto/categoria.
@@ -702,6 +737,13 @@ function loadAccountsMap(banDoc, userParam, accountsMap) {
 
 // Funzione che crea l'oggetto per ogni conto della tabella Cagegorie (contabilità entrate-uscite).
 function loadAccountsMap_IncomeAndExpenses(banDoc, userParam, tabCategories, accountsMap) {
+
+	// Fa passare la tabella Categorie,
+	// per ogni conto normale (non segmento o un centro di costo),
+	// calcola il currentBalance con il segmento selezionato dai parametri.
+	// Se ritorna un importo diverso da zero, crea un oggetto di quel conto
+	// con descrizione, gr1 e importo calcolato
+
 	for (let i = 0; i < tabCategories.rowCount; i++) {
 		let tRow = tabCategories.row(i);
 		let account = tRow.value("Category");
@@ -715,8 +757,13 @@ function loadAccountsMap_IncomeAndExpenses(banDoc, userParam, tabCategories, acc
 			let currentBal = banDoc.currentBalance(account + userParam.segment5XM, "", "");
 			let total = currentBal.total;
 
-			if (total) {
-				if (!accountsMap[account]) {
+
+            //sarebbe da calcolare il accountCard e aggiungerlo alla mappa
+
+
+            if (total) {
+                if (!accountsMap[account]) {
+					//Se non c'è lo aggiunge la prima volta
 
 					// //Split Gr groups
 					// if (gr && gr.indexOf(";") > -1) {
@@ -726,19 +773,27 @@ function loadAccountsMap_IncomeAndExpenses(banDoc, userParam, tabCategories, acc
 					accountsMap[account] = {
 						"description":tRow.value("Description"), 
 						"gr1":gr, 
-						"total" : total
-					};
+                        "total" : total
+                    };
 				}
 				else {
+					//c'è già e quindi somma l'importo
 					accountsMap[account].total = Banana.SDecimal.add(accountsMap[account].total, total); 
 				}				
 			}
 		}
-	}
+    }
 }
 
 // Funzione che crea l'oggetto per ogni conto della tabella Conti (contabilità doppia).
 function loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts, accountsMap) {
+
+	// Fa passare la tabella Conti,
+	// per ogni conto normale (non segmento o un centro di costo),
+	// calcola il currentBalance con il segmento selezionato dai parametri.
+	// Se ritorna un importo diverso da zero, crea un oggetto di quel conto
+	// con descrizione, gr1 e importo calcolato
+
 	for (let i = 0; i < tabAccounts.rowCount; i++) {
 		let tRow = tabAccounts.row(i);
 		let account = tRow.value("Account");
@@ -783,8 +838,8 @@ function loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts, accountsMap
 
 // Funzione che ritorna i codici di raggruppamento GR1 del gruppo indicato
 function getObjectGr1CodesByGroup(reportStructure, group) {
-	var searchGroup = group.trim();
-	for (var i = 0; i < reportStructure.length; i++) {
+    var searchGroup = group.trim();
+    for (var i = 0; i < reportStructure.length; i++) {
 		if (reportStructure[i].group === searchGroup) {
 			//Banana.console.log("GET => Group: " + group + " ... codes: " + reportStructure[i].gr1);
 			return reportStructure[i].gr1;
@@ -794,8 +849,8 @@ function getObjectGr1CodesByGroup(reportStructure, group) {
 
 // Funzione che imposta i codici di raggruppamento GR1 del gruppo indicato
 function setObjectGr1CodesByGroup(reportStructure, group, newCodes) {
-	var searchGroup = group.trim();
-	for (var i = 0; i < reportStructure.length; i++) {
+    var searchGroup = group.trim();
+    for (var i = 0; i < reportStructure.length; i++) {
 		if (reportStructure[i].group === searchGroup) {
 			reportStructure[i].gr1 = newCodes;
 			//Banana.console.log("SET => Group: " + group + " ... codes: " + reportStructure[i].gr1);
@@ -820,21 +875,21 @@ function checkCodesGroup4(banDoc, userParam, reportGroups) {
 	let codesSection5 = getObjectGr1CodesByGroup(reportGroups, "5").split(";");
 
 	// Crea un array con tutti i codici GR1 inseriti dall'utente
-	let userCodes = [];
+    let userCodes = [];
 
-	for (let i = 0; i < codesSection41.length; i++) {
+    for (let i = 0; i < codesSection41.length; i++) {
 		userCodes.push(codesSection41[i]);
 	}
-	for (let i = 0; i < codesSection42.length; i++) {
+    for (let i = 0; i < codesSection42.length; i++) {
 		userCodes.push(codesSection42[i]);
 	}
-	for (let i = 0; i < codesSection43.length; i++) {
+    for (let i = 0; i < codesSection43.length; i++) {
 		userCodes.push(codesSection43[i]);
 	}
-	for (let i = 0; i < codesSection44.length; i++) {
+    for (let i = 0; i < codesSection44.length; i++) {
 		userCodes.push(codesSection44[i]);
 	}
-	for (let i = 0; i < codesSection45.length; i++) {
+    for (let i = 0; i < codesSection45.length; i++) {
 		userCodes.push(codesSection45[i]);
 	}
 
@@ -923,7 +978,7 @@ function controlloAccantonamento(banDoc, accantonamento, entrate, uscite) {
 	
 	// Se 'Accantonamento > (Entrate - Uscite (1,2,3,4) )' => segnala errore
 	
-	var diffEntrateUscite = Banana.SDecimal.subtract(entrate,uscite);
+    var diffEntrateUscite = Banana.SDecimal.subtract(entrate,uscite);
 	if (Banana.SDecimal.compare(accantonamento,diffEntrateUscite) == 1) {
 		banDoc.addMessage(getErrorMessage(ID_ERR_ACCANTONAMENTO_5XMILLE));
 	}
