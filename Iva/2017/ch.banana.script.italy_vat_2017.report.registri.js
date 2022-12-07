@@ -134,7 +134,7 @@ function settingsDialog() {
   if (tipoRegistroComboBox)
     tipoRegistroComboBox.currentIndex = registri.param.tipoRegistro;
   //Colonna protocollo
-  index = 0;
+  var index = 0;
   if (registri.param.colonnaProtocollo == 'Doc')
     index = 1;
   var colProtocolloComboBox = dialog.tabWidget.findChild('colProtocolloComboBox');
@@ -302,7 +302,7 @@ function settingsDialog() {
     registri.param.periodoSelezionato = 'c';
   else
     registri.param.periodoSelezionato = 'y';
-  var index = parseInt(trimestreComboBox.currentIndex.toString());
+  index = parseInt(trimestreComboBox.currentIndex.toString());
   registri.param.periodoValoreTrimestre = index.toString();
   index = parseInt(meseComboBox.currentIndex.toString());
   registri.param.periodoValoreMese = index.toString();
@@ -1454,7 +1454,7 @@ Registri.prototype.printRegistroCorrispettivi = function(report, period, addPage
     //inserisce solamente i corrispettivi con un importo (così non vengono inclusi i codici c-reg, corrispettivi ventilati)
     if (Banana.SDecimal.isZero(corrispettivi[key].totaleGiornaliero))
       continue;
-    row = table.addRow();
+    var row = table.addRow();
     var date = key.substring(0, key.indexOf('|'));
     row.addCell(Banana.Converter.toLocaleDateFormat(date, "dd/mm/yy"), "");
     row.addCell(corrispettivi[key].vatCode, "");
@@ -1487,7 +1487,7 @@ Registri.prototype.printRegistroCorrispettivi = function(report, period, addPage
     tot8 = Banana.SDecimal.add(corrispettivi[key].totaleGiornaliero, tot8);
   }  
   
-  row = table.addRow();
+  var row = table.addRow();
   row.addCell("", "", 3);
   row.addCell("Totali", "total");
   row.addCell(Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(tot1)), "right total");
@@ -1549,7 +1549,7 @@ Registri.prototype.printRegistroCorrispettivi = function(report, period, addPage
   if (!corrispettivi.totaliAliquota)
     return true;
   var table = report.addTable("corrispettivi_riepilogo_table");
-  var row = table.addRow();
+  row = table.addRow();
   var title = "#RIEPILOGO PER ALIQUOTA IVA CORRISPETTIVI (" + new Utils(this.banDocument).getPeriodText(period) + ")";
   row.addCell(title, "h4");
   row.addCell("", "", 3);

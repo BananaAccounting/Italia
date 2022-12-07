@@ -18,7 +18,7 @@
 // @doctype = *
 // @encoding = utf-8
 // @inputdatasource = none
-// @pubdate = 2018-10-08
+// @pubdate = 2022-12-07
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -99,7 +99,7 @@ function settingsDialog() {
     //Dati IVA
   var tipoversamentoComboBox = dialog.tabWidget.findChild('tipoversamentoComboBox');
   if (tipoversamentoComboBox)
-    tipoversamentoComboBox.currentIndex = datiContribuente.param.liqTipoVersamento;
+    tipoversamentoComboBox.currentIndex = parseInt(datiContribuente.param.liqTipoVersamento);
   var percinteressiDoubleSpinBox = dialog.tabWidget.findChild('percinteressiDoubleSpinBox');
   if (percinteressiDoubleSpinBox) {
     if (datiContribuente.param.liqPercInteressi.length>0)

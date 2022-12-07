@@ -298,7 +298,7 @@ Journal.prototype.load = function() {
     var jsonLine = {};
     for (var j in this.columns) {
       var columnName = this.columns[j].name;
-      value = filteredRows[i].value(columnName);
+      var value = filteredRows[i].value(columnName);
       if (value) {
         jsonLine[columnName] = xml_escapeString(value);
       }

@@ -22,7 +22,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2019-05-06
+// @pubdate = 2022-12-07
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -153,7 +153,7 @@ function settingsDialog() {
     ultimoMese = '13';
   dialog.intestazioneGroupBox.ultimoMeseComboBox.currentIndex = ultimoMese;
   var metodoAcconto = liquidazione.param.metodoAcconto;
-  dialog.datiContabiliGroupBox.metodoAccontoComboBox.currentIndex = metodoAcconto;
+  dialog.datiContabiliGroupBox.metodoAccontoComboBox.currentIndex = parseInt(metodoAcconto);
   
   //Groupbox stampa
   if (liquidazione.param.outputScript==1)
