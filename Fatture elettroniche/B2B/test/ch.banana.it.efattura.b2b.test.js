@@ -141,7 +141,7 @@ EFatturaTest.prototype.getParam1 = function() {
    param.xml.progressive = '1';
    param.xml.open_file = false;
    param.xml.xslt_filename = 'fatturaPA_v1.2.1.xsl';
-   param.xml.xsd_filename = 'testcases/Schema_del_file_xml_FatturaPA_versione_1.2.1.xsd';
+   param.xml.xsd_filename = 'Schema_del_file_xml_FatturaPA_versione_1.2.1.xsd';
 
    return param;
 }
