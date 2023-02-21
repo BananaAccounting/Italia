@@ -751,6 +751,121 @@ function createReportStructureRendicontoGestionale() {
 //=================
 // Rendiconto cassa
 //=================
+function createXmlStructureRendicontoCassa() {
+
+	var xmlStructure = [];
+	xmlStructure.push({"titleText":"RendicontoPerCassa"});
+	xmlStructure.push({"id":"dC", "isTitle":true, "newpage":false});
+	xmlStructure.push({"id":"dCA", "isTitle":true});
+	xmlStructure.push({"id":"CA1"});
+	xmlStructure.push({"id":"CA2"});
+	xmlStructure.push({"id":"CA3"});
+	xmlStructure.push({"id":"CA4"});
+	xmlStructure.push({"id":"CA7"});
+	xmlStructure.push({"id":"CA"});
+	xmlStructure.push({"id":"dCB", "isTitle":true});
+	xmlStructure.push({"id":"CB1"});
+	xmlStructure.push({"id":"CB2"});
+	xmlStructure.push({"id":"CB3"});
+	xmlStructure.push({"id":"CB4"});
+	xmlStructure.push({"id":"CB7"});
+	xmlStructure.push({"id":"CB"});
+	xmlStructure.push({"id":"dCC", "isTitle":true});
+	xmlStructure.push({"id":"CC1"});
+	xmlStructure.push({"id":"CC2"});
+	xmlStructure.push({"id":"CC3"});
+	xmlStructure.push({"id":"CC"});
+	xmlStructure.push({"id":"dCD", "isTitle":true});
+	xmlStructure.push({"id":"CD1"});
+	xmlStructure.push({"id":"CD2"});
+	xmlStructure.push({"id":"CD3"});
+	xmlStructure.push({"id":"CD4"});
+	xmlStructure.push({"id":"CD6"});
+	xmlStructure.push({"id":"CD"});
+	xmlStructure.push({"id":"dCE", "isTitle":true});
+	xmlStructure.push({"id":"CE1"});
+	xmlStructure.push({"id":"CE2"});
+	xmlStructure.push({"id":"CE3"});
+	xmlStructure.push({"id":"CE4"});
+	xmlStructure.push({"id":"CE7"});
+	xmlStructure.push({"id":"CE"});
+	xmlStructure.push({"id":"C"});
+
+	xmlStructure.push({"id":"dR", "isTitle":true, "newpage":true});
+	xmlStructure.push({"id":"dRA", "isTitle":true});
+	xmlStructure.push({"id":"RA1"});
+	xmlStructure.push({"id":"RA2"});
+	xmlStructure.push({"id":"RA3"});
+	xmlStructure.push({"id":"RA4"});
+	xmlStructure.push({"id":"RA5"});
+	xmlStructure.push({"id":"RA6"});
+	xmlStructure.push({"id":"RA7"});
+	xmlStructure.push({"id":"RA8"});
+	xmlStructure.push({"id":"RA9"});
+	xmlStructure.push({"id":"RA10"});
+	xmlStructure.push({"id":"RA"});
+	xmlStructure.push({"id":"dRB", "isTitle":true});
+	xmlStructure.push({"id":"RB1"});
+	xmlStructure.push({"id":"RB2"});
+	xmlStructure.push({"id":"RB4"});
+	xmlStructure.push({"id":"RB5"});
+	xmlStructure.push({"id":"RB6"});
+	xmlStructure.push({"id":"RB"});
+	xmlStructure.push({"id":"dRC", "isTitle":true});
+	xmlStructure.push({"id":"RC1"});
+	xmlStructure.push({"id":"RC2"});
+	xmlStructure.push({"id":"RC3"});
+	xmlStructure.push({"id":"RC"});
+	xmlStructure.push({"id":"dRD", "isTitle":true});
+	xmlStructure.push({"id":"RD1"});
+	xmlStructure.push({"id":"RD2"});
+	xmlStructure.push({"id":"RD3"});
+	xmlStructure.push({"id":"RD4"});
+	xmlStructure.push({"id":"RD5"});
+	xmlStructure.push({"id":"RD"});
+	xmlStructure.push({"id":"dRE", "isTitle":true});
+	xmlStructure.push({"id":"RE1"});
+	xmlStructure.push({"id":"RE2"});
+	xmlStructure.push({"id":"RE"});
+	xmlStructure.push({"id":"R"});
+	xmlStructure.push({"id":"IM"});
+
+	xmlStructure.push({"id":"dCF", "isTitle":true, "newpage":true});
+	xmlStructure.push({"id":"CF1"});
+	xmlStructure.push({"id":"CF2"});
+	xmlStructure.push({"id":"CF3"});
+	xmlStructure.push({"id":"CF4"});
+	xmlStructure.push({"id":"CF"});
+	xmlStructure.push({"id":"dRF", "isTitle":true});
+	xmlStructure.push({"id":"RF1"});
+	xmlStructure.push({"id":"RF2"});
+	xmlStructure.push({"id":"RF3"});
+	xmlStructure.push({"id":"RF4"});
+	xmlStructure.push({"id":"RF"});
+	xmlStructure.push({"id":"IMRC"});
+
+	xmlStructure.push({"id":"TADES"});
+	xmlStructure.push({"id":"RF-CF"});
+	xmlStructure.push({"id":"TADRC"});
+
+	xmlStructure.push({"id":"dACIV", "isTitle":true, "newpage":true});
+	xmlStructure.push({"id":"ACIV"});
+	xmlStructure.push({"id":"ACIV3"});
+	xmlStructure.push({"id":"ACIV1"});
+
+	xmlStructure.push({"id":"dCG", "isTitle":true, "newpage":true});
+	xmlStructure.push({"id":"RC1"});
+	xmlStructure.push({"id":"RC2"});
+	xmlStructure.push({"id":"RC"});
+	xmlStructure.push({"id":"dRG", "isTitle":true});
+	xmlStructure.push({"id":"RG1"});
+	xmlStructure.push({"id":"RG2"});
+	xmlStructure.push({"id":"RG"});
+
+
+	return xmlStructure;
+}
+
 function createPrintStructureRendicontoCassa() {
 
 	var printStructure = [];
