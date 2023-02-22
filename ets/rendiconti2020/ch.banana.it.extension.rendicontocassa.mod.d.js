@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2023-02-20
+// @pubdate = 2023-02-22
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -27,7 +27,7 @@
 // @includejs = breport.js
 // @includejs = breportcontrollo.js
 // @includejs = errors.js
-// @includejs = etsXbrl_xml.js
+// @includejs = breportxml.js
 
 
 /*
@@ -109,9 +109,9 @@ function creaReportXml(banDoc, paramReport) {
    // bReport.formatValues(["currentAmount", "previousAmount"]);
 
 
-   var etsXml = new EtsXml(banDoc, paramReport);
-   var xml = etsXml.createXml();
-   etsXml.saveData(xml);
+   var breportxml = new BReportXml(banDoc, paramReport);
+   var outputxml = breportxml.createXml();
+   breportxml.saveData(outputxml);
 }
 
 

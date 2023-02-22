@@ -754,6 +754,7 @@ function createReportStructureRendicontoGestionale() {
 function createXmlStructureRendicontoCassa() {
 
 	var xmlStructure = [];
+	xmlStructure.push({"fileName":"RC"});
 	xmlStructure.push({"titleText":"RendicontoPerCassa"});
 	xmlStructure.push({"id":"dC", "isTitle":true, "newpage":false});
 	xmlStructure.push({"id":"dCA", "isTitle":true});
