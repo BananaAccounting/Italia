@@ -19,16 +19,16 @@
 				</IdFiscaleIVA>
 				<CodiceFiscale>00226500211</CodiceFiscale>
 				<Anagrafica>
-					<Denominazione>MESSAGGERO EDITRICE</Denominazione>
+					<Denominazione>MMM EDITRICE</Denominazione>
 				</Anagrafica>
 				<RegimeFiscale>RF07</RegimeFiscale>
 			</DatiAnagrafici>
 			<Sede>
 				<Indirizzo>PIAZZA DDD</Indirizzo>
 				<NumeroCivico>22</NumeroCivico>
-				<CAP>35100</CAP>
-				<Comune>PADOVA</Comune>
-				<Provincia>PD</Provincia>
+				<CAP>33100</CAP>
+				<Comune>VENEZIA</Comune>
+				<Provincia>VE</Provincia>
 				<Nazione>IT</Nazione>
 			</Sede>
 			<Contatti>
@@ -3899,10 +3899,10 @@ Protocollo N.: 754 /11 - Del 31-05-2021</Descrizione>
 				<GiorniTerminiPagamento>30</GiorniTerminiPagamento>
 				<DataScadenzaPagamento>2019-06-30</DataScadenzaPagamento>
 				<ImportoPagamento>3782.22</ImportoPagamento>
-				<IBAN>IT03V0103012197000000177201</IBAN>
+				<IBAN>XX03V0100012197000000177201</IBAN>
 				<ABI>01030</ABI>
 				<CAB>12197</CAB>
-				<BIC>PASCITM1202</BIC>
+				<BIC>XXSCITM12VV</BIC>
 			</DettaglioPagamento>
 		</DatiPagamento>
 	</FatturaElettronicaBody>
