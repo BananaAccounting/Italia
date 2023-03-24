@@ -2132,6 +2132,8 @@ function initUserParam() {
    userParam.finalnotes = '';
    userParam.colorheadertable = '#337ab7';
    userParam.stampareportcontrollo = false;
+   userParam.filexml = false;
+   userParam.visualizzafilexml = false;
    return userParam;
 }
 

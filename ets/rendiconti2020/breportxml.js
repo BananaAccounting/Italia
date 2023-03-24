@@ -47,7 +47,7 @@ var BReportXml = class JsClass {
    /**
     * Creates the XML of the 'Rendiconto Per Cassa' report
     */
-   createXml_RendicontoPerCassa(xml) {
+   createXml_AddElements(xml) {
 
       //Banana.console.log(JSON.stringify(this.printStructure, "", " "));
       //Banana.console.log(JSON.stringify(this.xmlStructure, "", " "));
@@ -63,6 +63,11 @@ var BReportXml = class JsClass {
       }
       var xmlNodoRoot = xml.addElement('ets-xbrl:'+titleText);
 
+
+      let isStatoPatrimoniale = false;
+      if (titleText === "StatoPatrimoniale") {
+         isStatoPatrimoniale = true;
+      }
 
       // All data
       for (let j = 0; j < this.xmlStructure.length; j++) {
@@ -83,12 +88,14 @@ var BReportXml = class JsClass {
 
 
 
-            // // ONLY FOR "Rendiconto Stato Patrimoniale"
-            // // Do not prints elements that can be excluded, when the "compattastampa" parameter in settings is TRUE.
-            // // Elements that can be excluded have the "exclude" property in "reportStructure" obj set to TRUE. All the other are set to FALSE.
-            // if (this.userParam.compattastampa && obj.exclude) {
-            //    continue; // go directly to the next element of the object
-            // }
+            // ONLY FOR "Rendiconto Stato Patrimoniale"
+            // Do not prints elements that can be excluded, when the "compattastampa" parameter in settings is TRUE.
+            // Elements that can be excluded have the "exclude" property in "reportStructure" obj set to TRUE. All the other are set to FALSE.
+            if (isStatoPatrimoniale) {
+               if (this.userParam.compattastampa && obj.exclude) {
+                  continue; // go directly to the next element of the object
+               }
+            }
 
 
             // ID (GR1)
@@ -278,7 +285,7 @@ var BReportXml = class JsClass {
       var ETSXbrlNode = this.addSchemaAndNamespaces(xmlDocument);
 
       //Rendiconto cassa
-      var xml = this.createXml_RendicontoPerCassa(ETSXbrlNode);
+      var xml = this.createXml_AddElements(ETSXbrlNode);
 
 
 

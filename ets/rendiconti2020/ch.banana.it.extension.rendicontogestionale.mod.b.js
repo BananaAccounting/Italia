@@ -1,4 +1,4 @@
-// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2023] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@
 // @includejs = breport.js
 // @includejs = breportcontrollo.js
 // @includejs = errors.js
+// @includejs = breportxml.js
 
 
 /*
@@ -85,10 +86,24 @@ function exec(string) {
       report = stampaReportNormale(Banana.document, paramReport, stylesheet);
    }
 
+   if (userParam.filexml) {
+      creaReportXml(Banana.document, paramReport);
+   }
+
    setCss(Banana.document, stylesheet, variables, userParam);
    Banana.Report.preview(report, stylesheet);
 }
 
+function creaReportXml(banDoc, paramReport) {
+   // var bReport = new BReport(banDoc, paramReport);
+   // bReport.validateGroups_IncomeExpenses(paramReport.userParam.column, paramReport.reportStructure);
+   // bReport.loadBalances();
+   // bReport.calculateTotals(["currentAmount", "previousAmount"]);
+   // bReport.formatValues(["currentAmount", "previousAmount"]);
+   var breportxml = new BReportXml(banDoc, paramReport);
+   var outputxml = breportxml.createXml();
+   breportxml.saveData(outputxml);
+}
 
 function stampaReportNormale(banDoc, paramReport, stylesheet) {
 
@@ -126,6 +141,7 @@ function setParamReport(banDoc, userParam) {
    // paramReport.userParam;
    // paramReport.reportStructure;
    // paramReport.printStructure;
+   // paramReport.xmlStructure
    // paramReport.currentCardFields;
    // paramReport.currentCardTitles;
    
@@ -139,6 +155,10 @@ function setParamReport(banDoc, userParam) {
    // Print report structure
    let printStructure = createPrintStructureRendicontoGestionale();
    paramReport.printStructure = printStructure;
+
+   // XML structure
+   let xmlStructure = createXmlStructureRendicontoGestionale();
+   paramReport.xmlStructure = xmlStructure;
 
    // CurrentCard fields names
    let currentCardFields = ["JDate","Doc","JDescription","JAccount","JDebitAmount","JCreditAmount","JBalance"];
@@ -1557,6 +1577,41 @@ function convertParam(userParam) {
    }
    convertedParam.data.push(currentParam);
 
+   currentParam = {};
+   currentParam.name = 'output';
+   currentParam.title = 'Modalità output XML';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+      userParam.output = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'filexml';
+   currentParam.parentObject = 'output';
+   currentParam.title = 'File XML';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.filexml ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+      userParam.filexml = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'visualizzafilexml';
+   currentParam.parentObject = 'output';
+   currentParam.title = 'Visualizza file immediatamente';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.visualizzafilexml ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+      userParam.visualizzafilexml = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
@@ -1574,6 +1629,8 @@ function initUserParam() {
    userParam.finalnotes = '';
    userParam.colorheadertable = '#337ab7';
    userParam.stampareportcontrollo = false;
+   userParam.filexml = false;
+   userParam.visualizzafilexml = false;
    return userParam;
 }
 
