@@ -34,7 +34,6 @@ var ImportUtilities = class ImportUtilities {
                 columnTitles.push(name);
             }
         }
-
         //Function call Banana.Converter.objectArrayToCsv() to create a CSV with new data just converted
         var convertedCsv = Banana.Converter.objectArrayToCsv(columnTitles, intermediaryData, "\t");
 
@@ -221,6 +220,24 @@ var ImportUtilities = class ImportUtilities {
         return intermediaryData;
     }
 
+    verifyBananaPlusVersion() {
+        if (!this.banDocument)
+            return false;
+
+        var BAN_VERSION_MIN = "10.0";
+
+        // supported Version
+        if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, BAN_VERSION_MIN) >= 0) {
+            return true;
+        }
+
+        // not supported version
+        var lang = this.getLang();
+        var msg = "This extension requires Banana Accounting+";
+        this.banDocument.addMessage(msg, "ID_ERR_LICENSE_NOTVALID");
+        return false;
+    }
+
     //Check if the version of Banana Accounting is compatible with this class
     verifyBananaAdvancedVersion() {
         if (!this.banDocument)
@@ -234,5 +251,38 @@ var ImportUtilities = class ImportUtilities {
         }
 
         return true;
+    }
+
+    getErrorMessage(errorId, lang) {
+        if (!lang)
+            lang = 'en';
+        switch (errorId) {
+            case "ID_ERR_FORMAT_UNKNOWN":
+                 if (lang == 'it')
+                    return "Formato del file *.csv non riconosciuto";
+                 else if (lang == 'fr')
+                    return "Format de fichier *.csv non reconnu";
+                 else if (lang == 'de')
+                    return "Unerkanntes *.csv-Dateiformat";
+                 else
+                    return "Unrecognised *.csv file format";
+        }
+        return '';
+     }
+
+    getLang() {
+        var lang = 'en';
+        if (Banana.application.locale)
+            lang = Banana.application.locale;
+        if (lang.length > 2)
+            lang = lang.substring(0, 2);
+        return lang;
+     }
+
+    getUnknownFormatError(){
+        let errId = "ID_ERR_FORMAT_UNKNOWN"; //error
+        let lang = this.getLang();
+        let msg = this.getErrorMessage(errId, lang);
+        Banana.document.addMessage(msg, errId);
     }
 }
