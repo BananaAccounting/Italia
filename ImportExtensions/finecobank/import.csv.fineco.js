@@ -16,7 +16,7 @@
 // @api = 1.0
 // @pubdate = 2022-01-11
 // @publisher = Banana.ch SA
-// @description = Fineco Bank - Importazione estratto
+// @description = Fineco Bank - Importa movimenti .csv (Banana+ Advanced)
 // @task = import.transactions
 // @doctype = 100.*; 110.*; 130.*
 // @docproperties = 
@@ -38,8 +38,8 @@ function exec(inData, isTest) {
 	var importFinecoBank = new ImportFinecoBank(Banana.document);
 
 	// The extensions runs only with advanced Version of Banana Accounting
-    if (isTest !== true && !importFinecoBank.verifyBananaAdvancedVersion())
-        return "@Cancel";
+	if (isTest !== true && !importFinecoBank.verifyBananaAdvancedVersion())
+		return "@Cancel";
 
 	//1. Function call to define the conversion parameters
 	var convertionParam = importFinecoBank.defineConversionParam(inData);
