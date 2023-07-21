@@ -730,8 +730,9 @@ EsibilitaIva
       secondo gli ultimi chiarimenti dell'Agenzia Entrate, per tutte le fatture, 
       sia EMESSE che RICEVUTE in reverse Charge, si deve indicare il codice N6. 
       l'unica differenza è che solo per quelle ricevute si deve valorizzare il campo Aliquota ed Imposta.
+      Aggiunto controllo codici natura N6 estesi a due cifre, ad esempio N6.9
      */
-     if (jsonLine["IT_Natura"] !== "ESCL" && jsonLine["IT_Natura"] !== "N6") {
+     if (jsonLine["IT_Natura"] !== "ESCL" && !jsonLine["IT_Natura"].startsWith("N6")) {
       if (jsonLine["IT_Natura"].length>0) {
          if (!Banana.SDecimal.isZero(imposta) && !Banana.SDecimal.isZero(aliquota)) {
             msg += getErrorMessage(ID_ERR_XML_ELEMENTO_NATURA_PRESENTE) + jsonLine["IT_Natura"];
