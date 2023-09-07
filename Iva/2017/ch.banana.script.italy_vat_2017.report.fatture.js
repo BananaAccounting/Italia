@@ -166,7 +166,7 @@ function settingsDialog() {
   progressivo = new Utils(this.banDocument).zeroPad(progressivo, 5);
   dialog.datiFatturaHeaderGroupBox.progressivoInvioLineEdit.text = progressivo;
   dialog.datiFatturaHeaderGroupBox.cfDichiaranteLineEdit.text = datiFatture.param.codicefiscaleDichiarante;
-  dialog.datiFatturaHeaderGroupBox.codiceCaricaComboBox.currentIndex = datiFatture.param.codiceCarica;
+  dialog.datiFatturaHeaderGroupBox.codiceCaricaComboBox.currentIndex = parseInt(datiFatture.param.codiceCarica);
   var bloccoId = 0;
   if (datiFatture.param.blocco == "DTR")
     bloccoId = 1;

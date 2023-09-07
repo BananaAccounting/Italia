@@ -139,9 +139,9 @@ function settingsDialog() {
   progressivo = new Utils(this.banDocument).zeroPad(progressivo, 5);
   dialog.intestazioneGroupBox.progressivoInvioLineEdit.text = progressivo;
   dialog.intestazioneGroupBox.cfDichiaranteLineEdit.text = liquidazione.param.comunicazioneCFDichiarante;
-  dialog.intestazioneGroupBox.codiceCaricaComboBox.currentIndex = liquidazione.param.comunicazioneCodiceCaricaDichiarante;
+  dialog.intestazioneGroupBox.codiceCaricaComboBox.currentIndex = parseInt(liquidazione.param.comunicazioneCodiceCaricaDichiarante);
   dialog.intestazioneGroupBox.cfIntermediarioLineEdit.text = liquidazione.param.comunicazioneCFIntermediario;
-  dialog.intestazioneGroupBox.impegnoComboBox.currentIndex = liquidazione.param.comunicazioneImpegno;
+  dialog.intestazioneGroupBox.impegnoComboBox.currentIndex = parseInt(liquidazione.param.comunicazioneImpegno);
   dialog.intestazioneGroupBox.firmaDichiarazioneCheckBox.checked = liquidazione.param.comunicazioneFirmaDichiarazione;
   dialog.intestazioneGroupBox.firmaIntermediarioCheckBox.checked = liquidazione.param.comunicazioneFirmaIntermediario;
   var dataImpegno = Banana.Converter.stringToDate(liquidazione.param.comunicazioneImpegnoData, "YYYY-MM-DD");
@@ -151,7 +151,7 @@ function settingsDialog() {
     ultimoMese = '12';
   else if (ultimoMese == '99')
     ultimoMese = '13';
-  dialog.intestazioneGroupBox.ultimoMeseComboBox.currentIndex = ultimoMese;
+  dialog.intestazioneGroupBox.ultimoMeseComboBox.currentIndex = parseInt(ultimoMese);
   var metodoAcconto = liquidazione.param.metodoAcconto;
   dialog.datiContabiliGroupBox.metodoAccontoComboBox.currentIndex = parseInt(metodoAcconto);
   
