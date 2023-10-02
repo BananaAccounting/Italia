@@ -89,7 +89,8 @@ function Intesa_Format1() {
 	this.colCategory = 5;
 	this.colAmount = 7;
 
-	this.colCount = 10;
+	this.csvColCount = 10; //When Excel converts the file in excel the columns are 10.
+	this.excelColAmount = 8;
 
 	/** Return true if the transactions match this format */
 	this.match = function (transactions) {
@@ -102,7 +103,7 @@ function Intesa_Format1() {
 			var formatMatched = false;
 
 			/* array should have all columns */
-			if (transaction.length === (this.colCount))
+			if (transaction.length === (this.csvColCount) || transaction.length === (this.excelColAmount))
 				formatMatched = true;
 			else
 				formatMatched = false;
