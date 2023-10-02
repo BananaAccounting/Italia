@@ -1,0 +1,55 @@
+%%info_test_name{csv_intesa_example_format1_20232209}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+\begin{tablevalue}{}{ l  l  l  l  l  l }
+Date & Doc & Description & Notes & Income & Expenses\\
+2023-09-22 &  & Dieiurrex Pervide Tro, Postam Xxx Avit 43 Faccento Cor. 4355362/11525 16/14 5241, Mitom 3343/40310345 & INO PRORDUSUISIVIS &  & 2.40\\
+2023-09-22 &  & Dieiurrex Pervide Tro, Sat Cuntrimi Xxx Magrage Me Cor. 5870437/38182 16/14 3686, Mitom 3343/40310345 & INO PRORDUSUISIVIS &  & 20.00\\
+2023-09-22 &  & Dieiurrex Pervide Tro, Sat Cuntrimi Xxx Magrage Me Cor. 6515522/24888 16/14 5247, Mitom 3343/40310345 & INO PRORDUSUISIVIS &  & 2.60\\
+2023-09-21 &  & Ocanumn Conuino Hodunt Xxx, OCANUMN CONUINO HODUNT XXX 22/313814 Quade M.6473 CENT CENT MF78UGR 35062 COR.8001286/132485, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 4.20\\
+2023-09-21 &  & Ocanumn Conuino Hodunt Xxx, OCANUMN CONUINO HODUNT XXX 22/553257 Quade M.6473 CENT CENT MF78UGR 35062 COR.8001286/132485, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 1.20\\
+2023-09-20 &  & Ficapire Ali Regine Stall O, FICAPIRE ALI REGINE STALL Y70/253144 Quade M.6473 CENT CENT MF78UGR 61263 COR.7847468/132485, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 58.00\\
+2023-09-20 &  & Jubiendas O Apilitas, COR. POST. 5767264370053753 ALIA JUBIENDAS O APILITAS 43 Perungentunt S'GUNCEPEM MAGE Car 16072862 Me 45588375 PUS XXX Ibulatem O Congus Flapta Gurrunis Ut SURA. TUIRED DIME XXX PILLA. S'GUNCEPEM MAGE NAM. SEC. COLUMELL, Mitom 3343/40310345 & PRORDUSUISIVIS & 3456.54 & \\
+2023-09-20 &  & Dieiurrex Tro, TemOr *Gerva Diustem Quam 36/14/7448 30.14, Mitom 3343/40310345 & INO PRORDUSUISIVIS &  & 4.20\\
+2023-09-19 &  & Ficapire Si Intulo Molet M., FICAPIRE SI INTULO MOLET M.51/214443 Quade M.6473 CENT CENT MF78UGR 61263 COR.7057045/887343, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 27.30\\
+2023-09-19 &  & Jubiendas O Apilitas, COR. POST. 8411547707538370 ALIA 3 Perungentunt S'GUNCEPEM MAGE Car 13002656 Me 64506070 PUS XXX Ibulatem O Congus Flapta Gurrunis Ut SURA. TUIRED DIME XXX PILLA. S'GUNCEPEM MAGE NAM. SEC. COLUMELL, Mitom 3343/40310345 & PRORDUSUISIVIS & 4345.73 & \\
+2023-09-19 &  & Fripta Atinte Quisi Usa, Fripta Atinte Quisi Usa Quam, QUADE LANGET SHAT              ****268777822514 & PRORDUSUISIVIS &  & 154.00\\
+2023-09-18 &  & Ocanumn Conuino Hodunt Xxx, OCANUMN CONUINO HODUNT XXX 81/212222 Quade M.6473 CENT CENT MF78UGR 35062 COR.8001286/132485, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 4.20\\
+2023-09-17 &  & Legunum X55 Ex Muluci Tent Pra, Legunum X55 Ex Muluci Tent Pra Quam, QUADE LANGET SHAT              ****268777822514 & PRORDUSUISIVIS &  & 179.00\\
+2023-09-16 &  & Chat' Adescantury Absque De, CHAT' ADESCANTURY ABSQUE OR06/133411 Quade M.6473 CENT CENT MF78UGR 27711 COR.6052047/132485, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 13.00\\
+2023-09-15 &  & Dix Cabar Absque Vi Frunuid, DIX CABAR ABSQUE VI SPHBDYH73/857306 Quade M.6473 CENT CENT MF78UGR 30726 COR.7746255/625414, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 10.05\\
+2023-09-15 &  & Cauprirotubi Mortalique Ampreventatet, M.O, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 300.00\\
+2023-09-15 &  & Addunti, Addunti Quam, QUADE LANGET SHAT              ****268777822514 & PRORDUSUISIVIS &  & 158.62\\
+2023-09-14 &  & Cone Vi Oricit Cabita Ostra, CONE VI ORICIT CABITA BMIIR17/217180 Quade M.6473 CENT CENT MF78UGR 55271 COR.5632466/625414, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 132.00\\
+2023-09-14 &  & Nuturune FRUSIOLO Sigro Fentus Hodunt O Pant, Nuturune FRUSIOLO NAM ALVUS POPRA 67000 43/834183 Quade M.6473 CENT CENT WL32 NAM 67000 ASU 40045, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 250.00\\
+2023-09-14 &  & Nuturune FRUSIOLO Sigro Fentus Hodunt O Pant, Nuturune FRUSIOLO NAM ALVUS POPRA 67000 43/715278 Quade M.6473 CENT CENT WL32 NAM 67000 ASU 14603, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 100.00\\
+2023-09-14 &  & Scro.nuturune Virequide Fentus Hodunt O Pant, M.O, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 2.00\\
+2023-09-14 &  & Scro.nuturune Virequide Fentus Hodunt O Pant, M.O, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 2.00\\
+2023-09-14 &  & Syllus Vica, Syllus Vica Obillia, QUADE LANGET SHAT              ****268777822514 & INO PRORDUSUISIVIS &  & 1000.00\\
+2023-09-11 &  & Protulumn Regine \& G... Xxx, PROTULUMN REGINE \& G... HHH54/243216 Quade M.6473 CENT CENT MF78UGR 77253 COR.3850403/132485, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 3.20\\
+2023-09-11 &  & Leges Mustorum Tuunt, LEGES MUSTORUM TUUNT Pirino, QUADE LANGET SHAT              ****268777822514 & PRORDUSUISIVIS &  & 52.06\\
+2023-09-11 &  & Syllus Vica, Syllus Vica Obillia, QUADE LANGET SHAT              ****268777822514 & INO PRORDUSUISIVIS &  & 1200.00\\
+2023-09-10 &  & In Bibultis, In Bibultis Quam, QUADE LANGET SHAT              ****268777822514 & PRORDUSUISIVIS &  & 110.00\\
+2023-09-09 &  & TemOr *Vinaverm Latem Quam, CIERERIBEM ET 14/14/7448 INSE XXX 8142 PULIERVA IN QUADE 6473 CENT CENT WL32 MAXIMA TemOr *Vinaverm Latem Quam, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 50.00\\
+2023-09-09 &  & TemOr *Vinaverm Latem Quam, CIERERIBEM ET 14/14/7448 INSE XXX 8142 PULIERVA IN QUADE 6473 CENT CENT WL32 MAXIMA TemOr *Vinaverm Latem Quam, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 20.00\\
+2023-09-09 &  & De Scridebier, Dieiurrex Et TRO DE SCRIDEBIER 14/873461 Quade M.6473 CENT CENT WL32 COR. 3060107/47483, Mitom 3343/40310345 & PRORDUSUISIVIS &  & 100.00\\
+\\
+\end{tablevalue}
+\end{document}
