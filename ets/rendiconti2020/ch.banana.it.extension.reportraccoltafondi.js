@@ -167,8 +167,8 @@ function printReport_transactions(report, banDoc, userParam, segment) {
 	let startDate = "";
 	let endDate = "";
 
-	startDate = userParam[segment.account+'_dataInizio'];
-	endDate = userParam[segment.account+'_dataFine'];
+	startDate = Banana.Converter.toInternalDateFormat(userParam[segment.account+'_dataInizio']);
+	endDate = Banana.Converter.toInternalDateFormat(userParam[segment.account+'_dataFine']);
 
 	//Create a table object with all transactions for the given account and period
 	let transTab = banDoc.currentCard(segment.account, startDate, endDate);
@@ -190,6 +190,11 @@ function printReport_transactions(report, banDoc, userParam, segment) {
 		let tRow = transTab.row(i);
 		let jdebitamount = tRow.value('JDebitAmount');
 		let jcreditamount = tRow.value('JCreditAmount');
+
+		if (tRow.value("JDescription") === "Riporto" && !tRow.value("Date") && !tRow.value("Doc") && !jdebitamount && !jcreditamount) {
+			// Do not print "Riporto" empty row, go to next transaction
+			continue;
+		}
 
 		tableRow = table.addRow();
 		tableRow.addCell(Banana.Converter.toLocaleDateFormat(tRow.value("Date")), "heading3");
