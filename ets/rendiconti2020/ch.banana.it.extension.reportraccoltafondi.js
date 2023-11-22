@@ -136,7 +136,13 @@ function printReport_information(report, banDoc, userParam, segment) {
 
 	strAccount = segment.account;
 	startDate = userParam[segment.account+'_dataInizio'];
+	if (!startDate) {
+		startDate = Banana.Converter.toLocaleDateFormat(banDoc.info("AccountingDataBase","OpeningDate")); 
+	}
 	endDate = userParam[segment.account+'_dataFine'];
+	if (!endDate) {
+		endDate = Banana.Converter.toLocaleDateFormat(banDoc.info("AccountingDataBase","ClosureDate"));
+	}
 	racFondi = userParam[segment.account+'_descrizione'];
 	responsabile = userParam[segment.account+'_responsabile'];
 	headerLeft = banDoc.info("Base","HeaderLeft");
@@ -394,7 +400,7 @@ function convertParam(userParam, segmentList) {
 		currentParam.parentObject = segment;
 		currentParam.title = "Data inizio";
 		currentParam.type = 'string';
-		currentParam.value = userParam[segment+'_dataInizio'] ? userParam[segment+'_dataInizio'] : '';
+		currentParam.value = userParam[segment+'_dataInizio'] ? userParam[segment+'_dataInizio'] : Banana.Converter.toLocaleDateFormat(Banana.document.info("AccountingDataBase","OpeningDate"));
 		currentParam.defaultvalue = Banana.Converter.toLocaleDateFormat(Banana.document.info("AccountingDataBase","OpeningDate"));
 		currentParam.segment = segment;
 		currentParam.tooltip = "Inserire la data di inizio periodo della raccolta fondi";
@@ -408,7 +414,7 @@ function convertParam(userParam, segmentList) {
 		currentParam.parentObject = segment;
 		currentParam.title = "Data fine";
 		currentParam.type = 'string';
-		currentParam.value = userParam[segment+'_dataFine'] ? userParam[segment+'_dataFine'] : '';
+		currentParam.value = userParam[segment+'_dataFine'] ? userParam[segment+'_dataFine'] : Banana.Converter.toLocaleDateFormat(Banana.document.info("AccountingDataBase","ClosureDate"));
 		currentParam.defaultvalue = Banana.Converter.toLocaleDateFormat(Banana.document.info("AccountingDataBase","ClosureDate"));
 		currentParam.segment = segment;
 		currentParam.tooltip = "Inserire la data di fine periodo della raccolta fondi";
