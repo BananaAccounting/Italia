@@ -233,6 +233,22 @@ EFatturaTest.prototype.outputXml = function(fileName, banDocument, param) {
       if (param.xml.xsd_filename) {
          this.xml_validate_test(output, param.xml.xsd_filename, "SCHEMA VALIDATION FOR" + fileName.toUpperCase());
       }
+
+      //sort attributes in Document tag
+      const regex = /<p:FatturaElettronica[^>]*>/;
+      const documentTag = output.match(regex);
+      const attributeRegex = /(\S+)=["'](.*?)["']/g;
+      const attributes = [];
+      let attributeMatch;
+      while ((attributeMatch = attributeRegex.exec(documentTag)) !== null) {
+         const attributeName = attributeMatch[1];
+         const attributeValue = attributeMatch[2];
+         attributes.push(`${attributeName}="${attributeValue}"`);
+      }
+      attributes.sort();
+      const sortedDocumentTag = `<p:FatturaElettronica ${attributes.join(' ')}>`;
+      output = output.replace(regex, sortedDocumentTag);
+
       this.testLogger.addComment('************************************************************************');
       this.testLogger.addXml("Xml document", output);
    }
