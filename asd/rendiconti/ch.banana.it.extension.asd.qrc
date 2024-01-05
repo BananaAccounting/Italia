@@ -1,0 +1,18 @@
+<!DOCTYPE RCC><RCC version="1.0">
+   <qresource>
+      <file>ch.banana.it.extension.asd.manifest.json</file>
+      <file>reportstructure.js</file>
+      <file>breport.js</file>
+      <file>breportcontrollo.js</file>
+      <file>errors.js</file>
+      <file>ch.banana.it.extension.asd.reportcontrollo.css</file>
+      <file>ch.banana.it.extension.asd.statopatrimoniale.js</file>
+      <file>ch.banana.it.extension.asd.statopatrimoniale.css</file>
+      <file>ch.banana.it.extension.asd.rendicontogestionale.js</file>
+      <file>ch.banana.it.extension.asd.rendicontogestionale.css</file>
+      <file>ch.banana.it.extension.asd.rendicontocassa.js</file>
+      <file>ch.banana.it.extension.asd.rendicontocassa.css</file>
+      <file>ch.banana.it.extension.asd.reportraccoltafondi.js</file>
+      <file>ch.banana.it.extension.asd.reportraccoltafondi.css</file>
+   </qresource>
+ </RCC>
