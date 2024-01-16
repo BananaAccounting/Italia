@@ -405,7 +405,7 @@ ABII1  & \multicolumn{5}{l}{1) terreni e fabbricati } & 0.00 \\
 ABII2  & \multicolumn{5}{l}{2) impianti } & 0.00 \\
 ABII3  & \multicolumn{5}{l}{3) attrezzature } & 0.00 \\
 Data  & Doc  & Descrizione  & Conto  & Dare  & Avere  & Saldo \\
-01.01.2020  &  & Initial balance  &  & 0.00  & 0.00  & 0.00 \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 0.00 \\
 ABII4  & \multicolumn{5}{l}{4) altri beni } & 0.00 \\
 ABII5  & \multicolumn{5}{l}{5) immobilizzazioni in corso e acconti } & 0.00 \\
 ABII  & \multicolumn{5}{l}{Totale } & 0.00 \\
@@ -475,7 +475,7 @@ ACIII  & \multicolumn{5}{l}{Totale } & 0.00 \\
  & \multicolumn{5}{l}{IV - Disponibilità liquide } & \\
 ACIV1  & \multicolumn{5}{l}{1) depositi bancari e postali } & 0.00 \\
 Data  & Doc  & Descrizione  & Conto  & Dare  & Avere  & Saldo \\
-01.01.2020  &  & Initial balance  &  & 0.00  & 0.00  & 0.00 \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 0.00 \\
 ACIV2  & \multicolumn{5}{l}{2) assegni } & 0.00 \\
 ACIV3  & \multicolumn{5}{l}{3) danaro e valori in cassa } & 0.00 \\
 ACIV4  & \multicolumn{5}{l}{4) portafoglio e conto federale } & 0.00 \\

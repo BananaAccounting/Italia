@@ -17,7 +17,7 @@ body {
 }
 
 table {
-  page-break-inside: avoid;
+  /* page-break-inside: avoid; */
   font-size: 6.7px;
   width: 100%;
 }
@@ -104,7 +104,7 @@ table {
   font-weight: bold;
 }
 
-table.table td {
+table.tableUsciteEntrate td {
   border-top-style: solid;
   border-top-color: black;
   border-top-width: thin;
@@ -117,6 +117,29 @@ table.table td {
   border-right-style: solid;
   border-right-color: black;
   border-right-width: thin;
+}
+
+.tableUsciteEntrate {
+  /* page-break-inside: avoid; */
+}
+
+table.tableCassaBanca td {
+  border-top-style: solid;
+  border-top-color: black;
+  border-top-width: thin;
+  border-bottom-style: solid;
+  border-bottom-color: black;
+  border-bottom-width: thin;
+  border-left-style: solid;
+  border-left-color: black;
+  border-left-width: thin;
+  border-right-style: solid;
+  border-right-color: black;
+  border-right-width: thin;
+}
+
+.tableCassaBanca {
+  page-break-inside: avoid;
 }
 
 .align-left {

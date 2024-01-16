@@ -391,7 +391,7 @@ GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
  & \multicolumn{5}{l}{A) Uscite da attività istituzionali } & \\
 CA1  & \multicolumn{5}{l}{1) Materie prime, sussidiarie, di consumo e di merci } & 0.00 \\
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
-01.01.2020  &  & Initial balance  &  & 0.00  & 0.00  & 0.00 \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 0.00 \\
 CA2  & \multicolumn{5}{l}{2) Servizi } & 0.00 \\
 CA3  & \multicolumn{5}{l}{3) Affiliazioni e tesseramenti } & 0.00 \\
 CA4  & \multicolumn{5}{l}{4) Godimento beni di terzi } & 0.00 \\
@@ -431,7 +431,7 @@ GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
  & \multicolumn{5}{l}{A) Entrate da attività istituzionali } & \\
 RA1  & \multicolumn{5}{l}{1) Entrate da quote associative } & 0.00 \\
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
-01.01.2020  &  & Initial balance  &  & 0.00  & 0.00  & 0.00 \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 0.00 \\
 RA2  & \multicolumn{5}{l}{2) Entrate da tesseramento sportivo } & 0.00 \\
 RA3  & \multicolumn{5}{l}{3) Entrate da associati e tesserati per partecipazione alle attività istituzionali } & 0.00 \\
 RA4  & \multicolumn{5}{l}{4) Premio di formazione tecnica e indennità di preparazione } & 0.00 \\
@@ -480,10 +480,10 @@ GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
 ACIV  & \multicolumn{5}{l}{Cassa e banca } & 0.00 \\
 ACIV3  & \multicolumn{5}{l}{Cassa } & 0.00 \\
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
-01.01.2020  &  & Initial balance  &  & 0.00  & 0.00  & 0.00 \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 0.00 \\
 ACIV1  & \multicolumn{5}{l}{Depositi bancari e postali } & 0.00 \\
 Data  & Doc  & Descrizione  & Conto  & Entrate  & Uscite  & Saldo \\
-01.01.2020  &  & Initial balance  &  & 0.00  & 0.00  & 0.00 \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 0.00 \\
 ACIV4  & \multicolumn{5}{l}{Portafoglio e conto federale } & 0.00 \\
 \end{longtable}
 -  \#page-nr  - \\

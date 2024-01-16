@@ -1510,8 +1510,8 @@ function convertParam(userParam) {
    currentParam.parentObject = 'styles';
    currentParam.title = 'Colore intestazioni tabelle';
    currentParam.type = 'color';
-   currentParam.value = userParam.colorheadertable ? userParam.colorheadertable : '#B02318';
-   currentParam.defaultvalue = '#B02318';
+   currentParam.value = userParam.colorheadertable ? userParam.colorheadertable : '#337ab7';
+   currentParam.defaultvalue = '#337ab7';
    currentParam.readValue = function() {
    userParam.colorheadertable = this.value;
    }
@@ -1555,7 +1555,7 @@ function initUserParam() {
    userParam.column = 'Gr1'; //per il raggruppamento si usa sempre la colonna Gr1
    userParam.printcolumn = true;
    userParam.finalnotes = '';
-   userParam.colorheadertable = '#B02318';
+   userParam.colorheadertable = '#337ab7';
    userParam.stampareportcontrollo = false;
    return userParam;
 }
@@ -1621,7 +1621,7 @@ function settingsDialog() {
 function setVariables(variables, userParam) {
    
    if (!userParam.colorheadertable) {
-      userParam.colorheadertable = '#B02318';
+      userParam.colorheadertable = '#337ab7';
    }
 
    //background color of header table

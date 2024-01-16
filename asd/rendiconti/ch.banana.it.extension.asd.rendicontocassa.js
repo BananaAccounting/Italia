@@ -285,7 +285,7 @@ function printReport_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bRepor
       datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
    }
 
-   var table = report.addTable("table");
+   var table = report.addTable("tableUsciteEntrate");
    var caption = table.getCaption();
    caption.addText("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "");
    var column0,column1,column2,column3,column4,column5,column6,column7,column8;
@@ -1207,7 +1207,7 @@ function printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport) 
 
    report.addParagraph(" ", "");
 
-   var table = report.addTable("table");
+   var table = report.addTable("tableCassaBanca");
    var caption = table.getCaption();
    caption.addText("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "");
    var column0,column1,column2,column3,column4,column5,column6,column7,column8;
@@ -1777,8 +1777,8 @@ function convertParam(userParam) {
    currentParam.parentObject = 'styles';
    currentParam.title = 'Colore intestazioni tabelle';
    currentParam.type = 'color';
-   currentParam.value = userParam.colorheadertable ? userParam.colorheadertable : '#B02318'; //'#337ab7';
-   currentParam.defaultvalue = '#B02318'; //'#337ab7';
+   currentParam.value = userParam.colorheadertable ? userParam.colorheadertable : '#337ab7';
+   currentParam.defaultvalue = '#337ab7';
    currentParam.readValue = function() {
    userParam.colorheadertable = this.value;
    }
@@ -1831,7 +1831,7 @@ function initUserParam() {
    userParam.currentbalancecolumn = '';
    userParam.previousbalancecolumn = '';
    userParam.finalnotes = '';
-   userParam.colorheadertable = '#B02318'; //'#337ab7';
+   userParam.colorheadertable = '#337ab7';
    userParam.stampareportcontrollo = false;
    return userParam;
 }
@@ -1905,7 +1905,7 @@ function settingsDialog() {
 function setVariables(variables, userParam) {
    
    if (!userParam.colorheadertable) {
-      userParam.colorheadertable = '#B02318'; //'#337ab7';
+      userParam.colorheadertable = '#337ab7';
    }
 
    //background color of header table

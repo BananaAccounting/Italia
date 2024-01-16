@@ -245,7 +245,7 @@ GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
 CA1  & \multicolumn{5}{l}{1) Materie prime, sussidiarie, di consumo e di merci } & 0.00 \\
 CA2  & \multicolumn{5}{l}{2) Servizi } & 0.00 \\
 Data  & Doc  & Descrizione  & Conto  & Dare  & Avere  & Saldo \\
-01.01.2020  &  & Initial balance  &  & 0.00  & 0.00  & 0.00 \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 0.00 \\
 CA3  & \multicolumn{5}{l}{3) Affiliazioni e tesseramenti } & 0.00 \\
 CA4  & \multicolumn{5}{l}{4) Godimento beni di terzi } & 0.00 \\
 CA5  & \multicolumn{5}{l}{5) Personale } & 0.00 \\
@@ -299,7 +299,7 @@ GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
  & \multicolumn{5}{l}{A) Ricavi, rendite e proventi da attività istituzionale } & \\
 RA1  & \multicolumn{5}{l}{1) Proventi da quote associative } & 0.00 \\
 Data  & Doc  & Descrizione  & Conto  & Dare  & Avere  & Saldo \\
-01.01.2020  &  & Initial balance  &  & 0.00  & 0.00  & 0.00 \\
+01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 0.00 \\
 RA2  & \multicolumn{5}{l}{2) Proventi da tesseramenti } & 0.00 \\
 RA3  & \multicolumn{5}{l}{3) Proventi da associati e tesserati per partecipazione alle attività istituzionali } & 0.00 \\
 RA4  & \multicolumn{5}{l}{4) Premio di formazione tecnica e indennità di preparazione } & 0.00 \\
