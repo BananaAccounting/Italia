@@ -285,9 +285,9 @@ function printReport_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bRepor
       datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
    }
 
+   report.addParagraph("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "text-currency");
+
    var table = report.addTable("tableUsciteEntrate");
-   var caption = table.getCaption();
-   caption.addText("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "");
    var column0,column1,column2,column3,column4,column5,column6,column7,column8;
    if (userParam.printcolumn) {
       column0 = table.addColumn("column00");
@@ -1206,10 +1206,9 @@ function printReport_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport) 
    }
 
    report.addParagraph(" ", "");
+   //report.addParagraph("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "text-currency");
 
    var table = report.addTable("tableCassaBanca");
-   var caption = table.getCaption();
-   caption.addText("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "");
    var column0,column1,column2,column3,column4,column5,column6,column7,column8;
    if (userParam.printcolumn) {
       column0 = table.addColumn("column00");

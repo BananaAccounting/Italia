@@ -388,10 +388,10 @@ function printRendicontoModA_Attivo(banDoc, report, userParam, bReport) {
       report.addParagraph(" ", "");
    }
 
+   report.addParagraph("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "text-currency");
+
    // Tabella Attivo
    var table = report.addTable("table");
-   var caption = table.getCaption();
-   caption.addText("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "");
    var column1,column2,column3,column4;
    if (userParam.printcolumn) {
       column1 = table.addColumn("column01");
@@ -622,6 +622,10 @@ function printRendicontoModA_Passivo(banDoc, report, userParam, bReport) {
    //Calculate date previous: start period - 1 day
    var datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
    datePrevious.setDate(datePrevious.getDate() - 1);
+
+   if (userParam.stampa) {
+      report.addParagraph("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "text-currency");
+   }
 
    // tabella Passivo
    var table = report.addTable("table");

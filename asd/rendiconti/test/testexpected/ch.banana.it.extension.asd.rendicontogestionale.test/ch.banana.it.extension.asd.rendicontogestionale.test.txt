@@ -26,8 +26,9 @@
   \\
 Associazione Sportiva Dilettantistica - RENDICONTO GESTIONALE ANNO 2022 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-(Importi in EUR) ONERI E COSTI  & 31.12.2022  & 31.12.2021  &  & PROVENTI E RICAVI  & 31.12.2022  & 31.12.2021 \\
+ONERI E COSTI  & 31.12.2022  & 31.12.2021  &  & PROVENTI E RICAVI  & 31.12.2022  & 31.12.2021 \\
 A) Costi e oneri da attività istituzionale  &  &  &  & A) Ricavi, rendite e proventi da attività istituzionale  &  & \\
 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & 1) Proventi da quote associative  & 0.00  & 0.00 \\
 2) Servizi  & 0.00  & 0.00  &  & 2) Proventi da tesseramenti  & 0.00  & 0.00 \\
@@ -97,8 +98,9 @@ TOTALE ONERI E COSTI  & 0.00  & 0.00  &  & TOTALE PROVENTI E RICAVI  & 0.00  & 0
   \\
 Associazione Sportiva Dilettantistica - RENDICONTO GESTIONALE ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-(Importi in EUR) ONERI E COSTI  & 31.12.2020  & 31.12.2019  &  & PROVENTI E RICAVI  & 31.12.2020  & 31.12.2019 \\
+ONERI E COSTI  & 31.12.2020  & 31.12.2019  &  & PROVENTI E RICAVI  & 31.12.2020  & 31.12.2019 \\
 A) Costi e oneri da attività istituzionale  &  &  &  & A) Ricavi, rendite e proventi da attività istituzionale  &  & \\
 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & 1) Proventi da quote associative  & 0.00  & 0.00 \\
 2) Servizi  & 0.00  & 0.00  &  & 2) Proventi da tesseramenti  & 0.00  & 0.00 \\
@@ -168,8 +170,9 @@ TOTALE ONERI E COSTI  & 0.00  & 0.00  &  & TOTALE PROVENTI E RICAVI  & 0.00  & 0
   \\
 Associazione Sportiva Dilettantistica - RENDICONTO GESTIONALE ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-(Importi in EUR) GR1  & ONERI E COSTI  & 31.12.2020  & 31.12.2019  &  & GR1  & PROVENTI E RICAVI  & 31.12.2020  & 31.12.2019 \\
+GR1  & ONERI E COSTI  & 31.12.2020  & 31.12.2019  &  & GR1  & PROVENTI E RICAVI  & 31.12.2020  & 31.12.2019 \\
  & A) Costi e oneri da attività istituzionale  &  &  &  &  & A) Ricavi, rendite e proventi da attività istituzionale  &  & \\
 CA1  & 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & RA1  & 1) Proventi da quote associative  & 0.00  & 0.00 \\
 CA2  & 2) Servizi  & 0.00  & 0.00  &  & RA2  & 2) Proventi da tesseramenti  & 0.00  & 0.00 \\

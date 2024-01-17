@@ -18,7 +18,7 @@ body {
 
 table {
   /* page-break-inside: avoid; */
-  font-size: 7.4px;
+  font-size: 6px;
   width: 100%;
 }
 
@@ -87,7 +87,7 @@ table {
 }
 
 .address-header {
-  font-size: 8px;
+  font-size: 7px;
 }
 
 .heading2 {
@@ -149,4 +149,8 @@ table.table td {
 
 .text-begin {
   font-size: 9px;
+}
+
+.text-currency {
+  font-size: 6px;
 }

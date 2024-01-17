@@ -26,8 +26,9 @@
   \\
 Associazione Sportiva Dilettantistica - RENDICONTO PER CASSA ANNO 2022 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-(Importi in EUR) USCITE  & 31.12.2022  & 31.12.2021  &  & ENTRATE  & 31.12.2022  & 31.12.2021 \\
+USCITE  & 31.12.2022  & 31.12.2021  &  & ENTRATE  & 31.12.2022  & 31.12.2021 \\
 A) Uscite da attività istituzionali  &  &  &  & A) Entrate da attività istituzionali  &  & \\
 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & 1) Entrate da quote associative  & 0.00  & 0.00 \\
 2) Servizi  & 0.00  & 0.00  &  & 2) Entrate da tesseramento sportivo  & 0.00  & 0.00 \\
@@ -87,7 +88,7 @@ Totale uscite della gestione  & 0.00  & 0.00  &  & Totale entrate della gestione
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-(Importi in EUR) \multicolumn{5}{l}{} & 31.12.2022  & 31.12.2021 \\
+\multicolumn{5}{l}{} & 31.12.2022  & 31.12.2021 \\
 \multicolumn{5}{l}{Cassa e banca } & 0.00  & 0.00 \\
 \multicolumn{5}{l}{Cassa } & 0.00  & 0.00 \\
 \multicolumn{5}{l}{Depositi bancari e postali } & 0.00  & 0.00 \\
@@ -98,8 +99,9 @@ Totale uscite della gestione  & 0.00  & 0.00  &  & Totale entrate della gestione
   \\
 Associazione Sportiva Dilettantistica - RENDICONTO PER CASSA ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-(Importi in EUR) USCITE  & 31.12.2020  & 31.12.2019  &  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
+USCITE  & 31.12.2020  & 31.12.2019  &  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
 A) Uscite da attività istituzionali  &  &  &  & A) Entrate da attività istituzionali  &  & \\
 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & 1) Entrate da quote associative  & 0.00  & 0.00 \\
 2) Servizi  & 0.00  & 0.00  &  & 2) Entrate da tesseramento sportivo  & 0.00  & 0.00 \\
@@ -159,7 +161,7 @@ Totale uscite della gestione  & 0.00  & 0.00  &  & Totale entrate della gestione
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-(Importi in EUR) \multicolumn{5}{l}{} & 31.12.2020  & 31.12.2019 \\
+\multicolumn{5}{l}{} & 31.12.2020  & 31.12.2019 \\
 \multicolumn{5}{l}{Cassa e banca } & 0.00  & 0.00 \\
 \multicolumn{5}{l}{Cassa } & 0.00  & 0.00 \\
 \multicolumn{5}{l}{Depositi bancari e postali } & 0.00  & 0.00 \\
@@ -170,8 +172,9 @@ Totale uscite della gestione  & 0.00  & 0.00  &  & Totale entrate della gestione
   \\
 Associazione Sportiva Dilettantistica - RENDICONTO PER CASSA ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-(Importi in EUR) GR1  & USCITE  & 31.12.2020  & 31.12.2019  &  & GR1  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
+GR1  & USCITE  & 31.12.2020  & 31.12.2019  &  & GR1  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
  & A) Uscite da attività istituzionali  &  &  &  &  & A) Entrate da attività istituzionali  &  & \\
 CA1  & 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & RA1  & 1) Entrate da quote associative  & 0.00  & 0.00 \\
 CA2  & 2) Servizi  & 0.00  & 0.00  &  & RA2  & 2) Entrate da tesseramento sportivo  & 0.00  & 0.00 \\
@@ -231,7 +234,7 @@ IM  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-(Importi in EUR) GR1  & \multicolumn{6}{l}{} & 31.12.2020  & 31.12.2019 \\
+GR1  & \multicolumn{6}{l}{} & 31.12.2020  & 31.12.2019 \\
 ACIV  & \multicolumn{6}{l}{Cassa e banca } & 0.00  & 0.00 \\
 ACIV3  & \multicolumn{6}{l}{Cassa } & 0.00  & 0.00 \\
 ACIV1  & \multicolumn{6}{l}{Depositi bancari e postali } & 0.00  & 0.00 \\
@@ -242,8 +245,9 @@ ACIV4  & \multicolumn{6}{l}{Portafoglio e conto federale } & 0.00  & 0.00 \\
   \\
 Associazione Sportiva Dilettantistica - RENDICONTO PER CASSA ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-(Importi in EUR) GR1  & USCITE  & 31.12.2020  & 31.12.2019  &  & GR1  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
+GR1  & USCITE  & 31.12.2020  & 31.12.2019  &  & GR1  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
  & A) Uscite da attività istituzionali  &  &  &  &  & A) Entrate da attività istituzionali  &  & \\
 CA1  & 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & RA1  & 1) Entrate da quote associative  & 0.00  & 0.00 \\
 CA2  & 2) Servizi  & 0.00  & 0.00  &  & RA2  & 2) Entrate da tesseramento sportivo  & 0.00  & 0.00 \\
@@ -303,7 +307,7 @@ IM  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-(Importi in EUR) GR1  & \multicolumn{6}{l}{} & 31.12.2020  & 31.12.2019 \\
+GR1  & \multicolumn{6}{l}{} & 31.12.2020  & 31.12.2019 \\
 ACIV  & \multicolumn{6}{l}{Cassa e banca } & 0.00  & 0.00 \\
 ACIV3  & \multicolumn{6}{l}{Cassa } & 0.00  & 0.00 \\
 ACIV1  & \multicolumn{6}{l}{Depositi bancari e postali } & 0.00  & 0.00 \\
@@ -314,8 +318,9 @@ ACIV4  & \multicolumn{6}{l}{Portafoglio e conto federale } & 0.00  & 0.00 \\
   \\
 Associazione Sportiva Dilettantistica - RENDICONTO PER CASSA ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-(Importi in EUR) GR1  & USCITE  & 31.12.2020  & 31.12.2019  &  & GR1  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
+GR1  & USCITE  & 31.12.2020  & 31.12.2019  &  & GR1  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
  & A) Uscite da attività istituzionali  &  &  &  &  & A) Entrate da attività istituzionali  &  & \\
 CA1  & 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & RA1  & 1) Entrate da quote associative  & 0.00  & 0.00 \\
 CA2  & 2) Servizi  & 0.00  & 0.00  &  & RA2  & 2) Entrate da tesseramento sportivo  & 0.00  & 0.00 \\
@@ -375,7 +380,7 @@ IM  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
 \end{longtable}
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-(Importi in EUR) GR1  & \multicolumn{6}{l}{} & 31.12.2020  & 31.12.2019 \\
+GR1  & \multicolumn{6}{l}{} & 31.12.2020  & 31.12.2019 \\
 ACIV  & \multicolumn{6}{l}{Cassa e banca } & 0.00  & 0.00 \\
 ACIV3  & \multicolumn{6}{l}{Cassa } & 0.00  & 0.00 \\
 ACIV1  & \multicolumn{6}{l}{Depositi bancari e postali } & 0.00  & 0.00 \\

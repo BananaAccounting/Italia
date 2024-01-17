@@ -26,8 +26,9 @@
   \\
 Associazione Sportiva Dilettantistica - STATO PATRIMONIALE ANNO 2022 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l }
-(Importi in EUR)  & 31.12.2022  & 31.12.2021 \\
+ & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{ATTIVO }\\
 A) Quote associative o apporti da associati ancora dovuti  & 0.00  & 0.00 \\
 B) Immobilizzazioni  &  & \\
@@ -183,8 +184,9 @@ TOTALE PASSIVO  & 0.00  & 0.00 \\
   \\
 Associazione Sportiva Dilettantistica - STATO PATRIMONIALE ANNO 2022 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l }
-(Importi in EUR)  & 31.12.2022  & 31.12.2021 \\
+ & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{ATTIVO }\\
 A) Quote associative o apporti da associati ancora dovuti  & 0.00  & 0.00 \\
 B) Immobilizzazioni  &  & \\
@@ -233,8 +235,9 @@ TOTALE PASSIVO  & 0.00  & 0.00 \\
   \\
 Associazione Sportiva Dilettantistica - STATO PATRIMONIALE ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l }
-(Importi in EUR)  & 31.12.2020  & 31.12.2019 \\
+ & 31.12.2020  & 31.12.2019 \\
 \multicolumn{3}{l}{ATTIVO }\\
 A) Quote associative o apporti da associati ancora dovuti  & 0.00  & 0.00 \\
 B) Immobilizzazioni  &  & \\

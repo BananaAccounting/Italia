@@ -239,11 +239,9 @@ function printRendicontoModB_Title(report, banDoc, userParam) {
 
    var currentYear = Banana.Converter.toDate(userParam.selectionEndDate).getFullYear();
 
-   var title = "";
+   var title = banDoc.info("Base", "HeaderLeft") + " - " + "RENDICONTO GESTIONALE ANNO " + currentYear;;
    if (userParam.title) {
       title = userParam.title;
-   } else {
-      title = banDoc.info("Base", "HeaderLeft") + " - " + "RENDICONTO GESTIONALE ANNO " + currentYear;
    }
 
    if (userParam.printtitle) {
@@ -280,9 +278,9 @@ function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) 
    datePrevious.setDate(datePrevious.getDate() - 1);
    datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
    
+   report.addParagraph("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "text-currency");
+
    var table = report.addTable("table");
-   var caption = table.getCaption();
-   caption.addText("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "");
    var column0,column1,column2,column3,column4,column5,column6,column7,column8;
    if (userParam.printcolumn) {
       column0 = table.addColumn("column00");

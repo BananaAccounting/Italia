@@ -6,8 +6,8 @@ td {
 }
 
 @page {
-  margin-top: 10mm;
-  margin-bottom: 10mm;
+  margin-top: 7mm;
+  margin-bottom: 7mm;
   margin-left: 10mm;
   margin-right: 10mm;
 }
@@ -65,7 +65,7 @@ table {
 }
 
 .address-header {
-  font-size: 8px;
+  font-size: 7px;
 }
 
 .heading2 {
@@ -151,7 +151,7 @@ table {
 
 .footer {
   font-family: Helvetica;
-  font-size: 8px;
+  font-size: 6px;
   text-align: center;
 }
 
@@ -186,4 +186,8 @@ table {
 
 .text-begin {
   font-size: 9px;
+}
+
+.text-currency {
+  font-size: 8px;
 }

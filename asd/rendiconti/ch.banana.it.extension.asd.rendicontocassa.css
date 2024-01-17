@@ -18,7 +18,7 @@ body {
 
 table {
   /* page-break-inside: avoid; */
-  font-size: 6.7px;
+  font-size: 6px;
   width: 100%;
 }
 
@@ -87,7 +87,7 @@ table {
 }
 
 .address-header {
-  font-size: 8px;
+  font-size: 7px;
 }
 
 .heading2 {
@@ -182,4 +182,8 @@ table.tableCassaBanca td {
 
 .text-begin {
   font-size: 9px;
+}
+
+.text-currency {
+  font-size: 6px;
 }
