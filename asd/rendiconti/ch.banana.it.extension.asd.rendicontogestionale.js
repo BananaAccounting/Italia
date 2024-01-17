@@ -209,9 +209,9 @@ function printRendicontoModB_Header(report, banDoc, userParam, stylesheet) {
          if (zip && city) {
             headerParagraph.addParagraph(zip + " " + city, "address-header");
          }
-         if (phone) {
-            headerParagraph.addParagraph(phone, "address-header");
-         }
+         // if (phone) {
+         //    headerParagraph.addParagraph(phone, "address-header");
+         // }
          if (web) {
             headerParagraph.addParagraph(web, "address-header");
          }
