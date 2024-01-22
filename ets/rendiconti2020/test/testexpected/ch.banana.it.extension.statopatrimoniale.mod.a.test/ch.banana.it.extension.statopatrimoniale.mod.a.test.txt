@@ -26,6 +26,7 @@
   \\
 Associazione APS - STATO PATRIMONIALE ANNO 2022 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{ATTIVO }\\
@@ -202,6 +203,7 @@ Attenzione: differenza tra totale Attivo <374.00> e totale Passivo <298.00> \\
   \\
 Associazione APS - STATO PATRIMONIALE ANNO 2022 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{ATTIVO }\\
@@ -257,6 +259,7 @@ Attenzione: differenza tra totale Attivo <2.00> e totale Passivo <-187.00> \\
   \\
 Associazione APS - STATO PATRIMONIALE ANNO 2022 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2022  & 31.12.2021 \\
 \multicolumn{3}{l}{ATTIVO }\\
@@ -433,6 +436,7 @@ Attenzione: differenza tra totale Attivo <374.00> e totale Passivo <298.00> \\
   \\
 Associazione Aiuto agli Anziani - STATO PATRIMONIALE ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l }
  & 31.12.2020  & 31.12.2019 \\
 \multicolumn{3}{l}{ATTIVO }\\
@@ -609,6 +613,7 @@ Attenzione: differenza tra totale Attivo <45'919.00> e totale Passivo <37'649.00
   \\
 Associazione Aiuto agli Anziani - STATO PATRIMONIALE ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l }
  &  & 31.12.2020  & 31.12.2019 \\
 Gr1  & \multicolumn{3}{l}{ATTIVO }\\

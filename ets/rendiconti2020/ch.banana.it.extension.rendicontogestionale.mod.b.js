@@ -1,4 +1,4 @@
-// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2024] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontogestionale.mod.b
 // @api = 1.0
-// @pubdate = 2022-10-19
+// @pubdate = 2024-01-22
 // @publisher = Banana.ch SA
 // @description = 2. Rendiconto gestionale
 // @task = app.command
@@ -170,6 +170,7 @@ function printRendicontoModB(banDoc, userParam, bReport, stylesheet) {
 
    printRendicontoModB_Header(report, banDoc, userParam, stylesheet);
    printRendicontoModB_Title(report, banDoc, userParam);
+   printRendicontoModB_Testo_Iniziale(report, banDoc, userParam)
    printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport);
    printRendicontoModB_Costi_Proventi_Figurativi(report, banDoc, userParam, bReport);
    printRendicontoModB_Note_Finali(report, userParam);
@@ -256,6 +257,20 @@ function printRendicontoModB_Title(report, banDoc, userParam) {
    return report;
 }
 
+function printRendicontoModB_Testo_Iniziale(report, banDoc, userParam) {
+
+   var textbegin = "";
+   if (userParam.textbegin) {
+      textbegin = userParam.textbegin.trim();
+   }
+   if (textbegin) {
+      report.addParagraph(textbegin, "text-begin");
+      report.addParagraph(" ", "");
+   }
+
+   return report;
+}
+
 function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) {
 
    // Costi e Proventi
@@ -266,6 +281,8 @@ function printRendicontoModB_Costi_Proventi(report, banDoc, userParam, bReport) 
    var datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
    datePrevious.setDate(datePrevious.getDate() - 1);
    datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
+
+   report.addParagraph("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "text-currency");
    
    var table = report.addTable("table");
    var column0,column1,column2,column3,column4,column5,column6,column7,column8;
@@ -1453,6 +1470,18 @@ function convertParam(userParam) {
    convertedParam.data.push(currentParam);
 
    currentParam = {};
+   currentParam.name = 'textbegin';
+   currentParam.parentObject = 'title_group';
+   currentParam.title = 'Testo iniziale';
+   currentParam.type = 'multilinestring';
+   currentParam.value = userParam.textbegin ? userParam.textbegin : '';
+   currentParam.defaultvalue = '';
+   currentParam.readValue = function() {
+      userParam.textbegin = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
    currentParam.name = 'report_group';
    currentParam.title = 'Dettagli gestionale';
    currentParam.type = 'string';
@@ -1568,6 +1597,7 @@ function initUserParam() {
    userParam.headertext = '';
    userParam.printtitle = true;
    userParam.title = '';
+   userParam.textbegin = '';
    userParam.column = 'Gr1';
    userParam.printcolumn = true;
    userParam.printcostifigurativi = false;

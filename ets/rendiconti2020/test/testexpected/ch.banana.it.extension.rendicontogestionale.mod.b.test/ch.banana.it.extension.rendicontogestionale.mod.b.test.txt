@@ -26,6 +26,7 @@
   \\
 Associazione APS - RENDICONTO GESTIONALE ANNO 2022 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
 ONERI E COSTI  & 31.12.2022  & 31.12.2021  &  & PROVENTI E RICAVI  & 31.12.2022  & 31.12.2021 \\
 A) Costi e oneri da attività di interesse generale  &  &  &  & A) Ricavi, rendite e proventi da attività di interesse generale  &  & \\
@@ -99,6 +100,7 @@ Totale  & 3.00  & 5.00  &  & Totale  & 3.00  & 9.00 \\
   \\
 Associazione APS - RENDICONTO GESTIONALE ANNO 2022 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
 ONERI E COSTI  & 31.12.2022  & 31.12.2021  &  & PROVENTI E RICAVI  & 31.12.2022  & 31.12.2021 \\
 A) Costi e oneri da attività di interesse generale  &  &  &  & A) Ricavi, rendite e proventi da attività di interesse generale  &  & \\
@@ -172,6 +174,7 @@ Totale  & 3.00  & 5.00  &  & Totale  & 3.00  & 9.00 \\
   \\
 Associazione Aiuto agli Anziani - RENDICONTO GESTIONALE ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
 ONERI E COSTI  & 31.12.2020  & 31.12.2019  &  & PROVENTI E RICAVI  & 31.12.2020  & 31.12.2019 \\
 A) Costi e oneri da attività di interesse generale  &  &  &  & A) Ricavi, rendite e proventi da attività di interesse generale  &  & \\
@@ -245,6 +248,7 @@ Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
   \\
 Associazione Aiuto agli Anziani - RENDICONTO GESTIONALE ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
 GR1  & ONERI E COSTI  & 31.12.2020  & 31.12.2019  &  & GR1  & PROVENTI E RICAVI  & 31.12.2020  & 31.12.2019 \\
  & A) Costi e oneri da attività di interesse generale  &  &  &  &  & A) Ricavi, rendite e proventi da attività di interesse generale  &  & \\

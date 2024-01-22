@@ -1,4 +1,4 @@
-// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2024] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2022-10-19
+// @pubdate = 2024-01-22
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -257,6 +257,15 @@ function printReport_Intestazione(report, banDoc, userParam, stylesheet) {
       report.addParagraph(title, "heading2");
       report.addParagraph(" ", "");
    }
+   // Text begin
+   var textbegin = "";
+   if (userParam.textbegin) {
+      textbegin = userParam.textbegin.trim();
+   }
+   if (textbegin) {
+      report.addParagraph(textbegin, "text-begin");
+      report.addParagraph(" ", "");
+   }
 }
 
 function printReport_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bReport) {
@@ -279,6 +288,8 @@ function printReport_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bRepor
       datePrevious.setDate(datePrevious.getDate() - 1);
       datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
    }
+
+   report.addParagraph("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "text-currency");
 
    var table = report.addTable("table");
    var column0,column1,column2,column3,column4,column5,column6,column7,column8;
@@ -1874,6 +1885,18 @@ function convertParam(userParam) {
    convertedParam.data.push(currentParam);
 
    currentParam = {};
+   currentParam.name = 'textbegin';
+   currentParam.parentObject = 'title_group';
+   currentParam.title = 'Testo iniziale';
+   currentParam.type = 'multilinestring';
+   currentParam.value = userParam.textbegin ? userParam.textbegin : '';
+   currentParam.defaultvalue = '';
+   currentParam.readValue = function() {
+      userParam.textbegin = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
    currentParam.name = 'report_group';
    currentParam.title = 'Dettagli rendiconto cassa';
    currentParam.type = 'string';
@@ -2052,6 +2075,7 @@ function initUserParam() {
    userParam.headertext = '';
    userParam.printtitle = true;
    userParam.title = '';
+   userParam.textbegin = '';
    userParam.column = 'Gr1';
    userParam.printcolumn = true;
    userParam.printcostifigurativi = false;

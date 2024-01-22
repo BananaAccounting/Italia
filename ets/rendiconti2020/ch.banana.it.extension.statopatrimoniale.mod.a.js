@@ -1,4 +1,4 @@
-// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2024] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.statopatrimoniale.mod.a
 // @api = 1.0
-// @pubdate = 2022-10-19
+// @pubdate = 2024-01-22
 // @publisher = Banana.ch SA
 // @description = 1. Stato patrimoniale
 // @task = app.command
@@ -380,6 +380,17 @@ function printRendicontoModA_Attivo(banDoc, report, userParam, bReport) {
       report.addParagraph(" ", "");
    }
 
+   var textbegin = "";
+   if (userParam.textbegin) {
+      textbegin = userParam.textbegin.trim();
+   }
+   if (textbegin) {
+      report.addParagraph(textbegin, "text-begin");
+      report.addParagraph(" ", "");
+   }
+   
+   report.addParagraph("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "text-currency");
+
    // Tabella Attivo
    var table = report.addTable("table");
    var column1,column2,column3,column4;
@@ -634,6 +645,10 @@ function printRendicontoModA_Passivo(banDoc, report, userParam, bReport) {
    //Calculate date previous: start period - 1 day
    var datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
    datePrevious.setDate(datePrevious.getDate() - 1);
+
+   if (userParam.stampa) {
+      report.addParagraph("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "text-currency");
+   }
 
    // tabella Passivo
    var table = report.addTable("table");
@@ -947,6 +962,18 @@ function convertParam(userParam) {
    convertedParam.data.push(currentParam);
 
    currentParam = {};
+   currentParam.name = 'textbegin';
+   currentParam.parentObject = 'title_group';
+   currentParam.title = 'Testo iniziale';
+   currentParam.type = 'multilinestring';
+   currentParam.value = userParam.textbegin ? userParam.textbegin : '';
+   currentParam.defaultvalue = '';
+   currentParam.readValue = function() {
+      userParam.textbegin = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
    currentParam.name = 'report_group';
    currentParam.title = 'Dettagli stato patrimoniale';
    currentParam.type = 'string';
@@ -1063,6 +1090,7 @@ function initUserParam() {
    userParam.headertext = '';
    userParam.printtitle = true;
    userParam.title = '';
+   userParam.textbegin = '';
    userParam.column = 'Gr1';
    userParam.printcolumn = true;
    userParam.printpreviousyear = true;

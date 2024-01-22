@@ -1,5 +1,5 @@
 
-/* CSS update: 2022-08-19  */
+/* CSS update: 2024-01-22  */
 
 td {
   vertical-align: top;
@@ -17,6 +17,7 @@ body {
 }
 
 table {
+  page-break-inside: avoid;
   font-size: 6.7px;
   width: 100%;
 }
@@ -155,3 +156,12 @@ table.table td {
   width: 50%;
   font-size: 10pt;
 }
+
+.text-begin {
+  font-size: 8px;
+}
+
+.text-currency {
+  font-size: 6px;
+}
+

@@ -26,6 +26,7 @@
   \\
 Associazione APS - RENDICONTO PER CASSA ANNO 2022 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
 USCITE  & 31.12.2022  & 31.12.2021  &  & ENTRATE  & 31.12.2022  & 31.12.2021 \\
 A) Uscite da attività di interesse generale  &  &  &  & A) Entrate da attività di interesse generale  &  & \\
@@ -127,6 +128,7 @@ Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corr
   \\
 Associazione APS - RENDICONTO PER CASSA ANNO 2022 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
 USCITE  & 31.12.2022  & 31.12.2021  &  & ENTRATE  & 31.12.2022  & 31.12.2021 \\
 A) Uscite da attività di interesse generale  &  &  &  & A) Entrate da attività di interesse generale  &  & \\
@@ -228,6 +230,7 @@ Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corr
   \\
 Associazione Aiuto agli Anziani - RENDICONTO PER CASSA ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
 USCITE  & 31.12.2020  & 31.12.2019  &  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
 A) Uscite da attività di interesse generale  &  &  &  & A) Entrate da attività di interesse generale  &  & \\
@@ -329,6 +332,7 @@ Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corr
   \\
 Associazione Aiuto agli Anziani - RENDICONTO PER CASSA ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
 GR1  & USCITE  & 31.12.2020  & 31.12.2019  &  & GR1  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
  & A) Uscite da attività di interesse generale  &  &  &  &  & A) Entrate da attività di interesse generale  &  & \\
@@ -430,6 +434,7 @@ Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corr
   \\
 Associazione Aiuto agli Anziani - RENDICONTO PER CASSA ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
 GR1  & USCITE  & 31.12.2020  & 31.12.2019  &  & GR1  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
  & A) Uscite da attività di interesse generale  &  &  &  &  & A) Entrate da attività di interesse generale  &  & \\
@@ -524,6 +529,7 @@ Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corr
   \\
 Associazione Aiuto agli Anziani - RENDICONTO PER CASSA ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
 GR1  & USCITE  & 31.12.2020  & 31.12.2019  &  & GR1  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
  & A) Uscite da attività di interesse generale  &  &  &  &  & A) Entrate da attività di interesse generale  &  & \\
@@ -625,6 +631,7 @@ Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corr
   \\
 Associazione Aiuto agli Anziani - RENDICONTO PER CASSA ANNO 2020 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
 GR1  & USCITE  & 31.12.2020  & 31.12.2019  &  & GR1  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
  & A) Uscite da attività di interesse generale  &  &  &  &  & A) Entrate da attività di interesse generale  &  & \\
@@ -726,6 +733,7 @@ Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corr
   \\
 Associazione Aiuto agli Anziani - RENDICONTO PER CASSA ANNO 2021 \\
   \\
+(Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
 GR1  & USCITE  & 31.12.2021  & 31.12.2020  &  & GR1  & ENTRATE  & 31.12.2021  & 31.12.2020 \\
  & A) Uscite da attività di interesse generale  &  &  &  &  & A) Entrate da attività di interesse generale  &  & \\
