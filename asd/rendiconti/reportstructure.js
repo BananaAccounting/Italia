@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2024-01-05 */
+/* Update: 2024-01-23 */
 
 
 /**
@@ -236,9 +236,7 @@ function createReportStructureStatoPatrimoniale() {
 	reportStructure.push({"id":"dACII", "type":"title", "indent":"1", "description":"II - Crediti"});
 	reportStructure.push({"id":"ACII1o", "type":"group", "indent":"3", "bclass":"1", "description":"esigibili oltre l'anno successivo"});
 	reportStructure.push({"id":"ACII1e", "type":"group", "indent":"3", "bclass":"1", "description":"esigibili entro l'anno successivo"});
-	reportStructure.push({"id":"TPC", "type":"group", "indent":"", "bclass":"1", "description":"Crediti verso clienti"});
-	reportStructure.push({"id":"ACII1P", "type":"total", "indent":"", "description":"Crediti verso utenti e clienti da partitario", "sum":"TPC"});
-	reportStructure.push({"id":"ACII1", "type":"total", "indent":"2", "description":"1) verso clienti", "sum":"ACII1o;ACII1e;TPC", "excludeamount":true});
+	reportStructure.push({"id":"ACII1", "type":"total", "indent":"2", "description":"1) verso clienti", "sum":"ACII1o;ACII1e", "excludeamount":true});
 	reportStructure.push({"id":"ACII2o", "type":"group", "indent":"3", "bclass":"1", "description":"esigibili oltre l'anno successivo"});
 	reportStructure.push({"id":"ACII2e", "type":"group", "indent":"3", "bclass":"1", "description":"esigibili entro l'anno successivo"});
 	reportStructure.push({"id":"ACII2", "type":"total", "indent":"2", "description":"2) verso associati", "sum":"ACII2o;ACII2e", "excludeamount":true});
@@ -322,9 +320,7 @@ function createReportStructureStatoPatrimoniale() {
 	reportStructure.push({"id":"PD6", "type":"total", "indent":"1", "description":"6) acconti", "sum":"PD6o;PD6e", "excludeamount":true});
 	reportStructure.push({"id":"PD7o", "type":"group", "indent":"2", "bclass":"2", "description":"esigibili oltre l'anno successivo"});
 	reportStructure.push({"id":"PD7e", "type":"group", "indent":"2", "bclass":"2", "description":"esigibili entro l'anno successivo"});
-	reportStructure.push({"id":"TPF", "type":"group", "indent":"", "bclass":"2", "description":"Partitario fornitori"});
-	reportStructure.push({"id":"PD7P", "type":"total", "indent":"", "description":"Debiti verso fornitori da partitario", "sum":"TPF"});
-	reportStructure.push({"id":"PD7", "type":"total", "indent":"1", "description":"7) debiti verso fornitori", "sum":"PD7o;PD7e;PD7P", "excludeamount":true});
+	reportStructure.push({"id":"PD7", "type":"total", "indent":"1", "description":"7) debiti verso fornitori", "sum":"PD7o;PD7e", "excludeamount":true});
 	reportStructure.push({"id":"PD8o", "type":"group", "indent":"2", "bclass":"2", "description":"esigibili oltre l'anno successivo"});
 	reportStructure.push({"id":"PD8e", "type":"group", "indent":"2", "bclass":"2", "description":"esigibili entro l'anno successivo"});
 	reportStructure.push({"id":"PD8", "type":"total", "indent":"1", "description":"8) debiti tributari", "sum":"PD8o;PD8e", "excludeamount":true});
