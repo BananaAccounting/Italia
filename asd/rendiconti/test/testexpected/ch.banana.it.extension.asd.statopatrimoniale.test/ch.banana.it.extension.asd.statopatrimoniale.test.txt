@@ -24,11 +24,11 @@
 \begin{test}{testBananaExtension}
 \begin{reportvalue}{Test 1: rendiconto 'Stato Patrimoniale'}
   \\
-Associazione Sportiva Dilettantistica - STATO PATRIMONIALE ANNO 2022 \\
+Associazione Sportiva Dilettantistica - STATO PATRIMONIALE ANNO 2024 \\
   \\
 (Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l }
- & 31.12.2022  & 31.12.2021 \\
+ & 31.12.2024  & 31.12.2023 \\
 \multicolumn{3}{l}{ATTIVO }\\
 A) Quote associative o apporti da associati ancora dovuti  & 0.00  & 0.00 \\
 B) Immobilizzazioni  &  & \\
@@ -41,10 +41,10 @@ Totale  & 0.00  & 0.00 \\
 II - Immobilizzazioni materiali  &  & \\
 1) terreni e fabbricati  & 0.00  & 0.00 \\
 2) impianti  & 0.00  & 0.00 \\
-3) attrezzature  & 0.00  & 0.00 \\
+3) attrezzature  & 60.00  & 0.00 \\
 4) altri beni  & 0.00  & 0.00 \\
 5) immobilizzazioni in corso e acconti  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00 \\
+Totale  & 60.00  & 0.00 \\
 III - Immobilizzazioni finanziarie  &  & \\
 1) Partecipazioni  &  & \\
 a) partecipazioni in imprese controllate  & 0.00  & 0.00 \\
@@ -65,7 +65,7 @@ esigibili entro l'anno successivo  & 0.00  & 0.00 \\
 esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 3) Altri titoli  & 0.00  & 0.00 \\
 Totale  & 0.00  & 0.00 \\
-Totale immobilizzazioni  & 0.00  & 0.00 \\
+Totale immobilizzazioni  & 60.00  & 0.00 \\
 C) Attivo circolante  &  & \\
 I - Rimanenze  &  & \\
 1) materie prime, sussidiarie e di consumo  & 0.00  & 0.00 \\
@@ -109,19 +109,19 @@ III - Attività finanziarie che non costituiscono immobilizzazioni  &  & \\
 2) altri titoli  & 0.00  & 0.00 \\
 Totale  & 0.00  & 0.00 \\
 IV - Disponibilità liquide  &  & \\
-1) depositi bancari e postali  & 0.00  & 0.00 \\
+1) depositi bancari e postali  & 15.00  & 0.00 \\
 2) assegni  & 0.00  & 0.00 \\
 3) danaro e valori in cassa  & 0.00  & 0.00 \\
 4) portafoglio e conto federale  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00 \\
-Totale attivo circolante  & 0.00  & 0.00 \\
+Totale  & 15.00  & 0.00 \\
+Totale attivo circolante  & 15.00  & 0.00 \\
 D) Ratei e risconti attivi  & 0.00  & 0.00 \\
-TOTALE ATTIVO  & 0.00  & 0.00 \\
+TOTALE ATTIVO  & 75.00  & 0.00 \\
 \end{longtable}
   \\
   \\
 \begin{longtable}[l]{ l  l  l }
- & 31.12.2022  & 31.12.2021 \\
+ & 31.12.2024  & 31.12.2023 \\
 \multicolumn{3}{l}{PASSIVO }\\
 A) Patrimonio netto  &  & \\
 I - Fondo di dotazione dell'ente  & 0.00  & 0.00 \\
@@ -132,8 +132,8 @@ II - Patrimonio vincolato  &  & \\
 III - Patrimonio libero  &  & \\
 1) Riserve di avanzi di gestione  & 0.00  & 0.00 \\
 2) Altre riserve  & 0.00  & 0.00 \\
-IV - Avanzo/disavanzo d'esercizio  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00 \\
+IV - Avanzo/disavanzo d'esercizio  & 75.00  & 0.00 \\
+Totale  & 75.00  & 0.00 \\
 B) Fondi per rischi e oneri  &  & \\
 1) per trattamento di quiescenza e obblighi simili  & 0.00  & 0.00 \\
 2) per imposte, anche differite  & 0.00  & 0.00 \\
@@ -176,27 +176,28 @@ esigibili entro l'anno successivo  & 0.00  & 0.00 \\
 esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 Totale  & 0.00  & 0.00 \\
 E) Ratei e risconti passivi  & 0.00  & 0.00 \\
-TOTALE PASSIVO  & 0.00  & 0.00 \\
+TOTALE PASSIVO  & 75.00  & 0.00 \\
 \end{longtable}
 -  \#page-nr  - \\
 \end{reportvalue}
 \begin{reportvalue}{Test 2: rendiconto 'Stato Patrimoniale'}
   \\
-Associazione Sportiva Dilettantistica - STATO PATRIMONIALE ANNO 2022 \\
+Associazione Sportiva Dilettantistica - STATO PATRIMONIALE ANNO 2024 \\
   \\
 (Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l }
- & 31.12.2022  & 31.12.2021 \\
+ & 31.12.2024  & 31.12.2023 \\
 \multicolumn{3}{l}{ATTIVO }\\
 A) Quote associative o apporti da associati ancora dovuti  & 0.00  & 0.00 \\
 B) Immobilizzazioni  &  & \\
 I - Immobilizzazioni immateriali  &  & \\
 Totale  & 0.00  & 0.00 \\
 II - Immobilizzazioni materiali  &  & \\
-Totale  & 0.00  & 0.00 \\
+3) attrezzature  & 60.00  & 0.00 \\
+Totale  & 60.00  & 0.00 \\
 III - Immobilizzazioni finanziarie  &  & \\
 Totale  & 0.00  & 0.00 \\
-Totale immobilizzazioni  & 0.00  & 0.00 \\
+Totale immobilizzazioni  & 60.00  & 0.00 \\
 C) Attivo circolante  &  & \\
 I - Rimanenze  &  & \\
 Totale  & 0.00  & 0.00 \\
@@ -205,39 +206,42 @@ Totale  & 0.00  & 0.00 \\
 III - Attività finanziarie che non costituiscono immobilizzazioni  &  & \\
 Totale  & 0.00  & 0.00 \\
 IV - Disponibilità liquide  &  & \\
-Totale  & 0.00  & 0.00 \\
-Totale attivo circolante  & 0.00  & 0.00 \\
+1) depositi bancari e postali  & 15.00  & 0.00 \\
+Totale  & 15.00  & 0.00 \\
+Totale attivo circolante  & 15.00  & 0.00 \\
 D) Ratei e risconti attivi  & 0.00  & 0.00 \\
-TOTALE ATTIVO  & 0.00  & 0.00 \\
+TOTALE ATTIVO  & 75.00  & 0.00 \\
 \end{longtable}
   \\
   \\
 \begin{longtable}[l]{ l  l  l }
- & 31.12.2022  & 31.12.2021 \\
+ & 31.12.2024  & 31.12.2023 \\
 \multicolumn{3}{l}{PASSIVO }\\
 A) Patrimonio netto  &  & \\
 I - Fondo di dotazione dell'ente  & 0.00  & 0.00 \\
 II - Patrimonio vincolato  &  & \\
 III - Patrimonio libero  &  & \\
-IV - Avanzo/disavanzo d'esercizio  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00 \\
+IV - Avanzo/disavanzo d'esercizio  & 75.00  & 0.00 \\
+Totale  & 75.00  & 0.00 \\
 B) Fondi per rischi e oneri  &  & \\
 Totale  & 0.00  & 0.00 \\
 C) Trattamento di fine rapporto di lavoro subordinato  & 0.00  & 0.00 \\
 D) Debiti  &  & \\
 Totale  & 0.00  & 0.00 \\
 E) Ratei e risconti passivi  & 0.00  & 0.00 \\
-TOTALE PASSIVO  & 0.00  & 0.00 \\
+TOTALE PASSIVO  & 75.00  & 0.00 \\
 \end{longtable}
 -  \#page-nr  - \\
 \end{reportvalue}
-\begin{reportvalue}{Test 3: rendiconto 'Stato Patrimoniale (MOD. A)', colonna Gr1}
+\begin{reportvalue}{Test 3: rendiconto 'Stato Patrimoniale'}
   \\
-Associazione Sportiva Dilettantistica - STATO PATRIMONIALE ANNO 2020 \\
+Associazione Sportiva Dilettantistica Nexum - STATO PATRIMONIALE ANNO 2024 \\
+  \\
+Testo iniziale\P su più\P righe. \\
   \\
 (Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l }
- & 31.12.2020  & 31.12.2019 \\
+ & 31.12.2024  & 31.12.2023 \\
 \multicolumn{3}{l}{ATTIVO }\\
 A) Quote associative o apporti da associati ancora dovuti  & 0.00  & 0.00 \\
 B) Immobilizzazioni  &  & \\
@@ -250,10 +254,10 @@ Totale  & 0.00  & 0.00 \\
 II - Immobilizzazioni materiali  &  & \\
 1) terreni e fabbricati  & 0.00  & 0.00 \\
 2) impianti  & 0.00  & 0.00 \\
-3) attrezzature  & 0.00  & 0.00 \\
+3) attrezzature  & 700.00  & 0.00 \\
 4) altri beni  & 0.00  & 0.00 \\
 5) immobilizzazioni in corso e acconti  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00 \\
+Totale  & 700.00  & 0.00 \\
 III - Immobilizzazioni finanziarie  &  & \\
 1) Partecipazioni  &  & \\
 a) partecipazioni in imprese controllate  & 0.00  & 0.00 \\
@@ -274,7 +278,7 @@ esigibili entro l'anno successivo  & 0.00  & 0.00 \\
 esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 3) Altri titoli  & 0.00  & 0.00 \\
 Totale  & 0.00  & 0.00 \\
-Totale immobilizzazioni  & 0.00  & 0.00 \\
+Totale immobilizzazioni  & 700.00  & 0.00 \\
 C) Attivo circolante  &  & \\
 I - Rimanenze  &  & \\
 1) materie prime, sussidiarie e di consumo  & 0.00  & 0.00 \\
@@ -295,7 +299,7 @@ esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 esigibili entro l'anno successivo  & 0.00  & 0.00 \\
 esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 5) verso soggetti privati per contributi  &  & \\
-esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili entro l'anno successivo  & 2'000.00  & 0.00 \\
 esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 6) verso Federazioni Sportive Nazionali, Discipline Sportive Associative, Enti di Promozione Sportiva, Coni, Sport e Salute Spa, altri enti dell’ordinamento sportivo  &  & \\
 esigibili entro l'anno successivo  & 0.00  & 0.00 \\
@@ -312,37 +316,37 @@ esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 10) verso altri  &  & \\
 esigibili entro l'anno successivo  & 0.00  & 0.00 \\
 esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00 \\
+Totale  & 2'000.00  & 0.00 \\
 III - Attività finanziarie che non costituiscono immobilizzazioni  &  & \\
 1) partecipazioni  & 0.00  & 0.00 \\
 2) altri titoli  & 0.00  & 0.00 \\
 Totale  & 0.00  & 0.00 \\
 IV - Disponibilità liquide  &  & \\
-1) depositi bancari e postali  & 0.00  & 0.00 \\
+1) depositi bancari e postali  & 32'085.00  & 28'570.00 \\
 2) assegni  & 0.00  & 0.00 \\
-3) danaro e valori in cassa  & 0.00  & 0.00 \\
+3) danaro e valori in cassa  & 980.00  & 0.00 \\
 4) portafoglio e conto federale  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00 \\
-Totale attivo circolante  & 0.00  & 0.00 \\
+Totale  & 33'065.00  & 28'570.00 \\
+Totale attivo circolante  & 35'065.00  & 28'570.00 \\
 D) Ratei e risconti attivi  & 0.00  & 0.00 \\
-TOTALE ATTIVO  & 0.00  & 0.00 \\
+TOTALE ATTIVO  & 35'765.00  & 28'570.00 \\
 \end{longtable}
   \\
   \\
 \begin{longtable}[l]{ l  l  l }
- & 31.12.2020  & 31.12.2019 \\
+ & 31.12.2024  & 31.12.2023 \\
 \multicolumn{3}{l}{PASSIVO }\\
 A) Patrimonio netto  &  & \\
-I - Fondo di dotazione dell'ente  & 0.00  & 0.00 \\
+I - Fondo di dotazione dell'ente  & 20'000.00  & 20'000.00 \\
 II - Patrimonio vincolato  &  & \\
 1) Riserve statutarie  & 0.00  & 0.00 \\
 2) Riserve vincolate per decisione degli organi istituzionali  & 0.00  & 0.00 \\
 3) Riserve vincolate destinate da terzi  & 0.00  & 0.00 \\
 III - Patrimonio libero  &  & \\
 1) Riserve di avanzi di gestione  & 0.00  & 0.00 \\
-2) Altre riserve  & 0.00  & 0.00 \\
-IV - Avanzo/disavanzo d'esercizio  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00 \\
+2) Altre riserve  & 8'570.00  & 0.00 \\
+IV - Avanzo/disavanzo d'esercizio  & 7'145.00  & 8'570.00 \\
+Totale  & 35'715.00  & 28'570.00 \\
 B) Fondi per rischi e oneri  &  & \\
 1) per trattamento di quiescenza e obblighi simili  & 0.00  & 0.00 \\
 2) per imposte, anche differite  & 0.00  & 0.00 \\
@@ -369,7 +373,7 @@ esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 esigibili entro l'anno successivo  & 0.00  & 0.00 \\
 esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 7) debiti verso fornitori  &  & \\
-esigibili entro l'anno successivo  & 0.00  & 0.00 \\
+esigibili entro l'anno successivo  & 50.00  & 0.00 \\
 esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 8) debiti tributari  &  & \\
 esigibili entro l'anno successivo  & 0.00  & 0.00 \\
@@ -383,17 +387,17 @@ esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
 11) altri debiti  &  & \\
 esigibili entro l'anno successivo  & 0.00  & 0.00 \\
 esigibili oltre l'anno successivo  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00 \\
+Totale  & 50.00  & 0.00 \\
 E) Ratei e risconti passivi  & 0.00  & 0.00 \\
-TOTALE PASSIVO  & 0.00  & 0.00 \\
+TOTALE PASSIVO  & 35'765.00  & 28'570.00 \\
 \end{longtable}
 -  \#page-nr  - \\
 \end{reportvalue}
 \begin{reportvalue}{Test 4: report di controllo - Stato Patrimoniale}
-RENDICONTO STATO PATRIMONIALE ANNO 2020 DETTAGLIO MOVIMENTI \\
+RENDICONTO STATO PATRIMONIALE ANNO 2024 DETTAGLIO MOVIMENTI \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2024 \\
  & \multicolumn{5}{l}{ATTIVO } & \\
 AA  & \multicolumn{5}{l}{A) Quote associative o apporti da associati ancora dovuti } & 0.00 \\
  & \multicolumn{5}{l}{B) Immobilizzazioni } & \\
@@ -406,12 +410,12 @@ ABI  & \multicolumn{5}{l}{Totale } & 0.00 \\
  & \multicolumn{5}{l}{II - Immobilizzazioni materiali } & \\
 ABII1  & \multicolumn{5}{l}{1) terreni e fabbricati } & 0.00 \\
 ABII2  & \multicolumn{5}{l}{2) impianti } & 0.00 \\
-ABII3  & \multicolumn{5}{l}{3) attrezzature } & 0.00 \\
+ABII3  & \multicolumn{5}{l}{3) attrezzature } & 60.00 \\
 Data  & Doc  & Descrizione  & Conto  & Dare  & Avere  & Saldo \\
-01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 0.00 \\
+23.03.2024  &  & Esempio: Acquisto attrezzatura  & Attrezzatura  & 60.00  & 0.00  & 60.00 \\
 ABII4  & \multicolumn{5}{l}{4) altri beni } & 0.00 \\
 ABII5  & \multicolumn{5}{l}{5) immobilizzazioni in corso e acconti } & 0.00 \\
-ABII  & \multicolumn{5}{l}{Totale } & 0.00 \\
+ABII  & \multicolumn{5}{l}{Totale } & 60.00 \\
  & \multicolumn{5}{l}{III - Immobilizzazioni finanziarie } & \\
  & \multicolumn{5}{l}{1) Partecipazioni } & \\
 ABIII1a  & \multicolumn{5}{l}{a) partecipazioni in imprese controllate } & 0.00 \\
@@ -432,7 +436,7 @@ ABIII2de  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 ABIII2do  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
 ABIII3  & \multicolumn{5}{l}{3) Altri titoli } & 0.00 \\
 ABIII  & \multicolumn{5}{l}{Totale } & 0.00 \\
-AB  & \multicolumn{5}{l}{Totale immobilizzazioni } & 0.00 \\
+AB  & \multicolumn{5}{l}{Totale immobilizzazioni } & 60.00 \\
  & \multicolumn{5}{l}{C) Attivo circolante } & \\
  & \multicolumn{5}{l}{I - Rimanenze } & \\
 ACI1  & \multicolumn{5}{l}{1) materie prime, sussidiarie e di consumo } & 0.00 \\
@@ -476,18 +480,20 @@ ACIII1  & \multicolumn{5}{l}{1) partecipazioni } & 0.00 \\
 ACIII2  & \multicolumn{5}{l}{2) altri titoli } & 0.00 \\
 ACIII  & \multicolumn{5}{l}{Totale } & 0.00 \\
  & \multicolumn{5}{l}{IV - Disponibilità liquide } & \\
-ACIV1  & \multicolumn{5}{l}{1) depositi bancari e postali } & 0.00 \\
+ACIV1  & \multicolumn{5}{l}{1) depositi bancari e postali } & 15.00 \\
 Data  & Doc  & Descrizione  & Conto  & Dare  & Avere  & Saldo \\
-01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 0.00 \\
+07.01.2024  &  & Esempio: Incasso quota associativa - Giorgi Michele  & Banca 1  & 100.00  & 0.00  & 100.00 \\
+14.02.2024  &  & Esempio: Pagato pulizia locali  & Banca 1  & 0.00  & 25.00  & 75.00 \\
+23.03.2024  &  & Esempio: Acquisto attrezzatura  & Banca 1  & 0.00  & 60.00  & 15.00 \\
 ACIV2  & \multicolumn{5}{l}{2) assegni } & 0.00 \\
 ACIV3  & \multicolumn{5}{l}{3) danaro e valori in cassa } & 0.00 \\
 ACIV4  & \multicolumn{5}{l}{4) portafoglio e conto federale } & 0.00 \\
-ACIV  & \multicolumn{5}{l}{Totale } & 0.00 \\
-AC  & \multicolumn{5}{l}{Totale attivo circolante } & 0.00 \\
+ACIV  & \multicolumn{5}{l}{Totale } & 15.00 \\
+AC  & \multicolumn{5}{l}{Totale attivo circolante } & 15.00 \\
 AD  & \multicolumn{5}{l}{D) Ratei e risconti attivi } & 0.00 \\
-A  & \multicolumn{5}{l}{TOTALE ATTIVO } & 0.00 \\
+A  & \multicolumn{5}{l}{TOTALE ATTIVO } & 75.00 \\
 \\
-GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2024 \\
  & \multicolumn{5}{l}{PASSIVO } & \\
  & \multicolumn{5}{l}{A) Patrimonio netto } & \\
 PAI  & \multicolumn{5}{l}{I - Fondo di dotazione dell'ente } & 0.00 \\
@@ -498,8 +504,8 @@ PAII3  & \multicolumn{5}{l}{3) Riserve vincolate destinate da terzi } & 0.00 \\
  & \multicolumn{5}{l}{III - Patrimonio libero } & \\
 PAIII1  & \multicolumn{5}{l}{1) Riserve di avanzi di gestione } & 0.00 \\
 PAIII2  & \multicolumn{5}{l}{2) Altre riserve } & 0.00 \\
-PAIV  & \multicolumn{5}{l}{IV - Avanzo/disavanzo d'esercizio } & 0.00 \\
-PA  & \multicolumn{5}{l}{Totale } & 0.00 \\
+PAIV  & \multicolumn{5}{l}{IV - Avanzo/disavanzo d'esercizio } & 75.00 \\
+PA  & \multicolumn{5}{l}{Totale } & 75.00 \\
  & \multicolumn{5}{l}{B) Fondi per rischi e oneri } & \\
 PB1  & \multicolumn{5}{l}{1) per trattamento di quiescenza e obblighi simili } & 0.00 \\
 PB2  & \multicolumn{5}{l}{2) per imposte, anche differite } & 0.00 \\
@@ -542,25 +548,28 @@ PD11e  & \multicolumn{5}{l}{esigibili entro l'anno successivo } & 0.00 \\
 PD11o  & \multicolumn{5}{l}{esigibili oltre l'anno successivo } & 0.00 \\
 PD  & \multicolumn{5}{l}{Totale } & 0.00 \\
 PE  & \multicolumn{5}{l}{E) Ratei e risconti passivi } & 0.00 \\
-P  & \multicolumn{5}{l}{TOTALE PASSIVO } & 0.00 \\
+P  & \multicolumn{5}{l}{TOTALE PASSIVO } & 75.00 \\
 \end{longtable}
 -  \#page-nr  - \\
 \end{reportvalue}
 \begin{reportvalue}{Test 5: report di controllo - Stato Patrimoniale}
-RENDICONTO STATO PATRIMONIALE ANNO 2020 DETTAGLIO MOVIMENTI \\
+RENDICONTO STATO PATRIMONIALE ANNO 2024 DETTAGLIO MOVIMENTI \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2024 \\
  & \multicolumn{5}{l}{ATTIVO } & \\
 AA  & \multicolumn{5}{l}{A) Quote associative o apporti da associati ancora dovuti } & 0.00 \\
  & \multicolumn{5}{l}{B) Immobilizzazioni } & \\
  & \multicolumn{5}{l}{I - Immobilizzazioni immateriali } & \\
 ABI  & \multicolumn{5}{l}{Totale } & 0.00 \\
  & \multicolumn{5}{l}{II - Immobilizzazioni materiali } & \\
-ABII  & \multicolumn{5}{l}{Totale } & 0.00 \\
+ABII3  & \multicolumn{5}{l}{3) attrezzature } & 60.00 \\
+Data  & Doc  & Descrizione  & Conto  & Dare  & Avere  & Saldo \\
+23.03.2024  &  & Esempio: Acquisto attrezzatura  & Attrezzatura  & 60.00  & 0.00  & 60.00 \\
+ABII  & \multicolumn{5}{l}{Totale } & 60.00 \\
  & \multicolumn{5}{l}{III - Immobilizzazioni finanziarie } & \\
 ABIII  & \multicolumn{5}{l}{Totale } & 0.00 \\
-AB  & \multicolumn{5}{l}{Totale immobilizzazioni } & 0.00 \\
+AB  & \multicolumn{5}{l}{Totale immobilizzazioni } & 60.00 \\
  & \multicolumn{5}{l}{C) Attivo circolante } & \\
  & \multicolumn{5}{l}{I - Rimanenze } & \\
 ACI  & \multicolumn{5}{l}{Totale } & 0.00 \\
@@ -569,26 +578,31 @@ ACII  & \multicolumn{5}{l}{Totale } & 0.00 \\
  & \multicolumn{5}{l}{III - Attività finanziarie che non costituiscono immobilizzazioni } & \\
 ACIII  & \multicolumn{5}{l}{Totale } & 0.00 \\
  & \multicolumn{5}{l}{IV - Disponibilità liquide } & \\
-ACIV  & \multicolumn{5}{l}{Totale } & 0.00 \\
-AC  & \multicolumn{5}{l}{Totale attivo circolante } & 0.00 \\
+ACIV1  & \multicolumn{5}{l}{1) depositi bancari e postali } & 15.00 \\
+Data  & Doc  & Descrizione  & Conto  & Dare  & Avere  & Saldo \\
+07.01.2024  &  & Esempio: Incasso quota associativa - Giorgi Michele  & Banca 1  & 100.00  & 0.00  & 100.00 \\
+14.02.2024  &  & Esempio: Pagato pulizia locali  & Banca 1  & 0.00  & 25.00  & 75.00 \\
+23.03.2024  &  & Esempio: Acquisto attrezzatura  & Banca 1  & 0.00  & 60.00  & 15.00 \\
+ACIV  & \multicolumn{5}{l}{Totale } & 15.00 \\
+AC  & \multicolumn{5}{l}{Totale attivo circolante } & 15.00 \\
 AD  & \multicolumn{5}{l}{D) Ratei e risconti attivi } & 0.00 \\
-A  & \multicolumn{5}{l}{TOTALE ATTIVO } & 0.00 \\
+A  & \multicolumn{5}{l}{TOTALE ATTIVO } & 75.00 \\
 \\
-GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2024 \\
  & \multicolumn{5}{l}{PASSIVO } & \\
  & \multicolumn{5}{l}{A) Patrimonio netto } & \\
 PAI  & \multicolumn{5}{l}{I - Fondo di dotazione dell'ente } & 0.00 \\
  & \multicolumn{5}{l}{II - Patrimonio vincolato } & \\
  & \multicolumn{5}{l}{III - Patrimonio libero } & \\
-PAIV  & \multicolumn{5}{l}{IV - Avanzo/disavanzo d'esercizio } & 0.00 \\
-PA  & \multicolumn{5}{l}{Totale } & 0.00 \\
+PAIV  & \multicolumn{5}{l}{IV - Avanzo/disavanzo d'esercizio } & 75.00 \\
+PA  & \multicolumn{5}{l}{Totale } & 75.00 \\
  & \multicolumn{5}{l}{B) Fondi per rischi e oneri } & \\
 PB  & \multicolumn{5}{l}{Totale } & 0.00 \\
 PC  & \multicolumn{5}{l}{C) Trattamento di fine rapporto di lavoro subordinato } & 0.00 \\
  & \multicolumn{5}{l}{D) Debiti } & \\
 PD  & \multicolumn{5}{l}{Totale } & 0.00 \\
 PE  & \multicolumn{5}{l}{E) Ratei e risconti passivi } & 0.00 \\
-P  & \multicolumn{5}{l}{TOTALE PASSIVO } & 0.00 \\
+P  & \multicolumn{5}{l}{TOTALE PASSIVO } & 75.00 \\
 \end{longtable}
 -  \#page-nr  - \\
 \end{reportvalue}

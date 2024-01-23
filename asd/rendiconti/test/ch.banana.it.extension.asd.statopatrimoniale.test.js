@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.asd.statopatrimoniale.test
 // @api = 1.0
-// @pubdate = 2024-01-05
+// @pubdate = 2024-01-23
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.asd.statopatrimoniale.js>
 // @task = app.command
@@ -72,9 +72,9 @@ ReportModATest.prototype.testBananaExtension = function() {
 	Test.assert(banDoc);
 
     userParam = {};
-  	userParam.selectionStartDate = "2022-01-01";
-  	userParam.selectionEndDate = "2022-12-31";
-  	userParam.title = "STATO PATRIMONIALE ANNO 2022";
+  	userParam.selectionStartDate = "2024-01-01";
+  	userParam.selectionEndDate = "2024-12-31";
+  	userParam.title = "STATO PATRIMONIALE ANNO 2024";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
 	userParam.printheader = false;
@@ -98,9 +98,9 @@ ReportModATest.prototype.testBananaExtension = function() {
 	Test.assert(banDoc);
 
     userParam = {};
-  	userParam.selectionStartDate = "2022-01-01";
-  	userParam.selectionEndDate = "2022-12-31";
-  	userParam.title = "STATO PATRIMONIALE ANNO 2022";
+  	userParam.selectionStartDate = "2024-01-01";
+  	userParam.selectionEndDate = "2024-12-31";
+  	userParam.title = "STATO PATRIMONIALE ANNO 2024";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
 	userParam.printheader = false;
@@ -119,19 +119,19 @@ ReportModATest.prototype.testBananaExtension = function() {
 	/**
 	 * Test 3 using the tutorial template
 	*/
-    banDoc = Banana.application.openDocument("file:script/../test/testcases/asd_gestionale_patrimoniale_test.ac2");
+    banDoc = Banana.application.openDocument("file:script/../test/testcases/11250-doppia-asd-rendiconto-gestionale-tutorial.ac2");
 	Test.assert(banDoc);
 
     userParam = {};
-  	userParam.selectionStartDate = "2020-01-01";
-  	userParam.selectionEndDate = "2020-12-31";
-  	userParam.title = "STATO PATRIMONIALE ANNO 2020";
+  	userParam.selectionStartDate = "2024-01-01";
+  	userParam.selectionEndDate = "2024-12-31";
+  	userParam.title = "STATO PATRIMONIALE ANNO 2024";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
 	userParam.printheader = false;
 	userParam.printtitle = true;
 	userParam.title = '';
-	userParam.textbegin = '';
+	userParam.textbegin = 'Testo iniziale\nsu più\nrighe.';
 	userParam.column = 'Gr1';
 	userParam.printcolumn = false;
 	userParam.printpreviousyear = true;
@@ -139,7 +139,7 @@ ReportModATest.prototype.testBananaExtension = function() {
 
     paramReport = setParamReport(banDoc, userParam);
     report = stampaReportNormale(banDoc, paramReport, "");
-	Test.logger.addReport("Test 3: rendiconto 'Stato Patrimoniale (MOD. A)', colonna Gr1", report);
+	Test.logger.addReport("Test 3: rendiconto 'Stato Patrimoniale'", report);
 
 	/**
 	 * Test 4: report di controllo
@@ -148,8 +148,8 @@ ReportModATest.prototype.testBananaExtension = function() {
 	Test.assert(banDoc);
 
     userParam = {};
-  	userParam.selectionStartDate = "2020-01-01";
-  	userParam.selectionEndDate = "2020-12-31";
+  	userParam.selectionStartDate = "2024-01-01";
+  	userParam.selectionEndDate = "2024-12-31";
   	userParam.title = "XXX";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
@@ -176,8 +176,8 @@ ReportModATest.prototype.testBananaExtension = function() {
 	Test.assert(banDoc);
 
     userParam = {};
-  	userParam.selectionStartDate = "2020-01-01";
-  	userParam.selectionEndDate = "2020-12-31";
+  	userParam.selectionStartDate = "2024-01-01";
+  	userParam.selectionEndDate = "2024-12-31";
   	userParam.title = "XXX";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';

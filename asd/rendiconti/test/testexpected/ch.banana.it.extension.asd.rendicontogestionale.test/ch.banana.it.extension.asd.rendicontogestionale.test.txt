@@ -24,14 +24,14 @@
 \begin{test}{testBananaExtension}
 \begin{reportvalue}{Test 1: 'rendiconto gestionale', column Gr1}
   \\
-Associazione Sportiva Dilettantistica - RENDICONTO GESTIONALE ANNO 2022 \\
+Associazione Sportiva Dilettantistica - RENDICONTO GESTIONALE ANNO 2024 \\
   \\
 (Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-ONERI E COSTI  & 31.12.2022  & 31.12.2021  &  & PROVENTI E RICAVI  & 31.12.2022  & 31.12.2021 \\
+ONERI E COSTI  & 31.12.2024  & 31.12.2023  &  & PROVENTI E RICAVI  & 31.12.2024  & 31.12.2023 \\
 A) Costi e oneri da attività istituzionale  &  &  &  & A) Ricavi, rendite e proventi da attività istituzionale  &  & \\
-1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & 1) Proventi da quote associative  & 0.00  & 0.00 \\
-2) Servizi  & 0.00  & 0.00  &  & 2) Proventi da tesseramenti  & 0.00  & 0.00 \\
+1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & 1) Proventi da quote associative  & 100.00  & 0.00 \\
+2) Servizi  & 25.00  & 0.00  &  & 2) Proventi da tesseramenti  & 0.00  & 0.00 \\
 3) Affiliazioni e tesseramenti  & 0.00  & 0.00  &  & 3) Proventi da associati e tesserati per partecipazione alle attività istituzionali  & 0.00  & 0.00 \\
 4) Godimento beni di terzi  & 0.00  & 0.00  &  & 4) Premio di formazione tecnica e indennità di preparazione  & 0.00  & 0.00 \\
 5) Personale  & 0.00  & 0.00  &  & 5) Erogazioni liberali  & 0.00  & 0.00 \\
@@ -43,8 +43,8 @@ A) Costi e oneri da attività istituzionale  &  &  &  & A) Ricavi, rendite e pro
 11) Accantonamento a riserva vincolata per decisione degli organi istituzionali  & 0.00  & 0.00  &  & 11) Proventi per attività in convenzione o in regime di accreditamento con enti pubblici  & 0.00  & 0.00 \\
 12) Utilizzo riserva vincolata per decisione degli organi istituzionali  & 0.00  & 0.00  &  & 12) Altri rendite e proventi  & 0.00  & 0.00 \\
  &  &  &  & 13) Rimanenze finali  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo attività istituzionale (+/-) } & 0.00  & 0.00 \\
+Totale  & 25.00  & 0.00  &  & Totale  & 100.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività istituzionale (+/-) } & 75.00  & 0.00 \\
 B) Costi e oneri da attività secondarie e strumentali  &  &  &  & B) Ricavi, rendite e proventi da attività secondarie e strumentali  &  & \\
 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & 1) Ricavi per prestazioni e cessioni ad associati e tesserati  & 0.00  & 0.00 \\
 2) Servizi  & 0.00  & 0.00  &  & 2) Contributi da soggetti privati  & 0.00  & 0.00 \\
@@ -88,35 +88,37 @@ E) Costi e oneri di supporto generale  &  &  &  & E) Proventi di supporto genera
 10) Utilizzo riserva vincolata per decisione degli organi istituzionali  & 0.00  & 0.00  &  &  &  & \\
 Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo attività di supporto generale (+/-) } & 0.00  & 0.00 \\
-TOTALE ONERI E COSTI  & 0.00  & 0.00  &  & TOTALE PROVENTI E RICAVI  & 0.00  & 0.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 0.00  & 0.00 \\
+TOTALE ONERI E COSTI  & 25.00  & 0.00  &  & TOTALE PROVENTI E RICAVI  & 100.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 75.00  & 0.00 \\
 \multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio (+/-) } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio (+/-) } & 75.00  & 0.00 \\
 \end{longtable}
 \end{reportvalue}
-\begin{reportvalue}{Test 2: 'rendiconto gestionale', column Gr1}
+\begin{reportvalue}{Test 2: 'rendiconto gestionale'}
   \\
-Associazione Sportiva Dilettantistica - RENDICONTO GESTIONALE ANNO 2020 \\
+Associazione Sportiva Dilettantistica Nexum - RENDICONTO GESTIONALE ANNO 2024 \\
+  \\
+Testo iniziale\P su più\P righe. \\
   \\
 (Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-ONERI E COSTI  & 31.12.2020  & 31.12.2019  &  & PROVENTI E RICAVI  & 31.12.2020  & 31.12.2019 \\
+ONERI E COSTI  & 31.12.2024  & 31.12.2023  &  & PROVENTI E RICAVI  & 31.12.2024  & 31.12.2023 \\
 A) Costi e oneri da attività istituzionale  &  &  &  & A) Ricavi, rendite e proventi da attività istituzionale  &  & \\
-1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & 1) Proventi da quote associative  & 0.00  & 0.00 \\
-2) Servizi  & 0.00  & 0.00  &  & 2) Proventi da tesseramenti  & 0.00  & 0.00 \\
+1) Materie prime, sussidiarie, di consumo e di merci  & 330.00  & 1'130.00  &  & 1) Proventi da quote associative  & 2'200.00  & 11'500.00 \\
+2) Servizi  & 1'600.00  & 6'000.00  &  & 2) Proventi da tesseramenti  & 0.00  & 0.00 \\
 3) Affiliazioni e tesseramenti  & 0.00  & 0.00  &  & 3) Proventi da associati e tesserati per partecipazione alle attività istituzionali  & 0.00  & 0.00 \\
 4) Godimento beni di terzi  & 0.00  & 0.00  &  & 4) Premio di formazione tecnica e indennità di preparazione  & 0.00  & 0.00 \\
-5) Personale  & 0.00  & 0.00  &  & 5) Erogazioni liberali  & 0.00  & 0.00 \\
+5) Personale  & 1'800.00  & 3'600.00  &  & 5) Erogazioni liberali  & 350.00  & 1'250.00 \\
 6) svalutazioni delle immobilizzazioni materiali ed immateriali  & 0.00  & 0.00  &  & 6) Proventi del 5 per mille  & 0.00  & 0.00 \\
 7) Ammortamenti  & 0.00  & 0.00  &  & 7) Contributi da soggetti privati  & 0.00  & 0.00 \\
 8) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  & 8) Contributi a fondo perduto o a rendicontazione da enti pubblici  & 0.00  & 0.00 \\
-9) Altri oneri istituzionali  & 0.00  & 0.00  &  & 9) Ricavi per prestazioni e cessioni a terzi  & 0.00  & 0.00 \\
-10) Rimanenze iniziali  & 0.00  & 0.00  &  & 10) Proventi e ricavi da contratti con enti pubblici  & 0.00  & 0.00 \\
-11) Accantonamento a riserva vincolata per decisione degli organi istituzionali  & 0.00  & 0.00  &  & 11) Proventi per attività in convenzione o in regime di accreditamento con enti pubblici  & 0.00  & 0.00 \\
+9) Altri oneri istituzionali  & 115.00  & 450.00  &  & 9) Ricavi per prestazioni e cessioni a terzi  & 0.00  & 0.00 \\
+10) Rimanenze iniziali  & 0.00  & 0.00  &  & 10) Proventi e ricavi da contratti con enti pubblici  & 3'000.00  & 3'000.00 \\
+11) Accantonamento a riserva vincolata per decisione degli organi istituzionali  & 0.00  & 0.00  &  & 11) Proventi per attività in convenzione o in regime di accreditamento con enti pubblici  & 1'500.00  & 1'500.00 \\
 12) Utilizzo riserva vincolata per decisione degli organi istituzionali  & 0.00  & 0.00  &  & 12) Altri rendite e proventi  & 0.00  & 0.00 \\
  &  &  &  & 13) Rimanenze finali  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo attività istituzionale (+/-) } & 0.00  & 0.00 \\
+Totale  & 3'845.00  & 11'180.00  &  & Totale  & 7'050.00  & 17'250.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività istituzionale (+/-) } & 3'205.00  & 6'070.00 \\
 B) Costi e oneri da attività secondarie e strumentali  &  &  &  & B) Ricavi, rendite e proventi da attività secondarie e strumentali  &  & \\
 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & 1) Ricavi per prestazioni e cessioni ad associati e tesserati  & 0.00  & 0.00 \\
 2) Servizi  & 0.00  & 0.00  &  & 2) Contributi da soggetti privati  & 0.00  & 0.00 \\
@@ -126,19 +128,19 @@ B) Costi e oneri da attività secondarie e strumentali  &  &  &  & B) Ricavi, re
 6) svalutazioni delle immobilizzazioni materiali ed immateriali  & 0.00  & 0.00  &  & 6) Altri ricavi, rendite e proventi  & 0.00  & 0.00 \\
 7) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  & 7) Rimanenze finali  & 0.00  & 0.00 \\
 8) Oneri diversi di gestione  & 0.00  & 0.00  &  & Sub-totale  & 0.00  & 0.00 \\
-9) Rimanenze iniziali  & 0.00  & 0.00  &  & 8) Ricavi da sponsorizzazioni e prestazioni promo pubblicitarie  & 0.00  & 0.00 \\
+9) Rimanenze iniziali  & 0.00  & 0.00  &  & 8) Ricavi da sponsorizzazioni e prestazioni promo pubblicitarie  & 2'000.00  & 1'400.00 \\
  &  &  &  & 9) Ricavi da cessione di diritti e indennità legate alla formazione degli atleti (oltre tariffe federali)  & 0.00  & 0.00 \\
  &  &  &  & 10) Titoli di accesso  & 0.00  & 0.00 \\
  &  &  &  & 11) Altri proventi e ricavi dalla gestione di impianti e strutture sportive  & 0.00  & 0.00 \\
- &  &  &  & Sub-totale  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo attività secondarie e strumentali (+/-) } & 0.00  & 0.00 \\
+ &  &  &  & Sub-totale  & 2'000.00  & 1'400.00 \\
+Totale  & 0.00  & 0.00  &  & Totale  & 2'000.00  & 1'400.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività secondarie e strumentali (+/-) } & 2'000.00  & 1'400.00 \\
 C) Costi e oneri da attività di raccolta fondi e da attività commerciali connesse a scopi istituzionali  &  &  &  & C) Ricavi, rendite e proventi da attività di raccolta fondi e da attività commerciali connesse a scopi istituzionali  &  & \\
 1) Oneri per attività commerciali connesse a scopi istituzionali  & 0.00  & 0.00  &  & 1) Proventi da attività commerciali connesse a scopi istituzionali  & 0.00  & 0.00 \\
-2) Oneri per raccolte pubbliche di fondi occasionali  & 0.00  & 0.00  &  & 2) Proventi da raccolte pubbliche di fondi occasionali  & 0.00  & 0.00 \\
-3) Altri oneri  & 0.00  & 0.00  &  & 3) Altri proventi  & 0.00  & 0.00 \\
-Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi e attività commerciali connesse a scopi istituzionali } & 0.00  & 0.00 \\
+2) Oneri per raccolte pubbliche di fondi occasionali  & 250.00  & 250.00  &  & 2) Proventi da raccolte pubbliche di fondi occasionali  & 2'390.00  & 1'550.00 \\
+3) Altri oneri  & 200.00  & 200.00  &  & 3) Altri proventi  & 0.00  & 0.00 \\
+Totale  & 450.00  & 450.00  &  & Totale  & 2'390.00  & 1'550.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi e attività commerciali connesse a scopi istituzionali } & 1'940.00  & 1'100.00 \\
 D) Costi e oneri da attività finanziarie e patrimoniali  &  &  &  & D) Ricavi, rendite e proventi da attività finanziarie e patrimoniali  &  & \\
 1) Su rapporti bancari  & 0.00  & 0.00  &  & 1) Da rapporti bancari  & 0.00  & 0.00 \\
 2) Su prestiti  & 0.00  & 0.00  &  & 2) Da altri investimenti finanziari  & 0.00  & 0.00 \\
@@ -160,35 +162,37 @@ E) Costi e oneri di supporto generale  &  &  &  & E) Proventi di supporto genera
 10) Utilizzo riserva vincolata per decisione degli organi istituzionali  & 0.00  & 0.00  &  &  &  & \\
 Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
 \multicolumn{5}{l}{Avanzo/disavanzo attività di supporto generale (+/-) } & 0.00  & 0.00 \\
-TOTALE ONERI E COSTI  & 0.00  & 0.00  &  & TOTALE PROVENTI E RICAVI  & 0.00  & 0.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 0.00  & 0.00 \\
+TOTALE ONERI E COSTI  & 4'295.00  & 11'630.00  &  & TOTALE PROVENTI E RICAVI  & 11'440.00  & 20'200.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 7'145.00  & 8'570.00 \\
 \multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
-\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio (+/-) } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio (+/-) } & 7'145.00  & 8'570.00 \\
 \end{longtable}
 \end{reportvalue}
 \begin{reportvalue}{Test 3: 'rendiconto gestionale', stampa colonna raggruppamento}
   \\
-Associazione Sportiva Dilettantistica - RENDICONTO GESTIONALE ANNO 2020 \\
+Associazione Sportiva Dilettantistica Nexum - RENDICONTO GESTIONALE ANNO 2024 \\
+  \\
+Testo iniziale\P su più\P righe. \\
   \\
 (Importi in EUR) \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l  l  l }
-GR1  & ONERI E COSTI  & 31.12.2020  & 31.12.2019  &  & GR1  & PROVENTI E RICAVI  & 31.12.2020  & 31.12.2019 \\
+GR1  & ONERI E COSTI  & 31.12.2024  & 31.12.2023  &  & GR1  & PROVENTI E RICAVI  & 31.12.2024  & 31.12.2023 \\
  & A) Costi e oneri da attività istituzionale  &  &  &  &  & A) Ricavi, rendite e proventi da attività istituzionale  &  & \\
-CA1  & 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & RA1  & 1) Proventi da quote associative  & 0.00  & 0.00 \\
-CA2  & 2) Servizi  & 0.00  & 0.00  &  & RA2  & 2) Proventi da tesseramenti  & 0.00  & 0.00 \\
+CA1  & 1) Materie prime, sussidiarie, di consumo e di merci  & 330.00  & 1'130.00  &  & RA1  & 1) Proventi da quote associative  & 2'200.00  & 11'500.00 \\
+CA2  & 2) Servizi  & 1'600.00  & 6'000.00  &  & RA2  & 2) Proventi da tesseramenti  & 0.00  & 0.00 \\
 CA3  & 3) Affiliazioni e tesseramenti  & 0.00  & 0.00  &  & RA3  & 3) Proventi da associati e tesserati per partecipazione alle attività istituzionali  & 0.00  & 0.00 \\
 CA4  & 4) Godimento beni di terzi  & 0.00  & 0.00  &  & RA4  & 4) Premio di formazione tecnica e indennità di preparazione  & 0.00  & 0.00 \\
-CA5  & 5) Personale  & 0.00  & 0.00  &  & RA5  & 5) Erogazioni liberali  & 0.00  & 0.00 \\
+CA5  & 5) Personale  & 1'800.00  & 3'600.00  &  & RA5  & 5) Erogazioni liberali  & 350.00  & 1'250.00 \\
 CA6  & 6) svalutazioni delle immobilizzazioni materiali ed immateriali  & 0.00  & 0.00  &  & RA6  & 6) Proventi del 5 per mille  & 0.00  & 0.00 \\
 CA7  & 7) Ammortamenti  & 0.00  & 0.00  &  & RA7  & 7) Contributi da soggetti privati  & 0.00  & 0.00 \\
 CA8  & 8) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  & RA8  & 8) Contributi a fondo perduto o a rendicontazione da enti pubblici  & 0.00  & 0.00 \\
-CA9  & 9) Altri oneri istituzionali  & 0.00  & 0.00  &  & RA9  & 9) Ricavi per prestazioni e cessioni a terzi  & 0.00  & 0.00 \\
-CA10  & 10) Rimanenze iniziali  & 0.00  & 0.00  &  & RA10  & 10) Proventi e ricavi da contratti con enti pubblici  & 0.00  & 0.00 \\
-CA11  & 11) Accantonamento a riserva vincolata per decisione degli organi istituzionali  & 0.00  & 0.00  &  & RA11  & 11) Proventi per attività in convenzione o in regime di accreditamento con enti pubblici  & 0.00  & 0.00 \\
+CA9  & 9) Altri oneri istituzionali  & 115.00  & 450.00  &  & RA9  & 9) Ricavi per prestazioni e cessioni a terzi  & 0.00  & 0.00 \\
+CA10  & 10) Rimanenze iniziali  & 0.00  & 0.00  &  & RA10  & 10) Proventi e ricavi da contratti con enti pubblici  & 3'000.00  & 3'000.00 \\
+CA11  & 11) Accantonamento a riserva vincolata per decisione degli organi istituzionali  & 0.00  & 0.00  &  & RA11  & 11) Proventi per attività in convenzione o in regime di accreditamento con enti pubblici  & 1'500.00  & 1'500.00 \\
 CA12  & 12) Utilizzo riserva vincolata per decisione degli organi istituzionali  & 0.00  & 0.00  &  & RA12  & 12) Altri rendite e proventi  & 0.00  & 0.00 \\
  &  &  &  &  & RA13  & 13) Rimanenze finali  & 0.00  & 0.00 \\
-CA  & Totale  & 0.00  & 0.00  &  & RA  & Totale  & 0.00  & 0.00 \\
-RA-CA  & \multicolumn{6}{l}{Avanzo/disavanzo attività istituzionale (+/-) } & 0.00  & 0.00 \\
+CA  & Totale  & 3'845.00  & 11'180.00  &  & RA  & Totale  & 7'050.00  & 17'250.00 \\
+RA-CA  & \multicolumn{6}{l}{Avanzo/disavanzo attività istituzionale (+/-) } & 3'205.00  & 6'070.00 \\
  & B) Costi e oneri da attività secondarie e strumentali  &  &  &  &  & B) Ricavi, rendite e proventi da attività secondarie e strumentali  &  & \\
 CB1  & 1) Materie prime, sussidiarie, di consumo e di merci  & 0.00  & 0.00  &  & RB1  & 1) Ricavi per prestazioni e cessioni ad associati e tesserati  & 0.00  & 0.00 \\
 CB2  & 2) Servizi  & 0.00  & 0.00  &  & RB2  & 2) Contributi da soggetti privati  & 0.00  & 0.00 \\
@@ -198,19 +202,19 @@ CB5  & 5) Ammortamenti  & 0.00  & 0.00  &  & RB5  & 5) Ricavi e proventi da cont
 CB6  & 6) svalutazioni delle immobilizzazioni materiali ed immateriali  & 0.00  & 0.00  &  & RB6  & 6) Altri ricavi, rendite e proventi  & 0.00  & 0.00 \\
 CB7  & 7) Accantonamenti per rischi ed oneri  & 0.00  & 0.00  &  & RB7  & 7) Rimanenze finali  & 0.00  & 0.00 \\
 CB8  & 8) Oneri diversi di gestione  & 0.00  & 0.00  &  & RBS1  & Sub-totale  & 0.00  & 0.00 \\
-CB9  & 9) Rimanenze iniziali  & 0.00  & 0.00  &  & RB8  & 8) Ricavi da sponsorizzazioni e prestazioni promo pubblicitarie  & 0.00  & 0.00 \\
+CB9  & 9) Rimanenze iniziali  & 0.00  & 0.00  &  & RB8  & 8) Ricavi da sponsorizzazioni e prestazioni promo pubblicitarie  & 2'000.00  & 1'400.00 \\
  &  &  &  &  & RB9  & 9) Ricavi da cessione di diritti e indennità legate alla formazione degli atleti (oltre tariffe federali)  & 0.00  & 0.00 \\
  &  &  &  &  & RB10  & 10) Titoli di accesso  & 0.00  & 0.00 \\
  &  &  &  &  & RB11  & 11) Altri proventi e ricavi dalla gestione di impianti e strutture sportive  & 0.00  & 0.00 \\
- &  &  &  &  & RBS2  & Sub-totale  & 0.00  & 0.00 \\
-CB  & Totale  & 0.00  & 0.00  &  & RB  & Totale  & 0.00  & 0.00 \\
-RB-CB  & \multicolumn{6}{l}{Avanzo/disavanzo attività secondarie e strumentali (+/-) } & 0.00  & 0.00 \\
+ &  &  &  &  & RBS2  & Sub-totale  & 2'000.00  & 1'400.00 \\
+CB  & Totale  & 0.00  & 0.00  &  & RB  & Totale  & 2'000.00  & 1'400.00 \\
+RB-CB  & \multicolumn{6}{l}{Avanzo/disavanzo attività secondarie e strumentali (+/-) } & 2'000.00  & 1'400.00 \\
  & C) Costi e oneri da attività di raccolta fondi e da attività commerciali connesse a scopi istituzionali  &  &  &  &  & C) Ricavi, rendite e proventi da attività di raccolta fondi e da attività commerciali connesse a scopi istituzionali  &  & \\
 CC1  & 1) Oneri per attività commerciali connesse a scopi istituzionali  & 0.00  & 0.00  &  & RC1  & 1) Proventi da attività commerciali connesse a scopi istituzionali  & 0.00  & 0.00 \\
-CC2  & 2) Oneri per raccolte pubbliche di fondi occasionali  & 0.00  & 0.00  &  & RC2  & 2) Proventi da raccolte pubbliche di fondi occasionali  & 0.00  & 0.00 \\
-CC3  & 3) Altri oneri  & 0.00  & 0.00  &  & RC3  & 3) Altri proventi  & 0.00  & 0.00 \\
-CC  & Totale  & 0.00  & 0.00  &  & RC  & Totale  & 0.00  & 0.00 \\
-RC-CC  & \multicolumn{6}{l}{Avanzo/disavanzo attività di raccolta fondi e attività commerciali connesse a scopi istituzionali } & 0.00  & 0.00 \\
+CC2  & 2) Oneri per raccolte pubbliche di fondi occasionali  & 250.00  & 250.00  &  & RC2  & 2) Proventi da raccolte pubbliche di fondi occasionali  & 2'390.00  & 1'550.00 \\
+CC3  & 3) Altri oneri  & 200.00  & 200.00  &  & RC3  & 3) Altri proventi  & 0.00  & 0.00 \\
+CC  & Totale  & 450.00  & 450.00  &  & RC  & Totale  & 2'390.00  & 1'550.00 \\
+RC-CC  & \multicolumn{6}{l}{Avanzo/disavanzo attività di raccolta fondi e attività commerciali connesse a scopi istituzionali } & 1'940.00  & 1'100.00 \\
  & D) Costi e oneri da attività finanziarie e patrimoniali  &  &  &  &  & D) Ricavi, rendite e proventi da attività finanziarie e patrimoniali  &  & \\
 CD1  & 1) Su rapporti bancari  & 0.00  & 0.00  &  & RD1  & 1) Da rapporti bancari  & 0.00  & 0.00 \\
 CD2  & 2) Su prestiti  & 0.00  & 0.00  &  & RD2  & 2) Da altri investimenti finanziari  & 0.00  & 0.00 \\
@@ -232,23 +236,23 @@ CE9  & 9) Accantonamento a riserva vincolata per decisione degli organi istituzi
 CE10  & 10) Utilizzo riserva vincolata per decisione degli organi istituzionali  & 0.00  & 0.00  &  &  &  &  & \\
 CE  & Totale  & 0.00  & 0.00  &  & RE  & Totale  & 0.00  & 0.00 \\
 RE-CE  & \multicolumn{6}{l}{Avanzo/disavanzo attività di supporto generale (+/-) } & 0.00  & 0.00 \\
-C  & TOTALE ONERI E COSTI  & 0.00  & 0.00  &  & R  & TOTALE PROVENTI E RICAVI  & 0.00  & 0.00 \\
-TADPI  & \multicolumn{6}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 0.00  & 0.00 \\
+C  & TOTALE ONERI E COSTI  & 4'295.00  & 11'630.00  &  & R  & TOTALE PROVENTI E RICAVI  & 11'440.00  & 20'200.00 \\
+TADPI  & \multicolumn{6}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 7'145.00  & 8'570.00 \\
 IM  & \multicolumn{6}{l}{Imposte } & 0.00  & 0.00 \\
-TADES  & \multicolumn{6}{l}{Avanzo/disavanzo d’esercizio (+/-) } & 0.00  & 0.00 \\
+TADES  & \multicolumn{6}{l}{Avanzo/disavanzo d’esercizio (+/-) } & 7'145.00  & 8'570.00 \\
 \end{longtable}
 \end{reportvalue}
 \begin{reportvalue}{Test 4: report di controllo - Rendiconto Gestionale}
-RENDICONTO GESTIONALE ANNO 2020 DETTAGLIO MOVIMENTI \\
+RENDICONTO GESTIONALE ANNO 2024 DETTAGLIO MOVIMENTI \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l  l }
-GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2024 \\
  & \multicolumn{5}{l}{ONERI E COSTI } & \\
  & \multicolumn{5}{l}{A) Costi e oneri da attività istituzionale } & \\
 CA1  & \multicolumn{5}{l}{1) Materie prime, sussidiarie, di consumo e di merci } & 0.00 \\
-CA2  & \multicolumn{5}{l}{2) Servizi } & 0.00 \\
+CA2  & \multicolumn{5}{l}{2) Servizi } & 25.00 \\
 Data  & Doc  & Descrizione  & Conto  & Dare  & Avere  & Saldo \\
-01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 0.00 \\
+14.02.2024  &  & Esempio: Pagato pulizia locali  & Pulizia  & 25.00  & 0.00  & 25.00 \\
 CA3  & \multicolumn{5}{l}{3) Affiliazioni e tesseramenti } & 0.00 \\
 CA4  & \multicolumn{5}{l}{4) Godimento beni di terzi } & 0.00 \\
 CA5  & \multicolumn{5}{l}{5) Personale } & 0.00 \\
@@ -259,7 +263,7 @@ CA9  & \multicolumn{5}{l}{9) Altri oneri istituzionali } & 0.00 \\
 CA10  & \multicolumn{5}{l}{10) Rimanenze iniziali } & 0.00 \\
 CA11  & \multicolumn{5}{l}{11) Accantonamento a riserva vincolata per decisione degli organi istituzionali } & 0.00 \\
 CA12  & \multicolumn{5}{l}{12) Utilizzo riserva vincolata per decisione degli organi istituzionali } & 0.00 \\
-CA  & \multicolumn{5}{l}{Totale } & 0.00 \\
+CA  & \multicolumn{5}{l}{Totale } & 25.00 \\
  & \multicolumn{5}{l}{B) Costi e oneri da attività secondarie e strumentali } & \\
 CB1  & \multicolumn{5}{l}{1) Materie prime, sussidiarie, di consumo e di merci } & 0.00 \\
 CB2  & \multicolumn{5}{l}{2) Servizi } & 0.00 \\
@@ -295,14 +299,14 @@ CE8  & \multicolumn{5}{l}{8) svalutazioni delle immobilizzazioni materiali ed im
 CE9  & \multicolumn{5}{l}{9) Accantonamento a riserva vincolata per decisione degli organi istituzionali } & 0.00 \\
 CE10  & \multicolumn{5}{l}{10) Utilizzo riserva vincolata per decisione degli organi istituzionali } & 0.00 \\
 CE  & \multicolumn{5}{l}{Totale } & 0.00 \\
-C  & \multicolumn{5}{l}{TOTALE ONERI E COSTI } & 0.00 \\
+C  & \multicolumn{5}{l}{TOTALE ONERI E COSTI } & 25.00 \\
 \\
-GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2020 \\
+GR1  & \multicolumn{5}{l}{DESCRIZIONE } & 31.12.2024 \\
  & \multicolumn{5}{l}{PROVENTI E RICAVI } & \\
  & \multicolumn{5}{l}{A) Ricavi, rendite e proventi da attività istituzionale } & \\
-RA1  & \multicolumn{5}{l}{1) Proventi da quote associative } & 0.00 \\
+RA1  & \multicolumn{5}{l}{1) Proventi da quote associative } & 100.00 \\
 Data  & Doc  & Descrizione  & Conto  & Dare  & Avere  & Saldo \\
-01.01.2020  &  & Saldo iniziale  &  & 0.00  & 0.00  & 0.00 \\
+07.01.2024  &  & Esempio: Incasso quota associativa - Giorgi Michele  & Ricavi quote  & 0.00  & 100.00  & -100.00 \\
 RA2  & \multicolumn{5}{l}{2) Proventi da tesseramenti } & 0.00 \\
 RA3  & \multicolumn{5}{l}{3) Proventi da associati e tesserati per partecipazione alle attività istituzionali } & 0.00 \\
 RA4  & \multicolumn{5}{l}{4) Premio di formazione tecnica e indennità di preparazione } & 0.00 \\
@@ -315,7 +319,7 @@ RA10  & \multicolumn{5}{l}{10) Proventi e ricavi da contratti con enti pubblici 
 RA11  & \multicolumn{5}{l}{11) Proventi per attività in convenzione o in regime di accreditamento con enti pubblici } & 0.00 \\
 RA12  & \multicolumn{5}{l}{12) Altri rendite e proventi } & 0.00 \\
 RA13  & \multicolumn{5}{l}{13) Rimanenze finali } & 0.00 \\
-RA  & \multicolumn{5}{l}{Totale } & 0.00 \\
+RA  & \multicolumn{5}{l}{Totale } & 100.00 \\
  & \multicolumn{5}{l}{B) Ricavi, rendite e proventi da attività secondarie e strumentali } & \\
 RB1  & \multicolumn{5}{l}{1) Ricavi per prestazioni e cessioni ad associati e tesserati } & 0.00 \\
 RB2  & \multicolumn{5}{l}{2) Contributi da soggetti privati } & 0.00 \\
@@ -345,7 +349,7 @@ RD  & \multicolumn{5}{l}{Totale } & 0.00 \\
 RE1  & \multicolumn{5}{l}{1) Proventi da distacco del personale } & 0.00 \\
 RE2  & \multicolumn{5}{l}{2) Altri proventi di supporto generale } & 0.00 \\
 RE  & \multicolumn{5}{l}{Totale } & 0.00 \\
-R  & \multicolumn{5}{l}{TOTALE PROVENTI E RICAVI } & 0.00 \\
+R  & \multicolumn{5}{l}{TOTALE PROVENTI E RICAVI } & 100.00 \\
 \end{longtable}
 -  \#page-nr  - \\
 \end{reportvalue}

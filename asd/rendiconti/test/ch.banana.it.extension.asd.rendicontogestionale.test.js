@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.asd.rendicontogestionale.test
 // @api = 1.0
-// @pubdate = 2024-01-05
+// @pubdate = 2024-01-23
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.asd.rendicontogestionale.js>
 // @task = app.command
@@ -71,9 +71,9 @@ ReportModBTest.prototype.testBananaExtension = function() {
 	Test.assert(banDoc);
 
     userParam = {};
-  	userParam.selectionStartDate = "2022-01-01";
-  	userParam.selectionEndDate = "2022-12-31";
-  	userParam.title = "RENDICONTO GESTIONALE ANNO 2022";
+  	userParam.selectionStartDate = "2024-01-01";
+  	userParam.selectionEndDate = "2024-12-31";
+  	userParam.title = "RENDICONTO GESTIONALE ANNO 2024";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
 	userParam.printheader = false;
@@ -90,42 +90,42 @@ ReportModBTest.prototype.testBananaExtension = function() {
 	/**
 	 * Test 2: tutorial template
 	 */
-    banDoc = Banana.application.openDocument("file:script/../test/testcases/asd_gestionale_patrimoniale_test.ac2");
+    banDoc = Banana.application.openDocument("file:script/../test/testcases/11250-doppia-asd-rendiconto-gestionale-tutorial.ac2");
 	Test.assert(banDoc);
 
     userParam = {};
-  	userParam.selectionStartDate = "2020-01-01";
-  	userParam.selectionEndDate = "2020-12-31";
-  	userParam.title = "RENDICONTO GESTIONALE ANNO 2020";
+  	userParam.selectionStartDate = "2024-01-01";
+  	userParam.selectionEndDate = "2024-12-31";
+  	userParam.title = "RENDICONTO GESTIONALE ANNO 2024";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
 	userParam.printheader = false;
 	userParam.printtitle = true;
 	userParam.title = '';
-	userParam.textbegin = '';
+	userParam.textbegin = 'Testo iniziale\nsu più\nrighe.';
 	userParam.column = 'Gr1';
 	userParam.printcolumn = false;
 
     paramReport = setParamReport(banDoc, userParam);
     report = stampaReportNormale(banDoc, paramReport, "");
-	Test.logger.addReport("Test 2: 'rendiconto gestionale', column Gr1", report);
+	Test.logger.addReport("Test 2: 'rendiconto gestionale'", report);
 
 	/**
 	 * Test 3: tutorial template, print gr1 column
 	 */
-    banDoc = Banana.application.openDocument("file:script/../test/testcases/asd_gestionale_patrimoniale_test.ac2");
+    banDoc = Banana.application.openDocument("file:script/../test/testcases/11250-doppia-asd-rendiconto-gestionale-tutorial.ac2");
 	Test.assert(banDoc);
 
     userParam = {};
-  	userParam.selectionStartDate = "2020-01-01";
-  	userParam.selectionEndDate = "2020-12-31";
-  	userParam.title = "RENDICONTO GESTIONALE ANNO 2020";
+  	userParam.selectionStartDate = "2024-01-01";
+  	userParam.selectionEndDate = "2024-12-31";
+  	userParam.title = "RENDICONTO GESTIONALE ANNO 2024";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
 	userParam.printheader = false;
 	userParam.printtitle = true;
 	userParam.title = '';
-	userParam.textbegin = '';
+	userParam.textbegin = 'Testo iniziale\nsu più\nrighe.';
 	userParam.column = 'Gr1';
 	userParam.printcolumn = true;
 
@@ -142,8 +142,8 @@ ReportModBTest.prototype.testBananaExtension = function() {
 	Test.assert(banDoc);
 
     userParam = {};
-  	userParam.selectionStartDate = "2020-01-01";
-  	userParam.selectionEndDate = "2020-12-31";
+  	userParam.selectionStartDate = "2024-01-01";
+  	userParam.selectionEndDate = "2024-12-31";
   	userParam.title = "XXX";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';

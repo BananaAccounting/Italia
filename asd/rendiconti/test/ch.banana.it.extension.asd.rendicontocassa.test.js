@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.asd.rendicontocassa.test
 // @api = 1.0
-// @pubdate = 2024-01-05
+// @pubdate = 2024-01-23
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.asd.rendicontocassa.js>
 // @task = app.command
@@ -71,9 +71,9 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	Test.assert(banDoc);
 
     userParam = {};
-  	userParam.selectionStartDate = "2022-01-01";
-  	userParam.selectionEndDate = "2022-12-31";
-  	userParam.title = "RENDICONTO CASSA ANNO 2022";
+  	userParam.selectionStartDate = "2024-01-01";
+  	userParam.selectionEndDate = "2024-12-31";
+  	userParam.title = "RENDICONTO CASSA ANNO 2024";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
 	userParam.printheader = false;
@@ -90,19 +90,19 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	/**
 	 *	Test using the tutorial template
 	 */
-    banDoc = Banana.application.openDocument("file:script/../test/testcases/asd_cassa_test.ac2");
+    banDoc = Banana.application.openDocument("file:script/../test/testcases/11249-entrate-uscite-asd-rendiconto-cassa-tutorial.ac2");
 	Test.assert(banDoc);
 
     userParam = {};
-  	userParam.selectionStartDate = "2020-01-01";
-  	userParam.selectionEndDate = "2020-12-31";
-  	userParam.title = "RENDICONTO CASSA ANNO 2020";
+  	userParam.selectionStartDate = "2024-01-01";
+  	userParam.selectionEndDate = "2024-12-31";
+  	userParam.title = "RENDICONTO CASSA ANNO 2024";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
 	userParam.printheader = false;
 	userParam.printtitle = true;
 	userParam.title = '';
-	userParam.textbegin = '';
+	userParam.textbegin = 'Testo iniziale\nsu più\nrighe.';
 	userParam.column = 'Gr1';
 
     paramReport = setParamReport(banDoc, userParam);
@@ -113,19 +113,19 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	/**
 	 *	Test using the tutorial template, print Gr1 column
 	 */
-    banDoc = Banana.application.openDocument("file:script/../test/testcases/asd_cassa_test.ac2");
+    banDoc = Banana.application.openDocument("file:script/../test/testcases/11249-entrate-uscite-asd-rendiconto-cassa-tutorial.ac2");
 	Test.assert(banDoc);
 
     userParam = {};
-  	userParam.selectionStartDate = "2020-01-01";
-  	userParam.selectionEndDate = "2020-12-31";
-  	userParam.title = "RENDICONTO CASSA ANNO 2020";
+  	userParam.selectionStartDate = "2024-01-01";
+  	userParam.selectionEndDate = "2024-12-31";
+  	userParam.title = "RENDICONTO CASSA ANNO 2024";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
 	userParam.printheader = false;
 	userParam.printtitle = true;
 	userParam.title = '';
-	userParam.textbegin = '';
+	userParam.textbegin = 'Testo iniziale\nsu più\nrighe.';
 	userParam.column = 'Gr1';
 	userParam.printcolumn = true;
 
@@ -141,9 +141,9 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	Test.assert(banDoc);
 
     userParam = {};
-	userParam.selectionStartDate = "2020-01-01";
-	userParam.selectionEndDate = "2020-12-31";
-	userParam.title = "RENDICONTO CASSA ANNO 2020";
+	userParam.selectionStartDate = "2024-01-01";
+	userParam.selectionEndDate = "2024-12-31";
+	userParam.title = "RENDICONTO CASSA ANNO 2024";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
 	userParam.printheader = false;
@@ -165,9 +165,9 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	Test.assert(banDoc);
 
     userParam = {};
-	userParam.selectionStartDate = "2020-01-01";
-	userParam.selectionEndDate = "2020-12-31";
-	userParam.title = "RENDICONTO CASSA ANNO 2020";
+	userParam.selectionStartDate = "2024-01-01";
+	userParam.selectionEndDate = "2024-12-31";
+	userParam.title = "RENDICONTO CASSA ANNO 2024";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
 	userParam.printheader = false;
@@ -189,8 +189,8 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	Test.assert(banDoc);
 
 	userParam = {};
-	userParam.selectionStartDate = "2020-01-01";
-	userParam.selectionEndDate = "2020-12-31";
+	userParam.selectionStartDate = "2024-01-01";
+	userParam.selectionEndDate = "2024-12-31";
 	userParam.title = "XXX";
 	userParam.logo = false;
 	userParam.logoname = 'Logo';
@@ -215,9 +215,9 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	// Test.assert(banDoc);
 
     // userParam = {};
-  	// userParam.selectionStartDate = "2021-01-01";
-  	// userParam.selectionEndDate = "2021-12-31";
-  	// userParam.title = "RENDICONTO CASSA (MOD. D) ANNO 2021";
+  	// userParam.selectionStartDate = "2024-01-01";
+  	// userParam.selectionEndDate = "2024-12-31";
+  	// userParam.title = "RENDICONTO CASSA (MOD. D) ANNO 2024";
 	// userParam.logo = false;
 	// userParam.logoname = 'Logo';
 	// userParam.printheader = false;
@@ -227,8 +227,8 @@ ReportModDTest.prototype.testBananaExtension = function() {
 	// userParam.column = 'Gr1';
 	// userParam.printcolumn = true;
 	// userParam.balancecolumns = true;
-	// userParam.currentbalancecolumn = 'Balance_2021';
-	// userParam.previousbalancecolumn = 'Balance_2020';
+	// userParam.currentbalancecolumn = 'Balance_2024';
+	// userParam.previousbalancecolumn = 'Balance_2024';
 
     // paramReport = setParamReport(banDoc, userParam);
     // report = stampaReportNormale(banDoc, paramReport, "");
