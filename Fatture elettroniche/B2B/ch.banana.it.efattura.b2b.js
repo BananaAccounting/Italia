@@ -1344,6 +1344,15 @@ EFattura.prototype.loadData = function () {
    if (!this.journalInvoices) {
       this.journalInvoices = this.banDocument.invoicesCustomers();
    }
+   /* Per invoice & Estimate 
+       let invoicesTable = Banana.document.table("Invoices");
+       for (let i = 0; i < invoicesTable.rowCount; i++) {
+        let row = invoicesTable.row(i);
+        if (!row.isEmpty) {
+            try {
+                let invoiceFieldObj = JSON.parse(row.value("InvoiceData"));
+                let invoiceObj = JSON.parse(invoiceFieldObj.invoice_json);
+   */
 
    var isPeriodSelected = this.param.period;
    var startDate = new Date();
