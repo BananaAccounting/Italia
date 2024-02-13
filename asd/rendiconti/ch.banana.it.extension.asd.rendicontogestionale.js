@@ -18,7 +18,7 @@
 // @publisher = Banana.ch SA
 // @description = 2. Rendiconto gestionale ASD
 // @task = app.command
-// @doctype = 100.*;110.*;130.*
+// @doctype = 100.*
 // @docproperties = 
 // @outputformat = none
 // @inputdatasource = none

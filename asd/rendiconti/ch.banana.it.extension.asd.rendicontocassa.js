@@ -18,7 +18,7 @@
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa ASD
 // @task = app.command
-// @doctype = 100.*;110.*;130.*
+// @doctype = 110.*;130.*
 // @docproperties = 
 // @outputformat = none
 // @inputdatasource = none
@@ -2011,7 +2011,7 @@ function bananaRequiredVersion(requiredVersion, expmVersion) {
       //    return true;
       // }
       if (Banana.application.license) {
-         if (Banana.application.license.licenseType === "professional" || Banana.application.license.licenseType === "advanced") {
+         if (Banana.application.license.isWithinMaxFreeLines || Banana.application.license.licenseType === "professional" || Banana.application.license.licenseType === "advanced") {
             return true;
          }
          else {
