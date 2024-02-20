@@ -19,7 +19,7 @@
 // @description = 1. Stato patrimoniale ASD
 // @task = app.command
 // @doctype = 100.*
-// @docproperties = 
+// @docproperties = associazioniasd
 // @outputformat = none
 // @inputdatasource = none
 // @timeout = -1

@@ -19,7 +19,7 @@
 // @description = 3. Rendiconto per cassa ASD
 // @task = app.command
 // @doctype = 110.*;130.*
-// @docproperties = 
+// @docproperties = associazioniasd
 // @outputformat = none
 // @inputdatasource = none
 // @timeout = -1

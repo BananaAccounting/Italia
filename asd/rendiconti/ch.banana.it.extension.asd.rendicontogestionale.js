@@ -19,7 +19,7 @@
 // @description = 2. Rendiconto gestionale ASD
 // @task = app.command
 // @doctype = 100.*
-// @docproperties = 
+// @docproperties = associazioniasd
 // @outputformat = none
 // @inputdatasource = none
 // @timeout = -1
