@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.attestatodonazioni.js
 // @api = 1.0
-// @pubdate = 2021-06-02
+// @pubdate = 2024-03-13
 // @publisher = Banana.ch SA
 // @description = 6. Attestato di donazione
 // @doctype = 100.*;110.*;130.*
@@ -86,18 +86,18 @@ function printReport(banDoc, startDate, endDate, userParam, accounts, texts, sty
 
     var report = Banana.Report.newReport(texts.reportTitle);
 
-    printReport_Header(report, banDoc, userParam, stylesheet);
+    printReportHeader(report, banDoc, userParam, stylesheet);
 
     // Print the report elements for the inserted cc3 accounts (or all cc3 accounts if empty)
-    for (var k = 0; k < accounts.length; k++) {
+    for (var i = 0; i < accounts.length; i++) {
 
-        printReport_Info(report, banDoc, userParam, accounts[k]);
-        printReport_Address(report, banDoc, accounts[k]);
-        printReport_Letter(report, banDoc, startDate, endDate, userParam, accounts[k])
-        printReport_DetailsTable(report, banDoc, startDate, endDate, userParam, accounts[k], texts);
-        printReport_Signature(report, banDoc, userParam);
+        printReportInfo(report, banDoc, userParam, accounts[i]);
+        printReportAddress(report, banDoc, accounts[i]);
+        printReportLetter(report, banDoc, startDate, endDate, userParam, accounts[i])
+        printReportDetailsTable(report, banDoc, startDate, endDate, userParam, accounts[i], texts);
+        printReportSignature(report, banDoc, userParam);
 
-        if (k < accounts.length-1) { // Page break at the end of all the pages (except the last)
+        if (i < accounts.length-1) { // Page break at the end of all the pages (except the last)
             report.addPageBreak();
         }
     }
@@ -105,7 +105,7 @@ function printReport(banDoc, startDate, endDate, userParam, accounts, texts, sty
     return report;
 }
 
-function printReport_Header(report, banDoc, userParam, stylesheet) {
+function printReportHeader(report, banDoc, userParam, stylesheet) {
     
     // Logo
 	var headerParagraph = report.getHeader().addSection();
@@ -179,7 +179,7 @@ function printReport_Header(report, banDoc, userParam, stylesheet) {
     }
 }
 
-function printReport_Info(report, banDoc, userParam, account) {
+function printReportInfo(report, banDoc, userParam, account) {
     
     // Info of the donor
 
@@ -205,7 +205,7 @@ function printReport_Info(report, banDoc, userParam, account) {
     }
 }
 
-function printReport_Address(report, banDoc, account) {
+function printReportAddress(report, banDoc, account) {
     
     // Address of the donor
 
@@ -242,11 +242,11 @@ function printReport_Address(report, banDoc, account) {
     report.addParagraph(" ", "");
 }
 
-function printReport_Letter(report, banDoc, startDate, endDate, userParam, account) {
+function printReportLetter(report, banDoc, startDate, endDate, userParam, account) {
     
     // Letter text
     
-    var transactionsObj = calculateTotalTransactions(banDoc, account, startDate, endDate);
+    var transactionsObj = calculateTotalTransactions(banDoc, account, startDate, endDate, userParam);
     var totalOfDonations = transactionsObj.total;
     var numberOfDonations = transactionsObj.numberOfTransactions;
     var trDate = getTransactionDate(banDoc, account, startDate, endDate);
@@ -282,7 +282,7 @@ function printReport_Letter(report, banDoc, startDate, endDate, userParam, accou
     }
 }
 
-function printReport_DetailsTable(report, banDoc, startDate, endDate, userParam, account, texts) {
+function printReportDetailsTable(report, banDoc, startDate, endDate, userParam, account, texts) {
 
     // Print a transactions detail with a list of all the donations
     
@@ -308,29 +308,70 @@ function printReport_DetailsTable(report, banDoc, startDate, endDate, userParam,
             var date = tRow.value("Date");
             var cc3 = tRow.value("Cc3");
             var desc = tRow.value("Description");
+            var accountDonation = userParam.accountDonation;
     
             if (date >= startDate && date <= endDate) {
     
                 if (account && account === cc3) {
-    
-                    /*  If simple accounting, amount=Income column of transaction
+
+                    /*  Use the account/category defined in parameters to filter the transactions that only contain the given account/catergory
+                        If simple accounting, amount=Income column of transaction
                         If double accounting, amount=Amount column of transaction */
-                    if (banDoc.table('Categories')) {
-                        var amount = tRow.value("Income");
+                    if (accountDonation) {
+
+                        if (banDoc.table('Categories')) {
+                            if (accountDonation === tRow.value("Category")) {
+                                var amount = tRow.value("Income");
+                                total = Banana.SDecimal.add(total, amount);
+
+                                rowCnt++;
+                                tableRow.addCell(rowCnt, "borderBottom", 1); //sequencial numbers
+                                tableRow.addCell(Banana.Converter.toLocaleDateFormat(tRow.value("Date")), "borderBottom", 1);
+                                tableRow.addCell(banDoc.info("AccountingDataBase", "BasicCurrency"), "borderBottom");
+                                tableRow.addCell(Banana.Converter.toLocaleNumberFormat(amount), "right borderBottom", 1);
+                                if (userParam.description) {
+                                    tableRow.addCell(" ", "borderBottom");
+                                    tableRow.addCell(desc, "borderBottom");
+                                }
+                            }
+                        } else {
+                            if (accountDonation === tRow.value("AccountCredit")) {
+                                var amount = tRow.value("Amount");
+                                total = Banana.SDecimal.add(total, amount);
+
+                                rowCnt++;
+                                tableRow.addCell(rowCnt, "borderBottom", 1); //sequencial numbers
+                                tableRow.addCell(Banana.Converter.toLocaleDateFormat(tRow.value("Date")), "borderBottom", 1);
+                                tableRow.addCell(banDoc.info("AccountingDataBase", "BasicCurrency"), "borderBottom");
+                                tableRow.addCell(Banana.Converter.toLocaleNumberFormat(amount), "right borderBottom", 1);
+                                if (userParam.description) {
+                                    tableRow.addCell(" ", "borderBottom");
+                                    tableRow.addCell(desc, "borderBottom");
+                                }
+                            }
+                        }
+
                     } else {
-                        var amount = tRow.value("Amount");
-                    }
     
-                    rowCnt++;
-                    tableRow.addCell(rowCnt, "borderBottom", 1); //sequencial numbers
-                    tableRow.addCell(Banana.Converter.toLocaleDateFormat(tRow.value("Date")), "borderBottom", 1);
-                    tableRow.addCell(banDoc.info("AccountingDataBase", "BasicCurrency"), "borderBottom");
-                    tableRow.addCell(Banana.Converter.toLocaleNumberFormat(amount), "right borderBottom", 1);
-                    if (userParam.description) {
-                        tableRow.addCell(" ", "borderBottom");
-                        tableRow.addCell(desc, "borderBottom");
+                        /*  If simple accounting, amount=Income column of transaction
+                            If double accounting, amount=Amount column of transaction */
+                        if (banDoc.table('Categories')) {
+                            var amount = tRow.value("Income");
+                        } else {
+                            var amount = tRow.value("Amount");
+                        }
+        
+                        rowCnt++;
+                        tableRow.addCell(rowCnt, "borderBottom", 1); //sequencial numbers
+                        tableRow.addCell(Banana.Converter.toLocaleDateFormat(tRow.value("Date")), "borderBottom", 1);
+                        tableRow.addCell(banDoc.info("AccountingDataBase", "BasicCurrency"), "borderBottom");
+                        tableRow.addCell(Banana.Converter.toLocaleNumberFormat(amount), "right borderBottom", 1);
+                        if (userParam.description) {
+                            tableRow.addCell(" ", "borderBottom");
+                            tableRow.addCell(desc, "borderBottom");
+                        }
+                        total = Banana.SDecimal.add(total, amount);
                     }
-                    total = Banana.SDecimal.add(total, amount);
                 }
             }
         }
@@ -353,7 +394,7 @@ function printReport_DetailsTable(report, banDoc, startDate, endDate, userParam,
     }
 }
 
-function printReport_Signature(report, banDoc, userParam) {
+function printReportSignature(report, banDoc, userParam) {
 
     // Signature
     
@@ -430,13 +471,14 @@ function getTransactionDate(banDoc, costcenter, startDate, endDate) {
 }
 
 /* Function that calculates the total of the transactions for the given account and period */
-function calculateTotalTransactions(banDoc, costcenter, startDate, endDate) {
+function calculateTotalTransactions(banDoc, costcenter, startDate, endDate, userParam) {
     var transTab = banDoc.table("Transactions");
     var date = "";
     var total = "";
     var numberOfTransactions = 0;
     var transactionsObj = {};
     costcenter = costcenter.substring(1); //remove first character ;
+    var accountDonation = userParam.accountDonation;
 
     for (var i = 0; i < transTab.rowCount; i++) {
         var tRow = transTab.row(i);
@@ -445,19 +487,40 @@ function calculateTotalTransactions(banDoc, costcenter, startDate, endDate) {
         var cc3 = tRow.value("Cc3");
 
         if (date >= startDate && date <= endDate) {
-
+            
             if (costcenter && costcenter === cc3) {
-
-                /*  If simple accounting, amount=Income column of transaction
+            
+                /*  Use the account/category defined in parameters to filter the transactions that only contain the given account/catergory
+                    If simple accounting, amount=Income column of transaction
                     If double accounting, amount=Amount column of transaction */
-                if (banDoc.table('Categories')) {
-                    var amount = tRow.value("Income");
-                } else {
-                    var amount = tRow.value("Amount");
-                }
+                if (accountDonation) {
 
-                total = Banana.SDecimal.add(total, amount);
-                numberOfTransactions++;
+                    if (banDoc.table('Categories')) {
+                        if (accountDonation === tRow.value("Category")) {
+                            var amount = tRow.value("Income");
+                            total = Banana.SDecimal.add(total, amount);
+                            numberOfTransactions++;
+                        }
+                    } else {
+                        if (accountDonation === tRow.value("AccountCredit")) {
+                            var amount = tRow.value("Amount");
+                            total = Banana.SDecimal.add(total, amount);
+                            numberOfTransactions++;
+                        }
+                    }
+                }
+                else {
+                    /*  If simple accounting, amount=Income column of transaction
+                        If double accounting, amount=Amount column of transaction */
+                    if (banDoc.table('Categories')) {
+                        var amount = tRow.value("Income");
+                    } else {
+                        var amount = tRow.value("Amount");
+                    }
+
+                    total = Banana.SDecimal.add(total, amount);
+                    numberOfTransactions++;
+                }
             }
         }
     }
@@ -506,7 +569,7 @@ function getAccountsToPrint(banDoc, startDate, endDate, userParam, texts) {
             // The inserted Cc3 exists
             // Check the minimum amount of the donation
             if (membershipList.indexOf(list[i]) > -1) {
-                transactionsObj = calculateTotalTransactions(banDoc, list[i], startDate, endDate);
+                transactionsObj = calculateTotalTransactions(banDoc, list[i], startDate, endDate, userParam);
                 totalOfDonations = transactionsObj.total;
                 if (Banana.SDecimal.compare(totalOfDonations, userParam.minimumAmount) > -1) { //totalOfDonation >= mimimunAmount
                     accounts.push(list[i]);
@@ -521,7 +584,7 @@ function getAccountsToPrint(banDoc, startDate, endDate, userParam, texts) {
     // Check the mimimun amount of the donation
     else if (!userParam.costcenter || userParam.costcenter === "" || userParam.costcenter === undefined) {
         for (var i = 0; i < membershipList.length; i++) {
-            transactionsObj = calculateTotalTransactions(banDoc, membershipList[i], startDate, endDate);
+            transactionsObj = calculateTotalTransactions(banDoc, membershipList[i], startDate, endDate, userParam);
             totalOfDonations = transactionsObj.total;
             if (Banana.SDecimal.compare(totalOfDonations, userParam.minimumAmount) > -1) { //totalOfDonation >= mimimunAmount
                 accounts.push(membershipList[i]);
@@ -799,6 +862,17 @@ function convertParam(userParam) {
     currentParam.value = userParam.costcenter ? userParam.costcenter : '';
     currentParam.readValue = function() {
         userParam.costcenter = this.value;
+    }
+    convertedParam.data.push(currentParam);
+
+    //Account/Category to filter the transactions
+    var currentParam = {};
+    currentParam.name = 'accountDonation';
+    currentParam.title = texts.accountDonation;
+    currentParam.type = 'string';
+    currentParam.value = userParam.accountDonation ? userParam.accountDonation : '';
+    currentParam.readValue = function() {
+        userParam.accountDonation = this.value;
     }
     convertedParam.data.push(currentParam);
 
@@ -1180,6 +1254,7 @@ function initUserParam() {
     var userParam = {};
     userParam.version = '1.0';
     userParam.costcenter = '';
+    userParam.accountDonation = '';
     userParam.minimumAmount = '';
     userParam.info = '';
     userParam.accountRef = false;
@@ -1387,7 +1462,8 @@ function loadTexts() {
     texts.dialogTitle = "Impostazioni";
     texts.title = "Attestato di donazione <Period>";
     texts.warningMessage = "Conto donatore non valido";
-    texts.accountNumber = "Indicare il conto del donatore (vuoto = stampa tutti)";
+    texts.accountNumber = "Indicare il conto del donatore/socio (vuoto = stampa tutti)";
+    texts.accountDonation = "Indicare il conto/categoria delle registrazioni da includere (vuoto = tutte le registrazioni)";
     texts.localityAndDate = "Località e data";
     texts.signature = "Firma";
     texts.signature_image = "Firma con immagine";
