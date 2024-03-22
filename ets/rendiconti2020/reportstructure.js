@@ -382,7 +382,7 @@ function createReportStructureStatoPatrimoniale() {
 	reportStructure.push({"id":"CA8", "type":"group", "indent":"", "bclass":"3", "description":"8) Rimanenze iniziali"});
 	reportStructure.push({"id":"CA9", "type":"group", "indent":"", "bclass":"3", "description":"9) Accantonamento a riserva vincolata per decisione degli organi istituzionali"});  //non usato
 	reportStructure.push({"id":"CA10", "type":"group", "indent":"", "bclass":"3", "description":"10) Utilizzo riserva vincolata per decisione degli organi istituzionali"});  //non usato
-	reportStructure.push({"id":"CA", "type":"total", "indent":"", "description":"Totale", "sum":"CA1;CA2;CA3;CA4;CA5;CA6;CA7;CA8"});
+	reportStructure.push({"id":"CA", "type":"total", "indent":"", "description":"Totale", "sum":"CA1;CA2;CA3;CA4;CA5;CA5b;CA6;CA7;CA8;CA9;CA10"});
 	reportStructure.push({"id":"dCB", "type":"title", "indent":"", "description":"B) Costi e oneri da attività diverse"});
 	reportStructure.push({"id":"CB1", "type":"group", "indent":"", "bclass":"3", "description":"1) Materie prime, sussidiarie, di consumo e di merci"});
 	reportStructure.push({"id":"CB2", "type":"group", "indent":"", "bclass":"3", "description":"2) Servizi"});
@@ -393,7 +393,7 @@ function createReportStructureStatoPatrimoniale() {
 	reportStructure.push({"id":"CB6", "type":"group", "indent":"", "bclass":"3", "description":"6) Accantonamenti per rischi ed oneri"});
 	reportStructure.push({"id":"CB7", "type":"group", "indent":"", "bclass":"3", "description":"7) Oneri diversi di gestione"});
 	reportStructure.push({"id":"CB8", "type":"group", "indent":"", "bclass":"3", "description":"8) Rimanenze iniziali"});
-	reportStructure.push({"id":"CB", "type":"total", "indent":"", "description":"Totale", "sum":"CB1;CB2;CB3;CB4;CB5;CB6;CB7;CB8"});
+	reportStructure.push({"id":"CB", "type":"total", "indent":"", "description":"Totale", "sum":"CB1;CB2;CB3;CB4;CB5;CB5b;CB6;CB7;CB8"});
 	reportStructure.push({"id":"dCC", "type":"title", "indent":"", "description":"C) Costi e oneri da attività di raccolta fondi"});
 	reportStructure.push({"id":"CC1", "type":"group", "indent":"", "bclass":"3", "description":"1) Oneri per raccolte fondi abituali"});
 	reportStructure.push({"id":"CC2", "type":"group", "indent":"", "bclass":"3", "description":"2) Oneri per raccolte fondi occasionali"});
@@ -418,7 +418,7 @@ function createReportStructureStatoPatrimoniale() {
 	reportStructure.push({"id":"CE7", "type":"group", "indent":"", "bclass":"3", "description":"7) Altri oneri"});
 	reportStructure.push({"id":"CE8", "type":"group", "indent":"", "bclass":"3", "description":"8) Accantonamento a riserva vincolata per decisione degli organi istituzionali"});  //non usato
 	reportStructure.push({"id":"CE9", "type":"group", "indent":"", "bclass":"3", "description":"9) Utilizzo riserva vincolata per decisione degli organi istituzionali"});  //non usato
-	reportStructure.push({"id":"CE", "type":"total", "indent":"", "description":"Totale", "sum":"CE1;CE2;CE3;CE4;CE5;CE6;CE7"});
+	reportStructure.push({"id":"CE", "type":"total", "indent":"", "description":"Totale", "sum":"CE1;CE2;CE3;CE4;CE5;CE5b;CE6;CE7;CE8;CE9"});
 	reportStructure.push({"id":"C", "type":"total", "indent":"", "description":"TOTALE ONERI E COSTI", "sum":"CA;CB;CC;CD;CE"});
 
 	/* PROVENTI */
