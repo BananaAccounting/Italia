@@ -14,7 +14,7 @@
 
 // @id = ch.banana.italia.import.unicredit
 // @api = 1.0
-// @pubdate = 2024-04-03
+// @pubdate = 2024-05-21
 // @publisher = Banana.ch SA
 // @description = Banca Unicredit - Import account statement .xls (Banana+ Advanced)
 // @description.en = Banca Unicredit - Import account statement .xls (Banana+ Advanced)
@@ -71,6 +71,11 @@ function exec(inData, isTest) {
  * 02.11.2023;01.11.2023;Descrizione;-66.98;280
  * 02.11.2023;01.11.2023;Descrizione;-13.11;280
  * 10.11.2023;07.11.2023;Descrizione;043
+ * 
+ * Dates could also be in the following format:
+ * 02/01/2024;01/01/2024;DESCRIZIONE;-6,86;198
+ * 02/01/2024;02/01/2024;DESCRIZIONE;-1.438,74;208
+ * 02/01/2024;02/01/2024;DESCRIZIONE;-1.171,74;208
  * 
  * Both formats (.xls and .csv) are valid.
  */
@@ -163,7 +168,7 @@ function UnicreditFormat1() {
 			var formatMatched = false;
 
 			if (transaction["Date"] && transaction["Date"].length >= 10 &&
-				transaction["Date"].match(/^[0-9]+\.[0-9]+\.[0-9]+$/))
+				transaction["Date"].match(/^[0-9]+[\/\.]+[0-9]+[\/\.][0-9]+$/))
 				formatMatched = true;
 			else
 				formatMatched = false;
@@ -180,7 +185,7 @@ function UnicreditFormat1() {
 
 		for (var i = 0; i < rows.length; i++) {
 			if (rows[i]["Date"] && rows[i]["Date"].length >= 10 &&
-				rows[i]["Date"].match(/^[0-9]+\.[0-9]+\.[0-9]+$/))
+				rows[i]["Date"].match(/^[0-9]+[\/\.][0-9]+[\/\.][0-9]+$/))
 				transactionsToImport.push(this.mapTransaction(rows[i]));
 		}
 
@@ -200,13 +205,15 @@ function UnicreditFormat1() {
 			mappedLine.push(Banana.Converter.toInternalDateFormat(element['Date'], "dd.mm.yyyy"));
 			mappedLine.push(Banana.Converter.toInternalDateFormat(element['DateValue'], "dd.mm.yyyy"));
 		} else {
-			mappedLine.push(Banana.Converter.toInternalDateFormat(element['Date'], "mm/dd/yyyy"));
-			mappedLine.push(Banana.Converter.toInternalDateFormat(element['DateValue'], "mm/dd/yyyy"));
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['Date'], "dd/mm/yyyy"));
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['DateValue'], "dd/mm/yyyy"));
 		}
 		mappedLine.push(""); // Doc is empty for now
 		var tidyDescr = element['Description'].replace(/\r\n/g, " "); //remove new line && new row characters
 		mappedLine.push(Banana.Converter.stringToCamelCase(tidyDescr));
 		let amount = element['Amount'];
+		if (amount.indexOf(",") > 0)
+			this.decimalSeparator = ",";
 		if (amount.indexOf("-") < 0) {
 			mappedLine.push(Banana.Converter.toInternalNumberFormat(amount, this.decimalSeparator));
 			mappedLine.push("");
