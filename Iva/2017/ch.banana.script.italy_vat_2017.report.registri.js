@@ -23,7 +23,7 @@
 // @includejs = ch.banana.script.italy_vat_2017.xml.js
 // @includejs = ch.banana.script.italy_vat.daticontribuente.js
 // @inputdatasource = none
-// @pubdate = 2018-07-30
+// @pubdate = 2024-05-17
 // @publisher = Banana.ch SA
 // @task = app.command
 // @timeout = -1
@@ -1210,14 +1210,14 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
   headerRow = table.getHeader().addRow();
   headerRow.addCell(new Utils(this.banDocument).getPeriodText(period), "h1_period", totColonne);
   headerRow = table.getHeader().addRow();
-  headerRow.addCell("N.Prot.", "title right");
+  headerRow.addCell("N.Prot.", "title");
   headerRow.addCell("Data Reg.", "title right");
   headerRow.addCell("Data Doc", "title right");
   headerRow.addCell("Descrizione", "title");
   headerRow.addCell("N.Doc", "title");
   headerRow.addCell("Tot.Doc", "title right");
   headerRow.addCell("Imponibile", "title right");
-  headerRow.addCell("Cod.IVA", "title right");
+  headerRow.addCell("Cod.IVA", "title");
   headerRow.addCell("%", "title right");
   if (register == 'acquisti') {
     headerRow.addCell("Imposta indetr.", "title right");
@@ -1258,7 +1258,7 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
     var row = table.addRow();
     row.addCell("", "separator", totColonne);
     row = table.addRow();
-    row.addCell(transactions[index].IT_ProgRegistro, "right");
+    row.addCell(transactions[index].IT_ProgRegistro, "");
     row.addCell(Banana.Converter.toLocaleDateFormat(transactions[index].JDate, "dd/mm/yy"), "right");
     row.addCell(Banana.Converter.toLocaleDateFormat(transactions[index].IT_DataDoc, "dd/mm/yy"), "right");
     var cell = row.addCell("");
@@ -1267,10 +1267,10 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
       cell.addParagraph(descrizione);
     if (transactions[index].Description.length>0)
       cell.addParagraph(transactions[index].Description);
-    row.addCell(transactions[index].IT_NoDoc, "right");
+    row.addCell(transactions[index].IT_NoDoc, "");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatGrossDocument), "right");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatTaxable), "right");
-    row.addCell(vatCode, "right");
+    row.addCell(vatCode, "");
     row.addCell(Banana.Converter.toLocaleNumberFormat(vatRate), "right");
     if (register == 'acquisti') {
       row.addCell(Banana.Converter.toLocaleNumberFormat(vatNonDed), "right");
@@ -1318,8 +1318,19 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
   row = table.addRow();
   row.addCell("", "", totColonne);
   row = table.addRow();
-  var title = "TOTALI DI PERIODO PER ALIQUOTA - Registro " + register.toUpperCase() + " (" + new Utils(this.banDocument).getPeriodText(period) + ")";
-  row.addCell(title, "h2", totColonne);
+  var title = "TOTALI DI PERIODO PER ALIQUOTA - Registro " + register.toUpperCase() + "\n\r(" + new Utils(this.banDocument).getPeriodText(period) + ")";
+  row.addCell(title, "h2", 6);
+  row.addCell("Imponibile", "right h2");
+  row.addCell("","h2");
+  row.addCell("%", "right h2");
+  if (register == 'acquisti') {
+    row.addCell("Imposta indetr.", "right h2");
+    row.addCell("Imposta detraibile", "right h2");
+  }
+  else {
+    row.addCell("Imposta", "right h2");
+  }
+
   if (register.toLowerCase() == "acquisti") {
     row = table.addRow();
     row.addCell("", "", totColonne);
@@ -1363,8 +1374,8 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
       row.addCell("");
       row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliAliquota[vatRate].vatTaxableNonDed), "right");
       row.addCell("","",span);
-      row.addCell("");
       row.addCell(Banana.Converter.toLocaleNumberFormat(period.registri[register].totaliAliquota[vatRate].vatNonDed), "right");
+      row.addCell("");
       tot1 = Banana.SDecimal.add(period.registri[register].totaliAliquota[vatRate].vatTaxableNonDed, tot1);
       tot2 = Banana.SDecimal.add(period.registri[register].totaliAliquota[vatRate].vatNonDed, tot2);
     }  
@@ -1373,15 +1384,21 @@ Registri.prototype.printRegistroAcquistiVendite = function(report, period, regis
     row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(tot1), "right bold");
     row.addCell("","",span);
-    row.addCell("");
     row.addCell(Banana.Converter.toLocaleNumberFormat(tot2), "right bold");
+    row.addCell("");
   }
 
   //Riepilogo IVA per CODICE
   row = table.addRow();
   row.addCell("", "", totColonne);
   row = table.addRow();
-  row.addCell("TOTALI DI PERIODO PER CODICI - Registro " + register.toUpperCase() + " (" + new Utils(this.banDocument).getPeriodText(period) + ")", "h2", totColonne);
+  row.addCell("TOTALI DI PERIODO PER CODICI - Registro " + register.toUpperCase() + "\n\r(" + new Utils(this.banDocument).getPeriodText(period) + ")", "h2", 5);
+  row.addCell("","h2");
+  row.addCell("Imponibile", "right h2");
+  row.addCell("","h2");
+  row.addCell("%", "right h2");
+  row.addCell("Imposta","right h2", span);
+
   var tot1=0;
   var tot2=0;
   for (var vatCode in period.registri[register].totaliCodice) {
