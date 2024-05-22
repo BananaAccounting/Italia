@@ -14,7 +14,7 @@
 
 // @id = ch.banana.italia.import.intesa
 // @api = 1.0
-// @pubdate = 2023-09-29
+// @pubdate = 2024-05-22
 // @publisher = Banana.ch SA
 // @description = Banca Intesa - Import account statement .csv (Banana+ Advanced)
 // @description.en = Banca Intesa - Import account statement .csv (Banana+ Advanced)
@@ -54,12 +54,217 @@ function exec(inData, isTest) {
 		return Banana.Converter.arrayToTsv(transactions);
 	}
 
+	// Format 2 (Lista Operazioni).
+	let format2 = new Intesa_Format2();
+	let transactionsData = format2.getFormattedData(transactions, importUtilities);
+	if (format2.match(transactionsData)) {
+		let convTr = format2.convert(transactionsData);
+		return Banana.Converter.arrayToTsv(convTr);
+	}
+
 	importUtilities.getUnknownFormatError();
 
 	return "";
 }
 
+/** Format 2
+ * ;;;;;;;;
+ * ;;;;;;;;
+ * ;;;;;;;;
+ * ;;;;;;;;
+ * ;;;;;;;;
+ * ;;;;;N.B.: I dati esposti nella presente lista hanno carattere puramente informativo.;;;
+ * ;;Intestatario conto:;MY COMPANY;;;;;
+ * ;;Numero conto:;1111111111111;;;;;
+ * ;;Filiale:;Filiale xxx, MILANO (MI);;;;;
+ * ;;;;;;;;
+ * ;;Saldo contabile iniziale al:;17.04.2024;2'345;;;;
+ * ;;Saldo contabile finale al:;17.05.2024;5'432;;;;
+ * ;;;;;;;;
+ * ;;Saldo disponibile  al (escluso Fido):;17.05.2024;5'432;;;;
+ * ;;Importo Fido:;;-;;;;
+ * ;;;;;;;;
+ * ;;Entrate/Uscite:;Tutte;;;;;
+ * ;;;;;;;;
+ * ;;Ricerca Per:;-;;;;;
+ * ;;Importo:;-;;;;;
+ * ;;Tipologia movimenti selezionata:;Tutti;;;;;
+ * ;;Controvalore in:;EUR;;;;;
+ * ;;I movimenti selezionati sono:;44;;;;;
+ * ;;;;;;;;
+ * ;;;;;;;;
+ * ;;;Operazioni contabilizzate;;;;;
+ * ;;;;;;;;
+ * Data contabile;Data valuta;Descrizione;Accrediti;Addebiti;Descrizione estesa;Effettuata tramite:;;
+ * ;;Saldo contabile iniziale in Euro;;2'345;;;;
+ * 18.04.24;18.04.24;ACCREDITO;640.00;;DESCR ESTESA;;;
+ * 19.04.24;19.04.24;ACCREDITO;100.00;;DESCR ESTESA;;;
+ * 19.04.24;19.04.24;ACCREDITO;600.00;;DESCR ESTESA;;;
+ * 22.04.24;22.04.24;ACCREDITO;240.00;;DESCR ESTESA;;;
+ * 24.04.24;24.04.24;ACCREDITO;127.60;;DESCR ESTESA;;;
+ * 26.04.24;26.04.24;PAGAMENTO;;-22.88;DESCR ESTESA;;;
+ * 
+ * ......
+ * 
+ * ;;Saldo contabile finale in Euro;;5'432;;;;
+ * ;;;;;;;;
+ * ;;;Operazioni non contabilizzate;;;;;
+ * ;;;;;;;;
+ * ;Data;Descrizione;Accrediti;Addebiti;Descrizione estesa;;;
+ * ;17.05.24;PRENOTAZIONE BOLLETTA CBILL;;-746.30;PAGAMENTO BOLLETTINO SU C-BILL;;;
+ * ;;;;;;;;
+ * ;;;;;;;;
+ * ;;;;;;;;
+ * ;;;;;;;;
+ * ;;;;;;;;
+*/
+function Intesa_Format2() {
+	this.decimalSeparator = ".";
+
+	this.getFormattedData = function (inData, importUtilities) {
+
+		let columns = this.getHeaderData(inData, 27); //array
+		let rows = importUtilities.getRowData(inData, 29); //array of array
+		let form = [];
+
+		let convertedColumns = [];
+
+		convertedColumns = this.convertHeaderIt(columns);
+		if (convertedColumns.length > 0) {
+			importUtilities.loadForm(form, convertedColumns, rows);
+			return form;
+		}
+
+		return [];
+	}
+
+	/**
+	 * We are redefining the original method taken from the utilities file so that 
+	 * does not insert index numbers in empty fields but an empty string.
+	 */
+	this.getHeaderData = function (inData, startLineNumber) {
+		if (!startLineNumber) {
+			startLineNumber = 0;
+		}
+		var headerData = inData[startLineNumber];
+		for (var i = 0; i < headerData.length; i++) {
+
+			headerData[i] = headerData[i].trim();
+
+			if (!headerData[i]) {
+				headerData[i] = "";
+			}
+
+			//Avoid duplicate headers -> Not useful in this case.
+			/**var headerPos = headerData.indexOf(headerData[i]);
+			if (headerPos >= 0 && headerPos < i) { // Header already exist
+				var postfixIndex = 2;
+				while (headerData.indexOf(headerData[i] + postfixIndex.toString()) !== -1 && postfixIndex <= 99)
+					postfixIndex++; // Append an incremental index
+				headerData[i] = headerData[i] + postfixIndex.toString()
+			}*/
+
+		}
+		return headerData;
+	}
+
+	/**
+	 * The problem with the headers for this format is that once copied from excel it is copied formatted over several rows, inserting 
+	 * the "Operaz" and "Valuta" columns last, but the way the data are arranged we then have to make sure that the new headings
+	 * follow the correct order.
+	 */
+	this.convertHeaderIt = function (columns) {
+		let convertedColumns = [];
+
+		columns.indexOf("Data contabile") >= 0 ? convertedColumns[0] = "Date" : "";
+		columns.indexOf("Data valuta") >= 0 ? convertedColumns[1] = "DateValue" : "";
+		columns.indexOf("Descrizione") >= 0 ? convertedColumns[2] = "Description" : "";
+		columns.indexOf("Accrediti") >= 0 ? convertedColumns[3] = "Income" : "";
+		columns.indexOf("Addebiti") >= 0 ? convertedColumns[4] = "Expenses" : "";
+		columns.indexOf("Descrizione estesa") >= 0 ? convertedColumns[5] = "Notes" : "";
+
+		if (convertedColumns.indexOf("Date") < 0
+			|| convertedColumns.indexOf("Description") < 0
+			|| convertedColumns.indexOf("Income") < 0
+			|| convertedColumns.indexOf("Expenses") < 0
+			|| convertedColumns.indexOf("Notes") < 0) {
+			return [];
+		}
+		return convertedColumns;
+	}
+
+	/** Return true if the transactions match this format */
+	this.match = function (transactionsData) {
+
+		if (transactionsData.length === 0)
+			return false;
+
+		for (var i = 0; i < transactionsData.length; i++) {
+			var transaction = transactionsData[i];
+
+			var formatMatched = false;
+
+			if (transaction["Date"] && transaction["Date"].length >= 8 &&
+				transaction["Date"].match(/^[0-9]+[\/\.]+[0-9]+[\/\.][0-9]+$/))
+				formatMatched = true;
+			else
+				formatMatched = false;
+
+			if (transaction["DateValue"] && transaction["DateValue"].length >= 8 &&
+				transaction["DateValue"].match(/^[0-9]+[\/\.]+[0-9]+[\/\.][0-9]+$/))
+				formatMatched = true;
+			else
+				formatMatched = false;
+
+			if (formatMatched)
+				return true;
+		}
+		return false;
+	}
+
+	/** Convert the transaction to the format to be imported */
+	this.convert = function (rows) {
+		var transactionsToImport = [];
+
+		for (var i = 0; i < rows.length; i++) {
+			if (rows[i]["Date"] && rows[i]["Date"].length >= 8 &&
+				rows[i]["Date"].match(/^[0-9]+[\/\.][0-9]+[\/\.][0-9]+$/))
+				transactionsToImport.push(this.mapTransaction(rows[i]));
+		}
+
+		transactionsToImport = transactionsToImport.reverse();
+
+		// Add header and return
+		var header = [["Date", "DateValue", "Doc", "Description", "Income", "Expenses", "Notes"]];
+		return header.concat(transactionsToImport);
+	}
+
+	/** Return the transaction converted in the import format */
+	this.mapTransaction = function (element) {
+		var mappedLine = [];
+		let date = element['Date'];
+		if (date.indexOf(".") > -1) {
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['Date'], "dd.mm.yy"));
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['DateValue'], "dd.mm.yy"));
+		} else {
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['Date'], "dd/mm/yy"));
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['DateValue'], "dd/mm/yy"));
+		}
+		mappedLine.push(""); // Doc is empty for now
+		let tidyDescr = element['Description'].replace(/[\\"\r\n]/g, " "); //remove new line && new row characters and others useless characters.
+		mappedLine.push(Banana.Converter.stringToCamelCase(tidyDescr));
+		mappedLine.push(Banana.Converter.toInternalNumberFormat(element['Income'], this.decimalSeparator));
+		let expAmount = element['Expenses'].replace(/-/g, '');
+		mappedLine.push(Banana.Converter.toInternalNumberFormat(expAmount, this.decimalSeparator));
+		let tidyNotes = element['Notes'].replace(/[\\"\r\n]/g, " ");
+		mappedLine.push(tidyNotes);
+
+		return mappedLine;
+	}
+}
+
 /**
+ * Format 1
  *;Conti e Carte:;Conto 1000/12345678;;;;;;;
  * ;;XME CARD PLUS MC MAGAZZINO     ****1234;;;;;;;
  * ;;Debit Visa ****1234;;;;;;;
