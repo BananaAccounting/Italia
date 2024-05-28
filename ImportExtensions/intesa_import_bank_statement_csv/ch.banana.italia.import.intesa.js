@@ -14,7 +14,7 @@
 
 // @id = ch.banana.italia.import.intesa
 // @api = 1.0
-// @pubdate = 2024-05-22
+// @pubdate = 2024-05-28
 // @publisher = Banana.ch SA
 // @description = Banca Intesa - Import account statement .csv (Banana+ Advanced)
 // @description.en = Banca Intesa - Import account statement .csv (Banana+ Advanced)
@@ -296,6 +296,7 @@ function Intesa_Format1() {
 
 	this.csvColCount = 10; //When Excel converts the file in excel the columns are 10.
 	this.excelColAmount = 8;
+	this.decimalSeparator = '.';
 
 	/** Return true if the transactions match this format */
 	this.match = function (transactions) {
@@ -313,7 +314,7 @@ function Intesa_Format1() {
 			else
 				formatMatched = false;
 
-			if (formatMatched && transaction[this.colDate] && transaction[this.colDate].match(/^[0-9]+\.[0-9]+\.[0-9]+$/))
+			if (formatMatched && transaction[this.colDate] && transaction[this.colDate].match(/^[0-9]+[./][0-9]+[./][0-9]+$/))
 				formatMatched = true;
 			else
 				formatMatched = false;
@@ -335,7 +336,7 @@ function Intesa_Format1() {
 			if (transaction.length < (this.colNotes)) {
 				continue;
 			}
-			if (transaction[this.colDate] && transaction[this.colDate].match(/^[0-9]+\.[0-9]+\.[0-9]+$/)) {
+			if (transaction[this.colDate] && transaction[this.colDate].match(/^[0-9]+[./][0-9]+[./][0-9]+$/)) {
 				transactionsToImport.push(this.mapTransaction(transaction));
 			}
 		}
@@ -359,15 +360,17 @@ function Intesa_Format1() {
 		let description = element[this.colOperationType] + ", " + element[this.colOperationDetail] + ", " + element[this.colPaymentMethod];
 		mappedLine.push(description);
 		mappedLine.push(element[this.colBooking]);
-		if (element[this.colAmount].length > 0) {
-			if (element[this.colAmount].substring(0, 1) === '-') {
+		let amount = element[this.colAmount];
+		if (amount.indexOf(",") > 0)
+			this.decimalSeparator = ",";
+		if (amount.length > 0) {
+			if (amount.substring(0, 1) === '-') {
 				mappedLine.push("");
-				var amount;
-				if (element[this.colAmount].length > 1)
-					amount = element[this.colAmount].substring(1);
-				mappedLine.push(Banana.Converter.toInternalNumberFormat(amount, '.'));
+				if (amount.length > 1)
+					amount = amount.substring(1);
+				mappedLine.push(Banana.Converter.toInternalNumberFormat(amount, this.decimalSeparator));
 			} else {
-				mappedLine.push(Banana.Converter.toInternalNumberFormat(element[this.colAmount], '.'));
+				mappedLine.push(Banana.Converter.toInternalNumberFormat(amount, this.decimalSeparator));
 				mappedLine.push("");
 			}
 		} else {

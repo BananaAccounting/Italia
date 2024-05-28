@@ -5,3 +5,9 @@
 *.autosave
 _*.*
 ~*
+build-*
+**/build-*/
+**/build/
+**/.vscode/
+~$*
+**/.vscode/
