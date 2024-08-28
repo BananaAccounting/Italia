@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.import.efattura
 // @api = 1.0
-// @pubdate = 2021-09-08
+// @pubdate = 2024-08-28
 // @publisher = Banana.ch SA
 // @description = Importa e-fatture (*.xml)...
 // @task = import.file
@@ -194,7 +194,9 @@ EFatturaImport.prototype.createJsonDocument = function (inData) {
             continue;
 
         //aggiunge le fatture nel documento json
-        this.createJsonDocument_AddTransactions(jsonDoc, xmlRoot, srcFileName, accountId);
+        var totTransactions = this.createJsonDocument_AddTransactions(jsonDoc, xmlRoot, srcFileName, accountId);
+        if (totTransactions <= 0)
+            continue;
 
         //Banana.console.debug(JSON.stringify(jsonDoc, null, 3));
         this.jsonDocArray.push(jsonDoc);
@@ -372,6 +374,10 @@ EFatturaImport.prototype.createJsonDocument_AddAccount = function (jsonDoc, xmlR
     }
 
     var sequence = this.accounts[accountId].sequence;
+    if (sequence)
+        sequence = sequence.toString();
+    else
+        sequence = "";
 
     row.fields["Account"] = accountId;
     row.operation = {};
@@ -401,10 +407,10 @@ EFatturaImport.prototype.createJsonDocument_AddAccount = function (jsonDoc, xmlR
 EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc, xmlRoot, srcFileName, accountId) {
 
     if (!this.accounts[accountId])
-        return;
+        return 0;
     let isCustomer = this.accounts[accountId].isCustomer;
     var invoiceNode = xmlRoot.firstChildElement('FatturaElettronicaBody');
-    var i = 0;
+    var totTransactions = 0;
     while (invoiceNode) {
         var datiGeneraliDocumento = invoiceNode.firstChildElement('DatiGenerali').firstChildElement('DatiGeneraliDocumento');
         if (!datiGeneraliDocumento) {
@@ -564,10 +570,11 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
             rowLists.rows[index.toString()] = row;
 
             datiRiepilogoNode = datiRiepilogoNode.nextSiblingElement('DatiRiepilogo');
-            i++;
+            totTransactions++;
         }
         invoiceNode = invoiceNode.nextSiblingElement('FatturaElettronicaBody');
     }
+    return totTransactions;
 }
 
 EFatturaImport.prototype.createJsonDocument_Init = function () {
@@ -596,7 +603,7 @@ EFatturaImport.prototype.createJsonDocument_Init = function () {
     dataUnitTransactions.nameXml = "Transactions";
     dataUnitTransactions.nid = 103;
 
-    var dataUnitVatCodes = {};
+    /*var dataUnitVatCodes = {};
     jsonDoc.document.dataUnits["2"] = dataUnitVatCodes;
     dataUnitVatCodes.data = {};
     dataUnitVatCodes.data.rowLists = [];
@@ -614,7 +621,7 @@ EFatturaImport.prototype.createJsonDocument_Init = function () {
     dataUnitFileInfo.data.rowLists[0].rows = [];
     dataUnitFileInfo.id = "FileInfo";
     dataUnitFileInfo.nameXml = "FileInfo";
-    dataUnitFileInfo.nid = 1003;
+    dataUnitFileInfo.nid = 1003;*/
 
     jsonDoc.creator = {};
     var d = new Date();
@@ -805,7 +812,8 @@ EFatturaImport.prototype.getVatCode = function (accountId, vatRate, codiceNatura
 EFatturaImport.prototype.initParam = function () {
     this.param = {};
     this.param.version = "1.0";
-    this.param.applyRules = true;
+    // preferire le regole di completamento integrate in Banana+
+    this.param.applyRules = false;
     this.param.filenameRules = 'rules.json';
     // controlla se i numeri fattura sono già stati importati
     this.param.checkDuplicated = true;
