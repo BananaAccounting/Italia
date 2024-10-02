@@ -151,3 +151,31 @@ table.tableAnagrafica td {
 .total {
 	/*background-color: #eeeeee;*/
 }
+
+.headerTableDettagli {
+	font-weight: bold;
+	background-color: #dde8ff;
+}
+.tableDettagli {
+	width: 100%;
+}
+
+.col1Dettagli {
+	width: 8%;
+}
+
+.col2Dettagli {
+	width: 10%;
+}
+
+.col3Dettagli {
+	width: 13%;
+}
+
+.col4Dettagli {
+	width: 69%;
+}
+
+table.tableDettagli td {
+	border: thin solid black;
+}

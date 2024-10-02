@@ -18,7 +18,7 @@
 \newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
 \newenvironment{test}[1]{\section*{Test case: #1}}{}
 %Begin test data
-%%SCRIPT{/Users/ivan/Documents/GitHub/Italia/ets/rendiconti2020/test/ch.banana.it.extension.attestatodonazione.test.js}
+%%SCRIPT{/Users/ivan/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.attestatodonazione.test.js}
 %
 \begin{testcase}{TestAttestatoDonazioni}
 \begin{test}{testExtension}
@@ -50,12 +50,6 @@ Con la presente dichiariamo che  Carlo Giorgi, Via dei Mille 5, 00199 Roma  nel 
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l }
-\\
-\\
-\\
-\\
-\\
-\\
 1  & 25.01.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, gennaio 2021 \\
 2  & 25.02.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, febbraio 2021 \\
 3  & 25.03.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, marzo 2021 \\
@@ -100,24 +94,7 @@ Con la presente dichiariamo che  Roberto Verdi, Via Fiume 25, 20121 Milano  nel 
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l }
-\\
 1  & 01.02.2021  & EUR  & 500.00  &    & Donazione da parte di un privato \\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
  & Totale  & EUR  & 500.00  &  & \\
 \end{longtable}
   \\
@@ -150,24 +127,8 @@ Con la presente dichiariamo che  Mauro Bianchi, Via delle Serre 16, 00199 Roma  
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l }
-\\
-\\
-\\
 1  & 10.01.2021  & EUR  & 150.00  &    & Donazione da parte di un privato \\
 2  & 10.07.2021  & EUR  & 200.00  &    & Donazione da parte di un privato \\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
  & Totale  & EUR  & 350.00  &  & \\
 \end{longtable}
   \\
@@ -214,18 +175,6 @@ Ringraziamo cordialmente. \\
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l }
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
 1  & 25.07.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, luglio 2021 \\
 2  & 25.08.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, agosto 2021 \\
 3  & 25.09.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, settembre 2021 \\
@@ -233,61 +182,6 @@ Ringraziamo cordialmente. \\
 5  & 25.11.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, novembre 2021 \\
 6  & 20.12.2021  & EUR  & 50.00  &    & Donazione Giorgi Carlo, dicembre 2021 \\
  & Totale  & EUR  & 300.00  &  & \\
-\end{longtable}
-  \\
-  \\
-  \\
-  \\
-  \\
-\begin{longtable}[l]{ l  l }
-Milano, dicembre 2021  & Pinco Pallino \\
- & Associazione Aiuto agli Anziani \\
-\end{longtable}
-\begin{longtable}[l]{}
-\end{longtable}
-\begin{longtable}[l]{ l }
-Roberto Verdi \\
-Via Fiume 25 \\
-20121 Milano \\
-\end{longtable}
-  \\
-  \\
-  \\
-  \\
-  \\
-  \\
-Donazioni \#;S002: 2. Semestre 2021 \\
-  \\
-  \\
-  \\
-Con la presente attestiamo che  Roberto Verdi  ha donato alla nostra associazione  EUR 0.00 . \\
-  \\
-Periodo delle donazioni: dal 01.07.2021 al 31.12.2021. \\
-  \\
-Indirizzo: Via Fiume 25, 20121 Milano. \\
-  \\
-Ringraziamo cordialmente. \\
-  \\
-  \\
-\begin{longtable}[l]{}
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
 \end{longtable}
   \\
   \\
@@ -325,80 +219,8 @@ Ringraziamo cordialmente. \\
   \\
   \\
 \begin{longtable}[l]{ l  l  l  l  l  l }
-\\
-\\
-\\
-\\
 1  & 10.07.2021  & EUR  & 200.00  &    & Donazione da parte di un privato \\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
  & Totale  & EUR  & 200.00  &  & \\
-\end{longtable}
-  \\
-  \\
-  \\
-  \\
-  \\
-\begin{longtable}[l]{ l  l }
-Milano, dicembre 2021  & Pinco Pallino \\
- & Associazione Aiuto agli Anziani \\
-\end{longtable}
-\begin{longtable}[l]{}
-\end{longtable}
-\begin{longtable}[l]{ l }
-Michele Rossi \\
-Via Giacomo Leopardi 2 \\
-20122 Milano \\
-\end{longtable}
-  \\
-  \\
-  \\
-  \\
-  \\
-  \\
-Donazioni \#;S004: 2. Semestre 2021 \\
-  \\
-  \\
-  \\
-Con la presente attestiamo che  Michele Rossi  ha donato alla nostra associazione  EUR 0.00 . \\
-  \\
-Periodo delle donazioni: dal 01.07.2021 al 31.12.2021. \\
-  \\
-Indirizzo: Via Giacomo Leopardi 2, 20122 Milano. \\
-  \\
-Ringraziamo cordialmente. \\
-  \\
-  \\
-\begin{longtable}[l]{}
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
 \end{longtable}
   \\
   \\

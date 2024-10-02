@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.reportcinquepermille.test
 // @api = 1.0
-// @pubdate = 2022-08-09
+// @pubdate = 2024-10-02
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.reportcinquepermille.js>
 // @task = app.command
@@ -79,6 +79,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoCorrente = function(
 	userParam.gruppo43 = "CE2";
 	userParam.gruppo44 = "CB7";
 	userParam.gruppo45 = "CE7;CG1;CG2";
+	userParam.giustificativispese = false;
+	userParam.contogiustificativospesa = true;
 
 	let reportGroups = createReportStructure5xMille(userParam);
 	
@@ -116,6 +118,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoPrecedente = functio
 	userParam.gruppo43 = "CE2";
 	userParam.gruppo44 = "CB7";
 	userParam.gruppo45 = "CE7;CG1;CG2";
+	userParam.giustificativispese = false;
+	userParam.contogiustificativospesa = true;
 
 	let reportGroups = createReportStructure5xMille(userParam);
 	
@@ -153,6 +157,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoCorrente = function() 
 	userParam.gruppo43 = "CE2";
 	userParam.gruppo44 = "CB7";
 	userParam.gruppo45 = "CE7;CG1;CG2";
+	userParam.giustificativispese = false;
+	userParam.contogiustificativospesa = true;
 
 	let reportGroups = createReportStructure5xMille(userParam);
 	
@@ -190,6 +196,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente = function(
 	userParam.gruppo43 = "CE2";
 	userParam.gruppo44 = "CB7";
 	userParam.gruppo45 = "CE7;CG1;CG2";
+	userParam.giustificativispese = false;
+	userParam.contogiustificativospesa = true;
 
 	let reportGroups = createReportStructure5xMille(userParam);
 	
@@ -227,6 +235,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoCorrente_colonnaSegm
 	userParam.gruppo43 = "CE2";
 	userParam.gruppo44 = "CB7";
 	userParam.gruppo45 = "CE7;CG1;CG2";
+	userParam.giustificativispese = false;
+	userParam.contogiustificativospesa = true;
 
 	let reportGroups = createReportStructure5xMille(userParam);
 	
@@ -264,6 +274,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_AnnoPrecedente_colonnaSe
 	userParam.gruppo43 = "CE2";
 	userParam.gruppo44 = "CB7";
 	userParam.gruppo45 = "CE7;CG1;CG2";
+	userParam.giustificativispese = false;
+	userParam.contogiustificativospesa = true;
 
 	let reportGroups = createReportStructure5xMille(userParam);
 	
@@ -301,6 +313,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoCorrente_colonnaSegmen
 	userParam.gruppo43 = "CE2";
 	userParam.gruppo44 = "CB7";
 	userParam.gruppo45 = "CE7;CG1;CG2";
+	userParam.giustificativispese = false;
+	userParam.contogiustificativospesa = true;
 
 	let reportGroups = createReportStructure5xMille(userParam);
 	
@@ -338,6 +352,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaDoppia_AnnoPrecedente_colonnaSegm
 	userParam.gruppo43 = "CE2";
 	userParam.gruppo44 = "CB7";
 	userParam.gruppo45 = "CE7;CG1;CG2";
+	userParam.giustificativispese = false;
+	userParam.contogiustificativospesa = true;
 
 	let reportGroups = createReportStructure5xMille(userParam);
 	
@@ -379,6 +395,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_Accantonamento_con_regis
 	userParam.gruppo43 = "CE2";
 	userParam.gruppo44 = "CB7";
 	userParam.gruppo45 = "CE7;CG1;CG2";
+	userParam.giustificativispese = false;
+	userParam.contogiustificativospesa = true;
 
 	let reportGroups = createReportStructure5xMille(userParam);
 	
@@ -420,6 +438,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_Calcolo_automatico_accan
 	userParam.gruppo43 = "CE2";
 	userParam.gruppo44 = "CB7";
 	userParam.gruppo45 = "CE7;CG1;CG2";
+	userParam.giustificativispese = false;
+	userParam.contogiustificativospesa = true;
 
 	let reportGroups = createReportStructure5xMille(userParam);
 	
@@ -461,6 +481,8 @@ Rendiconto5XMilleTest.prototype.testContabilitaSemplice_rendiconto_accantonament
 	userParam.gruppo43 = "CE2";
 	userParam.gruppo44 = "CB7";
 	userParam.gruppo45 = "CE7;CG1;CG2";
+	userParam.giustificativispese = false;
+	userParam.contogiustificativospesa = true;
 
 	let reportGroups = createReportStructure5xMille(userParam);
 	

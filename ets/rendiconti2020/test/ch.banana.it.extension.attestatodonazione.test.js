@@ -1,4 +1,4 @@
-// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2024] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.attestatodonazione.test
 // @api = 1.0
-// @pubdate = 2021-06-02
+// @pubdate = 2024-09-27
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.attestatodonazione.js>
 // @task = app.command
@@ -131,9 +131,13 @@ TestAttestatoDonazioni.prototype.testExtension = function() {
 
 //Function that create the report for the test
 TestAttestatoDonazioni.prototype.report_test = function(banDoc, startDate, endDate, userParam, reportName) {
-  texts = loadTexts();
-  var accounts = getAccountsToPrint(banDoc, startDate, endDate, userParam, texts);
-  var report = printReport(banDoc, startDate, endDate, userParam, accounts, texts, "");
+  userParam.selectionStartDate = startDate;
+  userParam.selectionEndDate = endDate;
+  userParam.transactions = [];
+  var texts = loadTexts();
+  fillTransactionStructure(banDoc, userParam, texts);
+  var accounts = getListOfAccountsToPrint(userParam);
+  var report = printReport(banDoc, userParam, accounts, texts, "");
   Test.logger.addReport(reportName, report);
 }
 

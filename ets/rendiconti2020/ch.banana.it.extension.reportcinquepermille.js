@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.reportcinquepermille
 // @api = 1.0
-// @pubdate = 2022-10-19
+// @pubdate = 2024-10-02
 // @publisher = Banana.ch SA
 // @description = 4. Report cinque per mille
 // @task = app.command
@@ -148,6 +148,11 @@ function printReport(banDoc, fileLastYear, userParam, reportGroups, accountsMap)
 	}
 
 	printReport_Finale(report, banDoc, userParam);
+	
+	if (userParam.giustificativispese) {
+		printReport_ListaGiustificativi(report, banDoc, fileLastYear, userParam, accountsMap);
+	}
+	
 	printReport_Footer(report);
 
 	return report;
@@ -569,6 +574,72 @@ function printReport_Footer(report) {
 	report.getFooter().addText("-", "");
 }
 
+// Funzione che stampa l'elenco dei giustificativi di spesa
+function printReport_ListaGiustificativi(report, banDoc, fileLastYear, userParam, accountsMap) {
+
+	// Elenco delle spese del 5x1000 con il dettaglio delle registrazioni (Data, Importo, Descrizione),
+	// ordinate in base al gruppo (da 1 a 4.5)
+
+	let details = createDetailsTransactions(banDoc, fileLastYear, userParam, accountsMap);
+
+	let thisYear = Banana.Converter.toDate(banDoc.info("AccountingDataBase","OpeningDate")).getFullYear();
+	let lastYear = "";
+	if (fileLastYear) {
+		lastYear = Banana.Converter.toDate(fileLastYear.info("AccountingDataBase","OpeningDate")).getFullYear();
+	}
+	let annofinanziario = "";
+	if (fileLastYear) {
+		annofinanziario = lastYear + "-" + thisYear;
+	} else {
+		annofinanziario = thisYear;
+	}
+
+	report.addPageBreak();
+	report.addParagraph("ELENCO GIUSTIFICATIVI DI SPESA", "heading alignCenter");
+	report.addParagraph(" ", "");
+	report.addParagraph("(Allegato alla rendicontazione del contributo cinque per mille destinato agli Enti del Terzo settore)", "alignCenter italic");
+	report.addParagraph(" ", "");
+	report.addParagraph(" ", "");
+	p = report.addParagraph("");
+	p.addText("Denominazione ente: ", "") + p.addText(banDoc.info("AccountingDataBase", "Company"), "bold");
+	report.addParagraph(" ", "");
+	p = report.addParagraph("");
+	p.addText("Codice fiscale ente: ", "") + p.addText(banDoc.info("AccountingDataBase", "FiscalNumber"), "bold");
+	report.addParagraph(" ", "");
+	p = report.addParagraph("");
+	p.addText("Giustificativi di spesa associati alla rendicontazione del contributo anno finanziario ","") + p.addText(annofinanziario, "bold") + p.addText(" percepito il ", "") + p.addText(userParam.dataPercezione, "bold") + p.addText(".","");
+	report.addParagraph(" ", "");
+	report.addParagraph(" ", "");
+
+	let tableDettagli = report.addTable("tableDettagli");
+	let col1Dettagli = tableDettagli.addColumn("col1Dettagli");
+	let col2Dettagli = tableDettagli.addColumn("col2Dettagli");
+	let col3Dettagli = tableDettagli.addColumn("col3Dettagli");
+	let col4Dettagli = tableDettagli.addColumn("col4Dettagli");
+
+	var tableHeader = tableDettagli.getHeader();
+	tableRow = tableHeader.addRow();
+	tableRow.addCell("Voce di spesa", "headerTableDettagli alignCenter", 1);
+	tableRow.addCell("Data di pagamento", "headerTableDettagli alignCenter", 1);
+	tableRow.addCell("Importo imputato al 5x1000 (euro)", "headerTableDettagli alignCenter", 1);
+	tableRow.addCell("Breve descrizione del giustificativo", "headerTableDettagli alignCenter", 1);
+
+	for (let i = 0; i < details.length; i++) {
+		tableRow = tableDettagli.addRow();
+		tableRow.addCell(details[i].group, "alignCenter", 1);
+		tableRow.addCell(Banana.Converter.toLocaleDateFormat(details[i].date), "alignCenter", 1);
+		tableRow.addCell(Banana.SDecimal.abs(details[i].amount), "alignRight", 1);
+		if (userParam.contogiustificativospesa) {
+			tableRow.addCell("<" + details[i].account + "> " + details[i].description, "", 1);
+		} else {
+			tableRow.addCell(details[i].description, "", 1);
+		}
+	}
+
+	report.addParagraph(" ", "");
+	report.addParagraph(" ", "");
+	report.addParagraph("Si rammenta che i giustificativi di spesa non dovranno essere trasmessi, bensì conservati presso la sede dell’ente ed esibiti solo qualora il Ministero ne faccia richiesta. Si evidenzia altresì che i soggetti beneficiari del contributo non sono obbligati alla pubblicazione del presente elenco dei giustificativi sul proprio sito web.","bold");
+}
 
 /**************************************************************************************
  * Calculation of balances
@@ -771,6 +842,7 @@ function loadAccountsMap_IncomeAndExpenses(banDoc, userParam, tabCategories, acc
 					// }
 
 					accountsMap[account] = {
+						"account":account,
 						"description":tRow.value("Description"), 
 						"gr1":gr, 
                         "total" : total
@@ -818,6 +890,7 @@ function loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts, accountsMap
 					// }
 
 					accountsMap[account] = {
+						"account":account,
 						"description":tRow.value("Description"), 
 						"gr1":gr, 
 						"total" : total
@@ -829,6 +902,81 @@ function loadAccountsMap_DoubleEntry(banDoc, userParam, tabAccounts, accountsMap
 			}
 		}
 	}
+}
+
+// Funzione che crea l'oggetto con i dettagli delle registrazioni per ogni gruppo del 5x1000
+function createDetailsTransactions(banDoc, fileLastYear, userParam, accountsMap) {
+
+    let details = [];
+    const groupMapping = {
+        "CA4": "1", "CB4": "1", "CE4": "1",
+        "CA1": "2", "CA3": "2", "CA7": "2", "CD1": "2", "CD2": "2",
+        "CD3": "2", "CD4": "2", "CD6": "2", "IM": "2",
+        "CA2": "3", "CA5": "3", "CB3": "3", "CB5": "3", "CE3": "3", 
+        "CE5": "3", "CC1": "3", "CC2": "3", "CC3": "3"
+    };
+
+    // Funzione per recuperare il gruppo in base a gr1
+    function getGroup(gr1) {
+        return groupMapping[gr1] || (() => {
+            if (gr1 === userParam.gruppo41) return "4.1";
+            if (gr1 === userParam.gruppo42) return "4.2";
+            if (gr1 === userParam.gruppo43) return "4.3";
+            if (gr1 === userParam.gruppo44) return "4.4";
+            if (gr1 === userParam.gruppo45) return "4.5";
+            return "";
+        })();
+    }
+
+    // Funzione che crea un oggetto con i dettagli delle registrazioni
+    function processTransactions(transTab, account, group) {
+        for (let j = 0; j < transTab.rowCount; j++) {
+            let tRow = transTab.row(j);
+            let trDate = tRow.value("Date");
+            let trDescription = tRow.value("Description");
+            let trCreditAccount = banDoc.table("Categories") ? tRow.value("Category") : tRow.value("AccountDebit");
+            let trAmount = banDoc.table("Categories") ? tRow.value("Expenses") : tRow.value("Amount");
+            let trSegment = tRow.value("Segment");
+
+            if ((trCreditAccount === account + userParam.segment5XM && !trSegment) || 
+                (":" + trSegment === userParam.segment5XM && trCreditAccount === account)) { // aggiunge due punti perché nella registrazione è senza
+                details.push({
+                    "group": group,
+                    "date": trDate,
+                    "amount": trAmount,
+                    "description": trDescription,
+                    "account": account
+                });
+            }
+        }
+    }
+
+    // Itera sui conti
+    for (const i in accountsMap) {
+        let account = accountsMap[i].account;
+        let gr1 = accountsMap[i].gr1;
+        let group = getGroup(gr1);
+
+        // Se il gruppo è valido (ovvero un gruppo di spesa)
+        if (group) {
+            // Processa registrazioni anno corrente
+            let transTabCurrentYear = banDoc.table("Transactions");
+            processTransactions(transTabCurrentYear, account, group);
+
+            // Se esiste, processa registrazioni anno precedente
+            if (fileLastYear) {
+                let transTabLastYear = fileLastYear.table("Transactions");
+                processTransactions(transTabLastYear, account, group);
+            }
+        }
+    }
+
+    // Ordina l'array di dettagli per gruppo, data e descrizione
+    details.sort((a, b) => {
+        return a.group.localeCompare(b.group) || a.date.localeCompare(b.date) || a.description.localeCompare(b.description);
+    });
+
+    return details;
 }
 
 
@@ -1305,6 +1453,42 @@ function convertParam(userParam, segment5XMList) {
 	}
 	convertedParam.data.push(currentParam);
 
+	currentParam = {};
+	currentParam.name = 'elencogiustificativispese';
+	currentParam.parentObject = '';
+	currentParam.title = 'Elenco giustificativi di spese';
+	currentParam.type = 'string';
+	currentParam.value = '';
+	currentParam.editable = false;
+	currentParam.readValue = function() {
+		userParam.anagrafica = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
+	currentParam = {};
+	currentParam.name = 'giustificativispese';
+	currentParam.parentObject = 'elencogiustificativispese';
+	currentParam.title = "Includi elenco giustificativi spese";
+	currentParam.type = 'bool';
+	currentParam.value = userParam.giustificativispese ? true : false;
+	currentParam.defaultvalue = false;
+	currentParam.readValue = function() {
+	  userParam.giustificativispese = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
+	currentParam = {};
+	currentParam.name = 'contogiustificativospesa';
+	currentParam.parentObject = 'elencogiustificativispese';
+	currentParam.title = "Includi conto di spesa nella descrizione";
+	currentParam.type = 'bool';
+	currentParam.value = userParam.contogiustificativospesa ? true : false;
+	currentParam.defaultvalue = true;
+	currentParam.readValue = function() {
+	  userParam.contogiustificativospesa = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
 	return convertedParam;
 }
 
@@ -1327,6 +1511,8 @@ function initUserParam(segment5XMList) {
    userParam.gruppo43 = "CE2";
    userParam.gruppo44 = "CB7";
    userParam.gruppo45 = "CE7;CG1;CG2";
+   userParam.giustificativispese = false;
+   userParam.contogiustificativospesa = true;
    return userParam;
 }
 
