@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.attestatodonazioni.js
 // @api = 1.0
-// @pubdate = 2024-09-27
+// @pubdate = 2024-12-16
 // @publisher = Banana.ch SA
 // @description = 6. Attestato di donazione
 // @doctype = 100.*;110.*;130.*
@@ -728,8 +728,8 @@ function convertFields(banDoc, userParam, account, text) {
         text = text.replace(/<FamilyName>/g,familyname);
     }    
     if (text.indexOf("<Address>") > -1) {
-        var address = address.street + ", " + address.postalcode + " " + address.locality;
-        text = text.replace(/<Address>/g,address);
+        var fulladdress = address.street + ", " + address.postalcode + " " + address.locality;
+        text = text.replace(/<Address>/g,fulladdress);
     }
     if (text.indexOf("<FiscalNumber>") > -1) {
         var fiscalnumber = address.fiscalnumber;
