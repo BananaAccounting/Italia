@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// @id = ch.banana.italy.import.bancadelpiemonte
+// @id = ch.banana.italia.import.bancadelpiemonte
 // @api = 1.0
 // @pubdate = 2024-12-30
 // @publisher = Banana.ch SA
