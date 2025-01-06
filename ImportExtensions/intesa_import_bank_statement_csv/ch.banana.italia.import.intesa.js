@@ -63,7 +63,7 @@ function exec(inData, isTest) {
 	}
 
 	// Format 3 (Lista Movimenti).
-	let format3 = new Intesa_Format3();
+	let format3 = new Intesa_FormatCc1();
 	transactionsData = format3.getFormattedData(transactions, importUtilities);
 	if (format3.match(transactionsData)) {
 		let convTr = format3.convert(transactionsData);
@@ -75,7 +75,7 @@ function exec(inData, isTest) {
 	return "";
 }
 
-/** Format 3
+/** Format Credit Card 1
  * ,,,,,,,,
  * ,,,,,,,,
  * ,,,,,,,,
@@ -126,7 +126,7 @@ function exec(inData, isTest) {
  * ,,,,,,,,
  * ,,,,,,,,
 */
-function Intesa_Format3() {
+function Intesa_FormatCc1() {
 	/** Return true if the transactions match this format */
 	this.match = function (transactionsData) {
 		if (transactionsData.length === 0)
