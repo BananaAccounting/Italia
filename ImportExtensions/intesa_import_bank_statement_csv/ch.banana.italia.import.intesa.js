@@ -109,7 +109,7 @@ function exec(inData, isTest) {
  * 28/11/24,26/11/24,Krusty Krabs,,,,5.99,,
  * 28/10/24,26/10/24,Krusty Krabs,,,,5.99,,
  * 29/09/24,26/09/24,Krusty Krabs,,,,5.99,,
- * 27/09/24,25/09/24,Prima Curia,,,,133.56,,
+ * 27/09/24,25/09/24, ,,,,133.56,,
  * ,,,,,,,,
  * ,,,,,,,,
  * ,,,,,,,,
@@ -137,7 +137,8 @@ function Intesa_FormatCc1() {
 		   var formatMatched = false;
 		   
 		   if (transaction["Date"] && transaction["Date"].length >= 8 &&
-			  transaction["Date"].match(/^\d{2}\/\d{2}\/\d{2}$/))
+			(transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{2}$/) ||
+			transactionsData[i]["Date"].match(/^\d{2}\.\d{2}\.\d{2}$/)))
 			  formatMatched = true;
 		   else
 			  formatMatched = false;
@@ -205,7 +206,8 @@ function Intesa_FormatCc1() {
 		for (var i = 0; i < transactionsData.length; i++) {
 		   
 		   if (transactionsData[i]["Date"] && transactionsData[i]["Date"].length >= 8 &&
-			  transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{2}$/)) {
+			  (transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{2}$/) ||
+			  transactionsData[i]["Date"].match(/^\d{2}\.\d{2}\.\d{2}$/))) {
 			  transactionsToImport.push(this.mapTransaction(transactionsData[i]));
 		   }
 		}
