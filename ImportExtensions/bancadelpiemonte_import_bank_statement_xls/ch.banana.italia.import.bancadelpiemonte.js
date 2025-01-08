@@ -102,7 +102,8 @@ function exec(inData, isTest) {
          var formatMatched = false;
          
          if (transaction["Date"] && transaction["Date"].length >= 10 &&
-            transaction["Date"].match(/^\d{2}\/\d{2}\/\d{4}$/))
+            (transaction["Date"].match(/^\d{2}\/\d{2}\/\d{4}$/) || 
+            transaction["Date"].match(/^\d{2}\.\d{2}\.\d{4}$/)))
             formatMatched = true;
          else
             formatMatched = false;
@@ -164,7 +165,8 @@ function exec(inData, isTest) {
       for (var i = 0; i < transactionsData.length; i++) {
          
          if (transactionsData[i]["Date"] && transactionsData[i]["Date"].length >= 10 &&
-            transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+            (transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{4}$/) || 
+            transactionsData[i]["Date"].match(/^\d{2}\.\d{2}\.\d{4}$/))) {
             transactionsToImport.push(this.mapTransaction(transactionsData[i]));
          }
       }
@@ -213,7 +215,8 @@ function exec(inData, isTest) {
           var formatMatched = true;
           
           if (formatMatched && transaction["Date"] && transaction["Date"].length >= 10 &&
-             transaction["Date"].match(/^\d{2}\/\d{2}\/\d{4}$/))
+            (transaction["Date"].match(/^\d{2}\/\d{2}\/\d{4}$/) || 
+            transaction["Date"].match(/^\d{2}\.\d{2}\.\d{4}$/)))
              formatMatched = true;
           else
              formatMatched = false;
@@ -278,7 +281,8 @@ function exec(inData, isTest) {
        for (var i = 0; i < transactionsData.length; i++) {
           
           if (transactionsData[i]["Date"] && transactionsData[i]["Date"].length >= 10 &&
-             transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+            (transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{4}$/) || 
+            transactionsData[i]["Date"].match(/^\d{2}\.\d{2}\.\d{4}$/))) {
              transactionsToImport.push(this.mapTransaction(transactionsData[i]));
           }
        }
