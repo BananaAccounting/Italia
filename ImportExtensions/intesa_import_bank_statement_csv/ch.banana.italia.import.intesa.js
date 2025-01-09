@@ -62,9 +62,179 @@ function exec(inData, isTest) {
 		return Banana.Converter.arrayToTsv(convTr);
 	}
 
+	// Format 3 (Lista Movimenti).
+	let format3 = new Intesa_FormatCc1();
+	transactionsData = format3.getFormattedData(transactions, importUtilities);
+	if (format3.match(transactionsData)) {
+		let convTr = format3.convert(transactionsData);
+		return Banana.Converter.arrayToTsv(convTr);
+	}
+
 	importUtilities.getUnknownFormatError();
 
 	return "";
+}
+
+/** Format Credit Card 1
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,N.B.: I dati esposti nella presente lista hanno carattere puramente informativo.,,,,,
+ * ,,,,,,,,
+ * ,,Intestatario carta:,HOMO SAPIENS SAPIENS,,,,,
+ * ,,Numero carta,1234 **** **** 4321,,,,,
+ * ,,Conto di riferimento:,00012345,,,,,
+ * ,,,,,,,,
+ * ,,Disponibilità residua al:,27.12.2024,998.01,,,,
+ * ,,,,,,,,
+ * ,,Sbilancio alla data:,27.12.2024,139.53,,,,
+ * ,,,,,,,,
+ * ,,Entrate/Uscite: ,Tutte,,,,,
+ * ,,Tipologia movimenti selezionata: ,Tutti,,,,,
+ * ,,Ricerca per:,-,,,,,
+ * ,,Importo:,tutti,,,,,
+ * ,,,,,,,,
+ * ,,Periodo:,Da 01.09.2024 A 27.12.2024,,,,,
+ * ,,Controvalore in:,Euro,,,,,
+ * ,,I movimenti selezionati sono:,4,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * Operazioni contabilizzate,,,,,,,,
+ * ,,,,,,,,
+ * Data contabile,Data operazione,Descrizione,Accrediti in valuta,Accrediti,Addebiti in valuta,Addebiti,,
+ * 28/11/24,26/11/24,Krusty Krabs,,,,5.99,,
+ * 28/10/24,26/10/24,Krusty Krabs,,,,5.99,,
+ * 29/09/24,26/09/24,Krusty Krabs,,,,5.99,,
+ * 27/09/24,25/09/24, ,,,,133.56,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+ * ,,,,,,,,
+*/
+function Intesa_FormatCc1() {
+	/** Return true if the transactions match this format */
+	this.match = function (transactionsData) {
+		if (transactionsData.length === 0)
+		   return false;
+  
+		for (var i = 0; i < transactionsData.length; i++) {
+		   var transaction = transactionsData[i];
+		   var formatMatched = false;
+		   
+		   if (transaction["Date"] && transaction["Date"].length >= 8 &&
+			(transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{2}$/) ||
+			transactionsData[i]["Date"].match(/^\d{2}\.\d{2}\.\d{2}$/)))
+			  formatMatched = true;
+		   else
+			  formatMatched = false;
+  
+		   if (formatMatched)
+			  return true;
+		}
+  
+		return false;
+	 }
+  
+	 this.convertHeaderIt = function (columns) {
+		let convertedColumns = [];
+	 
+		for (var i = 0; i < columns.length; i++) {
+		   switch (columns[i]) {
+			  case "Data contabile":
+				 convertedColumns[i] = "Date";
+				 break;
+			  case "Data operazione":
+				 convertedColumns[i] = "DateValue";
+				 break;
+			  case "Descrizione":
+				 convertedColumns[i] = "Description";
+				 break;
+			  case "Accrediti":
+				 convertedColumns[i] = "Income";
+				 break;
+			  case "Addebiti":
+				 convertedColumns[i] = "Expenses";
+				 break;
+			  default:
+				 break;
+		   }
+		}
+	 
+		if (convertedColumns.indexOf("Date") < 0) {
+		   return [];
+		}
+	 
+		return convertedColumns;
+	 }
+  
+	 this.getFormattedData = function (inData, importUtilities) {
+		var columns = importUtilities.getHeaderData(inData, 29); //array
+		var rows = importUtilities.getRowData(inData, 30); //array of array
+		let form = [];
+	 
+		let convertedColumns = [];
+	 
+		convertedColumns = this.convertHeaderIt(columns);
+	 
+		//Load the form with data taken from the array. Create objects
+		if (convertedColumns.length > 0) {
+		   importUtilities.loadForm(form, convertedColumns, rows);
+		   return form;
+		}
+	 
+		return [];
+	 }
+  
+	 this.convert = function (transactionsData) {
+		var transactionsToImport = [];
+  
+		for (var i = 0; i < transactionsData.length; i++) {
+		   
+		   if (transactionsData[i]["Date"] && transactionsData[i]["Date"].length >= 8 &&
+			  (transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{2}$/) ||
+			  transactionsData[i]["Date"].match(/^\d{2}\.\d{2}\.\d{2}$/))) {
+			  transactionsToImport.push(this.mapTransaction(transactionsData[i]));
+		   }
+		}
+  
+		// Sort rows by date
+		transactionsToImport = transactionsToImport.reverse();
+  
+		// Add header and return
+		var header = [["Date", "DateValue", "Doc", "ExternalReference", "Description", "Income", "Expenses"]];
+		
+		return header.concat(transactionsToImport);
+	 }
+  
+	 this.mapTransaction = function (transaction) {
+		 let mappedLine = [];
+	 
+		 mappedLine.push(Banana.Converter.toInternalDateFormat(transaction["Date"], "dd.mm.yyyy"));
+		 mappedLine.push(Banana.Converter.toInternalDateFormat(transaction["DateValue"], "dd.mm.yyyy"));
+		 mappedLine.push("");
+		 mappedLine.push("");
+		 mappedLine.push(transaction["Description"]);
+		 mappedLine.push(Banana.Converter.toInternalNumberFormat(transaction["Income"], '.'));
+		 mappedLine.push(Banana.Converter.toInternalNumberFormat(transaction["Expenses"], '.'));       
+		 
+  
+		 return mappedLine;
+	 }
 }
 
 /** Format 2

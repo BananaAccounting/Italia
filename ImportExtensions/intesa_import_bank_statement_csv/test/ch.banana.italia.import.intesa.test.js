@@ -61,6 +61,7 @@ TestImportBancaIntesa.prototype.testImport = function () {
    fileNameList.push("file:script/../test/testcases/csv_intesa_example_format1_20232209.csv");
    fileNameList.push("file:script/../test/testcases/csv_intesa_example_format2_20240522.csv");
    fileNameList.push("file:script/../test/testcases/csv_intesa_example_format1_20240527.csv");
+   fileNameList.push("file:script/../test/testcases/csv_intesa_example_formatCc1_20241227.csv");
 
    var parentLogger = this.testLogger;
    this.progressBar.start(fileNameList.length);
