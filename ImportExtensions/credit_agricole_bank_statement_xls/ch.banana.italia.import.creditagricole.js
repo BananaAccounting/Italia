@@ -35,8 +35,9 @@ function exec(inData, isTest) {
 
 	// Format 1
 	var CAFormat1 = new CreditAgricoleFormat1();
-	if (CAFormat1.match(transactions)) {
-		transactions = CAFormat1.convert(transactions);
+	var transactionsData = CAFormat1.getFormattedData(transactions, importUtilities);
+	if (CAFormat1.match(transactionsData)) {
+		transactions = CAFormat1.convert(transactionsData);
 		return Banana.Converter.arrayToTsv(transactions);
 	}
 
@@ -80,8 +81,8 @@ function CreditAgricoleFormat1() {
 	 }
  
 	 this.getFormattedData = function (inData, importUtilities) {
-		var columns = importUtilities.getHeaderData(inData, 10); //array
-		var rows = importUtilities.getRowData(inData, 11); //array of array
+		var columns = importUtilities.getHeaderData(inData, 11); //array
+		var rows = importUtilities.getRowData(inData, 12); //array of array
 		let form = [];
 		
 		let convertedColumns = [];
@@ -156,10 +157,10 @@ function CreditAgricoleFormat1() {
 		mappedLine.push("");
 		mappedLine.push(transaction["Description"]);
 		if (transaction["Amount"].match(/^[0-9]/))
-			mappedLine.push(Banana.Converter.toInternalNumberFormat(transaction["Income"], '.'));
-		else
-			mappedLine.push(Banana.Converter.toInternalNumberFormat(transaction["Expenses"], '.'));       
-		
+			mappedLine.push(Banana.Converter.toInternalNumberFormat(transaction["Amount"], '.'));
+		else {
+			mappedLine.push(Banana.Converter.toInternalNumberFormat(transaction["Amount"], '.'));       
+		}
 
 		return mappedLine;
 	}
