@@ -1,6 +1,6 @@
 // @id = ch.banana.italia.import.creditagricole
 // @api = 1.0
-// @pubdate = 2023-06-19
+// @pubdate = 2025-01-09
 // @publisher = Banana.ch SA
 // @description = Credit Agricole - Import account statement .csv (Banana+ Advanced)
 // @description.en = Credit Agricole - Import account statement .csv (Banana+ Advanced)
