@@ -1,0 +1,36 @@
+%%info_test_name{xls_bancadelpiemonte_example_formatCc1_20241230}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+\begin{tablevalue}{}{ l  l  l  l  l  l  l }
+Date & DateValue & Doc & ExternalReference & Description & Income & Expenses\\
+2024-12-12 &  &  &  & Malal.or*ZP25H7OJ5 &  & 26.15\\
+2024-12-18 &  &  &  & Malal.or*CD5242MW5 &  & 2.60\\
+2024-12-20 &  &  &  & Malal.or*2G9VY3D95 &  & 20.28\\
+2024-12-21 &  &  &  & Malal Sommelri*SE03X3OX5 &  & 5.99\\
+2024-12-21 &  &  &  & VVV.MALAL.* EZ0WY58W5 &  & 24.36\\
+2024-12-23 &  &  &  & Malal.or*IT0AI7RI5 &  & 10.19\\
+2024-12-23 &  &  &  & Preima Vera*J32BD1PQ5 &  & 3.99\\
+2024-12-23 &  &  &  & VVV.MALAL.* IV9QA0LG5 &  & 15.98\\
+2024-12-23 &  &  &  & MTSK Ukrp OR*NN20V4H20 &  & 10.99\\
+2024-12-25 &  &  &  & Preima Vera*AB1234US5 &  & 3.99\\
+2024-12-25 &  &  &  & Preima Vera &  & 6.99\\
+\\
+\end{tablevalue}
+\end{document}

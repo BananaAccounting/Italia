@@ -1,4 +1,4 @@
-// Copyright [2023] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2024] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,55 +13,54 @@
 // limitations under the License.
 //
 
-// @id = ch.banana.italia.import.intesa.test
+
+// @id = ch.banana.italia.import.bancadelpiemonte
 // @api = 1.0
-// @pubdate = 2024-05-22
+// @pubdate = 2024-12-30
 // @publisher = Banana.ch SA
-// @description = <TEST ch.banana.italia.import.intesa.test>
+// @description = <TEST ch.banana.italia.import.bancadelpiemonte>
 // @task = app.command
 // @doctype = *.*
 // @docproperties = 
 // @outputformat = none
 // @inputdataform = none
-// @includejs = ../ch.banana.italia.import.intesa.sbaa/import.utilities.js
-// @includejs = ../ch.banana.italia.import.intesa.sbaa/ch.banana.italia.import.intesa.js
+// @includejs = ../ch.banana.italia.import.bancadelpiemonte.sbaa/import.utilities.js
+// @includejs = ../ch.banana.italia.import.bancadelpiemonte.sbaa/ch.banana.italia.import.bancadelpiemonte.js
 // @timeout = -1
 
 // Register test case to be executed
-Test.registerTestCase(new TestImportBancaIntesa());
+Test.registerTestCase(new TestImportBancaDelPiemonteTrans());
 
 // Here we define the class, the name of the class is not important
-function TestImportBancaIntesa() {
+function TestImportBancaDelPiemonteTrans() {
 }
 
 // This method will be called at the beginning of the test case
-TestImportBancaIntesa.prototype.initTestCase = function () {
+TestImportBancaDelPiemonteTrans.prototype.initTestCase = function () {
    this.testLogger = Test.logger;
    this.progressBar = Banana.application.progressBar;
 }
 
 // This method will be called at the end of the test case
-TestImportBancaIntesa.prototype.cleanupTestCase = function () {
+TestImportBancaDelPiemonteTrans.prototype.cleanupTestCase = function () {
 
 }
 
 // This method will be called before every test method is executed
-TestImportBancaIntesa.prototype.init = function () {
+TestImportBancaDelPiemonteTrans.prototype.init = function () {
 
 }
 
 // This method will be called after every test method is executed
-TestImportBancaIntesa.prototype.cleanup = function () {
+TestImportBancaDelPiemonteTrans.prototype.cleanup = function () {
 
 }
 
-TestImportBancaIntesa.prototype.testImport = function () {
+TestImportBancaDelPiemonteTrans.prototype.testImport = function () {
    var fileNameList = [];
 
-   fileNameList.push("file:script/../test/testcases/csv_intesa_example_format1_20232209.csv");
-   fileNameList.push("file:script/../test/testcases/csv_intesa_example_format2_20240522.csv");
-   fileNameList.push("file:script/../test/testcases/csv_intesa_example_format1_20240527.csv");
-   fileNameList.push("file:script/../test/testcases/csv_intesa_example_formatCc1_20241227.csv");
+   fileNameList.push("file:script/../test/testcases/xls_bancadelpiemonte_example_format1_20241230.csv");
+   fileNameList.push("file:script/../test/testcases/xls_bancadelpiemonte_example_formatCc1_20241230.csv");
 
    var parentLogger = this.testLogger;
    this.progressBar.start(fileNameList.length);

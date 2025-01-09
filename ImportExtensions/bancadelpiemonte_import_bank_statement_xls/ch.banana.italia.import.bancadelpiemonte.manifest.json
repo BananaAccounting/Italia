@@ -1,0 +1,19 @@
+{
+    "category": "import",
+    "country": "italia",
+    "countryCode": "it",
+    "description": "Banca del Piemonte - Import account statement .xls (Banana+ Advanced)",
+    "description.en": "Banca del Piemonte - Import account statement .xls (Banana+ Advanced)",
+    "description.de": "Banca del Piemonte - Bewegungen importieren .xls (Banana+ Advanced)",
+    "description.fr": "Banca del Piemonte - Importer mouvements .xls (Banana+ Advanced)",
+    "description.it": "Banca del Piemonte - Importa movimenti .xls (Banana+ Advanced)",
+    "id": "ch.banana.italia.import.bancadelpiemonte",
+    "language": "it",
+    "publisher": "Banana.ch",
+    "title": "Banca del Piemonte - Import account statement .xls (Banana+ Advanced)",
+    "title.en": "Banca del Piemonte - Import account statement .xls (Banana+ Advanced)",
+    "title.de": "Banca del Piemonte - Bewegungen importieren .xls (Banana+ Advanced)",
+    "title.fr": "Banca del Piemonte - Importer mouvements .xls (Banana+ Advanced)",
+    "title.it": "Banca del Piemonte - Importa movimenti .xls (Banana+ Advanced)",
+    "version": "1.0"
+}
