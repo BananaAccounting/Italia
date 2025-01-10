@@ -1,0 +1,29 @@
+%%info_test_name{xls_creditagricole_example_format1_20241230}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+\begin{tablevalue}{}{ l  l  l  l  l  l  l }
+Date & DateValue & Doc & ExternalReference & Description & Income & Expenses\\
+2024-11-29 &  &  &  & Ferverem o in undabo *8474-78-38*IMATIAM VIUSA ANTERTEST INUNDAM VENTAM O AN. RET HAT SEQUIEM AT O NUMITA 52 MODIANGENT CANS 66135 Pulo octituunta:Irum frumen:38/78/6236Vuudcbx matuunt caurbered:IMATIAM FERUNIusquitae caurbered:HAT SED CUTIUNIX 4 DUNCIPLAPtIBELIGUS:QK77018378427025763122744213GOLkgdpyuvujw equerietho tet saervatem:*8474-78-38*IMATIAM VIUSA  ANTERTEST INUNDAM VENTAM O AN. RET HAT  SEQUIEM AT O NUMITA 52 CONSIECUS0         & 750.00\\
+2024-12-05 &  &  &  & Pecinch et rigem Pecinch et rigem eo 87/50/8435 & -724.53\\
+2024-12-16 &  &  &  & Sicisimox o metuuniunt Put.semo. 3862/470/221588                                                                                                                                          & -0.50\\
+2024-12-16 &  &  &  & Ferverem o in undabo *8474-78-30*MILIGNA COR ROTURES PORSIMILEI GAVA-2503065362 VI 711380140725 Pulo octituunta:Irum frumen:30/78/6236Vuudcbx matuunt caurbered:MILIGNA COR ROTURES MODUCCHOLOCunungere caurbered:DIT AMULAUXERAY SPULUMERI 86MJ\_NXUGBGKV:3381438015653423Uriivfgedmn equerietho tet saervatem:*8474-78-30*MILIGNA COR ROTURES PORSIMILEI GAVA-2503065362 VI  711380140725                                                                                                                               & -75.00\\
+\\
+\end{tablevalue}
+\end{document}
