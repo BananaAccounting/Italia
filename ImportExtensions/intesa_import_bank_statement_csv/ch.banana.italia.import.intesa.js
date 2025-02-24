@@ -183,8 +183,13 @@ function Intesa_FormatCc1() {
 	 }
   
 	 this.getFormattedData = function (inData, importUtilities) {
-		var columns = importUtilities.getHeaderData(inData, 29); //array
-		var rows = importUtilities.getRowData(inData, 30); //array of array
+		let headerLineStart = 29;
+		let dataLineStart = 30;
+		let transactionsCopy = JSON.parse(JSON.stringify(inData));
+		if (transactionsCopy.length < dataLineStart)
+		   return [];
+		var columns = importUtilities.getHeaderData(inData, headerLineStart); //array
+		var rows = importUtilities.getRowData(inData, dataLineStart); //array of array
 		let form = [];
 	 
 		let convertedColumns = [];
