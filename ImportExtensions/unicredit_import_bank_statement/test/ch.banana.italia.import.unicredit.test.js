@@ -24,7 +24,7 @@
 // @outputformat = none
 // @inputdataform = none
 // @includejs = ../ch.banana.italia.import.unicredit.sbaa/import.utilities.js
-// @includejs = ../ch.banana.italia.import.unicredit.sbaa/ch.banana.italia.import.unicredit.js
+// @includejs = ../ch.banana.italia.import.unicredit.sbaa/ch.banana.italia.import.unicredit.csvformat.js
 // @timeout = -1
 
 // Register test case to be executed
@@ -60,6 +60,7 @@ TestImportBancaUnicredit.prototype.testImport = function () {
 
    fileNameList.push("file:script/../test/testcases/csv_unicredit_example_format1_20240403.csv");
    fileNameList.push("file:script/../test/testcases/csv_unicredit_example_format1_20240521.csv");
+   fileNameList.push("file:script/../test/testcases/csv_unicredit_example_format2_20250225.csv");
 
    var parentLogger = this.testLogger;
    this.progressBar.start(fileNameList.length);

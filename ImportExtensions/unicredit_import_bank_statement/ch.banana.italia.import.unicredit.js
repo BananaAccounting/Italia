@@ -1,4 +1,4 @@
-// Copyright [2024] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,53 +12,147 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// @id = ch.banana.italia.import.unicredit
-// @api = 1.0
-// @pubdate = 2024-05-21
-// @publisher = Banana.ch SA
-// @description = Banca Unicredit - Import account statement .xls (Banana+ Advanced)
-// @description.en = Banca Unicredit - Import account statement .xls (Banana+ Advanced)
-// @description.de = Banca Unicredit - Bewegungen importieren .xls (Banana+ Advanced)
-// @description.fr = Banca Unicredit - Importer mouvements .xls (Banana+ Advanced)
-// @description.it = Banca Unicredit - Importa movimenti .xls (Banana+ Advanced)
-// @doctype = *
-// @docproperties =
-// @task = import.transactions
-// @outputformat = transactions.simple
-// @inputdatasource = openfiledialog
-// @inputencoding = latin1
-// @inputfilefilter = Text files (*.txt *.csv *.xls);;All files (*.*)
-// @inputfilefilter.de = Text (*.txt *.csv *.xls);;Alle Dateien (*.*)
-// @inputfilefilter.fr = Texte (*.txt *.csv *.xls);;Tous (*.*)
-// @inputfilefilter.it = Testo (*.txt *.csv *.xls);;Tutti i files (*.*)
-// @includejs = import.utilities.js
-
 /**
- * Parse the data and return the data to be imported as a tab separated file.
+ * Format 2
+ * The format is as follows:
+ * Data Registrazione;Data valuta;Descrizione;Importo (EUR);
+ * 19.02.2025;19.02.2025;ADDEBITO      Incasso 105XXX6018                                SDD da ITXXXXXX000093026890017                    VODAFONE                                   mandato nr. XXXXXXX                      Vodafone Italy;-14,49;
+ * 10.02.2025;10.02.2025;PAGAMENTO           ESTRATTO 01/2025 CARTA 5XXXXXXXXXXX7710;-810,85;
+ * 10.02.2025;10.02.2025;ADDEBITO          Incasso 01605XXXX1423534438                       SDD da ITXXXXXX100000488410010                    TELECOMITALIA                                 mandato nr. XXXXX0;-42,90;
  */
-function exec(inData, isTest) {
+function UnicreditFormat2() {
+	this.decimalSeparator = ",";
 
-	var importUtilities = new ImportUtilities(Banana.document);
+	this.getFormattedData = function (inData, importUtilities) {
+		var columns = importUtilities.getHeaderData(inData, 0); //array
+		var rows = importUtilities.getRowData(inData, 1); //array of array
+		let form = [];
 
-	if (isTest !== true && !importUtilities.verifyBananaAdvancedVersion())
-		return "";
+		let convertedColumns = [];
 
-	let fieldSeparator = findSeparator(inData);
-	let transactions = Banana.Converter.csvToArray(inData, fieldSeparator, '"');
+		convertedColumns = this.convertHeaderIt(columns);
 
-	//Banana.Ui.showText(JSON.stringify(transactions));
+		//Load the form with data taken from the array. Create objects
+		if (convertedColumns.length > 0) {
+			importUtilities.loadForm(form, convertedColumns, rows);
+			return form;
+		}
 
-	// Format 1
-	let format1 = new UnicreditFormat1();
-	let transactionsData = format1.getFormattedData(transactions, importUtilities);
-	if (format1.match(transactionsData)) {
-		transactions = format1.convert(transactionsData);
-		return Banana.Converter.arrayToTsv(transactions);
+		return [];
 	}
 
-	importUtilities.getUnknownFormatError();
+	this.convertHeaderIt = function (columns) {
+		let convertedColumns = [];
 
-	return "";
+		for (var i = 0; i < columns.length; i++) {
+			switch (columns[i]) {
+				case "Data Registrazione":
+					convertedColumns[i] = "Date";
+					break;
+				case "Data valuta":
+					convertedColumns[i] = "DateValue";
+					break;
+				case "Descrizione":
+					convertedColumns[i] = "Description";
+					break;
+				case "Importo (EUR)":
+				case "Importo (CHF)":
+				case "Importo (USD)":
+				case "Importo (GBP)":
+					convertedColumns[i] = "Amount";
+					break;
+				default:
+					break;
+			}
+		}
+
+		if (convertedColumns.indexOf("Date") < 0) {
+			return [];
+		}
+
+		return convertedColumns;
+	}
+
+	/** Return true if the transactions match this format */
+	this.match = function (transactionsData) {
+
+		if (transactionsData.length === 0)
+			return false;
+
+		for (var i = 0; i < transactionsData.length; i++) {
+			var transaction = transactionsData[i];
+
+			var formatMatched = false;
+
+			if (transaction["Date"] && transaction["Date"].length >= 10 &&
+				transaction["Date"].match(/^[0-9]+[\/\.]+[0-9]+[\/\.][0-9]+$/))
+				formatMatched = true;
+			else
+				formatMatched = false;
+
+			if (formatMatched)
+				return true;
+		}
+		return false;
+	}
+
+	/** Convert the transaction to the format to be imported */
+	this.convert = function (rows) {
+		var transactionsToImport = [];
+
+		for (var i = 0; i < rows.length; i++) {
+			if (rows[i]["Date"] && rows[i]["Date"].length >= 10 &&
+				rows[i]["Date"].match(/^[0-9]+[\/\.][0-9]+[\/\.][0-9]+$/))
+				transactionsToImport.push(this.mapTransaction(rows[i]));
+		}
+
+		transactionsToImport = transactionsToImport.reverse();
+
+		// Add header and return
+		var header = [["Date", "DateValue", "Doc", "Description", "Income", "Expenses"]];
+		return header.concat(transactionsToImport);
+	}
+
+	/** Return the transaction converted in the import format */
+	this.mapTransaction = function (element) {
+		var mappedLine = [];
+		let date = element['Date'];
+
+		if (date.indexOf(".") > -1) {
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['Date'], "dd.mm.yyyy"));
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['DateValue'], "dd.mm.yyyy"));
+		} else {
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['Date'], "dd/mm/yyyy"));
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['DateValue'], "dd/mm/yyyy"));
+		}
+		mappedLine.push(""); // Doc is empty for now
+		let cleanDescription = this.removeMultipleSpaces(element['Description']);
+		mappedLine.push(cleanDescription);
+		let amount = element['Amount'];
+		if (amount.indexOf("-") < 0) {
+			mappedLine.push(Banana.Converter.toInternalNumberFormat(amount, this.decimalSeparator));
+			mappedLine.push("");
+		}
+		else {
+			amount = amount.replace(/-/g, ''); //remove minus sign
+			mappedLine.push("");
+			mappedLine.push(Banana.Converter.toInternalNumberFormat(amount, this.decimalSeparator));
+		}
+
+		return mappedLine;
+	}
+
+	/**
+	 * Clean the description from unwanted characters.
+	 * Use a regex to find blocks of spaces of variable length up to 20 characters.
+	 */
+	this.removeMultipleSpaces = function (description) {
+		if (!description)
+			return "";
+		else
+			return description.replace(/ {2,20}/g, " ");
+	}
+
 }
 
 /**
@@ -259,5 +353,3 @@ function findSeparator(string) {
 
 	return ',';
 }
-
-
