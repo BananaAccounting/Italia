@@ -1,4 +1,4 @@
-// Copyright [2024] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.attestatodonazione.test
 // @api = 1.0
-// @pubdate = 2024-09-27
+// @pubdate = 2025-04-08
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.attestatodonazione.js>
 // @task = app.command
@@ -73,6 +73,7 @@ TestAttestatoDonazioni.prototype.testExtension = function() {
   Test.logger.addComment("****************************************************************************** TEST #1 ******************************************************************************");
   userParam.costcenter = 'S001,S002,S003,S004';
   userParam.minimumAmount = '1.00';
+  userParam.printHeaderAddress = true;
   userParam.address = '';
   userParam.alignleft = false;
   userParam.addressPositionDX = '0';
@@ -86,6 +87,8 @@ TestAttestatoDonazioni.prototype.testExtension = function() {
   userParam.text4 = '';
   userParam.details = true;
   userParam.description = true;
+  userParam.finaltext1 = '';
+  userParam.finaltext2 = '';
   userParam.signature = '';
   userParam.localityAndDate = '';
   userParam.printLogo = '';
@@ -102,6 +105,7 @@ TestAttestatoDonazioni.prototype.testExtension = function() {
   Test.logger.addComment("****************************************************************************** TEST #2 ******************************************************************************");
   userParam.costcenter = '';
   userParam.minimumAmount = '0.00';
+  userParam.printHeaderAddress = true;
   userParam.address = '';
   userParam.alignleft = false;
   userParam.addressPositionDX = '0';
@@ -115,6 +119,8 @@ TestAttestatoDonazioni.prototype.testExtension = function() {
   userParam.text4 = 'Ringraziamo cordialmente.';
   userParam.details = true;
   userParam.description = true;
+  userParam.finaltext1 = '';
+  userParam.finaltext2 = '';
   userParam.signature = 'Pinco Pallino';
   userParam.localityAndDate = 'Milano, dicembre 2021';
   userParam.printLogo = false;

@@ -36,12 +36,6 @@ Carlo Giorgi \\
 Via dei Mille 5 \\
 00199 Roma \\
 \end{longtable}
-  \\
-  \\
-  \\
-  \\
-  \\
-  \\
 Attestato di donazione 2021 \\
   \\
   \\
@@ -80,12 +74,6 @@ Roberto Verdi \\
 Via Fiume 25 \\
 20121 Milano \\
 \end{longtable}
-  \\
-  \\
-  \\
-  \\
-  \\
-  \\
 Attestato di donazione 2021 \\
   \\
   \\
@@ -113,12 +101,6 @@ Mauro Bianchi \\
 Via delle Serre 16 \\
 00199 Roma \\
 \end{longtable}
-  \\
-  \\
-  \\
-  \\
-  \\
-  \\
 Attestato di donazione 2021 \\
   \\
   \\
@@ -155,12 +137,6 @@ Carlo Giorgi \\
 Via dei Mille 5 \\
 00199 Roma \\
 \end{longtable}
-  \\
-  \\
-  \\
-  \\
-  \\
-  \\
 Donazioni \#;S001: 2. Semestre 2021 \\
   \\
   \\
@@ -199,12 +175,6 @@ Mauro Bianchi \\
 Via delle Serre 16 \\
 00199 Roma \\
 \end{longtable}
-  \\
-  \\
-  \\
-  \\
-  \\
-  \\
 Donazioni \#;S003: 2. Semestre 2021 \\
   \\
   \\
@@ -223,6 +193,32 @@ Ringraziamo cordialmente. \\
  & Totale  & EUR  & 200.00  &  & \\
 \end{longtable}
   \\
+  \\
+  \\
+  \\
+  \\
+\begin{longtable}[l]{ l  l }
+Milano, dicembre 2021  & Pinco Pallino \\
+ & Associazione Aiuto agli Anziani \\
+\end{longtable}
+\begin{longtable}[l]{}
+\end{longtable}
+\begin{longtable}[l]{ l }
+Michele Rossi \\
+Via Giacomo Leopardi 2 \\
+20122 Milano \\
+\end{longtable}
+Donazioni \#;S004: 2. Semestre 2021 \\
+  \\
+  \\
+  \\
+Con la presente attestiamo che  Michele Rossi  ha donato alla nostra associazione  EUR 0.00 . \\
+  \\
+Periodo delle donazioni: dal 01.07.2021 al 31.12.2021. \\
+  \\
+Indirizzo: Via Giacomo Leopardi 2, 20122 Milano. \\
+  \\
+Ringraziamo cordialmente. \\
   \\
   \\
   \\

@@ -1,4 +1,4 @@
-// Copyright [2024] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontogestionale.mod.b
 // @api = 1.0
-// @pubdate = 2024-01-22
+// @pubdate = 2025-04-22
 // @publisher = Banana.ch SA
 // @description = 2. Rendiconto gestionale
 // @task = app.command
@@ -98,7 +98,7 @@ function stampaReportNormale(banDoc, paramReport, stylesheet) {
    bReport.validateGroups_IncomeExpenses(paramReport.userParam.column, paramReport.reportStructure);
    bReport.loadBalances();
    bReport.calculateTotals(["currentAmount", "previousAmount"]);
-   bReport.formatValues(["currentAmount", "previousAmount"]);
+   bReport.formatValues(["currentAmount", "previousAmount"], paramReport.userParam.excludedecimals);
 
    var report = printRendicontoModB(banDoc, paramReport.userParam, bReport, stylesheet);
 
@@ -1529,6 +1529,18 @@ function convertParam(userParam) {
    convertedParam.data.push(currentParam);
 
    currentParam = {};
+   currentParam.name = 'excludedecimals';
+   currentParam.parentObject = 'report_group';
+   currentParam.title = 'Arrotonda gli importi all’intero (senza cifre decimali)';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.excludedecimals ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+    userParam.excludedecimals = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
    currentParam.name = 'finalnotes';
    currentParam.parentObject = 'report_group';
    currentParam.title = 'Note finali';
@@ -1601,6 +1613,7 @@ function initUserParam() {
    userParam.column = 'Gr1';
    userParam.printcolumn = true;
    userParam.printcostifigurativi = false;
+   userParam.excludedecimals = false;
    userParam.finalnotes = '';
    userParam.colorheadertable = '#337ab7';
    userParam.stampareportcontrollo = false;

@@ -1,4 +1,10 @@
 # Cronologia modifiche
+### 2025-04-22
+* Rendiconto patrimoniale, rendiconto gestionale, rendiconto cassa
+  * Aggiunto parametro per poter arrotondare gli importi all'intero (senza cifre decimali).  
+* Attestato donazioni
+  * Aggiunto parametri per inserimento testo finale.  
+  * Aggiunto parametro per includere/escludere l'indirzzo nell'intestazione.
 ### 2022-10-25
 * Rendiconto patrimoniale, rendiconto gestionale, rendiconto cassa
   * Aggiunta la stampa del report di controllo con i dettagli dei movimenti per ogni voce dei rendiconti.
@@ -16,4 +22,4 @@
 * 5 per mille
   * Novità: Implementazione nuovi rendiconti Mod.A e Mod.B secondo le nuove disposizioni del 30 settembre 2021.
 * Generale
-   * Controllo validità dei gruppi Gr1/Gr nei rendiconti.  
+  * Controllo validità dei gruppi Gr1/Gr nei rendiconti.  
