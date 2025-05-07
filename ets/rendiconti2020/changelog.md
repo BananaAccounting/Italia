@@ -1,5 +1,6 @@
 # Cronologia modifiche
 ### 2025-05-07
+* Stato patrimoniale: aggiunto messaggio di avviso quando si utilizza un modello non adatto.
 * Rendiconto gestionale: aggiunto messaggio di avviso quando si utilizza un modello per il rendiconto cassa.  
 * Rendiconto cassa: aggiunto messaggio di avviso quando si utilizza un modello per il rendiconto gestionale.  
 ### 2025-04-22
