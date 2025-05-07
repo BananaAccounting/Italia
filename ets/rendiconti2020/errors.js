@@ -30,6 +30,7 @@ var ID_ERR_ACCANTONAMENTO_5XMILLE = "ID_ERR_ACCANTONAMENTO_5XMILLE";
 var ID_ERR_CODICI_GR1_5XMILLE = "ID_ERR_CODICI_GR1_5XMILLE";
 var ID_ERR_FILE_SBAGLIATO_RENDICONTO_CASSA = "ID_ERR_FILE_SBAGLIATO_RENDICONTO_CASSA";
 var ID_ERR_FILE_SBAGLIATO_RENDICONTO_GESTIONALE = "ID_ERR_FILE_SBAGLIATO_RENDICONTO_GESTIONALE";
+var ID_ERR_FILE_SBAGLIATO_STATO_PATRIMONIALE = "ID_ERR_FILE_SBAGLIATO_STATO_PATRIMONIALE";
 
 /**
  * return the text error message according to error id
@@ -78,6 +79,9 @@ function getErrorMessage(errorId) {
 
         case ID_ERR_FILE_SBAGLIATO_RENDICONTO_GESTIONALE:
             return "Attenzione: Il piano dei conti di questo file non è strutturato per generare il Rendiconto Gestionale.\nÈ necessario utilizzare un modello adatto a questo scopo.";
+
+        case ID_ERR_FILE_SBAGLIATO_STATO_PATRIMONIALE:
+            return "Attenzione: Il piano dei conti di questo file non è strutturato per generare lo Stato Patrimoniale.\nÈ necessario utilizzare un modello adatto a questo scopo.";
     }
     return "";
 }

@@ -99,6 +99,7 @@ function stampaReportNormale(banDoc, paramReport, stylesheet) {
 
    var bReport = new BReport(banDoc, paramReport);
    bReport.validateGroups(paramReport.userParam.column);
+   bReport.validateGroups_RendicontoPatrimoniale(paramReport.userParam.column);
    bReport.loadBalances();
    bReport.calculateTotals(["currentAmount", "previousAmount"]);
    bReport.formatValues(["currentAmount", "previousAmount"], paramReport.userParam.excludedecimals);
@@ -115,6 +116,7 @@ function stampaReportControllo(banDoc, paramReport) {
    
    var bReportControllo = new BReportControllo(banDoc, paramReport);
    bReportControllo.validateGroups(paramReport.userParam.column);
+   bReportControllo.validateGroups_RendicontoPatrimoniale(paramReport.userParam.column);
    bReportControllo.loadBalances();
    bReportControllo.calculateTotals(["currentAmount", "previousAmount"]);
    bReportControllo.formatValues(["currentAmount", "previousAmount"]);

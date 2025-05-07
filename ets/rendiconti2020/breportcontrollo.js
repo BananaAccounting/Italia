@@ -503,6 +503,34 @@ var BReportControllo = class JsClass {
    }
 
    /**
+    * Checks that user defined groups in the given grColumn in Accounts table contains Liabilties groups that start with "P" (Passivi).
+    * Checks Assets/Liabilties.
+    * Used for "Stato Patrominiale"
+    */
+   validateGroups_RendicontoPatrimoniale(grColumn) {
+
+      //Create a list with all the used Gr1
+      var grList = [];
+      for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
+         var tRow = this.banDoc.table('Accounts').row(i);
+         var account = tRow.value('Account');
+         var gr = tRow.value(grColumn);
+         if (gr && account && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
+            grList.push(gr);
+         }
+      }
+
+      //Check if at least one Gr1 of the list begins with "P".
+      //Gr1 that begin with P are for Liabilites accounts (Passivi).
+      //If no Liabilites accounts are present, the template is not suitable for the print of Stato Patrimoniale, so we show a message.
+      var hasElementWithP = grList.some(i => i.startsWith("P"));
+      if (!hasElementWithP) {
+         var msg = getErrorMessage(ID_ERR_FILE_SBAGLIATO_STATO_PATRIMONIALE);
+         this.banDoc.addMessage(msg);
+      }
+   }
+
+   /**
     * Entries preceded by Arabic numbers or lower case letters
     * with zero amounts for two consecutive exercises, can be excluded from the print
     */
