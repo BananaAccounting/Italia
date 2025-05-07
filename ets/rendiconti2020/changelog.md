@@ -1,4 +1,7 @@
 # Cronologia modifiche
+### 2025-05-07
+* Rendiconto gestionale: aggiunto messaggio di avviso quando si utilizza un modello per il rendiconto cassa.  
+* Rendiconto cassa: aggiunto messaggio di avviso quando si utilizza un modello per il rendiconto gestionale.  
 ### 2025-04-22
 * Rendiconto patrimoniale, rendiconto gestionale, rendiconto cassa
   * Aggiunto parametro per poter arrotondare gli importi all'intero (senza cifre decimali).  

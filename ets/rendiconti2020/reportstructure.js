@@ -734,7 +734,7 @@ function createReportStructureRendicontoGestionale() {
 	reportStructure.push({"id":"RG", "type":"total", "indent":"", "description":"Totale", "sum":"RG1;RG2"});
 	reportStructure.push({"id":"RG-CG", "type":"total", "indent":"", "description":"Totale", "sum":"RG;-CG"}); //not used
 
-	/* USTI SOLO PER IL CONTROLLO CODICI */
+	/* USATI SOLO PER IL CONTROLLO CODICI */
 	reportStructure.push({"id":"CF1", "type":"group", "description":""});
 	reportStructure.push({"id":"CF2", "type":"group", "description":""});
 	reportStructure.push({"id":"CF3", "type":"group", "description":""});

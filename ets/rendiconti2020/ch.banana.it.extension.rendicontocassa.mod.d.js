@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2025-04-22
+// @pubdate = 2025-05-07
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -95,6 +95,7 @@ function stampaReportNormale(banDoc, paramReport, stylesheet) {
 
    var bReport = new BReport(banDoc, paramReport);
    bReport.validateGroups_IncomeExpenses(paramReport.userParam.column, paramReport.reportStructure);
+   bReport.validateGroups_RendicontoCassa(paramReport.userParam.column);
    bReport.loadBalances();
    bReport.calculateTotals(["currentAmount", "previousAmount"]);
    bReport.formatValues(["currentAmount", "previousAmount"], paramReport.userParam.excludedecimals);
@@ -110,6 +111,7 @@ function stampaReportControllo(banDoc, paramReport) {
    
    var bReportControllo = new BReportControllo(banDoc, paramReport);
    bReportControllo.validateGroups_IncomeExpenses(paramReport.userParam.column, paramReport.reportStructure);
+   bReportControllo.validateGroups_RendicontoCassa(paramReport.userParam.column);
    bReportControllo.loadBalances();
    bReportControllo.calculateTotals(["currentAmount", "previousAmount"]);
    bReportControllo.formatValues(["currentAmount", "previousAmount"]);

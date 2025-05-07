@@ -1,4 +1,4 @@
-// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.reportcinquepermille
 // @api = 1.0
-// @pubdate = 2024-10-02
+// @pubdate = 2025-05-07
 // @publisher = Banana.ch SA
 // @description = 4. Report cinque per mille
 // @task = app.command
@@ -1327,7 +1327,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.title = 'Data di percezione (Mod.A)';
 	currentParam.type = 'string';
 	currentParam.value = userParam.dataPercezione ? userParam.dataPercezione : '';
-	currentParam.defaultvalue = '31.12.2021';
+	currentParam.defaultvalue = '31.12.2025';
 	currentParam.readValue = function() {
 	  userParam.dataPercezione = this.value;
 	}
@@ -1483,7 +1483,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.title = "Includi conto di spesa nella descrizione";
 	currentParam.type = 'bool';
 	currentParam.value = userParam.contogiustificativospesa ? true : false;
-	currentParam.defaultvalue = true;
+	currentParam.defaultvalue = false;
 	currentParam.readValue = function() {
 	  userParam.contogiustificativospesa = this.value;
 	}
@@ -1498,7 +1498,7 @@ function initUserParam(segment5XMList) {
    userParam.pec = "";
    userParam.rappresentanteLegale = "Mario Rossi";
    userParam.cfRappresentanteLegale = "1234567890";
-   userParam.dataPercezione = "31.12.2021";
+   userParam.dataPercezione = "31.12.2025";
    userParam.colonnaRaggruppamento = "Gr1";
    userParam.fileAnnoPrecedente = false;
    userParam.segment5XM = segment5XMList;
@@ -1512,7 +1512,7 @@ function initUserParam(segment5XMList) {
    userParam.gruppo44 = "CB7";
    userParam.gruppo45 = "CE7;CG1;CG2";
    userParam.giustificativispese = false;
-   userParam.contogiustificativospesa = true;
+   userParam.contogiustificativospesa = false;
    return userParam;
 }
 

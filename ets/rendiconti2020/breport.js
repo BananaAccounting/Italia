@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2025-04-22 */
+/* Update: 2025-05-07 */
 
 
 
@@ -385,6 +385,114 @@ var BReport = class JsClass {
                }
             }
          }
+      }
+   }
+
+   /**
+    * Checks that user defined groups in the given grColumn are not the group codes for rendiconto gestionale.
+    * Checks Assets/Liabilties and Income/Expenses.
+    * Used for "Rendiconto Cassa"
+    */
+   validateGroups_RendicontoCassa(grColumn) {
+
+      var grGestionaleOnly = ["RA11","CA5","CA5b","CA6","CA8","CA9","CA10","RB7","CB5","CB5b","CB6","CB8","CD5","CE5","CE5b","CE6","CE8","CE9"];
+      var flagGrNotValid = false;
+
+      //Check if groups in Categories table are valid
+      if (this.banDoc.table("Categories")) {
+         for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
+            var tRow = this.banDoc.table('Accounts').row(i);
+            var account = tRow.value('Account');
+            var gr = tRow.value(grColumn);
+            if (gr && account && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
+               if (grGestionaleOnly.includes(gr)) {
+                  flagGrNotValid = true;
+               }
+            }
+         }
+         for (var i = 0; i < this.banDoc.table('Categories').rowCount; i++) {
+            var tRow = this.banDoc.table('Categories').row(i);
+            var category = tRow.value('Category');
+            var gr = tRow.value(grColumn);
+            if (gr && category && !category.startsWith(":") && !category.startsWith(".") && !category.startsWith(",") && !category.startsWith(";")) {
+               if (grGestionaleOnly.includes(gr)) {
+                  flagGrNotValid = true;
+               }
+            }
+         }
+      }
+      else {
+         //Check if groups in Accounts table are valid
+         for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
+            var tRow = this.banDoc.table('Accounts').row(i);
+            var account = tRow.value('Account');
+            var gr = tRow.value(grColumn);
+            var bclass = tRow.value('BClass');
+            if (gr && account && bclass && (bclass === '1' || bclass === '2' || bclass === '3' || bclass === '4') && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
+               if (grGestionaleOnly.includes(gr)) {
+                  flagGrNotValid = true;
+               }
+            }
+         } 
+      }
+
+      if (flagGrNotValid) {
+         var msg = getErrorMessage(ID_ERR_FILE_SBAGLIATO_RENDICONTO_CASSA);
+         this.banDoc.addMessage(msg);
+      }
+   }
+
+   /**
+    * Checks that user defined groups in the given grColumn are not the group codes for rendiconto cassa.
+    * Checks Assets/Liabilties and Income/Expenses.
+    * Used for "Rendiconto Gestionale"
+    */
+   validateGroups_RendicontoGestionale(grColumn) {
+
+      var grCassaOnly = ["RF1","RF2","RF3","RF4","CF1","CF2","CF3","CF4","IMRC"];
+      var flagGrNotValid = false;
+
+      //Check if groups in Categories table are valid
+      if (this.banDoc.table("Categories")) {
+         for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
+            var tRow = this.banDoc.table('Accounts').row(i);
+            var account = tRow.value('Account');
+            var gr = tRow.value(grColumn);
+            if (gr && account && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
+               if (grCassaOnly.includes(gr)) {
+                  flagGrNotValid = true;
+               }
+            }
+         }
+         for (var i = 0; i < this.banDoc.table('Categories').rowCount; i++) {
+            var tRow = this.banDoc.table('Categories').row(i);
+            var category = tRow.value('Category');
+            var gr = tRow.value(grColumn);
+            if (gr && category && !category.startsWith(":") && !category.startsWith(".") && !category.startsWith(",") && !category.startsWith(";")) {
+               if (grCassaOnly.includes(gr)) {
+                  flagGrNotValid = true;
+               }
+            }
+         }
+      }
+      else {
+         //Check if groups in Accounts table are valid
+         for (var i = 0; i < this.banDoc.table('Accounts').rowCount; i++) {
+            var tRow = this.banDoc.table('Accounts').row(i);
+            var account = tRow.value('Account');
+            var gr = tRow.value(grColumn);
+            var bclass = tRow.value('BClass');
+            if (gr && account && bclass && (bclass === '1' || bclass === '2' || bclass === '3' || bclass === '4') && !account.startsWith(":") && !account.startsWith(".") && !account.startsWith(",") && !account.startsWith(";")) {
+               if (grCassaOnly.includes(gr)) {
+                  flagGrNotValid = true;
+               }
+            }
+         } 
+      }
+
+      if (flagGrNotValid) {
+         var msg = getErrorMessage(ID_ERR_FILE_SBAGLIATO_RENDICONTO_GESTIONALE);
+         this.banDoc.addMessage(msg);
       }
    }
 

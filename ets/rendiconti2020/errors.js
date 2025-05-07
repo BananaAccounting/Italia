@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2022-04-20 */
+/* Update: 2025-05-07 */
 
 
 var ID_ERR_VERSIONE = "ID_ERR_VERSIONE";
@@ -28,6 +28,8 @@ var ID_ERR_SALDI_APERTURA_PRECEDENTE_DIFFERENTI = "ID_ERR_SALDI_APERTURA_PRECEDE
 var ID_ERR_REGISTRAZIONE_NON_CORRETTA = "ID_ERR_REGISTRAZIONE_NON_CORRETTA";
 var ID_ERR_ACCANTONAMENTO_5XMILLE = "ID_ERR_ACCANTONAMENTO_5XMILLE";
 var ID_ERR_CODICI_GR1_5XMILLE = "ID_ERR_CODICI_GR1_5XMILLE";
+var ID_ERR_FILE_SBAGLIATO_RENDICONTO_CASSA = "ID_ERR_FILE_SBAGLIATO_RENDICONTO_CASSA";
+var ID_ERR_FILE_SBAGLIATO_RENDICONTO_GESTIONALE = "ID_ERR_FILE_SBAGLIATO_RENDICONTO_GESTIONALE";
 
 /**
  * return the text error message according to error id
@@ -70,6 +72,12 @@ function getErrorMessage(errorId) {
 
         case ID_ERR_CODICI_GR1_5XMILLE:
             return "Il codice %CODEGR1 è stato inserito in più gruppi: %GROUPS. Nelle impostazioni ogni codice deve essere presente in un solo gruppo.";
+
+        case ID_ERR_FILE_SBAGLIATO_RENDICONTO_CASSA:
+            return "Attenzione: Il piano dei conti di questo file non è strutturato per generare il Rendiconto per Cassa.\nÈ necessario utilizzare un modello adatto a questo scopo.";
+
+        case ID_ERR_FILE_SBAGLIATO_RENDICONTO_GESTIONALE:
+            return "Attenzione: Il piano dei conti di questo file non è strutturato per generare il Rendiconto Gestionale.\nÈ necessario utilizzare un modello adatto a questo scopo.";
     }
     return "";
 }
