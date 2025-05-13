@@ -1,4 +1,4 @@
-// Copyright [2024] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2024-01-05 */
+/* Update: 2025-05-13 */
 
 
 
@@ -515,7 +515,16 @@ var BReport = class JsClass {
    /**
     * Converts all the amounts to local format for the given list of field
     */
-   formatValues(fields) {
+   formatValues(fields, excludeDecimals) {
+
+      // Default decimals is 2.
+      // With extension parameters it's possible to choose to print without decimals; the amount is rounded to the nearest whole number.
+      // Each extension (rendiconto patrimoniale, rendiconto gestionale, rendiconto cassa) has its own parameter for decimals choice.
+      var decimals = 2;
+      if (excludeDecimals) {
+         decimals = 0;
+      }
+
       for (var i = 0; i < this.reportStructure.length; i++) {
          var valueObj = this.getObject(this.reportStructure[i].id);
 
@@ -524,7 +533,7 @@ var BReport = class JsClass {
             if (!valueObj[fields[j]] || valueObj[fields[j]] === "" || valueObj[fields[j]] === "undefined" || valueObj[fields[j]] == null) {
               valueObj[fields[j]] = "0";
             }
-            valueObj[fields[j]+"Formatted"] = Banana.Converter.toLocaleNumberFormat(valueObj[fields[j]]);
+            valueObj[fields[j]+"Formatted"] = Banana.Converter.toLocaleNumberFormat(valueObj[fields[j]], decimals);
          }
       }
    }

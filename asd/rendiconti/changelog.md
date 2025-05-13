@@ -1,4 +1,7 @@
 # Cronologia modifiche  
+### 2025-05-13
+* Rendiconto patrimoniale, rendiconto gestionale, rendiconto cassa
+  * Aggiunto opzione per arrotondare gli importi all'intero (senza cifre decimali).  
 ### 2024-02-13
 * È ora possibile provare liberamente il rendiconto per cassa fino a 70 registrazioni.  
 * Il rendiconto per cassa ora è utilizzabile unicamente con la contabilità entrate/uscite e con il cash manager.  

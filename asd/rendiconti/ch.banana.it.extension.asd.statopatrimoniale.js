@@ -1,4 +1,4 @@
-// Copyright [2024] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.asd.statopatrimoniale
 // @api = 1.0
-// @pubdate = 2024-01-05
+// @pubdate = 2025-05-13
 // @publisher = Banana.ch SA
 // @description = 1. Stato patrimoniale ASD
 // @task = app.command
@@ -101,7 +101,7 @@ function stampaReportNormale(banDoc, paramReport, stylesheet) {
    bReport.validateGroups(paramReport.userParam.column);
    bReport.loadBalances();
    bReport.calculateTotals(["currentAmount", "previousAmount"]);
-   bReport.formatValues(["currentAmount", "previousAmount"]);
+   bReport.formatValues(["currentAmount", "previousAmount"], paramReport.userParam.excludedecimals);
    bReport.excludeEntries();
 
    var report = printRendicontoModA(banDoc, paramReport.userParam, bReport, stylesheet);
@@ -1028,6 +1028,18 @@ function convertParam(userParam) {
    convertedParam.data.push(currentParam);
 
    currentParam = {};
+   currentParam.name = 'excludedecimals';
+   currentParam.parentObject = 'report_group';
+   currentParam.title = 'Arrotonda gli importi all’intero (senza cifre decimali)';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.excludedecimals ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.readValue = function() {
+    userParam.excludedecimals = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
    currentParam.name = 'reportcontrollo';
    currentParam.title = 'Dettagli movimenti';
    currentParam.type = 'string';
@@ -1068,6 +1080,7 @@ function initUserParam() {
    userParam.compattastampa = false;
    userParam.stampa = true;
    userParam.finalnotes = '';
+   userParam.excludedecimals = false;
    userParam.stampareportcontrollo = false;
    return userParam;
 }
