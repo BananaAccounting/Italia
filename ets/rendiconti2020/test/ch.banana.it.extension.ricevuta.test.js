@@ -14,52 +14,52 @@
 //
 
 
-// @id = ch.banana.it.extension.attestatodonazione.test
+// @id = ch.banana.it.extension.ricevuta.test
 // @api = 1.0
 // @pubdate = 2025-05-14
 // @publisher = Banana.ch SA
-// @description = <TEST ch.banana.it.extension.attestatodonazione.js>
+// @description = <TEST ch.banana.it.extension.ricevuta.js>
 // @task = app.command
 // @doctype = *.*
 // @docproperties = 
 // @outputformat = none
 // @inputdataform = none
-// @includejs = ../ch.banana.it.extension.attestatodonazione.js
+// @includejs = ../ch.banana.it.extension.ricevuta.js
 // @timeout = -1
 
 
 
 
 // Register test case to be executed
-Test.registerTestCase(new TestAttestatoDonazioni());
+Test.registerTestCase(new TestRicevuta());
 
 // Here we define the class, the name of the class is not important
-function TestAttestatoDonazioni() {
+function TestRicevuta() {
 
 }
 
 // This method will be called at the beginning of the test case
-TestAttestatoDonazioni.prototype.initTestCase = function() {
+TestRicevuta.prototype.initTestCase = function() {
 
 }
 
 // This method will be called at the end of the test case
-TestAttestatoDonazioni.prototype.cleanupTestCase = function() {
+TestRicevuta.prototype.cleanupTestCase = function() {
 
 }
 
 // This method will be called before every test method is executed
-TestAttestatoDonazioni.prototype.init = function() {
+TestRicevuta.prototype.init = function() {
 
 }
 
 // This method will be called after every test method is executed
-TestAttestatoDonazioni.prototype.cleanup = function() {
+TestRicevuta.prototype.cleanup = function() {
 
 }
 
 // Generate the expected (correct) file
-TestAttestatoDonazioni.prototype.testExtension = function() {
+TestRicevuta.prototype.testExtension = function() {
 
   //Test file contabilità semplice
   var file = "file:script/../test/testcases/ets_semplice_test_attestato_donazioni.ac2";
@@ -136,7 +136,7 @@ TestAttestatoDonazioni.prototype.testExtension = function() {
 }
 
 //Function that create the report for the test
-TestAttestatoDonazioni.prototype.report_test = function(banDoc, startDate, endDate, userParam, reportName) {
+TestRicevuta.prototype.report_test = function(banDoc, startDate, endDate, userParam, reportName) {
   var docs = [];
   var styles = [];
   userParam.selectionStartDate = startDate;

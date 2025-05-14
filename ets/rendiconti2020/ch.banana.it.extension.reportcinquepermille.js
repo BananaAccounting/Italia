@@ -14,7 +14,7 @@
 //
 // @id = it.banana.app.reportcinquepermille
 // @api = 1.0
-// @pubdate = 2025-05-07
+// @pubdate = 2025-05-14
 // @publisher = Banana.ch SA
 // @description = 4. Report cinque per mille
 // @task = app.command
@@ -1232,6 +1232,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'string';
 	currentParam.value = userParam.provincia ? userParam.provincia : '';
 	currentParam.defaultvalue = "";
+	currentParam.tooltip = "Inserisci la Provincia";
 	currentParam.readValue = function() {
 	  userParam.provincia = this.value;
 	}
@@ -1244,6 +1245,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'string';
 	currentParam.value = userParam.pec ? userParam.pec : '';
 	currentParam.defaultvalue = "";
+	currentParam.tooltip = "Inserisci il PEC";
 	currentParam.readValue = function() {
 	  userParam.pec = this.value;
 	}
@@ -1256,6 +1258,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'string';
 	currentParam.value = userParam.rappresentanteLegale ? userParam.rappresentanteLegale : '';
 	currentParam.defaultvalue = 'Mario Rossi';
+	currentParam.tooltip = "Inserisci il nome del rappresentante legale";
 	currentParam.readValue = function() {
 	  userParam.rappresentanteLegale = this.value;
 	}
@@ -1268,6 +1271,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'string';
 	currentParam.value = userParam.cfRappresentanteLegale ? userParam.cfRappresentanteLegale : '';
 	currentParam.defaultvalue = '';
+	currentParam.tooltip = "Inserisci il codice fiscale del rappresentante legale";
 	currentParam.readValue = function() {
 	  userParam.cfRappresentanteLegale = this.value;
 	}
@@ -1292,6 +1296,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'string';
 	currentParam.value = userParam.colonnaRaggruppamento ? userParam.colonnaRaggruppamento : 'Gr1';
 	currentParam.defaultvalue = 'Gr1';
+	currentParam.tooltip = "Inserisci il nome XML della colonna utilizzata per indicare i codici necessari da usare per ottenere il report";
 	currentParam.readValue = function() {
 	  userParam.colonnaRaggruppamento = this.value;
 	}
@@ -1304,6 +1309,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'bool';
 	currentParam.value = userParam.fileAnnoPrecedente ? true : false;
 	currentParam.defaultvalue = false;
+	currentParam.tooltip = "Includi il file dell'anno precedente se le entrate o spese sono anche nel file contabile dell'anno precedente";
 	currentParam.readValue = function() {
 	  userParam.fileAnnoPrecedente = this.value;
 	}
@@ -1316,18 +1322,32 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'combobox';
 	currentParam.items = segment5XMList;
 	currentParam.value = userParam.segment5XM ? userParam.segment5XM : '';
+	currentParam.tooltip = "Seleziona il segmento del 5 per mille";
 	currentParam.readValue = function () {
 		userParam.segment5XM = this.value;
 	}
 	convertedParam.data.push(currentParam);
 
 	currentParam = {};
-	currentParam.name = 'dataPercezione';
+	currentParam.name = 'modA';
 	currentParam.parentObject = 'rendiconto';
-	currentParam.title = 'Data di percezione (Mod.A)';
+	currentParam.title = 'Rendiconto per il contributo Mod.A';
+	currentParam.type = 'string';
+	currentParam.value = '';
+	currentParam.editable = false;
+	currentParam.readValue = function() {
+		userParam.anagrafica = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
+	currentParam = {};
+	currentParam.name = 'dataPercezione';
+	currentParam.parentObject = 'modA';
+	currentParam.title = 'Data di percezione';
 	currentParam.type = 'string';
 	currentParam.value = userParam.dataPercezione ? userParam.dataPercezione : '';
 	currentParam.defaultvalue = '31.12.2025';
+	currentParam.tooltip = "Inserisci la data di percezione del contributo per il rendiconto Mod.A";
 	currentParam.readValue = function() {
 	  userParam.dataPercezione = this.value;
 	}
@@ -1335,23 +1355,37 @@ function convertParam(userParam, segment5XMList) {
 
 	currentParam = {};
 	currentParam.name = 'calcolaAccantonamento';
-	currentParam.parentObject = 'rendiconto';
-	currentParam.title = 'Calcolo automatico accantonamento (Mod.A)';
+	currentParam.parentObject = 'modA';
+	currentParam.title = 'Calcolo automatico accantonamento';
 	currentParam.type = 'bool';
 	currentParam.value = userParam.calcolaAccantonamento ? true : false;
 	currentParam.defaultvalue = false;
+	currentParam.tooltip = "L’importo dell’accantonamento del Mod.A può essere calcolato automaticamente come differenza tra l’importo percepito e i costi totali, se non viene registrato contabilmente";
 	currentParam.readValue = function() {
 	  userParam.calcolaAccantonamento = this.value;
 	}
 	convertedParam.data.push(currentParam);
 
 	currentParam = {};
-	currentParam.name = 'tipoRendicontoModB';
+	currentParam.name = 'modB';
 	currentParam.parentObject = 'rendiconto';
-	currentParam.title = "Tipo Rendiconto dell'accantonamento (Mod.B)";
+	currentParam.title = "Rendiconto per l'accancontamento Mod.B";
+	currentParam.type = 'string';
+	currentParam.value = '';
+	currentParam.editable = false;
+	currentParam.readValue = function() {
+		userParam.anagrafica = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
+	currentParam = {};
+	currentParam.name = 'tipoRendicontoModB';
+	currentParam.parentObject = 'modB';
+	currentParam.title = "Tipo Rendiconto dell'accantonamento";
 	currentParam.type = 'bool';
 	currentParam.value = userParam.tipoRendicontoModB ? true : false;
 	currentParam.defaultvalue = false;
+	currentParam.tooltip = "Crea il rendiconto dell'accantonamento Mod.B";
 	currentParam.readValue = function() {
 	  userParam.tipoRendicontoModB = this.value;
 	}
@@ -1359,11 +1393,12 @@ function convertParam(userParam, segment5XMList) {
 
 	currentParam = {};
 	currentParam.name = 'importoAccantonamento';
-	currentParam.parentObject = 'rendiconto';
-	currentParam.title = 'Importo accantonamento (Mod.B)';
+	currentParam.parentObject = 'modB';
+	currentParam.title = 'Importo accantonamento';
 	currentParam.type = 'string';
 	currentParam.value = userParam.importoAccantonamento ? userParam.importoAccantonamento : '';
 	currentParam.defaultvalue = '';
+	currentParam.tooltip = "Inserisci l'importo accantonato per il rendiconto dell'accantonamento Mod.B";
 	currentParam.readValue = function() {
 	  userParam.importoAccantonamento = this.value;
 	}
@@ -1376,6 +1411,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'string';
 	currentParam.value = userParam.dataDocumento ? userParam.dataDocumento : '';
 	currentParam.defaultvalue = '';
+	currentParam.tooltip = "Inserisci la data del documento";
 	currentParam.readValue = function() {
 	  userParam.dataDocumento = this.value;
 	}
@@ -1400,6 +1436,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'string';
 	currentParam.value = userParam.gruppo41 ? userParam.gruppo41 : '';
 	currentParam.defaultvalue = 'CB1;CE1';
+	currentParam.tooltip = "Inserisci i codici Gr1 da includere nel sottogruppo 4.1";
 	currentParam.readValue = function() {
 	  userParam.gruppo41 = this.value;
 	}
@@ -1412,6 +1449,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'string';
 	currentParam.value = userParam.gruppo42 ? userParam.gruppo42 : '';
 	currentParam.defaultvalue = 'CB2';
+	currentParam.tooltip = "Inserisci i codici Gr1 da includere nel sottogruppo 4.2";
 	currentParam.readValue = function() {
 	  userParam.gruppo42 = this.value;
 	}
@@ -1424,6 +1462,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'string';
 	currentParam.value = userParam.gruppo43 ? userParam.gruppo43 : '';
 	currentParam.defaultvalue = 'CE2';
+	currentParam.tooltip = "Inserisci i codici Gr1 da includere nel sottogruppo 4.3";
 	currentParam.readValue = function() {
 	  userParam.gruppo43 = this.value;
 	}
@@ -1436,6 +1475,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'string';
 	currentParam.value = userParam.gruppo44 ? userParam.gruppo44 : '';
 	currentParam.defaultvalue = 'CB7';
+	currentParam.tooltip = "Inserisci i codici Gr1 da includere nel sottogruppo 4.4";
 	currentParam.readValue = function() {
 	  userParam.gruppo44 = this.value;
 	}
@@ -1448,6 +1488,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'string';
 	currentParam.value = userParam.gruppo45 ? userParam.gruppo45 : '';
 	currentParam.defaultvalue = 'CE7;CG1;CG2';
+	currentParam.tooltip = "Inserisci i codici Gr1 da includere nel sottogruppo 4.5";
 	currentParam.readValue = function() {
 	  userParam.gruppo45 = this.value;
 	}
@@ -1471,7 +1512,8 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.title = "Includi elenco giustificativi spese";
 	currentParam.type = 'bool';
 	currentParam.value = userParam.giustificativispese ? true : false;
-	currentParam.defaultvalue = false;
+	currentParam.defaultvalue = true;
+	currentParam.tooltip = "Includi l'elenco dei giustificativi di spesa con i dettagli delle registrazioni";
 	currentParam.readValue = function() {
 	  userParam.giustificativispese = this.value;
 	}
@@ -1484,6 +1526,7 @@ function convertParam(userParam, segment5XMList) {
 	currentParam.type = 'bool';
 	currentParam.value = userParam.contogiustificativospesa ? true : false;
 	currentParam.defaultvalue = false;
+	currentParam.tooltip = "Includi il conto della spesa nel dettaglio della registrazione";
 	currentParam.readValue = function() {
 	  userParam.contogiustificativospesa = this.value;
 	}
@@ -1511,7 +1554,7 @@ function initUserParam(segment5XMList) {
    userParam.gruppo43 = "CE2";
    userParam.gruppo44 = "CB7";
    userParam.gruppo45 = "CE7;CG1;CG2";
-   userParam.giustificativispese = false;
+   userParam.giustificativispese = true;
    userParam.contogiustificativospesa = false;
    return userParam;
 }

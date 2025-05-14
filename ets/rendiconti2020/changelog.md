@@ -1,4 +1,7 @@
 # Cronologia modifiche
+### 2025-05-14
+* Aggiunto stampa ricevuta per quota sociale.
+* Attestato donazioni: aggiunto salvataggio in pdf separati.
 ### 2025-05-07
 * Stato patrimoniale: aggiunto messaggio di avviso quando si utilizza un modello non adatto.
 * Rendiconto gestionale: aggiunto messaggio di avviso quando si utilizza un modello per il rendiconto cassa.  

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// @id = ch.banana.it.extension.attestatodonazioni.js
+// @id = ch.banana.it.extension.ricevuta.js
 // @api = 1.0
 // @pubdate = 2025-05-14
 // @publisher = Banana.ch SA
-// @description = 6. Attestato di donazione
+// @description = 7. Ricevuta
 // @doctype = 100.*;110.*;130.*
 // @docproperties = 
 // @task = app.command
@@ -25,7 +25,7 @@
 // @timeout = -1
 
 /*
-*   This BananaApp prints a donation statement for all the selected donators and period.
+*   This extension prints a receipt for all the selected donators and period.
 *   Donators can be:
 *   - a single donator (with or without ";") => (i.e. "10001" or  ";10011")
 *   - more donators (with or without ";") separated by "," => (i.e. "10001, ;10011,;10012")
@@ -1623,18 +1623,18 @@ function loadTexts() {
 
     var texts = {};
     
-    texts.reportTitle = "Attestato di donazione";
+    texts.reportTitle = "Ricevuta";
     texts.dialogTitle = "Impostazioni";
-    texts.title = "Attestato di donazione <Period>";
-    texts.warningMessage = "Conto donatore non valido";
-    texts.accountNumber = "Indicare il conto del donatore/socio (vuoto = stampa tutti)";
+    texts.title = "Ricevuta <Period>";
+    texts.warningMessage = "Conto socio non valido";
+    texts.accountNumber = "Indicare il conto del socio (vuoto = stampa tutti)";
     texts.accountDonation = "Indicare il conto/categoria delle registrazioni da includere (vuoto = tutte le registrazioni)";
     texts.localityAndDate = "Località e data";
     texts.signature = "Firma";
     texts.signature_image = "Firma con immagine";
     texts.signatureImage = "Immagine";
     texts.imageHeight = "Altezza immagine (mm)";
-    texts.memberAccount = "Conto del donatore";
+    texts.memberAccount = "Conto del socio";
     texts.donationDate = "Periodo";
     texts.titleText = "Titolo (opzionale)";
     texts.text1 = "Testo 1 (opzionale)";
@@ -1642,22 +1642,22 @@ function loadTexts() {
     texts.text3 = "Testo 3 (opzionale)";
     texts.text4 = "Testo 4 (opzionale)";
     texts.useDefaultTexts = "Usa i testi standard";
-    texts.multiTransactionText = "Con la presente dichiariamo che **<FirstName> <FamilyName>, <Address>** nel periodo **<StartDate> - <EndDate>** ha donato **<Currency> <Amount>** alla nostra Associazione.";
+    texts.multiTransactionText = "Con la presente dichiariamo che **<FirstName> <FamilyName>, <Address>** nel periodo **<StartDate> - <EndDate>** ha versato **<Currency> <Amount>** alla nostra Associazione.";
     texts.textsGroup = "Testi";
-    texts.details = "Includi dettagli donazioni";
+    texts.details = "Includi dettagli versamenti";
     texts.description = "Includi descrizione";
     texts.finaltext1 = "Testo finale 1 (opzionale)";
     texts.finaltext2 = "Testo finale 2 (opzionale)";
     texts.total = "Totale";
-    texts.minimumAmount = "Importo minimo della donazione";
+    texts.minimumAmount = "Importo minimo dell'entrata";
     texts.styles = "Stili";
     texts.fontFamily = "Tipo di carattere";
     texts.fontSize = "Dimensione carattere";
     texts.printHeaderLogo = "Includi logo";
     texts.headerLogoName = "Nome personalizzazione logo";
-    texts.info = "Informazioni donatore";
+    texts.info = "Informazioni socio";
     texts.accountnumberRef = "Includi conto";
-    texts.accountnumber = "Conto donatore";
+    texts.accountnumber = "Conto socio";
     texts.fiscalnumberRef = "Includi codice fiscale";
     texts.fiscalnumber = "Codice fiscale";
     texts.vatnumberRef = "Includi numero IVA";

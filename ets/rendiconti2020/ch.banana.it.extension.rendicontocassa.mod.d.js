@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2025-05-07
+// @pubdate = 2025-05-14
 // @publisher = Banana.ch SA
 // @description = 3. Rendiconto per cassa
 // @task = app.command
@@ -1810,6 +1810,7 @@ function convertParam(userParam) {
    currentParam.type = 'bool';
    currentParam.value = userParam.logo ? true : false;
    currentParam.defaultvalue = false;
+   currentParam.tooltip = "Includi il logo nell'intestazione della pagina";
    currentParam.readValue = function() {
       userParam.logo = this.value;
    }
@@ -1822,6 +1823,7 @@ function convertParam(userParam) {
    currentParam.type = 'string';
    currentParam.value = userParam.logoname ? userParam.logoname : 'Logo';
    currentParam.defaultvalue = 'Logo';
+   currentParam.tooltip = "Inserisci il nome della personalizzazione del logo";
    currentParam.readValue = function() {
      userParam.logoname = this.value;
    }
@@ -1834,6 +1836,7 @@ function convertParam(userParam) {
    currentParam.type = 'bool';
    currentParam.value = userParam.printheader ? true : false;
    currentParam.defaultvalue = false;
+   currentParam.tooltip = "Includi l'indirizzo nell'intestazione della pagina";
    currentParam.readValue = function() {
     userParam.printheader = this.value;
    }
@@ -1846,6 +1849,7 @@ function convertParam(userParam) {
    currentParam.type = 'multilinestring';
    currentParam.value = userParam.headertext ? userParam.headertext : '';
    currentParam.defaultvalue = '';
+   currentParam.tooltip = "Inserisci l'indirizzo o il testo alternativo da utilizzare nell'intestazione della pagina";
    currentParam.readValue = function() {
      userParam.headertext = this.value;
    }
@@ -1869,6 +1873,7 @@ function convertParam(userParam) {
    currentParam.type = 'bool';
    currentParam.value = userParam.printtitle ? true : false;
    currentParam.defaultvalue = true;
+   currentParam.tooltip = "Includi il titolo a inizio pagina utilizzando il testo predefinito";
    currentParam.readValue = function() {
     userParam.printtitle = this.value;
    }
@@ -1881,6 +1886,7 @@ function convertParam(userParam) {
    currentParam.type = 'string';
    currentParam.value = userParam.title ? userParam.title : '';
    currentParam.defaultvalue = '';
+   currentParam.tooltip = "Inserisci il testo alternativo del titolo a inizio pagina";
    currentParam.readValue = function() {
       userParam.title = this.value;
    }
@@ -1893,6 +1899,7 @@ function convertParam(userParam) {
    currentParam.type = 'multilinestring';
    currentParam.value = userParam.textbegin ? userParam.textbegin : '';
    currentParam.defaultvalue = '';
+   currentParam.tooltip = "Inserisci un testo iniziale su più righe dopo il titolo";
    currentParam.readValue = function() {
       userParam.textbegin = this.value;
    }
@@ -1916,6 +1923,7 @@ function convertParam(userParam) {
    currentParam.type = 'string';
    currentParam.value = userParam.column ? userParam.column : 'Gr1';
    currentParam.defaultvalue = 'Gr1';
+   currentParam.tooltip = "Inserisci il nome XML della colonna utilizzata per indicare i codici necessari da usare per ottenere il rendiconto";
    currentParam.readValue = function() {
       userParam.column = this.value;
    }
@@ -1928,6 +1936,7 @@ function convertParam(userParam) {
    currentParam.type = 'bool';
    currentParam.value = userParam.printcolumn ? true : false;
    currentParam.defaultvalue = true;
+   currentParam.tooltip = "Includi la colonna dei codici di raggruppamento nel rendiconto";
    currentParam.readValue = function() {
       userParam.printcolumn = this.value;
    }
@@ -1940,6 +1949,7 @@ function convertParam(userParam) {
    currentParam.type = 'bool';
    currentParam.value = userParam.insertpagebreak ? true : false;
    currentParam.defaultvalue = false;
+   currentParam.tooltip = "Inserisci un'interruzione pagina subito prima della sezione investimenti e disinvestimenti";
    currentParam.readValue = function() {
     userParam.insertpagebreak = this.value;
    }
@@ -1952,6 +1962,7 @@ function convertParam(userParam) {
    currentParam.type = 'bool';
    currentParam.value = userParam.printcostifigurativi ? true : false;
    currentParam.defaultvalue = false;
+   currentParam.tooltip = "Includi la sezione con i costi e i proventi figurativi alla fine del rendiconto";
    currentParam.readValue = function() {
       userParam.printcostifigurativi = this.value;
    }
@@ -1980,6 +1991,7 @@ function convertParam(userParam) {
       currentParam.type = 'string';
       currentParam.value = userParam.currentbalancecolumn ? userParam.currentbalancecolumn : '';
       currentParam.defaultvalue = '';
+      currentParam.tooltip = "Inserisci il nome XML della colonna per l'anno corrente";
       currentParam.readValue = function() {
         userParam.currentbalancecolumn = this.value;
       }
@@ -1992,6 +2004,7 @@ function convertParam(userParam) {
       currentParam.type = 'string';
       currentParam.value = userParam.previousbalancecolumn ? userParam.previousbalancecolumn : '';
       currentParam.defaultvalue = '';
+      currentParam.tooltip = "Inserisci il nome XML della colonna per l'anno precedente";
       currentParam.readValue = function() {
         userParam.previousbalancecolumn = this.value;
       }
@@ -2009,6 +2022,7 @@ function convertParam(userParam) {
    currentParam.type = 'bool';
    currentParam.value = userParam.excludedecimals ? true : false;
    currentParam.defaultvalue = false;
+   currentParam.tooltip = "Stampa tutti gli importi arrotondandoli all'intero, senza cifre decimali";
    currentParam.readValue = function() {
     userParam.excludedecimals = this.value;
    }
@@ -2021,6 +2035,7 @@ function convertParam(userParam) {
    currentParam.type = 'multilinestring';
    currentParam.value = userParam.finalnotes ? userParam.finalnotes : '';
    currentParam.defaultvalue = '';
+   currentParam.tooltip = "Inserisci un testo finale su più righe in fondo al rendiconto";
    currentParam.readValue = function() {
       userParam.finalnotes = this.value;
    }
@@ -2044,6 +2059,7 @@ function convertParam(userParam) {
    currentParam.type = 'color';
    currentParam.value = userParam.colorheadertable ? userParam.colorheadertable : '#337ab7';
    currentParam.defaultvalue = '#337ab7';
+   currentParam.tooltip = "Seleziona il colore che vuoi utilizzare come sfondo nelle intestazioni delle tabelle";
    currentParam.readValue = function() {
    userParam.colorheadertable = this.value;
    }
@@ -2072,6 +2088,7 @@ function convertParam(userParam) {
        currentParam.type = 'bool';
        currentParam.value = userParam.stampareportcontrollo ? true : false;
        currentParam.defaultvalue = false;
+       currentParam.tooltip = "Crea una stampa di controllo con i dettagli dei movimenti per ogni voce del rendiconto";
        currentParam.readValue = function() {
           userParam.stampareportcontrollo = this.value;
        }
