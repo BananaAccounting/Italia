@@ -1,6 +1,6 @@
-// @id = ch.banana.filter.import.bps
+// @id = ch.banana.italia.import.bps
 // @api = 1.0
-// @pubdate = 2020-06-30
+// @pubdate = 2025-06-10
 // @publisher = Banana.ch SA
 // @description = Banca Popolare di Sondrio (*.csv)
 // @doctype = *
