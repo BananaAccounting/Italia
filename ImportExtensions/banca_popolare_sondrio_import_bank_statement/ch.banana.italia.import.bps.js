@@ -33,6 +33,13 @@ function exec( string) {
       return Banana.Converter.arrayToTsv(transactions);
    }
 
+   // Format 2
+   var format2 = new BPSFormat2();
+   let transactionsData = format2.getFormattedData(transactions, importUtilities);
+   if (format2.match(transactionsData)) {
+      transactions = format2.convert(transactionsData);
+      return Banana.Converter.arrayToTsv(transactions);
+   }
    // Format is unknow, return an error
    return "@Error: Unknow format";
 }
@@ -66,6 +73,137 @@ function findSeparator( string) {
    }
 
    return ',';
+}
+
+function BPSFormat2() {
+
+   /** Return true if the transactions match this format */
+   this.match = function (transactionsData) {
+
+		if (transactionsData.length === 0)
+			return false;
+
+		for (var i = 0; i < transactionsData.length; i++) {
+			var transaction = transactionsData[i];
+
+			var formatMatched = false;
+
+			if (transaction["Date"] && transaction["Date"].length >= 10 &&
+				transaction["Date"].match(/^[0-9]+[\/\.]+[0-9]+[\/\.][0-9]+$/))
+				formatMatched = true;
+			else
+				formatMatched = false;
+
+			if (transaction["DateValue"] && transaction["DateValue"].length >= 10 &&
+				transaction["DateValue"].match(/^[0-9]+[\/\.]+[0-9]+[\/\.][0-9]+$/))
+				formatMatched = true;
+			else
+				formatMatched = false;
+
+			if (formatMatched)
+				return true;
+		}
+		return false;
+	}
+
+   this.convertHeaderIt = function (columns) {
+      let convertedColumns = [];
+   
+      for (var i = 0; i < columns.length; i++) {
+         switch (columns[i]) {
+            case "Data":
+               convertedColumns[i] = "Date";
+               break;
+            case "Valuta":
+               convertedColumns[i] = "DateValue";
+               break;
+            case "Causale":
+               convertedColumns[i] = "Reason";
+               break;
+            case "Descrizione":
+               convertedColumns[i] = "Description";
+               break;
+            case "Importo":
+               convertedColumns[i] = "Amount";
+               break;
+            case "Divisa":
+               convertedColumns[i] = "Currency";
+               break;
+            default:
+               break;
+         }
+      }
+   
+      if (convertedColumns.indexOf("Date") < 0) {
+         return [];
+      }
+   
+      return convertedColumns;
+   }
+
+   this.getFormattedData = function (inData, importUtilities) {
+      var columns = importUtilities.getHeaderData(inData, 0); //array
+      var rows = importUtilities.getRowData(inData, 1); //array of array
+      let form = [];
+   
+      let convertedColumns = [];
+   
+      convertedColumns = this.convertHeaderIt(columns);
+   
+      //Load the form with data taken from the array. Create objects
+      if (convertedColumns.length > 0) {
+         importUtilities.loadForm(form, convertedColumns, rows);
+         return form;
+      }
+   
+      return [];
+   }
+
+   this.convert = function (transactionsData) {
+      var transactionsToImport = [];
+
+      for (var i = 0; i < transactionsData.length; i++) {
+         
+         if (transactionsData[i]["Date"] && transactionsData[i]["Date"].length >= 10 &&
+            (transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{4}$/) || 
+            transactionsData[i]["Date"].match(/^\d{2}\.\d{2}\.\d{4}$/))) {
+            transactionsToImport.push(this.mapTransaction(transactionsData[i]));
+         }
+      }
+
+      // Sort rows by date
+      transactionsToImport = transactionsToImport.reverse();
+
+      // Add header and return
+      var header = [["Date", "DateValue", "Doc", "ExternalReference", "Description", "Income", "Expenses"]];
+      
+      return header.concat(transactionsToImport);
+   }
+
+   this.mapTransaction = function (transaction) {
+      let mappedLine = [];
+
+      mappedLine.push(Banana.Converter.toInternalDateFormat(transaction["Date"], "dd.mm.yyyy"));
+      mappedLine.push(Banana.Converter.toInternalDateFormat(transaction["DateValue"], "dd.mm.yyyy"));
+      mappedLine.push("");
+      mappedLine.push("");
+      mappedLine.push(this.getDescription(transaction));
+      if (transaction["Amount"].substring(0, 1) === "-") {
+         mappedLine.push("");
+         mappedLine.push(Banana.Converter.toInternalNumberFormat(transaction["Amount"].substring(1), '.'));
+      } else if (transaction["Amount"].substring(0, 1) === "+") {
+         mappedLine.push(Banana.Converter.toInternalNumberFormat(transaction["Amount"].substring(1), '.'));
+         mappedLine.push("");
+      }     
+       
+
+       return mappedLine;
+   }
+
+   this.getDescription = function (transaction) {
+      const description = transaction["Description"] + '; ' + transaction["Causale"];
+      return description;
+   }
 }
 
 /**
