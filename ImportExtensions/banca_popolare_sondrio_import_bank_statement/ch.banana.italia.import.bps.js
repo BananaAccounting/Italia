@@ -2,7 +2,11 @@
 // @api = 1.0
 // @pubdate = 2025-06-10
 // @publisher = Banana.ch SA
-// @description = Banca Popolare di Sondrio (*.csv)
+// @description = Banca Popolare di Sondrio - Import account statement .csv (Banana+ Advanced)
+// @description.en = Banca Popolare di Sondrio - Import account statement .csv (Banana+ Advanced)
+// @description.de = Banca Popolare di Sondrio - Bewegungen importieren .csv (Banana+ Advanced)
+// @description.fr = Banca Popolare di Sondrio - Importer mouvements .csv (Banana+ Advanced)
+// @description.it = Banca Popolare di Sondrio - Importa movimenti .csv (Banana+ Advanced)
 // @doctype = *
 // @docproperties =
 // @task = import.transactions
@@ -13,14 +17,17 @@
 // @inputfilefilter.de = Text (*.txt *.csv);;Alle Dateien (*.*)
 // @inputfilefilter.fr = Texte (*.txt *.csv);;Tous (*.*)
 // @inputfilefilter.it = Testo (*.txt *.csv);;Tutti i files (*.*)
+// @includejs = import.utilities.js
 
 /**
  * Parse the data and return the data to be imported as a tab separated file.
  */
-function exec( string) {
+function exec(string, isTest) {
 
-    var applicationSupportIsDetail = Banana.compareVersion &&
-            (Banana.compareVersion(Banana.application.version, "8.0.5") >= 0)
+   var importUtilities = new ImportUtilities(Banana.document);
+
+   if (isTest !== true && !importUtilities.verifyBananaAdvancedVersion())
+		return "";
 
    var fieldSeparator = findSeparator(string);
    var transactions = Banana.Converter.csvToArray(string, fieldSeparator);
@@ -201,7 +208,7 @@ function BPSFormat2() {
    }
 
    this.getDescription = function (transaction) {
-      const description = transaction["Description"] + '; ' + transaction["Causale"];
+      const description = transaction["Description"] + '; ' + transaction["Reason"];
       return description;
    }
 }
