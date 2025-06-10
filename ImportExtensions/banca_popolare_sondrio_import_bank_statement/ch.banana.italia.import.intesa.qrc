@@ -1,0 +1,8 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+        <file>ch.banana.italia.import.bps.js</file>
+        <file>../import.utilities.js</file>
+        <file>ch.banana.italia.import.bps.manifest.json</file>
+    </qresource>
+</RCC>

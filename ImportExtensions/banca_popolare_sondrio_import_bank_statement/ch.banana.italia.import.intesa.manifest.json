@@ -1,0 +1,19 @@
+{
+    "category": "import",
+    "country": "italia",
+    "countryCode": "it",
+    "description": "Banca Popolare di Sondrio - Import account statement .csv (Banana+ Advanced)",
+    "description.en": "Banca Popolare di Sondrio - Import account statement .csv (Banana+ Advanced)",
+    "description.de": "Banca Popolare di Sondrio - Bewegungen importieren .csv (Banana+ Advanced)",
+    "description.fr": "Banca Popolare di Sondrio - Importer mouvements .csv (Banana+ Advanced)",
+    "description.it": "Banca Popolare di Sondrio - Importa movimenti .csv (Banana+ Advanced)",
+    "id": "ch.banana.italia.import.bps",
+    "language": "it",
+    "publisher": "Banana.ch",
+    "title": "Banca Popolare di Sondrio - Import account statement .csv (Banana+ Advanced)",
+    "title.en": "Banca Popolare di Sondrio - Import account statement .csv (Banana+ Advanced)",
+    "title.de": "Banca Popolare di Sondrio - Bewegungen importieren .csv (Banana+ Advanced)",
+    "title.fr": "Banca Popolare di Sondrio - Importer mouvements .csv (Banana+ Advanced)",
+    "title.it": "Banca Popolare di Sondrio - Importa movimenti .csv (Banana+ Advanced)",
+    "version": "1.0"
+}
