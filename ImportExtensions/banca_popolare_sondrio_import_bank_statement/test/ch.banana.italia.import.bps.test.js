@@ -59,8 +59,8 @@ TestImportBPSTrans.prototype.cleanup = function () {
 TestImportBPSTrans.prototype.testImport = function () {
    var fileNameList = [];
 
-   fileNameList.push("file:script/../test/testcases/xls_bancadelpiemonte_example_format1_20241230.csv");
-   fileNameList.push("file:script/../test/testcases/xls_bancadelpiemonte_example_formatCc1_20241230.csv");
+   fileNameList.push("file:script/../test/testcases/csv_bps_example_format1_20150227.csv");
+   fileNameList.push("file:script/../test/testcases/csv_bps_example_format2_20250610.csv");
 
    var parentLogger = this.testLogger;
    this.progressBar.start(fileNameList.length);
