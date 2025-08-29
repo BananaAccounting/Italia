@@ -130,111 +130,111 @@ function Intesa_FormatCc1() {
 	/** Return true if the transactions match this format */
 	this.match = function (transactionsData) {
 		if (transactionsData.length === 0)
-		   return false;
-  
+			return false;
+
 		for (var i = 0; i < transactionsData.length; i++) {
-		   var transaction = transactionsData[i];
-		   var formatMatched = false;
-		   
-		   if (transaction["Date"] && transaction["Date"].length >= 8 &&
-			(transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{2}$/) ||
-			transactionsData[i]["Date"].match(/^\d{2}\.\d{2}\.\d{2}$/)))
-			  formatMatched = true;
-		   else
-			  formatMatched = false;
-  
-		   if (formatMatched)
-			  return true;
+			var transaction = transactionsData[i];
+			var formatMatched = false;
+
+			if (transaction["Date"] && transaction["Date"].length >= 8 &&
+				(transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{2}$/) ||
+					transactionsData[i]["Date"].match(/^\d{2}\.\d{2}\.\d{2}$/)))
+				formatMatched = true;
+			else
+				formatMatched = false;
+
+			if (formatMatched)
+				return true;
 		}
-  
+
 		return false;
-	 }
-  
-	 this.convertHeaderIt = function (columns) {
+	}
+
+	this.convertHeaderIt = function (columns) {
 		let convertedColumns = [];
-	 
+
 		for (var i = 0; i < columns.length; i++) {
-		   switch (columns[i]) {
-			  case "Data contabile":
-				 convertedColumns[i] = "Date";
-				 break;
-			  case "Data operazione":
-				 convertedColumns[i] = "DateValue";
-				 break;
-			  case "Descrizione":
-				 convertedColumns[i] = "Description";
-				 break;
-			  case "Accrediti":
-				 convertedColumns[i] = "Income";
-				 break;
-			  case "Addebiti":
-				 convertedColumns[i] = "Expenses";
-				 break;
-			  default:
-				 break;
-		   }
+			switch (columns[i]) {
+				case "Data contabile":
+					convertedColumns[i] = "Date";
+					break;
+				case "Data operazione":
+					convertedColumns[i] = "DateValue";
+					break;
+				case "Descrizione":
+					convertedColumns[i] = "Description";
+					break;
+				case "Accrediti":
+					convertedColumns[i] = "Income";
+					break;
+				case "Addebiti":
+					convertedColumns[i] = "Expenses";
+					break;
+				default:
+					break;
+			}
 		}
-	 
+
 		if (convertedColumns.indexOf("Date") < 0) {
-		   return [];
+			return [];
 		}
-	 
+
 		return convertedColumns;
-	 }
-  
-	 this.getFormattedData = function (inData, importUtilities) {
+	}
+
+	this.getFormattedData = function (inData, importUtilities) {
 		var columns = importUtilities.getHeaderData(inData, 29); //array
 		var rows = importUtilities.getRowData(inData, 30); //array of array
 		let form = [];
-	 
+
 		let convertedColumns = [];
-	 
+
 		convertedColumns = this.convertHeaderIt(columns);
-	 
+
 		//Load the form with data taken from the array. Create objects
 		if (convertedColumns.length > 0) {
-		   importUtilities.loadForm(form, convertedColumns, rows);
-		   return form;
+			importUtilities.loadForm(form, convertedColumns, rows);
+			return form;
 		}
-	 
+
 		return [];
-	 }
-  
-	 this.convert = function (transactionsData) {
+	}
+
+	this.convert = function (transactionsData) {
 		var transactionsToImport = [];
-  
+
 		for (var i = 0; i < transactionsData.length; i++) {
-		   
-		   if (transactionsData[i]["Date"] && transactionsData[i]["Date"].length >= 8 &&
-			  (transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{2}$/) ||
-			  transactionsData[i]["Date"].match(/^\d{2}\.\d{2}\.\d{2}$/))) {
-			  transactionsToImport.push(this.mapTransaction(transactionsData[i]));
-		   }
+
+			if (transactionsData[i]["Date"] && transactionsData[i]["Date"].length >= 8 &&
+				(transactionsData[i]["Date"].match(/^\d{2}\/\d{2}\/\d{2}$/) ||
+					transactionsData[i]["Date"].match(/^\d{2}\.\d{2}\.\d{2}$/))) {
+				transactionsToImport.push(this.mapTransaction(transactionsData[i]));
+			}
 		}
-  
+
 		// Sort rows by date
 		transactionsToImport = transactionsToImport.reverse();
-  
+
 		// Add header and return
 		var header = [["Date", "DateValue", "Doc", "ExternalReference", "Description", "Income", "Expenses"]];
-		
+
 		return header.concat(transactionsToImport);
-	 }
-  
-	 this.mapTransaction = function (transaction) {
-		 let mappedLine = [];
-	 
-		 mappedLine.push(Banana.Converter.toInternalDateFormat(transaction["Date"], "dd.mm.yyyy"));
-		 mappedLine.push(Banana.Converter.toInternalDateFormat(transaction["DateValue"], "dd.mm.yyyy"));
-		 mappedLine.push("");
-		 mappedLine.push("");
-		 mappedLine.push(transaction["Description"]);
-		 mappedLine.push(Banana.Converter.toInternalNumberFormat(transaction["Income"], '.'));
-		 mappedLine.push(Banana.Converter.toInternalNumberFormat(transaction["Expenses"], '.'));       
-		 
-  
-		 return mappedLine;
-	 }
+	}
+
+	this.mapTransaction = function (transaction) {
+		let mappedLine = [];
+
+		mappedLine.push(Banana.Converter.toInternalDateFormat(transaction["Date"], "dd.mm.yyyy"));
+		mappedLine.push(Banana.Converter.toInternalDateFormat(transaction["DateValue"], "dd.mm.yyyy"));
+		mappedLine.push("");
+		mappedLine.push("");
+		mappedLine.push(transaction["Description"]);
+		mappedLine.push(Banana.Converter.toInternalNumberFormat(transaction["Income"], '.'));
+		mappedLine.push(Banana.Converter.toInternalNumberFormat(transaction["Expenses"], '.'));
+
+
+		return mappedLine;
+	}
 }
 
 /** Format 2
@@ -405,7 +405,7 @@ function Intesa_Format2() {
 		transactionsToImport = transactionsToImport.reverse();
 
 		// Add header and return
-		var header = [["Date", "DateValue", "Doc", "Description", "Income", "Expenses", "Notes"]];
+		var header = [["Date", "DateValue", "Doc", "Description", "Income", "Expenses"]];
 		return header.concat(transactionsToImport);
 	}
 
@@ -421,15 +421,26 @@ function Intesa_Format2() {
 			mappedLine.push(Banana.Converter.toInternalDateFormat(element['DateValue'], "dd/mm/yy"));
 		}
 		mappedLine.push(""); // Doc is empty for now
-		let tidyDescr = element['Description'].replace(/[\\"\r\n]/g, " "); //remove new line && new row characters and others useless characters.
-		mappedLine.push(Banana.Converter.stringToCamelCase(tidyDescr));
+		mappedLine.push(Banana.Converter.stringToCamelCase(this.getCompleteDescription(element)));
 		mappedLine.push(Banana.Converter.toInternalNumberFormat(element['Income'], this.decimalSeparator));
 		let expAmount = element['Expenses'].replace(/-/g, '');
 		mappedLine.push(Banana.Converter.toInternalNumberFormat(expAmount, this.decimalSeparator));
-		let tidyNotes = element['Notes'].replace(/[\\"\r\n]/g, " ");
-		mappedLine.push(tidyNotes);
 
 		return mappedLine;
+	}
+
+	this.getCompleteDescription = function (element) {
+		const tidyDescr = element['Description'].replace(/[\\"\r\n]/g, " ");
+		const tidyNotes = element['Notes'].replace(/[\\"\r\n]/g, " ");
+		let completeDescription = "";
+		if (tidyDescr.length > 0)
+			completeDescription = tidyDescr;
+		if (tidyNotes.length > 0) {
+			if (completeDescription.length > 0)
+				completeDescription += ", ";
+			completeDescription += tidyNotes;
+		}
+		return completeDescription;
 	}
 }
 
