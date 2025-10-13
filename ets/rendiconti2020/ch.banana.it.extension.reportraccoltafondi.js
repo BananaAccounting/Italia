@@ -1,4 +1,4 @@
-// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.reportraccoltafondi
 // @api = 1.0
-// @pubdate = 2021-03-01
+// @pubdate = 2025-10-13
 // @publisher = Banana.ch SA
 // @description = 5. Report raccolta fondi
 // @task = app.command
@@ -26,275 +26,362 @@
 // @includejs = errors.js
 
 
-var BAN_VERSION = "10.0.1";
-var BAN_EXPM_VERSION = "";
-
-
-
 /**
  * Report raccolta fondi.
  *
- * 1. Prende dalla tabella Conti/Categorie la lista di tutti i segmenti di liv 2 raccolta fondi (::RF01, ::RF02, ecc).
- * 2. Per ogni segmento aggiunge un gruppo nei parametri dell'estensione.
- * 3. Ogni gruppo ha 5 campi da compilare:
- *		- Descrizione: si inserisce la descrizione della raccolta fondi. Di default prende la descrizione del conto dalla tabella Conti/Categorie.
- *		- Data inizio: si inserisce la data di inizio raccolta fondi.
- *		- Data fine: si inserisce la data di fine raccolta fondi.
- *		- Responsabile: si inserisce il nome del responsabile.
- *		- Relazione: si inserice una relazione illustrativa della raccolta fondi. Si possono inserire più righe.  
+ * 1. Dalla tabella Conti/Categorie viene ripresa la lista di tutti i segmenti di liv 2 raccolta fondi (::RF01, ::RF02, ecc).
+ * 2. Per ogni segmento viene creato un gruppo nei parametri dell'estensione.
+ * 3. Ogni gruppo ha i seguenti campi da compilare:
+ *      - Includi nella stampa:
+ *          -> si seleziona/deseleziona per includere/escludere il segmento dalla stampa.
+ *      - Descrizione:
+ * 		    -> si inserisce la descrizione della raccolta fondi.
+ *          -> di default prende la descrizione del conto dalla tabella Conti/Categorie.
+ *      - Denominazione evento:
+ *          -> si inserisce la denominazione dell'evento della raccolta fondi.
+ *          -> di default prende la descrizione del conto dalla tabella Conti/Categorie.
+ *      - Data inizio:
+ *          -> si inserisce la data di inizio raccolta fondi.
+ *          -> di default viene ripresa la data di apertura della contabilità.
+ *      - Data fine:
+ *          -> si inserisce la data di fine raccolta fondi.
+ *          -> di default viene ripresa la data di chiusua della contabilità.
+ *      - Relazione:
+ *          -> si inserice una relazione illustrativa della raccolta fondi.
+ *          -> si possono inserire più righe.
+ *          -> di default viene inserito un testo di esempio.
  *
- * 4. Per ogni conto raccolta fondi viene generato una pagina di report, contantente i rispettivi dati dei parametri.
+ * 4. Per ogni segmento raccolta fondi viene generato una pagina di report, contenente:
+ * 		- Intestazione con titolo.
+ * 		- Informazioni della raccolta fondi con dati ripresi dai rispettivi parametri.
+ * 		- Tabella con i dettagli dei movimenti di entrate e uscite della raccolta fondi, e il risultato finale.
+ * 		- Relazione finale ripresa dai rispettivi parametri.
  * 
  */
 
 
-//Main function
 function exec(string) {
 	
-	// Check if we are on an opened document
 	if (!Banana.document) {
 		return;
 	}
 
-	// Check banana version
-	let isCurrentBananaVersionSupported = bananaRequiredVersion(BAN_VERSION, BAN_EXPM_VERSION);
+	let isCurrentBananaVersionSupported = bananaRequiredVersion("10.0.1", "");
 	if (!isCurrentBananaVersionSupported) {
 		return "@Cancel";
 	}
 
-	let segmentList = getSegmentsLvl2(Banana.document);
+	let segments = getSegmentsLvl2(Banana.document);
 
-	// User parameters
-	let userParam = initUserParam(segmentList);
+	let userParam = initUserParam(segments);
 	let savedParam = Banana.document.getScriptSettings();
 	if (savedParam && savedParam.length > 0) {
 		userParam = JSON.parse(savedParam);
 	}
 	// If needed show the settings dialog to the user
 	if (!options || !options.useLastSettings) {
-		userParam = settingsDialog(segmentList); // From properties
+		userParam = settingsDialog(segments); // From properties
 	}
 	if (!userParam) {
 		return "@Cancel";
 	}
+
+	// Filter to use only selected segments
+	segments = segments.filter(seg => userParam[seg.account + '_includi'] !== false);
+
+	// Creates an object with all the segments data
+	let segmentDataList = buildSegmentDataList(Banana.document, userParam, segments);
+
+	// Filter to get segments with movements only
+	if (userParam.stampaSegmenti) {
+		segmentDataList = segmentDataList.filter(sd => sd.transactions && sd.transactions.length > 0);
+	}
 	
-	//Create the stylesheet using the css file
+	//Banana.console.log(JSON.stringify(segmentDataList, null, 3));
+
+	//Print the report
 	let stylesheet = Banana.Report.newStyleSheet();
+	let report = printReport(Banana.document, userParam, segmentDataList, stylesheet);
 
-	//Create the report
-	let report = printReport(Banana.document, userParam, segmentList, stylesheet);
-
-	//Set styles
 	setCss(stylesheet);
-	
-	//Create the report preview
 	Banana.Report.preview(report, stylesheet);
 }
 
-//The purpose of this function is to create and print the report
-function printReport(banDoc, userParam, segmentList, stylesheet) {
+function printReport(banDoc, userParam, segmentDataList, stylesheet) {
 
 	let report = Banana.Report.newReport("Rendiconto raccolta fondi");
 
 	printReport_header(report, banDoc, userParam, stylesheet);
 
-	for (let i = 0; i < segmentList.length; i++) {
-		printReport_information(report, banDoc, userParam, segmentList[i]);
-		printReport_transactions(report, banDoc, userParam, segmentList[i]);
-		printReport_finalnotes(report, userParam, segmentList[i]);
+	for (let i = 0; i < segmentDataList.length; i++) {
+		let segmentData = segmentDataList[i];
+		printReport_information(report, banDoc, userParam, segmentData);
+		printReport_transactions(report, banDoc, userParam, segmentData);
+		printReport_finalnotes(report, banDoc, userParam, segmentData);
 
-		if (i !== segmentList.length-1) {
+		if (i !== segmentDataList.length-1) {
 			report.addPageBreak(); //add page break after each account
 		}
 	}
-	
+
 	return report;
 }
 
-function printReport_header(report, banDoc, userParam, stylesheet) {	
-	// Logo
+function printReport_header(report, banDoc, userParam, stylesheet) {
+	if (!userParam.stampaLogo) {
+		return;
+	}
 	let headerParagraph = report.getHeader().addSection();
-	if (userParam.stampaLogo) {
-		headerParagraph = report.addSection("");
-		let logoFormat = Banana.Report.logoFormat(userParam.nomeLogo);
-		if (logoFormat) {
-			let logoElement = logoFormat.createDocNode(headerParagraph, stylesheet, "logo");
-			report.getHeader().addChild(logoElement);
-		}
+	let logoFormat = Banana.Report.logoFormat(userParam.nomeLogo);
+	if (logoFormat) {
+		let logoElement = logoFormat.createDocNode(headerParagraph, stylesheet, "logo");
+		report.getHeader().addChild(logoElement);
 	}
 }
 
-function printReport_information(report, banDoc, userParam, segment) {
+function printReport_information(report, banDoc, userParam, segmentData) {
 
 	let strAccount = "";
 	let startDate = "";
 	let endDate = "";
 	let racFondi = "";
-	let responsabile = "";
-	let headerLeft = "";
-	let headerRight = "";
+	let denEvento = "";
+	let company = "";
+	let address1 = "";
+	let zip = "";
+	let city = "";
+	let fiscalnumber = "";
+	let strSede = "";
 
-	strAccount = segment.account;
-	startDate = userParam[segment.account+'_dataInizio'];
+	strAccount = segmentData.account;
+	startDate = userParam[segmentData.account+'_dataInizio'];
 	if (!startDate) {
 		startDate = Banana.Converter.toLocaleDateFormat(banDoc.info("AccountingDataBase","OpeningDate")); 
 	}
-	endDate = userParam[segment.account+'_dataFine'];
+	endDate = userParam[segmentData.account+'_dataFine'];
 	if (!endDate) {
 		endDate = Banana.Converter.toLocaleDateFormat(banDoc.info("AccountingDataBase","ClosureDate"));
 	}
-	racFondi = userParam[segment.account+'_descrizione'];
-	responsabile = userParam[segment.account+'_responsabile'];
-	headerLeft = banDoc.info("Base","HeaderLeft");
-	headerRight = banDoc.info("Base","HeaderRight");
+	racFondi = userParam[segmentData.account+'_descrizione'];
+	denEvento = userParam[segmentData.account+'_denominazione'];
+	company = banDoc.info("AccountingDataBase","Company");
+	address1 = banDoc.info("AccountingDataBase","Address1");
+	zip = banDoc.info("AccountingDataBase","Zip");
+	city = banDoc.info("AccountingDataBase","City");
+	fiscalnumber = banDoc.info("AccountingDataBase","FiscalNumber");
+
+	if (address1) {
+		strSede += address1;
+	}
+	if (zip) {
+		if (strSede) {
+			strSede += ", ";
+		}
+		strSede += zip;
+	}
+	if (city) {
+		if (zip) {
+			strSede += " ";
+		}
+		else if (strSede) {
+			strSede += ", ";
+		}
+		strSede += city;
+	}
 
 	if (userParam.stampaLogo) {
 		report.addParagraph(" ", "");
 		report.addParagraph(" ", "");
 	}
-	report.addParagraph("RENDICONTO DELLA RACCOLTA FONDI", "heading1 alignCenter");
-	report.addParagraph('"' + racFondi + '"', "heading1 alignCenter");
-	//report.addParagraph("(" + strAccount +")" , "heading1 alignCenter");
+	report.addParagraph("RENDICONTO DELLA SINGOLA RACCOLTA PUBBLICA DI FONDI OCCASIONALE REDATTO AI SENSI DELL’ARTICOLO 87, COMMA 6 E DELL’ ARTICOLO 79, COMMA 4, LETTERA A), DEL D.LGS. 3 AGOSTO 2017 N. 117", "heading2 alignCenter");
 	report.addParagraph(" ");
 	report.addParagraph(" ");
-	report.addParagraph("Ente: " + headerLeft, "heading3");
-	report.addParagraph(" ");
-	report.addParagraph("Raccolta fondi svolta dal " + startDate + " al " + endDate, "heading3");
-	report.addParagraph(" ");
-	report.addParagraph("Responsabile: " + responsabile, "heading3");
+	report.addParagraph("Denominazione ETS: " + company, "alignCenter");
+	report.addParagraph("CF: " + fiscalnumber, "alignCenter");
+	report.addParagraph("Sede: " + strSede, "alignCenter");
+	report.addParagraph("RENDICONTO DELLA SINGOLA RACCOLTA FONDI OCCASIONALE", "alignCenter");
+	report.addParagraph("Descrizione della celebrazione, ricorrenza o campagna di sensibilizzazione: " + racFondi, "alignCenter");
+	report.addParagraph("Eventuale denominazione dell’evento: " + denEvento, "alignCenter");
+	report.addParagraph("Durata della raccolta fondi: dal " + startDate + " al " + endDate, "alignCenter");
 	report.addParagraph(" ");
 	report.addParagraph(" ");
 }
 
-function printReport_transactions(report, banDoc, userParam, segment) {
+function printReport_transactions(report, banDoc, userParam, segmentData) {
 	
-	let totExpenses = "";
-	let totIncome = "";
-	let startDate = "";
-	let endDate = "";
+	/**
+	 * 
+	 * Prints transactions details contained in segmentData object.
+	 * 
+	 * Example segmentData.transactions:
+	 * 
+	 * segmentData.transactions: [
+	 *     { 
+	 *       date: "2025-03-10",
+	 *       description: "Offerte",
+	 *       income: "250.00",
+	 *       expenses: "" 
+	 *     },
+	 *     { 
+	 *       date: "2025-03-15",
+	 *       description: "Acquisto volantini",
+	 *       income: "",
+	 *       expenses: "35.50"
+	 *     }
+	 *   ]
+	 * 
+	 * 
+	 * Example segmentData.totals:
+	 * 
+	 * segmentData.totals: {
+	 *     income: "250.00",
+	 *     expenses: "35.50",
+	 *     result: "214.50"
+	 *   }
+	 * }
+	 * 
+	 */
 
-	startDate = Banana.Converter.toInternalDateFormat(userParam[segment.account+'_dataInizio']);
-	endDate = Banana.Converter.toInternalDateFormat(userParam[segment.account+'_dataFine']);
+	let incomeRows = [];
+	let expenseRows = [];
 
-	//Create a table object with all transactions for the given account and period
-	let transTab = banDoc.currentCard(segment.account, startDate, endDate);
+	for (let i = 0; i < segmentData.transactions.length; i++) {
+		let t = segmentData.transactions[i];
 
-	//Create the table that will be printed on the report
+		if (t.income && Banana.SDecimal.sign(t.income) !== 0) {
+			incomeRows.push([t.date, t.description, t.income]);
+		}
+		if (t.expenses && Banana.SDecimal.sign(t.expenses) !== 0) {
+			expenseRows.push([t.date, t.description, t.expenses]);
+		}
+	}
+
+	let totIncome = segmentData.totals.income;
+	let totExpenses = segmentData.totals.expenses;
+
 	let table = report.addTable("table");
 
-	//Add column titles to the table report
-	let tableHeader = table.getHeader();
-	tableRow = tableHeader.addRow();
-	tableRow.addCell("Data", "heading3 bold");
-	tableRow.addCell("Doc", "heading3 bold");
-	tableRow.addCell("Descrizione", "heading3 bold");
-	tableRow.addCell("Entrate €", "heading3 bold");
-	tableRow.addCell("Uscite €", "heading3 bold");
-
-	//Add the values taken from each row of the table (except the last one) to the respective cells of the table
-	for (let i = 0; i < transTab.rowCount-1; i++) {	
-		let tRow = transTab.row(i);
-		let jdebitamount = tRow.value('JDebitAmount');
-		let jcreditamount = tRow.value('JCreditAmount');
-
-		if (tRow.value("JDescription") === "Riporto" && !tRow.value("Date") && !tRow.value("Doc") && !jdebitamount && !jcreditamount) {
-			// Do not print "Riporto" empty row, go to next transaction
-			continue;
-		}
-
+	//Income
+	let tableRow = table.addRow();
+	tableRow.addCell("a) Proventi/entrate della raccolta fondi occasionale","bold");
+	tableRow.addCell("");
+	for (let i = 0; i < incomeRows.length; i++) {
 		tableRow = table.addRow();
-		tableRow.addCell(Banana.Converter.toLocaleDateFormat(tRow.value("Date")), "heading3");
-		tableRow.addCell(tRow.value("Doc"), "heading3");
-		tableRow.addCell(tRow.value("JDescription"), "heading3");
-
-		if (banDoc.table("Categories")) {
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jdebitamount,2,false), "heading3 alignRight");
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jcreditamount,2,false), "heading3 alignRight");
-		}
-		else {
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jcreditamount,2,false), "heading3 alignRight");
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jdebitamount,2,false), "heading3 alignRight");
-		}
+		tableRow.addCell(Banana.Converter.toLocaleDateFormat(incomeRows[i][0]) + ", " + incomeRows[i][1], "");
+		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(incomeRows[i][2], 2, false), "alignRight");
 	}
-
-	//We add last row (totals) separately because we want to apply a different style only to this row
-	for(let i = transTab.rowCount-1; i < transTab.rowCount; i++) {
-		let tRow = transTab.row(i);
-		let jdebitamount = tRow.value('JDebitAmount');
-		let jcreditamount = tRow.value('JCreditAmount');
-
-		tableRow = table.addRow();
-		tableRow.addCell("", "", 2);
-		tableRow.addCell("Totali movimenti", "heading3 bold");
-
-		if (banDoc.table("Categories")) {
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jdebitamount,2,false), "heading3 alignRight bold");
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jcreditamount,2,false), "heading3 alignRight bold");
-			totIncome = jdebitamount;
-			totExpenses = jcreditamount;
-		}
-		else {
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jcreditamount,2,false), "heading3 alignRight bold");
-			tableRow.addCell(Banana.Converter.toLocaleNumberFormat(jdebitamount,2,false), "heading3 alignRight bold");
-			totIncome = jcreditamount;
-			totExpenses = jdebitamount;
-		}
-	}
-
-	//Calculate the difference between expenses and income amounts
-	let res = Banana.SDecimal.subtract(totExpenses, totIncome);
-
 	tableRow = table.addRow();
-	tableRow.addCell("", "", 2);
+	tableRow.addCell("Totale a)", "alignRight bold");
+	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(totIncome, 2, true), "alignRight bold");
 
-	//Print the final total, the difference between expenses and income amounts
-	if (Banana.SDecimal.sign(res) == 1) { //It is an expense: amount > 0
-		tableRow.addCell("DISAVANZO D'ESERCIZIO", "heading3 bold", 1);
-		tableRow.addCell("€ "+ Banana.Converter.toLocaleNumberFormat(res,2,true), "heading3 alignCenter bold", 2);
-	} else if (Banana.SDecimal.sign(res) == -1) { //It is an income: amount < 0
-		tableRow.addCell("AVANZO D'ESERCIZIO", "heading3 bold", 1);
-		tableRow.addCell("€ "+ Banana.Converter.toLocaleNumberFormat(Banana.SDecimal.invert(res),2,true), "heading3 alignCenter bold", 2);
-	} else { //The difference is = 0
-		tableRow.addCell("AVANZO/DISAVANZO D'ESERCIZIO", "heading3 bold", 1);
-		tableRow.addCell("€ "+ Banana.Converter.toLocaleNumberFormat(res,2,true), "heading3 alignCenter bold", 2);
+	//Expenses
+	tableRow = table.addRow();
+	tableRow.addCell("b) Oneri/uscite per la raccolta fondi occasionale","bold");
+	tableRow.addCell("");
+	for (let i = 0; i < expenseRows.length; i++) {
+		tableRow = table.addRow();
+		tableRow.addCell(Banana.Converter.toLocaleDateFormat(expenseRows[i][0]) + ", " + expenseRows[i][1], "");
+		tableRow.addCell(Banana.Converter.toLocaleNumberFormat(expenseRows[i][2], 2, false), "alignRight");
 	}
+	tableRow = table.addRow();
+	tableRow.addCell("Totale b)", "alignRight bold");
+	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(totExpenses, 2, true), "alignRight bold");
+
+	//Result (income - expenses)
+	let res = segmentData.totals.result;
+	tableRow = table.addRow();
+	tableRow.addCell("Risultato della singola raccolta fondi (a-b)", "alignRight bold");
+	tableRow.addCell("€ " + Banana.Converter.toLocaleNumberFormat(res, 2, true), "alignRight bold", 2);
+
+	report.addParagraph(" ","");
+	report.addParagraph("La tabella si conclude con una relazione illustrativa in cui sono evidenziati, a integrazione e completamente dei risultati numerici, le finalità e gli elementi caratterizzanti della singola raccolta fondi.", "italic");
 }
 
-function printReport_finalnotes(report, userParam, segment) {
-
+function printReport_finalnotes(report, banDoc, userParam, segmentData) {
 	report.addParagraph(" ");
 	report.addParagraph(" ");
-	report.addParagraph("RELAZIONE ILLUSTRATIVA DELLA RACCOLTA FONDI:", "bold heading3");
+	report.addParagraph("RELAZIONE ILLUSTRATIVA DELLA SINGOLA INIZIATIVA DI RACCOLTA FONDI OCCASIONALE", "bold alignCenter");
 	report.addParagraph(" ");
-	report.addParagraph(userParam[segment.account+'_relazione'], "heading3");
-
-	//Add the signatures
-	report.addParagraph(" ");
-	report.addParagraph(" ");
-	report.addParagraph(" ");
-	report.addParagraph(" ");
-	let table1 = report.addTable("table1");
-	tableRow = table1.addRow();
-	tableRow.addCell("Firma del Rappresentante Legale", "alignCenter", 1);
-	tableRow.addCell("Firma del Responsabile", "alignCenter", 1);
-	tableRow = table1.addRow();
-	tableRow.addCell(" ", "alignCenter", 1);
-	tableRow.addCell(" ", "alignCenter", 1);
-	tableRow = table1.addRow();
-	tableRow.addCell("_____________________________", "alignCenter", 1);
-	tableRow.addCell("_____________________________", "alignCenter", 1);
+	let text = userParam[segmentData.account+'_relazione'];
+	text = variablesToValues(banDoc, userParam, segmentData, text);
+	report.addParagraph(text, "finalnotes");
 }
 
-//This function take from Banana tables 'Accounts/Categories'  all the lvl 2 segments
+function variablesToValues(banDoc, userParam, segmentData, text) {
+
+	let startDate = userParam[segmentData.account+'_dataInizio'];
+	let endDate = userParam[segmentData.account+'_dataFine'];
+	let denominazioneEts = banDoc.info("AccountingDataBase","Company");
+	let descrizione = userParam[segmentData.account+'_descrizione'];
+	let denominazioneEvento = userParam[segmentData.account+'_denominazione'];
+	let totIncome = Banana.Converter.toLocaleNumberFormat(segmentData.totals.income,2,true);
+	let totExpenses = Banana.Converter.toLocaleNumberFormat(segmentData.totals.expenses,2,true);
+	let totResult = Banana.Converter.toLocaleNumberFormat(segmentData.totals.result,2,true);
+	let totIncomeBanca = Banana.Converter.toLocaleNumberFormat(segmentData.totals.incomebanca,2,true);;
+	let totIncomeCassa = Banana.Converter.toLocaleNumberFormat(segmentData.totals.incomecassa,2,true);;
+	let totIncomeAltro = Banana.Converter.toLocaleNumberFormat(segmentData.totals.incomealtro,2,true);;
+	let totExpensesBanca = Banana.Converter.toLocaleNumberFormat(segmentData.totals.expensesbanca,2,true);;
+	let totExpensesCassa = Banana.Converter.toLocaleNumberFormat(segmentData.totals.expensescassa,2,true);;
+	let totExpensesAltro = Banana.Converter.toLocaleNumberFormat(segmentData.totals.expensesaltro,2,true);;
+
+	if (startDate && text.indexOf("<DataInizio>") > -1) {
+		text = text.replace(/<DataInizio>/g, startDate);
+	}
+	if (endDate && text.indexOf("<DataFine>") > -1) {
+		text = text.replace(/<DataFine>/g, endDate);
+	}
+	if (denominazioneEts && text.indexOf("<DenominazioneEts>") > -1) {
+		text = text.replace(/<DenominazioneEts>/g, denominazioneEts);
+	}	
+	if (descrizione && text.indexOf("<Descrizione>") > -1) {
+		text = text.replace(/<Descrizione>/g, descrizione);
+	}
+	if (denominazioneEvento && text.indexOf("<DenominazioneEvento>") > -1) {
+		text = text.replace(/<DenominazioneEvento>/g, denominazioneEvento);
+	}
+	if (totIncome && text.indexOf("<TotaleEntrate>") > -1) {
+		text = text.replace(/<TotaleEntrate>/g, totIncome);
+	}
+	if (totExpenses && text.indexOf("<TotaleUscite>") > -1) {
+		text = text.replace(/<TotaleUscite>/g, totExpenses);
+	}
+	if (totResult && text.indexOf("<TotaleRisultato>") > -1) {
+		text = text.replace(/<TotaleRisultato>/g, totResult);
+	}
+	if (totIncomeBanca && text.indexOf("<TotaleEntrateBanca>") > -1) {
+		text = text.replace(/<TotaleEntrateBanca>/g, totIncomeBanca);
+	}
+	if (totIncomeCassa && text.indexOf("<TotaleEntrateCassa>") > -1) {
+		text = text.replace(/<TotaleEntrateCassa>/g, totIncomeCassa);
+	}
+	if (totIncomeAltro && text.indexOf("<TotaleEntrateAltro>") > -1) {
+		text = text.replace(/<TotaleEntrateAltro>/g, totIncomeAltro);
+	}
+	if (totExpensesBanca && text.indexOf("<TotaleUsciteBanca>") > -1) {
+		text = text.replace(/<TotaleUsciteBanca>/g, totExpensesBanca);
+	}
+	if (totExpensesCassa && text.indexOf("<TotaleUsciteCassa>") > -1) {
+		text = text.replace(/<TotaleUsciteCassa>/g, totExpensesCassa);
+	}
+	if (totExpensesAltro && text.indexOf("<TotaleUsciteAltro>") > -1) {
+		text = text.replace(/<TotaleUsciteAltro>/g, totExpensesAltro);
+	}
+
+	return text;
+}
+
 function getSegmentsLvl2(banDoc) {
-	let segmentObj = [];
+
+	//Gets from tables Accounts/Categories all the lvl 2 segments (account + description)
+
+	let segments = [];
 	if (banDoc.table('Categories')) {
 		for (let i = 0; i < banDoc.table('Categories').rowCount; i++) {
 			let tRow = banDoc.table('Categories').row(i);
 			let account = tRow.value("Category");
 			let description = tRow.value("Description");
 			if (account.indexOf("::") > -1 && account.indexOf(":::") < 0 && account.substring(2,3)) {
-				segmentObj.push({"account":account, "description":description});
+				segments.push({"account":account, "description":description});
 			}
 		}
 	}
@@ -304,41 +391,222 @@ function getSegmentsLvl2(banDoc) {
 			let account = tRow.value("Account");
 			let description = tRow.value("Description");
 			if (account.indexOf("::") > -1 && account.indexOf(":::") < 0 && account.substring(2,3)) {
-				segmentObj.push({"account":account, "description":description});
+				segments.push({"account":account, "description":description});
 			}
 		}
 	}
-	//Banana.console.log(JSON.stringify(segmentObj, "", " "));
-	return segmentObj;
+	//Banana.console.log(JSON.stringify(segments, "", " "));
+	return segments;
 }
 
-//The main purpose of this function is to create styles for the report print
+function buildSegmentDataList(banDoc, userParam, segments) {
+
+	/**
+	 * Build unico: per ogni segmento legge i movimenti una sola volta,
+	 * costruisce transactions e totals, pronti per la stampa o per un eventuale filtro.
+	 * 
+	 * 
+	 *
+	 * Regole di costruzione:
+	 * - Legge la tabella scheda conto una sola volta per segmento.
+	 * - Esclude:
+	 *     - l’ultima riga di totali;
+	 *     - la riga "Riporto" completamente vuota (senza Date, Doc, importi).
+	 * - Mappatura entrate/uscite:
+	 *     - se esiste la tabella "Categories": income = JDebitAmount, expenses = JCreditAmount
+	 *     - altrimenti (solo tabella Conti): income = JCreditAmount, expenses = JDebitAmount
+	 * - Inserisce in transactions solo righe con almeno un importo non zero.
+	 *
+	 *
+	 * Esempio sintetico:
+	 * segmentDataList = [
+	 * {
+	 *   account: "::RF01",
+	 *   description: "Raccolta Primavera",
+	 *   startDate: "2025-01-01",
+	 *   endDate: "2025-12-31",
+	 *   transactions: [
+	 *     { 
+	 *       date: "2025-03-10",
+	 *       description: "Offerte",
+	 *       income: "250.00",
+	 *       expenses: ""
+	 *     },
+	 *     { 
+	 *       date: "2025-03-15",
+	 *       description: "Acquisto volantini",
+	 *       income: "",
+	 *       expenses: "35.50"
+	 *     }
+	 *   ],
+	 *   totals: {
+	 *     income: "250.00",
+	 *     expenses: "35.50",
+	 *     result: "214.50"
+	 *   }
+	 * },
+	 * { ... ::RF02 ...},
+	 * { ... ::RF03 ...}
+	 * ];
+	 */
+
+	let segmentDataList = [];
+	let isCategories = !!banDoc.table("Categories");
+
+	for (let i = 0; i < segments.length; i++) {
+
+		let segment = segments[i];
+		let account = segment.account;
+
+		let startDate = Banana.Converter.toInternalDateFormat(userParam[account + "_dataInizio"]) ||
+		                Banana.Converter.toInternalDateFormat(banDoc.info("AccountingDataBase","OpeningDate"));
+
+		let endDate = Banana.Converter.toInternalDateFormat(userParam[account + "_dataFine"]) ||
+		              Banana.Converter.toInternalDateFormat(banDoc.info("AccountingDataBase","ClosureDate"));
+
+		let transactions = [];
+		let totalIncome = "0";
+		let totalExpenses = "0";
+		let totalIncomeCassa = "0";
+		let totalIncomeBanca = "0";
+		let totalIncomeAltro = "0";
+		let totalExpensesCassa = "0";
+		let totalExpensesBanca = "0";
+		let totalExpensesAltro = "0";
+
+		let transTab = banDoc.currentCard(account, startDate, endDate);
+
+		if (transTab && transTab.rowCount > 0) {
+			// esclude ultima riga (totali)
+			for (let r = 0; r < transTab.rowCount - 1; r++) {
+				let row = transTab.row(r);
+				let jdebitamount  = row.value("JDebitAmount");
+				let jcreditamount = row.value("JCreditAmount");
+
+				// salta "Riporto" completamente vuoto
+				if (row.value("JDescription") === "Riporto" && !row.value("JDate") && !row.value("Doc") && !jdebitamount && !jcreditamount) {
+					continue;
+				}
+
+				let income = isCategories ? jdebitamount : jcreditamount;
+				let expenses = isCategories ? jcreditamount : jdebitamount;
+
+				let hasIncome = income && Banana.SDecimal.sign(income) !== 0;
+				let hasExpenses = expenses && Banana.SDecimal.sign(expenses) !== 0;
+
+				if (hasIncome || hasExpenses) {
+
+					let gr1 = banDoc.table('Accounts').findRowByValue('Account', row.value("JContraAccount")).value('Gr1');
+					let incomebanca = "";
+					let incomecassa = "";
+					let incomealtro = "";
+					let expensesbanca = "";
+					let expensescassa = "";
+					let expensesaltro = "";
+
+					if (gr1 === "ACIV1") {
+						incomebanca = income;
+						expensesbanca = expenses;
+					} else if (gr1 === "ACIV3") {
+						incomecassa = income;
+						expensescassa = expenses;
+					} else {
+						incomealtro = income;
+						expensesaltro = expenses;
+					}
+
+					transactions.push({
+						date: row.value("JDate"),
+						description: row.value("JDescription"),
+						income: income || "",
+						expenses: expenses || "",
+						//contraaccount: row.value("JContraAccount"),
+						//contraaccountgr1: banDoc.table('Accounts').findRowByValue('Account', row.value("JContraAccount")).value('Gr1'),
+						incomebanca: incomebanca || "",
+						incomecassa: incomecassa || "",
+						incomealtro: incomealtro || "",
+						expensesbanca: expensesbanca || "",
+						expensescassa: expensescassa || "",
+						expensesaltro: expensesaltro || ""
+					});
+
+					if (hasIncome) {
+						totalIncome = Banana.SDecimal.add(totalIncome, income);
+					}
+					if (incomebanca && Banana.SDecimal.sign(incomebanca) !== 0) {
+						totalIncomeBanca = Banana.SDecimal.add(totalIncomeBanca, incomebanca);
+					}
+					if (incomecassa && Banana.SDecimal.sign(incomecassa) !== 0) {
+						totalIncomeCassa = Banana.SDecimal.add(totalIncomeCassa, incomecassa);
+					}
+					if (incomealtro && Banana.SDecimal.sign(incomealtro) !== 0) {
+						totalIncomeAltro = Banana.SDecimal.add(totalIncomeAltro, incomealtro);
+					}
+
+					if (hasExpenses) {
+						totalExpenses = Banana.SDecimal.add(totalExpenses, expenses);
+					}
+					if (expensesbanca && Banana.SDecimal.sign(expensesbanca) !== 0) {
+						totalExpensesBanca = Banana.SDecimal.add(totalExpensesBanca, expensesbanca);
+					}
+					if (expensescassa && Banana.SDecimal.sign(expensescassa) !== 0) {
+						totalExpensesCassa = Banana.SDecimal.add(totalExpensesCassa, expensescassa);
+					}
+					if (expensesaltro && Banana.SDecimal.sign(expensesaltro) !== 0) {
+						totalExpensesAltro = Banana.SDecimal.add(totalExpensesAltro, expensesaltro);
+					}
+				}
+			}
+		}
+
+		segmentDataList.push({
+			account: account,
+			description: segment.description,
+			startDate: startDate,
+			endDate: endDate,
+			transactions: transactions,
+			totals: {
+				income: totalIncome,
+				expenses: totalExpenses,
+				result: Banana.SDecimal.subtract(totalIncome, totalExpenses),
+				incomebanca: totalIncomeBanca,
+				incomecassa: totalIncomeCassa,
+				incomealtro: totalIncomeAltro,
+				expensesbanca: totalExpensesBanca,
+				expensescassa: totalExpensesCassa,
+				expensesaltro: totalExpensesAltro
+			}
+		});
+	}
+
+	return segmentDataList;
+}
+
 function setCss(repStyleObj) {
-	let textCSS = "";
+	//Creates styles for the report print
+	let css = "";
 	let file = Banana.IO.getLocalFile("file:script/rendicontoRaccoltaFondi.css");
-	let fileContent = file.read();
 	if (!file.errorString) {
-		Banana.IO.openPath(fileContent);
-		//Banana.console.log(fileContent);
-		textCSS = fileContent;
+		//Banana.console.log(file.read);
+		css = file.read();
 	} else {
 		Banana.console.log(file.errorString);
 	}
-	// Parse the CSS text
-	repStyleObj.parse(textCSS);
+	// Parse the css text
+	repStyleObj.parse(css);
 }
 
 
 /**************************************************************************************
  * Functions to manage the parameters
  **************************************************************************************/
-function convertParam(userParam, segmentList) {
+function convertParam(userParam, segments) {
 
-	var convertedParam = {};
+	let convertedParam = {};
 	convertedParam.version = '1.0';
 	convertedParam.data = [];
 
-	var currentParam = {};
+	let currentParam = {};
 	currentParam.name = 'stampaLogo';
 	currentParam.title = 'Stampa logo';
 	currentParam.type = 'bool';
@@ -346,11 +614,11 @@ function convertParam(userParam, segmentList) {
 	currentParam.defaultvalue = false;
 	currentParam.tooltip = "Stampa logo nell'intestazione";
 	currentParam.readValue = function() {
-	userParam.stampaLogo = this.value;
+		userParam.stampaLogo = this.value;
 	}
 	convertedParam.data.push(currentParam);
 
-	var currentParam = {};
+	currentParam = {};
 	currentParam.name = 'nomeLogo';
 	currentParam.title = 'Nome composizione logo';
 	currentParam.type = 'string';
@@ -358,18 +626,30 @@ function convertParam(userParam, segmentList) {
 	currentParam.defaultvalue = "Logo";
 	currentParam.tooltip = 'Inserire il nome della composizione da utilizzare';
 	currentParam.readValue = function() {
-	userParam.nomeLogo = this.value;
+		userParam.nomeLogo = this.value;
+	}
+	convertedParam.data.push(currentParam);
+
+	currentParam = {};
+	currentParam.name = 'stampaSegmenti';
+	currentParam.title = 'Stampa solo raccolte fondi con movimenti in entrata/uscita';
+	currentParam.type = 'bool';
+	currentParam.value = userParam.stampaSegmenti ? true : false;
+	currentParam.defaultvalue = false;
+	currentParam.tooltip = "Stampa solo raccolte fondi dei segmenti con movimenti, escludi quelle senza movimenti";
+	currentParam.readValue = function() {
+		userParam.stampaSegmenti = this.value;
 	}
 	convertedParam.data.push(currentParam);
 
 
 	// Crea un gruppo di parametri per ogni segmento raccolta fondi
-	for (var i = 0; i < segmentList.length; i++) {
+	for (let i = 0; i < segments.length; i++) {
 
-		var segment = segmentList[i].account;
-		var segDesc = segmentList[i].description;
+		let segment = segments[i].account;
+		let segDesc = segments[i].description;
 
-		var currentParam = {};
+		currentParam = {};
 		currentParam.name = segment;
 		currentParam.title = segment;
 		currentParam.type = 'string';
@@ -380,7 +660,21 @@ function convertParam(userParam, segmentList) {
 		}
 		convertedParam.data.push(currentParam);
 
-		var currentParam = {};
+		currentParam = {};
+		currentParam.name = segment+'_includi';
+		currentParam.parentObject = segment;
+		currentParam.title = 'Includi nella stampa';
+		currentParam.type = 'bool';
+		currentParam.value = (typeof userParam[segment + '_includi'] === 'undefined') ? true : userParam[segment + '_includi'];
+		currentParam.defaultvalue = true;
+		currentParam.segment = segment;
+		currentParam.tooltip = 'Selezionare per includere questa raccolta fondi nella stampa';
+		currentParam.readValueSegment = function(segment) {
+			userParam[segment+'_includi'] = this.value;
+		}
+		convertedParam.data.push(currentParam);
+
+		currentParam = {};
 		currentParam.name = segment+'_descrizione';
 		currentParam.parentObject = segment;
 		currentParam.title = 'Descrizione';
@@ -390,12 +684,25 @@ function convertParam(userParam, segmentList) {
 		currentParam.segment = segment;
 		currentParam.tooltip = 'Inserire la descrizione della raccolta fondi';
 		currentParam.readValueSegment = function(segment) {
-		  userParam[segment+'_descrizione'] = this.value;
-		  // userParam['segments'][segment] = this.value;
+			userParam[segment+'_descrizione'] = this.value;
 		}
 		convertedParam.data.push(currentParam);
 
-		var currentParam = {};
+		currentParam = {};
+		currentParam.name = segment+'_denominazione';
+		currentParam.parentObject = segment;
+		currentParam.title = 'Denominazione evento';
+		currentParam.type = 'string';
+		currentParam.value = userParam[segment+'_denominazione'] ? userParam[segment+'_denominazione'] : '';
+		currentParam.defaultvalue = segDesc;
+		currentParam.segment = segment;
+		currentParam.tooltip = "Inserire la denominazione dell'evento raccolta fondi";
+		currentParam.readValueSegment = function(segment) {
+			userParam[segment+'_denominazione'] = this.value;
+		}
+		convertedParam.data.push(currentParam);
+
+		currentParam = {};
 		currentParam.name = segment+'_dataInizio';
 		currentParam.parentObject = segment;
 		currentParam.title = "Data inizio";
@@ -405,11 +712,11 @@ function convertParam(userParam, segmentList) {
 		currentParam.segment = segment;
 		currentParam.tooltip = "Inserire la data di inizio periodo della raccolta fondi";
 		currentParam.readValueSegment = function(segment) {
-		  userParam[segment+'_dataInizio'] = this.value;
+			userParam[segment+'_dataInizio'] = this.value;
 		}
 		convertedParam.data.push(currentParam);
 
-		var currentParam = {};
+		currentParam = {};
 		currentParam.name = segment+'_dataFine';
 		currentParam.parentObject = segment;
 		currentParam.title = "Data fine";
@@ -419,88 +726,60 @@ function convertParam(userParam, segmentList) {
 		currentParam.segment = segment;
 		currentParam.tooltip = "Inserire la data di fine periodo della raccolta fondi";
 		currentParam.readValueSegment = function(segment) {
-		  userParam[segment+'_dataFine'] = this.value;
+			userParam[segment+'_dataFine'] = this.value;
 		}
 		convertedParam.data.push(currentParam);
 
-		var currentParam = {};
-		currentParam.name = segment+'_responsabile';
-		currentParam.parentObject = segment;
-		currentParam.title = 'Responsabile';
-		currentParam.type = 'string';
-		currentParam.value = userParam[segment+'_responsabile'] ? userParam[segment+'_responsabile'] : '';
-		currentParam.defaultvalue = 'Sig. Mario Rossi';
-		currentParam.segment = segment;
-		currentParam.tooltip = 'Inserire il nome del repsonabile';
-		currentParam.readValueSegment = function(segment) {
-		  userParam[segment+'_responsabile'] = this.value;
-		}
-		convertedParam.data.push(currentParam);
-
-		var currentParam = {};
+		currentParam = {};
 		currentParam.name = segment+'_relazione';
 		currentParam.parentObject = segment;
 		currentParam.title = 'Relazione';
 		currentParam.type = 'multilinestring';
 		currentParam.value = userParam[segment+'_relazione'] ? userParam[segment+'_relazione'] : '';
-		currentParam.defaultvalue = 'Testo raccolta fondi\nsu più righe.\n';
+		currentParam.defaultvalue = "Descrizione dell’iniziativa\n\nL’ETS <DenominazioneEts> dal <DataInizio> al <DataFine> ha posto in essere un’iniziativa denominata <DenominazioneEvento>.\nSono stati raccolti fondi in denaro per un totale di Euro <TotaleEntrate> (riportare il totale di entrate in denaro).\nLe elargizioni in denaro sono state ricevute in contanti per un totale di Euro <TotaleEntrateCassa> su c/c bancario per un totale di Euro <TotaleEntrateBanca> altro______\n\ne/o\nSono stati raccolti beni materiali complessivi per un valore complessivo di Euro_______\nI costi sostenuti per la realizzazione dell’evento sono così dettagliati: ______________\nI fondi raccolti al netto del totale delle spese sostenute sono pari ad Euro <TotaleRisultato> e verranno impiegati per le seguenti attività di interesse generale*______________________\nE per le seguenti finalità:\n____________________________\n\nGli oneri sostenuti e/o le uscite sono risultati superiori ai proventi/entrate per le seguenti motivazioni (campo da compilare esclusivamente nell’ipotesi in cui i costi complessivamente sostenuti per la realizzazione dell’evento siano superiori ai ricavi)_________________\n\n*utilizzare la nomenclatura contenuta nell’art. 5 del D.lgs 117/17\n";
 		currentParam.segment = segment;
 		currentParam.tooltip = 'Inserire un testo';
 		currentParam.readValueSegment = function(segment) {
-		  userParam[segment+'_relazione'] = this.value;
+			userParam[segment+'_relazione'] = this.value;
 		}
 		convertedParam.data.push(currentParam);
-
-		// var currentParam = {};
-		// currentParam.name = segment+'_cancella';
-		// currentParam.parentObject = segment;
-		// currentParam.title = 'Cancella';
-		// currentParam.type = 'bool';
-		// currentParam.value = userParam[segment+'_cancella'] ? true : false;
-		// currentParam.defaultvalue = false;
-		// currentParam.segment = segment;
-		// currentParam.tooltip = 'Cancellare i dati del segmento selezionato';
-		// currentParam.readValueSegment = function(segment) {
-		//   userParam[segment+'_cancella'] = this.value;
-		// }
-		// convertedParam.data.push(currentParam);
-
 	}
 
 	return convertedParam;
 }
 
-function initUserParam(segmentList) {
+function initUserParam(segments) {
 
-	var userParam = {};
+	let userParam = {};
 
 	userParam.stampaLogo = false;
 	userParam.nomeLogo = 'Logo';
+	userParam.stampaSegmenti = false;
 
-	for (var i = 0; i < segmentList.length; i++) {
-		var segment = segmentList[i].account;
-		var segDesc = segmentList[i].description;
+	for (let i = 0; i < segments.length; i++) {
+		let segment = segments[i].account;
+		let segDesc = segments[i].description;
 
+		userParam[segment+'_includi'] = true;
 		userParam[segment+'_descrizione'] = segDesc;
+		userParam[segment+'_denominazione'] = segDesc;
 		userParam[segment+'_dataInizio'] = Banana.Converter.toLocaleDateFormat(Banana.document.info("AccountingDataBase","OpeningDate"));
 		userParam[segment+'_dataFine'] = Banana.Converter.toLocaleDateFormat(Banana.document.info("AccountingDataBase","ClosureDate"));
-		userParam[segment+'_responsabile'] = "Sig. Mario Rossi";
-		userParam[segment+'_relazione'] = "Testo raccolta fondi\nsu più righe.\n";
-		// userParam[segment+'_cancella'] = false;
+		userParam[segment+'_relazione'] = "Descrizione dell’iniziativa\n\nL’ETS <DenominazioneEts> dal <DataInizio> al <DataFine> ha posto in essere un’iniziativa denominata <DenominazioneEvento>.\nSono stati raccolti fondi in denaro per un totale di Euro <TotaleEntrate> (riportare il totale di entrate in denaro).\nLe elargizioni in denaro sono state ricevute in contanti per un totale di Euro <TotaleEntrateCassa> su c/c bancario per un totale di Euro <TotaleEntrateBanca> altro______\n\ne/o\nSono stati raccolti beni materiali complessivi per un valore complessivo di Euro_______\nI costi sostenuti per la realizzazione dell’evento sono così dettagliati: ______________\nI fondi raccolti al netto del totale delle spese sostenute sono pari ad Euro <TotaleRisultato> e verranno impiegati per le seguenti attività di interesse generale*______________________\nE per le seguenti finalità:\n____________________________\n\nGli oneri sostenuti e/o le uscite sono risultati superiori ai proventi/entrate per le seguenti motivazioni (campo da compilare esclusivamente nell’ipotesi in cui i costi complessivamente sostenuti per la realizzazione dell’evento siano superiori ai ricavi)_________________\n\n*utilizzare la nomenclatura contenuta nell’art. 5 del D.lgs 117/17\n";
 	}
 
 	return userParam;
 }
 
-function parametersDialog(userParam, segmentList) {
+function parametersDialog(userParam, segments) {
 	if (typeof(Banana.Ui.openPropertyEditor) !== 'undefined') {
-		var dialogTitle = "Parametri report raccolta fondi" ;
-		var convertedParam = convertParam(userParam, segmentList);
-		var pageAnchor = 'dlgSettings';
+		let dialogTitle = "Parametri report raccolta fondi" ;
+		let convertedParam = convertParam(userParam, segments);
+		let pageAnchor = 'dlgSettings';
 		if (!Banana.Ui.openPropertyEditor(dialogTitle, convertedParam, pageAnchor)) {
 	    	return null;
 		}
-		for (var i = 0; i < convertedParam.data.length; i++) {
+		for (let i = 0; i < convertedParam.data.length; i++) {
 	    	// Read values to userParam (through the readValue function)
 	        if (!convertedParam.data[i].segment) {
 	          convertedParam.data[i].readValue();
@@ -517,22 +796,21 @@ function parametersDialog(userParam, segmentList) {
 	return userParam;
 }
 
-function settingsDialog(segmentList) {
-	var userParam = initUserParam(segmentList);
-	var savedParam = Banana.document.getScriptSettings();
+function settingsDialog(segments) {
+	let userParam = initUserParam(segments);
+	let savedParam = Banana.document.getScriptSettings();
 	if (savedParam && savedParam.length > 0) {
 		userParam = JSON.parse(savedParam);
 	}
 
-	var userParam = parametersDialog(userParam,segmentList); // From propertiess
+	userParam = parametersDialog(userParam,segments); // From propertiess
 	if (userParam) {
-		var paramToString = JSON.stringify(userParam);
+		let paramToString = JSON.stringify(userParam);
 		Banana.document.setScriptSettings(paramToString);
 	}
 
    return userParam;
 }
-
 
 /**************************************************************************************
  * Check the banana version

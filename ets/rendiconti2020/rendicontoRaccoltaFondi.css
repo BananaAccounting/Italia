@@ -1,14 +1,15 @@
-/* Update 2020-10-16 */
+/* Update 2025-10-13 */
 
 @page {
    margin-top: 20mm;
-   margin-bottom: 20mm;
-   margin-left: 25mm;
+   margin-bottom: 10mm;
+   margin-left: 15mm;
    margin-right: 15mm;
 }
 
 body {
-   font-family: Times New Roman;
+   font-family: Helvetica, Arial, sans-serif;
+   font-size: 10px;
 }
 
 .heading1 {
@@ -17,7 +18,7 @@ body {
 }
 
 .heading2 {
-   font-size: 14px;
+   font-size: 13.5px;
    font-weight: bold;
 }
 
@@ -60,7 +61,7 @@ body {
 }
 
 table {
-   font-size: 12px;
+   font-size: 10px;
    width: 100%;
 }
 
@@ -85,4 +86,13 @@ table.table td {
    border-right-style: solid;
    border-right-color: black;
    border-right-width: thin;
+}
+
+.footer {
+   text-align: center;
+   font-size:8px;
+}
+
+.finalnotes {
+   margin-top: 0.5cm;
 }

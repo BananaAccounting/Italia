@@ -18,264 +18,232 @@
 \newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
 \newenvironment{test}[1]{\section*{Test case: #1}}{}
 %Begin test data
-%%SCRIPT{/Users/ivan/Documents/GitHub/Italia/ets/rendiconti2020/test/ch.banana.it.extension.reportraccoltafondi.test.js}
+%%SCRIPT{/Users/ivan/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.reportraccoltafondi.test.js}
 %
 \begin{testcase}{ReportRaccoltaFondiTest}
 \begin{test}{testContabilitaSemplice}
 \begin{reportvalue}{Test report raccolta fondi (contabilità semplice)}
-RENDICONTO DELLA RACCOLTA FONDI \\
-"Raccolta fondi 1" \\
+RENDICONTO DELLA SINGOLA RACCOLTA PUBBLICA DI FONDI OCCASIONALE REDATTO AI SENSI DELL’ARTICOLO 87, COMMA 6 E DELL’ ARTICOLO 79, COMMA 4, LETTERA A), DEL D.LGS. 3 AGOSTO 2017 N. 117 \\
   \\
   \\
-Ente: Associazione Aiuto agli Anziani \\
+Denominazione ETS: Associazione Aiuto agli Anziani \\
+CF: 1234567890 \\
+Sede: Gradenigo 10, 35131 Padova \\
+RENDICONTO DELLA SINGOLA RACCOLTA FONDI OCCASIONALE \\
+Descrizione della celebrazione, ricorrenza o campagna di sensibilizzazione: Raccolta fondi 1 \\
+Eventuale denominazione dell’evento: Raccolta fondi 1 \\
+Durata della raccolta fondi: dal 01.01.2020 al 31.12.2020 \\
   \\
-Raccolta fondi svolta dal 01.01.2020 al 31.12.2020 \\
   \\
-Responsabile: Sig. Mario Rossi \\
-  \\
-  \\
-\begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Entrate €  & Uscite € \\
-15.12.2020  &  & Entrate Raccolta fondi Natale  & 2'400.00  & \\
-18.12.2020  &  & Uscite Raccolta fondi Natale  &  & 450.00 \\
-22.12.2020  &  & Entrate Raccolta fondi Natale  & 5'400.00  & \\
-\multicolumn{2}{l}{} & Totali movimenti  & 7'800.00  & 450.00 \\
-\multicolumn{2}{l}{} & AVANZO D'ESERCIZIO  & \multicolumn{2}{l}{€ 7'350.00 }\\
+\begin{longtable}[l]{ l  l  l }
+a) Proventi/entrate della raccolta fondi occasionale  & \\
+15.12.2020, Entrate Raccolta fondi Natale  & 2'400.00 \\
+22.12.2020, Entrate Raccolta fondi Natale  & 5'400.00 \\
+Totale a)  & € 7'800.00 \\
+b) Oneri/uscite per la raccolta fondi occasionale  & \\
+18.12.2020, Uscite Raccolta fondi Natale  & 450.00 \\
+Totale b)  & € 450.00 \\
+Risultato della singola raccolta fondi (a-b)  & \multicolumn{2}{l}{€ 7'350.00 }\\
 \end{longtable}
   \\
+La tabella si conclude con una relazione illustrativa in cui sono evidenziati, a integrazione e completamente dei risultati numerici, le finalità e gli elementi caratterizzanti della singola raccolta fondi. \\
   \\
-RELAZIONE ILLUSTRATIVA DELLA RACCOLTA FONDI: \\
+  \\
+RELAZIONE ILLUSTRATIVA DELLA SINGOLA INIZIATIVA DI RACCOLTA FONDI OCCASIONALE \\
   \\
 Testo raccolta fondi\P su più righe.\P  \\
+RENDICONTO DELLA SINGOLA RACCOLTA PUBBLICA DI FONDI OCCASIONALE REDATTO AI SENSI DELL’ARTICOLO 87, COMMA 6 E DELL’ ARTICOLO 79, COMMA 4, LETTERA A), DEL D.LGS. 3 AGOSTO 2017 N. 117 \\
   \\
   \\
+Denominazione ETS: Associazione Aiuto agli Anziani \\
+CF: 1234567890 \\
+Sede: Gradenigo 10, 35131 Padova \\
+RENDICONTO DELLA SINGOLA RACCOLTA FONDI OCCASIONALE \\
+Descrizione della celebrazione, ricorrenza o campagna di sensibilizzazione: Raccolta fondi 2 \\
+Eventuale denominazione dell’evento: Raccolta fondi 2 \\
+Durata della raccolta fondi: dal 01.01.2020 al 31.12.2020 \\
   \\
   \\
-\begin{longtable}[l]{ l  l }
-Firma del Rappresentante Legale  & Firma del Responsabile \\
-   &   \\
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_  & \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
-\end{longtable}
-RENDICONTO DELLA RACCOLTA FONDI \\
-"Raccolta fondi 2" \\
-  \\
-  \\
-Ente: Associazione Aiuto agli Anziani \\
-  \\
-Raccolta fondi svolta dal 01.01.2020 al 31.12.2020 \\
-  \\
-Responsabile: Sig. Mario Rossi \\
-  \\
-  \\
-\begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Entrate €  & Uscite € \\
-20.02.2020  &  & Entrate Raccolta fondi Carnevale  & 1'700.00  & \\
-\multicolumn{2}{l}{} & Totali movimenti  & 1'700.00  & \\
-\multicolumn{2}{l}{} & AVANZO D'ESERCIZIO  & \multicolumn{2}{l}{€ 1'700.00 }\\
+\begin{longtable}[l]{ l  l  l }
+a) Proventi/entrate della raccolta fondi occasionale  & \\
+20.02.2020, Entrate Raccolta fondi Carnevale  & 1'700.00 \\
+Totale a)  & € 1'700.00 \\
+b) Oneri/uscite per la raccolta fondi occasionale  & \\
+Totale b)  & € 0.00 \\
+Risultato della singola raccolta fondi (a-b)  & \multicolumn{2}{l}{€ 1'700.00 }\\
 \end{longtable}
   \\
+La tabella si conclude con una relazione illustrativa in cui sono evidenziati, a integrazione e completamente dei risultati numerici, le finalità e gli elementi caratterizzanti della singola raccolta fondi. \\
   \\
-RELAZIONE ILLUSTRATIVA DELLA RACCOLTA FONDI: \\
+  \\
+RELAZIONE ILLUSTRATIVA DELLA SINGOLA INIZIATIVA DI RACCOLTA FONDI OCCASIONALE \\
   \\
 Testo raccolta fondi\P su più righe.\P  \\
+RENDICONTO DELLA SINGOLA RACCOLTA PUBBLICA DI FONDI OCCASIONALE REDATTO AI SENSI DELL’ARTICOLO 87, COMMA 6 E DELL’ ARTICOLO 79, COMMA 4, LETTERA A), DEL D.LGS. 3 AGOSTO 2017 N. 117 \\
   \\
   \\
+Denominazione ETS: Associazione Aiuto agli Anziani \\
+CF: 1234567890 \\
+Sede: Gradenigo 10, 35131 Padova \\
+RENDICONTO DELLA SINGOLA RACCOLTA FONDI OCCASIONALE \\
+Descrizione della celebrazione, ricorrenza o campagna di sensibilizzazione: Raccolta fondi 3 \\
+Eventuale denominazione dell’evento: Raccolta fondi 3 \\
+Durata della raccolta fondi: dal 01.01.2020 al 31.12.2020 \\
   \\
   \\
-\begin{longtable}[l]{ l  l }
-Firma del Rappresentante Legale  & Firma del Responsabile \\
-   &   \\
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_  & \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
-\end{longtable}
-RENDICONTO DELLA RACCOLTA FONDI \\
-"Raccolta fondi 3" \\
-  \\
-  \\
-Ente: Associazione Aiuto agli Anziani \\
-  \\
-Raccolta fondi svolta dal 01.01.2020 al 31.12.2020 \\
-  \\
-Responsabile: Sig. Mario Rossi \\
-  \\
-  \\
-\begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Entrate €  & Uscite € \\
-\multicolumn{2}{l}{} & Totali movimenti  &  & \\
-\multicolumn{2}{l}{} & AVANZO/DISAVANZO D'ESERCIZIO  & \multicolumn{2}{l}{€ 0.00 }\\
+\begin{longtable}[l]{ l  l  l }
+a) Proventi/entrate della raccolta fondi occasionale  & \\
+Totale a)  & € 0.00 \\
+b) Oneri/uscite per la raccolta fondi occasionale  & \\
+Totale b)  & € 0.00 \\
+Risultato della singola raccolta fondi (a-b)  & \multicolumn{2}{l}{€ 0.00 }\\
 \end{longtable}
   \\
+La tabella si conclude con una relazione illustrativa in cui sono evidenziati, a integrazione e completamente dei risultati numerici, le finalità e gli elementi caratterizzanti della singola raccolta fondi. \\
   \\
-RELAZIONE ILLUSTRATIVA DELLA RACCOLTA FONDI: \\
+  \\
+RELAZIONE ILLUSTRATIVA DELLA SINGOLA INIZIATIVA DI RACCOLTA FONDI OCCASIONALE \\
   \\
 Testo raccolta fondi\P su più righe.\P  \\
+RENDICONTO DELLA SINGOLA RACCOLTA PUBBLICA DI FONDI OCCASIONALE REDATTO AI SENSI DELL’ARTICOLO 87, COMMA 6 E DELL’ ARTICOLO 79, COMMA 4, LETTERA A), DEL D.LGS. 3 AGOSTO 2017 N. 117 \\
   \\
   \\
+Denominazione ETS: Associazione Aiuto agli Anziani \\
+CF: 1234567890 \\
+Sede: Gradenigo 10, 35131 Padova \\
+RENDICONTO DELLA SINGOLA RACCOLTA FONDI OCCASIONALE \\
+Descrizione della celebrazione, ricorrenza o campagna di sensibilizzazione: Raccolta fondi 4 \\
+Eventuale denominazione dell’evento: Raccolta fondi 4 \\
+Durata della raccolta fondi: dal 01.01.2020 al 31.12.2020 \\
   \\
   \\
-\begin{longtable}[l]{ l  l }
-Firma del Rappresentante Legale  & Firma del Responsabile \\
-   &   \\
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_  & \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
-\end{longtable}
-RENDICONTO DELLA RACCOLTA FONDI \\
-"Raccolta fondi 4" \\
-  \\
-  \\
-Ente: Associazione Aiuto agli Anziani \\
-  \\
-Raccolta fondi svolta dal 01.01.2020 al 31.12.2020 \\
-  \\
-Responsabile: Sig. Mario Rossi \\
-  \\
-  \\
-\begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Entrate €  & Uscite € \\
-\multicolumn{2}{l}{} & Totali movimenti  &  & \\
-\multicolumn{2}{l}{} & AVANZO/DISAVANZO D'ESERCIZIO  & \multicolumn{2}{l}{€ 0.00 }\\
+\begin{longtable}[l]{ l  l  l }
+a) Proventi/entrate della raccolta fondi occasionale  & \\
+Totale a)  & € 0.00 \\
+b) Oneri/uscite per la raccolta fondi occasionale  & \\
+Totale b)  & € 0.00 \\
+Risultato della singola raccolta fondi (a-b)  & \multicolumn{2}{l}{€ 0.00 }\\
 \end{longtable}
   \\
+La tabella si conclude con una relazione illustrativa in cui sono evidenziati, a integrazione e completamente dei risultati numerici, le finalità e gli elementi caratterizzanti della singola raccolta fondi. \\
   \\
-RELAZIONE ILLUSTRATIVA DELLA RACCOLTA FONDI: \\
+  \\
+RELAZIONE ILLUSTRATIVA DELLA SINGOLA INIZIATIVA DI RACCOLTA FONDI OCCASIONALE \\
   \\
 Testo raccolta fondi\P su più righe.\P  \\
-  \\
-  \\
-  \\
-  \\
-\begin{longtable}[l]{ l  l }
-Firma del Rappresentante Legale  & Firma del Responsabile \\
-   &   \\
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_  & \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
-\end{longtable}
 \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}
 \begin{test}{testContabilitaDoppia}
 \begin{reportvalue}{Test report raccolta fondi (contabilità doppia)}
-RENDICONTO DELLA RACCOLTA FONDI \\
-"Raccolta fondi 1" \\
+RENDICONTO DELLA SINGOLA RACCOLTA PUBBLICA DI FONDI OCCASIONALE REDATTO AI SENSI DELL’ARTICOLO 87, COMMA 6 E DELL’ ARTICOLO 79, COMMA 4, LETTERA A), DEL D.LGS. 3 AGOSTO 2017 N. 117 \\
   \\
   \\
-Ente: Associazione Aiuto agli Anziani \\
+Denominazione ETS: Associazione Aiuto agli Anziani \\
+CF: 1234567890 \\
+Sede: Gradenigo 10, 35131 Padova \\
+RENDICONTO DELLA SINGOLA RACCOLTA FONDI OCCASIONALE \\
+Descrizione della celebrazione, ricorrenza o campagna di sensibilizzazione: Raccolta fondi 1 \\
+Eventuale denominazione dell’evento: Raccolta fondi 1 \\
+Durata della raccolta fondi: dal 01.01.2022 al 31.12.2022 \\
   \\
-Raccolta fondi svolta dal 01.01.2022 al 31.12.2022 \\
   \\
-Responsabile: Sig. Mario Rossi \\
-  \\
-  \\
-\begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Entrate €  & Uscite € \\
-15.12.2022  &  & Entrate Raccolta fondi Natale  & 2'400.00  & \\
-18.12.2022  &  & Uscite Raccolta fondi Natale  &  & 450.00 \\
-22.12.2022  &  & Entrate Raccolta fondi Natale  & 5'400.00  & \\
-\multicolumn{2}{l}{} & Totali movimenti  & 7'800.00  & 450.00 \\
-\multicolumn{2}{l}{} & AVANZO D'ESERCIZIO  & \multicolumn{2}{l}{€ 7'350.00 }\\
+\begin{longtable}[l]{ l  l  l }
+a) Proventi/entrate della raccolta fondi occasionale  & \\
+15.12.2022, Entrate Raccolta fondi Natale  & 2'400.00 \\
+22.12.2022, Entrate Raccolta fondi Natale  & 5'400.00 \\
+Totale a)  & € 7'800.00 \\
+b) Oneri/uscite per la raccolta fondi occasionale  & \\
+18.12.2022, Uscite Raccolta fondi Natale  & 450.00 \\
+Totale b)  & € 450.00 \\
+Risultato della singola raccolta fondi (a-b)  & \multicolumn{2}{l}{€ 7'350.00 }\\
 \end{longtable}
   \\
+La tabella si conclude con una relazione illustrativa in cui sono evidenziati, a integrazione e completamente dei risultati numerici, le finalità e gli elementi caratterizzanti della singola raccolta fondi. \\
   \\
-RELAZIONE ILLUSTRATIVA DELLA RACCOLTA FONDI: \\
+  \\
+RELAZIONE ILLUSTRATIVA DELLA SINGOLA INIZIATIVA DI RACCOLTA FONDI OCCASIONALE \\
   \\
 Testo raccolta fondi\P su più righe.\P  \\
+RENDICONTO DELLA SINGOLA RACCOLTA PUBBLICA DI FONDI OCCASIONALE REDATTO AI SENSI DELL’ARTICOLO 87, COMMA 6 E DELL’ ARTICOLO 79, COMMA 4, LETTERA A), DEL D.LGS. 3 AGOSTO 2017 N. 117 \\
   \\
   \\
+Denominazione ETS: Associazione Aiuto agli Anziani \\
+CF: 1234567890 \\
+Sede: Gradenigo 10, 35131 Padova \\
+RENDICONTO DELLA SINGOLA RACCOLTA FONDI OCCASIONALE \\
+Descrizione della celebrazione, ricorrenza o campagna di sensibilizzazione: Raccolta fondi 2 \\
+Eventuale denominazione dell’evento: Raccolta fondi 2 \\
+Durata della raccolta fondi: dal 01.01.2022 al 31.12.2022 \\
   \\
   \\
-\begin{longtable}[l]{ l  l }
-Firma del Rappresentante Legale  & Firma del Responsabile \\
-   &   \\
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_  & \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
-\end{longtable}
-RENDICONTO DELLA RACCOLTA FONDI \\
-"Raccolta fondi 2" \\
-  \\
-  \\
-Ente: Associazione Aiuto agli Anziani \\
-  \\
-Raccolta fondi svolta dal 01.01.2022 al 31.12.2022 \\
-  \\
-Responsabile: Sig. Mario Rossi \\
-  \\
-  \\
-\begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Entrate €  & Uscite € \\
-20.02.2022  &  & Entrate Raccolta fondi Carnevale  & 1'700.00  & \\
-\multicolumn{2}{l}{} & Totali movimenti  & 1'700.00  & \\
-\multicolumn{2}{l}{} & AVANZO D'ESERCIZIO  & \multicolumn{2}{l}{€ 1'700.00 }\\
+\begin{longtable}[l]{ l  l  l }
+a) Proventi/entrate della raccolta fondi occasionale  & \\
+20.02.2022, Entrate Raccolta fondi Carnevale  & 1'700.00 \\
+Totale a)  & € 1'700.00 \\
+b) Oneri/uscite per la raccolta fondi occasionale  & \\
+Totale b)  & € 0.00 \\
+Risultato della singola raccolta fondi (a-b)  & \multicolumn{2}{l}{€ 1'700.00 }\\
 \end{longtable}
   \\
+La tabella si conclude con una relazione illustrativa in cui sono evidenziati, a integrazione e completamente dei risultati numerici, le finalità e gli elementi caratterizzanti della singola raccolta fondi. \\
   \\
-RELAZIONE ILLUSTRATIVA DELLA RACCOLTA FONDI: \\
+  \\
+RELAZIONE ILLUSTRATIVA DELLA SINGOLA INIZIATIVA DI RACCOLTA FONDI OCCASIONALE \\
   \\
 Testo raccolta fondi\P su più righe.\P  \\
+RENDICONTO DELLA SINGOLA RACCOLTA PUBBLICA DI FONDI OCCASIONALE REDATTO AI SENSI DELL’ARTICOLO 87, COMMA 6 E DELL’ ARTICOLO 79, COMMA 4, LETTERA A), DEL D.LGS. 3 AGOSTO 2017 N. 117 \\
   \\
   \\
+Denominazione ETS: Associazione Aiuto agli Anziani \\
+CF: 1234567890 \\
+Sede: Gradenigo 10, 35131 Padova \\
+RENDICONTO DELLA SINGOLA RACCOLTA FONDI OCCASIONALE \\
+Descrizione della celebrazione, ricorrenza o campagna di sensibilizzazione: Raccolta fondi 3 \\
+Eventuale denominazione dell’evento: Raccolta fondi 3 \\
+Durata della raccolta fondi: dal 01.01.2022 al 31.12.2022 \\
   \\
   \\
-\begin{longtable}[l]{ l  l }
-Firma del Rappresentante Legale  & Firma del Responsabile \\
-   &   \\
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_  & \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
-\end{longtable}
-RENDICONTO DELLA RACCOLTA FONDI \\
-"Raccolta fondi 3" \\
-  \\
-  \\
-Ente: Associazione Aiuto agli Anziani \\
-  \\
-Raccolta fondi svolta dal 01.01.2022 al 31.12.2022 \\
-  \\
-Responsabile: Sig. Mario Rossi \\
-  \\
-  \\
-\begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Entrate €  & Uscite € \\
-\multicolumn{2}{l}{} & Totali movimenti  &  & \\
-\multicolumn{2}{l}{} & AVANZO/DISAVANZO D'ESERCIZIO  & \multicolumn{2}{l}{€ 0.00 }\\
+\begin{longtable}[l]{ l  l  l }
+a) Proventi/entrate della raccolta fondi occasionale  & \\
+Totale a)  & € 0.00 \\
+b) Oneri/uscite per la raccolta fondi occasionale  & \\
+Totale b)  & € 0.00 \\
+Risultato della singola raccolta fondi (a-b)  & \multicolumn{2}{l}{€ 0.00 }\\
 \end{longtable}
   \\
+La tabella si conclude con una relazione illustrativa in cui sono evidenziati, a integrazione e completamente dei risultati numerici, le finalità e gli elementi caratterizzanti della singola raccolta fondi. \\
   \\
-RELAZIONE ILLUSTRATIVA DELLA RACCOLTA FONDI: \\
+  \\
+RELAZIONE ILLUSTRATIVA DELLA SINGOLA INIZIATIVA DI RACCOLTA FONDI OCCASIONALE \\
   \\
 Testo raccolta fondi\P su più righe.\P  \\
+RENDICONTO DELLA SINGOLA RACCOLTA PUBBLICA DI FONDI OCCASIONALE REDATTO AI SENSI DELL’ARTICOLO 87, COMMA 6 E DELL’ ARTICOLO 79, COMMA 4, LETTERA A), DEL D.LGS. 3 AGOSTO 2017 N. 117 \\
   \\
   \\
+Denominazione ETS: Associazione Aiuto agli Anziani \\
+CF: 1234567890 \\
+Sede: Gradenigo 10, 35131 Padova \\
+RENDICONTO DELLA SINGOLA RACCOLTA FONDI OCCASIONALE \\
+Descrizione della celebrazione, ricorrenza o campagna di sensibilizzazione: Raccolta fondi 4 \\
+Eventuale denominazione dell’evento: Raccolta fondi 4 \\
+Durata della raccolta fondi: dal 01.01.2022 al 31.12.2022 \\
   \\
   \\
-\begin{longtable}[l]{ l  l }
-Firma del Rappresentante Legale  & Firma del Responsabile \\
-   &   \\
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_  & \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
-\end{longtable}
-RENDICONTO DELLA RACCOLTA FONDI \\
-"Raccolta fondi 4" \\
-  \\
-  \\
-Ente: Associazione Aiuto agli Anziani \\
-  \\
-Raccolta fondi svolta dal 01.01.2022 al 31.12.2022 \\
-  \\
-Responsabile: Sig. Mario Rossi \\
-  \\
-  \\
-\begin{longtable}[l]{ l  l  l  l  l }
-Data  & Doc  & Descrizione  & Entrate €  & Uscite € \\
-\multicolumn{2}{l}{} & Totali movimenti  &  & \\
-\multicolumn{2}{l}{} & AVANZO/DISAVANZO D'ESERCIZIO  & \multicolumn{2}{l}{€ 0.00 }\\
+\begin{longtable}[l]{ l  l  l }
+a) Proventi/entrate della raccolta fondi occasionale  & \\
+Totale a)  & € 0.00 \\
+b) Oneri/uscite per la raccolta fondi occasionale  & \\
+Totale b)  & € 0.00 \\
+Risultato della singola raccolta fondi (a-b)  & \multicolumn{2}{l}{€ 0.00 }\\
 \end{longtable}
   \\
+La tabella si conclude con una relazione illustrativa in cui sono evidenziati, a integrazione e completamente dei risultati numerici, le finalità e gli elementi caratterizzanti della singola raccolta fondi. \\
   \\
-RELAZIONE ILLUSTRATIVA DELLA RACCOLTA FONDI: \\
+  \\
+RELAZIONE ILLUSTRATIVA DELLA SINGOLA INIZIATIVA DI RACCOLTA FONDI OCCASIONALE \\
   \\
 Testo raccolta fondi\P su più righe.\P  \\
-  \\
-  \\
-  \\
-  \\
-\begin{longtable}[l]{ l  l }
-Firma del Rappresentante Legale  & Firma del Responsabile \\
-   &   \\
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_  & \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
-\end{longtable}
 \end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}

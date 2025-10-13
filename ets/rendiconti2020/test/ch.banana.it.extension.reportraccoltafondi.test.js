@@ -1,4 +1,4 @@
-// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.reportraccoltafondi.test
 // @api = 1.0
-// @pubdate = 2021-03-01
+// @pubdate = 2025-10-13
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.reportraccoltafondi.js>
 // @task = app.command
@@ -60,46 +60,62 @@ ReportRaccoltaFondiTest.prototype.cleanup = function() {
 // Test contabilità semplice
 ReportRaccoltaFondiTest.prototype.testContabilitaSemplice = function() {
 
-	var banDoc = Banana.application.openDocument("file:script/../test/testcases/11094-entrate-uscite-ets-rendiconto-cassa-tutorial.ac2");
+	let banDoc = Banana.application.openDocument("file:script/../test/testcases/11094-entrate-uscite-ets-rendiconto-cassa-tutorial.ac2");
 	Test.assert(banDoc);
 
-	var segmentList = getSegmentsLvl2(banDoc);
+	let segmentList = getSegmentsLvl2(banDoc);
 
-	var userParam = {};
-	for (var i = 0; i < segmentList.length; i++) {
-		var segment = segmentList[i].account;
-		var segDesc = segmentList[i].description;
+	let userParam = {};
+	userParam.stampaSegmenti = false;
+	for (let i = 0; i < segmentList.length; i++) {
+		let segment = segmentList[i].account;
+		let segDesc = segmentList[i].description;
+		userParam[segment+'_includi'] = true;
 		userParam[segment+'_descrizione'] = segDesc;
+		userParam[segment+'_denominazione'] = segDesc;
 		userParam[segment+'_dataInizio'] = "01.01.2020";
 		userParam[segment+'_dataFine'] = "31.12.2020";
-		userParam[segment+'_responsabile'] = "Sig. Mario Rossi";
 		userParam[segment+'_relazione'] = "Testo raccolta fondi\nsu più righe.\n";
 	}
 
-	var report = printReport(banDoc, userParam, segmentList, "");
+	segmentList = segmentList.filter(seg => userParam[seg.account + '_includi'] !== false);
+	let segmentDataList = buildSegmentDataList(banDoc, userParam, segmentList);
+	if (userParam.stampaSegmenti) {
+		segmentDataList = segmentDataList.filter(sd => sd.transactions && sd.transactions.length > 0);
+	}
+
+	let report = printReport(banDoc, userParam, segmentDataList, "");
 	Test.logger.addReport("Test report raccolta fondi (contabilità semplice)", report);
 }
 
 // Test contabilità doppia
 ReportRaccoltaFondiTest.prototype.testContabilitaDoppia = function() {
 
-	var banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_doppia_raccolta_fondi.ac2");
+	let banDoc = Banana.application.openDocument("file:script/../test/testcases/ets_doppia_raccolta_fondi.ac2");
 	Test.assert(banDoc);
 
-	var segmentList = getSegmentsLvl2(banDoc);
+	let segmentList = getSegmentsLvl2(banDoc);
 
-	var userParam = {};
-	for (var i = 0; i < segmentList.length; i++) {
-		var segment = segmentList[i].account;
-		var segDesc = segmentList[i].description;
+	let userParam = {};
+	userParam.stampaSegmenti = false;
+	for (let i = 0; i < segmentList.length; i++) {
+		let segment = segmentList[i].account;
+		let segDesc = segmentList[i].description;
+		userParam[segment+'_includi'] = true;
 		userParam[segment+'_descrizione'] = segDesc;
+		userParam[segment+'_denominazione'] = segDesc;
 		userParam[segment+'_dataInizio'] = "01.01.2022";
 		userParam[segment+'_dataFine'] = "31.12.2022";
-		userParam[segment+'_responsabile'] = "Sig. Mario Rossi";
 		userParam[segment+'_relazione'] = "Testo raccolta fondi\nsu più righe.\n";
 	}
 
-	var report = printReport(banDoc, userParam, segmentList, "");
+	segmentList = segmentList.filter(seg => userParam[seg.account + '_includi'] !== false);
+	let segmentDataList = buildSegmentDataList(banDoc, userParam, segmentList);
+	if (userParam.stampaSegmenti) {
+		segmentDataList = segmentDataList.filter(sd => sd.transactions && sd.transactions.length > 0);
+	}
+	
+	let report = printReport(banDoc, userParam, segmentDataList, "");
 	Test.logger.addReport("Test report raccolta fondi (contabilità doppia)", report);
 }
 

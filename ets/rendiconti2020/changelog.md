@@ -1,4 +1,6 @@
 # Cronologia modifiche
+### 2025-10-13
+* Modificato report Raccolta fondi secondo linee giuda ufficiali.
 ### 2025-05-14
 * Aggiunto stampa ricevuta per quota sociale.
 * Attestato donazioni: aggiunto salvataggio in pdf separati.
