@@ -1,4 +1,4 @@
-// Copyright [2023] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 // @id = ch.banana.italia.import.intesa
 // @api = 1.0
-// @pubdate = 2024-05-28
+// @pubdate = 2025-12-11
 // @publisher = Banana.ch SA
 // @description = Banca Intesa - Import account statement .csv (Banana+ Advanced)
 // @description.en = Banca Intesa - Import account statement .csv (Banana+ Advanced)
@@ -287,6 +287,10 @@ function Intesa_FormatCc1() {
  * ;;;;;;;;
  * ;;;;;;;;
  * ;;;;;;;;
+ * 
+ * In some cases the decimal separator could change, as we work with an Excel file, it detects the
+ * regional setting. We define the separator used directly checking the amounts.
+ * Amounts do not have thousands separator.
 */
 function Intesa_Format2() {
 	this.decimalSeparator = ".";
@@ -324,16 +328,6 @@ function Intesa_Format2() {
 			if (!headerData[i]) {
 				headerData[i] = "";
 			}
-
-			//Avoid duplicate headers -> Not useful in this case.
-			/**var headerPos = headerData.indexOf(headerData[i]);
-			if (headerPos >= 0 && headerPos < i) { // Header already exist
-				var postfixIndex = 2;
-				while (headerData.indexOf(headerData[i] + postfixIndex.toString()) !== -1 && postfixIndex <= 99)
-					postfixIndex++; // Append an incremental index
-				headerData[i] = headerData[i] + postfixIndex.toString()
-			}*/
-
 		}
 		return headerData;
 	}
@@ -395,18 +389,27 @@ function Intesa_Format2() {
 	/** Convert the transaction to the format to be imported */
 	this.convert = function (rows) {
 		var transactionsToImport = [];
+		this.setDecimalSeparator(rows);
 
-		for (var i = 0; i < rows.length; i++) {
-			if (rows[i]["Date"] && rows[i]["Date"].length >= 8 &&
-				rows[i]["Date"].match(/^[0-9]+[\/\.][0-9]+[\/\.][0-9]+$/))
-				transactionsToImport.push(this.mapTransaction(rows[i]));
+		for (const row of rows) {
+			if (row["Date"] && row["Date"].length >= 8 &&
+				row["Date"].match(/^[0-9]+[\/\.][0-9]+[\/\.][0-9]+$/))
+				transactionsToImport.push(this.mapTransaction(row));
 		}
-
-		transactionsToImport = transactionsToImport.reverse();
 
 		// Add header and return
 		var header = [["Date", "DateValue", "Doc", "Description", "Income", "Expenses"]];
 		return header.concat(transactionsToImport);
+	}
+
+	this.setDecimalSeparator = function (rows) {
+		for (const row of rows) {
+			if ((row["Income"] && row["Income"].indexOf(",") >= 0) ||
+				(row["Expenses"] && row["Expenses"].indexOf(",") >= 0)) {
+				this.decimalSeparator = ","
+				return;
+			}
+		}
 	}
 
 	/** Return the transaction converted in the import format */

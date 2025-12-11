@@ -1,4 +1,4 @@
-// Copyright [2023] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 
 // @id = ch.banana.italia.import.intesa.test
 // @api = 1.0
-// @pubdate = 2024-05-22
+// @pubdate = 2025-12-11
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.italia.import.intesa.test>
 // @task = app.command
@@ -60,6 +60,7 @@ TestImportBancaIntesa.prototype.testImport = function () {
 
    fileNameList.push("file:script/../test/testcases/csv_intesa_example_format1_20232209.csv");
    fileNameList.push("file:script/../test/testcases/csv_intesa_example_format2_20240522.csv");
+   fileNameList.push("file:script/../test/testcases/csv_intesa_example_format2_20251211.csv");
    fileNameList.push("file:script/../test/testcases/csv_intesa_example_format1_20240527.csv");
    fileNameList.push("file:script/../test/testcases/csv_intesa_example_formatCc1_20241227.csv");
 

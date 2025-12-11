@@ -1,4 +1,4 @@
-%%info_test_name{csv_intesa_example_format2_20240522}
+%%info_test_name{csv_intesa_example_format2_20251211}
 \documentclass{report}
 \usepackage{longtable}
 \usepackage{color}
@@ -20,17 +20,11 @@
 %Begin test data
 \begin{tablevalue}{}{ l  l  l  l  l  l }
 Date & DateValue & Doc & Description & Income & Expenses\\
-2024-04-18 & 2024-04-18 &  & Accredito, Descrizione & 640.00 & \\
-2024-04-19 & 2024-04-19 &  & Accredito, Descrizione & 100.00 & \\
-2024-04-19 & 2024-04-19 &  & Accredito, Descrizione & 600.00 & \\
-2024-04-22 & 2024-04-22 &  & Accredito, Descrizione & 240.00 & \\
-2024-04-24 & 2024-04-24 &  & Accredito, Descrizione & 127.60 & \\
-2024-04-24 & 2024-04-24 &  & Accredito, Descrizione & 260.00 & \\
-2024-04-24 & 2024-04-24 &  & Accredito, Descrizione & 440.00 & \\
-2024-04-25 & 2024-04-25 &  & Accredito, Descrizione & 49.00 & \\
-2024-04-26 & 2024-04-26 &  & Pagamento, Descrizione &  & 22.88\\
-2024-04-26 & 2024-04-26 &  & Accredito, Descrizione & 850.00 & \\
-2024-04-28 & 2024-04-28 &  & Addebito Saldo E/c Carta Di Credito &  & 48.00\\
+2025-11-03 & 2025-11-01 &  & Commissioni Transato Pos, Test &  & 8.12\\
+2025-11-03 & 2025-11-01 &  & Commissioni Transato Pos, Test &  & 4.18\\
+2025-11-03 & 2025-11-01 &  & Commissioni Transato Pos, Test &  & 2.31\\
+2025-11-03 & 2025-11-01 &  & Sconto Da Riduzione Commiss Su Operaz <5, Test & 0.01 & \\
+2025-11-03 & 2025-11-03 &  & Accredito Pos Lordo A Pagament, Test & 12.00 & \\
 \\
 \end{tablevalue}
 \end{document}
