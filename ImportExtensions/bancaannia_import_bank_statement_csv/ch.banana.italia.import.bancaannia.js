@@ -2,11 +2,11 @@
 // @api = 1.0
 // @pubdate = 2023-06-19
 // @publisher = Banana.ch SA
-// @description = Banca Annia - Import account statement .csv (Banana+ Advanced)
-// @description.en = Banca Annia - Import account statement .csv (Banana+ Advanced)
-// @description.de = Banca Annia - Bewegungen importieren .csv (Banana+ Advanced)
-// @description.fr = Banca Annia - Importer mouvements .csv (Banana+ Advanced)
-// @description.it = Banca Annia - Importa movimenti .csv (Banana+ Advanced)
+// @description = Banca Annia - Import account statement .xls/.xlsx (Banana+ Advanced)
+// @description.en = Banca Annia - Import account statement .xls/.xlsx (Banana+ Advanced)
+// @description.de = Banca Annia - Bewegungen importieren .xls/.xlsx (Banana+ Advanced)
+// @description.fr = Banca Annia - Importer mouvements .xls/.xlsx (Banana+ Advanced)
+// @description.it = Banca Annia - Importa movimenti .xls/.xlsx (Banana+ Advanced)
 // @doctype = *
 // @docproperties =
 // @task = import.transactions
