@@ -16,11 +16,11 @@
 // @api = 1.0
 // @pubdate = 2025-12-11
 // @publisher = Banana.ch SA
-// @description = Banca Intesa - Import account statement .csv (Banana+ Advanced)
-// @description.en = Banca Intesa - Import account statement .csv (Banana+ Advanced)
-// @description.de = Banca Intesa - Bewegungen importieren .csv (Banana+ Advanced)
-// @description.fr = Banca Intesa - Importer mouvements .csv (Banana+ Advanced)
-// @description.it = Banca Intesa - Importa movimenti .csv (Banana+ Advanced)
+// @description = Banca Intesa - Import account statement .xls/.xlsx (Banana+ Advanced)
+// @description.en = Banca Intesa - Import account statement .xls/.xlsx (Banana+ Advanced)
+// @description.de = Banca Intesa - Bewegungen importieren .xls/.xlsx (Banana+ Advanced)
+// @description.fr = Banca Intesa - Importer mouvements .xls/.xlsx (Banana+ Advanced)
+// @description.it = Banca Intesa - Importa movimenti .xls/.xlsx (Banana+ Advanced)
 // @doctype = *
 // @docproperties =
 // @task = import.transactions
