@@ -1,4 +1,4 @@
-// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2026] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.ricevuta.js
 // @api = 1.0
-// @pubdate = 2025-05-14
+// @pubdate = 2026-01-21
 // @publisher = Banana.ch SA
 // @description = 7. Ricevuta
 // @doctype = 100.*;110.*;130.*
@@ -167,6 +167,7 @@ function printReportHeader(report, banDoc, userParam, senderAddress, stylesheet)
         var name = senderAddress.name;
         var familyName = senderAddress.familyName;
         var address1 = senderAddress.address1;
+        var buildingnumber = senderAddress.buildingnumber;
         var address2 = senderAddress.address2;
         var zip = senderAddress.zip;
         var city = senderAddress.city;
@@ -188,7 +189,11 @@ function printReportHeader(report, banDoc, userParam, senderAddress, stylesheet)
             headerParagraph.addParagraph(name, "addressHeader");
         }
         if (address1) {
-            headerParagraph.addParagraph(address1, "addressHeader");
+            if (buildingnumber) {
+                headerParagraph.addParagraph(address1 + " " + buildingnumber, "addressHeader");
+            } else {
+                headerParagraph.addParagraph(address1, "addressHeader");
+            }
         }
         if (address2) {
             headerParagraph.addParagraph(address2, "addressHeader");
@@ -260,6 +265,11 @@ function printReportAddress(report, banDoc, account, address) {
         row.addCell(address.nameprefix, "address", 1);
     }
 
+    if (address.organisationname) {
+        var row = tableAddress.addRow();
+        row.addCell(address.organisationname, "address", 1);
+    }
+
     if (address.firstname && address.familyname) {
         var row = tableAddress.addRow();
         row.addCell(address.firstname + " " + address.familyname, "address", 1);
@@ -270,7 +280,11 @@ function printReportAddress(report, banDoc, account, address) {
 
     if (address.street) {
         var row = tableAddress.addRow();
-        row.addCell(address.street, "address", 1);
+        if (address.buildingnumber) {
+            row.addCell(address.street + " " + address.buildingnumber, "address", 1);
+        } else {
+            row.addCell(address.street, "address", 1);
+        }
     }
 
     if (address.postalcode && address.locality) {
@@ -467,8 +481,35 @@ function getTransactionsData(banDoc, userParam, account) {
         //var jcontraaccount = tRow.value('JContraAccount');
         //var jcc3 = tRow.value("JCC3"); //only used in double-entry accouting
 
+
+
+        // The user may select an account, and we store it in `accountDonation`.
+        // Example: if the user selects "Erogazioni Liberali", then: accountDonation = "Erogazioni Liberali"
+        //
+        // Based on `donor account (CC3)`, we build the `currentCard` table (which contains the transactions for that account).
+        //
+        // For each row in the `currentCard` table, we read the value of column
+        // `AccountCredit` (for double-entry accounting) or `Category` (for income-expense accounting)
+        // and store it in `accountCheck`.
+        //
+        // Important note: `accountCheck` may match `accountDonation` exactly, or it may include segments at the end.
+        // Examples:
+        //   - "Erogazioni Liberali"
+        //   - "Erogazioni Liberali:Segment1"
+        //   - "Erogazioni Liberali::Segment2"
+        //   - ...
+        //
+        // Since the `currentCard` table contains ALL transactions of the donor account CC3 (with or without segments), we must include both cases.
+        //
+        // For this reason, we check whether `accountCheck` starts with `accountDonation`.
+        // This allows us to match both:
+        //   - transactions without segments, `accountCheck` === `accountDonation`
+        //   - transactions with segments, `accountCheck` starts with `accountDonation`
+
+
+
         if (jaccount && jaccount === account && jdebit && !jcredit && jdate >= startDate && jdate <= endDate && Banana.SDecimal.compare(jdebit, userParam.minimumAmount) > -1) {
-            if (!accountDonation || accountDonation === accountCheck) {
+            if (!accountDonation || accountDonation === accountCheck || accountCheck.startsWith(accountDonation)) {
                 transactions.push({
                     "cc3": account.substring(1), //remove first character ;
                     "date": jdate,
@@ -478,7 +519,7 @@ function getTransactionsData(banDoc, userParam, account) {
             }
         }
         else if (!jaccount && !jdebit && !jcredit && !jbalance && (!userParam.minimumAmount || userParam.minimumAmount === '0.00' || userParam.minimumAmount === undefined) ) {
-            if (!accountDonation || accountDonation === accountCheck) {
+            if (!accountDonation || accountDonation === accountCheck || accountCheck.startsWith(accountDonation)) {
                 transactions.push({
                     "cc3": account.substring(1), //remove first character ;
                     "date": '',
@@ -492,7 +533,7 @@ function getTransactionsData(banDoc, userParam, account) {
 
 /* This function returns true only if the row has the amount >= userParam.minimumAmount */
 function onlyMinimunAmountTableCategories(row, rowNr, table) {
-    if (!accountDonation || row.value('Category') === accountDonation) {
+    if (!accountDonation || row.value('Category') === accountDonation || row.value('Category').startsWith(accountDonation)) {
         if (Banana.SDecimal.compare(row.value('Income'), mimimunAmountDonation) > -1) {
             return true;
         }
@@ -502,7 +543,7 @@ function onlyMinimunAmountTableCategories(row, rowNr, table) {
 
 /* This function returns true only if the row has the amount >= userParam.minimumAmount */
 function onlyMinimunAmountTableAccounts(row, rowNr, table) {
-    if (!accountDonation || row.value('AccountCredit') === accountDonation) {
+    if (!accountDonation || row.value('AccountCredit') === accountDonation || row.value('AccountCredit').startsWith(accountDonation)) {
         if (Banana.SDecimal.compare(row.value('Amount'), mimimunAmountDonation) > -1) {
             return true;
         }
@@ -593,6 +634,7 @@ function getDonorAddress(banDoc, accountNumber) {
     address.firstname = banDoc.table('Accounts').findRowByValue('Account', accountNumber).value('FirstName');
     address.familyname = banDoc.table('Accounts').findRowByValue('Account', accountNumber).value('FamilyName');
     address.street = banDoc.table('Accounts').findRowByValue('Account', accountNumber).value('Street');
+    address.buildingnumber = banDoc.table('Accounts').findRowByValue('Account', accountNumber).value('BuildingNumber');
     address.addressextra = banDoc.table('Accounts').findRowByValue('Account', accountNumber).value('AddressExtra');
     address.postalcode = banDoc.table('Accounts').findRowByValue('Account', accountNumber).value('PostalCode');
     address.locality = banDoc.table('Accounts').findRowByValue('Account', accountNumber).value('Locality');
@@ -613,6 +655,7 @@ function getSenderAddress(banDoc) {
     senderAddress.name = banDoc.info("AccountingDataBase","Name");
     senderAddress.familyName = banDoc.info("AccountingDataBase","FamilyName");
     senderAddress.address1 = banDoc.info("AccountingDataBase","Address1");
+    senderAddress.buildingnumber = banDoc.info("AccountingDataBase","BuildingNumber");
     senderAddress.address2 = banDoc.info("AccountingDataBase","Address2");
     senderAddress.zip = banDoc.info("AccountingDataBase","Zip");
     senderAddress.city = banDoc.info("AccountingDataBase","City");
@@ -812,6 +855,14 @@ function convertFields(banDoc, userParam, account, address, text) {
     if (text.indexOf("<Account>") > -1) {
         text = text.replace(/<Account>/g,account);
     }
+    if (text.indexOf("<NamePrefix>") > -1) {
+        var nameprefix = address.nameprefix;
+        text = text.replace(/<NamePrefix>/g,nameprefix);
+    }
+    if (text.indexOf("<OrganisationName>") > -1) {
+        var organisationname = address.organisationname;
+        text = text.replace(/<OrganisationName>/g,organisationname);
+    }
     if (text.indexOf("<FirstName>") > -1) {
         var firstname = address.firstname;
         text = text.replace(/<FirstName>/g,firstname);
@@ -821,7 +872,11 @@ function convertFields(banDoc, userParam, account, address, text) {
         text = text.replace(/<FamilyName>/g,familyname);
     }    
     if (text.indexOf("<Address>") > -1) {
-        var fulladdress = address.street + ", " + address.postalcode + " " + address.locality;
+        if (address.buildingnumber) {
+            var fulladdress = address.street + " " + address.buildingnumber + ", " + address.postalcode + " " + address.locality;
+        } else {
+            var fulladdress = address.street + ", " + address.postalcode + " " + address.locality;
+        }
         text = text.replace(/<Address>/g,fulladdress);
     }
     if (text.indexOf("<FiscalNumber>") > -1) {
