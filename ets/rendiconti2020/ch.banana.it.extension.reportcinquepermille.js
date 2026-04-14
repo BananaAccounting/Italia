@@ -16,7 +16,7 @@
 // @api = 1.0
 // @pubdate = 2025-05-14
 // @publisher = Banana.ch SA
-// @description = 4. Report cinque per mille
+// @description = 5. Report cinque per mille
 // @task = app.command
 // @doctype = 100.*;110.*;130.*
 // @docproperties = 

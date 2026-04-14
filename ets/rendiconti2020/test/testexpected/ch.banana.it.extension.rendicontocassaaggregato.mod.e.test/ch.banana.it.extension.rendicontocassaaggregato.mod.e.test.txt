@@ -1,0 +1,385 @@
+%%info_test_name{ch.banana.it.extension.rendicontocassaaggregato.mod.e.test}
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{color}
+\usepackage{listings}
+\usepackage[margin=1cm]{geometry}
+\begin{document}
+\newenvironment{tablevalue}[2]{\textbf{Table: #1}\begin{longtable}[l]{#2}}{\end{longtable}}
+\newenvironment{reportvalue}[1]{\textbf{Report: #1}\\}{}
+\lstnewenvironment{jsonvalue}[1]{\textbf{Json: #1}\lstset{language=Java}}{}
+\lstnewenvironment{xmlvalue}[1]{\textbf{Xml: #1}\lstset{language=Xml}}{}
+\newcommand{\info}[2]{\textit{#1: #2}\\}
+\newcommand{\fatalerror}[1]{\textbf{\textcolor[rgb]{1,0,0}{Fatal error: #1}}\\}
+\newcommand{\keyvalue}[2]{\textbf{Keyvalue: #1} #2\\}
+\newcommand{\textvalue}[1]{#1\\}
+\newcommand{\excltest}[1]{\\Excluded from compare: #1}
+\newcommand{\lognewpage}{\newpage}
+\newenvironment{testcase}[1]{\section*{Test: #1}}{\newpage}
+\newenvironment{test}[1]{\section*{Test case: #1}}{}
+%Begin test data
+%%SCRIPT{/Users/ivan/GitHub/BananaAccounting/Italia/ets/rendiconti2020/test/ch.banana.it.extension.rendicontocassaaggregato.mod.e.test.js}
+%
+\begin{testcase}{ReportModETest}
+\begin{test}{testBananaExtension}
+\begin{reportvalue}{Test 'rendiconto cassa (MOD. E)'}
+  \\
+Associazione Aiuto agli Anziani - RENDICONTO PER CASSA IN FORMA AGGREGATA ANNO 2026 \\
+  \\
+(Importi in EUR) \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+USCITE  & 31.12.2026  & 31.12.2025  &  & ENTRATE  & 31.12.2026  & 31.12.2025 \\
+A) Uscite da attività di interesse generale  & 7'215.00  & 8'100.00  &  & A) Entrate da attività di interesse generale  & 9'800.00  & 7'650.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & 2'585.00  & -450.00 \\
+B) Uscite da attività diverse  & 700.00  & 0.00  &  & B) Entrate da attività diverse  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & -700.00  & 0.00 \\
+C) Uscite da attività di raccolta fondi  & 0.00  & 0.00  &  & C) Entrate da attività di raccolta fondi  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi (+/-) } & 0.00  & 0.00 \\
+D) Uscite da attività finanziarie e patrimoniali  & 0.00  & 0.00  &  & D) Entrate da attività finanziarie e patrimoniali  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & 0.00  & 0.00 \\
+E) Uscite di supporto generale  & 0.00  & 0.00  &  & E) Entrate di supporto generale  & 0.00  & 0.00 \\
+Totale uscite della gestione  & 7'915.00  & 8'100.00  &  & Totale entrate della gestione  & 9'800.00  & 7'650.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 1'885.00  & -450.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 1'885.00  & -450.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi  & 31.12.2026  & 31.12.2025  &  & Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi  & 31.12.2026  & 31.12.2025 \\
+ & 1'030.00  & 0.00  &  &  & 8'900.00  & 0.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 1'885.00  & -450.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & 9'755.00  & -450.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Cassa e banca } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Cassa } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Depositi bancari e postali } & 0.00  & 0.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Costi figurativi  & 31.12.2026  & 31.12.2025  &  & Proventi figurativi  & 31.12.2026  & 31.12.2025 \\
+1) da attività di interesse generale  & 0.00  & 0.00  &  & 1) da attività di interesse generale  & 0.00  & 0.00 \\
+2) da attività diverse  & 0.00  & 0.00  &  & 2) da attività diverse  & 0.00  & 0.00 \\
+Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
+\end{longtable}
+  \\
+La somma della liquidità iniziale + avanzo/disavanzo non è uguale alla liquidità finale. Importo differenza = 9'755.00 \\
+  \\
+\begin{longtable}[l]{ l  l }
+\multicolumn{2}{l}{CONTROLLO QUADRATURA }\\
+Totale Cassa e Banca anno precedente  & 0.00 \\
+Avanzo/Disavanzo anno corrente  & 9'755.00 \\
+Totale Cassa e Banca finale  & 0.00 \\
+\multicolumn{2}{l}{  }\\
+> Importo differenza  & 9'755.00 \\
+> Esito controllo  & Errore quadratura \\
+\end{longtable}
+  \\
+Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corrente = Cassa e Banca finale \\
+\end{reportvalue}
+\begin{reportvalue}{Test GR1 'rendiconto cassa (MOD. E)'}
+  \\
+Associazione Aiuto agli Anziani - RENDICONTO PER CASSA IN FORMA AGGREGATA ANNO 2026 \\
+  \\
+(Importi in EUR) \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+USCITE  & 31.12.2026  & 31.12.2025  &  & ENTRATE  & 31.12.2026  & 31.12.2025 \\
+A) Uscite da attività di interesse generale  & 7'215.00  & 8'100.00  &  & A) Entrate da attività di interesse generale  & 9'800.00  & 7'650.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & 2'585.00  & -450.00 \\
+B) Uscite da attività diverse  & 700.00  & 0.00  &  & B) Entrate da attività diverse  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & -700.00  & 0.00 \\
+C) Uscite da attività di raccolta fondi  & 250.00  & 220.00  &  & C) Entrate da attività di raccolta fondi  & 2'640.00  & 930.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi (+/-) } & 2'390.00  & 710.00 \\
+D) Uscite da attività finanziarie e patrimoniali  & 0.00  & 0.00  &  & D) Entrate da attività finanziarie e patrimoniali  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & 0.00  & 0.00 \\
+E) Uscite di supporto generale  & 0.00  & 0.00  &  & E) Entrate di supporto generale  & 0.00  & 0.00 \\
+Totale uscite della gestione  & 8'165.00  & 8'320.00  &  & Totale entrate della gestione  & 12'440.00  & 8'580.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 4'275.00  & 260.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & -450.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 4'275.00  & -190.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi  & 31.12.2026  & 31.12.2025  &  & Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi  & 31.12.2026  & 31.12.2025 \\
+ & 1'030.00  & 0.00  &  &  & 8'900.00  & 0.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 4'275.00  & -190.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & 12'145.00  & -190.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Cassa e banca } & 21'645.00  & 9'500.00 \\
+\multicolumn{5}{l}{Cassa } & 190.00  & 500.00 \\
+\multicolumn{5}{l}{Depositi bancari e postali } & 21'455.00  & 9'000.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Costi figurativi  & 31.12.2026  & 31.12.2025  &  & Proventi figurativi  & 31.12.2026  & 31.12.2025 \\
+1) da attività di interesse generale  & 0.00  & 0.00  &  & 1) da attività di interesse generale  & 0.00  & 0.00 \\
+2) da attività diverse  & 0.00  & 0.00  &  & 2) da attività diverse  & 0.00  & 0.00 \\
+Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
+\end{longtable}
+\end{reportvalue}
+\begin{reportvalue}{Test GR1 'rendiconto cassa (MOD. E)'}
+  \\
+Associazione Aiuto agli Anziani - RENDICONTO PER CASSA IN FORMA AGGREGATA ANNO 2026 \\
+  \\
+(Importi in EUR) \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+USCITE  & 31.12.2026  & 31.12.2025  &  & ENTRATE  & 31.12.2026  & 31.12.2025 \\
+A) Uscite da attività di interesse generale  & 7'215.00  & 8'100.00  &  & A) Entrate da attività di interesse generale  & 9'800.00  & 7'650.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & 2'585.00  & -450.00 \\
+B) Uscite da attività diverse  & 700.00  & 0.00  &  & B) Entrate da attività diverse  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & -700.00  & 0.00 \\
+C) Uscite da attività di raccolta fondi  & 250.00  & 220.00  &  & C) Entrate da attività di raccolta fondi  & 2'640.00  & 930.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi (+/-) } & 2'390.00  & 710.00 \\
+D) Uscite da attività finanziarie e patrimoniali  & 0.00  & 0.00  &  & D) Entrate da attività finanziarie e patrimoniali  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & 0.00  & 0.00 \\
+E) Uscite di supporto generale  & 0.00  & 0.00  &  & E) Entrate di supporto generale  & 0.00  & 0.00 \\
+Totale uscite della gestione  & 8'165.00  & 8'320.00  &  & Totale entrate della gestione  & 12'440.00  & 8'580.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 4'275.00  & 260.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & -450.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 4'275.00  & -190.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi  & 31.12.2026  & 31.12.2025  &  & Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi  & 31.12.2026  & 31.12.2025 \\
+ & 1'030.00  & 0.00  &  &  & 8'900.00  & 0.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 4'275.00  & -190.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & 12'145.00  & -190.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Cassa e banca } & 21'645.00  & 9'500.00 \\
+\multicolumn{5}{l}{Cassa } & 190.00  & 500.00 \\
+\multicolumn{5}{l}{Depositi bancari e postali } & 21'455.00  & 9'000.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Costi figurativi  & 31.12.2026  & 31.12.2025  &  & Proventi figurativi  & 31.12.2026  & 31.12.2025 \\
+1) da attività di interesse generale  & 0.00  & 0.00  &  & 1) da attività di interesse generale  & 0.00  & 0.00 \\
+2) da attività diverse  & 0.00  & 0.00  &  & 2) da attività diverse  & 0.00  & 0.00 \\
+Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
+\end{longtable}
+\end{reportvalue}
+\begin{reportvalue}{Test 'rendiconto cassa (MOD. E)' con stampa colonna raggruppamento}
+  \\
+Associazione Aiuto agli Anziani - RENDICONTO PER CASSA IN FORMA AGGREGATA ANNO 2026 \\
+  \\
+(Importi in EUR) \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+USCITE  & 31.12.2026  & 31.12.2025  &  & ENTRATE  & 31.12.2026  & 31.12.2025 \\
+A) Uscite da attività di interesse generale  & 7'215.00  & 8'100.00  &  & A) Entrate da attività di interesse generale  & 9'800.00  & 7'650.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & 2'585.00  & -450.00 \\
+B) Uscite da attività diverse  & 700.00  & 0.00  &  & B) Entrate da attività diverse  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & -700.00  & 0.00 \\
+C) Uscite da attività di raccolta fondi  & 250.00  & 220.00  &  & C) Entrate da attività di raccolta fondi  & 2'640.00  & 930.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi (+/-) } & 2'390.00  & 710.00 \\
+D) Uscite da attività finanziarie e patrimoniali  & 0.00  & 0.00  &  & D) Entrate da attività finanziarie e patrimoniali  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & 0.00  & 0.00 \\
+E) Uscite di supporto generale  & 0.00  & 0.00  &  & E) Entrate di supporto generale  & 0.00  & 0.00 \\
+Totale uscite della gestione  & 8'165.00  & 8'320.00  &  & Totale entrate della gestione  & 12'440.00  & 8'580.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 4'275.00  & 260.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & -450.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 4'275.00  & -190.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi  & 31.12.2026  & 31.12.2025  &  & Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi  & 31.12.2026  & 31.12.2025 \\
+ & 1'030.00  & 0.00  &  &  & 8'900.00  & 0.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 4'275.00  & -190.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & 12'145.00  & -190.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Cassa e banca } & 21'645.00  & 9'500.00 \\
+\multicolumn{5}{l}{Cassa } & 190.00  & 500.00 \\
+\multicolumn{5}{l}{Depositi bancari e postali } & 21'455.00  & 9'000.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Costi figurativi  & 31.12.2026  & 31.12.2025  &  & Proventi figurativi  & 31.12.2026  & 31.12.2025 \\
+1) da attività di interesse generale  & 0.00  & 0.00  &  & 1) da attività di interesse generale  & 0.00  & 0.00 \\
+2) da attività diverse  & 0.00  & 0.00  &  & 2) da attività diverse  & 0.00  & 0.00 \\
+Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
+\end{longtable}
+\end{reportvalue}
+\begin{reportvalue}{Test 'rendiconto cassa (MOD. E)' con stampa colonna raggruppamento senza costi/ricavi figurativi}
+  \\
+Associazione Aiuto agli Anziani - RENDICONTO PER CASSA IN FORMA AGGREGATA ANNO 2026 \\
+  \\
+(Importi in EUR) \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+USCITE  & 31.12.2026  & 31.12.2025  &  & ENTRATE  & 31.12.2026  & 31.12.2025 \\
+A) Uscite da attività di interesse generale  & 7'215.00  & 8'100.00  &  & A) Entrate da attività di interesse generale  & 9'800.00  & 7'650.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & 2'585.00  & -450.00 \\
+B) Uscite da attività diverse  & 700.00  & 0.00  &  & B) Entrate da attività diverse  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & -700.00  & 0.00 \\
+C) Uscite da attività di raccolta fondi  & 250.00  & 220.00  &  & C) Entrate da attività di raccolta fondi  & 2'640.00  & 930.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi (+/-) } & 2'390.00  & 710.00 \\
+D) Uscite da attività finanziarie e patrimoniali  & 0.00  & 0.00  &  & D) Entrate da attività finanziarie e patrimoniali  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & 0.00  & 0.00 \\
+E) Uscite di supporto generale  & 0.00  & 0.00  &  & E) Entrate di supporto generale  & 0.00  & 0.00 \\
+Totale uscite della gestione  & 8'165.00  & 8'320.00  &  & Totale entrate della gestione  & 12'440.00  & 8'580.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 4'275.00  & 260.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & -450.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 4'275.00  & -190.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi  & 31.12.2026  & 31.12.2025  &  & Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi  & 31.12.2026  & 31.12.2025 \\
+ & 1'030.00  & 0.00  &  &  & 8'900.00  & 0.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 4'275.00  & -190.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & 12'145.00  & -190.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Cassa e banca } & 21'645.00  & 9'500.00 \\
+\multicolumn{5}{l}{Cassa } & 190.00  & 500.00 \\
+\multicolumn{5}{l}{Depositi bancari e postali } & 21'455.00  & 9'000.00 \\
+\end{longtable}
+\end{reportvalue}
+\begin{reportvalue}{Test 'rendiconto cassa (MOD. E)' con stampa colonna raggruppamento senza costi/ricavi figurativi}
+  \\
+Associazione Aiuto agli Anziani - RENDICONTO PER CASSA IN FORMA AGGREGATA ANNO 2026 \\
+  \\
+(Importi in EUR) \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+USCITE  & 31.12.2026  & 31.12.2025  &  & ENTRATE  & 31.12.2026  & 31.12.2025 \\
+A) Uscite da attività di interesse generale  & 7'215.00  & 8'100.00  &  & A) Entrate da attività di interesse generale  & 9'800.00  & 7'650.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & 2'585.00  & -450.00 \\
+B) Uscite da attività diverse  & 700.00  & 0.00  &  & B) Entrate da attività diverse  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & -700.00  & 0.00 \\
+C) Uscite da attività di raccolta fondi  & 250.00  & 220.00  &  & C) Entrate da attività di raccolta fondi  & 2'640.00  & 930.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi (+/-) } & 2'390.00  & 710.00 \\
+D) Uscite da attività finanziarie e patrimoniali  & 0.00  & 0.00  &  & D) Entrate da attività finanziarie e patrimoniali  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & 0.00  & 0.00 \\
+E) Uscite di supporto generale  & 0.00  & 0.00  &  & E) Entrate di supporto generale  & 0.00  & 0.00 \\
+Totale uscite della gestione  & 8'165.00  & 8'320.00  &  & Totale entrate della gestione  & 12'440.00  & 8'580.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 4'275.00  & 260.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & -450.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 4'275.00  & -190.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi  & 31.12.2026  & 31.12.2025  &  & Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi  & 31.12.2026  & 31.12.2025 \\
+ & 1'030.00  & 0.00  &  &  & 8'900.00  & 0.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 4'275.00  & -190.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & 12'145.00  & -190.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Cassa e banca } & 21'645.00  & 9'500.00 \\
+\multicolumn{5}{l}{Cassa } & 190.00  & 500.00 \\
+\multicolumn{5}{l}{Depositi bancari e postali } & 21'455.00  & 9'000.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Costi figurativi  & 31.12.2026  & 31.12.2025  &  & Proventi figurativi  & 31.12.2026  & 31.12.2025 \\
+1) da attività di interesse generale  & 0.00  & 0.00  &  & 1) da attività di interesse generale  & 0.00  & 0.00 \\
+2) da attività diverse  & 0.00  & 0.00  &  & 2) da attività diverse  & 0.00  & 0.00 \\
+Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
+\end{longtable}
+\end{reportvalue}
+\begin{reportvalue}{Test 'rendiconto cassa (MOD. E)' con stampa colonna raggruppamento senza costi/ricavi figurativi}
+  \\
+Associazione Aiuto agli Anziani - RENDICONTO PER CASSA IN FORMA AGGREGATA ANNO 2026 \\
+  \\
+(Importi in EUR) \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+USCITE  & 31.12.2026  & 31.12.2025  &  & ENTRATE  & 31.12.2026  & 31.12.2025 \\
+A) Uscite da attività di interesse generale  & 7'215.00  & 8'100.00  &  & A) Entrate da attività di interesse generale  & 9'800.00  & 7'650.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & 2'585.00  & -450.00 \\
+B) Uscite da attività diverse  & 700.00  & 0.00  &  & B) Entrate da attività diverse  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & -700.00  & 0.00 \\
+C) Uscite da attività di raccolta fondi  & 250.00  & 220.00  &  & C) Entrate da attività di raccolta fondi  & 2'640.00  & 930.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi (+/-) } & 2'390.00  & 710.00 \\
+D) Uscite da attività finanziarie e patrimoniali  & 0.00  & 0.00  &  & D) Entrate da attività finanziarie e patrimoniali  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & 0.00  & 0.00 \\
+E) Uscite di supporto generale  & 0.00  & 0.00  &  & E) Entrate di supporto generale  & 0.00  & 0.00 \\
+Totale uscite della gestione  & 8'165.00  & 8'320.00  &  & Totale entrate della gestione  & 12'440.00  & 8'580.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 4'275.00  & 260.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & -450.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 4'275.00  & -190.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi  & 31.12.2026  & 31.12.2025  &  & Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi  & 31.12.2026  & 31.12.2025 \\
+ & 1'030.00  & 0.00  &  &  & 8'900.00  & 0.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 4'275.00  & -190.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 7'870.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & 12'145.00  & -190.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2026  & 31.12.2025 \\
+\multicolumn{5}{l}{Cassa e banca } & 21'645.00  & 9'500.00 \\
+\multicolumn{5}{l}{Cassa } & 190.00  & 500.00 \\
+\multicolumn{5}{l}{Depositi bancari e postali } & 21'455.00  & 9'000.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Costi figurativi  & 31.12.2026  & 31.12.2025  &  & Proventi figurativi  & 31.12.2026  & 31.12.2025 \\
+1) da attività di interesse generale  & 0.00  & 0.00  &  & 1) da attività di interesse generale  & 0.00  & 0.00 \\
+2) da attività diverse  & 0.00  & 0.00  &  & 2) da attività diverse  & 0.00  & 0.00 \\
+Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
+\end{longtable}
+\end{reportvalue}
+\keyvalue{Result}{Passed}
+\end{test}
+\end{testcase}
+\end{document}

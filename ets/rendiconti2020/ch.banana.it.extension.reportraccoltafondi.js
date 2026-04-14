@@ -16,7 +16,7 @@
 // @api = 1.0
 // @pubdate = 2025-10-13
 // @publisher = Banana.ch SA
-// @description = 5. Report raccolta fondi
+// @description = 6. Report raccolta fondi
 // @task = app.command
 // @doctype = 100.*;110.*;130.*
 // @docproperties = 

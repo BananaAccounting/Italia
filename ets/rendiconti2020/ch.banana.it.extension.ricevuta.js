@@ -16,7 +16,7 @@
 // @api = 1.0
 // @pubdate = 2026-01-21
 // @publisher = Banana.ch SA
-// @description = 7. Ricevuta
+// @description = 8. Ricevuta
 // @doctype = 100.*;110.*;130.*
 // @docproperties = 
 // @task = app.command

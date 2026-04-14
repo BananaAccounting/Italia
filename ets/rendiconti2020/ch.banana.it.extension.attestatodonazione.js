@@ -16,7 +16,7 @@
 // @api = 1.0
 // @pubdate = 2026-01-21
 // @publisher = Banana.ch SA
-// @description = 6. Attestato di donazione
+// @description = 7. Attestato di donazione
 // @doctype = 100.*;110.*;130.*
 // @docproperties = 
 // @task = app.command

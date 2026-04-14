@@ -1,4 +1,4 @@
-// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2026] [Banana.ch SA - Lugano Switzerland]
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 
-/* Update: 2025-05-07 */
+/* Update: 2026-04-10 */
 
 
 var ID_ERR_VERSIONE = "ID_ERR_VERSIONE";
@@ -31,6 +31,8 @@ var ID_ERR_CODICI_GR1_5XMILLE = "ID_ERR_CODICI_GR1_5XMILLE";
 var ID_ERR_FILE_SBAGLIATO_RENDICONTO_CASSA = "ID_ERR_FILE_SBAGLIATO_RENDICONTO_CASSA";
 var ID_ERR_FILE_SBAGLIATO_RENDICONTO_GESTIONALE = "ID_ERR_FILE_SBAGLIATO_RENDICONTO_GESTIONALE";
 var ID_ERR_FILE_SBAGLIATO_STATO_PATRIMONIALE = "ID_ERR_FILE_SBAGLIATO_STATO_PATRIMONIALE";
+var ID_ERR_CODICI_GR1_RENDICONTOCASSA = "ID_ERR_CODICI_GR1_RENDICONTOCASSA";
+var ID_ERR_CODICI_GR1_RENDICONTOCASSAAGGREGATO = "ID_ERR_CODICI_GR1_RENDICONTOCASSAAGGREGATO";
 
 /**
  * return the text error message according to error id
@@ -82,6 +84,12 @@ function getErrorMessage(errorId) {
 
         case ID_ERR_FILE_SBAGLIATO_STATO_PATRIMONIALE:
             return "Attenzione: Il piano dei conti di questo file non è strutturato per generare lo Stato Patrimoniale.\nÈ necessario utilizzare un modello adatto a questo scopo.";
+        
+        case ID_ERR_CODICI_GR1_RENDICONTOCASSA:
+            return "Attenzione: il piano dei conti di questo file utilizza dei codici GR1 che non sono supportati per questo rendiconto.\nDevi utilizzare l'estensione '1. Rendiconto per cassa in forma aggregata'.";
+
+        case ID_ERR_CODICI_GR1_RENDICONTOCASSAAGGREGATO:
+            return "Attenzione: il piano dei conti di questo file utilizza dei codici GR1 che non sono supportati per questo rendiconto.\nDevi utilizzare l'estensione '2. Rendiconto per cassa' > Parametri: 'Stampa Rendiconto in forma aggregata'.";
     }
     return "";
 }

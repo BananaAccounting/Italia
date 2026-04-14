@@ -1,4 +1,4 @@
-// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2026] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 //
 // @id = ch.banana.it.extension.rendicontocassa.mod.d
 // @api = 1.0
-// @pubdate = 2025-05-14
+// @pubdate = 2026-04-10
 // @publisher = Banana.ch SA
-// @description = 3. Rendiconto per cassa
+// @description = 2. Rendiconto per cassa
 // @task = app.command
 // @doctype = 100.*;110.*;130.*
 // @docproperties = 
@@ -79,10 +79,15 @@ function exec(string) {
 
    // Print the report (normal or with transactions movements)
    var report;
-   if (userParam.stampareportcontrollo) {
-      report = stampaReportControllo(Banana.document, paramReport);
-   } else {
-      report = stampaReportNormale(Banana.document, paramReport, stylesheet);
+   if (userParam.stamparendicontocassaaggregato) {
+      report = stampaReportNormale_Aggregato(Banana.document, paramReport, stylesheet);
+   }
+   else {
+      if (userParam.stampareportcontrollo) {
+         report = stampaReportControllo(Banana.document, paramReport);
+      } else {
+         report = stampaReportNormale(Banana.document, paramReport, stylesheet);
+      }
    }
 
    setCss(Banana.document, stylesheet, variables, userParam);
@@ -92,6 +97,11 @@ function exec(string) {
 function stampaReportNormale(banDoc, paramReport, stylesheet) {
 
    // Prints the normal report
+
+   var grCodesNotValid = controlloCodiciGr1(banDoc, paramReport.userParam.column);
+   if (grCodesNotValid) {
+      return "@Cancel";
+   }
 
    var bReport = new BReport(banDoc, paramReport);
    bReport.validateGroups_IncomeExpenses(paramReport.userParam.column, paramReport.reportStructure);
@@ -108,6 +118,11 @@ function stampaReportNormale(banDoc, paramReport, stylesheet) {
 function stampaReportControllo(banDoc, paramReport) {
    
    // Print the report with transactions movements
+
+   var grCodesNotValid = controlloCodiciGr1(banDoc, paramReport.userParam.column);
+   if (grCodesNotValid) {
+      return "@Cancel";
+   }
    
    var bReportControllo = new BReportControllo(banDoc, paramReport);
    bReportControllo.validateGroups_IncomeExpenses(paramReport.userParam.column, paramReport.reportStructure);
@@ -121,6 +136,27 @@ function stampaReportControllo(banDoc, paramReport) {
    checkLiquidity(report, banDoc, bReportControllo);
    controlloSaldiAperturaPrecedente(report, banDoc, paramReport.userParam, bReportControllo);
    controlloRegistrazioni(report, banDoc, paramReport.userParam, bReportControllo);
+
+   return report;
+}
+
+function stampaReportNormale_Aggregato(banDoc, paramReport, stylesheet) {
+
+   // Prints the normal report
+
+   var grCodesNotValid = controlloCodiciGr1(banDoc, paramReport.userParam.column);
+   if (grCodesNotValid) {
+      return "@Cancel";
+   }
+
+   var bReport = new BReport(banDoc, paramReport);
+   bReport.validateGroups_IncomeExpenses(paramReport.userParam.column, paramReport.reportStructure);
+   bReport.validateGroups_RendicontoCassa(paramReport.userParam.column);
+   bReport.loadBalances();
+   bReport.calculateTotals(["currentAmount", "previousAmount"]);
+   bReport.formatValues(["currentAmount", "previousAmount"], paramReport.userParam.excludedecimals);
+
+   var report = printReport_Aggregato(banDoc, paramReport.userParam, bReport, stylesheet);
 
    return report;
 }
@@ -169,7 +205,7 @@ function setParamReport(banDoc, userParam) {
 
 
 
-// Funzione che stampa il report
+// Funzioni che stampano il report standard
 function printReport(banDoc, userParam, bReport, stylesheet) {
 	
    var report = Banana.Report.newReport("Rendiconto per cassa");
@@ -1525,11 +1561,549 @@ function printReport_Rendiconto_Figurativi(report, banDoc, userParam, bReport) {
 }
 
 function printReport_Note_Finali(report, userParam) {
-   if (userParam.finalnotes) {
+   if (userParam.finalnotes && userParam.printfinalnotes) {
       report.addParagraph(" ", "");
       report.addParagraph(userParam.finalnotes, "text-notes");
    }
 }
+
+
+
+// Funzioni che stampano il report in forma aggregata
+function printReport_Aggregato(banDoc, userParam, bReport, stylesheet) {
+   
+   var report = Banana.Report.newReport("Rendiconto per cassa aggregato");
+   printReport_Aggregato_Intestazione(report, banDoc, userParam, stylesheet);
+   printReport_Aggregato_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bReport);
+   printReport_Aggregato_Rendiconto_Investimenti_Disinvestimenti(report, banDoc, userParam, bReport);
+   printReport_Aggregato_Rendiconto_Avanzo_Disavanzo(report, banDoc, userParam, bReport);
+   printReport_Aggregato_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport);
+   printReport_Aggregato_Rendiconto_Figurativi(report, banDoc, userParam, bReport);
+   printReport_Aggregato_Note_Finali(report, userParam);
+
+   checkLiquidity(report, banDoc, bReport);
+   controlloSaldiAperturaPrecedente(report, banDoc, userParam, bReport);
+   controlloRegistrazioni(report, banDoc, userParam, bReport);
+
+   return report;
+}
+
+function printReport_Aggregato_Intestazione(report, banDoc, userParam, stylesheet) {
+   
+   // INTESTAZIONE (LOGO, INDIRIZZO, TITOLO)
+   
+   // Logo
+   var headerParagraph = report.getHeader().addSection();
+   if (userParam.logo) {
+      headerParagraph = report.addSection("");
+      var logoFormat = Banana.Report.logoFormat(userParam.logoname);
+      if (logoFormat) {
+         var logoElement = logoFormat.createDocNode(headerParagraph, stylesheet, "logo");
+         report.getHeader().addChild(logoElement);
+      }
+      report.addParagraph(" ", "");
+   }
+   // Address
+   if (userParam.printheader) {
+      if (userParam.headertext.length <= 0) {
+         var company = banDoc.info("AccountingDataBase","Company");
+         var address1 = banDoc.info("AccountingDataBase","Address1");
+         var zip = banDoc.info("AccountingDataBase","Zip");
+         var city = banDoc.info("AccountingDataBase","City");
+         var phone = banDoc.info("AccountingDataBase","Phone");
+         var web = banDoc.info("AccountingDataBase","Web");
+         var email = banDoc.info("AccountingDataBase","Email");
+         if (company) {
+            headerParagraph.addParagraph(company, "address-header");
+         }
+         if (address1) {
+            headerParagraph.addParagraph(address1, "address-header");
+         }
+         if (zip && city) {
+            headerParagraph.addParagraph(zip + " " + city, "address-header");
+         }
+         if (phone) {
+            headerParagraph.addParagraph(phone, "address-header");
+         }
+         if (web) {
+            headerParagraph.addParagraph(web, "address-header");
+         }
+         if (email) {
+            headerParagraph.addParagraph(email, "address-header");
+         }
+         headerParagraph.addParagraph(" ", "address-header");
+      }
+      else {
+         var text = userParam.headertext.split("\n");
+         for (var i = 0; i < text.length; i++) {
+            if (text[i]) {
+               headerParagraph.addParagraph(text[i], "address-header");
+            } else {
+               headerParagraph.addParagraph(" ", "address-header");
+            }
+         }
+      }
+   }
+   // Title
+   var currentYear = Banana.Converter.toDate(userParam.selectionStartDate).getFullYear(); 
+   //Banana.Converter.toDate(banDoc.info("AccountingDataBase", "OpeningDate")).getFullYear();
+   var title = "";
+   if (userParam.title) {
+      title = userParam.title;
+   } else {
+      title = banDoc.info("Base", "HeaderLeft") + " - " + "RENDICONTO PER CASSA IN FORMA AGGREGATA ANNO " + currentYear;
+   }
+ 
+   if (userParam.printtitle) {
+      report.addParagraph(" ", "");
+      report.addParagraph(title, "heading2");
+      report.addParagraph(" ", "");
+   }
+   // Text begin
+   var textbegin = "";
+   if (userParam.textbegin) {
+      textbegin = userParam.textbegin.trim();
+   }
+   if (textbegin) {
+      report.addParagraph(textbegin, "text-begin");
+      report.addParagraph(" ", "");
+   }
+}
+
+function printReport_Aggregato_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bReport) {
+
+   // SEZIONE "USCITE E ENTRATE"
+   var dateCurrent = '';
+   var datePrevious = '';
+
+   var isColumnBalance = findBalanceColumns(banDoc);
+   if (isColumnBalance) {
+      //"Balance_2020", "Balance_2021"
+      dateCurrent = "31.12." + userParam.currentbalancecolumn.slice(8, 12); 
+      datePrevious = "31.12." + userParam.previousbalancecolumn.slice(8, 12);
+   } 
+   else {
+      dateCurrent = Banana.Converter.toLocaleDateFormat(userParam.selectionEndDate);
+      
+      //Calculate date previous: start period - 1 day
+      datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+      datePrevious.setDate(datePrevious.getDate() - 1);
+      datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
+   }
+
+   report.addParagraph("(Importi in " + banDoc.info("AccountingDataBase", "BasicCurrency") + ")", "text-currency");
+
+   var table = report.addTable("table");
+   var column1,column2,column3,column4,column5,column6,column7;
+   column1 = table.addColumn("column1");
+   column2 = table.addColumn("column2");
+   column3 = table.addColumn("column3");
+   column4 = table.addColumn("column4");
+   column5 = table.addColumn("column5");
+   column6 = table.addColumn("column6");
+   column7 = table.addColumn("column7");
+   
+
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("dC"), "table-header", 1);
+   tableRow.addCell(dateCurrent, "table-header align-right", 1);
+   tableRow.addCell(datePrevious, "table-header align-right", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("dR"), "table-header", 1);
+   tableRow.addCell(dateCurrent, "table-header align-right", 1);
+   tableRow.addCell(datePrevious, "table-header align-right", 1);
+
+   /* Row 1 */   
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("dCA"), "align-left bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CA"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CA"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("dRA"), "align-left bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA"), "align-right", 1);
+
+   /* Row 2 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("RA-CA"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RA-CA"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RA-CA"), "align-right", 1);
+
+   /* Row 3 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("dCB"), "align-left bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CB"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CB"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("dRB"), "align-left bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB"), "align-right", 1);
+
+   /* Row 4 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("RB-CB"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RB-CB"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RB-CB"), "align-right", 1);
+
+   /* Row 5 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("dCC"), "align-left bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CC"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CC"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("dRC"), "align-left bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RC"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RC"), "align-right", 1);
+
+   /* Row 6 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("RC-CC"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RC-CC"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RC-CC"), "align-right", 1);
+
+   /* Row 7 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("dCD"), "align-left bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CD"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CD"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("dRD"), "align-left bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD"), "align-right", 1);
+
+   /* Row 8 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("RD-CD"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RD-CD"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RD-CD"), "align-right", 1);
+
+   /* Row 9 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("dCE"), "align-left bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CE"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CE"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("dRE"), "align-left bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RE"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RE"), "align-right", 1);
+
+   /* Row 10 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("C"), "align-right bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("C"), "align-right bold", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("C"), "align-right bold", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("R"), "align-right bold", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("R"), "align-right bold", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("R"), "align-right bold", 1);
+
+   /* Row 11 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("TADPI"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADPI"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADPI"), "align-right", 1);
+
+   /* Row 12 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("IM"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("IM"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("IM"), "align-right", 1);
+
+   /* Row 13 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("TADES"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADES"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADES"), "align-right", 1);
+
+   return report;
+}
+
+function printReport_Aggregato_Rendiconto_Investimenti_Disinvestimenti(report, banDoc, userParam, bReport) {
+
+   // SEZIONE "Uscite da investimenti / Entrate da disinvestimenti"
+   
+   /**
+    *  Nella contabilità doppia le registrazioni di disinvestimenti (entrate) vanno con il segno -, 
+    *  mentre gli investimenti (uscite) con il segno +.
+    *  Questo perché vengono trattati come ricavi e costi: le entrate sono con il segno - e le uscite con il segno +.
+    *
+    *  Nella contabilità entrate/uscite le registrazioni di disinvestimenti (entrate) vanno con il segno +,
+    *  mentre gli investimenti con il segno -.
+    *  Questo perché vengono trattati come entrate e uscite: nella contabilità le entrate sono con il segno +
+    *  e le uscite con il segno -.
+    */
+
+   var dateCurrent = '';
+   var datePrevious = '';
+
+   var isColumnBalance = findBalanceColumns(banDoc);
+   if (isColumnBalance) {
+      //"Balance_2020", "Balance_2021"
+      dateCurrent = "31.12." + userParam.currentbalancecolumn.slice(8, 12); 
+      datePrevious = "31.12." + userParam.previousbalancecolumn.slice(8, 12);
+   } 
+   else {
+      dateCurrent = Banana.Converter.toLocaleDateFormat(userParam.selectionEndDate);
+      
+      //Calculate date previous: start period - 1 day
+      datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+      datePrevious.setDate(datePrevious.getDate() - 1);
+      datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
+   }
+
+   report.addParagraph(" ", "");
+
+   var table = report.addTable("table");
+   var column1,column2,column3,column4,column5,column6,column7;
+   column1 = table.addColumn("column1");
+   column2 = table.addColumn("column2");
+   column3 = table.addColumn("column3");
+   column4 = table.addColumn("column4");
+   column5 = table.addColumn("column5");
+   column6 = table.addColumn("column6");
+   column7 = table.addColumn("column7");
+
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("dCF"), "table-header", 1);
+   tableRow.addCell(dateCurrent, "table-header align-center", 1);
+   tableRow.addCell(datePrevious, "table-header align-center", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("dRF"), "table-header", 1);
+   tableRow.addCell(dateCurrent, "table-header align-center", 1);
+   tableRow.addCell(datePrevious, "table-header align-center", 1);
+
+   /* Row 5, tot */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("CF"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CF"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CF"), "align-right", 1);
+   tableRow.addCell("", "", 1);
+   tableRow.addCell(bReport.getObjectDescription("RF"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF"), "align-right", 1);
+   
+   /* Row 6 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("IMRC"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("IMRC"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("IMRC"), "align-right", 1);
+
+   /* Row 7 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("RF-CF"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF-CF"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF-CF"), "align-right", 1);
+
+   return report;
+}
+
+function printReport_Aggregato_Rendiconto_Avanzo_Disavanzo(report, banDoc, userParam, bReport) {
+
+   // SEZIONE "AVANZO E DISAVANZO"
+
+   var dateCurrent = '';
+   var datePrevious = '';
+
+   var isColumnBalance = findBalanceColumns(banDoc);
+   if (isColumnBalance) {
+      //"Balance_2020", "Balance_2021"
+      dateCurrent = "31.12." + userParam.currentbalancecolumn.slice(8, 12); 
+      datePrevious = "31.12." + userParam.previousbalancecolumn.slice(8, 12);
+   } 
+   else {
+      dateCurrent = Banana.Converter.toLocaleDateFormat(userParam.selectionEndDate);
+      
+      //Calculate date previous: start period - 1 day
+      datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+      datePrevious.setDate(datePrevious.getDate() - 1);
+      datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
+   }
+
+   report.addParagraph(" ", "");
+
+   var table = report.addTable("table");
+   var column1,column2,column3,column4,column5,column6,column7;
+   column1 = table.addColumn("column1");
+   column2 = table.addColumn("column2");
+   column3 = table.addColumn("column3");
+   column4 = table.addColumn("column4");
+   column5 = table.addColumn("column5");
+   column6 = table.addColumn("column6");
+   column7 = table.addColumn("column7");
+   
+   tableRow = table.addRow();
+   tableRow.addCell("", "table-header", 5);
+   tableRow.addCell(dateCurrent, "table-header align-center", 1);
+   tableRow.addCell(datePrevious, "table-header align-center", 1);
+
+   /* Row 1 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("TADES"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADES"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADES"), "align-right", 1);
+
+   /* Row 2 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("RF-CF"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RF-CF"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RF-CF"), "align-right", 1);
+
+   /* Row 3 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("TADRC"), "align-right", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("TADRC"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("TADRC"), "align-right", 1);
+
+   return report;
+}
+
+function printReport_Aggregato_Rendiconto_Cassa_Banca(report, banDoc, userParam, bReport) {
+
+   // SEZIONE "CASSA E BANCA"
+
+   var dateCurrent = '';
+   var datePrevious = '';
+
+   var isColumnBalance = findBalanceColumns(banDoc);
+   if (isColumnBalance) {
+      //"Balance_2020", "Balance_2021"
+      dateCurrent = "31.12." + userParam.currentbalancecolumn.slice(8, 12); 
+      datePrevious = "31.12." + userParam.previousbalancecolumn.slice(8, 12);
+   } 
+   else {
+      dateCurrent = Banana.Converter.toLocaleDateFormat(userParam.selectionEndDate);
+      
+      //Calculate date previous: start period - 1 day
+      datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+      datePrevious.setDate(datePrevious.getDate() - 1);
+      datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
+   }
+
+   report.addParagraph(" ", "");
+
+   var table = report.addTable("table");
+   var column1,column2,column3,column4,column5,column6,column7;
+   column1 = table.addColumn("column1");
+   column2 = table.addColumn("column2");
+   column3 = table.addColumn("column3");
+   column4 = table.addColumn("column4");
+   column5 = table.addColumn("column5");
+   column6 = table.addColumn("column6");
+   column7 = table.addColumn("column7");
+
+   tableRow = table.addRow();
+   tableRow.addCell("", "table-header", 5);
+   tableRow.addCell(dateCurrent, "table-header align-center", 1);
+   tableRow.addCell(datePrevious, "table-header align-center", 1);
+
+   /* Row 1 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("ACIV"), "align-left bold", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("ACIV"), "align-right bold", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("ACIV"), "align-right bold", 1);
+
+   /* Row 2 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("ACIV3"), "align-left", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("ACIV3"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("ACIV3"), "align-right", 1);
+
+   /* Row 3 */
+   tableRow = table.addRow();
+   tableRow.addCell(bReport.getObjectDescription("ACIV1"), "align-left", 5);
+   tableRow.addCell(bReport.getObjectCurrentAmountFormatted("ACIV1"), "align-right", 1);
+   tableRow.addCell(bReport.getObjectPreviousAmountFormatted("ACIV1"), "align-right", 1);
+
+   return report;
+}
+
+function printReport_Aggregato_Rendiconto_Figurativi(report, banDoc, userParam, bReport) {
+
+   // SEZIONE "COSTI E PROVENTI FIGURATIVI"
+
+   var dateCurrent = '';
+   var datePrevious = '';
+
+   var isColumnBalance = findBalanceColumns(banDoc);
+   if (isColumnBalance) {
+      //"Balance_2020", "Balance_2021"
+      dateCurrent = "31.12." + userParam.currentbalancecolumn.slice(8, 12); 
+      datePrevious = "31.12." + userParam.previousbalancecolumn.slice(8, 12);
+   } 
+   else {
+      dateCurrent = Banana.Converter.toLocaleDateFormat(userParam.selectionEndDate);
+      
+      //Calculate date previous: start period - 1 day
+      datePrevious = Banana.Converter.toDate(userParam.selectionStartDate);
+      datePrevious.setDate(datePrevious.getDate() - 1);
+      datePrevious = Banana.Converter.toLocaleDateFormat(datePrevious);
+   }
+
+   if (userParam.printcostifigurativi) {
+
+      report.addParagraph(" ", "");
+
+      var table = report.addTable("table");
+      var column1,column2,column3,column4,column5,column6,column7;
+      column1 = table.addColumn("column1");
+      column2 = table.addColumn("column2");
+      column3 = table.addColumn("column3");
+      column4 = table.addColumn("column4");
+      column5 = table.addColumn("column5");
+      column6 = table.addColumn("column6");
+      column7 = table.addColumn("column7");
+
+      tableRow = table.addRow();
+      tableRow.addCell(bReport.getObjectDescription("dCG"), "table-header", 1);
+      tableRow.addCell(dateCurrent, "table-header align-center", 1);
+      tableRow.addCell(datePrevious, "table-header align-center", 1);
+      tableRow.addCell("", "", 1);
+      tableRow.addCell(bReport.getObjectDescription("dRG"), "table-header", 1);
+      tableRow.addCell(dateCurrent, "table-header align-center", 1);
+      tableRow.addCell(datePrevious, "table-header align-center", 1);
+
+      /* Row 1 */
+      tableRow = table.addRow();
+      tableRow.addCell(bReport.getObjectDescription("CG1"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG1"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG1"), "align-right", 1);
+      tableRow.addCell("", "", 1);
+      tableRow.addCell(bReport.getObjectDescription("RG1"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG1"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG1"), "align-right", 1);
+
+      /* Row 2 */
+      tableRow = table.addRow();
+      tableRow.addCell(bReport.getObjectDescription("CG2"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG2"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG2"), "align-right", 1);
+      tableRow.addCell("", "", 1);
+      tableRow.addCell(bReport.getObjectDescription("RG2"), "align-left", 1);
+      tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG2"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG2"), "align-right", 1);
+
+      /* Row 3, tot */
+      tableRow = table.addRow();
+      tableRow.addCell(bReport.getObjectDescription("CG"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectCurrentAmountFormatted("CG"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectPreviousAmountFormatted("CG"), "align-right", 1);
+      tableRow.addCell("", "", 1);
+      tableRow.addCell(bReport.getObjectDescription("RG"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectCurrentAmountFormatted("RG"), "align-right", 1);
+      tableRow.addCell(bReport.getObjectPreviousAmountFormatted("RG"), "align-right", 1);
+   }
+
+   return report;
+}
+
+function printReport_Aggregato_Note_Finali(report, userParam) {
+   if (userParam.finalnotes && userParam.printfinalnotes) {
+      report.addParagraph(" ", "");
+      report.addParagraph(userParam.finalnotes, "text-notes");
+   }
+}
+
+
 
 /**************************************************************************************
  * Functionalities
@@ -1732,6 +2306,68 @@ function controlloRegistrazioni(report, banDoc, userParam, bReport) {
          }
       }
    }
+}
+
+function controlloCodiciGr1(banDoc, grColumn) {
+
+   /**
+    * Controlla i codici GR1 utilizzati nel file (RAxx e CAxx)
+    * Per il rendiconto cassa aggregato, si usano codici GR1 standard (RAxx, CAxx, RBxx, CBxx, ecc.)
+    * Vengono controllati i codici che iniziano con RAxx e CAxx
+    * I Codici Gr1 devono essere di lunghezza 3 o superiore
+    * Se sono di lunghezza 2 (come quelli semplificati), allora non vanno bene per questo rendiconto => segnala errore
+    */
+
+   var flagGrNotValid = false;
+
+   //Check if GR1 in Categories table are valid
+   if (banDoc.table("Categories")) {
+      for (var i = 0; i < banDoc.table('Categories').rowCount; i++) {
+         var tRow = banDoc.table('Categories').row(i);
+         var category = tRow.value('Category');
+         var gr = tRow.value(grColumn);
+         if (gr 
+            && (gr.startsWith("RA") || gr.startsWith("CA"))
+            && category 
+            && !category.startsWith(".")
+            && !category.startsWith(",")
+            && !category.startsWith(";")
+            && !category.startsWith(":")) {
+            if (gr.length == 2) {
+               flagGrNotValid = true;
+            }
+         }
+      }
+   }
+   else {
+      //Check if GR1 in Accounts table are valid
+      for (var i = 0; i < banDoc.table('Accounts').rowCount; i++) {
+         var tRow = banDoc.table('Accounts').row(i);
+         var account = tRow.value('Account');
+         var gr = tRow.value(grColumn);
+         var bclass = tRow.value('BClass');
+         if (gr
+            && (gr.startsWith("RA") || gr.startsWith("CA"))
+            && account 
+            && !account.startsWith(".")
+            && !account.startsWith(",") 
+            && !account.startsWith(";")
+            && !account.startsWith(":")
+            && bclass 
+            && (bclass === '3' || bclass === '4')) {
+            if (gr.length == 2) {
+               flagGrNotValid = true;
+            }
+         }
+      } 
+   }
+
+   if (flagGrNotValid) {
+      var msg = getErrorMessage(ID_ERR_CODICI_GR1_RENDICONTOCASSA);
+      banDoc.addMessage(msg);
+   }
+
+   return flagGrNotValid;
 }
 
 function getAccountsLiquidity(banDoc, userParam) {
@@ -2029,39 +2665,39 @@ function convertParam(userParam) {
    convertedParam.data.push(currentParam);
 
    currentParam = {};
+   currentParam.name = 'finalnotesgroup';
+   currentParam.title = 'Testo finale';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+      userParam.finalnotesgroup = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'printfinalnotes';
+   currentParam.parentObject = 'finalnotesgroup';
+   currentParam.title = 'Stampa testo';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.printfinalnotes ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.tooltip = "Stampa le note alla fine del rendiconto";
+   currentParam.readValue = function() {
+    userParam.printfinalnotes = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
    currentParam.name = 'finalnotes';
-   currentParam.parentObject = 'report_group';
-   currentParam.title = 'Note finali';
+   currentParam.parentObject = 'finalnotesgroup';
+   currentParam.title = 'Testo';
    currentParam.type = 'multilinestring';
    currentParam.value = userParam.finalnotes ? userParam.finalnotes : '';
    currentParam.defaultvalue = '';
    currentParam.tooltip = "Inserisci un testo finale su più righe in fondo al rendiconto";
    currentParam.readValue = function() {
       userParam.finalnotes = this.value;
-   }
-   convertedParam.data.push(currentParam);
-
-   currentParam = {};
-   currentParam.name = 'styles';
-   currentParam.title = 'Stili';
-   currentParam.type = 'string';
-   currentParam.value = '';
-   currentParam.editable = false;
-   currentParam.readValue = function() {
-    userParam.param_styles = this.value;
-   }
-   convertedParam.data.push(currentParam);
-
-   currentParam = {};
-   currentParam.name = 'colorheadertable';
-   currentParam.parentObject = 'styles';
-   currentParam.title = 'Colore intestazioni tabelle';
-   currentParam.type = 'color';
-   currentParam.value = userParam.colorheadertable ? userParam.colorheadertable : '#337ab7';
-   currentParam.defaultvalue = '#337ab7';
-   currentParam.tooltip = "Seleziona il colore che vuoi utilizzare come sfondo nelle intestazioni delle tabelle";
-   currentParam.readValue = function() {
-   userParam.colorheadertable = this.value;
    }
    convertedParam.data.push(currentParam);
 
@@ -2095,6 +2731,54 @@ function convertParam(userParam) {
        convertedParam.data.push(currentParam);
    }
 
+   currentParam = {};
+   currentParam.name = 'rendicontocassaaggregato';
+   currentParam.title = 'Stampa in forma aggregata';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+      userParam.rendicontocassaaggregato = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'stamparendicontocassaaggregato';
+   currentParam.parentObject = 'rendicontocassaaggregato';
+   currentParam.title = 'Rendiconto in forma aggregata';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.stamparendicontocassaaggregato ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.tooltip = "Stampa la versione in forma aggregata del Rendiconto per Cassa. Utilizzabile per gli enti del Terzo settore aventi entrate non superiori a 60.000 euro";
+   currentParam.readValue = function() {
+      userParam.stamparendicontocassaaggregato = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'styles';
+   currentParam.title = 'Stili';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+    userParam.param_styles = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'colorheadertable';
+   currentParam.parentObject = 'styles';
+   currentParam.title = 'Colore intestazioni tabelle';
+   currentParam.type = 'color';
+   currentParam.value = userParam.colorheadertable ? userParam.colorheadertable : '#337ab7';
+   currentParam.defaultvalue = '#337ab7';
+   currentParam.tooltip = "Seleziona il colore che vuoi utilizzare come sfondo nelle intestazioni delle tabelle";
+   currentParam.readValue = function() {
+   userParam.colorheadertable = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
    return convertedParam;
 }
 
@@ -2116,8 +2800,10 @@ function initUserParam() {
    userParam.insertpagebreak = '';
    userParam.excludedecimals = false;
    userParam.finalnotes = '';
+   userParam.printnotes = false;
    userParam.colorheadertable = '#337ab7';
    userParam.stampareportcontrollo = false;
+   userParam.stamparendicontocassaaggregato = false;
    return userParam;
 }
 

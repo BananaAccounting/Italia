@@ -1,4 +1,4 @@
-// Copyright [2022] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2026] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 // @id = ch.banana.it.extension.rendicontocassa.mod.d.test
 // @api = 1.0
-// @pubdate = 2022-10-19
+// @pubdate = 2026-04-10
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.it.extension.rendicontocassa.mod.d.js>
 // @task = app.command
@@ -279,5 +279,29 @@ ReportModDTest.prototype.testBananaExtension = function() {
     paramReport = setParamReport(banDoc, userParam);
     report = stampaReportControllo(banDoc, paramReport);
 	Test.logger.addReport("Test report di controllo - Rendiconto Cassa", report);
+
+
+	/**
+	 *	Test Rendiconto aggregato, using the tutorial template
+	 */
+    banDoc = Banana.application.openDocument("file:script/../test/testcases/11094-entrate-uscite-ets-rendiconto-cassa-tutorial.ac2");
+	Test.assert(banDoc);
+
+    userParam = {};
+  	userParam.selectionStartDate = "2020-01-01";
+  	userParam.selectionEndDate = "2020-12-31";
+  	userParam.title = "RENDICONTO CASSA AGGREGATO (MOD. E) ANNO 2020";
+	userParam.logo = false;
+	userParam.logoname = 'Logo';
+	userParam.printheader = false;
+	userParam.printtitle = true;
+	userParam.title = '';
+	userParam.column = 'Gr1';
+	userParam.printcostifigurativi = true;
+	userParam.stamparendicontocassaaggregato = true;
+
+    paramReport = setParamReport(banDoc, userParam);
+    report = stampaReportNormale_Aggregato(banDoc, paramReport, "");
+	Test.logger.addReport("Test GR1 'rendiconto cassa aggregato (MOD. E)'", report);
 
 }

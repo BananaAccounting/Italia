@@ -1054,6 +1054,70 @@ Totale Cassa e Banca finale  & 33'299.00 \\
 Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corrente = Cassa e Banca finale \\
 -  \#page-nr  - \\
 \end{reportvalue}
+\begin{reportvalue}{Test GR1 'rendiconto cassa aggregato (MOD. E)'}
+  \\
+Associazione Aiuto agli Anziani - RENDICONTO PER CASSA IN FORMA AGGREGATA ANNO 2020 \\
+  \\
+(Importi in EUR) \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+USCITE  & 31.12.2020  & 31.12.2019  &  & ENTRATE  & 31.12.2020  & 31.12.2019 \\
+A) Uscite da attività di interesse generale  & 84'701.00  & 0.00  &  & A) Entrate da attività di interesse generale  & 83'700.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di interesse generale (+/-) } & -1'001.00  & 0.00 \\
+B) Uscite da attività diverse  & 1'000.00  & 0.00  &  & B) Entrate da attività diverse  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività diverse (+/-) } & -1'000.00  & 0.00 \\
+C) Uscite da attività di raccolta fondi  & 0.00  & 0.00  &  & C) Entrate da attività di raccolta fondi  & 11'300.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività di raccolta fondi (+/-) } & 11'300.00  & 0.00 \\
+D) Uscite da attività finanziarie e patrimoniali  & 450.00  & 0.00  &  & D) Entrate da attività finanziarie e patrimoniali  & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo attività finanziarie e patrimoniali (+/-) } & -450.00  & 0.00 \\
+E) Uscite di supporto generale  & 0.00  & 0.00  &  & E) Entrate di supporto generale  & 0.00  & 0.00 \\
+Totale uscite della gestione  & 86'151.00  & 0.00  &  & Totale entrate della gestione  & 95'000.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima delle imposte (+/-) } & 8'849.00  & 0.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 8'849.00  & 0.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi  & 31.12.2020  & 31.12.2019  &  & Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi  & 31.12.2020  & 31.12.2019 \\
+Totale  & 2'050.00  & 0.00  &  & Totale  & 12'500.00  & 0.00 \\
+\multicolumn{5}{l}{Imposte } & 0.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 10'450.00  & 0.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2020  & 31.12.2019 \\
+\multicolumn{5}{l}{Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 8'849.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-) } & 10'450.00  & 0.00 \\
+\multicolumn{5}{l}{Avanzo/disavanzo complessivo (+/-) } & 19'299.00  & 0.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+\multicolumn{5}{l}{} & 31.12.2020  & 31.12.2019 \\
+\multicolumn{5}{l}{Cassa e banca } & 33'299.00  & 0.00 \\
+\multicolumn{5}{l}{Cassa } & 6'429.00  & 0.00 \\
+\multicolumn{5}{l}{Depositi bancari e postali } & 26'870.00  & 0.00 \\
+\end{longtable}
+  \\
+\begin{longtable}[l]{ l  l  l  l  l  l  l }
+Costi figurativi  & 31.12.2020  & 31.12.2019  &  & Proventi figurativi  & 31.12.2020  & 31.12.2019 \\
+1) da attività di interesse generale  & 0.00  & 0.00  &  & 1) da attività di interesse generale  & 0.00  & 0.00 \\
+2) da attività diverse  & 0.00  & 0.00  &  & 2) da attività diverse  & 0.00  & 0.00 \\
+Totale  & 0.00  & 0.00  &  & Totale  & 0.00  & 0.00 \\
+\end{longtable}
+  \\
+La somma della liquidità iniziale + avanzo/disavanzo non è uguale alla liquidità finale. Importo differenza = 14'000.00 \\
+  \\
+\begin{longtable}[l]{ l  l }
+\multicolumn{2}{l}{CONTROLLO QUADRATURA }\\
+Totale Cassa e Banca anno precedente  & 0.00 \\
+Avanzo/Disavanzo anno corrente  & 19'299.00 \\
+Totale Cassa e Banca finale  & 33'299.00 \\
+\multicolumn{2}{l}{  }\\
+> Importo differenza  & 14'000.00 \\
+> Esito controllo  & Errore quadratura \\
+\end{longtable}
+  \\
+Formula di controllo: Cassa e Banca anno precedente + Avanzo/Disavanzo anno corrente = Cassa e Banca finale \\
+\end{reportvalue}
 \keyvalue{Result}{Passed}
 \end{test}
 \end{testcase}

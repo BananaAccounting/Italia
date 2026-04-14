@@ -1015,6 +1015,88 @@ function createReportStructureRendicontoCassa() {
 	return reportStructure;
 }
 
+function createReportStructureRendicontoCassaAggregato() {
+
+	var reportStructure = [];
+	
+	/* CASSA E BANCA */
+	reportStructure.push({"id":"dACIV", "description":"CASSA E BANCA"});
+	reportStructure.push({"id":"ACIV1", "type":"group", "indent":"", "bclass":"1", "description":"Depositi bancari e postali"});	
+	reportStructure.push({"id":"ACIV3", "type":"group", "indent":"", "bclass":"1", "description":"Cassa"});
+	reportStructure.push({"id":"ACIV", "type":"total", "indent":"", "description":"Cassa e banca", "sum":"ACIV1;ACIV3"});
+	
+	/* USCITE */
+	reportStructure.push({"id":"dC", "description":"USCITE"});
+	reportStructure.push({"id":"dCA", "type":"title", "indent":"", "description":"A) Uscite da attività di interesse generale"});
+	reportStructure.push({"id":"CA", "type":"group", "indent":"", "bclass":"3", "description":""});
+	reportStructure.push({"id":"dCB", "type":"title", "indent":"", "description":"B) Uscite da attività diverse"});
+	reportStructure.push({"id":"CB", "type":"group", "indent":"", "bclass":"3", "description":""});
+	reportStructure.push({"id":"dCC", "type":"title", "indent":"", "description":"C) Uscite da attività di raccolta fondi"});
+	reportStructure.push({"id":"CC", "type":"group", "indent":"", "bclass":"3", "description":""});
+	reportStructure.push({"id":"dCD", "type":"title", "indent":"", "description":"D) Uscite da attività finanziarie e patrimoniali"});
+	reportStructure.push({"id":"CD", "type":"group", "indent":"", "bclass":"3", "description":""});
+	reportStructure.push({"id":"dCE", "type":"title", "indent":"", "description":"E) Uscite di supporto generale"});
+	reportStructure.push({"id":"CE", "type":"group", "indent":"", "bclass":"3", "description":""});
+	reportStructure.push({"id":"C", "type":"total", "indent":"", "description":"Totale uscite della gestione", "sum":"CA;CB;CC;CD;CE"});
+
+	/* ENTRATE */
+	reportStructure.push({"id":"dR", "description":"ENTRATE"});
+	reportStructure.push({"id":"dRA", "type":"title", "indent":"", "description":"A) Entrate da attività di interesse generale"});
+	reportStructure.push({"id":"RA", "type":"group", "indent":"", "bclass":"4", "description":""});
+	reportStructure.push({"id":"dRB", "type":"title", "indent":"", "description":"B) Entrate da attività diverse"});
+	reportStructure.push({"id":"RB", "type":"group", "indent":"", "bclass":"4", "description":"", });
+	reportStructure.push({"id":"dRC", "type":"title", "indent":"", "description":"C) Entrate da attività di raccolta fondi"});
+	reportStructure.push({"id":"RC", "type":"group", "indent":"", "bclass":"4", "description":""});
+	reportStructure.push({"id":"dRD", "type":"title", "indent":"", "description":"D) Entrate da attività finanziarie e patrimoniali"});
+	reportStructure.push({"id":"RD", "type":"group", "indent":"", "bclass":"4", "description":""});
+	reportStructure.push({"id":"dRE", "type":"title", "indent":"", "description":"E) Entrate di supporto generale"});
+	reportStructure.push({"id":"RE", "type":"group", "indent":"", "bclass":"4", "description":""});
+	reportStructure.push({"id":"R", "type":"total", "indent":"", "description":"Totale entrate della gestione", "sum":"RA;RB;RC;RD;RE"});
+	reportStructure.push({"id":"IM", "type":"group", "indent":"", "bclass":"4", "description":"Imposte"});
+
+	/* USCITE DA INVESTIMENTI */
+	reportStructure.push({"id":"dCF", "description":"Uscite da investimenti in immobilizzazioni o da deflussi di capitale di terzi"});
+	reportStructure.push({"id":"CF", "type":"group", "indent":"", "bclass":"3", "description":""});
+	reportStructure.push({"id":"IMRC", "type":"group", "indent":"", "bclass":"3", "description":"Imposte"});
+
+	/* ENTRATE DA DISINVESTIMENTI */
+	reportStructure.push({"id":"dRF", "description":"Entrate da disinvestimenti in immobilizzazioni o da flussi di capitale di terzi"});
+	reportStructure.push({"id":"RF", "type":"group", "indent":"", "bclass":"4", "description":""});
+
+	/* AVANZO / DISAVANZO */
+	  // => ricavi-costi (es RA;-CA)
+	reportStructure.push({"id":"RA-CA", "type":"total", "indent":"", "description":"Avanzo/disavanzo attività di interesse generale (+/-)", "sum":"RA;-CA"});
+	reportStructure.push({"id":"RB-CB", "type":"total", "indent":"", "description":"Avanzo/disavanzo attività diverse (+/-)", "sum":"RB;-CB"});
+	reportStructure.push({"id":"RC-CC", "type":"total", "indent":"", "description":"Avanzo/disavanzo attività di raccolta fondi (+/-)", "sum":"RC;-CC"});
+	reportStructure.push({"id":"RD-CD", "type":"total", "indent":"", "description":"Avanzo/disavanzo attività finanziarie e patrimoniali (+/-)", "sum":"RD;-CD"});
+	reportStructure.push({"id":"RE-CE", "type":"total", "indent":"", "description":"Avanzo/disavanzo supporto generale (+/-)", "sum":"RE;-CE"});   
+	reportStructure.push({"id":"RF-CF", "type":"total", "indent":"", "description":"Avanzo/disavanzo da entrate e uscite per investimenti e disinvestimenti patrimoniali e finanziamenti (+/-)", "sum":"RF;-CF"});
+	reportStructure.push({"id":"TADPI", "type":"total", "indent":"", "description":"Avanzo/disavanzo d’esercizio prima delle imposte (+/-)", "sum":"RA-CA;RB-CB;RC-CC;RD-CD;RE-CE"});
+	reportStructure.push({"id":"TADES", "type":"total", "indent":"", "description":"Avanzo/disavanzo d’esercizio prima di investimenti e disinvestimenti patrimoniali e finanziamenti (+/-)", "sum":"TADPI;IM"});
+	reportStructure.push({"id":"TADRC", "type":"total", "indent":"", "description":"Avanzo/disavanzo complessivo (+/-)", "sum":"-IMRC;TADES;RF;-CF"}); // prima solo "IMRC"
+	reportStructure.push({"id":"PAIV", "type":"total", "indent":"", "description":"Avanzo/disavanzo d'esercizio", "sum":"TADES"}); //not used
+
+	/* COSTI / PROVENTI FIGURATIVI */
+	reportStructure.push({"id":"dCG", "description":"Costi figurativi"});
+	reportStructure.push({"id":"CG1", "type":"group", "indent":"", "bclass":"3", "description":"1) da attività di interesse generale"});
+	reportStructure.push({"id":"CG2", "type":"group", "indent":"", "bclass":"3", "description":"2) da attività diverse"});
+	reportStructure.push({"id":"CG", "type":"total", "indent":"", "description":"Totale", "sum":"CG1;CG2"});
+	reportStructure.push({"id":"dRG", "description":"Proventi figurativi"});
+	reportStructure.push({"id":"RG1", "type":"group", "indent":"", "bclass":"4", "description":"1) da attività di interesse generale"});
+	reportStructure.push({"id":"RG2", "type":"group", "indent":"", "bclass":"4", "description":"2) da attività diverse"});
+	reportStructure.push({"id":"RG", "type":"total", "indent":"", "description":"Totale", "sum":"RG1;RG2"});
+	reportStructure.push({"id":"RG-CG", "type":"total", "indent":"", "description":"Totale", "sum":"RG;-CG"}); //not used
+
+	
+	// reportStructure.push({"id":"dCG", "description":"Costi figurativi"});
+	// reportStructure.push({"id":"CG", "type":"group", "indent":"", "bclass":"3", "description":""});
+	// reportStructure.push({"id":"dRG", "description":"Proventi figurativi"});
+	// reportStructure.push({"id":"RG", "type":"group", "indent":"", "bclass":"4", "description":""});
+	// reportStructure.push({"id":"RG-CG", "type":"total", "indent":"", "description":"Totale", "sum":"RG;-CG"}); //not used
+
+	return reportStructure;
+}
+
 //=======
 // 5x1000
 //=======
