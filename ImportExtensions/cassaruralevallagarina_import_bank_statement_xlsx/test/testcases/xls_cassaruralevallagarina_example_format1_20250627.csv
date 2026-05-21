@@ -1,0 +1,27 @@
+DATA	VALUTA	DARE	AVERE	DIVISA	DESCRIZIONE_OPERAZIONE	CAUSALE_ABI
+08.10.2024	08.10.2024	90		EUR	Test description	26
+06.05.2025	06.05.2025	93.35		EUR	Test description	26
+03.07.2024	03.07.2024	99.84		EUR	Test description	26
+27.06.2025	27.06.2025	104		EUR	Test description	50
+09.08.2024	09.08.2024	107.25		EUR	Test description	26
+07.01.2025	07.01.2025	130.44		EUR	Test description	26
+09.12.2024	09.12.2024	133.21		EUR	Test description	26
+14.04.2025	14.04.2025	134.27		EUR	Test description	26
+25.02.2025	25.02.2025	146.4		EUR	Test description	26
+13.01.2025	13.01.2025	150		EUR	Test description	26
+24.03.2025	24.03.2025	150		EUR	Test description	26
+23.04.2025	23.04.2025	171		EUR	Test description	26
+06.05.2025	06.05.2025	179.58		EUR	Test description	26
+01.08.2024	01.08.2024		658	EUR	Test description	48
+23.01.2025	23.01.2025		800	EUR	Test description	48
+25.07.2024	25.07.2024		831	EUR	Test description	48
+09.09.2024	09.09.2024		1220	EUR	Test description	48
+28.02.2025	28.02.2025		1220	EUR	Test description	48
+27.06.2025	27.06.2025		1300	EUR	Test description	78
+09.08.2024	09.08.2024		1302.6	EUR	Test description	48
+30.09.2024	30.09.2024		1500	EUR	Test description	48
+07.08.2024	07.08.2024		1600	EUR	Test description	48
+01.07.2024			1924.41	EUR	Test description	
+12.08.2024	12.08.2024		1952	EUR	Test description	48
+02.05.2025	02.05.2025		2000	EUR	Test description	78
+06.05.2025	06.05.2025		3000	EUR	Test description	48

@@ -1,0 +1,19 @@
+{
+    "category": "import",
+    "country": "italia",
+    "countryCode": "it",
+    "description": "Cassa Rurale Vallagarina - Import account statement .xls/.xlsx (Banana+ Advanced)",
+    "description.en": "Cassa Rurale Vallagarina - Import account statement .xls/.xlsx (Banana+ Advanced)",
+    "description.de": "Cassa Rurale Vallagarina - Bewegungen importieren .xls/.xlsx (Banana+ Advanced)",
+    "description.fr": "Cassa Rurale Vallagarina - Importer mouvements .xls/.xlsx (Banana+ Advanced)",
+    "description.it": "Cassa Rurale Vallagarina - Importa movimenti .xls/.xlsx (Banana+ Advanced)",
+    "id": "ch.banana.italia.import.cassaruralevallagarina",
+    "language": "it",
+    "publisher": "Banana.ch",
+    "title": "Cassa Rurale Vallagarina - Import account statement .xls/.xlsx (Banana+ Advanced)",
+    "title.en": "Cassa Rurale Vallagarina - Import account statement .xls/.xlsx (Banana+ Advanced)",
+    "title.de": "Cassa Rurale Vallagarina - Bewegungen importieren .xls/.xlsx (Banana+ Advanced)",
+    "title.fr": "Cassa Rurale Vallagarina - Importer mouvements .xls/.xlsx (Banana+ Advanced)",
+    "title.it": "Cassa Rurale Vallagarina - Importa movimenti .xls/.xlsx (Banana+ Advanced)",
+    "version": "1.0"
+}
