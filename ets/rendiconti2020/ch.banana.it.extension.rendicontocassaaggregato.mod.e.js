@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.extension.rendicontocassaaggregato.mod.e
 // @api = 1.0
-// @pubdate = 2026-04-10
+// @pubdate = 2026-05-22
 // @publisher = Banana.ch SA
 // @description = 1. Rendiconto per cassa in forma aggregata
 // @task = app.command
@@ -137,6 +137,8 @@ function printReport_Aggregato(banDoc, userParam, bReport, stylesheet) {
 	
    var report = Banana.Report.newReport("Rendiconto per cassa aggregato");
    printReport_Aggregato_Intestazione(report, banDoc, userParam, stylesheet);
+   printReport_Aggregato_Dati_Identificativi_Ente(report, userParam);
+   printReport_Aggregato_Testo_Iniziale(report, userParam);
    printReport_Aggregato_Rendiconto_Uscite_Entrate(report, banDoc, userParam, bReport);
    printReport_Aggregato_Rendiconto_Investimenti_Disinvestimenti(report, banDoc, userParam, bReport);
    printReport_Aggregato_Rendiconto_Avanzo_Disavanzo(report, banDoc, userParam, bReport);
@@ -222,13 +224,72 @@ function printReport_Aggregato_Intestazione(report, banDoc, userParam, styleshee
       report.addParagraph(title, "heading2");
       report.addParagraph(" ", "");
    }
-   // Text begin
+}
+
+function printReport_Aggregato_Testo_Iniziale(report, userParam) {
    var textbegin = "";
    if (userParam.textbegin) {
       textbegin = userParam.textbegin.trim();
    }
    if (textbegin) {
       report.addParagraph(textbegin, "text-begin");
+      report.addParagraph(" ", "");
+   }
+}
+
+function printReport_Aggregato_Dati_Identificativi_Ente(report, userParam) {
+
+   if (userParam.stampadatibase) {
+
+      report.addParagraph("", "");
+      report.addParagraph("Dati identificativi dell'ente", "text-begin bold");
+
+      var table = report.addTable("table-dati-ente");
+      var column1,column2,column3;
+      column1 = table.addColumn("column2");
+      column2 = table.addColumn("column4");
+      column3 = table.addColumn("column3");
+
+      var tableRow = table.addRow();
+      tableRow.addCell("Denominazione", "align-right", 1);
+      tableRow.addCell(" ", "", 1);
+      tableRow.addCell(userParam.datibasedenominazione, "bold", 1);
+
+      tableRow = table.addRow();
+      tableRow.addCell("Sede", "align-right", 1);
+      tableRow.addCell(" ", "", 1);
+      tableRow.addCell(userParam.datibasesede, "bold", 1);
+
+      tableRow = table.addRow();
+      tableRow.addCell("Partita IVA", "align-right", 1);
+      tableRow.addCell(" ", "", 1);
+      tableRow.addCell(userParam.datibasepartitaiva, "bold", 1);
+
+      tableRow = table.addRow();
+      tableRow.addCell("Codice fiscale", "align-right", 1);
+      tableRow.addCell(" ", "", 1);
+      tableRow.addCell(userParam.datibasecodicefiscale, "bold", 1);
+
+      tableRow = table.addRow();
+      tableRow.addCell("Forma giuridica", "align-right", 1);
+      tableRow.addCell(" ", "", 1);
+      tableRow.addCell(userParam.datibaseformagiuridica, "bold", 1);
+
+      tableRow = table.addRow();
+      tableRow.addCell("Numero di iscrizione al RUNTS", "align-right", 1);
+      tableRow.addCell(" ", "", 1);
+      tableRow.addCell(userParam.datibasenumerorunts, "bold", 1);
+
+      tableRow = table.addRow();
+      tableRow.addCell("Sezione di iscrizione al registro", "align-right", 1);
+      tableRow.addCell(" ", "", 1);
+      tableRow.addCell(userParam.datibasesezioneiscrizioneregistro, "bold", 1);
+
+      tableRow = table.addRow();
+      tableRow.addCell("Codice/lettera attività di interesse generale svolta", "align-right", 1);
+      tableRow.addCell(" ", "", 1);
+      tableRow.addCell(userParam.datibasecodiceattivita, "bold", 1);
+
       report.addParagraph(" ", "");
    }
 }
@@ -1095,6 +1156,151 @@ function convertParam(userParam) {
    currentParam.tooltip = "Inserisci un testo iniziale su più righe dopo il titolo";
    currentParam.readValue = function() {
       userParam.textbegin = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'basedata_group';
+   currentParam.title = 'Informazioni ente';
+   currentParam.type = 'string';
+   currentParam.value = '';
+   currentParam.editable = false;
+   currentParam.readValue = function() {
+      userParam.basedata_group = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'stampadatibase';
+   currentParam.parentObject = 'basedata_group';
+   currentParam.title = 'Stampa informazioni ente';
+   currentParam.type = 'bool';
+   currentParam.value = userParam.stampadatibase ? true : false;
+   currentParam.defaultvalue = false;
+   currentParam.tooltip = "Includi le informazioni dell'ente a inizio pagina";
+   currentParam.readValue = function() {
+      userParam.stampadatibase = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'datibasedenominazione';
+   currentParam.parentObject = 'basedata_group';
+   currentParam.title = 'Denominazione';
+   currentParam.type = 'string';
+   currentParam.value = userParam.datibasedenominazione ? userParam.datibasedenominazione : '';
+   currentParam.defaultvalue = '';
+   currentParam.tooltip = "Inserisci la denominazione dell'ente";
+   currentParam.readValue = function() {
+     userParam.datibasedenominazione = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'datibasesede';
+   currentParam.parentObject = 'basedata_group';
+   currentParam.title = 'Sede';
+   currentParam.type = 'string';
+   currentParam.value = userParam.datibasesede ? userParam.datibasesede : '';
+   currentParam.defaultvalue = '';
+   currentParam.tooltip = "Inserisci la sede dell'ente";
+   currentParam.readValue = function() {
+     userParam.datibasesede = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'datibasepartitaiva';
+   currentParam.parentObject = 'basedata_group';
+   currentParam.title = 'Partita IVA';
+   currentParam.type = 'string';
+   currentParam.value = userParam.datibasepartitaiva ? userParam.datibasepartitaiva : '';
+   currentParam.defaultvalue = '';
+   currentParam.tooltip = "Inserisci la partita IVA dell'ente";
+   currentParam.readValue = function() {
+     userParam.datibasepartitaiva = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'datibasecodicefiscale';
+   currentParam.parentObject = 'basedata_group';
+   currentParam.title = 'Codice fiscale';
+   currentParam.type = 'string';
+   currentParam.value = userParam.datibasecodicefiscale ? userParam.datibasecodicefiscale : '';
+   currentParam.defaultvalue = '';
+   currentParam.tooltip = "Inserisci il codice fiscale dell'ente";
+   currentParam.readValue = function() {
+     userParam.datibasecodicefiscale = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'datibaseformagiuridica';
+   currentParam.parentObject = 'basedata_group';
+   currentParam.title = "Forma giuridica";
+   currentParam.type = 'combobox';
+   currentParam.items = ["-",
+                        "Associazione riconosciuta",
+                        "Associazione non riconosciuta",
+                        "Fondazione",
+                        "Comitato",
+                        "Società di mutuo soccorso",
+                        "Cooperativa sociale",
+                        "Impresa sociale",
+                        "Rete associativa"];
+   currentParam.value = userParam.datibaseformagiuridica ? userParam.datibaseformagiuridica : '';
+   currentParam.defaultvalue = "-";
+   currentParam.tooltip = "Seleziona la forma giuridica dell'ente";
+   currentParam.readValue = function() {
+      userParam.datibaseformagiuridica = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'datibasenumerorunts';
+   currentParam.parentObject = 'basedata_group';
+   currentParam.title = 'Numero iscrizione RUNTS';
+   currentParam.type = 'string';
+   currentParam.value = userParam.datibasenumerorunts ? userParam.datibasenumerorunts : '';
+   currentParam.defaultvalue = '';
+   currentParam.tooltip = "Inserisci il numero di iscrizione al RUNTS dell'ente";
+   currentParam.readValue = function() {
+     userParam.datibasenumerorunts = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'datibasesezioneiscrizioneregistro';
+   currentParam.parentObject = 'basedata_group';
+   currentParam.title = "Sezione di iscrizione al registro";
+   currentParam.type = 'combobox';
+   currentParam.items = ["-",
+                        "Organizzazioni di Volontariato (ODV)",
+                        "Associazioni di Promozione Sociale (APS)",
+                        "Enti Filantropici",
+                        "Imprese Sociali",
+                        "Reti Associative",
+                        "Società di Mutuo Soccorso (SMS)",
+                        "Altri Enti del Terzo Settore"];
+   currentParam.value = userParam.datibasesezioneiscrizioneregistro ? userParam.datibasesezioneiscrizioneregistro : '';
+   currentParam.defaultvalue = "-";
+   currentParam.tooltip = "Seleziona la sezione di iscrizione al registro dell'ente";
+   currentParam.readValue = function() {
+      userParam.datibasesezioneiscrizioneregistro = this.value;
+   }
+   convertedParam.data.push(currentParam);
+
+   currentParam = {};
+   currentParam.name = 'datibasecodiceattivita';
+   currentParam.parentObject = 'basedata_group';
+   currentParam.title = 'Codice/lettera attività interesse generale';
+   currentParam.type = 'string';
+   currentParam.value = userParam.datibasecodiceattivita ? userParam.datibasecodiceattivita : '';
+   currentParam.defaultvalue = '';
+   currentParam.tooltip = "Inserisci il codice/lettera attività di interesse generale svolta dall'ente";
+   currentParam.readValue = function() {
+     userParam.datibasecodiceattivita = this.value;
    }
    convertedParam.data.push(currentParam);
 
