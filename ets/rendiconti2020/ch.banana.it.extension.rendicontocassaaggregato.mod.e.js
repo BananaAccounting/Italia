@@ -1243,12 +1243,7 @@ function convertParam(userParam) {
    currentParam.items = ["-",
                         "Associazione riconosciuta",
                         "Associazione non riconosciuta",
-                        "Fondazione",
-                        "Comitato",
-                        "Società di mutuo soccorso",
-                        "Cooperativa sociale",
-                        "Impresa sociale",
-                        "Rete associativa"];
+                        "Fondazione"];
    currentParam.value = userParam.datibaseformagiuridica ? userParam.datibaseformagiuridica : '';
    currentParam.defaultvalue = "-";
    currentParam.tooltip = "Seleziona la forma giuridica dell'ente";
