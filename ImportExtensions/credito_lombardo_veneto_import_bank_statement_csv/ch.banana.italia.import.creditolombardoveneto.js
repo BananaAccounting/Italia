@@ -136,10 +136,10 @@ function CreditoLombardoVenetoFormat1() {
 					convertedColumns[i] = "DateValue";
 					break;
 				case "DARE":
-					convertedColumns[i] = "Income";
+					convertedColumns[i] = "Expenses";
 					break;
 				case "AVERE":
-					convertedColumns[i] = "Expenses";
+					convertedColumns[i] = "Income";
 					break;
 				case "DIVISA":
 					convertedColumns[i] = "Currency";

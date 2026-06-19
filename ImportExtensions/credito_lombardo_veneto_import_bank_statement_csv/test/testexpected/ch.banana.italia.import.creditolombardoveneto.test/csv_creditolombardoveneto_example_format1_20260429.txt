@@ -20,9 +20,9 @@
 %Begin test data
 \begin{tablevalue}{}{ l  l  l  l  l  l  l }
 Date & DateValue & Doc & ExternalReference & Description & Income & Expenses\\
-2026-05-04 &  &  &  & PRE-ADDEBITO & 33.35 & \\
-2026-05-04 & 2026-04-29 &  &  & PAGAMENTO & 41.05 & \\
-2026-04-29 & 2026-04-27 &  &  & PAGAMENTO & 100.00 & \\
+2026-05-04 &  &  &  & PRE-ADDEBITO &  & 33.35\\
+2026-05-04 & 2026-04-29 &  &  & PAGAMENTO &  & 41.05\\
+2026-04-29 & 2026-04-27 &  &  & PAGAMENTO &  & 100.00\\
 \\
 \end{tablevalue}
 \end{document}
