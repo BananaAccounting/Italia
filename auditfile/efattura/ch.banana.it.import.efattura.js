@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.import.efattura
 // @api = 1.0
-// @pubdate = 2024-08-28
+// @pubdate = 2026-06-23
 // @publisher = Banana.ch SA
 // @description = Importa e-fatture (*.xml)...
 // @task = import.file
@@ -685,12 +685,13 @@ EFatturaImport.prototype.getAccountIdNew = function (isCustomer) {
     var gr = "";
     var sequence = "";
     for (var accountId in this.accounts) {
-        if (parseInt(accountId) > accountIdNew && this.accounts[accountId].isCustomer) {
+        //se parametro isCustomer=true bisogna cercare solo nei conti clienti this.accounts[accountId].isCustomer
+        if (parseInt(accountId) > accountIdNew && isCustomer && this.accounts[accountId].isCustomer) {
             accountIdNew = parseInt(accountId);
             gr = this.accounts[accountId].Gr;
             sequence = this.accounts[accountId].sequence;
         }
-        else if (parseInt(accountId) > accountIdNew && !this.accounts[accountId].isCustomer) {
+        else if (parseInt(accountId) > accountIdNew && !isCustomer && !this.accounts[accountId].isCustomer) {
             accountIdNew = parseInt(accountId);
             gr = this.accounts[accountId].Gr;
             sequence = this.accounts[accountId].sequence;
