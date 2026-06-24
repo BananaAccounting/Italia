@@ -14,7 +14,7 @@
 
 // @id = ch.banana.italia.import.bper
 // @api = 1.0
-// @pubdate = 2026-05-15
+// @pubdate = 2026-06-24
 // @publisher = Banana.ch SA
 // @description = BPER Banca - Import account statement .xls/.xlsx (Banana+ Advanced)
 // @description.en = BPER Banca - Import account statement .xls/.xlsx (Banana+ Advanced)
@@ -69,7 +69,6 @@ function exec(inData, isTest) {
  * 30 aprile 2026 | 30 aprile 2026 | BONIFICO | 2633.24 |        | BONIFICO         | Contabilizzato
  */
 function BperFormat1() {
-   this.decimalSeparator = ".";
 
    this.match = function (transactionsData) {
       if (!transactionsData || transactionsData.length === 0)
@@ -236,7 +235,7 @@ function BperFormat1() {
       if (value === null || value === undefined)
          return "";
 
-      var amount = Banana.Converter.toInternalNumberFormat(value, this.decimalSeparator);
+      var amount = Banana.Converter.toInternalNumberFormat(value, this.getDecimalSeparator(value));
       if (!amount)
          return "";
 
@@ -244,6 +243,21 @@ function BperFormat1() {
          return Banana.SDecimal.invert(amount);
 
       return amount;
+   }
+
+   /**
+    * Returns the decimal separator based on what is found in the 
+    * given amount. This method works for this format as transactions amounts
+    * does not have the thousands.
+    * It is a necessary method as the excel file provided by the bank, set amounts decimal
+    * separator based on the local machine settings.
+    */
+   this.getDecimalSeparator = function (value){
+      if (value.indexOf(",") >= 0){
+         return ",";
+      } else {
+         return ".";
+      }
    }
 }
 

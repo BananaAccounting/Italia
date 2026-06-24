@@ -15,7 +15,7 @@
 
 // @id = ch.banana.italia.import.bper.test
 // @api = 1.0
-// @pubdate = 2026-05-15
+// @pubdate = 2026-06-24
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.italia.import.bper>
 // @task = app.command
@@ -59,6 +59,7 @@ TestImportBperTrans.prototype.testImport = function () {
    var fileNameList = [];
 
    fileNameList.push("file:script/../test/testcases/xls_bper_example_format1_20260430.csv");
+   fileNameList.push("file:script/../test/testcases/xls_bper_example_format1_20260624.csv");
 
    var parentLogger = this.testLogger;
    this.progressBar.start(fileNameList.length);
