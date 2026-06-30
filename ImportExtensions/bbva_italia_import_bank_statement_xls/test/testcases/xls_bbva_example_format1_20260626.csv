@@ -1,0 +1,10 @@
+;;;;;;;;
+;;Ultime transazioni;;;;;;
+;;Data di generazione del rapporto: 17/06/2026;;;;;;
+;;;;;;;;
+Data valuta;Data;Parola chiave;Movimento;Importo;Valuta;Disponibile;Valuta;Osservazioni
+27/01/2026;27/01/2026;Test;Test;-1000;EUR;36926.47;EUR;Test
+22/01/2026;22/01/2026;Test;Test;-500;EUR;37926.47;EUR;Test
+22/01/2026;22/01/2026;Test;Test;-870;EUR;38426.47;EUR;Test
+01/01/2026;05/01/2026;Test;;55.02;EUR;39296.47;EUR;Test
+05/01/2026;05/01/2026;Test;Test;-8.55;EUR;39241.45;EUR;Test
