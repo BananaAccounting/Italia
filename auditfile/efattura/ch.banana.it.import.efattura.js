@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.import.efattura
 // @api = 1.0
-// @pubdate = 2026-06-23
+// @pubdate = 2026-10-15
 // @publisher = Banana.ch SA
 // @description = Importa e-fatture (*.xml)...
 // @task = import.file
@@ -227,7 +227,7 @@ EFatturaImport.prototype.createJsonDocument_AddAccount = function (jsonDoc, xmlR
     //cerca il cliente/fornitore in this.accounts
     //se non lo trova ne aggiunge uno nuovo
     let operationName = "";
-    var accountId = this.getAccountId(accountNode);
+    var accountId = this.getAccountId(accountNode, isCustomer);
     if (accountId.length <= 0) {
         accountId = this.getAccountIdNew(isCustomer);
         operationName = "add";
@@ -636,7 +636,7 @@ EFatturaImport.prototype.createJsonDocument_Init = function () {
 }
 
 /*cerca in this.accounts se esiste il cliente in base alla partita iva o codice fiscale)*/
-EFatturaImport.prototype.getAccountId = function (xmlNode) {
+EFatturaImport.prototype.getAccountId = function (xmlNode, isCustomer) {
     if (!xmlNode || !xmlNode.firstChildElement('DatiAnagrafici'))
         return "";
 
@@ -651,6 +651,11 @@ EFatturaImport.prototype.getAccountId = function (xmlNode) {
         nazione = xmlNode.firstChildElement('DatiAnagrafici').firstChildElement('IdFiscaleIVA').firstChildElement('IdPaese').text;
 
     for (var accountId in this.accounts) {
+        //Se la fattura è emessa, cerca soltanto tra i clienti.
+        //Rispettivamente se la fattura è ricevuta, cerca soltanto tra i fornitori.
+        if (this.accounts[accountId].isCustomer !== isCustomer) {
+            continue;
+        }
         if (partitaIva.length > 0 && this.accounts[accountId].VatNumber === partitaIva) {
             return accountId;
         }
