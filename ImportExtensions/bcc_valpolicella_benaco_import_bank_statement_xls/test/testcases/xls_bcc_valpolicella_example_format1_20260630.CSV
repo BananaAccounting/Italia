@@ -1,0 +1,11 @@
+;Data contabile;Data valuta;Dare;Avere;Causale;Descrizione;Note
+;10.07.2026;10.07.2026;;29,70;Bonifico;TEST;
+;09.07.2026;09.07.2026;;28,00;Incassi;TEST;
+;09.07.2026;09.07.2026;;8,91;Bonifico;TEST;
+;08.07.2026;08.07.2026;;48,00;Incassi;TEST;
+;06.07.2026;06.07.2026;;24,00;Incassi;TEST;
+;06.07.2026;06.07.2026;;11,88;Bonifico;TEST;
+;03.07.2026;03.07.2026;5,57;;Commissioni;TEST;
+;02.07.2026;02.07.2026;0,79;;Commissioni;TEST;
+;02.07.2026;30.06.2026;9,20;;Interessi;TEST;
+Totali dal 03/07/2017 al 10/07/2026;;;111.111,11;222.222,22;;SOMMA;123,45
