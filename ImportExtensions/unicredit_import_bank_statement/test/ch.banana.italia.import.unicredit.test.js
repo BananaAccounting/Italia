@@ -61,6 +61,7 @@ TestImportBancaUnicredit.prototype.testImport = function () {
    fileNameList.push("file:script/../test/testcases/csv_unicredit_example_format1_20240403.csv");
    fileNameList.push("file:script/../test/testcases/csv_unicredit_example_format1_20240521.csv");
    fileNameList.push("file:script/../test/testcases/csv_unicredit_example_format2_20250225.csv");
+   fileNameList.push("file:script/../test/testcases/csv_unicredit_example_format3_20261102.csv");
 
    var parentLogger = this.testLogger;
    this.progressBar.start(fileNameList.length);

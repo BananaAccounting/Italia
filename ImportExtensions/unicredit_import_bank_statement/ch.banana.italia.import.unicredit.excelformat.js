@@ -1,4 +1,4 @@
-// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2026] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 // @id = ch.banana.italia.import.unicredit
 // @api = 1.0
-// @pubdate = 2024-05-27
+// @pubdate = 2026-11-02
 // @publisher = Banana.ch SA
 // @description = Banca Unicredit Italia - Importa movimenti .xls /.xlsx (Banana+ Advanced)
 // @doctype = *
@@ -44,7 +44,6 @@ function exec(inData, isTest) {
 	let transactions = Banana.Converter.csvToArray(inData, fieldSeparator, '"');
 	let transactionsData = [];
 
-	//Banana.Ui.showText(JSON.stringify(transactions));
 
 	// Format 1
 	let format1 = new UnicreditFormat1();
@@ -59,6 +58,14 @@ function exec(inData, isTest) {
 	transactionsData = format2.getFormattedData(transactions, importUtilities);
 	if (format2.match(transactionsData)) {
 		transactions = format2.convert(transactionsData);
+		return Banana.Converter.arrayToTsv(transactions);
+	}
+
+	// Format 3
+	let format3 = new UnicreditFormat3();
+	transactionsData = format3.getFormattedData(transactions, importUtilities);
+	if (format3.match(transactionsData)) {
+		transactions = format3.convert(transactionsData);
 		return Banana.Converter.arrayToTsv(transactions);
 	}
 

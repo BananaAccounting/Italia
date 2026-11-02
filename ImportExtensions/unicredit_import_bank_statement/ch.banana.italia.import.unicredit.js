@@ -1,4 +1,4 @@
-// Copyright [2025] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2026] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,165 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+
+/**
+ * Format 3
+ * The format is as follows:
+ * Saldo Contabile: 13.678,24 EUR A Credito;;;;
+ * Saldo Disponibile: 11.123,10 EUR A Credito;;;;
+ * ;;;;
+ * Data registrazione;Data Valuta;Causale;Descrizione;Importo (EUR)
+ * 29.10.2026;29.10.2026;123;ADDEBITO;-14.60
+ * 27.10.2026;27.10.2026;456;ADDEBITO;-123.45
+ * 
+ */
+function UnicreditFormat3(){
+	this.decimalSeparator = ".";
+
+		this.getFormattedData = function (inData, importUtilities) {
+		var columns = importUtilities.getHeaderData(inData, 4); //array
+		var rows = importUtilities.getRowData(inData, 5); //array of array
+		let form = [];
+
+		let convertedColumns = [];
+
+		convertedColumns = this.convertHeaderIt(columns);
+		Banana.console.log(columns);
+		Banana.console.log(convertedColumns);
+
+		//Load the form with data taken from the array. Create objects
+		if (convertedColumns.length > 0) {
+			importUtilities.loadForm(form, convertedColumns, rows);
+			return form;
+		}
+
+		return [];
+	}
+
+	this.convertHeaderIt = function (columns) {
+		let convertedColumns = [];
+
+		for (var i = 0; i < columns.length; i++) {
+			switch (columns[i]) {
+				case "Data registrazione":
+					convertedColumns[i] = "Date";
+					break;
+				case "Data Valuta":
+					convertedColumns[i] = "DateValue";
+					break;
+				case "Descrizione":
+					convertedColumns[i] = "Description";
+					break;
+				case "Causale":
+					convertedColumns[i] = "Notes";
+					break;
+				case "Importo (EUR)":
+				case "Importo (CHF)":
+				case "Importo (USD)":
+				case "Importo (GBP)":
+					convertedColumns[i] = "Amount";
+					break;
+				default:
+					break;
+			}
+		}
+
+		if (convertedColumns.indexOf("Date") < 0 || convertedColumns.indexOf("Notes") < 0) {
+			return [];
+		}
+
+		return convertedColumns;
+	}
+
+	/** Return true if the transactions match this format */
+	this.match = function (transactionsData) {
+
+		if (transactionsData.length === 0)
+			return false;
+
+		for (var i = 0; i < transactionsData.length; i++) {
+			var transaction = transactionsData[i];
+
+			var formatMatched = false;
+
+			if (transaction["Date"] && transaction["Date"].length >= 10 &&
+				transaction["Date"].match(/^[0-9]+[\/\.]+[0-9]+[\/\.][0-9]+$/))
+				formatMatched = true;
+			else
+				formatMatched = false;
+
+			if (transaction["DateValue"] && transaction["DateValue"].length >= 10 &&
+				transaction["DateValue"].match(/^[0-9]+[\/\.]+[0-9]+[\/\.][0-9]+$/))
+				formatMatched = true;
+			else
+				formatMatched = false;
+
+			if (transaction["Notes"])
+				formatMatched = true;
+			else
+				formatMatched = false;
+
+			if (formatMatched)
+				return true;
+		}
+		return false;
+	}
+
+	/** Convert the transaction to the format to be imported */
+	this.convert = function (rows) {
+		var transactionsToImport = [];
+
+		for (var i = 0; i < rows.length; i++) {
+			if (rows[i]["Date"] && rows[i]["Date"].length >= 10 &&
+				rows[i]["Date"].match(/^[0-9]+[\/\.][0-9]+[\/\.][0-9]+$/))
+				transactionsToImport.push(this.mapTransaction(rows[i]));
+		}
+
+		transactionsToImport = transactionsToImport.reverse();
+
+		// Add header and return
+		var header = [["Date", "DateValue", "Doc", "Description", "Income", "Expenses"]];
+		return header.concat(transactionsToImport);
+	}
+
+	/** Return the transaction converted in the import format */
+	this.mapTransaction = function (element) {
+		var mappedLine = [];
+		let date = element['Date'];
+
+		if (date.indexOf(".") > -1) {
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['Date'], "dd.mm.yyyy"));
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['DateValue'], "dd.mm.yyyy"));
+		} else {
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['Date'], "dd/mm/yyyy"));
+			mappedLine.push(Banana.Converter.toInternalDateFormat(element['DateValue'], "dd/mm/yyyy"));
+		}
+		mappedLine.push(""); // Doc is empty for now
+		let cleanDescription = removeMultipleSpaces(element['Description']);
+		let paymentRef = element['Notes'];
+		mappedLine.push(this.completeDescription(cleanDescription, paymentRef));
+		let amount = element['Amount'];
+		if (amount.indexOf("-") < 0) {
+			mappedLine.push(Banana.Converter.toInternalNumberFormat(amount, this.decimalSeparator));
+			mappedLine.push("");
+		}
+		else {
+			amount = amount.replace(/-/g, ''); //remove minus sign
+			mappedLine.push("");
+			mappedLine.push(Banana.Converter.toInternalNumberFormat(amount, this.decimalSeparator));
+		}
+
+		return mappedLine;
+	}
+
+	this.completeDescription = function (currentDescription, paymentRef) {
+		if (!paymentRef)
+			return currentDescription;
+
+		return currentDescription += ", " + paymentRef;
+	}
+}
 
 /**
  * Format 2
@@ -126,7 +285,7 @@ function UnicreditFormat2() {
 			mappedLine.push(Banana.Converter.toInternalDateFormat(element['DateValue'], "dd/mm/yyyy"));
 		}
 		mappedLine.push(""); // Doc is empty for now
-		let cleanDescription = this.removeMultipleSpaces(element['Description']);
+		let cleanDescription = removeMultipleSpaces(element['Description']);
 		mappedLine.push(cleanDescription);
 		let amount = element['Amount'];
 		if (amount.indexOf("-") < 0) {
@@ -141,18 +300,17 @@ function UnicreditFormat2() {
 
 		return mappedLine;
 	}
+}
 
-	/**
-	 * Clean the description from unwanted characters.
-	 * Use a regex to find blocks of spaces of variable length up to 20 characters.
-	 */
-	this.removeMultipleSpaces = function (description) {
-		if (!description)
-			return "";
-		else
-			return description.replace(/ {2,20}/g, " ");
-	}
-
+/**
+ * Clean the description from unwanted characters.
+ * Use a regex to find blocks of spaces of variable length up to 20 characters.
+*/
+function removeMultipleSpaces(description) {
+	if (!description)
+		return "";
+	else
+		return description.replace(/ {2,20}/g, " ");
 }
 
 /**
@@ -207,6 +365,10 @@ function UnicreditFormat1() {
 			startLineNumber = 0;
 		}
 		var headerData = inData[startLineNumber];
+
+		if (!headerData)
+			return [];
+
 		for (var i = 0; i < headerData.length; i++) {
 
 			headerData[i] = headerData[i].trim();
