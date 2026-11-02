@@ -1,4 +1,4 @@
-// Copyright [2024] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2026] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 
 // @id = ch.banana.italia.import.unicredit.test
 // @api = 1.0
-// @pubdate = 2024-04-03
+// @pubdate = 2026-11-02
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.italia.import.unicredit.test>
 // @task = app.command

@@ -324,6 +324,7 @@ function removeMultipleSpaces(description) {
  * 02.11.2023;01.11.2023;Descrizione;-13.11;280
  * 10.11.2023;07.11.2023;Descrizione;043
  * 
+ * 
  * Dates could also be in the following format:
  * 02/01/2024;01/01/2024;DESCRIZIONE;-6,86;198
  * 02/01/2024;02/01/2024;DESCRIZIONE;-1.438,74;208
