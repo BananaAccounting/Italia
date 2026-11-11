@@ -23,16 +23,20 @@
 // @inputdatasource = opendirdialog
 // @inputfilefilter = *.xml
 // @timeout = -1
+// @includejs = ch.banana.it.import.efattura.settings.js
 
 //Main function
 function exec(inData) {
 
-    if (!Banana.document || inData.length <= 0)
+    if (!Banana.document || !inData || inData.length <= 0)
         return "@Cancel";
 
     Banana.application.clearMessages();
+    
     var eFatturaImport = new EFatturaImport(Banana.document);
-    if (!eFatturaImport.verifyBananaVersion())
+    var settings = new Settings(Banana.document);
+
+    if (!settings.verifyBananaVersion())
         return "@Cancel";
 
     //inData contiene i dati delle fatture in formato XML
@@ -48,7 +52,7 @@ function exec(inData) {
         return "@Cancel";
 
     var savedParam = Banana.document.getScriptSettings("import_efattura");
-    if (savedParam.length > 0) {
+    if (savedParam && savedParam.length > 0) {
         eFatturaImport.setParam(JSON.parse(savedParam));
     }
 
@@ -65,34 +69,9 @@ function exec(inData) {
     return documentChange;
 }
 
-/*Update script's parameters*/
 function settingsDialog() {
-
-    var eFatturaImport = new EFatturaImport(Banana.document);
-    if (!eFatturaImport.verifyBananaVersion())
-        return false;
-
-    if (typeof (Banana.Ui.openPropertyEditor) === 'undefined')
-        return false;
-
-    var savedParam = Banana.document.getScriptSettings("import_efattura");
-    if (savedParam.length > 0) {
-        eFatturaImport.setParam(JSON.parse(savedParam));
-    }
-
-    var dialogTitle = 'Settings';
-    var convertedParam = eFatturaImport.convertParam(eFatturaImport.param);
-    var pageAnchor = 'ch.banana.it.import.efattura';
-    if (!Banana.Ui.openPropertyEditor(dialogTitle, convertedParam, pageAnchor))
-        return false;
-    for (var i = 0; i < convertedParam.data.length; i++) {
-        // Read values to param (through the readValue function)
-        convertedParam.data[i].readValue();
-    }
-
-    var paramToString = JSON.stringify(eFatturaImport.param);
-    var value = Banana.document.setScriptSettings("import_efattura", paramToString);
-    return true;
+    var settings = new Settings(Banana.document);
+    return settings.showDialog();
 }
 
 /*Function called from converter*/
@@ -103,9 +82,6 @@ function EFatturaImport(banDocument) {
     this.banDocument = banDocument;
     if (this.banDocument === undefined)
         this.banDocument = Banana.document;
-
-    this.ID_ERR_LICENSE_NOTVALID = "ID_ERR_LICENSE_NOTVALID";
-    this.ID_ERR_VERSION_NOTSUPPORTED = "ID_ERR_VERSION_NOTSUPPORTED";
 
     //array dei documenti json che contengono i dati per modificare il file contabile
     this.jsonDocArray = [];
@@ -119,46 +95,6 @@ function EFatturaImport(banDocument) {
     this.docInvoices = [];
     //parametri che l'utente può modificare tramite dialogo
     this.initParam();
-}
-
-EFatturaImport.prototype.convertParam = function (param) {
-
-    var convertedParam = {};
-    convertedParam.version = '1.0';
-    /*array dei parametri dello script*/
-    convertedParam.data = [];
-
-    var currentParam = {};
-    currentParam.name = 'codice_iva_22';
-    currentParam.title = 'Codice IVA Banana per aliquota 22%';
-    currentParam.type = 'string';
-    currentParam.value = param.codice_iva_22 ? param.codice_iva_22 : '';
-    currentParam.readValue = function () {
-        param.codice_iva_22 = this.value;
-    }
-    convertedParam.data.push(currentParam);
-
-    currentParam = {};
-    currentParam.name = 'codice_iva_10';
-    currentParam.title = 'Codice IVA Banana per aliquota 10%';
-    currentParam.type = 'string';
-    currentParam.value = param.codice_iva_10 ? param.codice_iva_10 : '';
-    currentParam.readValue = function () {
-        param.codice_iva_10 = this.value;
-    }
-    convertedParam.data.push(currentParam);
-
-    currentParam = {};
-    currentParam.name = 'codice_iva_04';
-    currentParam.title = 'Codice IVA Banana per aliquota 04%';
-    currentParam.type = 'string';
-    currentParam.value = param.codice_iva_04 ? param.codice_iva_04 : '';
-    currentParam.readValue = function () {
-        param.codice_iva_04 = this.value;
-    }
-    convertedParam.data.push(currentParam);
-
-    return convertedParam;
 }
 
 /*Il metodo createJsonDocument() riprende i dati dal file xml della fattura elettronica
@@ -508,16 +444,24 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
             var signTaxableAmount = Banana.SDecimal.sign(taxableAmount);
             if (this.accountingInfo.isDoubleEntry) {
                 if (signTaxableAmount >= 0) {
-                    if (isCustomer)
-                        row.fields["AccountCredit"] = "[CTRPCLIENTE]";
-                    else
-                        row.fields["AccountDebit"] = "[CTRPFORNITORE]";
+                    if (isCustomer) {
+                        row.fields["AccountCredit"] = "[CA]";
+                        row.fields["AccountDebit"] = "[" + accountId + "]";
+                    }
+                    else {
+                        row.fields["AccountDebit"] = "[CA]";
+                        row.fields["AccountCredit"] = "[" + accountId + "]";
+                    }
                 }
                 else {
-                    if (isCustomer)
-                        row.fields["AccountDebit"] = "[CTRPLIENTE]";
-                    else
-                        row.fields["AccountCredit"] = "[CTRPFORNITORE]";
+                    if (isCustomer) {
+                        row.fields["AccountDebit"] = "[CA]";
+                        row.fields["AccountCredit"] = "[" + accountId + "]";
+                    }
+                    else {
+                        row.fields["AccountCredit"] = "[CA]";
+                        row.fields["AccountDebit"] = "[" + accountId + "]";
+                    }
                     taxableAmount = Banana.SDecimal.invert(taxableAmount);
                 }
                 if (this.accountingInfo.multiCurrency) {
@@ -530,11 +474,11 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
             }
             else {
                 if (signTaxableAmount >= 0) {
-                    row.fields["Account"] = "[CTRACCOUNT]";
+                    row.fields["Account"] = "[CA]";
                     row.fields["Expenses"] = taxableAmount;
                 }
                 else {
-                    row.fields["Account"] = "[CTRACCOUNT]";
+                    row.fields["Account"] = "[CA]";
                     row.fields["Income"] = Banana.SDecimal.invert(taxableAmount);
                 }
             }
@@ -614,7 +558,7 @@ EFatturaImport.prototype.createJsonDocument_Init = function () {
     var datestring = d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2);
     var timestring = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
     jsonDoc.creator.executionDate = Banana.Converter.toInternalDateFormat(datestring, "yyyymmdd");
-    jsonDoc.creator.executionTime = Banana.Converter.toInternalTimeFormat(timestring, "hh:mm");
+    jsonDoc.creator.executionTime = Banana.Converter.toInternalTimeFormat(timestring);
     jsonDoc.creator.name = Banana.script.getParamValue('id');
     jsonDoc.creator.version = "1.0";
 
@@ -760,29 +704,6 @@ EFatturaImport.prototype.getAccountIdNew = function (isCustomer) {
     return accountIdNew;
 }
 
-EFatturaImport.prototype.getErrorMessage = function (errorId) {
-    //Document language
-    var lang = 'en';
-    if (this.banDocument)
-        lang = this.banDocument.locale;
-    if (lang.length > 2)
-        lang = lang.substr(0, 2);
-    var rtnMsg = '';
-    if (errorId == this.ID_ERR_LICENSE_NOTVALID) {
-        if (lang == 'it')
-            rtnMsg = "Questa estensione richiede Banana Contabilità+ Advanced";
-        else
-            rtnMsg = "This extension requires Banana Accounting+ Advanced";
-    }
-    else if (errorId == this.ID_ERR_VERSION_NOTSUPPORTED) {
-        if (lang == 'it')
-            rtnMsg = "Lo script non funziona con la vostra attuale versione di Banana Contabilità.\nVersione minimina richiesta: %1.\nPer aggiornare o per maggiori informazioni cliccare su Aiuto";
-        else
-            rtnMsg = "This script does not run with your current version of Banana Accounting.\nMinimum version required: %1.\nTo update or for more information click on Help";
-    }
-    return rtnMsg + " [" + errorId + "] ";
-}
-
 EFatturaImport.prototype.getVatCode = function (accountId, vatRate, codiceNatura) {
 
     //crea un codice IVA fittizio che può essere aggiornato tramite rules.json
@@ -801,12 +722,9 @@ EFatturaImport.prototype.getVatCode = function (accountId, vatRate, codiceNatura
     return vatCode;
 }
 
-EFatturaImport.prototype.initParam = function () {
-    this.param = {};
-    this.param.version = "1.0";
-    this.param.codice_iva_22 = '';
-    this.param.codice_iva_10 = '';
-    this.param.codice_iva_04 = '';
+EFatturaImport.prototype.initParam = function (param) {
+    var settings = new Settings(Banana.document);
+    this.param = settings.initParam();
 }
 
 /*
@@ -837,67 +755,12 @@ EFatturaImport.prototype.isCustomer = function (invoiceNode) {
 }
 
 EFatturaImport.prototype.load = function () {
-    this.loadAccountingInfo();
+    var settings = new Settings(this.banDocument);
+    this.accountingInfo = settings.loadAccountingInfo();
     this.loadAccounts();
     this.loadExistingInvoices();
     /*Banana.console.log("---------------- accounts ---------------- ");
     Banana.console.log(JSON.stringify(this.accounts));*/
-
-}
-
-EFatturaImport.prototype.loadAccountingInfo = function () {
-    this.accountingInfo = {};
-    this.accountingInfo.isDoubleEntry = false;
-    this.accountingInfo.isIncomeExpenses = false;
-    this.accountingInfo.isCashBook = false;
-    this.accountingInfo.multiCurrency = false;
-    this.accountingInfo.withVat = false;
-    this.accountingInfo.vatAccount = "";
-    this.accountingInfo.customersGroup = "";
-    this.accountingInfo.suppliersGroup = "";
-    this.accountingInfo.vatNumber = "";
-    this.accountingInfo.fiscalNumber = "";
-    this.accountingInfo.baseCurrency = "";
-
-    if (this.banDocument) {
-        var fileGroup = this.banDocument.info("Base", "FileTypeGroup");
-        var fileNumber = this.banDocument.info("Base", "FileTypeNumber");
-        var fileVersion = this.banDocument.info("Base", "FileTypeVersion");
-
-        if (fileGroup == "100")
-            this.accountingInfo.isDoubleEntry = true;
-        else if (fileGroup == "110")
-            this.accountingInfo.isIncomeExpenses = true;
-        else if (fileGroup == "130")
-            this.accountingInfo.isCashBook = true;
-
-        if (fileNumber == "110") {
-            this.accountingInfo.withVat = true;
-        }
-        if (fileNumber == "120") {
-            this.accountingInfo.multiCurrency = true;
-        }
-        if (fileNumber == "130") {
-            this.accountingInfo.multiCurrency = true;
-            this.accountingInfo.withVat = true;
-        }
-
-        if (this.banDocument.info("AccountingDataBase", "VatAccount"))
-            this.accountingInfo.vatAccount = this.banDocument.info("AccountingDataBase", "VatAccount");
-
-        if (this.banDocument.info("AccountingDataBase", "CustomersGroup"))
-            this.accountingInfo.customersGroup = this.banDocument.info("AccountingDataBase", "CustomersGroup");
-        if (this.banDocument.info("AccountingDataBase", "SuppliersGroup"))
-            this.accountingInfo.suppliersGroup = this.banDocument.info("AccountingDataBase", "SuppliersGroup");
-
-        if (this.banDocument.info("AccountingDataBase", "VatNumber"))
-            this.accountingInfo.vatNumber = this.banDocument.info("AccountingDataBase", "VatNumber");
-        if (this.banDocument.info("AccountingDataBase", "FiscalNumber"))
-            this.accountingInfo.fiscalNumber = this.banDocument.info("AccountingDataBase", "FiscalNumber");
-
-        if (this.banDocument.info("AccountingDataBase", "BasicCurrency"))
-            this.accountingInfo.baseCurrency = this.banDocument.info("AccountingDataBase", "BasicCurrency");
-    }
 }
 
 /*
@@ -970,157 +833,14 @@ EFatturaImport.prototype.loadExistingInvoices = function () {
     }
 }
 
-/*EFatturaImport.prototype.loadVatCodes = function () {
-    //imposta dei codici IVA predefiniti
-    //se non esistono li aggiunge nella tabella codici IVA
-    let default_vatrates = '0%=AUTO_0;4%=AUTO_4;5%=AUTO_5;10%=AUTO_10;22%=AUTO_22;';
-    default_vatrates = default_vatrates.split(";");
-
-    this.vatRates = {};
-    for (var i in default_vatrates) {
-        var string = default_vatrates[i];
-        if (string.length <= 0 || string.indexOf("=") <= 0)
-            continue;
-        var splittedString = string.split("=");
-        if (splittedString.length == 2) {
-            var vatrate = splittedString[0].replace("%", "").trim();
-            vatrate = vatrate.replace(",", ".");
-            if (vatrate.length > 0 && vatrate.substring(0, 1).toLowerCase() !== "n") {
-                //vatrate = Banana.Converter.toLocaleNumberFormat(vatrate);
-                vatrate = Banana.SDecimal.round(vatrate, { 'decimals': 2 });
-            }
-            if (vatrate.length > 0) {
-                var vatcode = splittedString[1];
-                this.vatRates[vatrate] = vatcode;
-            }
-        }
-    }
-
-    //aggiunge le aliquota allo 0% con codice natura impostato nella colonna Gr1
-    var tableVatCodes = this.banDocument.table('VatCodes');
-    if (!tableVatCodes)
-        return;
-    for (i = 0; i < tableVatCodes.rowCount; i++) {
-        var tRow = tableVatCodes.row(i);
-        var vatcode = tRow.value('VatCode');
-        var vatrate = tRow.value('VatRate');
-        var isdue = tRow.value('IsDue');
-        var gr1 = tRow.value('Gr1');
-        if (vatcode.length <= 0 || gr1.length <= 0)
-            continue;
-        if (gr1.substring(0, 1).toLowerCase() !== "n")
-            continue;
-        if (Banana.SDecimal.isZero(vatrate) && Banana.SDecimal.isZero(isdue)) {
-            if (!this.vatRates.hasOwnProperty(gr1.toLowerCase())) {
-                this.vatRates[gr1.toLowerCase()] = vatcode;
-            }
-        }
-    }
-
-    var jsonDoc = this.createJsonDocument_Init();
-    var changedJsonDoc = false;
-    if (this.accountingInfo.vatAccount.length <= 0) {
-        var tableAccounts = this.banDocument.table('Accounts');
-        if (!tableAccounts)
-            return;
-        var sequence = tableAccounts.rowCount;
-        var i = 0;
-        var accountId = "VatAccount";
-        this.accountingInfo.vatAccount = accountId;
-        var row = {};
-        row.fields = {};
-        row.fields["Account"] = this.accountingInfo.vatAccount;
-        row.fields["Description"] = this.accountingInfo.vatAccount;
-        row.fields["BClass"] = "2";
-        row.operation = {};
-        row.operation.name = "add";
-        row.operation.sequence = sequence;
-        var rowLists = jsonDoc.document.dataUnits["0"].data.rowLists[0];
-        var index = parseInt(rowLists.rows.length);
-        rowLists.rows[index.toString()] = row;
-        if (!changedJsonDoc)
-            changedJsonDoc = true;
-    }
-
-    var jsonDoc2 = this.createJsonDocument_Init();
-    var changedJsonDoc2 = false;
-    for (var key in this.vatRates) {
-        var vatCode = this.vatRates[key];
-        if (vatCode.substring(0, 1).toLowerCase() === "n")
-            continue;
-        var rowVatCode = tableVatCodes.findRowByValue('VatCode', vatCode);
-        if (!rowVatCode) {
-            var row = {};
-            row.fields = {};
-            row.fields["VatCode"] = vatCode;
-            row.fields["VatRate"] = key;
-            row.fields["AmountType"] = "1"; //amount without vat/sales tax
-            row.fields["VatAccount"] = this.accountingInfo.vatAccount;
-            row.fields["Description"] = vatCode + " " + key;
-            row.operation = {};
-            row.operation.name = "add";
-            var rowLists = jsonDoc2.document.dataUnits["2"].data.rowLists[0];
-            var index = parseInt(rowLists.rows.length);
-            rowLists.rows[index.toString()] = row;
-            if (!changedJsonDoc2)
-                changedJsonDoc2 = true;
-        }
-    }
-    if (changedJsonDoc2)
-        this.jsonDocArray.unshift(jsonDoc2);
-
-    if (changedJsonDoc)
-        this.jsonDocArray.unshift(jsonDoc);
-}*/
-
 EFatturaImport.prototype.setParam = function (param) {
+    var settings = new Settings(Banana.document);
+
+    this.param = settings.initParam();
     if (param && typeof (param) === 'object') {
         this.param = param;
     } else if (param && typeof (param) === 'string') {
         this.param = JSON.parse(param);
     }
-    this.verifyParam();
+    this.param = settings.verifyParam(this.param);
 }
-
-EFatturaImport.prototype.verifyBananaVersion = function () {
-    if (!this.banDocument)
-        return false;
-
-    //Banana+ is required
-    var requiredVersion = "10.2";
-    if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
-        var msg = this.getErrorMessage(this.ID_ERR_VERSION_NOTSUPPORTED);
-        msg = msg.replace("%1", requiredVersion);
-        this.banDocument.addMessage(msg, this.ID_ERR_VERSION_NOTSUPPORTED);
-        return false;
-    }
-
-    if (!Banana.application.license || Banana.application.license.licenseType !== "advanced") {
-        var msg = this.getErrorMessage(this.ID_ERR_LICENSE_NOTVALID);
-        this.banDocument.addMessage(msg, this.ID_ERR_LICENSE_NOTVALID);
-        return false;
-    }
-
-    return true;
-}
-
-EFatturaImport.prototype.verifyParam = function () {
-    if (!this.param)
-        this.param = {};
-
-    if (!this.param.version || this.param.version != "1.0") {
-        this.initParam();
-        return;
-    }
-
-    if (!this.param.codice_iva_22)
-        this.param.codice_iva_22 = '';
-
-    if (!this.param.codice_iva_10)
-        this.param.codice_iva_10 = '';
-
-    if (!this.param.codice_iva_04)
-        this.param.codice_iva_04 = '';
-
-}
-

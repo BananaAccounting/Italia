@@ -1,14 +1,17 @@
 // Copyright [2026] [Banana.ch SA - Lugano Switzerland]
-//
+// 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 // @id = ch.banana.it.import.corrispettivi
 // @api = 1.0
 // @pubdate = 2026-11-11
@@ -20,80 +23,55 @@
 // @inputdatasource = opendirdialog
 // @inputfilefilter = *.xml
 // @timeout = -1
-// @includejs = ch.banana.it.import.efattura.js
+// @includejs = ch.banana.it.import.efattura.settings.js
 
-// Main function: stessa struttura di ch.banana.it.import.efattura.js
+// Main function
 function exec(inData) {
+
     if (!Banana.document || !inData || inData.length <= 0)
         return "@Cancel";
 
     Banana.application.clearMessages();
 
     var corrispettiviImport = new CorrispettiviImport(Banana.document);
-    if (!corrispettiviImport.verifyBananaVersion())
+    var settings = new Settings(Banana.document);
+
+    if (!settings.verifyBananaVersion())
         return "@Cancel";
 
+    //inData contiene i dati dei corrispettivi in formato XML
     var xmlData = {};
     try {
         xmlData = JSON.parse(inData);
-        if (!xmlData || typeof xmlData !== "object")
-            xmlData = { "0": inData };
     }
     catch (e) {
         xmlData[0] = inData;
     }
 
-    var savedParam = Banana.document.getScriptSettings("import_corrispettivi");
+    if (!xmlData)
+        return "@Cancel";
+
+    var savedParam = Banana.document.getScriptSettings("import_efattura");
     if (savedParam && savedParam.length > 0) {
-        try {
-            corrispettiviImport.setParam(JSON.parse(savedParam));
-        }
-        catch (e) {
-            Banana.document.addMessage("Impostazioni corrispettivi non leggibili: " + e);
-        }
+        corrispettiviImport.setParam(JSON.parse(savedParam));
     }
 
     var jsonData = corrispettiviImport.createJsonDocument(xmlData);
 
     var documentChange = { "format": "documentChange", "error": "" };
     documentChange["data"] = jsonData;
-    if (!jsonData.length)
-        Banana.document.addMessage("Nessun corrispettivo da importare: file inattivo, non valido o già importato.");
+
+    //TO DEBUG SHOW THE INTERMEDIARY TEXT
+    //Banana.Ui.showText(JSON.stringify(documentChange, null, 3));
+
+    //si può ritornare l'oggetto json oppure la stringa
+    //return JSON.stringify(documentChange, null, 3);
     return documentChange;
 }
 
-/* Update script's parameters: come eFattura */
 function settingsDialog() {
-    var corrispettiviImport = new CorrispettiviImport(Banana.document);
-    if (!corrispettiviImport.verifyBananaVersion())
-        return false;
-    if (typeof Banana.Ui.openPropertyEditor === "undefined")
-        return false;
-
-    var savedParam = Banana.document.getScriptSettings("import_corrispettivi");
-    if (savedParam && savedParam.length > 0) {
-        try {
-            corrispettiviImport.setParam(JSON.parse(savedParam));
-        }
-        catch (e) {
-            Banana.document.addMessage("Impostazioni precedenti non valide: " + e);
-        }
-    }
-
-    var dialogTitle = "Impostazioni corrispettivi";
-    var convertedParam = corrispettiviImport.convertParam(corrispettiviImport.param);
-    var pageAnchor = "ch.banana.it.import.corrispettivi";
-    if (!Banana.Ui.openPropertyEditor(dialogTitle, convertedParam, pageAnchor))
-        return false;
-    for (var i = 0; i < convertedParam.data.length; i++)
-        convertedParam.data[i].readValue();
-
-    Banana.document.setScriptSettings("import_corrispettivi", JSON.stringify(corrispettiviImport.param));
-    return true;
-}
-
-/* Function called from converter, come eFattura */
-function setup() {
+    var settings = new Settings(Banana.document);
+    return settings.showDialog();
 }
 
 function CorrispettiviImport(banDocument) {
@@ -104,186 +82,8 @@ function CorrispettiviImport(banDocument) {
     this.jsonDocArray = [];
     this.existingDocs = {};
     this.newDocs = {};
-
-    var eFatturaImport = new EFatturaImport(this.banDocument);
-    eFatturaImport.loadAccountingInfo();
-    this.accountingInfo = eFatturaImport.accountingInfo;
-
     this.initParam();
 }
-
-/* Parametri editabili con la stessa forma di EFatturaImport.convertParam */
-CorrispettiviImport.prototype.convertParam = function (param) {
-    var convertedParam = { version: "1.0", data: [] };
-    var definitions = [
-        ["conto_transitorio", "Conto transitorio corrispettivi"],
-        ["conto_ricavi", "Conto ricavi vendite"],
-        ["conto_cassa", "Conto cassa"],
-        ["conto_pos", "Conto POS / carte"],
-        ["codice_iva_22", "Codice IVA Banana vendite 22%"],
-        ["codice_iva_10", "Codice IVA Banana vendite 10%"],
-        ["codice_iva_04", "Codice IVA Banana vendite 4%"]
-    ];
-    for (var i = 0; i < definitions.length; i++) {
-        (function (name, title) {
-            var currentParam = {};
-            currentParam.name = name;
-            currentParam.title = title;
-            currentParam.type = "string";
-            currentParam.value = param[name] || "";
-            currentParam.readValue = function () { param[name] = this.value; };
-            convertedParam.data.push(currentParam);
-        })(definitions[i][0], definitions[i][1]);
-    }
-    return convertedParam;
-};
-
-CorrispettiviImport.prototype.initParam = function () {
-    this.param = {};
-    this.param.version = "1.0";
-    // Segnaposto come [CTRACCOUNT] usati da eFattura: sostituirli in Banana/rules.json.
-    this.param.conto_transitorio = "[CTRCORRISPETTIVI]";
-    this.param.conto_ricavi = "[CTRACCOUNT]";
-    this.param.conto_cassa = "[CTRCASSA]";
-    this.param.conto_pos = "[CTRPOS]";
-    this.param.codice_iva_22 = "";
-    this.param.codice_iva_10 = "";
-    this.param.codice_iva_04 = "";
-};
-
-CorrispettiviImport.prototype.setParam = function (param) {
-    if (!param || typeof param !== "object")
-        return;
-    for (var key in this.param) {
-        if (Object.prototype.hasOwnProperty.call(this.param, key) &&
-            Object.prototype.hasOwnProperty.call(param, key))
-            this.param[key] = String(param[key] === null ? "" : param[key]);
-    }
-    // Compatibilità con la precedente denominazione del parametro 4%.
-    if (!param.codice_iva_04 && param.codice_iva_4)
-        this.param.codice_iva_04 = String(param.codice_iva_4);
-};
-
-CorrispettiviImport.prototype.verifyBananaVersion = function () {
-    // Riutilizza la stessa verifica di licenza/versione dell'estensione eFattura.
-    var eFatturaImport = new EFatturaImport(this.banDocument);
-    return eFatturaImport.verifyBananaVersion();
-};
-
-CorrispettiviImport.prototype.message = function (msg) {
-    if (this.banDocument && this.banDocument.addMessage)
-        this.banDocument.addMessage(msg);
-};
-
-CorrispettiviImport.prototype.nodeName = function (node) {
-    if (!node)
-        return "";
-    return String(node.nodeName || node.tagName || "").split(":").pop();
-};
-
-CorrispettiviImport.prototype.child = function (node, name) {
-    if (!node)
-        return null;
-    // firstChildElement gestisce il caso normale, il ciclo gestisce eventuali prefissi XML.
-    var found = node.firstChildElement(name);
-    if (found)
-        return found;
-    var child = node.firstChildElement();
-    while (child) {
-        if (this.nodeName(child) === name)
-            return child;
-        child = child.nextSiblingElement();
-    }
-    return null;
-};
-
-CorrispettiviImport.prototype.children = function (node, name) {
-    var children = [];
-    if (!node)
-        return children;
-    var child = node.firstChildElement();
-    while (child) {
-        if (this.nodeName(child) === name)
-            children.push(child);
-        child = child.nextSiblingElement();
-    }
-    return children;
-};
-
-CorrispettiviImport.prototype.getXmlText = function (node, name) {
-    var child = this.child(node, name);
-    if (!child)
-        return "";
-    return String(child.text || "").trim();
-};
-
-CorrispettiviImport.prototype.getAmount = function (node, name) {
-    var value = this.getXmlText(node, name).replace(/\s/g, "");
-    if (!value)
-        return null;
-    if (value.indexOf(",") >= 0 && value.indexOf(".") >= 0)
-        value = value.replace(/\./g, "").replace(",", ".");
-    else
-        value = value.replace(",", ".");
-    if (!/^-?\d+(\.\d+)?$/.test(value))
-        return null;
-    return Math.round(parseFloat(value) * 100) / 100;
-};
-
-CorrispettiviImport.prototype.getDate = function (str) {
-    var match = /^(\d{4})-(\d{2})-(\d{2})/.exec(str || "");
-    if (!match)
-        return "";
-    var date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
-    if (date.getUTCFullYear() !== Number(match[1]) ||
-        date.getUTCMonth() !== Number(match[2]) - 1 ||
-        date.getUTCDate() !== Number(match[3]))
-        return "";
-    return match[1] + match[2] + match[3];
-};
-
-/* Stessa struttura createJsonDocument_Init di eFattura: unità Transactions */
-CorrispettiviImport.prototype.createJsonDocument_Init = function () {
-    var jsonDoc = {};
-    jsonDoc.document = {};
-    jsonDoc.fileVersion = "1.0.0";
-    jsonDoc.document.dataUnits = [];
-
-    var dataUnitTransactions = {};
-    jsonDoc.document.dataUnits[0] = dataUnitTransactions;
-    dataUnitTransactions.data = {};
-    dataUnitTransactions.data.rowLists = [];
-    dataUnitTransactions.data.rowLists[0] = {};
-    dataUnitTransactions.data.rowLists[0].rows = [];
-    dataUnitTransactions.id = "Transactions";
-    dataUnitTransactions.nameXml = "Transactions";
-    dataUnitTransactions.nid = 103;
-
-    jsonDoc.creator = {};
-    var d = new Date();
-    var datestring = d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2);
-    var timestring = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
-    jsonDoc.creator.executionDate = Banana.Converter.toInternalDateFormat(datestring, "yyyymmdd");
-    jsonDoc.creator.executionTime = Banana.Converter.toInternalTimeFormat(timestring, "hh:mm");
-    jsonDoc.creator.name = "ch.banana.it.import.corrispettivi";
-    jsonDoc.creator.version = "1.0";
-    return jsonDoc;
-};
-
-/* Usa codici reali impostati dall'utente; altrimenti i segnaposto di eFattura. */
-CorrispettiviImport.prototype.getVatCode = function (aliquota, natura) {
-    var rate = parseFloat(String(aliquota || "").replace(",", "."));
-    rate = Banana.SDecimal.round(rate, { 'decimals': 2 });
-    if (rate === 22 && this.param.codice_iva_22)
-        return this.param.codice_iva_22;
-    if (rate === 10 && this.param.codice_iva_10)
-        return this.param.codice_iva_10;
-    if (rate === 4 && this.param.codice_iva_04)
-        return this.param.codice_iva_04;
-    if (isNaN(rate))
-        return "";
-    return "[V" + rate + (natura ? "_" + natura : "") + "]";
-};
 
 /* Aggiunge registrazioni come createJsonDocument_AddTransactions di eFattura */
 CorrispettiviImport.prototype.addTransaction = function (
@@ -327,23 +127,74 @@ CorrispettiviImport.prototype.addTransaction = function (
     return 1;
 };
 
-/* Come eFattura, carica il documento contabile per evitare doppi import. */
-CorrispettiviImport.prototype.loadExistingDocs = function () {
-    this.existingDocs = {};
-    var tableTransactions = this.banDocument.table("Transactions");
-    if (!tableTransactions)
-        return;
-    for (var i = 0; i < tableTransactions.rowCount; i++) {
-        var row = tableTransactions.row(i);
-        var description = String(row.value("Description") || "");
-        if (description.indexOf("Corrispettivi telematici Z-") !== 0)
-            continue;
-        var doc = String(row.value("Doc") || "");
-        var date = String(row.value("DateDocument") || row.value("Date") || "").replace(/-/g, "");
-        var match = / RT-([^ ]+)/.exec(description);
-        if (doc && date)
-            this.existingDocs[date + "|" + doc + "|" + (match ? match[1] : "")] = true;
+CorrispettiviImport.prototype.child = function (node, name) {
+    if (!node)
+        return null;
+    // firstChildElement gestisce il caso normale, il ciclo gestisce eventuali prefissi XML.
+    var found = node.firstChildElement(name);
+    if (found)
+        return found;
+    var child = node.firstChildElement();
+    while (child) {
+        if (this.nodeName(child) === name)
+            return child;
+        child = child.nextSiblingElement();
     }
+    return null;
+};
+
+CorrispettiviImport.prototype.children = function (node, name) {
+    var children = [];
+    if (!node)
+        return children;
+    var child = node.firstChildElement();
+    while (child) {
+        if (this.nodeName(child) === name)
+            children.push(child);
+        child = child.nextSiblingElement();
+    }
+    return children;
+};
+
+/*Il metodo createJsonDocument() riprende i dati dal file xml della fattura elettronica
+  e li trasforma in formato json per essere importati nella tabella Registrazioni
+*/
+CorrispettiviImport.prototype.createJsonDocument = function (inData) {
+    this.load();
+    for (var srcFileName in inData) {
+        if (!Object.prototype.hasOwnProperty.call(inData, srcFileName))
+            continue;
+        var xmlFile;
+        try {
+            xmlFile = Banana.Xml.parse(inData[srcFileName]);
+        }
+        catch (e) {
+            this.message("XML non valido: " + srcFileName);
+            continue;
+        }
+        if (!xmlFile)
+            continue;
+        var xmlRoot = xmlFile.firstChildElement();
+        if (!xmlRoot)
+            continue;
+        var datiRT = this.child(xmlRoot, "DatiRT");
+        if (!datiRT) {
+            this.message("Struttura corrispettivi non riconosciuta: " + srcFileName);
+            continue;
+        }
+        var trasmissione = this.child(xmlRoot, "Trasmissione");
+        var dataOraRilevazione = this.getXmlText(xmlRoot, "DataOraRilevazione");
+        var jsonDoc = this.createJsonDocument_Init();
+        var count = 0;
+        while (datiRT) {
+            count += this.createJsonDocument_AddTransactions(
+                jsonDoc, datiRT, srcFileName, trasmissione, dataOraRilevazione);
+            datiRT = datiRT.nextSiblingElement("DatiRT");
+        }
+        if (count > 0)
+            this.jsonDocArray.push(jsonDoc);
+    }
+    return this.jsonDocArray;
 };
 
 /* Importa un singolo DatiRT usando il tracciato COR10 reale. */
@@ -387,8 +238,10 @@ CorrispettiviImport.prototype.createJsonDocument_AddTransactions = function (
         }
         if (ammontare === 0)
             continue;
-        valid.push({ "amount": ammontare, "rate": aliquota, "nature": natura,
-                     "vatCode": this.getVatCode(aliquota, natura) });
+        valid.push({
+            "amount": ammontare, "rate": aliquota, "nature": natura,
+            "vatCode": this.getVatCode(aliquota, natura)
+        });
         totalCents += Math.round(ammontare * 100);
     }
     if (!valid.length)
@@ -410,7 +263,7 @@ CorrispettiviImport.prototype.createJsonDocument_AddTransactions = function (
     for (var j = 0; j < valid.length; j++) {
         var item = valid[j];
         var info = item.rate ? "Aliquota " + item.rate + "%" :
-                   (item.nature ? "Natura " + item.nature : "IVA non indicata");
+            (item.nature ? "Natura " + item.nature : "IVA non indicata");
         // Ammontare del COR10: totale lordo, da abbinare al codice IVA vendite.
         count += this.addTransaction(jsonDoc, srcFileName, date, numeroZ,
             description + " - " + info,
@@ -434,42 +287,133 @@ CorrispettiviImport.prototype.createJsonDocument_AddTransactions = function (
     return count;
 };
 
-/* Legge file XML e crea gli stessi documentChange di eFattura */
-CorrispettiviImport.prototype.createJsonDocument = function (inData) {
-    this.jsonDocArray = [];
-    this.loadExistingDocs();
-    for (var srcFileName in inData) {
-        if (!Object.prototype.hasOwnProperty.call(inData, srcFileName))
-            continue;
-        var xmlFile;
-        try {
-            xmlFile = Banana.Xml.parse(inData[srcFileName]);
-        }
-        catch (e) {
-            this.message("XML non valido: " + srcFileName);
-            continue;
-        }
-        if (!xmlFile)
-            continue;
-        var xmlRoot = xmlFile.firstChildElement();
-        if (!xmlRoot)
-            continue;
-        var datiRT = this.child(xmlRoot, "DatiRT");
-        if (!datiRT) {
-            this.message("Struttura corrispettivi non riconosciuta: " + srcFileName);
-            continue;
-        }
-        var trasmissione = this.child(xmlRoot, "Trasmissione");
-        var dataOraRilevazione = this.getXmlText(xmlRoot, "DataOraRilevazione");
-        var jsonDoc = this.createJsonDocument_Init();
-        var count = 0;
-        while (datiRT) {
-            count += this.createJsonDocument_AddTransactions(
-                jsonDoc, datiRT, srcFileName, trasmissione, dataOraRilevazione);
-            datiRT = datiRT.nextSiblingElement("DatiRT");
-        }
-        if (count > 0)
-            this.jsonDocArray.push(jsonDoc);
-    }
-    return this.jsonDocArray;
+/* Stessa struttura createJsonDocument_Init di eFattura: unità Transactions */
+CorrispettiviImport.prototype.createJsonDocument_Init = function () {
+    var jsonDoc = {};
+    jsonDoc.document = {};
+    jsonDoc.fileVersion = "1.0.0";
+    jsonDoc.document.dataUnits = [];
+
+    var dataUnitTransactions = {};
+    jsonDoc.document.dataUnits[0] = dataUnitTransactions;
+    dataUnitTransactions.data = {};
+    dataUnitTransactions.data.rowLists = [];
+    dataUnitTransactions.data.rowLists[0] = {};
+    dataUnitTransactions.data.rowLists[0].rows = [];
+    dataUnitTransactions.id = "Transactions";
+    dataUnitTransactions.nameXml = "Transactions";
+    dataUnitTransactions.nid = 103;
+
+    jsonDoc.creator = {};
+    var d = new Date();
+    var datestring = d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2);
+    var timestring = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+    jsonDoc.creator.executionDate = Banana.Converter.toInternalDateFormat(datestring, "yyyymmdd");
+    jsonDoc.creator.executionTime = Banana.Converter.toInternalTimeFormat(timestring);
+    jsonDoc.creator.name = "ch.banana.it.import.corrispettivi";
+    jsonDoc.creator.version = "1.0";
+    return jsonDoc;
 };
+
+CorrispettiviImport.prototype.getAmount = function (node, name) {
+    var value = this.getXmlText(node, name).replace(/\s/g, "");
+    if (!value)
+        return null;
+    if (value.indexOf(",") >= 0 && value.indexOf(".") >= 0)
+        value = value.replace(/\./g, "").replace(",", ".");
+    else
+        value = value.replace(",", ".");
+    if (!/^-?\d+(\.\d+)?$/.test(value))
+        return null;
+    return Math.round(parseFloat(value) * 100) / 100;
+};
+
+CorrispettiviImport.prototype.getDate = function (str) {
+    var match = /^(\d{4})-(\d{2})-(\d{2})/.exec(str || "");
+    if (!match)
+        return "";
+    var date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+    if (date.getUTCFullYear() !== Number(match[1]) ||
+        date.getUTCMonth() !== Number(match[2]) - 1 ||
+        date.getUTCDate() !== Number(match[3]))
+        return "";
+    return match[1] + match[2] + match[3];
+};
+
+/* Usa codici reali impostati dall'utente; altrimenti i segnaposto di eFattura. */
+CorrispettiviImport.prototype.getVatCode = function (aliquota, natura) {
+    var rate = parseFloat(String(aliquota || "").replace(",", "."));
+    rate = Banana.SDecimal.round(rate, { 'decimals': 2 });
+    if (Number(rate) === 22 && this.param.codice_iva_22)
+        return this.param.codice_iva_22;
+    if (Number(rate) === 10 && this.param.codice_iva_10)
+        return this.param.codice_iva_10;
+    if (Number(rate) === 4 && this.param.codice_iva_04)
+        return this.param.codice_iva_04;
+    if (isNaN(rate))
+        return "";
+    return "[V" + rate + (natura ? "_" + natura : "") + "]";
+};
+
+CorrispettiviImport.prototype.getXmlText = function (node, name) {
+    var child = this.child(node, name);
+    if (!child)
+        return "";
+    return String(child.text || "").trim();
+};
+
+CorrispettiviImport.prototype.initParam = function (param) {
+    var settings = new Settings(Banana.document);
+    this.param = settings.initParam();
+}
+
+CorrispettiviImport.prototype.load = function () {
+    var settings = new Settings(Banana.document);
+    this.accountingInfo = settings.loadAccountingInfo();
+    this.loadExistingDocs();
+    /*Banana.console.log("---------------- accounts ---------------- ");
+    Banana.console.log(JSON.stringify(this.accounts));*/
+
+}
+
+/* Come eFattura, carica il documento contabile per evitare doppi import. */
+CorrispettiviImport.prototype.loadExistingDocs = function () {
+    this.existingDocs = {};
+    var tableTransactions = this.banDocument.table("Transactions");
+    if (!tableTransactions)
+        return;
+    for (var i = 0; i < tableTransactions.rowCount; i++) {
+        var row = tableTransactions.row(i);
+        var description = String(row.value("Description") || "");
+        if (description.indexOf("Corrispettivi telematici Z-") !== 0)
+            continue;
+        var doc = String(row.value("Doc") || "");
+        var date = String(row.value("DateDocument") || row.value("Date") || "").replace(/-/g, "");
+        var match = / RT-([^ ]+)/.exec(description);
+        if (doc && date)
+            this.existingDocs[date + "|" + doc + "|" + (match ? match[1] : "")] = true;
+    }
+};
+
+CorrispettiviImport.prototype.message = function (msg) {
+    if (this.banDocument && this.banDocument.addMessage)
+        this.banDocument.addMessage(msg);
+};
+
+CorrispettiviImport.prototype.nodeName = function (node) {
+    if (!node)
+        return "";
+    return String(node.nodeName || node.tagName || "").split(":").pop();
+};
+
+CorrispettiviImport.prototype.setParam = function (param) {
+    var settings = new Settings(Banana.document);
+
+    this.param = settings.initParam();
+    if (param && typeof (param) === 'object') {
+        this.param = param;
+    } else if (param && typeof (param) === 'string') {
+        this.param = JSON.parse(param);
+    }
+    this.param = settings.verifyParam(this.param);
+}
