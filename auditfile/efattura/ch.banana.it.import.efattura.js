@@ -449,21 +449,17 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
                 if (signTaxableAmount >= 0) {
                     if (isCustomer) {
                         row.fields["AccountCredit"] = "[CA]";
-                        row.fields["AccountDebit"] = "[" + accountId + "]";
                     }
                     else {
                         row.fields["AccountDebit"] = "[CA]";
-                        row.fields["AccountCredit"] = "[" + accountId + "]";
                     }
                 }
                 else {
                     if (isCustomer) {
                         row.fields["AccountDebit"] = "[CA]";
-                        row.fields["AccountCredit"] = "[" + accountId + "]";
                     }
                     else {
                         row.fields["AccountCredit"] = "[CA]";
-                        row.fields["AccountDebit"] = "[" + accountId + "]";
                     }
                     taxableAmount = Banana.SDecimal.invert(taxableAmount);
                 }
