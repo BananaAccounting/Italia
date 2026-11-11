@@ -116,7 +116,7 @@ CorrispettiviImport.prototype.addTransaction = function (
     }
     else {
         row.fields["Account"] = accountDebit;
-        row.fields["Expenses"] = totalAmount;
+        row.fields["Expenses"] = amount;
     }
 
     if (vatCode)
@@ -197,92 +197,171 @@ CorrispettiviImport.prototype.createJsonDocument = function (inData) {
     return this.jsonDocArray;
 };
 
-/* Importa un singolo DatiRT usando il tracciato COR10 reale. */
 CorrispettiviImport.prototype.createJsonDocument_AddTransactions = function (
     jsonDoc, datiRT, srcFileName, trasmissione, dataOraRilevazione
 ) {
-    var numeroZ = this.getXmlText(datiRT, "NumeroZ") || this.getXmlText(trasmissione, "Progressivo");
+    var numeroZ = this.getXmlText(datiRT, "NumeroZ") ||
+        this.getXmlText(trasmissione, "Progressivo");
     var dataOraZ = this.getXmlText(datiRT, "DataOraZ") || dataOraRilevazione;
     var date = this.getDate(dataOraZ);
-    var device = this.getXmlText(this.child(trasmissione, "Dispositivo"), "IdDispositivo");
-    var riepiloghi = this.children(datiRT, "Riepilogo").concat(this.children(datiRT, "DatiRiepilogo"));
+    var device = this.getXmlText(
+        this.child(trasmissione, "Dispositivo"), "IdDispositivo");
+    var riepiloghi = this.children(datiRT, "Riepilogo");
 
-    // Un XML di inattività è un documento valido, ma non produce registrazioni.
+    // Nessuna registrazione per XML senza riepiloghi.
     if (!riepiloghi.length)
         return 0;
+
     if (!numeroZ || !date) {
-        this.message("Progressivo o data di rilevazione mancanti: " + srcFileName);
-        return 0;
-    }
-    var key = date + "|" + numeroZ + "|" + device;
-    if (this.existingDocs[key] || this.existingDocs[date + "|" + numeroZ + "|"] || this.newDocs[key]) {
-        this.message("Corrispettivo già registrato, ignorato: " + srcFileName);
+        this.message("Progressivo o data mancanti: " + srcFileName);
         return 0;
     }
 
+    // Evita documenti duplicati.
+    var key = date + "|" + numeroZ + "|" + device;
+
+    if (this.existingDocs[key] ||
+        this.existingDocs[date + "|" + numeroZ + "|"] ||
+        this.newDocs[key]) {
+        this.message("Corrispettivo già registrato: " + srcFileName);
+        return 0;
+    }
+
+    var contoContanti = this.param.contoContanti;
+    var contoElettronici = this.param.contoPagamentiElettronici;
+    var contoContropartita = this.param.contoContropartita || "[CA]";
+
+    // Totali dei pagamenti.
+    var totali = this.child(datiRT, "Totali");
+
+    if (!totali) {
+        this.message("Totali mancanti: " + srcFileName);
+        return 0;
+    }
+
+    var contante = this.getAmount(totali, "PagatoContanti");
+    var elettronico = this.getAmount(totali, "PagatoElettronico");
+
+    contante = Banana.SDecimal.round(
+        contante === null ? 0 : contante, { 'decimals': 2 });
+    elettronico = Banana.SDecimal.round(
+        elettronico === null ? 0 : elettronico, { 'decimals': 2 });
+
+    if (Banana.SDecimal.compare(contante, "0") < 0 ||
+        Banana.SDecimal.compare(elettronico, "0") < 0 ||
+        (Banana.SDecimal.compare(contante, "0") > 0 && !contoContanti) ||
+        (Banana.SDecimal.compare(elettronico, "0") > 0 && !contoElettronici)) {
+        this.message("Pagamenti o conti non validi: " + srcFileName);
+        return 0;
+    }
+
+    // Riepiloghi IVA.
     var valid = [];
-    var totalCents = 0;
+    var totaleCorrispettivi = "0.00";
+
     for (var i = 0; i < riepiloghi.length; i++) {
         var riepilogo = riepiloghi[i];
-        var ivaNode = this.child(riepilogo, "IVA") || this.child(riepilogo, "Iva");
-        var aliquota = this.getXmlText(ivaNode, "AliquotaIVA") ||
-            this.getXmlText(ivaNode, "Aliquota") ||
-            this.getXmlText(riepilogo, "AliquotaIVA");
-        var natura = this.getXmlText(ivaNode, "Natura") || this.getXmlText(riepilogo, "Natura");
-        var ammontare = this.getAmount(riepilogo, "Ammontare");
-        if (ammontare === null)
-            ammontare = this.getAmount(riepilogo, "ImportoParziale");
-        if (ammontare === null || ammontare < 0) {
-            this.message("Importo del riepilogo non valido: " + srcFileName);
-            return 0; // evita importazioni parziali
+
+        // Casistiche che richiedono una gestione separata.
+        if ((this.getAmount(riepilogo, "NonRiscossoServizi") || 0) > 0 ||
+            (this.getAmount(riepilogo, "NonRiscossoFatture") || 0) > 0 ||
+            (this.getAmount(riepilogo, "NonRiscossoDCRaSSN") || 0) > 0 ||
+            (this.getAmount(riepilogo, "BeniInSospeso") || 0) > 0 ||
+            (this.getAmount(riepilogo, "Omaggi") || 0) > 0 ||
+            this.child(riepilogo, "VentilazioneIVA")) {
+            this.message("Corrispettivi particolari da verificare: " + srcFileName);
+            return 0;
         }
-        if (ammontare === 0)
+
+        var ivaNode = this.child(riepilogo, "IVA");
+        var aliquota = this.getXmlText(ivaNode, "AliquotaIVA");
+        var natura = this.getXmlText(riepilogo, "Natura");
+        var ammontare = this.getAmount(riepilogo, "Ammontare");
+
+        if (ammontare === null || ammontare < 0) {
+            this.message("Ammontare non valido: " + srcFileName);
+            return 0;
+        }
+
+        ammontare = Banana.SDecimal.round(ammontare, { 'decimals': 2 });
+
+        if (Banana.SDecimal.compare(ammontare, "0") === 0)
             continue;
+
+        var vatCode = this.getVatCode(aliquota, natura);
+
+        if (!vatCode) {
+            this.message("Codice IVA mancante: " + srcFileName);
+            return 0;
+        }
+
         valid.push({
-            "amount": ammontare, "rate": aliquota, "nature": natura,
-            "vatCode": this.getVatCode(aliquota, natura)
+            amount: ammontare,
+            rate: aliquota,
+            nature: natura,
+            vatCode: vatCode
         });
-        totalCents += Math.round(ammontare * 100);
+
+        totaleCorrispettivi = Banana.SDecimal.add(
+            totaleCorrispettivi, ammontare
+        );
     }
+
     if (!valid.length)
         return 0;
 
-    var totali = this.child(datiRT, "Totali");
-    var pagamento = this.child(totali, "Pagamento");
-    var elettronico = this.getAmount(totali, "PagatoElettronico");
-    if (elettronico === null)
-        elettronico = this.getAmount(pagamento, "PagamentoElettronico");
-    var contante = this.getAmount(totali, "PagatoContante");
-    if (contante === null)
-        contante = this.getAmount(totali, "PagatoContanti");
-    if (contante === null)
-        contante = this.getAmount(pagamento, "Contante");
+    // Verifica che pagamenti e corrispettivi coincidano.
+    var totalePagamenti = Banana.SDecimal.add(contante, elettronico);
 
-    var description = "Corrispettivi telematici Z-" + numeroZ + (device ? " RT-" + device : "");
+    if (Banana.SDecimal.compare(totaleCorrispettivi, totalePagamenti) !== 0) {
+        this.message(
+            "Totale corrispettivi diverso dai pagamenti: " +
+            srcFileName + " - Corrispettivi: " +
+            totaleCorrispettivi + " - Pagamenti: " + totalePagamenti
+        );
+        return 0;
+    }
+
+    var description = "Corrispettivi telematici Z-" + numeroZ +
+        (device ? " RT-" + device : "");
+
     var count = 0;
+
+    // 1. Prima le registrazioni patrimoniali.
+
+    if (Banana.SDecimal.compare(contante, "0") > 0) {
+        count += this.addTransaction(
+            jsonDoc, srcFileName, date, numeroZ,
+            description + " - Contanti",
+            contoContanti, "",
+            contante, ""
+        );
+    }
+
+    if (Banana.SDecimal.compare(elettronico, "0") > 0) {
+        count += this.addTransaction(
+            jsonDoc, srcFileName, date, numeroZ,
+            description + " - POS/carte",
+            contoElettronici, "",
+            elettronico, ""
+        );
+    }
+
+    // 2. Dopo i corrispettivi per aliquota IVA.
+
     for (var j = 0; j < valid.length; j++) {
         var item = valid[j];
         var info = item.rate ? "Aliquota " + item.rate + "%" :
-            (item.nature ? "Natura " + item.nature : "IVA non indicata");
-        // Ammontare del COR10: totale lordo, da abbinare al codice IVA vendite.
-        count += this.addTransaction(jsonDoc, srcFileName, date, numeroZ,
-            description + " - " + info,
-            this.param.conto_transitorio, this.param.conto_ricavi,
-            item.amount, item.vatCode);
-    }
-    if (elettronico !== null && elettronico > 0)
-        count += this.addTransaction(jsonDoc, srcFileName, date, numeroZ,
-            description + " - POS/carte",
-            this.param.conto_pos, this.param.conto_transitorio, elettronico, "");
-    if (contante !== null && contante > 0)
-        count += this.addTransaction(jsonDoc, srcFileName, date, numeroZ,
-            description + " - Contanti",
-            this.param.conto_cassa, this.param.conto_transitorio, contante, "");
+            "Natura " + item.nature;
 
-    var total = totalCents / 100;
-    total = Banana.SDecimal.round(total, { 'decimals': 2 });
-    if (elettronico !== null && contante !== null && elettronico + contante > total + 0.02)
-        this.message("Attenzione: pagamenti superiori ai corrispettivi in " + srcFileName);
+        count += this.addTransaction(
+            jsonDoc, srcFileName, date, numeroZ,
+            description + " - " + info,
+            "", contoContropartita,
+            item.amount, item.vatCode
+        );
+    }
+
     this.newDocs[key] = true;
     return count;
 };
@@ -344,12 +423,12 @@ CorrispettiviImport.prototype.getDate = function (str) {
 CorrispettiviImport.prototype.getVatCode = function (aliquota, natura) {
     var rate = parseFloat(String(aliquota || "").replace(",", "."));
     rate = Banana.SDecimal.round(rate, { 'decimals': 2 });
-    if (Number(rate) === 22 && this.param.codice_iva_22)
-        return this.param.codice_iva_22;
-    if (Number(rate) === 10 && this.param.codice_iva_10)
-        return this.param.codice_iva_10;
-    if (Number(rate) === 4 && this.param.codice_iva_04)
-        return this.param.codice_iva_04;
+    if (Number(rate) === 22 && this.param.codiceIva22)
+        return this.param.codiceIva22;
+    if (Number(rate) === 10 && this.param.codiceIva10)
+        return this.param.codiceIva10;
+    if (Number(rate) === 4 && this.param.codiceIva04)
+        return this.param.codiceIva04;
     if (isNaN(rate))
         return "";
     return "[V" + rate + (natura ? "_" + natura : "") + "]";

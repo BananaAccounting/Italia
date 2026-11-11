@@ -185,9 +185,12 @@ EFatturaImport.prototype.createJsonDocument_AddAccount = function (jsonDoc, xmlR
         partitaIva = accountNode.firstChildElement('DatiAnagrafici').firstChildElement('IdFiscaleIVA').firstChildElement('IdCodice').text.trim();
     if (accountNode.firstChildElement('DatiAnagrafici').firstChildElement('CodiceFiscale'))
         codiceFiscale = accountNode.firstChildElement('DatiAnagrafici').firstChildElement('CodiceFiscale').text.trim();
+
     var divisa = "";
-    var datiGeneraliDocNode = xmlRoot.firstChildElement('FatturaElettronicaBody').firstChildElement('DatiGenerali').firstChildElement('DatiGeneraliDocumento');
-    if (datiGeneraliDocNode) {
+    if (xmlRoot.firstChildElement('FatturaElettronicaBody')
+        && xmlRoot.firstChildElement('FatturaElettronicaBody').firstChildElement('DatiGenerali')
+        && xmlRoot.firstChildElement('FatturaElettronicaBody').firstChildElement('DatiGenerali').firstChildElement('DatiGeneraliDocumento')) {
+        var datiGeneraliDocNode = xmlRoot.firstChildElement('FatturaElettronicaBody').firstChildElement('DatiGenerali').firstChildElement('DatiGeneraliDocumento');
         divisa = datiGeneraliDocNode.firstChildElement('Divisa').text.trim();
     }
 

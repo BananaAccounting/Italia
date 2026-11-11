@@ -55,32 +55,62 @@ Settings.prototype.convertParam = function (param) {
     convertedParam.data = [];
 
     var currentParam = {};
-    currentParam.name = 'codice_iva_22';
+    currentParam.name = 'codiceIva22';
     currentParam.title = 'Codice IVA aliquota 22%';
     currentParam.type = 'string';
-    currentParam.value = param.codice_iva_22 ? param.codice_iva_22 : '';
+    currentParam.value = param.codiceIva22 ? param.codiceIva22 : '';
     currentParam.readValue = function () {
-        param.codice_iva_22 = this.value;
+        param.codiceIva22 = this.value;
     }
     convertedParam.data.push(currentParam);
 
     currentParam = {};
-    currentParam.name = 'codice_iva_10';
+    currentParam.name = 'codiceIva10';
     currentParam.title = 'Codice IVA aliquota 10%';
     currentParam.type = 'string';
-    currentParam.value = param.codice_iva_10 ? param.codice_iva_10 : '';
+    currentParam.value = param.codiceIva10 ? param.codiceIva10 : '';
     currentParam.readValue = function () {
-        param.codice_iva_10 = this.value;
+        param.codiceIva10 = this.value;
     }
     convertedParam.data.push(currentParam);
 
     currentParam = {};
-    currentParam.name = 'codice_iva_04';
+    currentParam.name = 'codiceIva04';
     currentParam.title = 'Codice IVA aliquota 4%';
     currentParam.type = 'string';
-    currentParam.value = param.codice_iva_04 ? param.codice_iva_04 : '';
+    currentParam.value = param.codiceIva04 ? param.codiceIva04 : '';
     currentParam.readValue = function () {
-        param.codice_iva_04 = this.value;
+        param.codiceIva04 = this.value;
+    }
+    convertedParam.data.push(currentParam);
+
+    currentParam = {};
+    currentParam.name = 'contoContanti';
+    currentParam.title = 'Conto contanti';
+    currentParam.type = 'string';
+    currentParam.value = param.contoContanti ? param.contoContanti : '';
+    currentParam.readValue = function () {
+        param.contoContanti = this.value;
+    }
+    convertedParam.data.push(currentParam);
+
+    currentParam = {};
+    currentParam.name = 'contoPagamentiElettronici';
+    currentParam.title = 'Conto pagamenti elettronici';
+    currentParam.type = 'string';
+    currentParam.value = param.contoPagamentiElettronici ? param.contoPagamentiElettronici : '';
+    currentParam.readValue = function () {
+        param.contoPagamentiElettronici = this.value;
+    }
+    convertedParam.data.push(currentParam);
+
+    currentParam = {};
+    currentParam.name = 'contoContropartita';
+    currentParam.title = 'Conto contropartita';
+    currentParam.type = 'string';
+    currentParam.value = param.contoContropartita ? param.contoContropartita : '';
+    currentParam.readValue = function () {
+        param.contoContropartita = this.value;
     }
     convertedParam.data.push(currentParam);
 
@@ -113,9 +143,12 @@ Settings.prototype.getErrorMessage = function (errorId) {
 Settings.prototype.initParam = function () {
     var param = {};
     param.version = "1.0";
-    param.codice_iva_22 = '';
-    param.codice_iva_10 = '';
-    param.codice_iva_04 = '';
+    param.codiceIva22 = '';
+    param.codiceIva10 = '';
+    param.codiceIva04 = '';
+    param.contoContanti = '';
+    param.contoPagamentiElettronici = '';
+    param.contoContropartita = '[CA]'
     return param;
 }
 
@@ -209,14 +242,23 @@ Settings.prototype.verifyParam = function (param) {
         return this.initParam();
     }
 
-    if (!param.codice_iva_22)
-        param.codice_iva_22 = '';
+    if (!param.codiceIva22)
+        param.codiceIva22 = '';
 
-    if (!param.codice_iva_10)
-        param.codice_iva_10 = '';
+    if (!param.codiceIva10)
+        param.codiceIva10 = '';
 
-    if (!param.codice_iva_04)
-        param.codice_iva_04 = '';
+    if (!param.codiceIva04)
+        param.codiceIva04 = '';
+
+    if (!param.contoContanti)
+        param.contoContanti = '';
+
+    if (!param.contoPagamentiElettronici)
+        param.contoPagamentiElettronici = '';
+
+    if (!param.contoContropartita)
+        param.contoContropartita = '[CA]'
 
     return param;
 }
