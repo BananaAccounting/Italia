@@ -1,4 +1,4 @@
-// Copyright [2021] [Banana.ch SA - Lugano Switzerland]
+// Copyright [2026] [Banana.ch SA - Lugano Switzerland]
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,15 @@
 //
 // @id = ch.banana.it.import.efattura
 // @api = 1.0
-// @pubdate = 2026-10-15
+// @pubdate = 2026-11-10
 // @publisher = Banana.ch SA
-// @description = Importa e-fatture (*.xml)...
+// @description = Importa fatture elettroniche
 // @task = import.file
 // @doctype = *
 // @docproperties =
 // @inputdatasource = opendirdialog
 // @inputfilefilter = *.xml
 // @timeout = -1
-// @includejs = ch.banana.it.import.efattura.rules.js
 
 //Main function
 function exec(inData) {
@@ -54,8 +53,6 @@ function exec(inData) {
     }
 
     var jsonData = eFatturaImport.createJsonDocument(xmlData);
-    if (eFatturaImport.param.applyRules)
-        jsonData = eFatturaImport.applyRules(jsonData);
 
     var documentChange = { "format": "documentChange", "error": "" };
     documentChange["data"] = jsonData;
@@ -82,7 +79,6 @@ function settingsDialog() {
     if (savedParam.length > 0) {
         eFatturaImport.setParam(JSON.parse(savedParam));
     }
-    eFatturaImport.verifyParam();
 
     var dialogTitle = 'Settings';
     var convertedParam = eFatturaImport.convertParam(eFatturaImport.param);
@@ -125,14 +121,6 @@ function EFatturaImport(banDocument) {
     this.initParam();
 }
 
-EFatturaImport.prototype.applyRules = function (jsonData) {
-    var importRules = new ImportRules(this.banDocument);
-    let documentName = this.param.filenameRules;
-    if (importRules.loadDocument(documentName))
-        return importRules.apply(jsonData);
-    return jsonData;
-}
-
 EFatturaImport.prototype.convertParam = function (param) {
 
     var convertedParam = {};
@@ -141,32 +129,32 @@ EFatturaImport.prototype.convertParam = function (param) {
     convertedParam.data = [];
 
     var currentParam = {};
-    currentParam.name = 'applyRules';
-    currentParam.title = 'Applica regole';
-    currentParam.type = 'bool';
-    currentParam.value = param.applyRules ? param.applyRules : '';
-    currentParam.readValue = function () {
-        param.applyRules = this.value;
-    }
-    convertedParam.data.push(currentParam);
-
-    currentParam = {};
-    currentParam.name = 'filenameRules';
-    currentParam.title = 'Documento regole';
+    currentParam.name = 'codice_iva_22';
+    currentParam.title = 'Codice IVA Banana per aliquota 22%';
     currentParam.type = 'string';
-    currentParam.value = param.filenameRules ? param.filenameRules : '';
+    currentParam.value = param.codice_iva_22 ? param.codice_iva_22 : '';
     currentParam.readValue = function () {
-        param.filenameRules = this.value;
+        param.codice_iva_22 = this.value;
     }
     convertedParam.data.push(currentParam);
 
     currentParam = {};
-    currentParam.name = 'checkDuplicated';
-    currentParam.title = 'Controlla fatture duplicate';
-    currentParam.type = 'bool';
-    currentParam.value = param.checkDuplicated ? param.checkDuplicated : '';
+    currentParam.name = 'codice_iva_10';
+    currentParam.title = 'Codice IVA Banana per aliquota 10%';
+    currentParam.type = 'string';
+    currentParam.value = param.codice_iva_10 ? param.codice_iva_10 : '';
     currentParam.readValue = function () {
-        param.checkDuplicated = this.value;
+        param.codice_iva_10 = this.value;
+    }
+    convertedParam.data.push(currentParam);
+
+    currentParam = {};
+    currentParam.name = 'codice_iva_04';
+    currentParam.title = 'Codice IVA Banana per aliquota 04%';
+    currentParam.type = 'string';
+    currentParam.value = param.codice_iva_04 ? param.codice_iva_04 : '';
+    currentParam.readValue = function () {
+        param.codice_iva_04 = this.value;
     }
     convertedParam.data.push(currentParam);
 
@@ -435,12 +423,10 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
         var noFattura = datiGeneraliDocumento.firstChildElement('Numero').text;
 
         // controlla se la fattura è già stata importata
-        if (this.param.checkDuplicated) {
-            var key = noFattura + "_" + dataFattura;
-            if (this.docInvoices.indexOf(key) >= 0) {
-                Banana.console.info("fattura già importata " + noFattura + " " + dataFattura);
-                break;
-            }
+        var key = noFattura + "_" + dataFattura;
+        if (this.docInvoices.indexOf(key) >= 0) {
+            Banana.console.info("fattura già importata " + noFattura + " " + dataFattura);
+            break;
         }
 
         var d = new Date();
@@ -818,11 +804,9 @@ EFatturaImport.prototype.getVatCode = function (accountId, vatRate, codiceNatura
 EFatturaImport.prototype.initParam = function () {
     this.param = {};
     this.param.version = "1.0";
-    // preferire le regole di completamento integrate in Banana+
-    this.param.applyRules = false;
-    this.param.filenameRules = 'rules.json';
-    // controlla se i numeri fattura sono già stati importati
-    this.param.checkDuplicated = true;
+    this.param.codice_iva_22 = '';
+    this.param.codice_iva_10 = '';
+    this.param.codice_iva_04 = '';
 }
 
 /*
@@ -873,6 +857,7 @@ EFatturaImport.prototype.loadAccountingInfo = function () {
     this.accountingInfo.suppliersGroup = "";
     this.accountingInfo.vatNumber = "";
     this.accountingInfo.fiscalNumber = "";
+    this.accountingInfo.baseCurrency = "";
 
     if (this.banDocument) {
         var fileGroup = this.banDocument.info("Base", "FileTypeGroup");
@@ -910,6 +895,8 @@ EFatturaImport.prototype.loadAccountingInfo = function () {
         if (this.banDocument.info("AccountingDataBase", "FiscalNumber"))
             this.accountingInfo.fiscalNumber = this.banDocument.info("AccountingDataBase", "FiscalNumber");
 
+        if (this.banDocument.info("AccountingDataBase", "BasicCurrency"))
+            this.accountingInfo.baseCurrency = this.banDocument.info("AccountingDataBase", "BasicCurrency");
     }
 }
 
@@ -1100,7 +1087,7 @@ EFatturaImport.prototype.verifyBananaVersion = function () {
         return false;
 
     //Banana+ is required
-    var requiredVersion = "10.0.10";
+    var requiredVersion = "10.2";
     if (Banana.compareVersion && Banana.compareVersion(Banana.application.version, requiredVersion) < 0) {
         var msg = this.getErrorMessage(this.ID_ERR_VERSION_NOTSUPPORTED);
         msg = msg.replace("%1", requiredVersion);
@@ -1126,14 +1113,14 @@ EFatturaImport.prototype.verifyParam = function () {
         return;
     }
 
-    if (!this.param.applyRules)
-        this.param.applyRules = false;
+    if (!this.param.codice_iva_22)
+        this.param.codice_iva_22 = '';
 
-    if (!this.param.filenameRules)
-        this.param.filenameRules = '';
+    if (!this.param.codice_iva_10)
+        this.param.codice_iva_10 = '';
 
-    if (!this.param.checkDuplicated)
-        this.param.checkDuplicated = false;
+    if (!this.param.codice_iva_04)
+        this.param.codice_iva_04 = '';
 
 }
 

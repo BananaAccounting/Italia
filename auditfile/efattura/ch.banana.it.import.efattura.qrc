@@ -1,7 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
  <qresource>
+    <file>ch.banana.it.import.corrispettivi.js</file>
     <file>ch.banana.it.import.efattura.js</file>
-    <file>ch.banana.it.import.efattura.rules.js</file>
     <file>ch.banana.it.import.efattura.settings.js</file>
     <file>ch.banana.it.import.efattura.qrc</file>
     <file>createinit.js</file>
