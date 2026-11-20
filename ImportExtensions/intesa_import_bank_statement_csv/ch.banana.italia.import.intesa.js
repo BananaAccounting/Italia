@@ -14,13 +14,13 @@
 
 // @id = ch.banana.italia.import.intesa
 // @api = 1.0
-// @pubdate = 2025-12-11
+// @pubdate = 2026-11-11
 // @publisher = Banana.ch SA
-// @description = Banca Intesa - Import account statement .xls/.xlsx (Banana+ Advanced)
-// @description.en = Banca Intesa - Import account statement .xls/.xlsx (Banana+ Advanced)
-// @description.de = Banca Intesa - Bewegungen importieren .xls/.xlsx (Banana+ Advanced)
-// @description.fr = Banca Intesa - Importer mouvements .xls/.xlsx (Banana+ Advanced)
-// @description.it = Banca Intesa - Importa movimenti .xls/.xlsx (Banana+ Advanced)
+// @description = Banca Intesa Sanpaolo - Import account statement .xls/.xlsx (Banana+ Advanced)
+// @description.en = Banca Intesa Sanpaolo - Import account statement .xls/.xlsx (Banana+ Advanced)
+// @description.de = Banca Intesa Sanpaolo - Bewegungen importieren .xls/.xlsx (Banana+ Advanced)
+// @description.fr = Banca Intesa Sanpaolo - Importer mouvements .xls/.xlsx (Banana+ Advanced)
+// @description.it = Banca Intesa Sanpaolo - Importa movimenti .xls/.xlsx (Banana+ Advanced)
 // @doctype = *
 // @docproperties =
 // @task = import.transactions
@@ -54,19 +54,29 @@ function exec(inData, isTest) {
 		return Banana.Converter.arrayToTsv(transactions);
 	}
 
+	// Format 3 (Movimenti conto corrente, colonne Dare/Avere).
+	// Checked before Format 2 and Format Cc1 because those formats read fixed rows (27/29)
+	// that do not exist in the shorter Format 3 files.
+	let format3 = new Intesa_Format3();
+	let transactionsData = format3.getFormattedData(transactions, importUtilities);
+	if (format3.match(transactionsData)) {
+		let convTr = format3.convert(transactionsData);
+		return Banana.Converter.arrayToTsv(convTr);
+	}
+
 	// Format 2 (Lista Operazioni).
 	let format2 = new Intesa_Format2();
-	let transactionsData = format2.getFormattedData(transactions, importUtilities);
+	transactionsData = format2.getFormattedData(transactions, importUtilities);
 	if (format2.match(transactionsData)) {
 		let convTr = format2.convert(transactionsData);
 		return Banana.Converter.arrayToTsv(convTr);
 	}
 
-	// Format 3 (Lista Movimenti).
-	let format3 = new Intesa_FormatCc1();
-	transactionsData = format3.getFormattedData(transactions, importUtilities);
-	if (format3.match(transactionsData)) {
-		let convTr = format3.convert(transactionsData);
+	// Format Credit Card 1 (Lista Movimenti).
+	let formatCc1 = new Intesa_FormatCc1();
+	transactionsData = formatCc1.getFormattedData(transactions, importUtilities);
+	if (formatCc1.match(transactionsData)) {
+		let convTr = formatCc1.convert(transactionsData);
 		return Banana.Converter.arrayToTsv(convTr);
 	}
 
@@ -183,6 +193,8 @@ function Intesa_FormatCc1() {
 	}
 
 	this.getFormattedData = function (inData, importUtilities) {
+		if (!inData[29])
+			return [];
 		var columns = importUtilities.getHeaderData(inData, 29); //array
 		var rows = importUtilities.getRowData(inData, 30); //array of array
 		let form = [];
@@ -234,6 +246,166 @@ function Intesa_FormatCc1() {
 
 
 		return mappedLine;
+	}
+}
+
+/** Format 3 (Movimenti conto corrente, colonne Dare/Avere)
+ * Ragione sociale:;JAN KOWALSKI;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ * Conto Corrente n°:;IT1111111111111111111111111;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ * Divisa;EUR;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ * Data Contabile da:;01.10.2026;a:;31.10.2026;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ * Ultime giornate:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ * Saldo iniziale:;1.111.111,11;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ * Saldo contabile:;1.111.111,11;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ * Saldo liquido:;1.111.111,11;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ * ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ * Data Contabile;Data Valuta;Dare;Avere;Causale ABI/Swift;Descrizione Causale ABI/SWIFT;Descrizioni Aggiuntive;Descrizioni Aggiuntive - Seconda parte;Numero Assegno;Rif. Banca (CRO);Riferimento Cliente;Descrizione Movimento;Data Ordine;Cod. Fiscale Ordinante;Ordinante;Beneficiario;Cod. Divisa Importo Origine;Importo Origine;Cod. Divisa Importo Regolato;Importo Regolato;Cod. Divisa Importo Negoziato;Importo Negoziato;Tasso di Cambio Applicato;Importo Commissioni;Importo Spese;Motivo Pagamento;Identificativo C/C di giro;Loc. ordinante;Indir. ordinante;Iban ordinante;Causale Banca;Descrizione Causale Banca
+ * 01.10.2026;01.10.2026;2'546.00;;39;Vostra disposizione;Dettagli;Dettagli2;;1212121212121212;;XXXXXXX1;;;;;;;;;;;;;;;;;;;HP;YYYYYYYYY
+ *
+ * - The header row is at a fixed position (row 10, index 9). If the expected columns are not
+ *   found there, the format is considered changed and the file is not imported
+ *   (unknown format error).
+ * - "Dare" (debit) amounts are positive and go to Expenses, "Avere" (credit) amounts go to Income.
+ * - Amounts use "." as decimal separator; the thousands separator (a non standard
+ *   character in the exported file, shown as "�") is removed by toInternalNumberFormat.
+ * - "Rif. Banca (CRO)" is imported as ExternalReference.
+ * - Description joins "Descrizione Movimento", "Descrizione Causale ABI/SWIFT",
+ *   "Descrizioni Aggiuntive" and "Descrizioni Aggiuntive - Seconda parte" (empty fields are skipped).
+ */
+function Intesa_Format3() {
+	this.decimalSeparator = ".";
+
+	this.convertHeaderIt = function (columns) {
+		let convertedColumns = [];
+
+		for (var i = 0; i < columns.length; i++) {
+			switch (columns[i]) {
+				case "Data Contabile":
+					convertedColumns[i] = "Date";
+					break;
+				case "Data Valuta":
+					convertedColumns[i] = "DateValue";
+					break;
+				case "Dare":
+					convertedColumns[i] = "Expenses";
+					break;
+				case "Avere":
+					convertedColumns[i] = "Income";
+					break;
+				case "Descrizione Causale ABI/SWIFT":
+					convertedColumns[i] = "CausalDescription";
+					break;
+				case "Descrizioni Aggiuntive":
+					convertedColumns[i] = "AdditionalDescription";
+					break;
+				case "Descrizioni Aggiuntive - Seconda parte":
+					convertedColumns[i] = "AdditionalDescription2";
+					break;
+				case "Rif. Banca (CRO)":
+					convertedColumns[i] = "ExternalReference";
+					break;
+				case "Descrizione Movimento":
+					convertedColumns[i] = "Description";
+					break;
+				default:
+					convertedColumns[i] = "Column" + i;
+					break;
+			}
+		}
+
+		if (convertedColumns.indexOf("Date") < 0
+			|| convertedColumns.indexOf("Income") < 0
+			|| convertedColumns.indexOf("Expenses") < 0
+			|| convertedColumns.indexOf("Description") < 0) {
+			return [];
+		}
+
+		return convertedColumns;
+	}
+
+	this.getFormattedData = function (inData, importUtilities) {
+		if (!inData[9])
+			return [];
+		let columns = importUtilities.getHeaderData(inData, 9); //array
+		let rows = importUtilities.getRowData(inData, 10); //array of array
+		let form = [];
+
+		let convertedColumns = this.convertHeaderIt(columns);
+		if (convertedColumns.length > 0) {
+			importUtilities.loadForm(form, convertedColumns, rows);
+			return form;
+		}
+
+		return [];
+	}
+
+	this.isTransactionRow = function (row) {
+		return row["Date"] && row["Date"].trim().match(/^\d{2}\.\d{2}\.\d{4}$/);
+	}
+
+	/** Return true if the transactions match this format */
+	this.match = function (transactionsData) {
+		if (transactionsData.length === 0)
+			return false;
+
+		for (var i = 0; i < transactionsData.length; i++) {
+			if (this.isTransactionRow(transactionsData[i]))
+				return true;
+		}
+
+		return false;
+	}
+
+	/** Convert the transaction to the format to be imported */
+	this.convert = function (rows) {
+		var transactionsToImport = [];
+
+		for (var i = 0; i < rows.length; i++) {
+			if (this.isTransactionRow(rows[i]))
+				transactionsToImport.push(this.mapTransaction(rows[i]));
+		}
+
+		// Add header and return
+		var header = [["Date", "DateValue", "Doc", "ExternalReference", "Description", "Income", "Expenses"]];
+		return header.concat(transactionsToImport);
+	}
+
+	/** Return the transaction converted in the import format */
+	this.mapTransaction = function (element) {
+		var mappedLine = [];
+
+		mappedLine.push(Banana.Converter.toInternalDateFormat(element["Date"].trim(), "dd.mm.yyyy"));
+		let dateValue = element["DateValue"] ? element["DateValue"].trim() : "";
+		mappedLine.push(dateValue ? Banana.Converter.toInternalDateFormat(dateValue, "dd.mm.yyyy") : "");
+		mappedLine.push(""); // Doc
+		mappedLine.push(this.cleanText(element["ExternalReference"]));
+		mappedLine.push(this.getDescription(element));
+		mappedLine.push(Banana.Converter.toInternalNumberFormat(element["Income"], this.decimalSeparator));
+		mappedLine.push(Banana.Converter.toInternalNumberFormat(element["Expenses"], this.decimalSeparator));
+
+		return mappedLine;
+	}
+
+	this.cleanText = function (text) {
+		if (!text)
+			return "";
+		return text.replace(/[\\"\r\n]/g, " ").replace(/\s+/g, " ").trim();
+	}
+
+	this.joinTexts = function (texts) {
+		let parts = [];
+		for (var i = 0; i < texts.length; i++) {
+			let text = this.cleanText(texts[i]);
+			if (text.length > 0)
+				parts.push(text);
+		}
+		return parts.join(", ");
+	}
+
+	/** Description: "Descrizione Movimento", "Descrizione Causale ABI/SWIFT" and the additional descriptions */
+	this.getDescription = function (element) {
+		return this.joinTexts([element["Description"], element["CausalDescription"],
+			element["AdditionalDescription"], element["AdditionalDescription2"]]);
 	}
 }
 
@@ -321,6 +493,8 @@ function Intesa_Format2() {
 			startLineNumber = 0;
 		}
 		var headerData = inData[startLineNumber];
+		if (!headerData)
+			return [];
 		for (var i = 0; i < headerData.length; i++) {
 
 			headerData[i] = headerData[i].trim();

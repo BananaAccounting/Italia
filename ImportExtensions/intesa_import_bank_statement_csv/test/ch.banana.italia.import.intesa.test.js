@@ -15,7 +15,7 @@
 
 // @id = ch.banana.italia.import.intesa.test
 // @api = 1.0
-// @pubdate = 2025-12-11
+// @pubdate = 2026-11-11
 // @publisher = Banana.ch SA
 // @description = <TEST ch.banana.italia.import.intesa.test>
 // @task = app.command
@@ -63,6 +63,7 @@ TestImportBancaIntesa.prototype.testImport = function () {
    fileNameList.push("file:script/../test/testcases/csv_intesa_example_format2_20251211.csv");
    fileNameList.push("file:script/../test/testcases/csv_intesa_example_format1_20240527.csv");
    fileNameList.push("file:script/../test/testcases/csv_intesa_example_formatCc1_20241227.csv");
+   fileNameList.push("file:script/../test/testcases/csv_intesa_example_format3_20261111.csv");
 
    var parentLogger = this.testLogger;
    this.progressBar.start(fileNameList.length);
