@@ -1,11 +1,11 @@
 // Copyright [2026] [Banana.ch SA - Lugano Switzerland]
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.import.corrispettivi
 // @api = 1.0
-// @pubdate = 2026-11-11
+// @pubdate = 2026-11-20
 // @publisher = Banana.ch SA
 // @description = Importa corrispettivi telematici
 // @task = import.file
@@ -24,6 +24,64 @@
 // @inputfilefilter = *.xml
 // @timeout = -1
 // @includejs = ch.banana.it.import.efattura.settings.js
+
+/*
+ * Tracciato di riferimento: Agenzia delle Entrate, allegato "Tipi Dati per i
+ * corrispettivi" versione 7.1 (XMLcor, formato COR10). Struttura:
+ *
+ *   <DatiCorrispettivi simulazione="true|false">
+ *     1   <Trasmissione>
+ *     1.1   <Progressivo>            progressivo di trasmissione (univoco per dispositivo)
+ *     1.2   <Formato>                [COR10]
+ *     1.3   <Dispositivo>            solo vending machine / più punti cassa
+ *     1.3.2   <IdDispositivo>
+ *     2   <PeriodoInattivo>          periodo con corrispettivi a zero
+ *     3   <DataOraRilevazione>       per RT: data e ora della chiusura giornaliera
+ *     4   <DatiRT>                   (0..1)
+ *     4.1   <Riepilogo>              (1..40) uno per aliquota / natura / ventilazione
+ *     4.1.1   <IVA>
+ *     4.1.1.1   <AliquotaIVA>
+ *     4.1.1.2   <Imposta>            imposta sull'imponibile di 4.1.6
+ *     4.1.2   <Natura>               alternativo a <IVA> e <VentilazioneIVA>
+ *     4.1.3   <VentilazioneIVA>      alternativo a <IVA> e <Natura>
+ *     4.1.4   <Ammontare>            = somma dei campi da 4.1.6 a 4.1.13
+ *     4.1.6   <ImportoParziale>      imponibile da assoggettare a IVA
+ *     4.1.7   <TotaleAmmontareResi>
+ *     4.1.8   <TotaleAmmontareAnnulli>
+ *     4.1.9   <BeniInSospeso>        incassati in acconto, non ancora ricavo
+ *     4.1.10  <NonRiscossoServizi>
+ *     4.1.11  <NonRiscossoFatture>
+ *     4.1.12  <TotaleDaFattureRT>
+ *     4.1.13  <NonRiscossoDCRaSSN>
+ *     4.1.14  <NonRiscossoOmaggio>   compreso in 4.1.6, quindi tassato ma non incassato
+ *     4.2   <Totali>
+ *     4.2.1   <NumeroDocCommerciali>
+ *     4.2.2   <PagatoContanti>
+ *     4.2.3   <PagatoElettronico>
+ *     4.2.4   <ScontoApagare>
+ *     4.2.5.1 <PagatoTicket>
+ *     5   <DatiDA>                   vending machine (non gestito)
+ *
+ * Come vengono costruite le registrazioni
+ * ---------------------------------------
+ * <ImportoParziale> e <Imposta> sono l'imponibile e l'IVA della parte incassata
+ * e tassata; i resi, gli annulli e i corrispettivi non riscossi ne sono già
+ * esclusi. I pagamenti di 4.2 sono invece al lordo.
+ *
+ *   dare   = PagatoContanti + PagatoElettronico + PagatoTicket + ScontoApagare
+ *   avere  = somma degli imponibili, con il codice IVA che calcola l'imposta
+ *
+ * Le due somme devono coincidere. Se restano differenze, sono spiegate dai campi
+ * dichiarati nel riepilogo (omaggi non riscossi, beni in sospeso, non riscosso)
+ * e vengono registrate sul conto indicato nelle impostazioni; se il conto manca,
+ * o se più casistiche sono presenti contemporaneamente, il documento non viene
+ * importato e viene segnalato con un messaggio.
+ *
+ * Gli imponibili sono registrati con VatAmountType = "1" (IVA esclusa), come fa
+ * l'importazione delle fatture elettroniche, così gli stessi codici IVA valgono
+ * per le due estensioni. Con la ventilazione IVA l'importo è invece al lordo e
+ * viene registrato con VatAmountType = "0".
+ */
 
 // Main function
 function exec(inData) {
@@ -58,6 +116,11 @@ function exec(inData) {
 
     var jsonData = corrispettiviImport.createJsonDocument(xmlData);
 
+    if (!jsonData || jsonData.length <= 0) {
+        Banana.document.addMessage(
+            "Nessun corrispettivo importato: controllare i messaggi precedenti e le impostazioni dell'estensione.");
+    }
+
     var documentChange = { "format": "documentChange", "error": "" };
     documentChange["data"] = jsonData;
 
@@ -82,16 +145,31 @@ function CorrispettiviImport(banDocument) {
     this.jsonDocArray = [];
     this.existingDocs = {};
     this.newDocs = {};
+    //codici IVA e contropartite per aliquota, dalle impostazioni
+    this.vatTable = {};
+    //prefisso usato nelle descrizioni, serve anche a riconoscere i doc già importati
+    this.descriptionPrefix = "Corrispettivi telematici";
     this.initParam();
 }
 
-/* Aggiunge registrazioni come createJsonDocument_AddTransactions di eFattura */
+/* Aggiunge una registrazione.
+   account = conto in dare, counterpart = conto in avere.
+   vatAmountType: "1" importo al netto dell'IVA, "0" al lordo. */
 CorrispettiviImport.prototype.addTransaction = function (
-    jsonDoc, srcFileName, date, doc, description, accountDebit, accountCredit, amount, vatCode
+    jsonDoc, srcFileName, date, doc, description, account, counterpart, amount, vatCode, vatAmountType
 ) {
-    if (!(amount > 0))
+    if (Banana.SDecimal.compare(amount, "0") === 0)
         return 0;
     amount = Banana.SDecimal.round(amount, { 'decimals': 2 });
+    //gli importi negativi si registrano invertendo i conti
+    if (Banana.SDecimal.compare(amount, "0") < 0) {
+        var swap = account;
+        account = counterpart;
+        counterpart = swap;
+        amount = Banana.SDecimal.invert(amount);
+        if (vatCode)
+            vatCode = "-" + vatCode;
+    }
     var row = {};
     row.operation = {};
     row.operation.name = "add";
@@ -104,8 +182,8 @@ CorrispettiviImport.prototype.addTransaction = function (
     row.fields["Description"] = description;
 
     if (this.accountingInfo.isDoubleEntry) {
-        row.fields["AccountDebit"] = accountDebit;
-        row.fields["AccountCredit"] = accountCredit;
+        row.fields["AccountDebit"] = account;
+        row.fields["AccountCredit"] = counterpart;
         if (this.accountingInfo.multiCurrency) {
             row.fields["AmountCurrency"] = amount;
             row.fields["ExchangeCurrency"] = this.accountingInfo.baseCurrency;
@@ -115,12 +193,19 @@ CorrispettiviImport.prototype.addTransaction = function (
         }
     }
     else {
-        row.fields["Account"] = accountDebit;
-        row.fields["Expenses"] = amount;
+        //contabilità entrate/uscite: il conto patrimoniale va in Account,
+        //la contropartita in Category. I corrispettivi sono sempre entrate.
+        if (account)
+            row.fields["Account"] = account;
+        if (counterpart)
+            row.fields["Category"] = counterpart;
+        row.fields["Income"] = amount;
     }
 
-    if (vatCode)
+    if (vatCode) {
         row.fields["VatCode"] = vatCode;
+        row.fields["VatAmountType"] = vatAmountType ? vatAmountType : "1";
+    }
 
     var rowLists = jsonDoc.document.dataUnits[0].data.rowLists[0];
     rowLists.rows.push(row);
@@ -156,11 +241,13 @@ CorrispettiviImport.prototype.children = function (node, name) {
     return children;
 };
 
-/*Il metodo createJsonDocument() riprende i dati dal file xml della fattura elettronica
+/*Il metodo createJsonDocument() riprende i dati dal file xml dei corrispettivi
   e li trasforma in formato json per essere importati nella tabella Registrazioni
 */
 CorrispettiviImport.prototype.createJsonDocument = function (inData) {
     this.load();
+    if (!this.verifyFileType())
+        return this.jsonDocArray;
     for (var srcFileName in inData) {
         if (!Object.prototype.hasOwnProperty.call(inData, srcFileName))
             continue;
@@ -177,12 +264,23 @@ CorrispettiviImport.prototype.createJsonDocument = function (inData) {
         var xmlRoot = xmlFile.firstChildElement();
         if (!xmlRoot)
             continue;
+        //le trasmissioni di prova non vanno contabilizzate
+        if (this.getAttribute(xmlRoot, "simulazione").toLowerCase() === "true") {
+            this.message("Trasmissione di simulazione, non importata: " + srcFileName);
+            continue;
+        }
         var datiRT = this.child(xmlRoot, "DatiRT");
         if (!datiRT) {
-            this.message("Struttura corrispettivi non riconosciuta: " + srcFileName);
+            if (this.child(xmlRoot, "PeriodoInattivo"))
+                this.message("Periodo inattivo senza corrispettivi, niente da importare: " + srcFileName);
+            else if (this.child(xmlRoot, "DatiDA"))
+                this.message("Corrispettivi da distributore automatico non gestiti: " + srcFileName);
+            else
+                this.message("Struttura corrispettivi non riconosciuta: " + srcFileName);
             continue;
         }
         var trasmissione = this.child(xmlRoot, "Trasmissione");
+        //campo 3: <DataOraRilevazione> è figlio diretto della radice
         var dataOraRilevazione = this.getXmlText(xmlRoot, "DataOraRilevazione");
         var jsonDoc = this.createJsonDocument_Init();
         var count = 0;
@@ -200,10 +298,12 @@ CorrispettiviImport.prototype.createJsonDocument = function (inData) {
 CorrispettiviImport.prototype.createJsonDocument_AddTransactions = function (
     jsonDoc, datiRT, srcFileName, trasmissione, dataOraRilevazione
 ) {
-    var numeroZ = this.getXmlText(datiRT, "NumeroZ") ||
-        this.getXmlText(trasmissione, "Progressivo");
-    var dataOraZ = this.getXmlText(datiRT, "DataOraZ") || dataOraRilevazione;
-    var date = this.getDate(dataOraZ);
+    //il tracciato prevede il progressivo di trasmissione (1.1) e la data di
+    //rilevazione (3); NumeroZ/DataOraZ sono accettati per tolleranza
+    var progressivo = this.getXmlText(trasmissione, "Progressivo") ||
+        this.getXmlText(datiRT, "NumeroZ");
+    var dataOra = dataOraRilevazione || this.getXmlText(datiRT, "DataOraZ");
+    var date = this.getDate(dataOra);
     var device = this.getXmlText(
         this.child(trasmissione, "Dispositivo"), "IdDispositivo");
     var riepiloghi = this.children(datiRT, "Riepilogo");
@@ -212,26 +312,24 @@ CorrispettiviImport.prototype.createJsonDocument_AddTransactions = function (
     if (!riepiloghi.length)
         return 0;
 
-    if (!numeroZ || !date) {
+    if (!progressivo || !date) {
         this.message("Progressivo o data mancanti: " + srcFileName);
         return 0;
     }
 
     // Evita documenti duplicati.
-    var key = date + "|" + numeroZ + "|" + device;
+    var key = date + "|" + progressivo + "|" + device;
 
     if (this.existingDocs[key] ||
-        this.existingDocs[date + "|" + numeroZ + "|"] ||
+        this.existingDocs[date + "|" + progressivo + "|"] ||
         this.newDocs[key]) {
         this.message("Corrispettivo già registrato: " + srcFileName);
         return 0;
     }
 
-    var contoContanti = this.param.contoContanti;
-    var contoElettronici = this.param.contoPagamentiElettronici;
     var contoContropartita = this.param.contoContropartita || "[CA]";
 
-    // Totali dei pagamenti.
+    // ---- incassi (4.2) ----
     var totali = this.child(datiRT, "Totali");
 
     if (!totali) {
@@ -239,126 +337,145 @@ CorrispettiviImport.prototype.createJsonDocument_AddTransactions = function (
         return 0;
     }
 
-    var contante = this.getAmount(totali, "PagatoContanti");
-    var elettronico = this.getAmount(totali, "PagatoElettronico");
+    var ticketNode = this.child(totali, "Ticket");
+    var incassi = [
+        { "tag": "PagatoContanti", "node": totali, "conto": this.param.contoContanti, "titolo": "Contanti", "parametro": "conto contanti" },
+        { "tag": "PagatoElettronico", "node": totali, "conto": this.param.contoPagamentiElettronici, "titolo": "POS/carte", "parametro": "conto pagamenti elettronici" },
+        { "tag": "PagatoTicket", "node": ticketNode, "conto": this.param.contoTicket, "titolo": "Ticket", "parametro": "conto ticket" },
+        { "tag": "ScontoApagare", "node": totali, "conto": this.param.contoSconti, "titolo": "Sconto a pagare", "parametro": "conto sconti concessi" }
+    ];
 
-    contante = Banana.SDecimal.round(
-        contante === null ? 0 : contante, { 'decimals': 2 });
-    elettronico = Banana.SDecimal.round(
-        elettronico === null ? 0 : elettronico, { 'decimals': 2 });
-
-    if (Banana.SDecimal.compare(contante, "0") < 0 ||
-        Banana.SDecimal.compare(elettronico, "0") < 0 ||
-        (Banana.SDecimal.compare(contante, "0") > 0 && !contoContanti) ||
-        (Banana.SDecimal.compare(elettronico, "0") > 0 && !contoElettronici)) {
-        this.message("Pagamenti o conti non validi: " + srcFileName);
-        return 0;
+    var totaleIncassi = "0.00";
+    for (var i = 0; i < incassi.length; i++) {
+        var importo = incassi[i].node ?
+            this.getAmountStr(incassi[i].node, incassi[i].tag, "0.00") : "0.00";
+        if (importo === null) {
+            this.message("Importo non valido in " + incassi[i].tag + ": " + srcFileName);
+            return 0;
+        }
+        if (Banana.SDecimal.compare(importo, "0") < 0) {
+            this.message("Importo negativo in " + incassi[i].tag + ": " + srcFileName);
+            return 0;
+        }
+        if (Banana.SDecimal.compare(importo, "0") > 0 && !incassi[i].conto) {
+            this.message("Nelle impostazioni manca il " + incassi[i].parametro +
+                ", necessario per " + incassi[i].tag + ": " + srcFileName);
+            return 0;
+        }
+        incassi[i].importo = importo;
+        totaleIncassi = Banana.SDecimal.add(totaleIncassi, importo);
     }
 
-    // Riepiloghi IVA.
+    // ---- riepiloghi IVA (4.1) ----
     var valid = [];
-    var totaleCorrispettivi = "0.00";
+    var totaleRicavi = "0.00";
+    //casistiche dichiarate che possono spiegare una differenza
+    var categorie = {
+        "omaggi": { "importo": "0.00", "conto": this.param.contoOmaggi, "titolo": "Omaggi", "parametro": "conto omaggi", "tags": ["NonRiscossoOmaggio"] },
+        "sospeso": { "importo": "0.00", "conto": this.param.contoBeniInSospeso, "titolo": "Beni in sospeso", "parametro": "conto acconti e beni in sospeso", "tags": ["BeniInSospeso"] },
+        "nonriscosso": {
+            "importo": "0.00", "conto": this.param.contoNonRiscosso, "titolo": "Corrispettivi non riscossi",
+            "parametro": "conto corrispettivi non riscossi",
+            "tags": ["NonRiscossoServizi", "NonRiscossoFatture", "NonRiscossoDCRaSSN", "TotaleDaFattureRT"]
+        }
+    };
 
-    for (var i = 0; i < riepiloghi.length; i++) {
-        var riepilogo = riepiloghi[i];
+    for (var r = 0; r < riepiloghi.length; r++) {
+        var riepilogo = riepiloghi[r];
 
-        // Casistiche che richiedono una gestione separata.
-        if ((this.getAmount(riepilogo, "NonRiscossoServizi") || 0) > 0 ||
-            (this.getAmount(riepilogo, "NonRiscossoFatture") || 0) > 0 ||
-            (this.getAmount(riepilogo, "NonRiscossoDCRaSSN") || 0) > 0 ||
-            (this.getAmount(riepilogo, "BeniInSospeso") || 0) > 0 ||
-            (this.getAmount(riepilogo, "Omaggi") || 0) > 0 ||
-            this.child(riepilogo, "VentilazioneIVA")) {
-            this.message("Corrispettivi particolari da verificare: " + srcFileName);
-            return 0;
+        for (var nome in categorie) {
+            for (var t = 0; t < categorie[nome].tags.length; t++) {
+                var valore = this.getAmountStr(riepilogo, categorie[nome].tags[t], "0.00");
+                if (valore === null) {
+                    this.message("Importo non valido in " + categorie[nome].tags[t] + ": " + srcFileName);
+                    return 0;
+                }
+                categorie[nome].importo = Banana.SDecimal.add(categorie[nome].importo, valore);
+            }
         }
 
-        var ivaNode = this.child(riepilogo, "IVA");
-        var aliquota = this.getXmlText(ivaNode, "AliquotaIVA");
-        var natura = this.getXmlText(riepilogo, "Natura");
-        var ammontare = this.getAmount(riepilogo, "Ammontare");
-
-        if (ammontare === null || ammontare < 0) {
-            this.message("Ammontare non valido: " + srcFileName);
+        var voce = this.getRiepilogoAmounts(riepilogo, srcFileName);
+        if (!voce)
             return 0;
-        }
-
-        ammontare = Banana.SDecimal.round(ammontare, { 'decimals': 2 });
-
-        if (Banana.SDecimal.compare(ammontare, "0") === 0)
-            continue;
-
-        var vatCode = this.getVatCode(aliquota, natura);
-
-        if (!vatCode) {
+        if (!voce.vatCode && this.accountingInfo.withVat) {
             this.message("Codice IVA mancante: " + srcFileName);
             return 0;
         }
+        if (Banana.SDecimal.compare(voce.amount, "0") === 0)
+            continue;
 
-        valid.push({
-            amount: ammontare,
-            rate: aliquota,
-            nature: natura,
-            vatCode: vatCode
-        });
-
-        totaleCorrispettivi = Banana.SDecimal.add(
-            totaleCorrispettivi, ammontare
-        );
+        voce.account = voce.account || contoContropartita;
+        valid.push(voce);
+        totaleRicavi = Banana.SDecimal.add(totaleRicavi, voce.gross);
     }
 
     if (!valid.length)
         return 0;
 
-    // Verifica che pagamenti e corrispettivi coincidano.
-    var totalePagamenti = Banana.SDecimal.add(contante, elettronico);
+    // ---- differenza tra ricavi e incassi ----
+    var differenza = Banana.SDecimal.subtract(totaleRicavi, totaleIncassi);
+    var categoriaDifferenza = null;
 
-    if (Banana.SDecimal.compare(totaleCorrispettivi, totalePagamenti) !== 0) {
-        this.message(
-            "Totale corrispettivi diverso dai pagamenti: " +
-            srcFileName + " - Corrispettivi: " +
-            totaleCorrispettivi + " - Pagamenti: " + totalePagamenti
-        );
-        return 0;
+    if (Banana.SDecimal.compare(differenza, "0") !== 0) {
+        var presenti = [];
+        for (var nome2 in categorie) {
+            if (Banana.SDecimal.compare(categorie[nome2].importo, "0") !== 0)
+                presenti.push(categorie[nome2]);
+        }
+        if (presenti.length === 1 && presenti[0].conto) {
+            categoriaDifferenza = presenti[0];
+        }
+        else if (presenti.length === 1) {
+            this.message("Nelle impostazioni manca il " + presenti[0].parametro +
+                ", necessario per registrare " + presenti[0].titolo.toLowerCase() +
+                " di " + presenti[0].importo + ": " + srcFileName);
+            return 0;
+        }
+        else {
+            this.message("Totale corrispettivi diverso dai pagamenti: " +
+                srcFileName + " - Corrispettivi: " + totaleRicavi +
+                " - Pagamenti: " + totaleIncassi +
+                " - Differenza: " + differenza +
+                (presenti.length > 1 ? " (più casistiche particolari presenti, da registrare a mano)" : ""));
+            return 0;
+        }
     }
 
-    var description = "Corrispettivi telematici Z-" + numeroZ +
+    var description = this.descriptionPrefix + " n. " + progressivo +
         (device ? " RT-" + device : "");
 
     var count = 0;
 
     // 1. Prima le registrazioni patrimoniali.
-
-    if (Banana.SDecimal.compare(contante, "0") > 0) {
+    for (var k = 0; k < incassi.length; k++) {
+        if (Banana.SDecimal.compare(incassi[k].importo, "0") <= 0)
+            continue;
         count += this.addTransaction(
-            jsonDoc, srcFileName, date, numeroZ,
-            description + " - Contanti",
-            contoContanti, "",
-            contante, ""
+            jsonDoc, srcFileName, date, progressivo,
+            description + " - " + incassi[k].titolo,
+            incassi[k].conto, "",
+            incassi[k].importo, "", ""
         );
     }
 
-    if (Banana.SDecimal.compare(elettronico, "0") > 0) {
+    // 2. La differenza spiegata dalle casistiche particolari.
+    if (categoriaDifferenza) {
         count += this.addTransaction(
-            jsonDoc, srcFileName, date, numeroZ,
-            description + " - POS/carte",
-            contoElettronici, "",
-            elettronico, ""
+            jsonDoc, srcFileName, date, progressivo,
+            description + " - " + categoriaDifferenza.titolo,
+            categoriaDifferenza.conto, "",
+            differenza, "", ""
         );
     }
 
-    // 2. Dopo i corrispettivi per aliquota IVA.
-
+    // 3. Dopo i corrispettivi per aliquota IVA.
     for (var j = 0; j < valid.length; j++) {
         var item = valid[j];
-        var info = item.rate ? "Aliquota " + item.rate + "%" :
-            "Natura " + item.nature;
-
         count += this.addTransaction(
-            jsonDoc, srcFileName, date, numeroZ,
-            description + " - " + info,
-            "", contoContropartita,
-            item.amount, item.vatCode
+            jsonDoc, srcFileName, date, progressivo,
+            description + " - " + item.info,
+            "", item.account,
+            item.amount, item.vatCode, item.vatAmountType
         );
     }
 
@@ -398,13 +515,43 @@ CorrispettiviImport.prototype.getAmount = function (node, name) {
     var value = this.getXmlText(node, name).replace(/\s/g, "");
     if (!value)
         return null;
-    if (value.indexOf(",") >= 0 && value.indexOf(".") >= 0)
-        value = value.replace(/\./g, "").replace(",", ".");
-    else
+    if (value.indexOf(",") >= 0 && value.indexOf(".") >= 0) {
+        //separatore decimale = l'ultimo dei due
+        if (value.lastIndexOf(",") > value.lastIndexOf("."))
+            value = value.replace(/\./g, "").replace(",", ".");
+        else
+            value = value.replace(/,/g, "");
+    }
+    else {
         value = value.replace(",", ".");
+    }
     if (!/^-?\d+(\.\d+)?$/.test(value))
         return null;
     return Math.round(parseFloat(value) * 100) / 100;
+};
+
+/* Ritorna l'importo arrotondato come stringa, "" (o defaultValue) se il tag
+   manca, null se il contenuto non è un numero valido. */
+CorrispettiviImport.prototype.getAmountStr = function (node, name, defaultValue) {
+    var child = this.child(node, name);
+    if (!child)
+        return defaultValue === undefined ? "" : defaultValue;
+    var value = this.getAmount(node, name);
+    if (value === null)
+        return null;
+    return Banana.SDecimal.round(value, { 'decimals': 2 });
+};
+
+CorrispettiviImport.prototype.getAttribute = function (node, name) {
+    if (!node)
+        return "";
+    try {
+        if (typeof node.attribute === 'function')
+            return String(node.attribute(name) || "").trim();
+    }
+    catch (e) {
+    }
+    return "";
 };
 
 CorrispettiviImport.prototype.getDate = function (str) {
@@ -419,19 +566,126 @@ CorrispettiviImport.prototype.getDate = function (str) {
     return match[1] + match[2] + match[3];
 };
 
-/* Usa codici reali impostati dall'utente; altrimenti i segnaposto di eFattura. */
+/*
+ * Ritorna gli importi di un riepilogo: importo da registrare, importo lordo per
+ * il controllo di quadratura, codice IVA, contropartita e tipo di importo.
+ * Ritorna null se i dati non sono validi (il messaggio è già stato aggiunto).
+*/
+CorrispettiviImport.prototype.getRiepilogoAmounts = function (riepilogo, srcFileName) {
+    var ventilazione = this.child(riepilogo, "VentilazioneIVA");
+    var ivaNode = this.child(riepilogo, "IVA");
+    var aliquota = this.getXmlText(ivaNode, "AliquotaIVA");
+    var natura = this.getXmlText(riepilogo, "Natura");
+
+    if (ventilazione) {
+        //con la ventilazione <Ammontare> è al lordo e non c'è un'aliquota
+        var lordo = this.getAmountStr(riepilogo, "ImportoParziale");
+        if (lordo === null) {
+            this.message("Importo parziale non valido: " + srcFileName);
+            return null;
+        }
+        if (lordo === "")
+            lordo = this.getAmountStr(riepilogo, "Ammontare");
+        if (lordo === null || lordo === "") {
+            this.message("Ammontare non valido: " + srcFileName);
+            return null;
+        }
+        var codiceVentilazione = this.param.codiceIvaVentilazione;
+        if (this.accountingInfo.withVat && !codiceVentilazione) {
+            this.message("Nelle impostazioni manca il codice IVA per la ventilazione: " + srcFileName);
+            return null;
+        }
+        return {
+            "amount": lordo,
+            "gross": lordo,
+            "vatCode": this.accountingInfo.withVat ? codiceVentilazione : "",
+            "vatAmountType": "0",
+            "account": "",
+            "info": "Ventilazione IVA"
+        };
+    }
+
+    // <ImportoParziale> (4.1.6) è l'imponibile effettivamente da assoggettare
+    // a IVA; <Ammontare> (4.1.4) lo comprende ma include anche resi, annulli
+    // e non riscossi. <Imposta> (4.1.1.2) si riferisce a <ImportoParziale>.
+    var imponibile = this.getAmountStr(riepilogo, "ImportoParziale");
+    if (imponibile === null) {
+        this.message("Importo parziale non valido: " + srcFileName);
+        return null;
+    }
+    if (imponibile === "")
+        imponibile = this.getAmountStr(riepilogo, "Ammontare");
+    if (imponibile === null || imponibile === "") {
+        this.message("Ammontare non valido: " + srcFileName);
+        return null;
+    }
+
+    var imposta = this.getAmountStr(ivaNode, "Imposta", "0.00");
+    if (imposta === null) {
+        this.message("Imposta non valida: " + srcFileName);
+        return null;
+    }
+
+    if (Banana.SDecimal.compare(imponibile, "0") < 0 ||
+        Banana.SDecimal.compare(imposta, "0") < 0) {
+        this.message("Importi negativi non gestiti: " + srcFileName);
+        return null;
+    }
+
+    var vatInfo = this.getVatCodeInfo(aliquota, natura);
+    var info = aliquota ? "Aliquota " + aliquota + "%" :
+        (natura ? "Natura " + natura : "Corrispettivi");
+
+    //senza gestione IVA si registra l'importo lordo e nessun codice
+    if (!this.accountingInfo.withVat) {
+        return {
+            "amount": Banana.SDecimal.add(imponibile, imposta),
+            "gross": Banana.SDecimal.add(imponibile, imposta),
+            "vatCode": "",
+            "vatAmountType": "",
+            "account": vatInfo ? vatInfo.account : "",
+            "info": info
+        };
+    }
+
+    return {
+        "amount": imponibile,
+        "gross": Banana.SDecimal.add(imponibile, imposta),
+        "vatCode": vatInfo ? vatInfo.vatCode : "",
+        "vatAmountType": "1",
+        "account": vatInfo ? vatInfo.account : "",
+        "info": info
+    };
+};
+
+/* Ritorna il solo codice IVA (segnaposto se non è nelle impostazioni) */
 CorrispettiviImport.prototype.getVatCode = function (aliquota, natura) {
+    var info = this.getVatCodeInfo(aliquota, natura);
+    return info ? info.vatCode : "";
+};
+
+/*
+ * Cerca il codice IVA e l'eventuale contropartita nella tabella delle
+ * impostazioni; se non c'è ritorna il segnaposto, che può essere sostituito
+ * tramite rules.json. I corrispettivi sono sempre vendite: prefisso V.
+*/
+CorrispettiviImport.prototype.getVatCodeInfo = function (aliquota, natura) {
     var rate = parseFloat(String(aliquota || "").replace(",", "."));
-    rate = Banana.SDecimal.round(rate, { 'decimals': 2 });
+    if (isNaN(rate) && !natura)
+        return null;
+    rate = isNaN(rate) ? "0.00" : Banana.SDecimal.round(rate, { 'decimals': 2 });
+    var key = "V" + rate + (natura ? "_" + natura : "");
+    var entry = this.vatTable[key.toUpperCase()];
+    if (entry && entry.vatCode)
+        return { "vatCode": entry.vatCode, "account": entry.account };
+    //compatibilità con i parametri della versione 1.0
     if (Number(rate) === 22 && this.param.codiceIva22)
-        return this.param.codiceIva22;
+        return { "vatCode": this.param.codiceIva22, "account": "" };
     if (Number(rate) === 10 && this.param.codiceIva10)
-        return this.param.codiceIva10;
+        return { "vatCode": this.param.codiceIva10, "account": "" };
     if (Number(rate) === 4 && this.param.codiceIva04)
-        return this.param.codiceIva04;
-    if (isNaN(rate))
-        return "";
-    return "[V" + rate + (natura ? "_" + natura : "") + "]";
+        return { "vatCode": this.param.codiceIva04, "account": "" };
+    return { "vatCode": "[" + key + "]", "account": entry ? entry.account : "" };
 };
 
 CorrispettiviImport.prototype.getXmlText = function (node, name) {
@@ -447,24 +701,24 @@ CorrispettiviImport.prototype.initParam = function (param) {
 }
 
 CorrispettiviImport.prototype.load = function () {
-    var settings = new Settings(Banana.document);
+    var settings = new Settings(this.banDocument);
     this.accountingInfo = settings.loadAccountingInfo();
+    this.vatTable = settings.parseVatTable(this.param);
     this.loadExistingDocs();
-    /*Banana.console.log("---------------- accounts ---------------- ");
-    Banana.console.log(JSON.stringify(this.accounts));*/
-
 }
 
 /* Come eFattura, carica il documento contabile per evitare doppi import. */
 CorrispettiviImport.prototype.loadExistingDocs = function () {
     this.existingDocs = {};
+    if (!this.banDocument)
+        return;
     var tableTransactions = this.banDocument.table("Transactions");
     if (!tableTransactions)
         return;
     for (var i = 0; i < tableTransactions.rowCount; i++) {
         var row = tableTransactions.row(i);
         var description = String(row.value("Description") || "");
-        if (description.indexOf("Corrispettivi telematici Z-") !== 0)
+        if (description.indexOf(this.descriptionPrefix) !== 0)
             continue;
         var doc = String(row.value("Doc") || "");
         var date = String(row.value("DateDocument") || row.value("Date") || "").replace(/-/g, "");
@@ -496,3 +750,12 @@ CorrispettiviImport.prototype.setParam = function (param) {
     }
     this.param = settings.verifyParam(this.param);
 }
+
+/* Il file contabile deve essere in partita doppia o entrate/uscite */
+CorrispettiviImport.prototype.verifyFileType = function () {
+    if (this.accountingInfo.isDoubleEntry || this.accountingInfo.isIncomeExpenses)
+        return true;
+    this.message("Tipo di file contabile non supportato: l'importazione dei corrispettivi " +
+        "richiede una contabilità in partita doppia o entrate/uscite.");
+    return false;
+};

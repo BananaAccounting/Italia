@@ -1,11 +1,11 @@
 // Copyright [2026] [Banana.ch SA - Lugano Switzerland]
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.import.efattura.settings
 // @api = 1.0
-// @pubdate = 2026-10-11
+// @pubdate = 2026-11-20
 // @publisher = Banana.ch SA
 // @description = Impostazioni...
 // @description.it = Impostazioni...
@@ -47,6 +47,38 @@ function Settings(banDocument) {
     this.ID_ERR_VERSION_NOTSUPPORTED = "ID_ERR_VERSION_NOTSUPPORTED";
 }
 
+/* versione corrente dei parametri */
+Settings.VERSION = "1.1";
+/* valori del parametro dataRegistrazione */
+Settings.DATA_IMPORTAZIONE = "Data di importazione";
+Settings.DATA_DOCUMENTO = "Data del documento";
+
+/*
+ * Aggiunge un parametro all'elenco mostrato nel dialogo
+*/
+Settings.prototype.addParam = function (convertedParam, param, name, title, type, defaultValue, items) {
+    var currentParam = {};
+    currentParam.name = name;
+    currentParam.title = title;
+    currentParam.type = type;
+    if (type === 'bool') {
+        currentParam.value = param[name] ? true : false;
+    }
+    else {
+        currentParam.value = (param[name] === undefined || param[name] === null) ?
+            (defaultValue === undefined ? '' : defaultValue) : param[name];
+    }
+    if (defaultValue !== undefined)
+        currentParam.defaultvalue = defaultValue;
+    if (items)
+        currentParam.items = items;
+    currentParam.readValue = function () {
+        param[name] = this.value;
+    }
+    convertedParam.data.push(currentParam);
+    return currentParam;
+}
+
 Settings.prototype.convertParam = function (param) {
 
     var convertedParam = {};
@@ -54,65 +86,78 @@ Settings.prototype.convertParam = function (param) {
     /*array dei parametri dello script*/
     convertedParam.data = [];
 
-    var currentParam = {};
-    currentParam.name = 'codiceIva22';
-    currentParam.title = 'Codice IVA aliquota 22%';
-    currentParam.type = 'string';
-    currentParam.value = param.codiceIva22 ? param.codiceIva22 : '';
-    currentParam.readValue = function () {
-        param.codiceIva22 = this.value;
-    }
-    convertedParam.data.push(currentParam);
+    /* ---- codici IVA e contropartite, validi per entrambe le importazioni ---- */
 
-    currentParam = {};
-    currentParam.name = 'codiceIva10';
-    currentParam.title = 'Codice IVA aliquota 10%';
-    currentParam.type = 'string';
-    currentParam.value = param.codiceIva10 ? param.codiceIva10 : '';
-    currentParam.readValue = function () {
-        param.codiceIva10 = this.value;
-    }
-    convertedParam.data.push(currentParam);
+    this.addParam(convertedParam, param, 'tabellaCodiciIva',
+        'Codici IVA e contropartite (una riga per aliquota)', 'multilinestring', '');
 
-    currentParam = {};
-    currentParam.name = 'codiceIva04';
-    currentParam.title = 'Codice IVA aliquota 4%';
-    currentParam.type = 'string';
-    currentParam.value = param.codiceIva04 ? param.codiceIva04 : '';
-    currentParam.readValue = function () {
-        param.codiceIva04 = this.value;
-    }
-    convertedParam.data.push(currentParam);
+    /* ---- fatture elettroniche ---- */
 
-    currentParam = {};
-    currentParam.name = 'contoContanti';
-    currentParam.title = 'Conto contanti';
-    currentParam.type = 'string';
-    currentParam.value = param.contoContanti ? param.contoContanti : '';
-    currentParam.readValue = function () {
-        param.contoContanti = this.value;
-    }
-    convertedParam.data.push(currentParam);
+    this.addParam(convertedParam, param, 'contoContropartitaAcquisti',
+        'Fatture: conto contropartita acquisti (costi)', 'string', '');
 
-    currentParam = {};
-    currentParam.name = 'contoPagamentiElettronici';
-    currentParam.title = 'Conto pagamenti elettronici';
-    currentParam.type = 'string';
-    currentParam.value = param.contoPagamentiElettronici ? param.contoPagamentiElettronici : '';
-    currentParam.readValue = function () {
-        param.contoPagamentiElettronici = this.value;
-    }
-    convertedParam.data.push(currentParam);
+    this.addParam(convertedParam, param, 'contoContropartitaVendite',
+        'Fatture: conto contropartita vendite (ricavi)', 'string', '');
 
-    currentParam = {};
-    currentParam.name = 'contoContropartita';
-    currentParam.title = 'Conto contropartita';
-    currentParam.type = 'string';
-    currentParam.value = param.contoContropartita ? param.contoContropartita : '';
-    currentParam.readValue = function () {
-        param.contoContropartita = this.value;
-    }
-    convertedParam.data.push(currentParam);
+    this.addParam(convertedParam, param, 'dataRegistrazione',
+        'Fatture: data della registrazione', 'combobox', Settings.DATA_IMPORTAZIONE,
+        Array(Settings.DATA_IMPORTAZIONE, Settings.DATA_DOCUMENTO));
+
+    this.addParam(convertedParam, param, 'creaContiMancanti',
+        'Fatture: creare i conti clienti/fornitori mancanti', 'bool', true);
+
+    this.addParam(convertedParam, param, 'gruppoClienti',
+        'Fatture: gruppo clienti (se non indicato nei dati base)', 'string', '');
+
+    this.addParam(convertedParam, param, 'gruppoFornitori',
+        'Fatture: gruppo fornitori (se non indicato nei dati base)', 'string', '');
+
+    this.addParam(convertedParam, param, 'numerazioneClienti',
+        'Fatture: numero iniziale dei conti clienti', 'number', '10000');
+
+    this.addParam(convertedParam, param, 'numerazioneFornitori',
+        'Fatture: numero iniziale dei conti fornitori', 'number', '20000');
+
+    this.addParam(convertedParam, param, 'contoRitenuta',
+        'Fatture: conto ritenuta d\'acconto', 'string', '');
+
+    this.addParam(convertedParam, param, 'contoBollo',
+        'Fatture: conto imposta di bollo', 'string', '');
+
+    this.addParam(convertedParam, param, 'contoCassaPrevidenziale',
+        'Fatture: conto cassa previdenziale', 'string', '');
+
+    this.addParam(convertedParam, param, 'contoArrotondamento',
+        'Fatture: conto arrotondamenti e differenze', 'string', '');
+
+    /* ---- corrispettivi telematici ---- */
+
+    this.addParam(convertedParam, param, 'contoContanti',
+        'Corrispettivi: conto contanti', 'string', '');
+
+    this.addParam(convertedParam, param, 'contoPagamentiElettronici',
+        'Corrispettivi: conto pagamenti elettronici', 'string', '');
+
+    this.addParam(convertedParam, param, 'contoContropartita',
+        'Corrispettivi: conto contropartita (ricavi)', 'string', '[CA]');
+
+    this.addParam(convertedParam, param, 'contoTicket',
+        'Corrispettivi: conto ticket e buoni fatturati a terzi', 'string', '');
+
+    this.addParam(convertedParam, param, 'contoSconti',
+        'Corrispettivi: conto sconti concessi', 'string', '');
+
+    this.addParam(convertedParam, param, 'contoNonRiscosso',
+        'Corrispettivi: conto corrispettivi non riscossi', 'string', '');
+
+    this.addParam(convertedParam, param, 'contoBeniInSospeso',
+        'Corrispettivi: conto acconti e beni in sospeso', 'string', '');
+
+    this.addParam(convertedParam, param, 'contoOmaggi',
+        'Corrispettivi: conto omaggi', 'string', '');
+
+    this.addParam(convertedParam, param, 'codiceIvaVentilazione',
+        'Corrispettivi: codice IVA per la ventilazione', 'string', '');
 
     return convertedParam;
 }
@@ -142,13 +187,42 @@ Settings.prototype.getErrorMessage = function (errorId) {
 
 Settings.prototype.initParam = function () {
     var param = {};
-    param.version = "1.0";
+    param.version = Settings.VERSION;
+
+    /* codici IVA e contropartite per aliquota/natura */
+    param.tabellaCodiciIva = '';
+
+    /* fatture elettroniche */
+    param.contoContropartitaAcquisti = '';
+    param.contoContropartitaVendite = '';
+    param.dataRegistrazione = Settings.DATA_IMPORTAZIONE;
+    param.creaContiMancanti = true;
+    param.gruppoClienti = '';
+    param.gruppoFornitori = '';
+    param.numerazioneClienti = '10000';
+    param.numerazioneFornitori = '20000';
+    param.contoRitenuta = '';
+    param.contoBollo = '';
+    param.contoCassaPrevidenziale = '';
+    param.contoArrotondamento = '';
+
+    /* corrispettivi telematici */
+    param.contoContanti = '';
+    param.contoPagamentiElettronici = '';
+    param.contoContropartita = '[CA]';
+    param.contoTicket = '';
+    param.contoSconti = '';
+    param.contoNonRiscosso = '';
+    param.contoBeniInSospeso = '';
+    param.contoOmaggi = '';
+    param.codiceIvaVentilazione = '';
+
+    /* parametri della versione 1.0, mantenuti per compatibilità:
+       vengono travasati in tabellaCodiciIva dalla migrazione */
     param.codiceIva22 = '';
     param.codiceIva10 = '';
     param.codiceIva04 = '';
-    param.contoContanti = '';
-    param.contoPagamentiElettronici = '';
-    param.contoContropartita = '[CA]'
+
     return param;
 }
 
@@ -208,6 +282,44 @@ Settings.prototype.loadAccountingInfo = function () {
     return accountingInfo;
 }
 
+/*
+ * Converte il testo di tabellaCodiciIva in un oggetto.
+ * Ogni riga ha la forma CHIAVE=codiceIva[,contropartita], dove CHIAVE è il
+ * segnaposto generato dalle estensioni senza le parentesi quadre:
+ * la lettera A per gli acquisti o V per le vendite, l'aliquota con due decimali
+ * e, se presente, il codice natura separato da _ . Per esempio:
+ *   A22.00=M22
+ *   V22.00=V22,3000
+ *   A0.00_N6.1=M22-RC,6000
+ * Le righe vuote e quelle che iniziano con # o // vengono ignorate.
+*/
+Settings.prototype.parseVatTable = function (param) {
+    var table = {};
+    if (!param || !param.tabellaCodiciIva)
+        return table;
+    var lines = String(param.tabellaCodiciIva).split(/[\r\n]+/);
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (line.length <= 0 || line.indexOf('#') === 0 || line.indexOf('//') === 0)
+            continue;
+        var pos = line.indexOf('=');
+        if (pos <= 0)
+            continue;
+        var key = line.substring(0, pos).trim().toUpperCase();
+        //la chiave può essere indicata anche tra parentesi quadre
+        key = key.replace(/^\[/, '').replace(/\]$/, '');
+        if (key.length <= 0)
+            continue;
+        var value = line.substring(pos + 1).trim();
+        var parts = value.split(',');
+        table[key] = {
+            "vatCode": parts[0] ? parts[0].trim() : '',
+            "account": parts.length > 1 && parts[1] ? parts[1].trim() : ''
+        };
+    }
+    return table;
+}
+
 Settings.prototype.showDialog = function () {
     if (!this.verifyBananaVersion())
         return false;
@@ -217,7 +329,7 @@ Settings.prototype.showDialog = function () {
 
     var param = this.initParam();
     var savedParam = Banana.document.getScriptSettings("import_efattura");
-    if (savedParam.length > 0) {
+    if (savedParam && savedParam.length > 0) {
         param = JSON.parse(savedParam);
         param = this.verifyParam(param);
     }
@@ -237,28 +349,54 @@ Settings.prototype.showDialog = function () {
     return true;
 }
 
+/*
+ * Porta i parametri della versione 1.0 alla versione corrente:
+ * i tre codici IVA per aliquota diventano righe di tabellaCodiciIva.
+ * Erano usati soltanto dai corrispettivi, che sono sempre vendite,
+ * quindi vengono convertiti in chiavi con il prefisso V.
+*/
+Settings.prototype.migrateParam = function (param) {
+    var lines = [];
+    if (param.tabellaCodiciIva)
+        lines.push(String(param.tabellaCodiciIva).trim());
+    var legacy = [
+        { "name": 'codiceIva22', "key": 'V22.00' },
+        { "name": 'codiceIva10', "key": 'V10.00' },
+        { "name": 'codiceIva04', "key": 'V4.00' }
+    ];
+    for (var i = 0; i < legacy.length; i++) {
+        var code = param[legacy[i].name];
+        if (code && String(code).trim().length > 0)
+            lines.push(legacy[i].key + "=" + String(code).trim());
+    }
+    param.tabellaCodiciIva = lines.join("\n");
+    param.version = Settings.VERSION;
+    return param;
+}
+
 Settings.prototype.verifyParam = function (param) {
-    if (!param || !param.version || param.version != "1.0") {
+    if (!param || !param.version)
         return this.initParam();
+
+    if (param.version === "1.0")
+        param = this.migrateParam(param);
+
+    if (param.version !== Settings.VERSION)
+        return this.initParam();
+
+    //completa i parametri mancanti con i valori predefiniti
+    var defaults = this.initParam();
+    for (var name in defaults) {
+        if (name === 'version')
+            continue;
+        if (param[name] === undefined || param[name] === null)
+            param[name] = defaults[name];
     }
 
-    if (!param.codiceIva22)
-        param.codiceIva22 = '';
+    if (param.dataRegistrazione !== Settings.DATA_DOCUMENTO)
+        param.dataRegistrazione = Settings.DATA_IMPORTAZIONE;
 
-    if (!param.codiceIva10)
-        param.codiceIva10 = '';
-
-    if (!param.codiceIva04)
-        param.codiceIva04 = '';
-
-    if (!param.contoContanti)
-        param.contoContanti = '';
-
-    if (!param.contoPagamentiElettronici)
-        param.contoPagamentiElettronici = '';
-
-    if (!param.contoContropartita)
-        param.contoContropartita = '[CA]'
+    param.creaContiMancanti = param.creaContiMancanti ? true : false;
 
     return param;
 }

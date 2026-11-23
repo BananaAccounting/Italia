@@ -93,6 +93,8 @@ function EFatturaImport(banDocument) {
     this.supplierIdCounter = 20000;
     // elenco numeri fatture già registrate per controllare i duplicati
     this.docInvoices = [];
+    //codici IVA e contropartite per aliquota, dalle impostazioni
+    this.vatTable = {};
     //parametri che l'utente può modificare tramite dialogo
     this.initParam();
 }
@@ -153,6 +155,13 @@ EFatturaImport.prototype.createJsonDocument_AddAccount = function (jsonDoc, xmlR
     let operationName = "";
     var accountId = this.getAccountId(accountNode, isCustomer);
     if (accountId.length <= 0) {
+        if (!this.param.creaContiMancanti) {
+            this.message("Il " + (isCustomer ? "cliente" : "fornitore") +
+                " del file " + srcFileName + " non è presente nella tabella Conti e " +
+                "la creazione automatica dei conti è disattivata nelle impostazioni: " +
+                "documento non importato.");
+            return "";
+        }
         accountId = this.getAccountIdNew(isCustomer);
         operationName = "add";
     }
@@ -336,6 +345,9 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
     if (!this.accounts[accountId])
         return 0;
     let isCustomer = this.accounts[accountId].isCustomer;
+    //conto contropartita impostato dall'utente; il valore predefinito è il
+    //segnaposto [CA], che può essere sostituito tramite rules.json
+    var contoContropartita = this.getContropartita(isCustomer);
     var invoiceNode = xmlRoot.firstChildElement('FatturaElettronicaBody');
     var totTransactions = 0;
     while (invoiceNode) {
@@ -370,13 +382,20 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
 
         var d = new Date();
         var dataOggi = d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2);
+        //data della registrazione: di norma la data di importazione,
+        //su richiesta la data del documento
+        var dataRegistrazione = dataOggi;
+        if (this.param.dataRegistrazione === Settings.DATA_DOCUMENTO)
+            dataRegistrazione = dataFattura;
+        //somma di imponibili e imposte dei riepiloghi, per il controllo di quadratura
+        var totaleRiepiloghi = "0.00";
 
         var row = {};
         row.operation = {};
         row.operation.name = "add";
         row.operation.srcFileName = srcFileName;
         row.fields = {};
-        row.fields["Date"] = dataOggi;
+        row.fields["Date"] = dataRegistrazione;
         row.fields["DateDocument"] = dataFattura;
         row.fields["Doc"] = noFattura;
         row.fields["DocInvoice"] = noFattura;
@@ -429,7 +448,7 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
             row.operation.sequence = "";
             row.operation.srcFileName = srcFileName;
             row.fields = {};
-            row.fields["Date"] = dataOggi;
+            row.fields["Date"] = dataRegistrazione;
             row.fields["DateDocument"] = dataFattura;
             row.fields["Doc"] = noFattura;
             row.fields["DocInvoice"] = noFattura;
@@ -445,21 +464,40 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
            */
             var taxableAmount = datiRiepilogoNode.firstChildElement('ImponibileImporto').text.trim();
             var signTaxableAmount = Banana.SDecimal.sign(taxableAmount);
+
+            var vatRate = "";
+            var codiceNatura = "";
+            if (datiRiepilogoNode.firstChildElement('AliquotaIVA'))
+                vatRate = datiRiepilogoNode.firstChildElement('AliquotaIVA').text;
+            if (datiRiepilogoNode.firstChildElement('Natura'))
+                codiceNatura = datiRiepilogoNode.firstChildElement('Natura').text;
+            //codice IVA e contropartita indicati nelle impostazioni per questa
+            //aliquota/natura; in mancanza restano il segnaposto e il conto generale
+            var vatInfo = this.getVatCodeInfo(accountId, vatRate, codiceNatura);
+            var contoRiga = vatInfo.account ? vatInfo.account : contoContropartita;
+
+            //somma dei riepiloghi (imponibile + imposta) prima di invertire gli importi
+            var vatAmount = "0";
+            if (datiRiepilogoNode.firstChildElement('Imposta'))
+                vatAmount = datiRiepilogoNode.firstChildElement('Imposta').text.trim();
+            totaleRiepiloghi = Banana.SDecimal.add(totaleRiepiloghi,
+                Banana.SDecimal.add(taxableAmount, vatAmount));
+
             if (this.accountingInfo.isDoubleEntry) {
                 if (signTaxableAmount >= 0) {
                     if (isCustomer) {
-                        row.fields["AccountCredit"] = "[CA]";
+                        row.fields["AccountCredit"] = contoRiga;
                     }
                     else {
-                        row.fields["AccountDebit"] = "[CA]";
+                        row.fields["AccountDebit"] = contoRiga;
                     }
                 }
                 else {
                     if (isCustomer) {
-                        row.fields["AccountDebit"] = "[CA]";
+                        row.fields["AccountDebit"] = contoRiga;
                     }
                     else {
-                        row.fields["AccountCredit"] = "[CA]";
+                        row.fields["AccountCredit"] = contoRiga;
                     }
                     taxableAmount = Banana.SDecimal.invert(taxableAmount);
                 }
@@ -473,22 +511,16 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
             }
             else {
                 if (signTaxableAmount >= 0) {
-                    row.fields["Account"] = "[CA]";
+                    row.fields["Account"] = contoRiga;
                     row.fields["Expenses"] = taxableAmount;
                 }
                 else {
-                    row.fields["Account"] = "[CA]";
+                    row.fields["Account"] = contoRiga;
                     row.fields["Income"] = Banana.SDecimal.invert(taxableAmount);
                 }
             }
 
-            var vatRate = "";
-            var codiceNatura = "";
-            if (datiRiepilogoNode.firstChildElement('AliquotaIVA'))
-                vatRate = datiRiepilogoNode.firstChildElement('AliquotaIVA').text;
-            if (datiRiepilogoNode.firstChildElement('Natura'))
-                codiceNatura = datiRiepilogoNode.firstChildElement('Natura').text;
-            var vatCode = this.getVatCode(accountId, vatRate, codiceNatura);
+            var vatCode = vatInfo.vatCode;
             if (signTaxableAmount < 0)
                 vatCode = "-" + vatCode;
             row.fields["VatCode"] = vatCode;
@@ -501,6 +533,42 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
             datiRiepilogoNode = datiRiepilogoNode.nextSiblingElement('DatiRiepilogo');
             totTransactions++;
         }
+
+        //Il totale del documento può non coincidere con la somma dei riepiloghi IVA:
+        //ritenuta d'acconto, imposta di bollo, cassa previdenziale, sconti e
+        //arrotondamenti non sono compresi nei dati di riepilogo. La differenza viene
+        //registrata sul conto indicato nelle impostazioni, così la registrazione
+        //quadra; se il conto non è indicato viene soltanto segnalata.
+        //Il caso di totale negativo non viene trattato, per non alterare l'inversione
+        //dei conti fatta sopra.
+        if (totTransactions > 0 && signTotalAmount >= 0 && totalAmount.length > 0) {
+            var differenza = Banana.SDecimal.subtract(totalAmount, totaleRiepiloghi);
+            if (Banana.SDecimal.compare(differenza, "0") !== 0) {
+                var caso = this.getContoDifferenza(datiGeneraliDocumento);
+                if (caso.account) {
+                    //se il totale supera i riepiloghi la differenza va sul lato
+                    //della contropartita, altrimenti su quello del cliente/fornitore
+                    var differenzaSulLatoContropartita = Banana.SDecimal.compare(differenza, "0") > 0;
+                    var importoDifferenza = differenzaSulLatoContropartita ?
+                        differenza : Banana.SDecimal.invert(differenza);
+                    var isDebit = differenzaSulLatoContropartita ? !isCustomer : isCustomer;
+                    this.addDifferenceRow(jsonDoc, {
+                        "srcFileName": srcFileName,
+                        "date": dataRegistrazione,
+                        "dateDocument": dataFattura,
+                        "doc": noFattura,
+                        "description": description + " - " + caso.label
+                    }, caso.account, importoDifferenza, isDebit, divisa);
+                }
+                else {
+                    this.message("Il totale del documento " + noFattura + " (" + srcFileName +
+                        ") differisce di " + differenza + " dalla somma dei riepiloghi IVA (" +
+                        caso.label + "): indicare il " + caso.parametro +
+                        " nelle impostazioni, oppure completare la registrazione a mano.");
+                }
+            }
+        }
+
         invoiceNode = invoiceNode.nextSiblingElement('FatturaElettronicaBody');
     }
     return totTransactions;
@@ -652,6 +720,13 @@ EFatturaImport.prototype.getAccountIdNew = function (isCustomer) {
         else if (this.accountingInfo.suppliersGroup > 0 && !isCustomer) {
             gr = this.accountingInfo.suppliersGroup;
         }
+        else if (isCustomer && this.param.gruppoClienti) {
+            //gruppo indicato nelle impostazioni
+            gr = this.param.gruppoClienti;
+        }
+        else if (!isCustomer && this.param.gruppoFornitori) {
+            gr = this.param.gruppoFornitori;
+        }
         else {
             //crea il gruppo clienti/fornitori se non esiste
             /*var tableAccounts = this.banDocument.table('Accounts');
@@ -704,10 +779,18 @@ EFatturaImport.prototype.getAccountIdNew = function (isCustomer) {
 }
 
 EFatturaImport.prototype.getVatCode = function (accountId, vatRate, codiceNatura) {
+    return this.getVatCodeInfo(accountId, vatRate, codiceNatura).vatCode;
+}
 
-    //crea un codice IVA fittizio che può essere aggiornato tramite rules.json
-    //il codice IVA è composto dall'aliquota e dal codice natura, ad esempio [A0_N2] per acquisti 0% codice natura N2
-    //è incluso tra parentesi quadre, in modo che non dia errore nel caso non venga sostituito da rules.json
+/*
+ * Ritorna il codice IVA e l'eventuale contropartita da usare per un riepilogo.
+ * Se nelle impostazioni è presente una riga per questa aliquota/natura si usano
+ * i valori indicati, altrimenti si crea un codice IVA fittizio che può essere
+ * aggiornato tramite rules.json: il codice è composto dall'aliquota e dal codice
+ * natura, ad esempio [A0.00_N2] per acquisti 0% codice natura N2, ed è incluso
+ * tra parentesi quadre in modo che non dia errore nel caso non venga sostituito.
+*/
+EFatturaImport.prototype.getVatCodeInfo = function (accountId, vatRate, codiceNatura) {
     let isCustomer = this.accounts[accountId].isCustomer;
     let vatCode = Banana.SDecimal.round(vatRate, { 'decimals': 2 });
     if (codiceNatura.length > 0) {
@@ -715,10 +798,112 @@ EFatturaImport.prototype.getVatCode = function (accountId, vatRate, codiceNatura
     }
     //V=IVA sulle vendite, A=IVA sugli acquisti
     if (isCustomer)
-        vatCode = "[V" + vatCode + "]";
+        vatCode = "V" + vatCode;
     else
-        vatCode = "[A" + vatCode + "]";
-    return vatCode;
+        vatCode = "A" + vatCode;
+
+    var entry = this.vatTable[vatCode.toUpperCase()];
+    if (entry && entry.vatCode)
+        return { "vatCode": entry.vatCode, "account": entry.account };
+
+    return { "vatCode": "[" + vatCode + "]", "account": entry ? entry.account : "" };
+}
+
+/*
+ * Conto contropartita per i ricavi (fatture emesse) o per i costi (fatture
+ * ricevute). In mancanza si usa il conto contropartita generale e, se anche
+ * quello non è indicato, il segnaposto [CA].
+*/
+EFatturaImport.prototype.getContropartita = function (isCustomer) {
+    var conto = isCustomer ? this.param.contoContropartitaVendite : this.param.contoContropartitaAcquisti;
+    if (!conto)
+        conto = this.param.contoContropartita;
+    if (!conto)
+        conto = "[CA]";
+    return conto;
+}
+
+/*
+ * Stabilisce su quale conto registrare la differenza tra il totale del documento
+ * e la somma dei riepiloghi IVA, in base ai blocchi dichiarati nella fattura.
+*/
+EFatturaImport.prototype.getContoDifferenza = function (datiGeneraliDocumento) {
+    var casi = [
+        {
+            "node": 'DatiRitenuta', "account": this.param.contoRitenuta,
+            "label": "ritenuta d'acconto", "parametro": "conto ritenuta d'acconto"
+        },
+        {
+            "node": 'DatiBollo', "account": this.param.contoBollo,
+            "label": "imposta di bollo", "parametro": "conto imposta di bollo"
+        },
+        {
+            "node": 'DatiCassaPrevidenziale', "account": this.param.contoCassaPrevidenziale,
+            "label": "cassa previdenziale", "parametro": "conto cassa previdenziale"
+        },
+        {
+            "node": 'Arrotondamento', "account": this.param.contoArrotondamento,
+            "label": "arrotondamento", "parametro": "conto arrotondamenti e differenze"
+        }
+    ];
+    var presenti = [];
+    for (var i = 0; i < casi.length; i++) {
+        if (datiGeneraliDocumento.firstChildElement(casi[i].node))
+            presenti.push(casi[i]);
+    }
+    if (presenti.length === 1)
+        return presenti[0];
+    //più casistiche insieme, oppure nessuna dichiarata: si usa il conto differenze
+    return {
+        "account": this.param.contoArrotondamento,
+        "label": presenti.length > 1 ? "ritenute, bolli e altre somme" : "differenza",
+        "parametro": "conto arrotondamenti e differenze"
+    };
+}
+
+/*
+ * Aggiunge la riga che porta a quadratura la registrazione
+*/
+EFatturaImport.prototype.addDifferenceRow = function (jsonDoc, rowData, conto, amount, isDebit, divisa) {
+    var row = {};
+    row.operation = {};
+    row.operation.name = "add";
+    row.operation.sequence = "";
+    row.operation.srcFileName = rowData.srcFileName;
+    row.fields = {};
+    row.fields["Date"] = rowData.date;
+    row.fields["DateDocument"] = rowData.dateDocument;
+    row.fields["Doc"] = rowData.doc;
+    row.fields["DocInvoice"] = rowData.doc;
+    row.fields["Description"] = rowData.description;
+    if (this.accountingInfo.isDoubleEntry) {
+        if (isDebit)
+            row.fields["AccountDebit"] = conto;
+        else
+            row.fields["AccountCredit"] = conto;
+        if (this.accountingInfo.multiCurrency) {
+            row.fields["AmountCurrency"] = amount;
+            row.fields["ExchangeCurrency"] = divisa;
+        }
+        else {
+            row.fields["Amount"] = amount;
+        }
+    }
+    else {
+        row.fields["Account"] = conto;
+        if (isDebit)
+            row.fields["Expenses"] = amount;
+        else
+            row.fields["Income"] = amount;
+    }
+    var rowLists = jsonDoc.document.dataUnits["1"].data.rowLists[0];
+    var index = parseInt(rowLists.rows.length);
+    rowLists.rows[index.toString()] = row;
+}
+
+EFatturaImport.prototype.message = function (msg) {
+    if (this.banDocument && this.banDocument.addMessage)
+        this.banDocument.addMessage(msg);
 }
 
 EFatturaImport.prototype.initParam = function (param) {
@@ -756,6 +941,13 @@ EFatturaImport.prototype.isCustomer = function (invoiceNode) {
 EFatturaImport.prototype.load = function () {
     var settings = new Settings(this.banDocument);
     this.accountingInfo = settings.loadAccountingInfo();
+    //codici IVA e contropartite per aliquota, dalle impostazioni
+    this.vatTable = settings.parseVatTable(this.param);
+    //numerazione iniziale dei conti, se indicata nelle impostazioni
+    if (parseInt(this.param.numerazioneClienti) > 0)
+        this.customerIdCounter = parseInt(this.param.numerazioneClienti);
+    if (parseInt(this.param.numerazioneFornitori) > 0)
+        this.supplierIdCounter = parseInt(this.param.numerazioneFornitori);
     this.loadAccounts();
     this.loadExistingInvoices();
     /*Banana.console.log("---------------- accounts ---------------- ");
