@@ -59,7 +59,7 @@ Settings.DATA_DOCUMENTO = "Data del documento";
  * I gruppi sono elementi non modificabili utilizzati
  * come contenitori per i parametri figli.
  */
-Settings.prototype.addGroup = function (convertedParam, name, title, collapse) {
+Settings.prototype.addGroup = function (convertedParam, name, title, collapse, parentObject) {
     var group = {};
 
     group.name = name;
@@ -68,6 +68,9 @@ Settings.prototype.addGroup = function (convertedParam, name, title, collapse) {
     group.value = '';
     group.editable = false;
     group.collapse = collapse === true;
+
+    if (parentObject)
+        group.parentObject = parentObject;
 
     // Il gruppo non corrisponde a un parametro da salvare.
     group.readValue = function () {};
@@ -146,6 +149,11 @@ Settings.prototype.addParam = function (
 /*
  * Converte i parametri per il PropertyEditor.
  */
+
+/*
+ * Converte i parametri per il PropertyEditor.
+ * I conti sono raggruppati per funzione contabile.
+ */
 Settings.prototype.convertParam = function (param) {
 
     var convertedParam = {
@@ -153,38 +161,29 @@ Settings.prototype.convertParam = function (param) {
         data: []
     };
 
-    //propone i gruppi clienti/fornitori impostati nel piano dei conti
+    // Propone i gruppi clienti/fornitori impostati nel piano dei conti.
     var accountingInfo = this.loadAccountingInfo();
-    if (!param.gruppoClienti || !param.gruppoFornitori) {
-        if (!param.gruppoClienti)
-            param.gruppoClienti = accountingInfo.customersGroup || '';
 
-        if (!param.gruppoFornitori)
-            param.gruppoFornitori = accountingInfo.suppliersGroup || '';
-    }
+    if (!param.gruppoClienti)
+        param.gruppoClienti = accountingInfo.customersGroup || '';
+
+    if (!param.gruppoFornitori)
+        param.gruppoFornitori = accountingInfo.suppliersGroup || '';
+
 
     // =====================================================
     // GENERALE
     // =====================================================
 
-    this.addGroup(
-        convertedParam,
-        'generale',
-        'Generale',
-        false
-    );
+    this.addGroup(convertedParam, 'generale', 'Generale', false);
 
     this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
         'dataRegistrazione',
         'Data di registrazione',
         'combobox',
         Settings.DATA_IMPORTAZIONE,
-        [
-            Settings.DATA_IMPORTAZIONE,
-            Settings.DATA_DOCUMENTO
-        ],
+        [Settings.DATA_IMPORTAZIONE, Settings.DATA_DOCUMENTO],
         'generale',
         'Data utilizzata nella colonna Data delle registrazioni.\n'
         + 'Data di importazione: giorno in cui si importa il file XML.\n'
@@ -198,21 +197,23 @@ Settings.prototype.convertParam = function (param) {
     // =====================================================
 
     this.addGroup(
-        convertedParam,
-        'fatture',
-        'Fatture elettroniche',
-        false
+        convertedParam, 'fatture', 'Fatture elettroniche', false
+    );
+
+    // Associazioni IVA
+    this.addGroup(
+        convertedParam, 'ivaFatture',
+        'Associazioni IVA', false, 'fatture'
     );
 
     this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
         'tabellaCodiciIvaFatture',
         'Associazione codici IVA e conti',
         'multilinestring',
         '',
         null,
-        'fatture',
+        'ivaFatture',
         'Associa le aliquote e le nature IVA delle fatture elettroniche '
         + 'ai codici IVA di Banana e, facoltativamente, ai conti contropartita.\n'
         + 'Le chiavi A identificano gli acquisti, le chiavi V le vendite.\n'
@@ -225,147 +226,154 @@ Settings.prototype.convertParam = function (param) {
         + '[A0.00_N6.1]=B22-RC,6000'
     );
 
-    this.addParam(
-        convertedParam,
-        param,
-        'contoContropartitaAcquisti',
-        'Conto acquisti',
-        'string',
-        '[CONTO_ACQUISTI]',
-        null,
-        'fatture',
-        'Conto di costo utilizzato come contropartita '
-        + 'per le fatture di acquisto.'
+    // Conti patrimoniali
+    this.addGroup(
+        convertedParam, 'patrimonialiFatture',
+        'Conti patrimoniali', false, 'fatture'
     );
 
     this.addParam(
-        convertedParam,
-        param,
-        'contoContropartitaVendite',
-        'Conto vendite',
-        'string',
-        '[CONTO_VENDITE]',
-        null,
-        'fatture',
-        'Conto di ricavo utilizzato come contropartita '
-        + 'per le fatture di vendita.'
-    );
-
-    this.addParam(
-        convertedParam,
-        param,
-        'creaContiMancanti',
-        'Crea clienti e fornitori mancanti',
-        'bool',
-        true,
-        null,
-        'fatture',
-        'Crea automaticamente i conti clienti e fornitori '
-        + 'che non sono ancora presenti nel piano dei conti.'
-    );
-
-    this.addParam(
-        convertedParam,
-        param,
-        'gruppoClienti',
-        'Gruppo clienti',
-        'string',
-        accountingInfo.customersGroup || '',
-        null,
-        'fatture',
-        'Gruppo in cui inserire i nuovi conti clienti, '
-        + 'se non specificato nei dati base.'
-    );
-
-    this.addParam(
-        convertedParam,
-        param,
-        'gruppoFornitori',
-        'Gruppo fornitori',
-        'string',
-        accountingInfo.suppliersGroup || '',
-        null,
-        'fatture',
-        'Gruppo in cui inserire i nuovi conti fornitori, '
-        + 'se non specificato nei dati base.'
-    );
-
-    this.addParam(
-        convertedParam,
-        param,
-        'numerazioneClienti',
-        'Numerazione iniziale clienti',
-        'number',
-        '10000',
-        null,
-        'fatture',
-        'Numero iniziale utilizzato per la creazione '
-        + 'automatica dei nuovi conti clienti.'
-    );
-
-    this.addParam(
-        convertedParam,
-        param,
-        'numerazioneFornitori',
-        'Numerazione iniziale fornitori',
-        'number',
-        '20000',
-        null,
-        'fatture',
-        'Numero iniziale utilizzato per la creazione '
-        + 'automatica dei nuovi conti fornitori.'
-    );
-
-    this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
         'contoRitenuta',
         'Conto ritenute d\'acconto',
         'string',
-        '[CONTO_RITENUTE_ACCONTO]',
+        '[RITENUTE_ACCONTO]',
         null,
-        'fatture',
+        'patrimonialiFatture',
         'Conto utilizzato per contabilizzare '
         + 'le ritenute d\'acconto presenti nelle fatture.'
     );
 
     this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
         'contoBollo',
         'Conto imposta di bollo',
         'string',
-        '[CONTO_IMPOSTA_BOLLO]',
+        '[IMPOSTA_BOLLO]',
         null,
-        'fatture',
+        'patrimonialiFatture',
         'Conto utilizzato per gli importi relativi '
         + 'all\'imposta di bollo indicata nelle fatture.'
     );
 
     this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
         'contoCassaPrevidenziale',
         'Conto cassa previdenziale',
         'string',
-        '[CONTO_CASSA_PREVIDENZIALE]',
+        '[CASSA_PREVIDENZIALE]',
         null,
-        'fatture',
+        'patrimonialiFatture',
         'Conto utilizzato per i contributi '
         + 'della cassa previdenziale presenti nelle fatture.'
     );
 
+    // Conti economici
+    this.addGroup(
+        convertedParam, 'economiciFatture',
+        'Conti economici', false, 'fatture'
+    );
+
     this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
+        'contoContropartitaAcquisti',
+        'Contropartita acquisti',
+        'string',
+        '[ACQUISTI]',
+        null,
+        'economiciFatture',
+        'Conto di costo utilizzato come contropartita '
+        + 'per le fatture di acquisto.'
+    );
+
+    this.addParam(
+        convertedParam, param,
+        'contoContropartitaVendite',
+        'Contropartita vendite',
+        'string',
+        '[VENDITE]',
+        null,
+        'economiciFatture',
+        'Conto di ricavo utilizzato come contropartita '
+        + 'per le fatture di vendita.'
+    );
+
+    this.addParam(
+        convertedParam, param,
         'contoArrotondamento',
         'Conto differenze e arrotondamenti',
         'string',
-        '[CONTO_ARROTONDAMENTO]',
+        '[ARROTONDAMENTO]',
         null,
-        'fatture',
+        'economiciFatture',
         'Conto utilizzato per contabilizzare eventuali '
         + 'differenze e arrotondamenti.'
+    );
+
+    // Clienti e fornitori
+    this.addGroup(
+        convertedParam, 'clientiFornitori',
+        'Clienti e fornitori', false, 'fatture'
+    );
+
+    this.addParam(
+        convertedParam, param,
+        'creaContiMancanti',
+        'Crea clienti e fornitori mancanti',
+        'bool',
+        true,
+        null,
+        'clientiFornitori',
+        'Crea automaticamente i conti clienti e fornitori '
+        + 'che non sono ancora presenti nel piano dei conti.'
+    );
+
+    this.addParam(
+        convertedParam, param,
+        'gruppoClienti',
+        'Gruppo clienti',
+        'string',
+        accountingInfo.customersGroup || '',
+        null,
+        'clientiFornitori',
+        'Gruppo in cui inserire i nuovi conti clienti, '
+        + 'se non specificato nei dati base.'
+    );
+
+    this.addParam(
+        convertedParam, param,
+        'gruppoFornitori',
+        'Gruppo fornitori',
+        'string',
+        accountingInfo.suppliersGroup || '',
+        null,
+        'clientiFornitori',
+        'Gruppo in cui inserire i nuovi conti fornitori, '
+        + 'se non specificato nei dati base.'
+    );
+
+    this.addParam(
+        convertedParam, param,
+        'numerazioneClienti',
+        'Numerazione iniziale clienti',
+        'number',
+        '10000',
+        null,
+        'clientiFornitori',
+        'Numero iniziale utilizzato per la creazione '
+        + 'automatica dei nuovi conti clienti.'
+    );
+
+    this.addParam(
+        convertedParam, param,
+        'numerazioneFornitori',
+        'Numerazione iniziale fornitori',
+        'number',
+        '20000',
+        null,
+        'clientiFornitori',
+        'Numero iniziale utilizzato per la creazione '
+        + 'automatica dei nuovi conti fornitori.'
     );
 
 
@@ -374,21 +382,24 @@ Settings.prototype.convertParam = function (param) {
     // =====================================================
 
     this.addGroup(
-        convertedParam,
-        'corrispettivi',
-        'Corrispettivi telematici',
-        false
+        convertedParam, 'corrispettivi',
+        'Corrispettivi telematici', false
+    );
+
+    // Associazioni IVA
+    this.addGroup(
+        convertedParam, 'ivaCorrispettivi',
+        'Associazioni IVA', false, 'corrispettivi'
     );
 
     this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
         'tabellaCodiciIvaCorrispettivi',
         'Associazione codici IVA e conti',
         'multilinestring',
         '',
         null,
-        'corrispettivi',
+        'ivaCorrispettivi',
         'Associa le aliquote e le nature IVA dei corrispettivi '
         + 'ai codici IVA di Banana e, facoltativamente, ai conti ricavi.\n'
         + 'Formato: Chiave=CodiceIVA[,Conto]\n'
@@ -399,123 +410,126 @@ Settings.prototype.convertParam = function (param) {
     );
 
     this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
+        'codiceIvaVentilazione',
+        'Codice IVA per ventilazione',
+        'string',
+        '[COD_IVA_VENTILAZIONE]',
+        null,
+        'ivaCorrispettivi',
+        'Codice IVA utilizzato per i corrispettivi '
+        + 'soggetti a ventilazione IVA.'
+    );
+
+    // Conti patrimoniali
+    this.addGroup(
+        convertedParam, 'patrimonialiCorrispettivi',
+        'Conti patrimoniali', false, 'corrispettivi'
+    );
+
+    this.addParam(
+        convertedParam, param,
         'contoContanti',
         'Conto contanti',
         'string',
-        '[CONTO_CONTANTI]',
+        '[CONTANTI]',
         null,
-        'corrispettivi',
+        'patrimonialiCorrispettivi',
         'Conto utilizzato per gli incassi in contanti.'
     );
 
     this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
         'contoPagamentiElettronici',
         'Conto pagamenti elettronici',
         'string',
-        '[CONTO_PAG_ELETTRONICI]',
+        '[PAGAMENTI_ELETTRONICI]',
         null,
-        'corrispettivi',
+        'patrimonialiCorrispettivi',
         'Conto utilizzato per gli incassi tramite '
         + 'carte di pagamento e altri strumenti elettronici.'
     );
 
     this.addParam(
-        convertedParam,
-        param,
-        'contoContropartita',
-        'Conto ricavi',
-        'string',
-        '[CA]',
-        null,
-        'corrispettivi',
-        'Conto di ricavo utilizzato come contropartita '
-        + 'per la registrazione dei corrispettivi.'
-    );
-
-    this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
         'contoTicket',
         'Conto ticket e buoni pasto',
         'string',
-        '[CONTO_TICKET]',
+        '[TICKET]',
         null,
-        'corrispettivi',
+        'patrimonialiCorrispettivi',
         'Conto utilizzato per i corrispettivi pagati '
         + 'con ticket e buoni fatturati a terzi.'
     );
 
     this.addParam(
-        convertedParam,
-        param,
-        'contoSconti',
-        'Conto sconti concessi',
-        'string',
-        '[CONTO_SCONTI]',
-        null,
-        'corrispettivi',
-        'Conto utilizzato per contabilizzare '
-        + 'gli sconti concessi.'
-    );
-
-    this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
         'contoNonRiscosso',
         'Conto corrispettivi non riscossi',
         'string',
-        '[CONTO_NON_RISCOSSO]',
+        '[NON_RISCOSSO]',
         null,
-        'corrispettivi',
+        'patrimonialiCorrispettivi',
         'Conto utilizzato per i corrispettivi '
         + 'non ancora riscossi.'
     );
 
     this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
         'contoBeniInSospeso',
         'Conto acconti e beni in sospeso',
         'string',
-        '[CONTO_ACCONTI]',
+        '[ACCONTI]',
         null,
-        'corrispettivi',
+        'patrimonialiCorrispettivi',
         'Conto utilizzato per gli acconti '
         + 'e i beni in sospeso.'
     );
 
+    // Conti economici
+    this.addGroup(
+        convertedParam, 'economiciCorrispettivi',
+        'Conti economici', false, 'corrispettivi'
+    );
+
     this.addParam(
-        convertedParam,
-        param,
+        convertedParam, param,
+        'contoContropartita',
+        'Contropartita ricavi',
+        'string',
+        '[RICAVI]',
+        null,
+        'economiciCorrispettivi',
+        'Conto di ricavo utilizzato come contropartita '
+        + 'per la registrazione dei corrispettivi.'
+    );
+
+    this.addParam(
+        convertedParam, param,
+        'contoSconti',
+        'Conto sconti concessi',
+        'string',
+        '[SCONTI]',
+        null,
+        'economiciCorrispettivi',
+        'Conto utilizzato per contabilizzare '
+        + 'gli sconti concessi.'
+    );
+
+    this.addParam(
+        convertedParam, param,
         'contoOmaggi',
         'Conto omaggi',
         'string',
-        '[CONTO_OMAGGI]',
+        '[OMAGGI]',
         null,
-        'corrispettivi',
+        'economiciCorrispettivi',
         'Conto utilizzato per la contabilizzazione '
         + 'degli omaggi.'
     );
 
-    this.addParam(
-        convertedParam,
-        param,
-        'codiceIvaVentilazione',
-        'Codice IVA per ventilazione',
-        'string',
-        '[CV]',
-        null,
-        'corrispettivi',
-        'Codice IVA utilizzato per i corrispettivi '
-        + 'soggetti a ventilazione IVA.'
-    );
-
     return convertedParam;
-}
+};
 
 Settings.prototype.getErrorMessage = function (errorId) {
     //Document language

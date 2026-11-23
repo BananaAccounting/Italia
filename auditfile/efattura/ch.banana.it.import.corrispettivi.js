@@ -708,10 +708,11 @@ CorrispettiviImport.prototype.getVatCode = function (aliquota, natura) {
 };
 
 /*
- * Cerca il codice IVA e l'eventuale contropartita nella tabella delle
- * impostazioni; se non c'è ritorna il segnaposto, che può essere sostituito
- * tramite rules.json. I corrispettivi sono sempre vendite: prefisso V.
-*/
+ * Cerca il codice IVA e l'eventuale conto nella tabella delle impostazioni.
+ * Se non trova un'associazione, restituisce un segnaposto tra parentesi
+ * quadre, che l'utente può configurare nelle impostazioni.
+ * I corrispettivi utilizzano il prefisso C.
+ */
 
 CorrispettiviImport.prototype.getVatCodeInfo = function (aliquota, natura) {
     var rate = parseFloat(String(aliquota || "").replace(",", "."));

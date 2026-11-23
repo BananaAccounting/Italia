@@ -346,8 +346,8 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
     if (!this.accounts[accountId])
         return 0;
     let isCustomer = this.accounts[accountId].isCustomer;
-    //conto contropartita impostato dall'utente; il valore predefinito è il
-    //segnaposto [CA], che può essere sostituito tramite rules.json
+    //Conto contropartita definito nelle impostazioni.
+    //Se non configurato, viene utilizzato il segnaposto predefinito.
     var contoContropartita = this.getContropartita(isCustomer);
     var invoiceNode = xmlRoot.firstChildElement('FatturaElettronicaBody');
     var totTransactions = 0;
@@ -820,7 +820,8 @@ EFatturaImport.prototype.getVatCode = function (accountId, vatRate, codiceNatura
  * Ritorna il codice IVA e l'eventuale contropartita da usare per un riepilogo.
  * Se nelle impostazioni è presente una riga per questa aliquota/natura si usano
  * i valori indicati, altrimenti si crea un codice IVA fittizio che può essere
- * aggiornato tramite rules.json: il codice è composto dall'aliquota e dal codice
+ * associato a un codice IVA reale tramite le impostazioni dell'estensione
+ * il codice è composto dall'aliquota e dal codice
  * natura, ad esempio [A0.00_N2] per acquisti 0% codice natura N2, ed è incluso
  * tra parentesi quadre in modo che non dia errore nel caso non venga sostituito.
 */
