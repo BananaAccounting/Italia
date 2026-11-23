@@ -432,12 +432,12 @@ CorrispettiviImport.prototype.createJsonDocument_AddTransactions = function (
             return 0;
         }
         else {
-            this.message("Totale corrispettivi diverso dai pagamenti: " +
+            /*this.message("Totale corrispettivi diverso dai pagamenti: " +
                 srcFileName + " - Corrispettivi: " + totaleRicavi +
                 " - Pagamenti: " + totaleIncassi +
                 " - Differenza: " + differenza +
                 (presenti.length > 1 ? " (più casistiche particolari presenti, da registrare a mano)" : ""));
-            return 0;
+            return 0;*/
         }
     }
 
@@ -669,23 +669,25 @@ CorrispettiviImport.prototype.getVatCode = function (aliquota, natura) {
  * impostazioni; se non c'è ritorna il segnaposto, che può essere sostituito
  * tramite rules.json. I corrispettivi sono sempre vendite: prefisso V.
 */
+
 CorrispettiviImport.prototype.getVatCodeInfo = function (aliquota, natura) {
     var rate = parseFloat(String(aliquota || "").replace(",", "."));
+
     if (isNaN(rate) && !natura)
         return null;
+
     rate = isNaN(rate) ? "0.00" : Banana.SDecimal.round(rate, { 'decimals': 2 });
+
     var key = "V" + rate + (natura ? "_" + natura : "");
     var entry = this.vatTable[key.toUpperCase()];
+
     if (entry && entry.vatCode)
         return { "vatCode": entry.vatCode, "account": entry.account };
-    //compatibilità con i parametri della versione 1.0
-    if (Number(rate) === 22 && this.param.codiceIva22)
-        return { "vatCode": this.param.codiceIva22, "account": "" };
-    if (Number(rate) === 10 && this.param.codiceIva10)
-        return { "vatCode": this.param.codiceIva10, "account": "" };
-    if (Number(rate) === 4 && this.param.codiceIva04)
-        return { "vatCode": this.param.codiceIva04, "account": "" };
-    return { "vatCode": "[" + key + "]", "account": entry ? entry.account : "" };
+
+    return {
+        "vatCode": "[" + key + "]",
+        "account": entry ? entry.account : ""
+    };
 };
 
 CorrispettiviImport.prototype.getXmlText = function (node, name) {
@@ -703,7 +705,7 @@ CorrispettiviImport.prototype.initParam = function (param) {
 CorrispettiviImport.prototype.load = function () {
     var settings = new Settings(this.banDocument);
     this.accountingInfo = settings.loadAccountingInfo();
-    this.vatTable = settings.parseVatTable(this.param);
+    this.vatTable = settings.parseVatTable(this.param, 'corrispettivi');
     this.loadExistingDocs();
 }
 

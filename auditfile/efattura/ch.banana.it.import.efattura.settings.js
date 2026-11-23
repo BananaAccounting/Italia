@@ -48,7 +48,7 @@ function Settings(banDocument) {
 }
 
 /* versione corrente dei parametri */
-Settings.VERSION = "1.1";
+Settings.VERSION = "1.0";
 /* valori del parametro dataRegistrazione */
 Settings.DATA_IMPORTAZIONE = "Data di importazione";
 Settings.DATA_DOCUMENTO = "Data del documento";
@@ -167,20 +167,19 @@ Settings.prototype.convertParam = function (param) {
     this.addParam(
         convertedParam,
         param,
-        'tabellaCodiciIva',
-        'Codici IVA per controparte',
-        'multilinestring',
-        '',
-        null,
+        'dataRegistrazione',
+        'Data di registrazione',
+        'combobox',
+        Settings.DATA_IMPORTAZIONE,
+        [
+            Settings.DATA_IMPORTAZIONE,
+            Settings.DATA_DOCUMENTO
+        ],
         'generale',
-        'Associa le aliquote IVA ai codici IVA e ai conti di contropartita. '
-        + 'Inserire una riga per ogni aliquota.\n'
-        + 'Esempio:\n'
-        + '22 = V22\n'
-        + '10 = V10\n'
-        + '4 = V4\n'
-        + '0 = V0\n'
-        + 'Utilizzare i codici IVA definiti nella tabella Codici IVA di Banana.'
+        'Data utilizzata nella colonna Data delle registrazioni.\n'
+        + 'Data di importazione: giorno in cui si importa il file XML.\n'
+        + 'Data del documento: data della fattura o della '
+        + 'rilevazione dei corrispettivi.'
     );
 
 
@@ -198,10 +197,31 @@ Settings.prototype.convertParam = function (param) {
     this.addParam(
         convertedParam,
         param,
+        'tabellaCodiciIvaFatture',
+        'Associazione codici IVA e conti',
+        'multilinestring',
+        '',
+        null,
+        'fatture',
+        'Associa le aliquote e le nature IVA delle fatture '
+        + 'ai codici IVA di Banana e, facoltativamente, '
+        + 'ai conti di contropartita.\n'
+        + 'Formato: Chiave=CodiceIVA[,Conto]\n'
+        + 'Esempi:\n'
+        + 'A22.00=B22-AL\n'
+        + 'A10.00=B10-AL\n'
+        + 'V22.00=Z22,3000\n'
+        + 'A0.00_N2.2=A-NE3,6000\n'
+        + 'A = acquisti, V = vendite.'
+    );
+
+    this.addParam(
+        convertedParam,
+        param,
         'contoContropartitaAcquisti',
         'Conto acquisti',
         'string',
-        '',
+        '[CONTO_ACQUISTI]',
         null,
         'fatture',
         'Conto di costo utilizzato come contropartita '
@@ -214,27 +234,11 @@ Settings.prototype.convertParam = function (param) {
         'contoContropartitaVendite',
         'Conto vendite',
         'string',
-        '',
+        '[CONTO_VENDITE]',
         null,
         'fatture',
         'Conto di ricavo utilizzato come contropartita '
         + 'per le fatture di vendita.'
-    );
-
-    this.addParam(
-        convertedParam,
-        param,
-        'dataRegistrazione',
-        'Data di registrazione',
-        'combobox',
-        Settings.DATA_IMPORTAZIONE,
-        [
-            Settings.DATA_IMPORTAZIONE,
-            Settings.DATA_DOCUMENTO
-        ],
-        'fatture',
-        'Sceglie se registrare le fatture usando la data '
-        + 'di importazione oppure la data del documento.'
     );
 
     this.addParam(
@@ -308,7 +312,7 @@ Settings.prototype.convertParam = function (param) {
         'contoRitenuta',
         'Conto ritenute d\'acconto',
         'string',
-        '',
+        '[CONTO_RITENUTE_ACCONTO]',
         null,
         'fatture',
         'Conto utilizzato per contabilizzare '
@@ -321,7 +325,7 @@ Settings.prototype.convertParam = function (param) {
         'contoBollo',
         'Conto imposta di bollo',
         'string',
-        '',
+        '[CONTO_IMPOSTA_BOLLO]',
         null,
         'fatture',
         'Conto utilizzato per gli importi relativi '
@@ -334,7 +338,7 @@ Settings.prototype.convertParam = function (param) {
         'contoCassaPrevidenziale',
         'Conto cassa previdenziale',
         'string',
-        '',
+        '[CONTO_CASSA_PREVIDENZIALE]',
         null,
         'fatture',
         'Conto utilizzato per i contributi '
@@ -347,7 +351,7 @@ Settings.prototype.convertParam = function (param) {
         'contoArrotondamento',
         'Conto differenze e arrotondamenti',
         'string',
-        '',
+        '[CONTO_ARROTONDAMENTO]',
         null,
         'fatture',
         'Conto utilizzato per contabilizzare eventuali '
@@ -369,10 +373,31 @@ Settings.prototype.convertParam = function (param) {
     this.addParam(
         convertedParam,
         param,
+        'tabellaCodiciIvaCorrispettivi',
+        'Associazione codici IVA e conti',
+        'multilinestring',
+        '',
+        null,
+        'corrispettivi',
+        'Associa le aliquote e le nature IVA dei corrispettivi '
+        + 'ai codici IVA di Banana e, facoltativamente, '
+        + 'ai conti di contropartita.\n'
+        + 'Formato: Chiave=CodiceIVA[,Conto]\n'
+        + 'Esempi:\n'
+        + 'V22.00=C22\n'
+        + 'V10.00=C10\n'
+        + 'V4.00=C04,3000\n'
+        + 'Le chiavi V sono utilizzate internamente '
+        + 'anche per i corrispettivi.'
+    );
+
+    this.addParam(
+        convertedParam,
+        param,
         'contoContanti',
         'Conto contanti',
         'string',
-        '',
+        '[CONTO_CONTANTI]',
         null,
         'corrispettivi',
         'Conto utilizzato per gli incassi in contanti.'
@@ -384,7 +409,7 @@ Settings.prototype.convertParam = function (param) {
         'contoPagamentiElettronici',
         'Conto pagamenti elettronici',
         'string',
-        '',
+        '[CONTO_PAG_ELETTRONICI]',
         null,
         'corrispettivi',
         'Conto utilizzato per gli incassi tramite '
@@ -410,7 +435,7 @@ Settings.prototype.convertParam = function (param) {
         'contoTicket',
         'Conto ticket e buoni pasto',
         'string',
-        '',
+        '[CONTO_TICKET]',
         null,
         'corrispettivi',
         'Conto utilizzato per i corrispettivi pagati '
@@ -423,7 +448,7 @@ Settings.prototype.convertParam = function (param) {
         'contoSconti',
         'Conto sconti concessi',
         'string',
-        '',
+        '[CONTO_SCONTI]',
         null,
         'corrispettivi',
         'Conto utilizzato per contabilizzare '
@@ -436,7 +461,7 @@ Settings.prototype.convertParam = function (param) {
         'contoNonRiscosso',
         'Conto corrispettivi non riscossi',
         'string',
-        '',
+        '[CONTO_NON_RISCOSSO]',
         null,
         'corrispettivi',
         'Conto utilizzato per i corrispettivi '
@@ -449,7 +474,7 @@ Settings.prototype.convertParam = function (param) {
         'contoBeniInSospeso',
         'Conto acconti e beni in sospeso',
         'string',
-        '',
+        '[CONTO_ACCONTI]',
         null,
         'corrispettivi',
         'Conto utilizzato per gli acconti '
@@ -462,7 +487,7 @@ Settings.prototype.convertParam = function (param) {
         'contoOmaggi',
         'Conto omaggi',
         'string',
-        '',
+        '[CONTO_OMAGGI]',
         null,
         'corrispettivi',
         'Conto utilizzato per la contabilizzazione '
@@ -475,7 +500,7 @@ Settings.prototype.convertParam = function (param) {
         'codiceIvaVentilazione',
         'Codice IVA per ventilazione',
         'string',
-        '',
+        '[CV]',
         null,
         'corrispettivi',
         'Codice IVA utilizzato per i corrispettivi '
@@ -508,46 +533,44 @@ Settings.prototype.getErrorMessage = function (errorId) {
     return rtnMsg + " [" + errorId + "] ";
 }
 
+
 Settings.prototype.initParam = function () {
     var param = {};
     param.version = Settings.VERSION;
 
     /* codici IVA e contropartite per aliquota/natura */
-    param.tabellaCodiciIva = '';
+    param.tabellaCodiciIvaFatture = '';
+    param.tabellaCodiciIvaCorrispettivi = '';
+
+    /* generale */
+    param.dataRegistrazione = Settings.DATA_IMPORTAZIONE;
 
     /* fatture elettroniche */
-    param.contoContropartitaAcquisti = '';
-    param.contoContropartitaVendite = '';
-    param.dataRegistrazione = Settings.DATA_IMPORTAZIONE;
+    param.contoContropartitaAcquisti = '[CONTO_ACQUISTI]';
+    param.contoContropartitaVendite = '[CONTO_VENDITE]';
     param.creaContiMancanti = true;
     param.gruppoClienti = '';
     param.gruppoFornitori = '';
     param.numerazioneClienti = '10000';
     param.numerazioneFornitori = '20000';
-    param.contoRitenuta = '';
-    param.contoBollo = '';
-    param.contoCassaPrevidenziale = '';
-    param.contoArrotondamento = '';
+    param.contoRitenuta = '[CONTO_RITENUTE_ACCONTO]';
+    param.contoBollo = '[CONTO_IMPOSTA_BOLLO]';
+    param.contoCassaPrevidenziale = '[CONTO_CASSA_PREVIDENZIALE]';
+    param.contoArrotondamento = '[CONTO_ARROTONDAMENTO]';
 
     /* corrispettivi telematici */
-    param.contoContanti = '';
-    param.contoPagamentiElettronici = '';
+    param.contoContanti = '[CONTO_CONTANTI]';
+    param.contoPagamentiElettronici = '[CONTO_PAG_ELETTRONICI]';
     param.contoContropartita = '[CA]';
-    param.contoTicket = '';
-    param.contoSconti = '';
-    param.contoNonRiscosso = '';
-    param.contoBeniInSospeso = '';
-    param.contoOmaggi = '';
-    param.codiceIvaVentilazione = '';
-
-    /* parametri della versione 1.0, mantenuti per compatibilità:
-       vengono travasati in tabellaCodiciIva dalla migrazione */
-    param.codiceIva22 = '';
-    param.codiceIva10 = '';
-    param.codiceIva04 = '';
+    param.contoTicket = '[CONTO_TICKET]';
+    param.contoSconti = '[CONTO_SCONTI]';
+    param.contoNonRiscosso = '[CONTO_NON_RISCOSSO]';
+    param.contoBeniInSospeso = '[CONTO_ACCONTI]';
+    param.contoOmaggi = '[CONTO_OMAGGI]';
+    param.codiceIvaVentilazione = '[CV]';
 
     return param;
-}
+};
 
 Settings.prototype.loadAccountingInfo = function () {
     var accountingInfo = {};
@@ -616,11 +639,14 @@ Settings.prototype.loadAccountingInfo = function () {
  *   A0.00_N6.1=M22-RC,6000
  * Le righe vuote e quelle che iniziano con # o // vengono ignorate.
 */
-Settings.prototype.parseVatTable = function (param) {
+Settings.prototype.parseVatTable = function (param, tipoImportazione) {
     var table = {};
-    if (!param || !param.tabellaCodiciIva)
+    var nomeParametro = tipoImportazione === 'corrispettivi' ?
+        'tabellaCodiciIvaCorrispettivi' :
+        'tabellaCodiciIvaFatture';
+    if (!param || !param[nomeParametro])
         return table;
-    var lines = String(param.tabellaCodiciIva).split(/[\r\n]+/);
+    var lines = String(param[nomeParametro]).split(/[\r\n]+/);
     for (var i = 0; i < lines.length; i++) {
         var line = lines[i].trim();
         if (line.length <= 0 || line.indexOf('#') === 0 || line.indexOf('//') === 0)
@@ -672,37 +698,9 @@ Settings.prototype.showDialog = function () {
     return true;
 }
 
-/*
- * Porta i parametri della versione 1.0 alla versione corrente:
- * i tre codici IVA per aliquota diventano righe di tabellaCodiciIva.
- * Erano usati soltanto dai corrispettivi, che sono sempre vendite,
- * quindi vengono convertiti in chiavi con il prefisso V.
-*/
-Settings.prototype.migrateParam = function (param) {
-    var lines = [];
-    if (param.tabellaCodiciIva)
-        lines.push(String(param.tabellaCodiciIva).trim());
-    var legacy = [
-        { "name": 'codiceIva22', "key": 'V22.00' },
-        { "name": 'codiceIva10', "key": 'V10.00' },
-        { "name": 'codiceIva04', "key": 'V4.00' }
-    ];
-    for (var i = 0; i < legacy.length; i++) {
-        var code = param[legacy[i].name];
-        if (code && String(code).trim().length > 0)
-            lines.push(legacy[i].key + "=" + String(code).trim());
-    }
-    param.tabellaCodiciIva = lines.join("\n");
-    param.version = Settings.VERSION;
-    return param;
-}
-
 Settings.prototype.verifyParam = function (param) {
     if (!param || !param.version)
         return this.initParam();
-
-    if (param.version === "1.0")
-        param = this.migrateParam(param);
 
     if (param.version !== Settings.VERSION)
         return this.initParam();

@@ -942,7 +942,7 @@ EFatturaImport.prototype.load = function () {
     var settings = new Settings(this.banDocument);
     this.accountingInfo = settings.loadAccountingInfo();
     //codici IVA e contropartite per aliquota, dalle impostazioni
-    this.vatTable = settings.parseVatTable(this.param);
+    this.vatTable = settings.parseVatTable(this.param, 'fatture');
     //numerazione iniziale dei conti, se indicata nelle impostazioni
     if (parseInt(this.param.numerazioneClienti) > 0)
         this.customerIdCounter = parseInt(this.param.numerazioneClienti);
@@ -950,8 +950,6 @@ EFatturaImport.prototype.load = function () {
         this.supplierIdCounter = parseInt(this.param.numerazioneFornitori);
     this.loadAccounts();
     this.loadExistingInvoices();
-    /*Banana.console.log("---------------- accounts ---------------- ");
-    Banana.console.log(JSON.stringify(this.accounts));*/
 }
 
 /*
