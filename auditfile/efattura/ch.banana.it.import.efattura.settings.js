@@ -213,16 +213,16 @@ Settings.prototype.convertParam = function (param) {
         '',
         null,
         'fatture',
-        'Associa le aliquote e le nature IVA delle fatture '
-        + 'ai codici IVA di Banana e, facoltativamente, '
-        + 'ai conti di contropartita.\n'
+        'Associa le aliquote e le nature IVA delle fatture elettroniche '
+        + 'ai codici IVA di Banana e, facoltativamente, ai conti contropartita.\n'
+        + 'Le chiavi A identificano gli acquisti, le chiavi V le vendite.\n'
         + 'Formato: Chiave=CodiceIVA[,Conto]\n'
         + 'Esempi:\n'
-        + 'A22.00=B22-AL\n'
-        + 'A10.00=B10-AL\n'
-        + 'V22.00=Z22,3000\n'
-        + 'A0.00_N2.2=A-NE3,6000\n'
-        + 'A = acquisti, V = vendite.'
+        + '[A22.00]=B22,6000\n'
+        + '[V4.00]=Z04,4100\n'
+        + '[V10.00]=Z10,4100\n'
+        + '[V22.00]=Z22,4100\n'
+        + '[A0.00_N6.1]=B22-RC,6000'
     );
 
     this.addParam(
@@ -390,15 +390,12 @@ Settings.prototype.convertParam = function (param) {
         null,
         'corrispettivi',
         'Associa le aliquote e le nature IVA dei corrispettivi '
-        + 'ai codici IVA di Banana e, facoltativamente, '
-        + 'ai conti di contropartita.\n'
+        + 'ai codici IVA di Banana e, facoltativamente, ai conti ricavi.\n'
         + 'Formato: Chiave=CodiceIVA[,Conto]\n'
         + 'Esempi:\n'
-        + 'V22.00=C22\n'
-        + 'V10.00=C10\n'
-        + 'V4.00=C04,3000\n'
-        + 'Le chiavi V sono utilizzate internamente '
-        + 'anche per i corrispettivi.'
+        + '[C4.00]=C04,4105\n'
+        + '[C10.00]=C10,4107\n'
+        + '[C22.00]=C22,4108'
     );
 
     this.addParam(

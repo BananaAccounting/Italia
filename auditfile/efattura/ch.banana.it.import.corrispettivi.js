@@ -721,7 +721,7 @@ CorrispettiviImport.prototype.getVatCodeInfo = function (aliquota, natura) {
 
     rate = isNaN(rate) ? "0.00" : Banana.SDecimal.round(rate, { 'decimals': 2 });
 
-    var key = "V" + rate + (natura ? "_" + natura : "");
+    var key = "C" + rate + (natura ? "_" + natura : "");
     var entry = this.vatTable[key.toUpperCase()];
 
     if (entry && entry.vatCode)
