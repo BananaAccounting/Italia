@@ -150,6 +150,7 @@ function CorrispettiviImport(banDocument) {
     //prefisso usato nelle descrizioni, serve anche a riconoscere i doc già importati
     this.descriptionPrefix = "Corrispettivi telematici";
     this.initParam();
+    this.settings = new Settings(this.banDocument);
 }
 
 /* Aggiunge una registrazione.
@@ -571,6 +572,17 @@ CorrispettiviImport.prototype.getDate = function (str) {
  * il controllo di quadratura, codice IVA, contropartita e tipo di importo.
  * Ritorna null se i dati non sono validi (il messaggio è già stato aggiunto).
 */
+
+/*
+ * Ritorna gli importi di un riepilogo: importo da registrare, importo lordo
+ * per il controllo di quadratura, codice IVA, contropartita e tipo di importo.
+ *
+ * Per i corrispettivi ordinari determina se ImportoParziale è al netto
+ * o al lordo dell'IVA, confrontando l'imposta dichiarata con quella calcolata.
+ * Per la ventilazione IVA l'importo è sempre trattato al lordo.
+ *
+ * Ritorna null se i dati non sono validi o il tipo importo non è determinabile.
+ */
 CorrispettiviImport.prototype.getRiepilogoAmounts = function (riepilogo, srcFileName) {
     var ventilazione = this.child(riepilogo, "VentilazioneIVA");
     var ivaNode = this.child(riepilogo, "IVA");
@@ -578,7 +590,7 @@ CorrispettiviImport.prototype.getRiepilogoAmounts = function (riepilogo, srcFile
     var natura = this.getXmlText(riepilogo, "Natura");
 
     if (ventilazione) {
-        //con la ventilazione <Ammontare> è al lordo e non c'è un'aliquota
+        // Con la ventilazione l'importo è al lordo e non c'è un'aliquota IVA.
         var lordo = this.getAmountStr(riepilogo, "ImportoParziale");
         if (lordo === null) {
             this.message("Importo parziale non valido: " + srcFileName);
@@ -586,28 +598,30 @@ CorrispettiviImport.prototype.getRiepilogoAmounts = function (riepilogo, srcFile
         }
         if (lordo === "")
             lordo = this.getAmountStr(riepilogo, "Ammontare");
+
         if (lordo === null || lordo === "") {
             this.message("Ammontare non valido: " + srcFileName);
             return null;
         }
+
         var codiceVentilazione = this.param.codiceIvaVentilazione;
         if (this.accountingInfo.withVat && !codiceVentilazione) {
             this.message("Nelle impostazioni manca il codice IVA per la ventilazione: " + srcFileName);
             return null;
         }
+
         return {
             "amount": lordo,
             "gross": lordo,
             "vatCode": this.accountingInfo.withVat ? codiceVentilazione : "",
-            "vatAmountType": "0",
+            "vatAmountType": this.accountingInfo.withVat ? "0" : "",
             "account": "",
             "info": "Ventilazione IVA"
         };
     }
 
-    // <ImportoParziale> (4.1.6) è l'imponibile effettivamente da assoggettare
-    // a IVA; <Ammontare> (4.1.4) lo comprende ma include anche resi, annulli
-    // e non riscossi. <Imposta> (4.1.1.2) si riferisce a <ImportoParziale>.
+    // ImportoParziale è l'importo da assoggettare a IVA.
+    // Ammontare comprende anche le altre componenti del riepilogo.
     var imponibile = this.getAmountStr(riepilogo, "ImportoParziale");
     if (imponibile === null) {
         this.message("Importo parziale non valido: " + srcFileName);
@@ -615,6 +629,7 @@ CorrispettiviImport.prototype.getRiepilogoAmounts = function (riepilogo, srcFile
     }
     if (imponibile === "")
         imponibile = this.getAmountStr(riepilogo, "Ammontare");
+
     if (imponibile === null || imponibile === "") {
         this.message("Ammontare non valido: " + srcFileName);
         return null;
@@ -632,15 +647,40 @@ CorrispettiviImport.prototype.getRiepilogoAmounts = function (riepilogo, srcFile
         return null;
     }
 
+    // Determina se l'importo è al netto ("1") o al lordo ("0") dell'IVA.
+    // Per aliquote zero o operazioni senza aliquota non serve lo scorporo.
+    var vatAmountType = "1";
+
+    if (aliquota && Number(aliquota) > 0) {
+        vatAmountType = this.settings.getVatAmountType(
+            imponibile, imposta, aliquota
+        );
+
+        if (vatAmountType === null) {
+            this.message(
+                "Tipo importo IVA non determinabile: " + srcFileName +
+                ", aliquota " + aliquota + "%" +
+                ", importo " + imponibile +
+                ", imposta " + imposta
+            );
+            return null;
+        }
+    }
+
+    // Se l'importo è già lordo, non bisogna aggiungere nuovamente l'IVA.
+    var lordo = vatAmountType === "0"
+        ? imponibile
+        : Banana.SDecimal.add(imponibile, imposta);
+
     var vatInfo = this.getVatCodeInfo(aliquota, natura);
     var info = aliquota ? "Aliquota " + aliquota + "%" :
         (natura ? "Natura " + natura : "Corrispettivi");
 
-    //senza gestione IVA si registra l'importo lordo e nessun codice
+    // Senza gestione IVA si registra l'importo lordo e nessun codice IVA.
     if (!this.accountingInfo.withVat) {
         return {
-            "amount": Banana.SDecimal.add(imponibile, imposta),
-            "gross": Banana.SDecimal.add(imponibile, imposta),
+            "amount": lordo,
+            "gross": lordo,
             "vatCode": "",
             "vatAmountType": "",
             "account": vatInfo ? vatInfo.account : "",
@@ -648,15 +688,18 @@ CorrispettiviImport.prototype.getRiepilogoAmounts = function (riepilogo, srcFile
         };
     }
 
+    // Con gestione IVA si registra l'importo XML specificando se è
+    // al netto o al lordo, indipendentemente dal tipo del codice IVA.
     return {
         "amount": imponibile,
-        "gross": Banana.SDecimal.add(imponibile, imposta),
+        "gross": lordo,
         "vatCode": vatInfo ? vatInfo.vatCode : "",
-        "vatAmountType": "1",
+        "vatAmountType": vatAmountType,
         "account": vatInfo ? vatInfo.account : "",
         "info": info
     };
 };
+
 
 /* Ritorna il solo codice IVA (segnaposto se non è nelle impostazioni) */
 CorrispettiviImport.prototype.getVatCode = function (aliquota, natura) {

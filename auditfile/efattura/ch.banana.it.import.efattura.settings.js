@@ -153,6 +153,16 @@ Settings.prototype.convertParam = function (param) {
         data: []
     };
 
+    //propone i gruppi clienti/fornitori impostati nel piano dei conti
+    var accountingInfo = this.loadAccountingInfo();
+    if (!param.gruppoClienti || !param.gruppoFornitori) {
+        if (!param.gruppoClienti)
+            param.gruppoClienti = accountingInfo.customersGroup || '';
+
+        if (!param.gruppoFornitori)
+            param.gruppoFornitori = accountingInfo.suppliersGroup || '';
+    }
+
     // =====================================================
     // GENERALE
     // =====================================================
@@ -260,7 +270,7 @@ Settings.prototype.convertParam = function (param) {
         'gruppoClienti',
         'Gruppo clienti',
         'string',
-        '',
+        accountingInfo.customersGroup || '',
         null,
         'fatture',
         'Gruppo in cui inserire i nuovi conti clienti, '
@@ -273,7 +283,7 @@ Settings.prototype.convertParam = function (param) {
         'gruppoFornitori',
         'Gruppo fornitori',
         'string',
-        '',
+        accountingInfo.suppliersGroup || '',
         null,
         'fatture',
         'Gruppo in cui inserire i nuovi conti fornitori, '
@@ -743,3 +753,59 @@ Settings.prototype.verifyBananaVersion = function () {
 
     return true;
 }
+
+/*
+ * Determina se un importo XML è al netto o al lordo dell'IVA,
+ * confrontando l'imposta dichiarata con quella calcolata
+ * applicando l'aliquota o scorporandola dall'importo.
+ *
+ * Parametri:
+ *   importo  - importo indicato nel file XML
+ *   imposta  - importo IVA dichiarato nel file XML
+ *   aliquota - aliquota IVA in percentuale
+ *
+ * Valori restituiti:
+ *   "1"  - importo al netto dell'IVA (IVA esclusa)
+ *   "0"  - importo al lordo dell'IVA (IVA inclusa)
+ *   null - valori non validi, incoerenti o ambigui
+ *
+ * Il confronto ammette una tolleranza di un centesimo.
+ * Con aliquota zero non è possibile distinguere netto e lordo.
+ *
+ */
+
+Settings.prototype.getVatAmountType = function (
+    importo, imposta, aliquota
+) {
+    var amount = Number(importo);
+    var vat = Number(imposta);
+    var rate = Number(String(aliquota).replace(",", "."));
+
+    if (!isFinite(amount) || !isFinite(vat) ||
+        !isFinite(rate) || rate <= 0) {
+        return null;
+    }
+
+    // IVA calcolata sull'importo netto
+    var ivaNetto = Math.round(amount * rate * 100 / 100) / 100;
+
+    // IVA scorporata dall'importo lordo
+    var ivaLordo = Math.round(
+        amount * rate / (100 + rate) * 100
+    ) / 100;
+
+    var differenzaNetto = Math.abs(vat - ivaNetto);
+    var differenzaLordo = Math.abs(vat - ivaLordo);
+
+    // Tolleranza di un centesimo
+    var nettoValido = differenzaNetto <= 0.01;
+    var lordoValido = differenzaLordo <= 0.01;
+
+    if (nettoValido && !lordoValido)
+        return "1";
+
+    if (lordoValido && !nettoValido)
+        return "0";
+
+    return null;
+};

@@ -97,6 +97,7 @@ function EFatturaImport(banDocument) {
     this.vatTable = {};
     //parametri che l'utente può modificare tramite dialogo
     this.initParam();
+    this.settings = new Settings(this.banDocument);
 }
 
 /*Il metodo createJsonDocument() riprende i dati dal file xml della fattura elettronica
@@ -480,6 +481,25 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
             var vatAmount = "0";
             if (datiRiepilogoNode.firstChildElement('Imposta'))
                 vatAmount = datiRiepilogoNode.firstChildElement('Imposta').text.trim();
+
+            var vatAmountType = "1";
+            if (Number(vatRate) > 0) {
+                var detectedType = this.settings.getVatAmountType(
+                    taxableAmount, vatAmount, vatRate
+                );
+
+                // Nelle fatture FatturaPA, ImponibileImporto è al netto dell'IVA.
+                // Il metodo condiviso viene utilizzato come controllo di coerenza.
+                if (detectedType !== "1") {
+                    this.message(
+                        "Verificare gli importi IVA della fattura: " + srcFileName +
+                        ", aliquota " + vatRate + "%" +
+                        ", imponibile " + taxableAmount +
+                        ", imposta " + vatAmount
+                    );
+                }
+            }
+
             totaleRiepiloghi = Banana.SDecimal.add(totaleRiepiloghi,
                 Banana.SDecimal.add(taxableAmount, vatAmount));
 
@@ -524,7 +544,7 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
             if (signTaxableAmount < 0)
                 vatCode = "-" + vatCode;
             row.fields["VatCode"] = vatCode;
-            // row.fields["VatAmountType"] = "";
+            row.fields["VatAmountType"] = vatAmountType;
 
             var rowLists = jsonDoc.document.dataUnits["1"].data.rowLists[0];
             var index = parseInt(rowLists.rows.length);
@@ -704,28 +724,42 @@ EFatturaImport.prototype.getAccountIdNew = function (isCustomer) {
         accountIdNew = parseInt(accountIdNew) + 1;
 
     }
-    if (accountIdNew.length <= 0 && isCustomer) {
+    if (accountIdNew === "" && isCustomer) {
         accountIdNew = this.customerIdCounter;
         this.customerIdCounter = parseInt(this.customerIdCounter) + 1;
     }
-    else if (accountIdNew.length <= 0 && !isCustomer) {
+    else if (accountIdNew === "" && !isCustomer) {
         accountIdNew = this.supplierIdCounter;
         this.supplierIdCounter = parseInt(this.supplierIdCounter + 1);
     }
 
+    //segnale se il conto cliente/fornitore appartiene ad un gruppo diverso dal gruppo indicato nei parametri
+    var gruppoImpostato = isCustomer ?
+        this.param.gruppoClienti :
+        this.param.gruppoFornitori;
+
+    if (gr && gruppoImpostato && gr !== gruppoImpostato) {
+        this.message(
+            "Il gruppo " + (isCustomer ? "clienti" : "fornitori") +
+            " indicato nelle impostazioni (" + gruppoImpostato +
+            ") è diverso da quello dei conti esistenti (" + gr +
+            "). Verrà utilizzato il gruppo " + gr + "."
+        );
+    }
+
     if (gr.length <= 0) {
-        if (this.accountingInfo.customersGroup > 0 && isCustomer) {
-            gr = this.accountingInfo.customersGroup;
-        }
-        else if (this.accountingInfo.suppliersGroup > 0 && !isCustomer) {
-            gr = this.accountingInfo.suppliersGroup;
-        }
-        else if (isCustomer && this.param.gruppoClienti) {
+       if (isCustomer && this.param.gruppoClienti) {
             //gruppo indicato nelle impostazioni
             gr = this.param.gruppoClienti;
         }
         else if (!isCustomer && this.param.gruppoFornitori) {
             gr = this.param.gruppoFornitori;
+        }
+        else if (isCustomer && this.accountingInfo.customersGroup) {
+            gr = this.accountingInfo.customersGroup;
+        }
+        else if (!isCustomer && this.accountingInfo.suppliersGroup) {
+            gr = this.accountingInfo.suppliersGroup;
         }
         else {
             //crea il gruppo clienti/fornitori se non esiste
