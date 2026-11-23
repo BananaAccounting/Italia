@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.import.efattura.settings
 // @api = 1.0
-// @pubdate = 2026-11-20
+// @pubdate = 2026-11-23
 // @publisher = Banana.ch SA
 // @description = Impostazioni...
 // @description.it = Impostazioni...
@@ -53,111 +53,434 @@ Settings.VERSION = "1.1";
 Settings.DATA_IMPORTAZIONE = "Data di importazione";
 Settings.DATA_DOCUMENTO = "Data del documento";
 
+
 /*
- * Aggiunge un parametro all'elenco mostrato nel dialogo
-*/
-Settings.prototype.addParam = function (convertedParam, param, name, title, type, defaultValue, items) {
+ * Aggiunge un gruppo di parametri al dialogo.
+ * I gruppi sono elementi non modificabili utilizzati
+ * come contenitori per i parametri figli.
+ */
+Settings.prototype.addGroup = function (convertedParam, name, title, collapse) {
+    var group = {};
+
+    group.name = name;
+    group.title = title;
+    group.type = 'string';
+    group.value = '';
+    group.editable = false;
+    group.collapse = collapse === true;
+
+    // Il gruppo non corrisponde a un parametro da salvare.
+    group.readValue = function () {};
+
+    convertedParam.data.push(group);
+    return group;
+};
+
+
+/*
+ * Aggiunge un parametro all'elenco mostrato nel dialogo.
+ *
+ * parentObject: nome del gruppo di appartenenza
+ * tooltip: descrizione visualizzata al passaggio del mouse
+ */
+Settings.prototype.addParam = function (
+    convertedParam,
+    param,
+    name,
+    title,
+    type,
+    defaultValue,
+    items,
+    parentObject,
+    tooltip
+) {
     var currentParam = {};
+
     currentParam.name = name;
     currentParam.title = title;
     currentParam.type = type;
+
+    if (parentObject) {
+        currentParam.parentObject = parentObject;
+    }
+
+    if (tooltip) {
+        currentParam.tooltip = tooltip;
+    }
+
+    // Utilizza il valore salvato oppure quello predefinito.
+    var value = param[name];
+
+    if (value === undefined || value === null) {
+        value = defaultValue === undefined ? '' : defaultValue;
+    }
+
     if (type === 'bool') {
-        currentParam.value = param[name] ? true : false;
+        currentParam.value = (
+            value === true ||
+            value === 'true' ||
+            value === 1
+        );
     }
     else {
-        currentParam.value = (param[name] === undefined || param[name] === null) ?
-            (defaultValue === undefined ? '' : defaultValue) : param[name];
+        currentParam.value = value;
     }
-    if (defaultValue !== undefined)
+
+    if (defaultValue !== undefined) {
         currentParam.defaultvalue = defaultValue;
-    if (items)
+    }
+
+    if (items) {
         currentParam.items = items;
+    }
+
     currentParam.readValue = function () {
         param[name] = this.value;
-    }
+    };
+
     convertedParam.data.push(currentParam);
     return currentParam;
 }
 
+
+/*
+ * Converte i parametri per il PropertyEditor.
+ */
 Settings.prototype.convertParam = function (param) {
 
-    var convertedParam = {};
-    convertedParam.version = '1.0';
-    /*array dei parametri dello script*/
-    convertedParam.data = [];
+    var convertedParam = {
+        version: '1.0',
+        data: []
+    };
 
-    /* ---- codici IVA e contropartite, validi per entrambe le importazioni ---- */
+    // =====================================================
+    // GENERALE
+    // =====================================================
 
-    this.addParam(convertedParam, param, 'tabellaCodiciIva',
-        'Codici IVA e contropartite (una riga per aliquota)', 'multilinestring', '');
+    this.addGroup(
+        convertedParam,
+        'generale',
+        'Generale',
+        false
+    );
 
-    /* ---- fatture elettroniche ---- */
+    this.addParam(
+        convertedParam,
+        param,
+        'tabellaCodiciIva',
+        'Codici IVA per controparte',
+        'multilinestring',
+        '',
+        null,
+        'generale',
+        'Associa le aliquote IVA ai codici IVA e ai conti di contropartita. '
+        + 'Inserire una riga per ogni aliquota.\n'
+        + 'Esempio:\n'
+        + '22 = V22\n'
+        + '10 = V10\n'
+        + '4 = V4\n'
+        + '0 = V0\n'
+        + 'Utilizzare i codici IVA definiti nella tabella Codici IVA di Banana.'
+    );
 
-    this.addParam(convertedParam, param, 'contoContropartitaAcquisti',
-        'Fatture: conto contropartita acquisti (costi)', 'string', '');
 
-    this.addParam(convertedParam, param, 'contoContropartitaVendite',
-        'Fatture: conto contropartita vendite (ricavi)', 'string', '');
+    // =====================================================
+    // FATTURE ELETTRONICHE
+    // =====================================================
 
-    this.addParam(convertedParam, param, 'dataRegistrazione',
-        'Fatture: data della registrazione', 'combobox', Settings.DATA_IMPORTAZIONE,
-        Array(Settings.DATA_IMPORTAZIONE, Settings.DATA_DOCUMENTO));
+    this.addGroup(
+        convertedParam,
+        'fatture',
+        'Fatture elettroniche',
+        false
+    );
 
-    this.addParam(convertedParam, param, 'creaContiMancanti',
-        'Fatture: creare i conti clienti/fornitori mancanti', 'bool', true);
+    this.addParam(
+        convertedParam,
+        param,
+        'contoContropartitaAcquisti',
+        'Conto acquisti',
+        'string',
+        '',
+        null,
+        'fatture',
+        'Conto di costo utilizzato come contropartita '
+        + 'per le fatture di acquisto.'
+    );
 
-    this.addParam(convertedParam, param, 'gruppoClienti',
-        'Fatture: gruppo clienti (se non indicato nei dati base)', 'string', '');
+    this.addParam(
+        convertedParam,
+        param,
+        'contoContropartitaVendite',
+        'Conto vendite',
+        'string',
+        '',
+        null,
+        'fatture',
+        'Conto di ricavo utilizzato come contropartita '
+        + 'per le fatture di vendita.'
+    );
 
-    this.addParam(convertedParam, param, 'gruppoFornitori',
-        'Fatture: gruppo fornitori (se non indicato nei dati base)', 'string', '');
+    this.addParam(
+        convertedParam,
+        param,
+        'dataRegistrazione',
+        'Data di registrazione',
+        'combobox',
+        Settings.DATA_IMPORTAZIONE,
+        [
+            Settings.DATA_IMPORTAZIONE,
+            Settings.DATA_DOCUMENTO
+        ],
+        'fatture',
+        'Sceglie se registrare le fatture usando la data '
+        + 'di importazione oppure la data del documento.'
+    );
 
-    this.addParam(convertedParam, param, 'numerazioneClienti',
-        'Fatture: numero iniziale dei conti clienti', 'number', '10000');
+    this.addParam(
+        convertedParam,
+        param,
+        'creaContiMancanti',
+        'Crea clienti e fornitori mancanti',
+        'bool',
+        true,
+        null,
+        'fatture',
+        'Crea automaticamente i conti clienti e fornitori '
+        + 'che non sono ancora presenti nel piano dei conti.'
+    );
 
-    this.addParam(convertedParam, param, 'numerazioneFornitori',
-        'Fatture: numero iniziale dei conti fornitori', 'number', '20000');
+    this.addParam(
+        convertedParam,
+        param,
+        'gruppoClienti',
+        'Gruppo clienti',
+        'string',
+        '',
+        null,
+        'fatture',
+        'Gruppo in cui inserire i nuovi conti clienti, '
+        + 'se non specificato nei dati base.'
+    );
 
-    this.addParam(convertedParam, param, 'contoRitenuta',
-        'Fatture: conto ritenuta d\'acconto', 'string', '');
+    this.addParam(
+        convertedParam,
+        param,
+        'gruppoFornitori',
+        'Gruppo fornitori',
+        'string',
+        '',
+        null,
+        'fatture',
+        'Gruppo in cui inserire i nuovi conti fornitori, '
+        + 'se non specificato nei dati base.'
+    );
 
-    this.addParam(convertedParam, param, 'contoBollo',
-        'Fatture: conto imposta di bollo', 'string', '');
+    this.addParam(
+        convertedParam,
+        param,
+        'numerazioneClienti',
+        'Numerazione iniziale clienti',
+        'number',
+        '10000',
+        null,
+        'fatture',
+        'Numero iniziale utilizzato per la creazione '
+        + 'automatica dei nuovi conti clienti.'
+    );
 
-    this.addParam(convertedParam, param, 'contoCassaPrevidenziale',
-        'Fatture: conto cassa previdenziale', 'string', '');
+    this.addParam(
+        convertedParam,
+        param,
+        'numerazioneFornitori',
+        'Numerazione iniziale fornitori',
+        'number',
+        '20000',
+        null,
+        'fatture',
+        'Numero iniziale utilizzato per la creazione '
+        + 'automatica dei nuovi conti fornitori.'
+    );
 
-    this.addParam(convertedParam, param, 'contoArrotondamento',
-        'Fatture: conto arrotondamenti e differenze', 'string', '');
+    this.addParam(
+        convertedParam,
+        param,
+        'contoRitenuta',
+        'Conto ritenute d\'acconto',
+        'string',
+        '',
+        null,
+        'fatture',
+        'Conto utilizzato per contabilizzare '
+        + 'le ritenute d\'acconto presenti nelle fatture.'
+    );
 
-    /* ---- corrispettivi telematici ---- */
+    this.addParam(
+        convertedParam,
+        param,
+        'contoBollo',
+        'Conto imposta di bollo',
+        'string',
+        '',
+        null,
+        'fatture',
+        'Conto utilizzato per gli importi relativi '
+        + 'all\'imposta di bollo indicata nelle fatture.'
+    );
 
-    this.addParam(convertedParam, param, 'contoContanti',
-        'Corrispettivi: conto contanti', 'string', '');
+    this.addParam(
+        convertedParam,
+        param,
+        'contoCassaPrevidenziale',
+        'Conto cassa previdenziale',
+        'string',
+        '',
+        null,
+        'fatture',
+        'Conto utilizzato per i contributi '
+        + 'della cassa previdenziale presenti nelle fatture.'
+    );
 
-    this.addParam(convertedParam, param, 'contoPagamentiElettronici',
-        'Corrispettivi: conto pagamenti elettronici', 'string', '');
+    this.addParam(
+        convertedParam,
+        param,
+        'contoArrotondamento',
+        'Conto differenze e arrotondamenti',
+        'string',
+        '',
+        null,
+        'fatture',
+        'Conto utilizzato per contabilizzare eventuali '
+        + 'differenze e arrotondamenti.'
+    );
 
-    this.addParam(convertedParam, param, 'contoContropartita',
-        'Corrispettivi: conto contropartita (ricavi)', 'string', '[CA]');
 
-    this.addParam(convertedParam, param, 'contoTicket',
-        'Corrispettivi: conto ticket e buoni fatturati a terzi', 'string', '');
+    // =====================================================
+    // CORRISPETTIVI TELEMATICI
+    // =====================================================
 
-    this.addParam(convertedParam, param, 'contoSconti',
-        'Corrispettivi: conto sconti concessi', 'string', '');
+    this.addGroup(
+        convertedParam,
+        'corrispettivi',
+        'Corrispettivi telematici',
+        false
+    );
 
-    this.addParam(convertedParam, param, 'contoNonRiscosso',
-        'Corrispettivi: conto corrispettivi non riscossi', 'string', '');
+    this.addParam(
+        convertedParam,
+        param,
+        'contoContanti',
+        'Conto contanti',
+        'string',
+        '',
+        null,
+        'corrispettivi',
+        'Conto utilizzato per gli incassi in contanti.'
+    );
 
-    this.addParam(convertedParam, param, 'contoBeniInSospeso',
-        'Corrispettivi: conto acconti e beni in sospeso', 'string', '');
+    this.addParam(
+        convertedParam,
+        param,
+        'contoPagamentiElettronici',
+        'Conto pagamenti elettronici',
+        'string',
+        '',
+        null,
+        'corrispettivi',
+        'Conto utilizzato per gli incassi tramite '
+        + 'carte di pagamento e altri strumenti elettronici.'
+    );
 
-    this.addParam(convertedParam, param, 'contoOmaggi',
-        'Corrispettivi: conto omaggi', 'string', '');
+    this.addParam(
+        convertedParam,
+        param,
+        'contoContropartita',
+        'Conto ricavi',
+        'string',
+        '[CA]',
+        null,
+        'corrispettivi',
+        'Conto di ricavo utilizzato come contropartita '
+        + 'per la registrazione dei corrispettivi.'
+    );
 
-    this.addParam(convertedParam, param, 'codiceIvaVentilazione',
-        'Corrispettivi: codice IVA per la ventilazione', 'string', '');
+    this.addParam(
+        convertedParam,
+        param,
+        'contoTicket',
+        'Conto ticket e buoni pasto',
+        'string',
+        '',
+        null,
+        'corrispettivi',
+        'Conto utilizzato per i corrispettivi pagati '
+        + 'con ticket e buoni fatturati a terzi.'
+    );
+
+    this.addParam(
+        convertedParam,
+        param,
+        'contoSconti',
+        'Conto sconti concessi',
+        'string',
+        '',
+        null,
+        'corrispettivi',
+        'Conto utilizzato per contabilizzare '
+        + 'gli sconti concessi.'
+    );
+
+    this.addParam(
+        convertedParam,
+        param,
+        'contoNonRiscosso',
+        'Conto corrispettivi non riscossi',
+        'string',
+        '',
+        null,
+        'corrispettivi',
+        'Conto utilizzato per i corrispettivi '
+        + 'non ancora riscossi.'
+    );
+
+    this.addParam(
+        convertedParam,
+        param,
+        'contoBeniInSospeso',
+        'Conto acconti e beni in sospeso',
+        'string',
+        '',
+        null,
+        'corrispettivi',
+        'Conto utilizzato per gli acconti '
+        + 'e i beni in sospeso.'
+    );
+
+    this.addParam(
+        convertedParam,
+        param,
+        'contoOmaggi',
+        'Conto omaggi',
+        'string',
+        '',
+        null,
+        'corrispettivi',
+        'Conto utilizzato per la contabilizzazione '
+        + 'degli omaggi.'
+    );
+
+    this.addParam(
+        convertedParam,
+        param,
+        'codiceIvaVentilazione',
+        'Codice IVA per ventilazione',
+        'string',
+        '',
+        null,
+        'corrispettivi',
+        'Codice IVA utilizzato per i corrispettivi '
+        + 'soggetti a ventilazione IVA.'
+    );
 
     return convertedParam;
 }
