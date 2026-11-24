@@ -93,7 +93,7 @@ function EFatturaImport(banDocument) {
     this.supplierIdCounter = 20000;
     // elenco numeri fatture già registrate per controllare i duplicati
     this.docInvoices = [];
-    // invoices added by this import: key -> source file name
+    // fatture aggiunte da questa importazione: chiave -> nome del file di origine
     this.newInvoices = {};
     //codici IVA e contropartite per aliquota, dalle impostazioni
     this.vatTable = {};
@@ -386,7 +386,7 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
         if (duplicateMsg) {
             this.message("Fattura " + noFattura + " del " + this.formatDate(dataFattura) +
                 " non importata: " + duplicateMsg + " (" + srcFileName + ").");
-            // skip only this body: advance first, otherwise the loop never ends
+            // salta solo questa fattura: avanza prima del continue, altrimenti il ciclo non termina
             invoiceNode = invoiceNode.nextSiblingElement('FatturaElettronicaBody');
             continue;
         }
@@ -600,7 +600,7 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
             }
         }
 
-        // register only invoices that produced rows, so a skipped body is not marked as imported
+        // registra solo le fatture che hanno prodotto righe, così una fattura scartata non risulta importata
         if (totTransactions > bodyRowsStart)
             this.newInvoices[key] = srcFileName;
 
@@ -609,7 +609,7 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
     return totTransactions;
 }
 
-/* yyyymmdd -> dd.mm.yyyy, for messages */
+/* yyyymmdd -> gg.mm.aaaa, per i messaggi */
 EFatturaImport.prototype.formatDate = function (date) {
     if (!date || date.length !== 8)
         return date;

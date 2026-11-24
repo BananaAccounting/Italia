@@ -561,7 +561,7 @@ Settings.prototype.getErrorMessage = function (errorId) {
     }
     else if (errorId == this.ID_ERR_VERSION_NOTSUPPORTED) {
         if (lang == 'it')
-            rtnMsg = "Lo script non funziona con la vostra attuale versione di Banana Contabilità.\nVersione minimina richiesta: %1.\nPer aggiornare o per maggiori informazioni cliccare su Aiuto";
+            rtnMsg = "Lo script non funziona con la vostra attuale versione di Banana Contabilità.\nVersione minima richiesta: %1.\nPer aggiornare o per maggiori informazioni cliccare su Aiuto";
         else
             rtnMsg = "This script does not run with your current version of Banana Accounting.\nMinimum version required: %1.\nTo update or for more information click on Help";
     }
