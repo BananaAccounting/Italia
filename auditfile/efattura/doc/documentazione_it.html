@@ -163,9 +163,10 @@ Prima di importare conviene salvare una copia del file di contabilità.</p>
 
 <ul>
    <li><strong>Generale</strong>, con la data di registrazione;</li>
-   <li><strong>Fatture elettroniche</strong>, con le contropartite e l'associazione dei codici IVA
-       sempre visibili, e due sottogruppi chiusi all'apertura: <em>Conto cliente o fornitore</em>
-       e <em>Impostazioni aggiuntive</em>;</li>
+   <li><strong>Fatture elettroniche</strong>, con il sottogruppo <em>Conti clienti e fornitori</em> in
+       cima, seguito dalle contropartite e dall'associazione dei codici IVA sempre visibili, e dal
+       sottogruppo <em>Impostazioni aggiuntive</em>. I due sottogruppi sono chiusi
+       all'apertura;</li>
    <li><strong>Corrispettivi telematici</strong>, con i conti degli incassi principali, la
        contropartita e l'associazione dei codici IVA sempre visibili, e il sottogruppo
        <em>Impostazioni aggiuntive</em> chiuso all'apertura.</li>
@@ -181,6 +182,10 @@ sopra il campo.</p>
 vengono lasciate come sono, finiscono nelle registrazioni e Banana le segnala come conti
 inesistenti: in questo modo sono facili da individuare e da correggere, nelle impostazioni oppure
 direttamente nella tabella Registrazioni.</p>
+
+<p><strong>Attenzione:</strong> il pulsante <em>Restore Defaults</em> ripristina tutti i valori
+predefiniti, comprese le due tabelle di associazione dei codici IVA, che tornano vuote. Prima di
+usarlo conviene copiare il contenuto delle tabelle.</p>
 
 <p>Se invece un campo viene <strong>svuotato</strong>, il comportamento dipende dal parametro:</p>
 
@@ -289,6 +294,43 @@ parametro <em>Codice IVA per ventilazione</em>.</p>
    </thead>
    <tbody>
       <tr>
+         <td>Conti clienti e fornitori</td>
+         <td>Crea clienti e fornitori mancanti</td>
+         <td>Se disattivato, le fatture di controparti non ancora presenti nella tabella Conti non
+             vengono importate e vengono segnalate con un messaggio. Utile per non alterare un
+             piano dei conti già definito.</td>
+         <td>attivo</td>
+      </tr>
+      <tr>
+         <td>Conti clienti e fornitori</td>
+         <td>Numerazione iniziale clienti</td>
+         <td>Numero da cui partire quando nel gruppo dei clienti non c'è ancora nessun conto.</td>
+         <td>10000</td>
+      </tr>
+      <tr>
+         <td>Conti clienti e fornitori</td>
+         <td>Numerazione iniziale fornitori</td>
+         <td>Numero da cui partire quando nel gruppo dei fornitori non c'è ancora nessun
+             conto.</td>
+         <td>20000</td>
+      </tr>
+      <tr>
+         <td>Conti clienti e fornitori</td>
+         <td>Gruppo clienti</td>
+         <td>Gruppo in cui inserire i nuovi conti clienti quando nel gruppo dei dati base non c'è
+             ancora nessun cliente. All'apertura delle impostazioni, se il campo è vuoto, viene
+             proposto il gruppo indicato nei dati base della contabilità.</td>
+         <td>dai dati base</td>
+      </tr>
+      <tr>
+         <td>Conti clienti e fornitori</td>
+         <td>Gruppo fornitori</td>
+         <td>Gruppo in cui inserire i nuovi conti fornitori quando nel gruppo dei dati base non c'è
+             ancora nessun fornitore. All'apertura delle impostazioni, se il campo è vuoto, viene
+             proposto il gruppo indicato nei dati base della contabilità.</td>
+         <td>dai dati base</td>
+      </tr>
+      <tr>
          <td>Fatture elettroniche</td>
          <td>Contropartita acquisti</td>
          <td>Conto di costo usato come contropartita nelle fatture ricevute, quando l'associazione
@@ -309,43 +351,6 @@ parametro <em>Codice IVA per ventilazione</em>.</p>
              ai conti di contropartita. Chiavi <code>A</code> per gli acquisti e <code>V</code>
              per le vendite.</td>
          <td>vuoto</td>
-      </tr>
-      <tr>
-         <td>Conto cliente o fornitore</td>
-         <td>Crea clienti e fornitori mancanti</td>
-         <td>Se disattivato, le fatture di controparti non ancora presenti nella tabella Conti non
-             vengono importate e vengono segnalate con un messaggio. Utile per non alterare un
-             piano dei conti già definito.</td>
-         <td>attivo</td>
-      </tr>
-      <tr>
-         <td>Conto cliente o fornitore</td>
-         <td>Numerazione iniziale clienti</td>
-         <td>Numero da cui partire quando nel gruppo dei clienti non c'è ancora nessun conto.</td>
-         <td>10000</td>
-      </tr>
-      <tr>
-         <td>Conto cliente o fornitore</td>
-         <td>Numerazione iniziale fornitori</td>
-         <td>Numero da cui partire quando nel gruppo dei fornitori non c'è ancora nessun
-             conto.</td>
-         <td>20000</td>
-      </tr>
-      <tr>
-         <td>Conto cliente o fornitore</td>
-         <td>Gruppo clienti</td>
-         <td>Gruppo in cui inserire i nuovi conti clienti quando nel gruppo dei dati base non c'è
-             ancora nessun cliente. All'apertura delle impostazioni, se il campo è vuoto, viene
-             proposto il gruppo indicato nei dati base della contabilità.</td>
-         <td>dai dati base</td>
-      </tr>
-      <tr>
-         <td>Conto cliente o fornitore</td>
-         <td>Gruppo fornitori</td>
-         <td>Gruppo in cui inserire i nuovi conti fornitori quando nel gruppo dei dati base non c'è
-             ancora nessun fornitore. All'apertura delle impostazioni, se il campo è vuoto, viene
-             proposto il gruppo indicato nei dati base della contabilità.</td>
-         <td>dai dati base</td>
       </tr>
       <tr>
          <td>Impostazioni aggiuntive</td>
