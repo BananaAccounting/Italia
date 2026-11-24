@@ -93,6 +93,8 @@ function EFatturaImport(banDocument) {
     this.supplierIdCounter = 20000;
     // elenco numeri fatture già registrate per controllare i duplicati
     this.docInvoices = [];
+    // invoices added by this import: key -> source file name
+    this.newInvoices = {};
     //codici IVA e contropartite per aliquota, dalle impostazioni
     this.vatTable = {};
     //parametri che l'utente può modificare tramite dialogo
@@ -376,10 +378,19 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
 
         // controlla se la fattura è già stata importata
         var key = noFattura + "_" + dataFattura;
-        if (this.docInvoices.indexOf(key) >= 0) {
-            Banana.console.info("fattura già importata " + noFattura + " " + dataFattura);
-            break;
+        var duplicateMsg = "";
+        if (this.docInvoices.indexOf(key) >= 0)
+            duplicateMsg = "è già registrata nella contabilità";
+        else if (this.newInvoices[key])
+            duplicateMsg = "è già presente nel file " + this.newInvoices[key];
+        if (duplicateMsg) {
+            this.message("Fattura " + noFattura + " del " + this.formatDate(dataFattura) +
+                " non importata: " + duplicateMsg + " (" + srcFileName + ").");
+            // skip only this body: advance first, otherwise the loop never ends
+            invoiceNode = invoiceNode.nextSiblingElement('FatturaElettronicaBody');
+            continue;
         }
+        var bodyRowsStart = totTransactions;
 
         var d = new Date();
         var dataOggi = d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2);
@@ -589,9 +600,20 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
             }
         }
 
+        // register only invoices that produced rows, so a skipped body is not marked as imported
+        if (totTransactions > bodyRowsStart)
+            this.newInvoices[key] = srcFileName;
+
         invoiceNode = invoiceNode.nextSiblingElement('FatturaElettronicaBody');
     }
     return totTransactions;
+}
+
+/* yyyymmdd -> dd.mm.yyyy, for messages */
+EFatturaImport.prototype.formatDate = function (date) {
+    if (!date || date.length !== 8)
+        return date;
+    return date.substr(6, 2) + "." + date.substr(4, 2) + "." + date.substr(0, 4);
 }
 
 EFatturaImport.prototype.createJsonDocument_Init = function () {
