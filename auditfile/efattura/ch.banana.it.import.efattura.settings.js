@@ -49,6 +49,30 @@ function Settings(banDocument) {
 
 /* versione corrente dei parametri */
 Settings.VERSION = "1.0";
+
+/*
+ * Valori predefiniti dei conti e dei codici IVA, proposti da initParam() alla
+ * prima apertura e dal pulsante di ripristino del dialogo. L'utente li sostituisce
+ * con i conti della propria contabilità. Sono definiti qui una volta sola, in modo
+ * che initParam() e il dialogo delle impostazioni propongano sempre lo stesso valore.
+*/
+Settings.DEFAULT_VALUES = {
+    "contoContropartitaAcquisti": '[ACQUISTI]',
+    "contoContropartitaVendite": '[VENDITE]',
+    "contoRitenuta": '[RITENUTE_ACCONTO]',
+    "contoBollo": '[IMPOSTA_BOLLO]',
+    "contoCassaPrevidenziale": '[CASSA_PREVIDENZIALE]',
+    "contoArrotondamento": '[ARROTONDAMENTO]',
+    "contoContanti": '[CONTANTI]',
+    "contoPagamentiElettronici": '[PAGAMENTI_ELETTRONICI]',
+    "contoContropartita": '[RICAVI]',
+    "contoTicket": '[TICKET]',
+    "contoSconti": '[SCONTI]',
+    "contoNonRiscosso": '[NON_RISCOSSO]',
+    "contoBeniInSospeso": '[ACCONTI]',
+    "contoOmaggi": '[OMAGGI]',
+    "codiceIvaVentilazione": '[COD_IVA_VENTILAZIONE]'
+};
 /* valori del parametro dataRegistrazione */
 Settings.DATA_IMPORTAZIONE = "Data di importazione";
 Settings.DATA_DOCUMENTO = "Data del documento";
@@ -237,7 +261,7 @@ Settings.prototype.convertParam = function (param) {
         'contoRitenuta',
         'Conto ritenute d\'acconto',
         'string',
-        '[RITENUTE_ACCONTO]',
+        Settings.DEFAULT_VALUES.contoRitenuta,
         null,
         'patrimonialiFatture',
         'Conto utilizzato per contabilizzare '
@@ -249,7 +273,7 @@ Settings.prototype.convertParam = function (param) {
         'contoBollo',
         'Conto imposta di bollo',
         'string',
-        '[IMPOSTA_BOLLO]',
+        Settings.DEFAULT_VALUES.contoBollo,
         null,
         'patrimonialiFatture',
         'Conto utilizzato per gli importi relativi '
@@ -261,7 +285,7 @@ Settings.prototype.convertParam = function (param) {
         'contoCassaPrevidenziale',
         'Conto cassa previdenziale',
         'string',
-        '[CASSA_PREVIDENZIALE]',
+        Settings.DEFAULT_VALUES.contoCassaPrevidenziale,
         null,
         'patrimonialiFatture',
         'Conto utilizzato per i contributi '
@@ -279,7 +303,7 @@ Settings.prototype.convertParam = function (param) {
         'contoContropartitaAcquisti',
         'Contropartita acquisti',
         'string',
-        '[ACQUISTI]',
+        Settings.DEFAULT_VALUES.contoContropartitaAcquisti,
         null,
         'economiciFatture',
         'Conto di costo utilizzato come contropartita '
@@ -291,7 +315,7 @@ Settings.prototype.convertParam = function (param) {
         'contoContropartitaVendite',
         'Contropartita vendite',
         'string',
-        '[VENDITE]',
+        Settings.DEFAULT_VALUES.contoContropartitaVendite,
         null,
         'economiciFatture',
         'Conto di ricavo utilizzato come contropartita '
@@ -303,7 +327,7 @@ Settings.prototype.convertParam = function (param) {
         'contoArrotondamento',
         'Conto differenze e arrotondamenti',
         'string',
-        '[ARROTONDAMENTO]',
+        Settings.DEFAULT_VALUES.contoArrotondamento,
         null,
         'economiciFatture',
         'Conto utilizzato per contabilizzare eventuali '
@@ -414,7 +438,7 @@ Settings.prototype.convertParam = function (param) {
         'codiceIvaVentilazione',
         'Codice IVA per ventilazione',
         'string',
-        '[COD_IVA_VENTILAZIONE]',
+        Settings.DEFAULT_VALUES.codiceIvaVentilazione,
         null,
         'ivaCorrispettivi',
         'Codice IVA utilizzato per i corrispettivi '
@@ -432,7 +456,7 @@ Settings.prototype.convertParam = function (param) {
         'contoContanti',
         'Conto contanti',
         'string',
-        '[CONTANTI]',
+        Settings.DEFAULT_VALUES.contoContanti,
         null,
         'patrimonialiCorrispettivi',
         'Conto utilizzato per gli incassi in contanti.'
@@ -443,7 +467,7 @@ Settings.prototype.convertParam = function (param) {
         'contoPagamentiElettronici',
         'Conto pagamenti elettronici',
         'string',
-        '[PAGAMENTI_ELETTRONICI]',
+        Settings.DEFAULT_VALUES.contoPagamentiElettronici,
         null,
         'patrimonialiCorrispettivi',
         'Conto utilizzato per gli incassi tramite '
@@ -455,7 +479,7 @@ Settings.prototype.convertParam = function (param) {
         'contoTicket',
         'Conto ticket e buoni pasto',
         'string',
-        '[TICKET]',
+        Settings.DEFAULT_VALUES.contoTicket,
         null,
         'patrimonialiCorrispettivi',
         'Conto utilizzato per i corrispettivi pagati '
@@ -467,7 +491,7 @@ Settings.prototype.convertParam = function (param) {
         'contoNonRiscosso',
         'Conto corrispettivi non riscossi',
         'string',
-        '[NON_RISCOSSO]',
+        Settings.DEFAULT_VALUES.contoNonRiscosso,
         null,
         'patrimonialiCorrispettivi',
         'Conto utilizzato per i corrispettivi '
@@ -479,7 +503,7 @@ Settings.prototype.convertParam = function (param) {
         'contoBeniInSospeso',
         'Conto acconti e beni in sospeso',
         'string',
-        '[ACCONTI]',
+        Settings.DEFAULT_VALUES.contoBeniInSospeso,
         null,
         'patrimonialiCorrispettivi',
         'Conto utilizzato per gli acconti '
@@ -497,7 +521,7 @@ Settings.prototype.convertParam = function (param) {
         'contoContropartita',
         'Contropartita ricavi',
         'string',
-        '[RICAVI]',
+        Settings.DEFAULT_VALUES.contoContropartita,
         null,
         'economiciCorrispettivi',
         'Conto di ricavo utilizzato come contropartita '
@@ -509,7 +533,7 @@ Settings.prototype.convertParam = function (param) {
         'contoSconti',
         'Conto sconti concessi',
         'string',
-        '[SCONTI]',
+        Settings.DEFAULT_VALUES.contoSconti,
         null,
         'economiciCorrispettivi',
         'Conto utilizzato per contabilizzare '
@@ -521,7 +545,7 @@ Settings.prototype.convertParam = function (param) {
         'contoOmaggi',
         'Conto omaggi',
         'string',
-        '[OMAGGI]',
+        Settings.DEFAULT_VALUES.contoOmaggi,
         null,
         'economiciCorrispettivi',
         'Conto utilizzato per la contabilizzazione '
@@ -567,28 +591,28 @@ Settings.prototype.initParam = function () {
     param.dataRegistrazione = Settings.DATA_IMPORTAZIONE;
 
     /* fatture elettroniche */
-    param.contoContropartitaAcquisti = '[CONTO_ACQUISTI]';
-    param.contoContropartitaVendite = '[CONTO_VENDITE]';
+    param.contoContropartitaAcquisti = Settings.DEFAULT_VALUES.contoContropartitaAcquisti;
+    param.contoContropartitaVendite = Settings.DEFAULT_VALUES.contoContropartitaVendite;
     param.creaContiMancanti = true;
     param.gruppoClienti = '';
     param.gruppoFornitori = '';
     param.numerazioneClienti = '10000';
     param.numerazioneFornitori = '20000';
-    param.contoRitenuta = '[CONTO_RITENUTE_ACCONTO]';
-    param.contoBollo = '[CONTO_IMPOSTA_BOLLO]';
-    param.contoCassaPrevidenziale = '[CONTO_CASSA_PREVIDENZIALE]';
-    param.contoArrotondamento = '[CONTO_ARROTONDAMENTO]';
+    param.contoRitenuta = Settings.DEFAULT_VALUES.contoRitenuta;
+    param.contoBollo = Settings.DEFAULT_VALUES.contoBollo;
+    param.contoCassaPrevidenziale = Settings.DEFAULT_VALUES.contoCassaPrevidenziale;
+    param.contoArrotondamento = Settings.DEFAULT_VALUES.contoArrotondamento;
 
     /* corrispettivi telematici */
-    param.contoContanti = '[CONTO_CONTANTI]';
-    param.contoPagamentiElettronici = '[CONTO_PAG_ELETTRONICI]';
-    param.contoContropartita = '[CA]';
-    param.contoTicket = '[CONTO_TICKET]';
-    param.contoSconti = '[CONTO_SCONTI]';
-    param.contoNonRiscosso = '[CONTO_NON_RISCOSSO]';
-    param.contoBeniInSospeso = '[CONTO_ACCONTI]';
-    param.contoOmaggi = '[CONTO_OMAGGI]';
-    param.codiceIvaVentilazione = '[CV]';
+    param.contoContanti = Settings.DEFAULT_VALUES.contoContanti;
+    param.contoPagamentiElettronici = Settings.DEFAULT_VALUES.contoPagamentiElettronici;
+    param.contoContropartita = Settings.DEFAULT_VALUES.contoContropartita;
+    param.contoTicket = Settings.DEFAULT_VALUES.contoTicket;
+    param.contoSconti = Settings.DEFAULT_VALUES.contoSconti;
+    param.contoNonRiscosso = Settings.DEFAULT_VALUES.contoNonRiscosso;
+    param.contoBeniInSospeso = Settings.DEFAULT_VALUES.contoBeniInSospeso;
+    param.contoOmaggi = Settings.DEFAULT_VALUES.contoOmaggi;
+    param.codiceIvaVentilazione = Settings.DEFAULT_VALUES.codiceIvaVentilazione;
 
     return param;
 };
@@ -797,20 +821,26 @@ Settings.prototype.getVatAmountType = function (
         return null;
     }
 
-    // IVA calcolata sull'importo netto
-    var ivaNetto = Math.round(amount * rate * 100 / 100) / 100;
+    // IVA calcolata sull'importo netto, arrotondata ai centesimi
+    var ivaNetto = Banana.SDecimal.round(
+        amount * rate / 100, { 'decimals': 2 }
+    );
 
-    // IVA scorporata dall'importo lordo
-    var ivaLordo = Math.round(
-        amount * rate / (100 + rate) * 100
-    ) / 100;
+    // IVA scorporata dall'importo lordo, arrotondata ai centesimi
+    var ivaLordo = Banana.SDecimal.round(
+        amount * rate / (100 + rate), { 'decimals': 2 }
+    );
 
-    var differenzaNetto = Math.abs(vat - ivaNetto);
-    var differenzaLordo = Math.abs(vat - ivaLordo);
+    var differenzaNetto = Banana.SDecimal.abs(
+        Banana.SDecimal.subtract(vat, ivaNetto)
+    );
+    var differenzaLordo = Banana.SDecimal.abs(
+        Banana.SDecimal.subtract(vat, ivaLordo)
+    );
 
     // Tolleranza di un centesimo
-    var nettoValido = differenzaNetto <= 0.01;
-    var lordoValido = differenzaLordo <= 0.01;
+    var nettoValido = Banana.SDecimal.compare(differenzaNetto, "0.01") <= 0;
+    var lordoValido = Banana.SDecimal.compare(differenzaLordo, "0.01") <= 0;
 
     if (nettoValido && !lordoValido)
         return "1";
