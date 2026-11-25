@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.import.corrispettivi
 // @api = 1.0
-// @pubdate = 2026-11-20
+// @pubdate = 2026-11-25
 // @publisher = Banana.ch SA
 // @description = Importa corrispettivi telematici
 // @task = import.file
@@ -159,8 +159,7 @@ function CorrispettiviImport(banDocument) {
 CorrispettiviImport.prototype.addTransaction = function (
     jsonDoc, srcFileName, date, doc, description, account, counterpart, amount, vatCode, vatAmountType
 ) {
-    if (Banana.SDecimal.compare(amount, "0") === 0)
-        return 0;
+    // gli importi zero sono filtrati dai chiamanti; la riga del periodo inattivo ha importo zero
     amount = Banana.SDecimal.round(amount, { 'decimals': 2 });
     //gli importi negativi si registrano invertendo i conti
     if (Banana.SDecimal.compare(amount, "0") < 0) {
@@ -271,16 +270,24 @@ CorrispettiviImport.prototype.createJsonDocument = function (inData) {
             continue;
         }
         var datiRT = this.child(xmlRoot, "DatiRT");
+        var trasmissione = this.child(xmlRoot, "Trasmissione");
+        var periodoInattivo = this.readPeriodoInattivo(xmlRoot);
+
+        // il periodo inattivo si registra solo se il file non contiene riepiloghi da importare
+        if (periodoInattivo && !this.hasRiepiloghi(xmlRoot)) {
+            var jsonDocInattivo = this.createJsonDocument_Init();
+            if (this.createJsonDocument_AddPeriodoInattivo(
+                jsonDocInattivo, periodoInattivo, srcFileName, trasmissione) > 0)
+                this.jsonDocArray.push(jsonDocInattivo);
+            continue;
+        }
         if (!datiRT) {
-            if (this.child(xmlRoot, "PeriodoInattivo"))
-                this.message("Periodo inattivo senza corrispettivi, niente da importare: " + srcFileName);
-            else if (this.child(xmlRoot, "DatiDA"))
+            if (this.child(xmlRoot, "DatiDA"))
                 this.message("Corrispettivi da distributore automatico non gestiti: " + srcFileName);
             else
                 this.message("Struttura corrispettivi non riconosciuta: " + srcFileName);
             continue;
         }
-        var trasmissione = this.child(xmlRoot, "Trasmissione");
         //campo 3: <DataOraRilevazione> è figlio diretto della radice
         var dataOraRilevazione = this.getXmlText(xmlRoot, "DataOraRilevazione");
         var jsonDoc = this.createJsonDocument_Init();
@@ -479,6 +486,69 @@ CorrispettiviImport.prototype.createJsonDocument_AddTransactions = function (
             item.amount, item.vatCode, item.vatAmountType
         );
     }
+
+    this.newDocs[key] = true;
+    return count;
+};
+
+/*
+ * Legge il blocco <PeriodoInattivo> (campo 2).
+ * Ritorna { dal, al } con date aaaammgg (vuote se non valide), oppure null se il blocco manca.
+ */
+CorrispettiviImport.prototype.readPeriodoInattivo = function (xmlRoot) {
+    var node = this.child(xmlRoot, "PeriodoInattivo");
+    if (!node)
+        return null;
+    return {
+        "dal": this.getDate(this.getXmlText(node, "DalGiorno")),
+        "al": this.getDate(this.getXmlText(node, "AlGiorno"))
+    };
+};
+
+/* Vero se almeno un blocco <DatiRT> contiene un <Riepilogo> */
+CorrispettiviImport.prototype.hasRiepiloghi = function (xmlRoot) {
+    var datiRT = this.child(xmlRoot, "DatiRT");
+    while (datiRT) {
+        if (this.children(datiRT, "Riepilogo").length)
+            return true;
+        datiRT = datiRT.nextSiblingElement("DatiRT");
+    }
+    return false;
+};
+
+/*
+ * Registra il periodo inattivo con una riga descrittiva senza conti e con importo zero.
+ * Data della registrazione: ultimo giorno del periodo (AlGiorno).
+ */
+CorrispettiviImport.prototype.createJsonDocument_AddPeriodoInattivo = function (
+    jsonDoc, periodo, srcFileName, trasmissione
+) {
+    var progressivo = this.getXmlText(trasmissione, "Progressivo");
+    var device = this.getXmlText(
+        this.child(trasmissione, "Dispositivo"), "IdDispositivo");
+
+    if (!progressivo || !periodo.al) {
+        this.message("Progressivo o data mancanti: " + srcFileName);
+        return 0;
+    }
+
+    // stessa chiave delle altre chiusure, così loadExistingDocs riconosce la riga
+    var key = periodo.al + "|" + progressivo + "|" + device;
+    if (this.existingDocs[key] ||
+        this.existingDocs[periodo.al + "|" + progressivo + "|"] ||
+        this.newDocs[key]) {
+        this.message("Corrispettivo già registrato: " + srcFileName);
+        return 0;
+    }
+
+    var description = this.descriptionPrefix + " n. " + progressivo +
+        (device ? " RT-" + device : "") + " - Periodo inattivo" +
+        (periodo.dal ? " dal " + this.settings.formatDate(periodo.dal) : "") +
+        " al " + this.settings.formatDate(periodo.al);
+
+    var count = this.addTransaction(
+        jsonDoc, srcFileName, periodo.al, progressivo,
+        description, "", "", "0", "", "");
 
     this.newDocs[key] = true;
     return count;

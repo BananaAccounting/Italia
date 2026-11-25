@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.import.efattura.settings
 // @api = 1.0
-// @pubdate = 2026-11-23
+// @pubdate = 2026-11-25
 // @publisher = Banana.ch SA
 // @description = Impostazioni...
 // @description.it = Impostazioni...
@@ -543,6 +543,13 @@ Settings.prototype.convertParam = function (param) {
 
     return convertedParam;
 
+};
+
+/* aaaammgg -> gg.mm.aaaa, per descrizioni e messaggi */
+Settings.prototype.formatDate = function (date) {
+    if (!date || date.length !== 8)
+        return date;
+    return date.substr(6, 2) + "." + date.substr(4, 2) + "." + date.substr(0, 4);
 };
 
 Settings.prototype.getErrorMessage = function (errorId) {

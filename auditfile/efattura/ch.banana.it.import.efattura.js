@@ -14,7 +14,7 @@
 //
 // @id = ch.banana.it.import.efattura
 // @api = 1.0
-// @pubdate = 2026-11-10
+// @pubdate = 2026-11-25
 // @publisher = Banana.ch SA
 // @description = Importa fatture elettroniche
 // @task = import.file
@@ -384,7 +384,7 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
         else if (this.newInvoices[key])
             duplicateMsg = "è già presente nel file " + this.newInvoices[key];
         if (duplicateMsg) {
-            this.message("Fattura " + noFattura + " del " + this.formatDate(dataFattura) +
+            this.message("Fattura " + noFattura + " del " + this.settings.formatDate(dataFattura) +
                 " non importata: " + duplicateMsg + " (" + srcFileName + ").");
             // salta solo questa fattura: avanza prima del continue, altrimenti il ciclo non termina
             invoiceNode = invoiceNode.nextSiblingElement('FatturaElettronicaBody');
@@ -607,13 +607,6 @@ EFatturaImport.prototype.createJsonDocument_AddTransactions = function (jsonDoc,
         invoiceNode = invoiceNode.nextSiblingElement('FatturaElettronicaBody');
     }
     return totTransactions;
-}
-
-/* yyyymmdd -> gg.mm.aaaa, per i messaggi */
-EFatturaImport.prototype.formatDate = function (date) {
-    if (!date || date.length !== 8)
-        return date;
-    return date.substr(6, 2) + "." + date.substr(4, 2) + "." + date.substr(0, 4);
 }
 
 EFatturaImport.prototype.createJsonDocument_Init = function () {
